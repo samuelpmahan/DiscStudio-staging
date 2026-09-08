@@ -1,0 +1,21 @@
+/** Emit a neat-compatible exact-commit handoff only after fresh checks succeeded. */
+import fs from 'node:fs/promises';
+import { reviewItems } from '../src/review-data.js';
+import { stable, labelHash } from '../src/domain.js';
+const info = JSON.parse(await fs.readFile('dist/build-info.json', 'utf8'));
+const browser = JSON.parse(await fs.readFile('test-results/browser-report.json', 'utf8'));
+const unit = await fs.readFile('test-results/unit.tap', 'utf8');
+if (!/^# fail 0$/m.test(unit) || browser.count !== 9 || browser.errors.length) throw new Error('Fresh verification reports are not passing.');
+if (browser.mode !== 'HTTP; real origin storage') throw new Error('Real-origin browser verification is required for the deployable review checkpoint.');
+const item = JSON.parse(await fs.readFile('.neat/items/DS-STUDIO-02.json', 'utf8'));
+const requirementIds = reviewItems.flatMap(t => t.parts.map(p => p.reviewId));
+if (stable(item.requirements.map(r => r.id).sort()) !== stable(requirementIds.sort())) throw new Error('neat item and UI review requirements diverged.');
+const submissionId = `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`;
+item.checkpoints = [{ id: info.fingerprint, commit: info.commit, observationRef: 'review/browser-report.json', verificationRefs: Object.fromEntries(item.requirements.map(r => [r.id, 'review/submission.json'])), executionRefs: ['review/browser-report.json', 'review/unit.tap'], inspectionRefs: [] }];
+const submission = { schemaVersion: 1, id: submissionId, itemId: item.id, expectedItemRevision: labelHash(item), checkpointId: info.fingerprint, subjectCommit: info.commit, createdBy: 'GitHub Actions automated verification', whatChanged: ['Linked PxC Shelf, OnTheCourse and Component Editor', 'All-field bindings, shared render path and reusable competition Constraints', 'neat per-item inspection comments with exact checkpoint identity'], verifications: reviewItems.flatMap(t => t.parts.map(p => ({ id: p.reviewId, label: p.label, recordKind: 'inspection', requirementIds: [p.reviewId], results: { [p.reviewId]: 'passed' }, observed: `Automated unit/browser checks passed; see the attached reports. Human review is pending. ${p.verification}`, links: [p.action], reviewable: true }))) };
+await fs.mkdir('dist/review', { recursive: true });
+await fs.writeFile('dist/review/item.json', JSON.stringify(item, null, 2));
+await fs.writeFile('dist/review/submission.json', JSON.stringify(submission, null, 2));
+await fs.copyFile('test-results/browser-report.json', 'dist/review/browser-report.json');
+await fs.copyFile('test-results/unit.tap', 'dist/review/unit.tap');
+console.log(`neat review ${submission.id}; commit ${info.commit}; acceptance/promotion are not recorded.`);

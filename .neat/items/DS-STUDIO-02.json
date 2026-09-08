@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "DS-STUDIO-02",
+  "outcome": "A linked, instrumented DiscStudio with editable domain-bound presentations and reusable competition Constraints.",
+  "location": {
+    "component": "DiscStudio"
+  },
+  "target": {
+    "kind": "pcr",
+    "identity": "pcr.on-the-course"
+  },
+  "requirements": [
+    {
+      "id": "identity",
+      "text": "Manufacturer + mold + physical disc identity"
+    },
+    {
+      "id": "bags",
+      "text": "Named bags use shared physical-disc references"
+    },
+    {
+      "id": "persistence",
+      "text": "Drafts, photos and changes survive reload"
+    },
+    {
+      "id": "bindings",
+      "text": "Every field is discoverable; identity text is editable"
+    },
+    {
+      "id": "reuse",
+      "text": "One presentation works for Single and DiscBattle"
+    },
+    {
+      "id": "footage",
+      "text": "Compose on footage, export a transparent overlay"
+    },
+    {
+      "id": "states",
+      "text": "Independent states, scores, highlights and winner"
+    },
+    {
+      "id": "constraints",
+      "text": "PutterWarz composes reusable rules"
+    },
+    {
+      "id": "trace",
+      "text": "Real PQL path and memoized Parts are inspectable"
+    },
+    {
+      "id": "feedback",
+      "text": "Item comments persist and export with checkpoint identity"
+    }
+  ],
+  "dependencies": [],
+  "agent": "Astra direct implementation",
+  "status": "review",
+  "blockers": [],
+  "checkpoints": [],
+  "acceptanceRefs": [],
+  "promotionRefs": [],
+  "resume": "CI emits an exact-commit item/submission under dist/review after fresh tests. Review each item in the in-app neat checklist, export comments, and address those items. No human acceptance is implied."
+}
