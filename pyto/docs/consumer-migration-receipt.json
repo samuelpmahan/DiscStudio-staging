@@ -1,0 +1,197 @@
+{
+  "seedManifest": "/mnt/d/pyto-worktrees/evidence/seed-manifest.json",
+  "wrappers": [
+    {
+      "module": "chainspot_quick_anno",
+      "source": "/mnt/d/pyto-worktrees/chainspot/packages/quick_anno_py/chainspot_quick_anno/__init__.py",
+      "installed": "/mnt/d/pyto-worktrees/clean-consumers/lib/python3.14/site-packages/chainspot_quick_anno/__init__.py",
+      "sha256": "20b6670d473876e8cc253e7ed04f2eed5d552e5ea9b419e836296f6d810456ad"
+    },
+    {
+      "module": "chainspot_quick_anno.core",
+      "source": "/mnt/d/pyto-worktrees/chainspot/packages/quick_anno_py/chainspot_quick_anno/core.py",
+      "installed": "/mnt/d/pyto-worktrees/clean-consumers/lib/python3.14/site-packages/chainspot_quick_anno/core.py",
+      "sha256": "36d8f98e3a2130501b8e9beba11e276165ecbd3792ade855c1ca002b14568286"
+    },
+    {
+      "module": "chainspot_quick_anno.pcr",
+      "source": "/mnt/d/pyto-worktrees/chainspot/packages/quick_anno_py/chainspot_quick_anno/pcr.py",
+      "installed": "/mnt/d/pyto-worktrees/clean-consumers/lib/python3.14/site-packages/chainspot_quick_anno/pcr.py",
+      "sha256": "a2c98063993d7a30173790e09d084dd2a350ed3f432d364259320a73da8ae4fb"
+    },
+    {
+      "module": "chainspot_quick_anno.pql",
+      "source": "/mnt/d/pyto-worktrees/chainspot/packages/quick_anno_py/chainspot_quick_anno/pql.py",
+      "installed": "/mnt/d/pyto-worktrees/clean-consumers/lib/python3.14/site-packages/chainspot_quick_anno/pql.py",
+      "sha256": "7689c520eff0bdcb96e73eb4f2645279bd7e81a92d5d655653fc5bc564c75a7a"
+    },
+    {
+      "module": "chainspot_quick_anno.graph",
+      "source": "/mnt/d/pyto-worktrees/chainspot/packages/quick_anno_py/chainspot_quick_anno/graph.py",
+      "installed": "/mnt/d/pyto-worktrees/clean-consumers/lib/python3.14/site-packages/chainspot_quick_anno/graph.py",
+      "sha256": "26882f5e52cd6dea3023d8b5cdda65f0aa4bbe8509093901ad969d70e5c90d89"
+    },
+    {
+      "module": "chainspot_quick_anno.neon",
+      "source": "/mnt/d/pyto-worktrees/chainspot/packages/quick_anno_py/chainspot_quick_anno/neon.py",
+      "installed": "/mnt/d/pyto-worktrees/clean-consumers/lib/python3.14/site-packages/chainspot_quick_anno/neon.py",
+      "sha256": "f8745cf472adef23a9d4cfd71efd3a92355fec6baf8e6f4267cf5ea61ccf80e5"
+    }
+  ],
+  "exports": [
+    "Binding",
+    "Calculation",
+    "CalculationTestimony",
+    "Match",
+    "PCR",
+    "PQL",
+    "Part",
+    "PartRef",
+    "Pcr",
+    "PcrRun",
+    "PxC",
+    "PxWrite",
+    "ResultRef",
+    "Tick",
+    "TickTestimony",
+    "ValueRef"
+  ],
+  "allExportsSameObjects": true,
+  "pytoVersion": "0.1.0",
+  "installedCommand": "/mnt/d/pyto-worktrees/clean-consumers/bin/python -I (identity checks and wrapper-byte verification)",
+  "installedGraphChecks": 4,
+  "installedCoreAndCompatibilityChecks": 4,
+  "realStageResultsEqual": [
+    "s1",
+    "s2",
+    "s3"
+  ],
+  "newPythonImagesEqual": [
+    {
+      "stage": "s1",
+      "file": "s1-added-mute-neon.png",
+      "sha256": "ef05f8f4558e2fda4e9dea78b186cdca7d3845e19068c9e4790d5fa39ccafaac"
+    },
+    {
+      "stage": "s1",
+      "file": "s1-badge-objects-neon.png",
+      "sha256": "0960524a71efa182acb6156a5a239b428b2ddb86e694f062e0b7a23ced86a194"
+    },
+    {
+      "stage": "s1",
+      "file": "s1-muted-neon.png",
+      "sha256": "ae591ccba2c81566699ae53e9cc9507066103350ab636daf05161c29f01cd64c"
+    },
+    {
+      "stage": "s1",
+      "file": "s1-neon-correctness-sheet.png",
+      "sha256": "0b7b86bd2e9143c1fa7881141228045644df9750631f85c961aa0e013ef02005"
+    },
+    {
+      "stage": "s1",
+      "file": "s1-owned-neon.png",
+      "sha256": "be23524ca678e26fa9158b1ad16b6cfb6ee847a2d9d31fe29d51458054555037"
+    },
+    {
+      "stage": "s1",
+      "file": "s1-remaining-checkerboard.png",
+      "sha256": "6b0867b4d2d73ac177e112eabfc182514fdeabe35312fae5a77a711a19be9423"
+    },
+    {
+      "stage": "s1",
+      "file": "s1-removed-neon.png",
+      "sha256": "3593978fe072c515813205d357d1b802e3ffa031e7a6455620baa90bd0d0d272"
+    },
+    {
+      "stage": "s2",
+      "file": "s2-basket-px-neon.png",
+      "sha256": "83e8951429abf1fb3b7ac701533aaff003b49a9de5fab8245546ac9e17fb49ac"
+    },
+    {
+      "stage": "s2",
+      "file": "s2-baskets-neon.png",
+      "sha256": "6838164592b7093958faa78a99dfde7068e4163529ce5a2e185779df93106a6e"
+    },
+    {
+      "stage": "s2",
+      "file": "s2-family-neon.png",
+      "sha256": "6ef995d28e8b571f4c8baf2a073bc4f9d60dba9ca14bb654ae855aba3e509e9d"
+    },
+    {
+      "stage": "s2",
+      "file": "s2-neon-correctness-sheet.png",
+      "sha256": "ee43f74669400620827f6671cfff6cf56e16308be884dae30854a05280d1ef15"
+    },
+    {
+      "stage": "s2",
+      "file": "s2-remaining-checkerboard.png",
+      "sha256": "c3bc42d9c0356d1772d06935de7fb9df4a44460331823899db7e4ba938b621e3"
+    },
+    {
+      "stage": "s2",
+      "file": "s2-shell-family-neon.png",
+      "sha256": "cec0b4a527edb53a9ea39ab9a2a557d8edee31bb7f4f3e03869f4395e0e30c46"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-badge-muted-crops.png",
+      "sha256": "04ee02df421ac6beacfa3219f26a15ac5e594defda06722af3474e734ae24c84"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-family-vote-neon.png",
+      "sha256": "5679bbb48ca8dc8b983cfb940074ad8e0de01256235640fd09eaeddc37894edc"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-frames-neon.png",
+      "sha256": "231f5862c9fce1631b22e076f9f3a58f99563127e11b9cfddca8648b54d1143b"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-neon-correctness-sheet.png",
+      "sha256": "85d79c503b5049a09d7d81e3ef3893da71ae96f2766dbfdff546df7ffec300b0"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-rejected-neon.png",
+      "sha256": "b3594504c7ffdcb34e50ba73bbbf87373d38f13a27f9751a913eb6a476e11e95"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-remaining-checkerboard.png",
+      "sha256": "de837b6604870b3b2773c45ddaf0e93473025c47814b9d3d4f4d80fd328123a3"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-ring-candidates-neon.png",
+      "sha256": "3b6edcf0fbe23779ff5f712eac06b978a60e34a0cfbaa58d1c16bd2d432ae41f"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-tee-crops.png",
+      "sha256": "99f2fd6fba96ff332eef83de67c3cebacaf518ad3ca21d365df675ffdfcbaf84"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-tee-px-neon.png",
+      "sha256": "9cbb5a1d5c05d47f54c1eba43c8a355a126749c6fc29439f09691ff236ac73c5"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-tees-neon.png",
+      "sha256": "69ffb44ef3e2da5fefcc1320842edef8bace48b246747b86e0dea073fadccd80"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-unframed-crops.png",
+      "sha256": "e5b93a8475cf5a7f4eeed1e67dd01bf899eb20e0ef31ec24457a4d9fa155bd1f"
+    },
+    {
+      "stage": "s3",
+      "file": "s3-voted-out-crops.png",
+      "sha256": "12f8952bb10756d514652e23f07ab3ba20969891bc20ec7a42a1251207675573"
+    }
+  ],
+  "copiedNodePanelsExcludedFromImageCount": true
+}

@@ -1,0 +1,16 @@
+{
+  "source": "/mnt/d/disc-studio-sandbox",
+  "files": {
+    ".gitignore": "a7a2085b2c592640e26131deaea737c8193ecf536addd682038db08fa3c00cab",
+    "app.py": "03b3b0e15449588d0a2c425b9e5464ff43380723245eb7fd168446610dbde423",
+    "index.html": "f830ffeea802f99898061e63b764bd24afc9c9b20008cecb6a642074b371174c",
+    "paint_components.py": "93c62cc73023636835cb8ad8e841f65e82a88d0ddfa89e4a52cf19d7528161ad",
+    "README.md": "34ee3d1feded4bf82c7d9a551413d532b7c81650d18646b96eae74662c8dd949",
+    "test_art_backend.py": "de67cca33582c9f4a97c46e407afacef09461c69cbe8fac4ac79a10710b5690a",
+    "test_sandbox.py": "af4ec60fc08f64ee5838320f400dd3e896a6e7371c54a32cd7e668f1307ef417",
+    "experiments/disc-stats/REPORT.md": "7fcb25b1fde5c05dc5d0ee97b104734f3bcf32b4234ccac2020a3635ca9870d8",
+    "experiments/disc-stats/run_experiment.py": "d1d9ef0874bced466eac68e17d5e8e150b885526034d6aa7b9424ec277b172b1",
+    "experiments/disc-stats/stats.py": "12e454de899d40ff272d306c4da712ded5f1c1b8c1319caf576dd909f7590a0e",
+    "experiments/disc-stats/test_stats.py": "4a1a6af5a84b0d800d847e943408fd043d98c57100e45f01cc8e8f0f9c1ee414"
+  }
+}
