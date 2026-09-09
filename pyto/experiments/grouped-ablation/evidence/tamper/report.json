@@ -42,6 +42,7 @@
     "f13",
     "f14"
   ],
+  "record_unchanged_by_baseline_replay": true,
   "tampered_columns": [
     "f00",
     "f01",

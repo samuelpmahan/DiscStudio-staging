@@ -301,7 +301,13 @@ def write_evidence(
     # record; receipts.json is one pyto.pcr.Receipt per invocation from the observe=True
     # seam. Neither changes testimony.json's bytes.
     retained_path = os.path.join(out_dir, "retained.json")
-    record = retain.retain_run(result["pxc"], result["run"], EXTERNAL_ADDRESSES, registry=REGISTRY, record_path=retained_path)
+    # retained_at carries the same sha commit.txt does, so a reader never has to infer
+    # whether record["provider"] is the library that ran or the one that retained
+    # (fixer round 1, finding 5).
+    record = retain.retain_run(
+        result["pxc"], result["run"], EXTERNAL_ADDRESSES,
+        registry=REGISTRY, record_path=retained_path, retained_at={"commit": sha},
+    )
     retain.write_record(record, retained_path)
     _dump(os.path.join(out_dir, "receipts.json"), receipts_payload(result["run"]))
     return sorted(os.listdir(out_dir))

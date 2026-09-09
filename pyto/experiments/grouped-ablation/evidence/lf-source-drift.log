@@ -1,0 +1,18 @@
+# Day 2 Lane D: LF-converted pyto package on PYTHONPATH (src/pyto/*.py are CRLF)
+
+Produced by `python3 experiments/grouped-ablation/replay.py` ONLY. This probe
+sets PYTHONPATH to a scratch directory to import a modified copy of the library,
+which experiments/CAPTURE.md forbids for anything scripts/check_all.sh runs; it
+is therefore outside the discovered test suite, and the tests assert on this
+committed log instead of re-running it (fixer round 1, finding 4).
+
+PYTHONPATH (scratch, removed after the run): /tmp/determinism-lf-g5ck_xbx
+command: ['/usr/local/bin/python3', '-c', '<CHILD_LF_SNIPPET>', '/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation', '/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/run-1/retained.json']
+record_results_sha256 (the retained.json this log was produced against): a74557dc7652993c7bf647b8f5f9a64da5dc1e2cd93eaef769c0aeb90d8388b7
+converted files: ['__init__.py', 'core.py', 'graph.py', 'neon.py', 'pcr.py', 'pql.py']
+child pyto.__file__: /tmp/determinism-lf-g5ck_xbx/pyto/__init__.py  (used editable install instead of the LF copy: False)
+core.py source sha256: editable-install(CRLF)=32a031830659b4fd31c6f1068e487cf4613e7ff4609dd01a2cb32b8510c1c120 lf-copy(LF)=8133f980896366b4e11afb9e608710bec46e1e98b95be00ac1b334e7ba420fae differs_by_construction=True
+pcr.py source sha256: editable-install(CRLF)=64cd374a0887d3f12c5c7167fbdf47d93556a403df47922f9de08f6926830acf lf-copy(LF)=65e1ba3fb6dd71812c95f2cdb976856a4f9c81dcc19571f5c2b06ee6e6b80961 differs_by_construction=True
+replay result digests identical to run-1 despite the source-hash drift: True
+
+This row is the reason retain.replay does NOT compare provider identity: it replays under a deliberately different library copy and must not be refused. retain.verify_provider makes the comparison available to callers that do need to reject (replay.run_fresh_process_replay asserts on it).

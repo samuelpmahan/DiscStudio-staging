@@ -42,5 +42,9 @@
   },
   "results": {
     "annotate": null
+  },
+  "retained": {
+    "commit": null,
+    "provider_is": "the pyto modules and calculation-provider sources present when this record was retained, which are not necessarily the ones that produced the evidence beside it; retain.verify_provider(record, registry) performs the comparison, replay does not"
   }
 }

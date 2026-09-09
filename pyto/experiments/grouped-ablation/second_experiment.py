@@ -46,6 +46,13 @@ from run import (  # noqa: E402
 EVIDENCE = os.path.join(HERE, "evidence")
 RUN_1 = os.path.join(EVIDENCE, "run-1")
 
+# The Day 2 base commit (research/ULTRACODE-WEEK.md, Day 2; the orchestrator's brief).
+# The kill criterion is "program.py/calculations.py were not edited *this day*", so the
+# diff base must be the day's base, not HEAD: HEAD moves as the day's checkpoints land,
+# and a program.py edit committed in one of them would make a HEAD-based diff report 0
+# (fixer round 1, finding 11). Recorded in saved-work.json as program_lines_changed_base.
+DAY2_BASE = "d9dded6"
+
 
 def resolve_named_out_dir(out: str | None, default_rel: str, force: bool) -> str:
     """Unlike run.py's resolve_out_dir (whose default is a fresh temp dir so Day 1's
@@ -136,17 +143,21 @@ def failed_variants_markdown(comparison: list[dict], groups: Mapping[str, list[s
 # --------------------------------------------------------------- program-lines-changed
 
 
-def changed_lines(paths: list[str], repo_dir: str = HERE) -> dict[str, int]:
-    """{basename: added+deleted lines} against HEAD; 0 for a path git diff reports nothing for.
+def changed_lines(paths: list[str], repo_dir: str = HERE, base: str = DAY2_BASE) -> dict[str, int]:
+    """{basename: added+deleted lines} against `base`; 0 for a path git diff reports nothing for.
 
     Measured, not asserted: run_regrouped.py/run_reinput.py/run_from_retained.py change
     only input Parts and the variants list, so this is expected (and tested) to be all
     zeros -- but it is computed here, not hard-coded (gap 18b: "every number ... computed
     at run time").
+
+    `base` defaults to DAY2_BASE rather than HEAD (fixer round 1, finding 11) and the
+    caller records it in saved-work.json, so a reader can see what the zero is measured
+    against instead of inferring a moving checkpoint.
     """
     counts = {os.path.basename(path): 0 for path in paths}
     proc = subprocess.run(
-        ["git", "diff", "--numstat", "HEAD", "--", *paths],
+        ["git", "diff", "--numstat", base, "--", *paths],
         cwd=repo_dir, capture_output=True, text=True, check=True,
     )
     for line in proc.stdout.strip().splitlines():
@@ -165,8 +176,15 @@ def load_json(path: str) -> Any:
 
 
 def write_retained(pxc, run, external_addresses: list[str], registry: Mapping[str, Any], out_dir: str) -> dict:
+    """retained.json for runs 2-4. `retained_at` carries the same sha commit.txt does,
+    so record["provider"] is never read as the library that produced the run when it is
+    only the library that retained the record (fixer round 1, finding 5)."""
     path = os.path.join(out_dir, "retained.json")
-    record = retain.retain_run(pxc, run, external_addresses, registry=registry, record_path=path)
+    sha = commit_sha(HERE, WATCHED_PATHS, exclude=(os.path.abspath(out_dir),))
+    record = retain.retain_run(
+        pxc, run, external_addresses, registry=registry, record_path=path,
+        retained_at={"commit": sha},
+    )
     retain.write_record(record, path)
     return record
 
@@ -191,10 +209,15 @@ def saved_work(
     record_this: Mapping[str, Any],
     prior_receipts: Mapping[str, Mapping[str, Any]],
     program_lines: Mapping[str, int],
+    program_lines_base: str,
     skip_reason: str,
 ) -> dict:
     """The Day 2 reuse ledger: what compare_local.explain_changes says can be skipped,
     and how many ms that would have saved, read from the *prior* run's receipts.json.
+
+    `program_lines_base` is the sha the program-lines diff was taken against (DAY2_BASE,
+    not HEAD): the kill criterion asks whether *this day* edited program.py or
+    calculations.py, and HEAD moves while the day runs (fixer round 1, finding 11).
 
     `skip_reason` names which half of explain_changes' output counts as "skippable"
     for this run: 'unchanged_upstream' (run_regrouped.py, run_reinput.py -- the
@@ -216,6 +239,7 @@ def saved_work(
         "calculations_inherited": sorted(registry_addresses_used),
         "calculations_added": calculations_added,
         "program_lines_changed": {**program_lines, "total": sum(program_lines.values())},
+        "program_lines_changed_base": program_lines_base,
         "input_parts_changed": sorted(input_parts_changed),
         "explain_changes": explanation,
         "skip_reason": skip_reason,

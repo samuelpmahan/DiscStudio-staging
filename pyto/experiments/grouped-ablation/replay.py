@@ -23,13 +23,20 @@ critic gap 3 on the PYTHONHASHSEED/`-I` interaction):
 4. Determinism matrix: PYTHONHASHSEED 0..4 without `-I` (`-I` ignores
    PYTHONHASHSEED -- verified below, and the plan's own "confirmed not gaps"
    note this cuts against for n != 0 is corrected in the log rather than
-   asserted blindly), plus one row replaying against an LF-converted copy of the
-   `pyto` package on PYTHONPATH (src/pyto/*.py are CRLF) to show module-source
-   digest drift "by construction" while replay result digests do not drift.
-   -> evidence/determinism.log
+   asserted blindly), plus the computed count of distinct `hash('pyto')` values
+   across the five seeds, which is the only line that shows the seed took effect
+   at all. No PYTHONPATH is set by any row. -> evidence/determinism.log
+5. LF source-drift probe, OUTSIDE the discovered suite: replay against an
+   LF-converted copy of the `pyto` package on PYTHONPATH (src/pyto/*.py are CRLF)
+   to show module-source digest drift "by construction" while replay result
+   digests do not drift. It is the one check that needs a PYTHONPATH pointing at
+   a scratch directory, which experiments/CAPTURE.md forbids for anything
+   `scripts/check_all.sh` runs, so it runs only from `python3 replay.py` and the
+   tests assert on its committed log. -> evidence/lf-source-drift.log
 
-Nothing here is a library change; nothing here is executed by
-`scripts/check_all.sh` other than through `test_replay.py`'s `unittest` suite.
+Nothing here is a library change. Of the five, only 1-4 are executed by
+`scripts/check_all.sh` (through `test_replay.py`'s `unittest` suite); check 5 is
+a standalone probe whose evidence is committed.
 """
 
 from __future__ import annotations
@@ -55,18 +62,24 @@ import retain  # noqa: E402
 from calculations import REGISTRY, select_variants  # noqa: E402
 from features import GROUPS, make_data  # noqa: E402
 from program import GROUPS as GROUPS_PART, ROWS, build_program  # noqa: E402
+from run import EXTERNAL_ADDRESSES, WATCHED_PATHS, commit_sha  # noqa: E402
 
 EVIDENCE = os.path.join(HERE, "evidence")
 RUN1 = os.path.join(EVIDENCE, "run-1")
 RETAINED_PATH = os.path.join(RUN1, "retained.json")
 COMPARISON_PATH = os.path.join(RUN1, "comparison.json")
+TESTIMONY_PATH = os.path.join(RUN1, "testimony.json")
 REPLAY_DIR = os.path.join(EVIDENCE, "replay")
 FRESH_PROCESS_LOG = os.path.join(REPLAY_DIR, "fresh-process.log")
+# Written by test_replay.py::HiddenStateAuditor: the same child, handed a record that
+# deleted a step and pre-seeded its output, refusing to replay it (fixer round 1, finding 1).
+FORGED_REPLAY_LOG = os.path.join(REPLAY_DIR, "forged-record-refused.log")
 TAMPER_DIR = os.path.join(EVIDENCE, "tamper")
 TAMPER_REPORT = os.path.join(TAMPER_DIR, "report.json")
 TAMPER_RECORD = os.path.join(TAMPER_DIR, "retained-tampered.json")
 REGISTRY_HOLE_LOG = os.path.join(EVIDENCE, "registry-hole.log")
 DETERMINISM_LOG = os.path.join(EVIDENCE, "determinism.log")
+LF_DRIFT_LOG = os.path.join(EVIDENCE, "lf-source-drift.log")
 
 SEED, ROWS_N = 7, 400  # the committed evidence/run-1 pipeline (run.py main() defaults)
 
@@ -91,10 +104,18 @@ def build_day1_pxc_and_run():
 
 
 def build_retained_record() -> dict:
-    """The Day 1 run, retained through lane B's retain_run (registry-keyed, no code)."""
+    """The Day 1 run, retained through lane B's retain_run (registry-keyed, no code).
+
+    `retained_at` is the same sha run.py stamps into commit.txt (computed with the
+    evidence directory excluded, so a regenerated evidence set does not mark its own
+    producing code dirty), which is what stops record["provider"] from reading as the
+    library that *ran* run-1 (fixer round 1, finding 5).
+    """
     pxc, _pcr, run = build_day1_pxc_and_run()
+    sha = commit_sha(HERE, WATCHED_PATHS, exclude=(os.path.abspath(RUN1),))
     return retain.retain_run(
-        pxc, run, [ROWS.address, GROUPS_PART.address], registry=REGISTRY, record_path=RETAINED_PATH
+        pxc, run, [ROWS.address, GROUPS_PART.address], registry=REGISTRY,
+        record_path=RETAINED_PATH, retained_at={"commit": sha},
     )
 
 
@@ -118,10 +139,10 @@ def ensure_retained_record() -> dict:
 
 CHILD_REPLAY_SNIPPET = textwrap.dedent(
     """\
-    import json, sys
+    import hashlib, json, os, sys
     sys_path_before = list(sys.path)
     sys_modules_before = sorted(sys.modules)
-    experiment_dir, record_path = sys.argv[1], sys.argv[2]
+    experiment_dir, record_path, testimony_path, expected_externals_json = sys.argv[1:5]
     sys.path.insert(0, experiment_dir)
     sys.stderr.write(
         "[replay-child] sys.path.insert(0, %r)"
@@ -129,60 +150,147 @@ CHILD_REPLAY_SNIPPET = textwrap.dedent(
         " see experiments/CAPTURE.md 'sys.path: what is logged and what is forbidden'\\n"
         % experiment_dir
     )
+    sys.stderr.write("[replay-child] sys.dont_write_bytecode=%r (python3 -B: no __pycache__ is read"
+                     " or written, so a stale .pyc cannot serve this replay)\\n" % sys.dont_write_bytecode)
     import retain
     from calculations import REGISTRY
     with open(record_path, encoding="utf-8") as handle:
         record = json.load(handle)
+    with open(testimony_path, encoding="utf-8") as handle:
+        testimony = json.load(handle)
+
+    # What this record is supposed to be, checked before it is trusted.
+    program_matches_committed_testimony = (
+        json.dumps(record["program"]["ticks"], sort_keys=True)
+        == json.dumps(testimony["ticks"], sort_keys=True)
+    )
+    expected_externals = sorted(json.loads(expected_externals_json))
+    record_externals = sorted(record.get("external") or {})
+    externals_match_declared_inputs = record_externals == expected_externals
+    provider = retain.verify_provider(record, REGISTRY)
+    source_sha256 = {}
+    for name in ("retain.py", "calculations.py", "features.py"):
+        with open(os.path.join(experiment_dir, name), "rb") as handle:
+            source_sha256[name] = hashlib.sha256(handle.read()).hexdigest()
+    claimed_provider_sha = sorted({
+        entry.get("source_sha256")
+        for entry in (record.get("provider", {}).get("registry") or {}).values()
+    })
+    calculations_source_matches_record = claimed_provider_sha == [source_sha256["calculations.py"]]
+
     pxc, run = retain.replay(record, REGISTRY)
     comparison_rows = run.results["compare"]
     result_digests = {k: retain.digest_of(v) for k, v in run.results.items()}
     report = {
+        "dont_write_bytecode": sys.dont_write_bytecode,
         "sys_path_before": sys_path_before,
         "sys_path_after": list(sys.path),
         "sys_modules_before": sys_modules_before,
         "sys_modules": sorted(sys.modules),
         "new_modules": sorted(set(sys.modules) - set(sys_modules_before)),
+        "program_matches_committed_testimony": program_matches_committed_testimony,
+        "expected_externals": expected_externals,
+        "record_externals": record_externals,
+        "externals_match_declared_inputs": externals_match_declared_inputs,
+        "provider_agrees": provider["agrees"],
+        "provider_disagreeing_addresses": provider["disagreeing_addresses"],
+        "provider_pyto_agrees": provider["pyto"]["agrees"],
+        "source_sha256": source_sha256,
+        "claimed_provider_source_sha256": claimed_provider_sha,
+        "calculations_source_matches_record": calculations_source_matches_record,
         "comparison_rows": comparison_rows,
         "result_digests": result_digests,
     }
+    failed = [
+        name for name in (
+            "program_matches_committed_testimony",
+            "externals_match_declared_inputs",
+            "provider_agrees",
+            "calculations_source_matches_record",
+        )
+        if not report[name]
+    ]
+    report["failed_checks"] = failed
     sys.stdout.write(json.dumps(report, sort_keys=True))
+    sys.exit(3 if failed else 0)
     """
 )
 
 
-def run_fresh_process_replay(record: dict) -> dict:
-    """`python3 -I -c <snippet>` from a cwd outside the repo, env stripped to PATH.
+def purge_experiment_bytecode() -> list[str]:
+    """Delete every __pycache__ this (parent) process wrote under the experiment directory.
+
+    `python3 -B` already stops the child from reading or writing bytecode, but the
+    parent's own `__pycache__` is what made the leak possible in the first place
+    (fixer round 1, finding 6: a .pyc whose timestamp+size still match a tampered
+    source is served instead of the source). Removing it is the belt to -B's braces
+    and is reported into the log so the reader can see it happened.
+    """
+    removed = []
+    for root, dirs, _files in os.walk(HERE):
+        for name in list(dirs):
+            if name == "__pycache__":
+                path = os.path.join(root, name)
+                shutil.rmtree(path, ignore_errors=True)
+                removed.append(os.path.relpath(path, HERE))
+                dirs.remove(name)
+    return sorted(removed)
+
+
+def run_fresh_process_replay(record: dict, record_path: str | None = None, log_path: str | None = None) -> dict:
+    """`python3 -I -B -c <snippet>` from a cwd outside the repo, env stripped to PATH.
 
     Returns the parsed child report; writes evidence/replay/fresh-process.log with
-    the command line, sys.path before/after, and sorted(sys.modules) -- the proof
-    that nothing beyond `pyto` + `calculations` (+ `features`, its own import) +
-    `retain` was on the child's module table.
+    the command line, sys.path before/after, sorted(sys.modules) -- the proof that
+    nothing beyond `pyto` + `calculations` (+ `features`, its own import) + `retain`
+    was on the child's module table -- and the four checks the child makes before it
+    trusts the record (fixer round 1, findings 1, 3 and 6):
+
+    * the record's program ticks are the committed evidence/run-1/testimony.json
+      ticks, so a record that deleted a step cannot pass as run-1's;
+    * the record's external addresses are exactly run.EXTERNAL_ADDRESSES, so an
+      address the program is supposed to compute cannot be pre-seeded;
+    * retain.verify_provider agrees on the pyto modules and on every per-address
+      provider source hash;
+    * the child's own sha256 of calculations.py equals the one the record claims,
+      which is what -B plus the __pycache__ purge make meaningful.
     """
     os.makedirs(REPLAY_DIR, exist_ok=True)
+    record_path = RETAINED_PATH if record_path is None else record_path
+    log_path = FRESH_PROCESS_LOG if log_path is None else log_path
+    purged = purge_experiment_bytecode()
     workdir = tempfile.mkdtemp(prefix="replay-cwd-")  # outside the repository on purpose
     try:
         assert not os.path.abspath(workdir).startswith(os.path.normpath(os.path.join(HERE, "..", "..", ".."))), (
             "fresh-process cwd must be outside the repository"
         )
-        args = [PYTHON, "-I", "-c", CHILD_REPLAY_SNIPPET, HERE, RETAINED_PATH]
+        expected_externals = json.dumps(sorted(EXTERNAL_ADDRESSES))
+        args = [
+            PYTHON, "-I", "-B", "-c", CHILD_REPLAY_SNIPPET,
+            HERE, record_path, TESTIMONY_PATH, expected_externals,
+        ]
         completed = subprocess.run(
             args, cwd=workdir, env=dict(STRIPPED_ENV), capture_output=True, text=True, timeout=60
         )
         lines = [
-            "# Day 2 Lane D: fresh-process replay of evidence/run-1/retained.json",
+            "# Day 2 Lane D: fresh-process replay",
+            f"record: {record_path}",
             f"command: {args!r}",
             f"cwd (outside repo): {workdir}",
             f"env: {STRIPPED_ENV!r}",
+            f"__pycache__ directories purged under the experiment before the spawn: {purged!r}",
             f"returncode: {completed.returncode}",
             "--- child stderr ---",
             completed.stderr.rstrip("\n"),
         ]
-        if completed.returncode != 0:
-            lines.append("--- child stdout ---")
+        try:
+            report = json.loads(completed.stdout)
+        except ValueError:
+            lines.append("--- child stdout (not JSON) ---")
             lines.append(completed.stdout)
-            _write_lf(FRESH_PROCESS_LOG, "\n".join(lines) + "\n")
-            raise RuntimeError(f"fresh-process replay child failed (see {FRESH_PROCESS_LOG})")
-        report = json.loads(completed.stdout)
+            _write_lf(log_path, "\n".join(lines) + "\n")
+            raise RuntimeError(f"fresh-process replay child failed (see {log_path})")
+        lines.append(f"child sys.dont_write_bytecode (python3 -B): {report['dont_write_bytecode']}")
         lines.append(f"sys.path before: {report['sys_path_before']!r}")
         lines.append(f"sys.path after:  {report['sys_path_after']!r}")
         lines.append(f"sys.modules before this script's own imports ({len(report['sys_modules_before'])}): {report['sys_modules_before']!r}")
@@ -194,13 +302,45 @@ def run_fresh_process_replay(record: dict) -> dict:
             if name.split(".")[0] not in _ALLOWED_TOP_LEVEL_MODULES
         )
         lines.append(f"new modules outside {{pyto, calculations, features, retain}}: {leaked!r}")
+        lines.append(
+            f"record program ticks identical to the committed evidence/run-1/testimony.json ticks: "
+            f"{report['program_matches_committed_testimony']}"
+        )
+        lines.append(
+            f"record external addresses {report['record_externals']!r} equal the declared inputs "
+            f"{report['expected_externals']!r}: {report['externals_match_declared_inputs']}"
+        )
+        lines.append(
+            f"provider identity accepted (retain.verify_provider): {report['provider_agrees']}"
+            f"  pyto modules agree: {report['provider_pyto_agrees']}"
+            f"  disagreeing addresses: {report['provider_disagreeing_addresses']!r}"
+        )
+        parent_source_sha256 = _source_sha256(("retain.py", "calculations.py", "features.py"))
+        for name in sorted(parent_source_sha256):
+            child_sha = report["source_sha256"].get(name)
+            lines.append(
+                f"{name} sha256: parent(on disk)={parent_source_sha256[name]} child(read at replay)={child_sha} "
+                f"agree={parent_source_sha256[name] == child_sha}"
+            )
+        lines.append(
+            f"calculations.py sha256 the record claims {report['claimed_provider_source_sha256']!r} equals the "
+            f"one the child computed: {report['calculations_source_matches_record']}"
+        )
         with open(COMPARISON_PATH, encoding="utf-8") as handle:
             committed_rows = json.load(handle)["rows"]
         rows_equal = report["comparison_rows"] == committed_rows
         digests_equal = report["result_digests"] == record["results"]
         lines.append(f"comparison.json rows byte-identical: {rows_equal}")
         lines.append(f"result digests identical to record['results']: {digests_equal}")
-        _write_lf(FRESH_PROCESS_LOG, "\n".join(lines) + "\n")
+        lines.append(f"child failed checks: {report['failed_checks']!r}")
+        _write_lf(log_path, "\n".join(lines) + "\n")
+        if report["failed_checks"] or completed.returncode != 0:
+            raise AssertionError(
+                f"fresh-process replay refused the record: failed checks "
+                f"{report['failed_checks']!r}, returncode {completed.returncode} (see {log_path})"
+            )
+        if parent_source_sha256 != report["source_sha256"]:
+            raise AssertionError("fresh-process replay: the child read different module sources than the parent")
         if leaked:
             raise AssertionError(f"fresh-process replay leaked modules: {leaked}")
         if not rows_equal:
@@ -210,6 +350,15 @@ def run_fresh_process_replay(record: dict) -> dict:
         return report
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
+
+
+def _source_sha256(names: tuple[str, ...]) -> dict[str, str]:
+    """sha256 of the named files in this experiment directory, read from disk now."""
+    out = {}
+    for name in names:
+        with open(os.path.join(HERE, name), "rb") as handle:
+            out[name] = hashlib.sha256(handle.read()).hexdigest()
+    return out
 
 
 # sys.modules top-level names a clean `-I` interpreter always carries, regardless
@@ -227,10 +376,19 @@ _ALLOWED_TOP_LEVEL_MODULES = {
 
 def run_tamper_check(record: dict) -> dict:
     """Edit one variant's `args.columns` in a copy; only its fit/score (and the
-    downstream `compare`, which aggregates every score) may change digest."""
+    downstream `compare`, which aggregates every score) may change digest.
+
+    Both sides replay from a deep copy of the caller's record and the record's own
+    canonical bytes are re-checked afterwards (fixer round 1, finding 2): retain.replay
+    now seeds the PxC from copies, and this belt records that the baseline replay left
+    the record it was handed byte-identical, so a future Calculation that mutates an
+    input in place cannot make both sides of this report inherit the mutation.
+    """
     os.makedirs(TAMPER_DIR, exist_ok=True)
-    baseline_pxc_results = retain.replay(record, REGISTRY)[1].results
+    record_bytes_before = json.dumps(record, sort_keys=True)
+    baseline_pxc_results = retain.replay(copy.deepcopy(record), REGISTRY)[1].results
     baseline_digests = {k: retain.digest_of(v) for k, v in baseline_pxc_results.items()}
+    record_unchanged_by_baseline_replay = json.dumps(record, sort_keys=True) == record_bytes_before
 
     tampered = copy.deepcopy(record)
     target_id = "fit.drop_g0"
@@ -278,8 +436,14 @@ def run_tamper_check(record: dict) -> dict:
         "tampered_digests": tampered_digests,
         "unexpected_changes": unexpected,
         "missing_expected_changes": missing,
+        "record_unchanged_by_baseline_replay": record_unchanged_by_baseline_replay,
     }
     _dump_lf(TAMPER_REPORT, report)
+    if not record_unchanged_by_baseline_replay:
+        raise AssertionError(
+            "tamper test: the baseline replay mutated the record it was handed, so the report's "
+            "two sides are not independent (fixer round 1, finding 2)"
+        )
     if unexpected:
         raise AssertionError(f"tamper test: unexpected digest changes at {unexpected}")
     if missing:
@@ -405,8 +569,14 @@ def _lf_copy_of_pyto_package(dest_root: str) -> str:
 
     dest_root itself carries no directory literally named 'src' (CAPTURE.md forbids
     a PYTHONPATH containing 'src'; the library is reached through the editable
-    install on Days 1-4, never by pointing at pyto/src) -- this is a one-off
-    determinism probe, not part of scripts/check_all.sh or the editable install.
+    install on Days 1-4, never by pointing at pyto/src).
+
+    This row sets PYTHONPATH to a scratch directory, which experiments/CAPTURE.md
+    ("sys.path: what is logged and what is forbidden") forbids for any import that
+    scripts/check_all.sh performs. It is therefore NOT part of any test_*.py: it runs
+    only from `python3 experiments/grouped-ablation/replay.py`, and its committed
+    output is evidence/lf-source-drift.log (fixer round 1, finding 4). The PYTHONPATH
+    value is printed into that log and to stderr so it is visible rather than implied.
     """
     src_pkg_dir = os.path.dirname(os.path.abspath(__import__("pyto").__file__))
     dest_pkg_dir = os.path.join(dest_root, "pyto")
@@ -430,6 +600,12 @@ def _run_lf_copy_row(record_path: str) -> dict:
     try:
         dest_pkg_dir, converted = _lf_copy_of_pyto_package(tmp)
         env = {"PATH": os.environ.get("PATH", ""), "PYTHONPATH": tmp}
+        print(
+            f"[grouped-ablation] PYTHONPATH={tmp} for the LF-source-drift probe only "
+            f"(standalone `python3 replay.py`; not run by scripts/check_all.sh -- "
+            f"experiments/CAPTURE.md forbids a scratch PYTHONPATH inside the suites)",
+            file=sys.stderr,
+        )
         args = [PYTHON, "-c", CHILD_LF_SNIPPET, HERE, record_path]
         completed = subprocess.run(args, env=env, capture_output=True, text=True, timeout=60)
         if completed.returncode != 0:
@@ -445,8 +621,20 @@ def _run_lf_copy_row(record_path: str) -> dict:
 
 
 def run_determinism_matrix(record: dict) -> dict:
+    """PYTHONHASHSEED 0..4, twice each, in real child processes. No PYTHONPATH.
+
+    The LF-converted-package row lives in `run_lf_source_drift_probe` instead: it is
+    the one check that needs a scratch PYTHONPATH, which experiments/CAPTURE.md
+    forbids inside anything scripts/check_all.sh runs (fixer round 1, finding 4).
+    """
     lines = [
         "# Day 2 Lane D: determinism matrix (critic gap 3)",
+        "",
+        "No PYTHONPATH is set by any row below; each child is spawned with env",
+        "{PATH, PYTHONHASHSEED} only. The LF-converted-package row that needs a",
+        "scratch PYTHONPATH was moved out of the discovered test suite and into",
+        "`python3 experiments/grouped-ablation/replay.py` -> evidence/lf-source-drift.log",
+        "(experiments/CAPTURE.md, 'sys.path: what is logged and what is forbidden').",
         "",
         "## PYTHONHASHSEED rows (no -I: -I implies -E, which ignores PYTHONHASHSEED)",
         "verified in this sandbox (Python " + sys.version.split()[0] + "):",
@@ -480,30 +668,87 @@ def run_determinism_matrix(record: dict) -> dict:
         if not reproducible or not digests_match:
             all_ok = False
 
+    # The matrix's central claim is that the seed took effect at all. Within-seed
+    # equality cannot show that: on a build where PYTHONHASHSEED were ignored, all
+    # five rows would collapse to one hash value and every row above would still
+    # read reproducible=True (fixer round 1, finding 7). Computed, never a literal.
+    distinct_hashes = len({row["first"]["hash_pyto"] for row in rows})
     lines.append("")
-    lines.append("## LF-converted pyto package on PYTHONPATH (src/pyto/*.py are CRLF)")
-    lf_row = _run_lf_copy_row(RETAINED_PATH)
-    provider_modules = record["provider"]["pyto"]["modules"]
-    module_drift = {name: (provider_modules.get(name), lf_row["modules"].get(name)) for name in ("core.py", "pcr.py")}
-    digests_match_lf = lf_row["result_digests"] == baseline_digests
-    lines.append(f"converted files: {lf_row['converted_files']}")
-    lines.append(f"child pyto.__file__: {lf_row['pyto_file']}  (used editable install instead of the LF copy: {lf_row['used_editable_install']})")
-    for name, (before, after) in module_drift.items():
-        lines.append(f"{name} source sha256: editable-install(CRLF)={before} lf-copy(LF)={after} differs_by_construction={before != after}")
-    lines.append(f"replay result digests identical to run-1 despite the source-hash drift: {digests_match_lf}")
-    if lf_row["used_editable_install"]:
+    lines.append(
+        f"distinct hash('pyto') across the {len(rows)} seeds: {distinct_hashes} "
+        f"(equal to the number of seeds: {distinct_hashes == len(rows)} -- if this ever "
+        f"reads 1, PYTHONHASHSEED stopped taking effect and every per-seed row above "
+        f"would still pass)"
+    )
+    if distinct_hashes != len(rows):
         all_ok = False
-        lines.append("  UNEXPECTED: the child imported the editable install, not the LF copy -- PYTHONPATH override failed")
-    if not digests_match_lf:
-        all_ok = False
-        lines.append("  FAILURE: result digests drifted from an LF-only source change")
-    if all(before == after for before, after in module_drift.values()):
-        lines.append("  NOTE: no module-source drift observed -- either the originals are not CRLF here, or the copy did not convert anything")
+        lines.append("  FAILURE: the seeds did not produce distinct hashes; the matrix proves nothing")
 
     _write_lf(DETERMINISM_LOG, "\n".join(lines) + "\n")
     if not all_ok:
         raise AssertionError(f"determinism matrix found a real discrepancy; see {DETERMINISM_LOG}")
-    return {"hashseed_rows": rows, "lf_row": lf_row}
+    return {"hashseed_rows": rows, "distinct_hashes": distinct_hashes}
+
+
+def run_lf_source_drift_probe(record: dict) -> dict:
+    """Standalone probe: replay against an LF-converted copy of `pyto` on PYTHONPATH.
+
+    Not called by any test_*.py and therefore not by scripts/check_all.sh: it is the
+    one row that needs a PYTHONPATH pointing at a scratch directory, which
+    experiments/CAPTURE.md forbids for the suites (fixer round 1, finding 4). Run it
+    with `python3 experiments/grouped-ablation/replay.py`; its committed output,
+    evidence/lf-source-drift.log, is what the tests read.
+
+    `record_results_sha256` pins the log to the record it was produced against, so a
+    stale log is a failing test rather than an unnoticed drift.
+    """
+    lf_row = _run_lf_copy_row(RETAINED_PATH)
+    baseline_digests = record["results"]
+    provider_modules = record["provider"]["pyto"]["modules"]
+    module_drift = {name: (provider_modules.get(name), lf_row["modules"].get(name)) for name in ("core.py", "pcr.py")}
+    digests_match_lf = lf_row["result_digests"] == baseline_digests
+    results_sha = hashlib.sha256(
+        json.dumps(baseline_digests, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    lines = [
+        "# Day 2 Lane D: LF-converted pyto package on PYTHONPATH (src/pyto/*.py are CRLF)",
+        "",
+        "Produced by `python3 experiments/grouped-ablation/replay.py` ONLY. This probe",
+        "sets PYTHONPATH to a scratch directory to import a modified copy of the library,",
+        "which experiments/CAPTURE.md forbids for anything scripts/check_all.sh runs; it",
+        "is therefore outside the discovered test suite, and the tests assert on this",
+        "committed log instead of re-running it (fixer round 1, finding 4).",
+        "",
+        f"PYTHONPATH (scratch, removed after the run): {lf_row['pythonpath']}",
+        f"command: {[PYTHON, '-c', '<CHILD_LF_SNIPPET>', HERE, RETAINED_PATH]!r}",
+        f"record_results_sha256 (the retained.json this log was produced against): {results_sha}",
+        f"converted files: {lf_row['converted_files']}",
+        f"child pyto.__file__: {lf_row['pyto_file']}  (used editable install instead of the LF copy: {lf_row['used_editable_install']})",
+    ]
+    for name, (before, after) in module_drift.items():
+        lines.append(f"{name} source sha256: editable-install(CRLF)={before} lf-copy(LF)={after} differs_by_construction={before != after}")
+    lines.append(f"replay result digests identical to run-1 despite the source-hash drift: {digests_match_lf}")
+    ok = True
+    if lf_row["used_editable_install"]:
+        ok = False
+        lines.append("  UNEXPECTED: the child imported the editable install, not the LF copy -- PYTHONPATH override failed")
+    if not digests_match_lf:
+        ok = False
+        lines.append("  FAILURE: result digests drifted from an LF-only source change")
+    if all(before == after for before, after in module_drift.values()):
+        ok = False
+        lines.append("  UNEXPECTED: no module-source drift observed -- either the originals are not CRLF here, or the copy did not convert anything")
+    lines.append("")
+    lines.append(
+        "This row is the reason retain.replay does NOT compare provider identity: it "
+        "replays under a deliberately different library copy and must not be refused. "
+        "retain.verify_provider makes the comparison available to callers that do need "
+        "to reject (replay.run_fresh_process_replay asserts on it)."
+    )
+    _write_lf(LF_DRIFT_LOG, "\n".join(lines) + "\n")
+    if not ok:
+        raise AssertionError(f"LF source-drift probe found a real discrepancy; see {LF_DRIFT_LOG}")
+    return {"lf_row": lf_row, "record_results_sha256": results_sha, "module_drift": module_drift}
 
 
 # ------------------------------------------------------------------------ util
@@ -530,6 +775,8 @@ def main() -> int:
     print("wrote", REGISTRY_HOLE_LOG)
     run_determinism_matrix(record)
     print("wrote", DETERMINISM_LOG)
+    run_lf_source_drift_probe(record)
+    print("wrote", LF_DRIFT_LOG)
     return 0
 
 

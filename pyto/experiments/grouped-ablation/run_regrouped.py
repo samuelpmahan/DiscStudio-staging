@@ -110,6 +110,7 @@ def main(argv: list[str] | None = None) -> int:
         record_prior=record_1, record_this=record_2,
         prior_receipts=receipts_1,
         program_lines=program_lines,
+        program_lines_base=se.DAY2_BASE,
         skip_reason="unchanged_upstream",
     )
     se._dump(os.path.join(out_dir, "saved-work.json"), saved)

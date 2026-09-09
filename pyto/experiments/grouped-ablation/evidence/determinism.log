@@ -1,5 +1,11 @@
 # Day 2 Lane D: determinism matrix (critic gap 3)
 
+No PYTHONPATH is set by any row below; each child is spawned with env
+{PATH, PYTHONHASHSEED} only. The LF-converted-package row that needs a
+scratch PYTHONPATH was moved out of the discovered test suite and into
+`python3 experiments/grouped-ablation/replay.py` -> evidence/lf-source-drift.log
+(experiments/CAPTURE.md, 'sys.path: what is logged and what is forbidden').
+
 ## PYTHONHASHSEED rows (no -I: -I implies -E, which ignores PYTHONHASHSEED)
 verified in this sandbox (Python 3.11.15):
 sys.flags.hash_randomization is 0 ONLY for PYTHONHASHSEED=0; for n=1..4 it
@@ -17,9 +23,4 @@ seed=2: hash_randomization=1 hash('pyto') first=1604489765919181924 second=16044
 seed=3: hash_randomization=1 hash('pyto') first=3300665333823433997 second=3300665333823433997 reproducible=True digests_match_baseline=True
 seed=4: hash_randomization=1 hash('pyto') first=7906683456969500245 second=7906683456969500245 reproducible=True digests_match_baseline=True
 
-## LF-converted pyto package on PYTHONPATH (src/pyto/*.py are CRLF)
-converted files: ['__init__.py', 'core.py', 'graph.py', 'neon.py', 'pcr.py', 'pql.py']
-child pyto.__file__: /tmp/determinism-lf-_0mgknvb/pyto/__init__.py  (used editable install instead of the LF copy: False)
-core.py source sha256: editable-install(CRLF)=32a031830659b4fd31c6f1068e487cf4613e7ff4609dd01a2cb32b8510c1c120 lf-copy(LF)=8133f980896366b4e11afb9e608710bec46e1e98b95be00ac1b334e7ba420fae differs_by_construction=True
-pcr.py source sha256: editable-install(CRLF)=64cd374a0887d3f12c5c7167fbdf47d93556a403df47922f9de08f6926830acf lf-copy(LF)=65e1ba3fb6dd71812c95f2cdb976856a4f9c81dcc19571f5c2b06ee6e6b80961 differs_by_construction=True
-replay result digests identical to run-1 despite the source-hash drift: True
+distinct hash('pyto') across the 5 seeds: 5 (equal to the number of seeds: True -- if this ever reads 1, PYTHONHASHSEED stopped taking effect and every per-seed row above would still pass)

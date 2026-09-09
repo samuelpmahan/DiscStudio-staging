@@ -25,7 +25,14 @@ run testifies and what is retained.
 record   {"program": program,
           "external": {address: <json value> | {"digest": sha256, "ref": "<sidecar file>"}},
           "provider": {"pyto": {...}, "registry": {address: {"module", "source_sha256"}}},
-          "results": {invocation id: sha256 | None}}
+          "results": {invocation id: sha256 | None},
+          "retained": {"commit": str | None, "provider_is": str}}
+
+`retained` is the "retained at", not the "ran at" (fixer round 1, finding 5):
+`provider` is an identity of the library and provider sources present when
+`retain_run` was called, which need not be the ones that produced the sibling
+evidence in the same directory. `retained["commit"]` is whatever the caller
+passed (run.py/second_experiment.py pass `run.commit_sha()`), never derived here.
 
 Rules this module enforces
 --------------------------
@@ -42,10 +49,27 @@ Rules this module enforces
 * Digests are sha256 over `json.dumps(value, sort_keys=True, separators=(",", ":"))`
   with **no** `default=` (critic gap 10): a value JSON cannot describe gets
   `None`, never a digest of its repr.
+* `check_record` (called by `replay` after the registry is resolved and before
+  anything runs, fixer round 1 finding 1) refuses a record that contradicts its
+  own program: an `external` address that the program declares it *computes*
+  (an `into` of some invocation) would be pre-seeded over a step the replay is
+  supposed to perform, and `results` keys that are not exactly the program's
+  invocation ids mean the record's digests do not describe the program it holds.
+* `replay` seeds the fresh PxC from a **deep copy** of each external value
+  (fixer round 1, finding 2). pcr.py:334-336 publishes the same object as both
+  `run.results[id]` and the PxC value, so without the copy a Calculation that
+  mutated an input in place would silently rewrite the retained record it was
+  replaying, and a tamper report taking its baseline from that record would
+  inherit the mutation on both sides.
+* `verify_provider` compares a record's carried identity against the library and
+  provider sources *this* process imported. `replay` does not call it: a caller
+  that must reject an incompatible replay asserts on its report (replay.py's
+  fresh-process child does; the determinism probe deliberately does not).
 """
 
 from __future__ import annotations
 
+import copy
 import dataclasses
 import datetime
 import hashlib
@@ -77,6 +101,10 @@ class ShadowedInputError(RetainError):
 
 class NotAProgramError(RetainError):
     """The dict is a graph.Pcr projection, not a PCR program (stewardship:19)."""
+
+
+class ContradictoryRecordError(RetainError):
+    """The record's externals or results contradict the program it carries."""
 
 
 # --------------------------------------------------------------------------- digests
@@ -373,8 +401,15 @@ def _module_source_sha256(obj: Any) -> tuple[str | None, str | None]:
 def provider_identity(registry: Mapping[str, Any]) -> dict[str, Any]:
     """Pyto distribution version, library module hashes, and per-address provider hashes.
 
-    This is the identity a replay compares against before trusting a record
-    (docs/PYTHON-LAB-STEWARDSHIP.md:37).
+    This *carries* the identity docs/PYTHON-LAB-STEWARDSHIP.md:36-37 asks a record
+    to carry ("the Pyto distribution version and calculation-provider identity
+    needed to reject an incompatible replay"). Comparing it is a separate,
+    caller-made decision: `verify_provider(record, registry)` performs the
+    comparison and `replay()` deliberately does not call it, because the
+    determinism probe (replay.py, LF-converted package) replays under a different
+    library copy on purpose and must not be refused. The fresh-process replay
+    child asserts `verify_provider(...)["agrees"]` and logs the accept/mismatch
+    line (fixer round 1, finding 3).
     """
     library_dir = os.path.dirname(os.path.abspath(pyto.core.__file__))
     modules = {}
@@ -395,6 +430,77 @@ def provider_identity(registry: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def verify_provider(record: Mapping[str, Any], registry: Mapping[str, Any]) -> dict[str, Any]:
+    """Compare the identity a record carries with the one this process can compute.
+
+    Reporting only -- it raises nothing. `agrees` is the conjunction of the pyto
+    block and every per-address provider hash; `registry` lists one row per
+    address present in either side, so an address the record names and this
+    process cannot resolve (or the reverse) shows as a row with a None side
+    rather than being dropped.
+    """
+    claimed = dict(record.get("provider") or {})
+    observed = provider_identity(registry)
+    pyto_agrees = claimed.get("pyto") == observed["pyto"]
+    claimed_registry = dict(claimed.get("registry") or {})
+    rows: dict[str, Any] = {}
+    for address in sorted(set(claimed_registry) | set(observed["registry"])):
+        left = claimed_registry.get(address)
+        right = observed["registry"].get(address)
+        rows[address] = {"claimed": left, "observed": right, "agrees": left == right}
+    return {
+        "pyto": {"claimed": claimed.get("pyto"), "observed": observed["pyto"], "agrees": pyto_agrees},
+        "registry": rows,
+        "disagreeing_addresses": sorted(a for a, row in rows.items() if not row["agrees"]),
+        "agrees": pyto_agrees and all(row["agrees"] for row in rows.values()),
+    }
+
+
+def check_record(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Refuse a record that contradicts its own program; return what was checked.
+
+    Two refusals, both fixer round 1 finding 1 (a record that deletes a step,
+    pre-seeds that step's output as an 'external' and drops the real input would
+    otherwise replay clean and report the original comparison):
+
+    * an `external` address that is also an `into` of some invocation -- the
+      program declares it *computes* that address, so seeding it hands the
+      replay an answer instead of letting it be derived;
+    * `results` keys that are not exactly the program's invocation ids -- the
+      retained digests then do not describe the program in the same record.
+
+    This is a self-consistency check, not a provenance check: it cannot know
+    which program a record is *supposed* to hold. The caller that does know
+    (replay.py's fresh-process child, which replays evidence/run-1) compares the
+    program against the committed testimony and the external address set against
+    the declared inputs.
+    """
+    program = record.get("program")
+    entries = [entry for _tick, entry in _walk_entries(program)]
+    into_addresses = {entry.get("into") for entry in entries if entry.get("into")}
+    external_addresses = set(record.get("external") or {})
+    preseeded = sorted(into_addresses & external_addresses)
+    if preseeded:
+        raise ContradictoryRecordError(
+            f"retain.check_record: external {preseeded} is an address this program claims to "
+            f"compute (it is the 'into' of a declared invocation); a replay seeded with it would "
+            f"report a value it did not derive"
+        )
+    invocation_ids = sorted(entry["id"] for entry in entries)
+    result_ids = sorted(record.get("results") or {})
+    if result_ids != invocation_ids:
+        raise ContradictoryRecordError(
+            f"retain.check_record: results keys {result_ids} are not the program's invocation ids "
+            f"{invocation_ids}; only in results: {sorted(set(result_ids) - set(invocation_ids))}, "
+            f"only in the program: {sorted(set(invocation_ids) - set(result_ids))}"
+        )
+    return {
+        "into_addresses": sorted(into_addresses),
+        "external_addresses": sorted(external_addresses),
+        "invocation_ids": invocation_ids,
+    }
+
+
 # -------------------------------------------------------------------------- retain
 
 
@@ -405,6 +511,7 @@ def retain_run(
     *,
     registry: Mapping[str, Any],
     record_path: str | None = None,
+    retained_at: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Retain a finished run as a replayable record.
 
@@ -416,6 +523,12 @@ def retain_run(
     Non-JSON external values are written next to `record_path` as
     `<stem>.external.<address>.json` and referenced as {"digest", "ref"}; without a
     `record_path` there is nowhere to put them and the call is refused.
+
+    `retained_at` is merged into the record's `retained` block (fixer round 1,
+    finding 5): callers that know the working tree's commit pass
+    `{"commit": run.commit_sha()}`, so a record never silently implies that its
+    `provider` hashes are the library that produced the sibling evidence.
+    Nothing here shells out to git; an absent `retained_at` leaves `commit` None.
     """
     program = to_program(run)
 
@@ -443,11 +556,21 @@ def retain_run(
             "ref": ref,
         }
 
+    retained = {
+        "commit": None,
+        "provider_is": (
+            "the pyto modules and calculation-provider sources present when this record was "
+            "retained, which are not necessarily the ones that produced the evidence beside it; "
+            "retain.verify_provider(record, registry) performs the comparison, replay does not"
+        ),
+    }
+    retained.update(dict(retained_at or {}))
     return {
         "program": program,
         "external": external,
         "provider": provider_identity(registry),
         "results": {invocation_id: digest_of(value) for invocation_id, value in run.results.items()},
+        "retained": retained,
     }
 
 
@@ -463,13 +586,23 @@ def write_record(record: Mapping[str, Any], record_path: str) -> str:
 def replay(record: Mapping[str, Any], registry: Mapping[str, Any]) -> tuple[PxC, PcrRun]:
     """Seed a fresh PxC from the record's JSON externals and re-run the rebuilt program.
 
+    Order (fixer round 1, finding 1): `from_program` resolves every calculation
+    address first, so a registry hole still raises KeyError before anything else
+    is inspected; then `check_record` refuses a record that contradicts its own
+    program; only then is anything executed.
+
+    Each external value is seeded as a **deep copy** (finding 2): the PxC value and
+    `run.results[id]` are the same object (pcr.py:334-336), so an in-place mutation
+    by a Calculation would otherwise reach back into the caller's record.
+
     Externals held as {"digest", "ref"} are not reconstructed here: a digest is not
     a value. Such a record replays only if the caller seeds those addresses itself.
     """
     pcr = from_program(record["program"], registry)
+    check_record(record)
     pxc = PxC()
     for address, value in record.get("external", {}).items():
         if isinstance(value, Mapping) and "digest" in value and "ref" in value:
             continue
-        pxc.set(Part(address), value)
+        pxc.set(Part(address), copy.deepcopy(value))
     return pxc, pcr.run(pxc)

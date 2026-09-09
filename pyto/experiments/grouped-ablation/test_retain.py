@@ -275,9 +275,79 @@ class RetainRun(unittest.TestCase):
         cls.pxc, cls.pcr, cls.pcr_run, cls.record = day1_record()
 
     def test_record_keys_and_external_values(self):
-        self.assertEqual(sorted(self.record), ["external", "program", "provider", "results"])
+        self.assertEqual(
+            sorted(self.record), ["external", "program", "provider", "results", "retained"]
+        )
         self.assertEqual(sorted(self.record["external"]), [GROUPS_PART.address, ROWS.address])
         self.assertEqual(self.record["external"][GROUPS_PART.address], GROUPS)
+
+    def test_retained_block_separates_retained_at_from_ran_at(self):
+        """Fixer round 1, finding 5: `provider` is the library that RETAINED the record.
+
+        Nothing in retain.py derives the commit; a caller that knows it passes
+        `retained_at={"commit": ...}` (run.py, second_experiment.py, replay.py all do),
+        and this record -- retained by day1_record() with no caller -- carries None
+        rather than a value invented here.
+        """
+        retained = self.record["retained"]
+        self.assertEqual(sorted(retained), ["commit", "provider_is"])
+        self.assertIsNone(retained["commit"])
+        self.assertIn("not necessarily the ones that produced the evidence beside it", retained["provider_is"])
+        passed = retain.retain_run(
+            self.pxc, self.pcr_run, [ROWS.address, GROUPS_PART.address],
+            registry=REGISTRY, retained_at={"commit": "deadbeef"},
+        )
+        self.assertEqual(passed["retained"]["commit"], "deadbeef")
+
+    def test_check_record_refuses_an_external_the_program_claims_to_compute(self):
+        """Fixer round 1, finding 1 (the milder form of the pre-seeding attack)."""
+        forged = copy.deepcopy(self.record)
+        forged["external"]["scratch.ablation.split"] = ["pre-seeded"]
+        with self.assertRaises(retain.ContradictoryRecordError) as caught:
+            retain.check_record(forged)
+        self.assertIn("scratch.ablation.split", str(caught.exception))
+        with self.assertRaises(retain.ContradictoryRecordError):
+            retain.replay(forged, REGISTRY)
+
+    def test_check_record_refuses_results_that_are_not_the_programs_invocation_ids(self):
+        missing = copy.deepcopy(self.record)
+        missing["results"].pop("split")
+        with self.assertRaises(retain.ContradictoryRecordError) as caught:
+            retain.check_record(missing)
+        self.assertIn("split", str(caught.exception))
+        extra = copy.deepcopy(self.record)
+        extra["results"]["ghost"] = None
+        with self.assertRaises(retain.ContradictoryRecordError):
+            retain.check_record(extra)
+
+    def test_check_record_accepts_the_honest_record_and_reports_what_it_checked(self):
+        checked = retain.check_record(self.record)
+        ids = sorted(
+            entry["id"] for tick in self.record["program"]["ticks"] for entry in tick["calculations"]
+        )
+        self.assertEqual(checked["invocation_ids"], ids)
+        self.assertEqual(checked["external_addresses"], sorted([GROUPS_PART.address, ROWS.address]))
+        self.assertEqual(set(checked["into_addresses"]) & set(checked["external_addresses"]), set())
+
+    def test_verify_provider_reports_agreement_and_names_every_disagreement(self):
+        """Fixer round 1, finding 3: the comparison the provider docstring promises."""
+        agreeing = retain.verify_provider(self.record, REGISTRY)
+        self.assertTrue(agreeing["agrees"])
+        self.assertTrue(agreeing["pyto"]["agrees"])
+        self.assertEqual(agreeing["disagreeing_addresses"], [])
+        self.assertEqual(sorted(agreeing["registry"]), sorted(REGISTRY))
+
+        falsified = copy.deepcopy(self.record)
+        falsified["provider"]["pyto"]["version"] = "0.0.0-FAKE"
+        for entry in falsified["provider"]["registry"].values():
+            entry["source_sha256"] = "1" * 64
+        report = retain.verify_provider(falsified, REGISTRY)
+        self.assertFalse(report["agrees"])
+        self.assertFalse(report["pyto"]["agrees"])
+        self.assertEqual(report["disagreeing_addresses"], sorted(REGISTRY))
+        # Reporting only: replay still runs, which is what the LF-source-drift probe needs.
+        _pxc, run = retain.replay(falsified, REGISTRY)
+        self.assertEqual({k: retain.digest_of(v) for k, v in run.results.items()}, self.record["results"])
 
     def test_result_digests_are_computed_from_the_values(self):
         expected = {}
