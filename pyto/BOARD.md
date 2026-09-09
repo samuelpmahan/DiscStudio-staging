@@ -42,6 +42,11 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 08:50 **landed** `portable-sums`: floats add left to right (Python 3.11 and 3.13 agree bit for bit), every record regenerated, and the no-program-edits diff is taken against the program as last landed (45 files since 1c5447f, suites green, receipt 20260909T084944Z-portable-sums)
+- 2026-09-09 08:48 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084745Z-portable-sums/check_all.txt)
+- 2026-09-09 08:47 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084626Z-portable-sums/check_all.txt)
+- 2026-09-09 08:46 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084525Z-portable-sums/check_all.txt)
+- 2026-09-09 08:45 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084437Z-portable-sums/check_all.txt)
 - 2026-09-09 08:41 **refused** `task-7`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
 - 2026-09-09 08:41 **refused** `task-5`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
 - 2026-09-09 08:41 **refused** `task-4`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )

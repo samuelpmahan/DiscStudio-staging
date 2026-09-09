@@ -7,7 +7,7 @@ scratch PYTHONPATH was moved out of the discovered test suite and into
 (experiments/CAPTURE.md, 'sys.path: what is logged and what is forbidden').
 
 ## PYTHONHASHSEED rows (no -I: -I implies -E, which ignores PYTHONHASHSEED)
-verified in this sandbox (Python 3.13.14):
+verified in this sandbox (Python 3.11.15):
 sys.flags.hash_randomization is 0 ONLY for PYTHONHASHSEED=0; for n=1..4 it
 reports 1 (CPython treats an explicit nonzero seed as 'randomization enabled,
 with a fixed seed', not as disabled) while hash('pyto') is still reproducible

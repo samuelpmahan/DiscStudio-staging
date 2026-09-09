@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T084745Z-portable-sums",
+  "package": "portable-sums",
+  "base_sha": "1c5447f49545690bfd24450a07dfbd517ba95ddb",
+  "result": "failed",
+  "reason": "check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084745Z-portable-sums/check_all.txt)",
+  "at": "2026-09-09T08:48:28.908220Z"
+}

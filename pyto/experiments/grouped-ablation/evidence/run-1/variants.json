@@ -3,13 +3,13 @@
     {
       "delta_vs_baseline": 0.0005,
       "group": "g2",
-      "planted_weight": 0,
+      "planted_weight": 0.0,
       "variant": "drop_g2"
     },
     {
       "delta_vs_baseline": 0.0002,
       "group": "g4",
-      "planted_weight": 0,
+      "planted_weight": 0.0,
       "variant": "drop_g4"
     }
   ],

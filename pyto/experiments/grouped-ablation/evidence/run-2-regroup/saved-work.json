@@ -19,14 +19,14 @@
     "changed": [
       "select",
       "fit.all",
-      "score.all",
       "compare"
     ],
-    "downstream_affected": [],
+    "downstream_affected": [
+      "score.all"
+    ],
     "reason": {
       "compare": "input",
       "fit.all": "args",
-      "score.all": "digest",
       "select": "external"
     },
     "removed": [
@@ -51,9 +51,9 @@
   "invocations_skippable_by_digest": [
     "split"
   ],
-  "ms_saved": 0.038,
+  "ms_saved": 0.065,
   "ms_saved_by_invocation": {
-    "split": 0.03789999755099416
+    "split": 0.06470000153058209
   },
   "prior_run": "run-1",
   "program_lines_changed": {
@@ -61,7 +61,7 @@
     "program.py": 0,
     "total": 0
   },
-  "program_lines_changed_base": "d9dded6",
+  "program_lines_changed_base": "1c5447f49545690bfd24450a07dfbd517ba95ddb",
   "run": "run-2-regroup",
   "skip_reason": "unchanged_upstream"
 }

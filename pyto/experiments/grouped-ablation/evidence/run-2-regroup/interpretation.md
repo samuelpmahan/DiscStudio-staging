@@ -17,10 +17,10 @@ Nonzero-weight features per group -- Day 1: {'g0': 1, 'g1': 1, 'g2': 0, 'g3': 1,
 
 ## What changed against run-1, as compare_local.explain_changes reports it
 
-Invocations skippable by digest (unchanged_upstream): ['split']. ms saved (run-1 receipts.json duration of those ids): 0.038
+Invocations skippable by digest (unchanged_upstream): ['split']. ms saved (run-1 receipts.json duration of those ids): 0.065
 Ids only in this run (added): ['fit.drop_h0', 'fit.drop_h1', 'fit.drop_h2', 'score.drop_h0', 'score.drop_h1', 'score.drop_h2']
 Ids only in run-1 (removed): ['fit.drop_g0', 'fit.drop_g1', 'fit.drop_g2', 'fit.drop_g3', 'fit.drop_g4', 'score.drop_g0', 'score.drop_g1', 'score.drop_g2', 'score.drop_g3', 'score.drop_g4']
-Ids present in BOTH programs whose retained state changed, with the reason explain_changes computed: {'select': 'external', 'fit.all': 'args', 'score.all': 'digest', 'compare': 'input'}
+Ids present in BOTH programs whose retained state changed, with the reason explain_changes computed: {'select': 'external', 'fit.all': 'args', 'compare': 'input'}
   fit.all: run-1 args={'columns': ['f00', 'f01', 'f02', 'f03', 'f04', 'f05', 'f06', 'f07', 'f08', 'f09', 'f10', 'f11', 'f12', 'f13', 'f14'], 'variant': 'all'} -> run-2 args={'columns': ['f00', 'f04', 'f07', 'f10', 'f13', 'f01', 'f03', 'f08', 'f11', 'f14', 'f02', 'f05', 'f06', 'f09', 'f12'], 'variant': 'all'}
 
-Reconstruction required: no. program.py and calculations.py are imported unchanged (git diff against d9dded6 shows program_lines_changed {'program.py': 0, 'calculations.py': 0, 'total': 0}); only the `groups` input Part and the variants list it produces via select_variants differ from run-1.
+Reconstruction required: no. program.py and calculations.py are imported unchanged (git diff against 1c5447f49545690bfd24450a07dfbd517ba95ddb shows program_lines_changed {'program.py': 0, 'calculations.py': 0, 'total': 0}); only the `groups` input Part and the variants list it produces via select_variants differ from run-1.

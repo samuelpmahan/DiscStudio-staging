@@ -14,7 +14,7 @@
     "declared_produces": [
       "scratch.ablation.comparison"
     ],
-    "duration_ms": 0.022599997464567423,
+    "duration_ms": 0.03364100120961666,
     "effective_arg_keys": [
       "all",
       "drop_h0",
@@ -25,7 +25,7 @@
     "invocation_id": "compare",
     "result_sha256": "89b6b6618fab07951c44a4594712e139d486868b09f7b43731c85661d20d2a7c",
     "shadowed_inputs": [],
-    "started_ms": 125654795.5469,
+    "started_ms": 32835450.066650998,
     "writes": [
       {
         "address": "scratch.ablation.comparison",
@@ -41,23 +41,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.all"
     ],
-    "duration_ms": 6.01680000545457,
+    "duration_ms": 6.722848003846593,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.all",
-    "result_sha256": "98101d85de7e59821d58c6987d05b7a2a1bb939121ff72712e8d9ca99fa936a5",
+    "result_sha256": "0589b719eb825f5c950a9a7b4d1913a5d6e6a59e8e926819bd7acf205eb1eb21",
     "shadowed_inputs": [],
-    "started_ms": 125654778.75129999,
+    "started_ms": 32835429.020236,
     "writes": [
       {
         "address": "scratch.ablation.model.all",
@@ -73,23 +73,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_h0"
     ],
-    "duration_ms": 2.7289999998174608,
+    "duration_ms": 3.011239998158999,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_h0",
-    "result_sha256": "09854f4af9015e39134b0b7d5a0e44c447c6657e578faf04089ad3f8a71da24a",
+    "result_sha256": "c49443d66e95ac80cf21ecb45f7b66fd4b8681003980c10d9b36d1007e3a07cb",
     "shadowed_inputs": [],
-    "started_ms": 125654785.0771,
+    "started_ms": 32835436.590801,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_h0",
@@ -105,23 +105,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_h1"
     ],
-    "duration_ms": 2.7102000021841377,
+    "duration_ms": 2.9625249953824095,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_h1",
-    "result_sha256": "72abffcb276bec4d225fb43d2582af9cdeb391fa9327d01f69cda3181a152306",
+    "result_sha256": "25a6ee759d604e718589809fb18e85f0ae252749ec836915e1f2fb3aa9446aea",
     "shadowed_inputs": [],
-    "started_ms": 125654788.08739999,
+    "started_ms": 32835440.405312,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_h1",
@@ -137,23 +137,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_h2"
     ],
-    "duration_ms": 2.769700004137121,
+    "duration_ms": 2.905911998823285,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_h2",
-    "result_sha256": "485279c6df823cdc648926f9554c7af7bf1dee717f132cb90e42217f6edc199b",
+    "result_sha256": "45fcea3bb68a1b3fa8d483a1192c4a66311848dbdd0baa51423bf722e87d05b2",
     "shadowed_inputs": [],
-    "started_ms": 125654791.0878,
+    "started_ms": 32835444.149768997,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_h2",
@@ -169,14 +169,14 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.all"
     ],
-    "duration_ms": 0.18570000247564167,
+    "duration_ms": 0.2138250056304969,
     "effective_arg_keys": [
       "split",
       "model"
@@ -184,7 +184,7 @@
     "invocation_id": "score.all",
     "result_sha256": "76a3ac4106d0e15fbacf9a49b2e54a080cf01434f0a16b4b905909dff9d303e7",
     "shadowed_inputs": [],
-    "started_ms": 125654794.1386,
+    "started_ms": 32835447.729627,
     "writes": [
       {
         "address": "scratch.ablation.score.all",
@@ -200,22 +200,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_h0"
     ],
-    "duration_ms": 0.14099999680183828,
+    "duration_ms": 0.16988700372166932,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.drop_h0",
-    "result_sha256": "92d93f7c463623925ee0d013d7a8353a58be5aa50088c430a4889c8a9211dc4e",
+    "result_sha256": "3ccd9a87ba049dc79c83d04c8538ab0911bc6e2dd8a377b570cd86e985feab37",
     "shadowed_inputs": [],
-    "started_ms": 125654794.5334,
+    "started_ms": 32835448.44991,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_h0",
@@ -231,22 +231,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_h1"
     ],
-    "duration_ms": 0.13919999764766544,
+    "duration_ms": 0.17487800505477935,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.drop_h1",
-    "result_sha256": "1cd6e57c76d5ef4eb0ab9ab0fbdb2e76466b4e877bdf9c9b3b3b26266f284479",
+    "result_sha256": "825a54f497c2c48f64183607aa0e44803f4bd896fbce45d1f0a518b012a579e6",
     "shadowed_inputs": [],
-    "started_ms": 125654794.8737,
+    "started_ms": 32835449.014556,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_h1",
@@ -262,14 +262,14 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_h2"
     ],
-    "duration_ms": 0.13770000077784061,
+    "duration_ms": 0.14860900409985334,
     "effective_arg_keys": [
       "split",
       "model"
@@ -277,7 +277,7 @@
     "invocation_id": "score.drop_h2",
     "result_sha256": "d6d6dc2fbf575a348d77caab259944930e45e20648c875d92c51d137946b5706",
     "shadowed_inputs": [],
-    "started_ms": 125654795.2119,
+    "started_ms": 32835449.553606,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_h2",
@@ -304,14 +304,14 @@
     "declared_produces": [
       "scratch.ablation.variants"
     ],
-    "duration_ms": 0.018699996871873736,
+    "duration_ms": 0.026543995772954077,
     "effective_arg_keys": [
       "groups"
     ],
     "invocation_id": "select",
     "result_sha256": "d926a85fc3f5476d6ffcda7973f1177ef25f0de9d5e3f72e8c85096a3939d21e",
     "shadowed_inputs": [],
-    "started_ms": 125654774.5122,
+    "started_ms": 32835419.669558004,
     "writes": [
       {
         "address": "scratch.ablation.variants",
@@ -338,14 +338,14 @@
     "declared_produces": [
       "scratch.ablation.split"
     ],
-    "duration_ms": 0.03789999755099416,
+    "duration_ms": 0.06885900074848905,
     "effective_arg_keys": [
       "rows"
     ],
     "invocation_id": "split",
-    "result_sha256": "d6f1c2e65dc0c1268b34601697a2db8467e8cf0b367f035e2132b53939d624c4",
+    "result_sha256": "cefbd6bdda24c1770b8dd863559305b4b4ebc60ccc179fab0a1499297963f4f0",
     "shadowed_inputs": [],
-    "started_ms": 125654775.0729,
+    "started_ms": 32835422.850786004,
     "writes": [
       {
         "address": "scratch.ablation.split",

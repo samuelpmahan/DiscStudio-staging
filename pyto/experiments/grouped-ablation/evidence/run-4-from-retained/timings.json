@@ -6,7 +6,7 @@
       "clock": "time.perf_counter",
       "fixture": "synthetic-fixture",
       "label": "pcr.run",
-      "wall_ms": 30.693
+      "wall_ms": 54.307
     }
   ]
 }

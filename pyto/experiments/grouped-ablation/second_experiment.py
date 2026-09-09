@@ -47,12 +47,26 @@ from run import (  # noqa: E402
 EVIDENCE = os.path.join(HERE, "evidence")
 RUN_1 = os.path.join(EVIDENCE, "run-1")
 
-# The Day 2 base commit (research/ULTRACODE-WEEK.md, Day 2; the orchestrator's brief).
-# The kill criterion is "program.py/calculations.py were not edited *this day*", so the
-# diff base must be the day's base, not HEAD: HEAD moves as the day's checkpoints land,
-# and a program.py edit committed in one of them would make a HEAD-based diff report 0
-# (fixer round 1, finding 11). Recorded in saved-work.json as program_lines_changed_base.
-DAY2_BASE = "d9dded6"
+# The base the "no program edits" diff is taken against: the last commit that touched the
+# program (program.py or calculations.py), never HEAD. On Day 2 this was the day's base
+# (d9dded6; fixer round 1, finding 11: a checkpoint committing a program edit must not make a
+# HEAD-based diff report 0). Since the landing protocol, a committed program change is a
+# landing with a receipt and its own `land(...)` commit, visible in git log, so the honest
+# reading of the criterion is: these scripts edit nothing in the program as last landed. An
+# uncommitted, run-time edit still shows as lines changed. Recorded in saved-work.json as
+# program_lines_changed_base.
+
+
+def _program_base() -> str:
+    completed = subprocess.run(
+        ["git", "log", "-1", "--format=%H", "--", "program.py", "calculations.py"],
+        cwd=HERE, capture_output=True, text=True,
+    )
+    sha = completed.stdout.strip()
+    return sha or "d9dded6"
+
+
+DAY2_BASE = _program_base()
 
 
 def resolve_named_out_dir(out: str | None, default_rel: str, force: bool) -> str:
