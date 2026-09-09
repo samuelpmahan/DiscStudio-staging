@@ -1,4 +1,5 @@
 import { safeImage, id } from './domain.js';
+import { render as paintDisc } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 export const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const color = (value, fallback = '#203d36') => /^(#[0-9a-f]{3,8}|transparent)$/i.test(value ?? '') ? value : fallback;
 export const fonts = { sans: 'Arial, Helvetica, sans-serif', serif: 'Georgia, Times New Roman, serif', mono: 'Courier New, monospace' };
@@ -19,12 +20,25 @@ export function defaultPresets() {
 /** One material, reused by shelf, card editor and comparison. No photo recognition is claimed. */
 export function prepareDiscArt({ disc, mold, maker }) {
   if (disc.photo && safeImage(disc.photo)) return { kind: 'photo', src: disc.photo, alt: disc.nickname || mold?.name || 'Physical disc', sample: false };
-  const hue = Number.isFinite(disc.sampleHue) ? disc.sampleHue : 146;
-  const name = mold?.name || 'Your disc';
-  const markup = `<g><circle cx="60" cy="62" r="56" fill="hsl(${hue} 21% 58%)" opacity=".23"/><circle cx="60" cy="58" r="54" fill="hsl(${hue} 35% 72%)"/><circle cx="60" cy="58" r="48" fill="none" stroke="hsl(${hue} 26% 52%)" stroke-width="1.5"/><circle cx="60" cy="58" r="43" fill="none" stroke="hsl(${hue} 29% 83%)"/><g transform="rotate(-12 60 58)" fill="#24453c" font-family="Arial, sans-serif"><text x="60" y="43" text-anchor="middle" font-size="6.5" letter-spacing="1">${esc((maker?.name || 'DISC STUDIO').toUpperCase())}</text><text x="60" y="61" text-anchor="middle" font-size="${Math.min(16, 100 / Math.max(name.length * .63, 1))}" font-weight="700">${esc(name)}</text><text x="60" y="76" text-anchor="middle" font-size="4.7" letter-spacing=".6">SAMPLE · NOT YOUR PHOTO</text></g></g>`;
-  return { kind: 'sample', markup, alt: `Sample artwork · ${name}`, sample: true };
+  const inputs = artInputs({ disc, mold, maker });
+  return { kind: 'painted', svg: paintDisc(...inputs), alt: `Sample artwork · ${inputs[5]}`, sample: true, inputs };
 }
+export function artInputs({ disc, mold, maker }) {
+  const family = disc.artFamily || 'wind-rose';
+  const seed = Number.isFinite(disc.sampleHue) ? disc.sampleHue : 146;
+  const base = paintColor(disc.artBase, '#e6ebde');
+  const accent = paintColor(disc.artAccent, '#456157');
+  const target = 96;
+  const label = `${maker?.name || 'Disc Studio'} · ${mold?.name || disc.nickname || 'Your disc'}`;
+  return [family, seed, base, accent, target, label];
+}
+const paintColor = (value, fallback) => {
+  const sanitized = color(value, fallback);
+  return /^#[0-9a-f]{6}$/i.test(sanitized) ? sanitized : fallback;
+};
 const display = (value, unit) => value == null || value === '' ? '—' : Array.isArray(value) ? value.join(' · ') : typeof value === 'boolean' ? (value ? 'Yes' : 'No') : `${value}${unit ? ` ${unit}` : ''}`;
+/** The inner markup of a painter SVG document, for embedding inside a card or a sheet. */
+export const artInner = (svg) => { const root = /<svg\b[^>]*>/s.exec(svg), close = svg.lastIndexOf('</svg>'); if (!root || close < root.index + root[0].length) throw new Error('Painter returned malformed SVG.'); const inner = svg.slice(root.index + root[0].length, close); if (/<\/?svg\b/i.test(inner)) throw new Error('Painter art contains a nested SVG root.'); return inner; };
 export function composeCard({ fields, art, preset, entry = null }) {
   const byPath = Object.fromEntries(fields.map(f => [f.path, f]));
   const warnings = [];
@@ -47,7 +61,7 @@ function renderNode(n, card, uid) {
     else image = safeImage(n.value) ? { kind: 'photo', src: n.value } : null;
     let markup = '';
     if (image?.kind === 'photo') markup = `<image href="${esc(image.src)}" width="${n.w}" height="${n.h}" preserveAspectRatio="${n.fit === 'cover' ? 'xMidYMid slice' : 'xMidYMid meet'}"/>`;
-    else if (image?.kind === 'sample') markup = `<svg width="${n.w}" height="${n.h}" viewBox="0 0 120 120">${image.markup}</svg>`;
+    else if (image?.kind === 'painted') markup = `<svg width="${n.w}" height="${n.h}" viewBox="0 0 512 512" preserveAspectRatio="${n.fit === 'cover' ? 'xMidYMid slice' : 'xMidYMid meet'}">${artInner(image.svg)}</svg>`;
     else markup = `<rect width="${n.w}" height="${n.h}" fill="#dce3d6"/><text x="${n.w / 2}" y="${n.h / 2}" text-anchor="middle" font-size="12" fill="#42574c">Add image</text>`;
     return `<g data-node="${esc(n.id)}" transform="translate(${n.x} ${n.y})"><defs><clipPath id="${clip}"><rect width="${n.w}" height="${n.h}" rx="${Math.max(0, Math.min(n.radius || 0, n.w / 2))}"/></clipPath></defs><g clip-path="url(#${clip})">${markup}</g></g>`;
   }

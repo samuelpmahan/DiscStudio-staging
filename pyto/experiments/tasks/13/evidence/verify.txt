@@ -1,0 +1,20 @@
+per status:
+  open: 54
+  provisional: 21
+  resolved: 25
+
+per section:
+  Open, from the plan and the days: 25
+  Resolved by the owner this session: 22
+  From the four re-mined ChainSpot tips (2026-09-09, mining appendix): 15
+  From the ChainSpot branch mining (2026-09-09, `research/chainspot-branch-mining.md` §7): 11
+  neat, the caveman version (2026-09-09, from the owner's other chat): 6
+  Five questions from Astra (GPT-6, via the owner, 2026-09-10), answered by this session: 5
+  Landing and communication (2026-09-09): 4
+  Questions I resolved alone and should have asked (recorded late, 2026-09-09): 3
+  Questions I resolved alone in Day 2's third fixer round (2026-09-09): 3
+  Questions the Day 2 verifier resolved alone (2026-09-09): 2
+  Added by the Day 3 record stage (2026-09-09): 2
+  Everything is a file (2026-09-09, the owner's line): 2
+
+54 open, 21 provisional, 25 resolved

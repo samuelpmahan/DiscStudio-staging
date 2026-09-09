@@ -1,0 +1,90 @@
+{
+  "input": {
+    "bag": {
+      "id": "luna-bag",
+      "name": "Luna squad",
+      "discIds": [
+        "luna-mint",
+        "luna-lilac",
+        "luna-blue"
+      ],
+      "notes": "",
+      "type": "Bag"
+    },
+    "discs": {
+      "luna-mint": {
+        "id": "luna-mint",
+        "moldId": "luna",
+        "nickname": "Luna · putter one",
+        "plastic": "Rubber blend",
+        "weight": 173,
+        "color": "Mint",
+        "sampleHue": 148,
+        "photo": null,
+        "notes": "",
+        "type": "Disc"
+      },
+      "luna-lilac": {
+        "id": "luna-lilac",
+        "moldId": "luna",
+        "nickname": "Luna · putter two",
+        "plastic": "Rubber blend",
+        "weight": 174,
+        "color": "Lilac",
+        "sampleHue": 268,
+        "photo": null,
+        "notes": "",
+        "type": "Disc"
+      },
+      "luna-blue": {
+        "id": "luna-blue",
+        "moldId": "luna",
+        "nickname": "Luna · putter three",
+        "plastic": "Rubber blend",
+        "weight": 173,
+        "color": "Blue",
+        "sampleHue": 205,
+        "photo": null,
+        "notes": "",
+        "type": "Disc"
+      }
+    },
+    "molds": {
+      "buzzz": {
+        "id": "buzzz",
+        "name": "Buzzz",
+        "manufacturerId": "discraft",
+        "category": "Midrange",
+        "flight": {
+          "speed": 5,
+          "glide": 4,
+          "turn": -1,
+          "fade": 1
+        },
+        "type": "Mold"
+      },
+      "luna": {
+        "id": "luna",
+        "name": "Luna",
+        "manufacturerId": "discraft",
+        "category": "Putter",
+        "flight": {
+          "speed": 3,
+          "glide": 3,
+          "turn": 0,
+          "fade": 3
+        },
+        "type": "Mold"
+      }
+    },
+    "manufacturers": {
+      "discraft": {
+        "id": "discraft",
+        "name": "Discraft",
+        "website": "",
+        "type": "Manufacturer"
+      }
+    }
+  },
+  "expectedSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"768\" height=\"258\" viewBox=\"0 0 768 258\" role=\"img\" aria-label=\"Luna squad\"><rect width=\"768\" height=\"258\" fill=\"#f9f7ef\"/><text x=\"24\" y=\"46\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"18\" font-weight=\"700\" fill=\"#203d36\">Luna squad</text><text x=\"744\" y=\"46\" text-anchor=\"end\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"10\" fill=\"#718d48\">3 PHYSICAL DISCS</text><g data-disc=\"luna-mint\"><svg x=\"24\" y=\"88\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Luna\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#b9d789\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#203d36\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#203d36\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(-7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#203d36\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(20.2 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"400.2\" cy=\"196.5\" r=\"12\" fill=\"#203d36\"/>\n</g>\n<title>Luna</title>\n</svg><text x=\"24\" y=\"200\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"12\" font-weight=\"700\" fill=\"#203d36\">Luna</text><text x=\"24\" y=\"216\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"10\" fill=\"#5d6c5e\">3 / 3 / 0 / 3</text></g><g data-disc=\"luna-lilac\"><svg x=\"204\" y=\"88\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Luna\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#b9d789\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#203d36\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#203d36\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(-1.4 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#203d36\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(26.6 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"394.6\" cy=\"327.6\" r=\"12\" fill=\"#203d36\"/>\n</g>\n<title>Luna</title>\n</svg><text x=\"204\" y=\"200\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"12\" font-weight=\"700\" fill=\"#203d36\">Luna</text><text x=\"204\" y=\"216\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"10\" fill=\"#5d6c5e\">3 / 3 / 0 / 3</text></g><g data-disc=\"luna-blue\"><svg x=\"384\" y=\"88\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Luna\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#b9d789\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#203d36\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#203d36\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(-5.2 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#203d36\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(22.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"407.3\" cy=\"293.9\" r=\"12\" fill=\"#203d36\"/>\n</g>\n<title>Luna</title>\n</svg><text x=\"384\" y=\"200\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"12\" font-weight=\"700\" fill=\"#203d36\">Luna</text><text x=\"384\" y=\"216\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"10\" fill=\"#5d6c5e\">3 / 3 / 0 / 3</text></g></svg>"
+}

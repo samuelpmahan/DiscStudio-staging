@@ -16,6 +16,7 @@ bash pyto/scripts/neat.sh land 0                -> merge into MAIN, verify there
 bash pyto/scripts/neat.sh drop 0 <path> ...     -> "I like two of the three files": back to the start, repacked
 bash pyto/scripts/neat.sh kill 0                -> abandon, nothing lands
 bash pyto/scripts/neat.sh undo 0                -> a landed task back out of MAIN: revert, verify, receipt, push
+bash pyto/scripts/neat.sh update 0              -> MAIN's newer commits into EXP/0 (a conflict names the files and stops)
 bash pyto/scripts/neat.sh list
 ```
 
@@ -29,6 +30,19 @@ holds for it too. Underneath: EXP/<id> is a git worktree on branch `exp/<id>`, d
 Control is a way back, not a gate (owner, 2026-09-09: "minimal hard stops"): `neat undo <id>`
 reverts a landed task through the same protocol, so the owner never needs git to take something
 back, and nothing waits on the owner to go in.
+
+## Self-improvement, and the explicability gate
+
+The system may improve itself: a Fable orchestrates Sonnets that mine the record (refusals, failed
+receipts, the Today log, the `{?}` root, slow steps) for small useful changes to neat, landing,
+the board, hand-offs, tests, scripts and docs, and tries them in parallel, one neat task each.
+Branching is allowed; opacity is not. Before such a task may land it passes the explicability
+gate: a cold reader who has seen nothing but the hand-off page writes, in plain words, what it
+believes changed and why and which files it expects touched; a judge compares that to the real
+diff. A mismatch refuses the landing, the reason goes on the packet and the board, and the task
+stays packed. Bounds per branch: one plain-sentence intent, at most three files, at most 150
+changed lines, no new dependency, no config. Losers are kept. Kernel semantics (what a Part, a
+Calculation, a receipt means) are not in scope for the loop; they run as their own tasks.
 
 ## The words
 

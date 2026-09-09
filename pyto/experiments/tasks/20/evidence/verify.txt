@@ -1,0 +1,12 @@
+...../home/user/DiscStudio-staging/EXP/20/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/EXP/20/pyto/experiments/hiding-primitives/graphs.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/20/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/EXP/20/pyto/experiments/hiding-primitives/subdue.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 6 tests in 8.619s
+
+OK
+report.md matches a fresh mine

@@ -1,0 +1,1 @@
+check_receipts: 32 receipt(s) OK

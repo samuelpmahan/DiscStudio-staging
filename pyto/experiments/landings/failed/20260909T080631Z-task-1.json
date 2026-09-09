@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T080631Z-task-1",
+  "package": "task-1",
+  "base_sha": "8041281af30cd10e48091b20a8b5e3f06ac92e4f",
+  "result": "failed",
+  "reason": "check_all exited 1 (see /d/pyto-socratic-20260909/pyto/experiments/landings/20260909T080631Z-task-1/check_all.txt)",
+  "at": "2026-09-09T08:07:33.738537Z"
+}

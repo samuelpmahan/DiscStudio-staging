@@ -96,7 +96,7 @@ test('deriveHit: an address this run overwrote is not a hit, however it started 
   // The reference rule for the one shape the two runtimes disagreed on: a Part
   // that existed before the run, was refined by an earlier invocation of it, and
   // is then read again. Nothing was reused -- the reader sees the freshly
-  // computed value -- and RECORD.md:55-56 excludes it in its own parenthetical
+  // computed value -- and RECORD.md:104-105 excludes it in its own parenthetical
   // ("whose address was not produced by an earlier invocation of the same run").
   // deriveHit never consults a preexisting set, so `produced` alone decides;
   // pyto.materialize.run_record now says the same, pinned in
@@ -224,7 +224,10 @@ test('materialize honours RECORD.md size and array caps', () => {
   const truncated = materialize(long);
   assert.equal(truncated.kind, 'json');
   assert.equal(truncated.data.length, MAX_ARRAY_ENTRIES);
-  assert.match(truncated.note, new RegExp(`first ${MAX_ARRAY_ENTRIES} of ${long.length} entries`));
+  assert.equal(
+    truncated.note,
+    `1 array(s) truncated to the first ${MAX_ARRAY_ENTRIES} entries; original lengths: [${long.length}]`
+  );
 
   const huge = 'x'.repeat(MAX_VALUE_BYTES + 1);
   const omitted = materialize(huge, { digest: 'abc123' });
@@ -235,6 +238,77 @@ test('materialize honours RECORD.md size and array caps', () => {
   const circular = {};
   circular.self = circular;
   assert.equal(materialize(circular).kind, 'omitted');
+});
+
+/**
+ * RECORD.md caps arrays at 200 entries without qualifying the cap by depth
+ * ("arrays longer than 200 entries carry the first 200 and a note with the full
+ * length", RECORD.md:113 as it now stands),
+ * so the two runtimes have to cut the same arrays and write the same note. The
+ * expectation below is Python's own output, not a transcription of it, produced
+ * once with:
+ *
+ *   .venv/bin/python -c 'import json
+ *   from pyto.materialize import render_value
+ *   cases = {"nested-1000": {"rows": list(range(1000))},
+ *            "deep-300": {"a": {"b": [list(range(300))]}},
+ *            "two-arrays": {"p": list(range(1000)), "q": {"r": list(range(300))}, "s": [1, 2, 3]},
+ *            "short-first": {"a": list(range(300)), "z": list(range(1000))},
+ *            "top-level-255": list(range(255))}
+ *   print(json.dumps({k: render_value(v) for k, v in cases.items()}, sort_keys=True, separators=(",", ":")))'
+ *
+ * Before the fix JS truncated only a TOP-LEVEL array, so `{"rows": [0..999]}`
+ * was a 200-row record in pyto and a 1000-row record with note null in the
+ * browser (pyto/experiments/runs/day3/verdicts/adversarial-values.json:12).
+ */
+const PYTHON_TRUNCATION_EXPECTATION = JSON.parse(
+  '{"deep-300":{"data":{"a":{"b":[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199]]}},"kind":"json","note":"1 array(s) truncated to the first 200 entries; original lengths: [300]"},"nested-1000":{"data":{"rows":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199]},"kind":"json","note":"1 array(s) truncated to the first 200 entries; original lengths: [1000]"},"short-first":{"data":{"a":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199],"z":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199]},"kind":"json","note":"2 array(s) truncated to the first 200 entries; original lengths: [1000, 300]"},"top-level-255":{"data":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199],"kind":"json","note":"1 array(s) truncated to the first 200 entries; original lengths: [255]"},"two-arrays":{"data":{"p":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199],"q":{"r":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199]},"s":[1,2,3]},"kind":"json","note":"2 array(s) truncated to the first 200 entries; original lengths: [1000, 300]"}}'
+);
+
+const TRUNCATION_INPUTS = {
+  'nested-1000': { rows: Array.from({ length: 1000 }, (_, i) => i) },
+  'deep-300': { a: { b: [Array.from({ length: 300 }, (_, i) => i)] } },
+  'two-arrays': {
+    p: Array.from({ length: 1000 }, (_, i) => i),
+    q: { r: Array.from({ length: 300 }, (_, i) => i) },
+    s: [1, 2, 3]
+  },
+  // Traversal meets 300 first; the note still has to read [1000, 300], because
+  // materialize.py:238 sorts the lengths descending rather than reporting them
+  // in the order it found them.
+  'short-first': {
+    a: Array.from({ length: 300 }, (_, i) => i),
+    z: Array.from({ length: 1000 }, (_, i) => i)
+  },
+  'top-level-255': Array.from({ length: 255 }, (_, i) => i)
+};
+
+test('materialize truncates nested arrays exactly as the Python materializer does', () => {
+  for (const [name, input] of Object.entries(TRUNCATION_INPUTS)) {
+    assert.deepEqual(
+      materialize(input),
+      PYTHON_TRUNCATION_EXPECTATION[name],
+      `JS materialize disagrees with pyto render_value on ${name}`
+    );
+  }
+  // Named separately so a regression reads as what it is rather than as a diff
+  // of two 200-entry arrays.
+  assert.equal(materialize(TRUNCATION_INPUTS['nested-1000']).data.rows.length, MAX_ARRAY_ENTRIES);
+  assert.equal(materialize(TRUNCATION_INPUTS['deep-300']).data.a.b[0].length, MAX_ARRAY_ENTRIES);
+  assert.equal(
+    materialize(TRUNCATION_INPUTS['two-arrays']).note,
+    `2 array(s) truncated to the first ${MAX_ARRAY_ENTRIES} entries; original lengths: [1000, 300]`
+  );
+});
+
+test('materialize still reaches omitted for a cycle hidden past the array cap', () => {
+  // The serializability check runs on the whole value, before truncation, so a
+  // bad entry at index 900 cannot be sliced out of sight.
+  const cyclic = {};
+  cyclic.self = cyclic;
+  const long = Array.from({ length: 1000 }, (_, i) => i);
+  long[900] = cyclic;
+  assert.equal(materialize({ rows: long }).kind, 'omitted');
 });
 
 test('materialize counts UTF-8 bytes, not characters', () => {
@@ -362,6 +436,29 @@ test('the synthetic record carries the four value kinds the real run never produ
   assert.deepEqual([...new Set(real)], ['json'], 'grouped-ablation run-1 materializes JSON only');
 });
 
+// RECORD.md:83-86 makes declared_consumes exactly the `px:` bindings of inputs.
+// Each of its two halves is violated on its own here, so each test names one
+// branch of viewer/adapters.js:162-167 and no other check can stand in for it.
+test('validate rejects a declared_consumes entry spelled fn:, naming the path', () => {
+  const clone = structuredClone(pytoDoc);
+  // `fn:split` IS an inputs value on fit.all, so only the `px:` rule can reject it.
+  clone.ticks[1].invocations[0].declared_consumes = ['fn:split'];
+  const error = caught(() => validate(clone));
+  assert.ok(error instanceof RecordSchemaError, `expected RecordSchemaError, got ${error}`);
+  assert.equal(error.path, 'ticks[1].invocations[0].declared_consumes[0]', error.message);
+  assert.match(error.message, /declared_consumes carries Part bindings only/);
+});
+
+test('validate rejects a declared_consumes entry that inputs does not carry, naming the path', () => {
+  const clone = structuredClone(pytoDoc);
+  // Correctly spelled `px:`, so only the subset-of-inputs rule can reject it.
+  clone.ticks[0].invocations[1].declared_consumes = ['px:input.ablation.unbound'];
+  const error = caught(() => validate(clone));
+  assert.ok(error instanceof RecordSchemaError, `expected RecordSchemaError, got ${error}`);
+  assert.equal(error.path, 'ticks[0].invocations[1].declared_consumes[0]', error.message);
+  assert.match(error.message, /subset of inputs\.values\(\)/);
+});
+
 test('validate rejects a duplicate invocation id, because ids anchor annotations', () => {
   const clone = structuredClone(pytoDoc);
   clone.ticks[1].invocations[0].id = 'split';
@@ -450,7 +547,7 @@ test('a Part address named __proto__ or constructor is an ordinary row, not a pr
 });
 
 test('validate rejects a png-data-url whose data is not a PNG data URL', () => {
-  // RECORD.md:60-61 states the shape, and tick-viewer.js puts this string into
+  // RECORD.md:109-110 states the shape, and tick-viewer.js puts this string into
   // an <img src>: unchecked, a record chooses an outbound request from a page
   // whose premise is that it makes none.
   for (const data of ['https://evil.example/beacon.gif?record=opened', 'javascript:alert(1)//', 'data:image/svg+xml,<svg/>', '']) {

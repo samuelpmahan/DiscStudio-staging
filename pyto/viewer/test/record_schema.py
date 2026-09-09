@@ -10,7 +10,7 @@ each rule naming the line of RECORD.md it comes from -- so a field one side
 invents or omits fails on the other side instead of travelling unnoticed.
 
 Strictness is the point. Key sets are exact in both directions:
-  - a missing key is an error, because RECORD.md:65 says missing fields are
+  - a missing key is an error, because RECORD.md:114 says missing fields are
     null, never absent ("Missing fields are null, never invented");
   - an unknown key is an error, because a field neither RECORD.md nor the other
     runtime knows about is exactly the invention that clause forbids.
@@ -25,13 +25,13 @@ from __future__ import annotations
 
 import json
 
-SCHEMA = "pyto-run-record@1"                     # RECORD.md:16
-RUNTIMES = ("pyto", "discstudio", "chesslab", "wumpus")   # RECORD.md:18
-VALUE_KINDS = ("json", "text", "svg", "png-data-url", "omitted")  # RECORD.md:59-63
+SCHEMA = "pyto-run-record@1"                     # RECORD.md:20
+RUNTIMES = ("pyto", "discstudio", "chesslab", "wumpus")   # RECORD.md:22
+VALUE_KINDS = ("json", "text", "svg", "png-data-url", "omitted")  # RECORD.md:108-112
 WRITE_KINDS = ("new-address", "refinement", "replacement")
-MAX_VALUE_BYTES = 262144                          # RECORD.md:63
-MAX_ARRAY_ENTRIES = 200                           # RECORD.md:64
-PNG_DATA_URL_PREFIX = "data:image/png;base64,"    # RECORD.md:60-61
+MAX_VALUE_BYTES = 262144                          # RECORD.md:112
+MAX_ARRAY_ENTRIES = 200                           # RECORD.md:113
+PNG_DATA_URL_PREFIX = "data:image/png;base64,"    # RECORD.md:109-110
 
 DOCUMENT_KEYS = ("schema", "pcr", "source", "ticks", "parts", "counters")
 SOURCE_KEYS = ("runtime", "version", "commit")
@@ -134,7 +134,7 @@ def _str_array(value, path):
 
 
 def _binding(value, path):
-    """RECORD.md:52-53: inputs keep the testimony spelling, px: or fn:."""
+    """RECORD.md:80-82: inputs keep the testimony spelling, px: or fn:."""
     _str(value, path)
     if not value.startswith("px:") and not value.startswith("fn:"):
         _fail(path, f'expected a testimony binding spelled "px:<address>" or "fn:<id>", got {_show(value)}')
@@ -142,7 +142,7 @@ def _binding(value, path):
 
 
 def _value(block, path):
-    """RECORD.md:59-64."""
+    """RECORD.md:108-113."""
     _keys(block, path, VALUE_KEYS)
     kind = _enum(block["kind"], VALUE_KINDS, f"{path}.kind")
     _nullable_str(block["note"], f"{path}.note")
@@ -157,7 +157,7 @@ def _value(block, path):
         pass
     else:
         _str(data, f"{path}.data", non_empty=False)
-        # RECORD.md:60-61 does not merely name the kind, it states the shape:
+        # RECORD.md:109-110 does not merely name the kind, it states the shape:
         # "data is a `data:image/png;base64,...` string". A viewer puts this
         # string into an <img src>, so the clause is checked, not assumed.
         if kind == "png-data-url" and not data.startswith(PNG_DATA_URL_PREFIX):
@@ -185,8 +185,18 @@ def _invocation(inv, path, seen_ids):
     _obj(inv["args"], f"{path}.args")
     _nullable_str(inv["into"], f"{path}.into")
 
+    # RECORD.md's declared_consumes rule is strict, so it is checked and not
+    # assumed: exactly the `px:` bindings of `inputs`, in binding order. An
+    # `fn:` entry or an address `inputs` does not carry would add a read edge no
+    # binding declares, because derive_part_index below unions the two fields.
+    bound_values = set(inv["inputs"].values())
     for i, entry in enumerate(_arr(inv["declared_consumes"], f"{path}.declared_consumes")):
-        _binding(entry, f"{path}.declared_consumes[{i}]")
+        where = f"{path}.declared_consumes[{i}]"
+        _binding(entry, where)
+        if not entry.startswith("px:"):
+            _fail(where, f'declared_consumes carries Part bindings only, spelled "px:<address>", got {_show(entry)}')
+        if entry not in bound_values:
+            _fail(where, f"declared_consumes is a subset of inputs.values(), which does not carry {_show(entry)}")
     _str_array(inv["actual_consumes"], f"{path}.actual_consumes")
     _str_array(inv["actual_produces"], f"{path}.actual_produces")
 
@@ -253,20 +263,20 @@ def validate(record):
 
 
 def derive_part_index(ticks):
-    """RECORD.md:66 -- parts is derived from the invocations, for convenience.
+    """RECORD.md:115 -- parts is derived from the invocations, for convenience.
 
-    Written from that clause and RECORD.md:52-57, independently of adapters.js
+    Written from that clause and RECORD.md:80-107, independently of adapters.js
     `derivePartIndex` and of `pyto.materialize`, so the `parts` block is checked
     against a third reading of the rule instead of being trusted because two
     files by the same hand agree. `read_by` is compared sorted: RECORD.md fixes
     the membership, not the order.
 
     - a `px:` binding reads that address; a `fn:` binding reads the address the
-      named invocation wrote (RECORD.md:52-53, and the example at :44 where the
+      named invocation wrote (RECORD.md:80-82, and the example at :71 where the
       readers of scratch.ablation.split are the fit/score invocations);
     - `actual_consumes` are bare addresses already observed on the store;
     - an address read before anything in this run wrote it preexisted
-      (RECORD.md:55-57, the same clause `hit` is built on).
+      (RECORD.md:104-107, the same clause `hit` is built on).
     """
     index = {}
     produced_by = {}

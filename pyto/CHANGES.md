@@ -684,3 +684,217 @@ overwritten address). `scripts/check_all.sh:150-158` pins the viewer count and i
 no other expected count moved. `bash pyto/scripts/check_all.sh`: ALL SUITES PASSED
 (library 103, experiments/grouped-ablation 230, experiments/s3-synthetic 5, consumer 61,
 disc-stats 4, examples 3, art-registry-md, viewer 83, viewer-record-schema 19).
+
+### Day 3 contract fix: `declared_consumes` is the Part reads, not a copy of `inputs`
+
+`viewer/RECORD.md` said "`inputs` keeps the testimony spelling … `declared_consumes`
+repeats them in binding order" (RECORD.md:52-54 before this change). No pyto record has
+ever looked like that. `Receipt.declared_consumes` is filled only from bindings whose
+source is a `Part` (`src/pyto/pcr.py:308-315`, the field at `pcr.py:120`), and
+`materialize.py:416` does nothing to it but add the `px:` prefix — so in the committed
+Day 1 evidence (`experiments/grouped-ablation/evidence/run-1/record.json`) 13 of the 15
+invocations carry `declared_consumes: []`, because everything downstream of `split` binds
+`fn:` result refs and declares no store read at all. Two independent readers already
+behave as if the amended text were the rule: `viewer/adapters.js:385-390` and
+`viewer/test/record_schema.py:290-299` both union `inputs.values()` with
+`declared_consumes` before building the part index. The contract was the only thing out of
+step, so the contract moved and no runtime code did — `pcr.py` and `materialize.py` are
+untouched, and consumer testimony bytes are unchanged.
+
+RECORD.md now states it in three clauses: `inputs` is the complete binding map in
+testimony spelling; `declared_consumes` is the producing runtime's declared *Part* reads
+only, the `px:` bindings in binding order, empty where every binding is an `fn:` ref; and
+a part index must union the two and resolve each `fn:<id>` through that invocation's
+`into`. The worked example carries a second invocation, `fit.all` in a second Tick, whose
+one binding is `fn:split` — so the example itself shows the empty `declared_consumes` and
+the empty `actual_consumes` that come with a result binding, and the `parts` rows shown
+are the ones those two invocations derive.
+
+`viewer/fixtures/pyto-value-kinds.json` was modelling the retired convention: six of its
+eleven invocations listed `fn:` ids in `declared_consumes` (`fit.all`, `score.all`,
+`fit.drop_g3`, `score.drop_g3`, `snapshot`, `table`). They are now `[]`. The derived part
+index is unchanged — both readers were already taking those reads from `inputs` — so no
+viewer expectation moved; the mutation cases that pin `declared_consumes` paths
+(`viewer/test/adapters.test.mjs:392`, `viewer/test/test_record_schema.py:244,339`) point
+at `select`, whose binding is a `px:` and stays.
+
+Three tests in `tests/test_materialize.py`
+(`DeclaredConsumesIsThePartSubsetOfInputs`): the committed run-1 bytes obey the rule for
+all 15 invocations and the 13 empty ones are exactly the all-`fn:` invocations; a freshly
+materialized Day 1 record obeys it too (mutant: `materialize.py:416` →
+`declared_consumes = list(testimony.inputs.values())`, i.e. the old text — fails with 13
+violations); and two `px:` bindings whose parameter names sort the other way keep binding
+order (mutant: `sorted(...)` around the comprehension at `pcr.py:311-315` — fails with the
+alphabetical answer). The first test's mutant is the evidence itself: giving `fit.all` a
+`declared_consumes` of `["fn:split"]` in `evidence/run-1/record.json` fails it.
+
+**Fix round 2 (verifier).** Four corrections to the above, none of which change what a
+runtime emits:
+
+- The rule is now *enforced*, not described. `declared_consumes` is exactly the `px:`
+  bindings of `inputs`: both validators reject an `fn:` entry and an entry `inputs` does
+  not carry, at the same path (`viewer/adapters.js:153-168`,
+  `viewer/test/record_schema.py:188-199`). Without it, the six `fn:` entries deleted from
+  `viewer/fixtures/pyto-value-kinds.json` validated cleanly and nothing stopped the drift
+  returning. Two cases per validator table, one isolating each half of the rule
+  (`viewer/test/test_record_schema.py:246-256,341-351`): `fit.all` binds `split` as
+  `fn:split`, so an `fn:split` entry there *is* in `inputs.values()` and only the spelling
+  rule refuses it, while `px:scratch.ablation.not_bound` is spelled right and only the
+  subset rule refuses it. Each of the four checks, disabled one at a time, fails the
+  `viewer-record-schema` suite. The suite is still 19 tests: the cases went into the two
+  existing tables rather than into new methods.
+- RECORD.md's own text said `declared_consumes` is a subset of `inputs.values()` and, two
+  paragraphs later, that reading `inputs` alone loses a declared Part read recorded
+  outside the binding map. Both cannot hold. The subset rule is the one that is true of
+  every record in the tree and is now validated, so the second clause is gone: the union
+  the two reference readers do is documented as a defence against a record that reached
+  them without passing `validate`, not as a requirement.
+- The RECORD.md edit inserted 54 lines above `## Field rules`, so every in-tree
+  `RECORD.md:NN` citation below the insertion pointed at the wrong line. All of them in
+  live code and live prose *outside the kernel* are renumbered against the amended file
+  (`tests/test_materialize.py`, `questions.md`, `viewer/adapters.js`,
+  `viewer/tick-viewer.js`, `viewer/README.md`, the five files under `viewer/test/`,
+  `experiments/grouped-ablation/hits.py` and `materialize_run.py`). Three citation classes
+  are deliberately left alone and listed here instead. (1) The twelve in
+  `src/pyto/materialize.py:15,20,49,50,51,187,223,296,308,394,480,595`: renumbering them
+  means editing `pyto/src`, and the day's hard rule keeps that tree clean — pinned by
+  `experiments/grouped-ablation/test_materials.py:352`
+  (`LibraryUntouched.test_git_status_is_clean_under_pyto_src`), which fails on the edit.
+  (2) The dated entries earlier in this file. (3) The archived run records under
+  `experiments/runs/day3/` and `experiments/landings/` (including the built
+  `evidence/run-1/tick-viewer.html`), which quote RECORD.md as it stood when they were
+  written. The union readers moved too and are
+  cited at their new lines: `viewer/adapters.js:385-390` and
+  `viewer/test/record_schema.py:290-299` (the earlier `adapters.js:327-336` named
+  `capped()`, not the union).
+- `evidence/run-6-cached/reuse-ledger.json` was regenerated from a throwaway worktree and
+  baked that worktree's absolute paths into committed evidence — the only evidence file in
+  the tree naming a directory that landing deletes. `run_cached.py`'s
+  `resolve_in_fresh_process` now records `command` through `portable()`: a path inside the
+  pyto root becomes `<pyto>/...` and anything else inside the checkout becomes
+  `<checkout>/...` (so a sibling `.venv` reads `<checkout>/.venv/bin/python`, not a
+  `<pyto>/../` path that climbs out of the root it names), a path outside the checkout is
+  left exactly as it ran. Both
+  spellings of each argument are tested, because `.venv/bin/python` is a symlink to the
+  system interpreter and resolving first would hide the checkout path. Five tests in
+  `experiments/grouped-ablation/test_run_cached.py`
+  (`TheLedgerRecordsNoPathThatLandingWouldBreak`), each naming the one-line mutation it
+  kills; the ledger on disk is asserted to contain no path under the checkout.
+
+**Fix round 3 (verifier).** Three corrections to fix round 2, none of which change what a
+runtime emits:
+
+- `experiments/grouped-ablation/hits.py:14` cited `RECORD.md:83-105` for the `hit` rule,
+  but 83 is where the `declared_consumes` bullet starts. The sentence is about `hit`, whose
+  bullet is `viewer/RECORD.md:104-107`; the citation now reads that.
+- The JavaScript half of the `declared_consumes` rule was pinned only by the Python
+  cross-check suite: either branch of `viewer/adapters.js:162-167` could be deleted with
+  `node --test viewer/test/*.test.mjs` still green. Two tests in
+  `viewer/test/adapters.test.mjs` now isolate one branch each, the same way the
+  `viewer-record-schema` tables do — `fn:split` on `fit.all` is in `inputs.values()`, so
+  only the spelling rule can refuse it; `px:input.ablation.unbound` on `split` is spelled
+  right, so only the subset rule can. Deleting either branch fails exactly its own test.
+- `portable()` (`experiments/grouped-ablation/run_cached.py:176-200`) anchored everything
+  under the checkout at the pyto root, so this worktree's sibling `.venv` came out
+  `<pyto>/../.venv/bin/python` — a placeholder that climbs back out of the root it names.
+  It now anchors at the containing root: `<pyto>/...` inside `pyto/`, `<checkout>/...`
+  elsewhere in the checkout, untouched outside it. `evidence/run-6-cached/reuse-ledger.json:166`
+  reads `<checkout>/.venv/bin/python`, which is what regenerating would now write; the rest
+  of the ledger is byte-identical and still `json.dumps(sort_keys=True, indent=2)`.
+
+**Counts.** `viewer-record-schema` stays 19 and `experiments/grouped-ablation` grows by
+the five new `test_run_cached.py` tests (no pin, 240 total). `viewer` is 87 — 85 after fix
+round 2, plus the two `declared_consumes` tests of round 3 — against a
+`scripts/check_all.sh:160` pin of 83, which this pack may not edit; see the `{?}`
+`ViewerPin` entry in `experiments/tasks/0/packet.md`. Runs green with
+`EXPECT_VIEWER=87 bash pyto/scripts/check_all.sh`.
+
+**Fix round 4 (verifier).** Two corrections, neither touching a runtime or a validator; the
+round's blocker is a one-number pin this pack may not edit.
+
+- `viewer/RECORD.md:41` — the worked example contradicted the contract two bullets down. The
+  `split` invocation binds `px:scratch.ablation.raw`, and the example's own `parts` block
+  (`viewer/RECORD.md:70`, added in fix round 2) says that address is `written_by: null,
+  preexisting: true`. The `hit` rule (`viewer/RECORD.md:104-107`) makes exactly that shape a
+  hit, and both implementations agree on it —
+  `deriveHit(["px:scratch.ablation.raw"], new Set(), false)` is `true`
+  (`viewer/adapters.js:258-265`) and `src/pyto/materialize.py:383` is the same predicate — as
+  does the record the example abridges (`experiments/grouped-ablation/evidence/run-1/record.json`
+  records `split` with `hit: true`). The example now reads `"hit": true`. `fit.all`'s
+  `"hit": false` at `:63` is untouched and correct: its one binding is `fn:split`. The counters
+  line at `:74` (`"hits": 2` of 15) was already right — `select` and `split` are the run's two
+  hits — so nothing else in the block moves, and no line numbers shift.
+- `tests/test_materialize.py:607` cited `RECORD.md:83-105` for the `hit` rule: the same
+  off-by-a-bullet fix round 3 corrected in `hits.py:14` and missed here (83 starts the
+  `declared_consumes` bullet). It now reads `RECORD.md:104-107`, matching `:646` in the same
+  file. A grep of every live `RECORD.md:NN` citation outside `src/`, `experiments/runs/` and
+  `experiments/landings/` finds no other bullet-range citation off its bullet.
+
+**Counts.** Unchanged by this round: no test was added or removed, so `library` is 106,
+`viewer` 87, `viewer-record-schema` 19, `experiments/grouped-ablation` 240. The
+`scripts/check_all.sh:160` pin still reads 83 and this pack still may not edit that file, so
+the unaltered `bash pyto/scripts/check_all.sh` ends `SOME SUITES FAILED` on that one line and
+on nothing else; `EXPECT_VIEWER=87 bash pyto/scripts/check_all.sh` ends `ALL SUITES PASSED`.
+See the `{?}` `ViewerPin` entries in `experiments/tasks/0/packet.md`.
+## Day 3+ (base f2e0b8e): `pyto/src/pyto/mounts.py`, the world as a mount id
+
+**A world is an id above an ordinary PxC, and it never enters an address.** Round four
+put `disc`, `chess`, `wumpus`, `neat`, `tidy` inside the address as segments; ChainSpot had
+already decided the other way and written a test for it — "The root is intentionally
+external to PxC's semantic address space" (`43e6ea3:packages/alg/src/exec/mounts.ts:3-8`,
+quoted at `research/chainspot-branch-mining.md:40-48`), with
+`expect(dash.has('px.DashsTrack.s1.badges')).toBe(false)`
+(`43e6ea3:tests/unit/pxcRootMounts.test.ts:6-18`, quoted at
+`research/chainspot-branch-mining.md:56-65`). Section 6 item 1
+(`research/chainspot-branch-mining.md:411`) ranks the port first and says the negative test
+is the point: "it is what stops the LAB name from creeping into addresses".
+`questions.md:407-411` (`{?} AddressRootIsAMount`) leans adopt, and the same entry's
+earlier copy records that "Python has no mount type at all" and that the default taken is
+`PartyMountType` — "build the Python mount type in round five, since nothing else prevents
+collisions" (`questions.md:129,139-140`).
+
+**`Mounts` is 89 lines and six methods plus a side map** (`src/pyto/mounts.py:37-89`):
+`mount(root, pxc)`, `has(root)`, `get(root)`, `roots()` in insertion order, `entries()`,
+and `slice(roots)` returning a new `Mounts` that shares the same PxC objects
+(`mounts.py:70-77`) — a write through a slice is visible through the original, which is
+the "cheap root-level slice; mounted PxCs themselves are shared" of
+`43e6ea3:…/mounts.ts:11-22`. The human label lives beside the mounts, never in an address:
+`set_label`/`label` (`mounts.py:79-89`), after
+`43e6ea3:scripts/warm-dev-pxc-roots.mjs:46-48`. **No address rewriting happens anywhere** —
+`mount` stores the object and writes nothing into it (`mounts.py:44-51`), `get` returns the
+exact object (`mounts.py:56-60`) — so a value at `px.badges.px` is reached only as
+`mounts.get(root).get("px.badges.px")`.
+
+**Both errors are loud, as in the reference.** Re-mounting the *same* object is a no-op;
+a *different* object under a mounted root raises `ValueError` naming the root
+(`mounts.py:49-50`, after `43e6ea3:…/mounts.ts:32-34`), and a missing root raises
+`KeyError` from `get`, `slice`, `set_label` and `label` rather than returning `None`
+(`mounts.py:58-59,74,81-82,87-88`, after `43e6ea3:…/mounts.ts:40`). An empty or non-`str`
+root is refused at `mount` (`mounts.py:46-47`), the way `Part` refuses an empty address
+(`core.py:17-19`).
+
+**The id is expected to be content-derived; `Mounts` does not compute it.** ChainSpot's
+root is `sha256(WxH:sha256(rgba))` (`43e6ea3:packages/alg/src/exec/operations.ts:688,707`;
+`questions.md:413-416`, `{?} RootIdIsContent`). `Mounts` accepts any non-empty string and
+`tests/test_mounts.py:243-253` asserts `hashlib` never appears in the module, so the digest
+stays the caller's job and this file has no opinion about how a world is named.
+
+**Nothing in the kernel moved.** `core.py`, `pcr.py`, `pql.py`, `graph.py` and
+`__init__.py` are untouched; the module is reached as `from pyto.mounts import Mounts`, the
+status `pyto.address` and `pyto.materialize` have, and two tests pin that
+(`tests/test_mounts.py:227-241`). `mounts.py` imports `PxC` only under `TYPE_CHECKING`
+(`mounts.py:31-32`), so at runtime it depends on nothing.
+
+**Counts.** `library` 120 → 141 (`tests/test_mounts.py`, 21 tests, 21 of 21 mutations
+killed one at a time with the file restored after each: the prefix rewrite in `mount`, a
+stray `px.mount.root` write, a copying `get`, the dropped `is not pxc` half of the guard,
+the deleted already-mounted raise, the deleted empty-root guard, `get` degraded to
+`.get(root)`, `has` returning `True`, `slice` skipping a missing root, the deleted
+`set_label` guard, `sorted()` in `roots`, `entries` and `slice`, a deep-copying `slice`,
+`sliced = self`, a `px.view.label` write in `set_label`, `label` falling back to the root,
+the dropped label carry in `slice`, a `mounts` import added to `core.py`, a re-export added
+to `__init__.py`, and a `hashlib` digest computed inside `mount`). No suite count is
+pinned for `library` (`scripts/check_all.sh:86`), so that file is unchanged.
+`bash pyto/scripts/check_all.sh`: ALL SUITES PASSED (library 141,
+experiments/grouped-ablation 230, experiments/s3-synthetic 5, consumer 61, disc-stats 4,
+examples 3, art-registry-md, viewer 83, viewer-record-schema 19).

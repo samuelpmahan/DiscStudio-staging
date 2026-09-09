@@ -92,6 +92,30 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
     print(f"[grouped-ablation] sys.path.insert(0, {HERE!r})  # this experiment's own modules (retain, calculations, features, program)", file=sys.stderr)
 
+
+def _relpath(path: str, start: str) -> str:
+    """os.path.relpath(path, start), but never raises and always uses '/'.
+
+    These call sites only use the result to make a log/error message shorter;
+    the shortening is cosmetic and must never be what decides whether a check
+    passes, or differ by platform in what it prints for the same relationship
+    between two paths. Two Windows-only failure modes, neither reachable on
+    Linux/macOS (one root, os.sep == '/'):
+      - relpath raises ValueError when `path` and `start` sit on different
+        drives (e.g. a test's tempfile.mkdtemp() scratch dir on C: against
+        this directory on D:); fall back to the absolute path rather than
+        crash.
+      - relpath otherwise joins with os.sep ('\\'), but the committed logs
+        and the tests that assertIn() against them were written with '/'
+        (e.g. "evidence/run-1/testimony.json"); normalize so the same
+        message is produced on every platform.
+    """
+    try:
+        result = os.path.relpath(path, start)
+    except ValueError:
+        result = os.path.abspath(path)
+    return result.replace(os.sep, "/")
+
 from pyto import Calculation, PxC  # noqa: E402
 
 import retain  # noqa: E402
@@ -153,6 +177,10 @@ if os.name == "nt" and os.environ.get("SystemRoot"):
     # test_subprocess.py::test_empty_env on win32 for this reason). It is the one
     # variable the strip keeps, and only there.
     STRIPPED_ENV["SystemRoot"] = os.environ["SystemRoot"]
+    # SystemDrive too: without it Windows shell components expand the literal
+    # "%SystemDrive%" relative to the child's cwd and leave a "%SystemDrive%"
+    # folder of cache .db files inside the repository (seen on the owner's D:/).
+    STRIPPED_ENV["SystemDrive"] = os.environ.get("SystemDrive", "C:")
 
 
 class SkippedCheck(RuntimeError):
@@ -244,7 +272,7 @@ def ensure_retained_record(out_dir: str | None = None) -> dict:
         if json.dumps(unstamped(fresh), sort_keys=True) != json.dumps(unstamped(committed), sort_keys=True):
             raise AssertionError(
                 f"a fresh build of the Day 1 record does not match the committed "
-                f"{os.path.relpath(RETAINED_PATH, HERE)} (ignoring retained.commit). "
+                f"{_relpath(RETAINED_PATH, HERE)} (ignoring retained.commit). "
                 f"Fresh copy left at {produced_path}. Regenerate the evidence with "
                 f"`python3 experiments/grouped-ablation/replay.py --force` if the change is intended."
             )
@@ -368,7 +396,7 @@ def purge_experiment_bytecode() -> list[str]:
             if name == "__pycache__":
                 path = os.path.join(root, name)
                 shutil.rmtree(path, ignore_errors=True)
-                removed.append(os.path.relpath(path, HERE))
+                removed.append(_relpath(path, HERE))
                 dirs.remove(name)
     return sorted(removed)
 
@@ -506,7 +534,7 @@ def run_fresh_process_replay(
         )
         lines.append(
             f"record program ticks identical to the committed "
-            f"{os.path.relpath(testimony_path, HERE)} ticks: "
+            f"{_relpath(testimony_path, HERE)} ticks: "
             f"{report['program_matches_committed_testimony']}"
         )
         lines.append(
@@ -556,7 +584,7 @@ def run_fresh_process_replay(
         )
         lines.append(
             f"receipt digests identical to the committed "
-            f"{os.path.relpath(receipts_path, HERE)} result_sha256: {receipts_equal_committed}"
+            f"{_relpath(receipts_path, HERE)} result_sha256: {receipts_equal_committed}"
         )
         lines.append(f"child failed checks: {report['failed_checks']!r}")
 
@@ -583,7 +611,7 @@ def run_fresh_process_replay(
         if not receipts_equal_record:
             reasons.append("receipt digests differ from record['results']")
         if not receipts_equal_committed:
-            reasons.append(f"receipt digests differ from the committed {os.path.relpath(receipts_path, HERE)}")
+            reasons.append(f"receipt digests differ from the committed {_relpath(receipts_path, HERE)}")
         verdict = "VERDICT: accepted" if not reasons else f"VERDICT: refused ({'; '.join(reasons)})"
         lines.append(verdict)
         _write_lf(log_path, "\n".join(lines) + "\n")
@@ -1380,7 +1408,7 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "replay.py: refusing to overwrite committed evidence without --force; "
             f"{len(existing)} of {len(OWNED_EVIDENCE)} owned files already exist, "
-            f"starting with {os.path.relpath(existing[0], HERE)}",
+            f"starting with {_relpath(existing[0], HERE)}",
             file=sys.stderr,
         )
         return 2

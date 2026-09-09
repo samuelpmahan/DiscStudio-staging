@@ -140,6 +140,74 @@ relabel the two fixtures "pre-mount, illustrative", do not rewrite); PartyMountT
 build the Python mount type in round five, since nothing else prevents collisions). Bites: round
 five, `core.py`, `adapters.js`, `materials.py`, Day 5.
 
+### {?} Purpose
+What is all of this for?
+Status: resolved 2026-09-09 by owner. "the point of all this is to explore things idk that I want
+to." and "im not linus torvalds I just did lots of weird systems programming but all in Java at
+Adaptiva basically being a ghost behind Windows managing and optimizing everything so I have a
+weird OS insticnt but 0 understanding". Filed as: pyto is an exploration instrument for its owner;
+questions to the owner are invitations to explore in OS-instinct vocabulary, never decisions that
+need the theory. Bites: every prompt on the board; `{?} AddressRootIsAMount` (why it went by
+default).
+
+### {?} TheTestSeen
+When it works on D:/, what is the first thing the owner wants to see?
+Status: resolved 2026-09-09 by owner. "every delulu out there thinks they have AIOS. I need proof
+im not one of them". Filed as: not a demo, proof a skeptic can run and cannot talk around. Bites:
+"The test" on the board; the fresh-clone proof below.
+
+### {?} ProofShape
+Who is the skeptic, and what must fail to break?
+Status: resolved 2026-09-09 by owner. "Uh me in 5 hours might be skeptical this is all worth it
+but in general every kook thinks they have an ai os. Not every kook worked at Adaptiva which
+manages mega corporate fleets. I turned my cv alg into workflow engine (like they had but yknow
+generic stuff nothing protectable). Then kept chasing primitives then an agent I started with an
+art tourney went from 'this is a function registry' to talking bout AIOS and function schedulers
+and Claude has not been helpful on this project for like 2 weeks while I did this generalization
+and then suddenly THAT happens". Filed as: the skeptic is the owner five hours from now; the proof
+is what that reader can run from a fresh clone on D:/ and cannot dismiss, and its result is
+written on the board as a result, never as a claim. Owner, later: "My entire past month of GitHub is proof this process works." First run, 2026-09-09 08:22, fresh clone of
+3b8b5e5 into `D:/pyto-fresh-20260909`, the board's commands verbatim: the venv and install
+worked; `run_cached.py` gave one miss and one hit with a write, from a fresh process; the tick
+page rendered (296 KB); the suite was red on one test and its nested twin:
+`retained.commit` names `dbc069dd…-dirty`, a working-tree sha from the experiment that produced
+the evidence, which exists in no clone. Every other suite was green. That failure is Lane 4's
+open prompt made concrete. Bites: `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`, Lane 4;
+the proof run after every landing.
+
+### {?} RecordRemembersCommit
+Should a saved run remember its commit at all?
+Status: resolved 2026-09-09 by owner. "I made neat to not care about git but let's say max
+telemetry since ur gonna try to selfbootstrap and go ham overnight lol". So the field stays, and
+the record may carry more, not less: neat is what spares the owner git, the stamp's job is to be
+true. Consequence for the fresh-clone failure (`{?} ProofShape`): a stamp must name a landed
+commit that every clone has, never a working-tree sha; evidence regenerated inside an experiment
+is stamped at its landing base, and the proof run after each landing is the check. Bites: Lane 4's
+open prompt (closed), `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`,
+`experiments/grouped-ablation/run.py:235-265`, `replay.py`, the landing script.
+
+### {?} RenderersForUsers
+Should the studio stay static with the Python card renderers ported to JS and proven
+byte-identical, or get a backend?
+Status: resolved 2026-09-09 by owner, by default. Owner: "Bruh idk what you're saying. Idk any of
+this it just happened." Default taken: port to JS with digest equality (same inputs, same SVG
+bytes in both runtimes, the record is the proof), the site stays static, Python stays the
+workshop where formats are designed and verified before they ship. Plain words: the studio is a
+website with no server, browsers cannot run Python, so the drawers are rewritten in the browser's
+language and the rewrite is proven identical byte for byte. Bites: Lane 2's open prompt (closed),
+the DiscShelf and OnTheCourse brief, Astra's painter-port package.
+
+### {?} StableAndExplainable
+What does the owner need from the kernel, given they do not want to know how it works?
+Status: resolved 2026-09-09 by owner. "My Adaptiva work was all java so I can basically write sick
+services above the os so that's why it needs to be stable and explainable. I know nothing. U
+explain it. That's why this works." Filed as the working contract: the kernel is the stable layer
+the owner writes services above, the way Adaptiva's services sat above Windows; every question to
+the owner comes with a plain-words explanation and a default; the agent explains, the owner
+decides at the altitude of the services; "it just happened" is fine, the record is what makes it
+explainable after the fact. Bites: every prompt on the board; `LANDING.md`'s explicability gate;
+the hand-off primer (`{?} ConvincingAFreshAgent`).
+
 ## Questions I resolved alone and should have asked (recorded late, 2026-09-09)
 
 ### {?} PlanPrimacy
@@ -481,7 +549,7 @@ Both labels were already named, undetailed, in the mega-list above ("{?} ValueRe
 ### {?} ValueRetention
 What happens to a Part's value when it is too large for the run record to carry whole?
 Status: open. Records carry values up to 256 KB; image Parts beyond that are digests + sidecars.
-`viewer/RECORD.md:63` ("Values over 256 KB are replaced by `omitted` with a note carrying the
+`viewer/RECORD.md:112` ("Values over 256 KB are replaced by `omitted` with a note carrying the
 size and the digest") is the rule pinned on the pyto side by
 `pyto/src/pyto/materialize.py` (`VALUE_CAP_BYTES = 262144`, `ARRAY_CAP = 200`, materialize.py:49-50)
 and on the JS side by `viewer/adapters.js`'s `capped()`. The owner has not said whether 256 KB is the
@@ -562,3 +630,78 @@ the owner's words with the default; `neat undo <id>` reverts a landed task with 
 so control is a way back, not a gate. Nothing is deleted; a losing attempt stays as a packed task.
 Bites: tonight's queue on the board, `neat.sh`.
 
+
+### {?} NearHit
+The owner pointed at Annoy (approximate nearest neighbours, read-only mmapped index shared by
+processes). Status: provisional: the cache today hits only on identical bytes; a near hit would
+reduce a course screenshot to a small vector and reuse the nearest already-parsed course's Parts
+as proposals, confirmed by the parser inside the budget. Annoy is a workshop tool (C++, no
+browser build, out of the runtime by the cold-start rule); the runtime needs only a brute-force
+loop over one user's few hundred vectors. Default: an experiment `near-hit` when CV returns, one
+number (how often the nearest prior course is a good proposal), nothing before DiscStudio ships.
+Bites: the materials store, the record's `hit` field, Day 5.
+
+### {?} ResidueMining
+The owner: could SUBDUE-style mining find shared substructure in ANN logs, or be the CV substrate
+itself, detecting residue pixels? Status: provisional. ANN logs: real but plain clustering finds
+the same cliques. The residue: yes, and it fits the LAB: every stage already writes
+`px.remaining.after<Stage>`; turn the last residue into a labelled component graph (colour, size,
+shape labels; touching, above, left, same-screen-region edges) and SUBDUE finds the arrangements
+that repeat across courses, which are the objects no stage exists for yet (the S3 iOS map-chrome
+false positives are residue structure fixed to screen position). Its output is a candidate with
+evidence (instances, compression, where), the owner names it, it becomes
+`fn.disc.detect.<name>`, receipts show hits, the residue shrinks: promotion with evidence, the
+Lane 5 claim. The same algorithm over run records (Ticks to Calculations to Parts) finds recurring
+sub-programs, the Day 5 plan. Default: workshop only, Python, after DiscStudio ships, needing the
+dev course images; the one piece that can land any time is a scalar Part with the count of
+unclaimed pixels per Tick, which makes competition Ticks scoreable. Bites: Day 5, Lane 5, the
+competition Ticks, `research/primary-sources.md` (Cook and Holder 1994).
+
+### {?} HidingPrimitives
+The owner: the ANN logs would be neat's, the LAB's, the paint studio's, to see if they hide
+command primitives. Status: provisional, running as task 20. A primitive hiding in a log is a
+subsequence that recurs with different arguments and has no name; ANN groups near-identical
+instances, SUBDUE names the shared skeleton and scores it by compression; the output is a
+proposal with evidence, the owner names it, it becomes a Calculation or a neat command. The logs
+become Parts when receipts (task 13) and the `oc` table land. First substrate, needing no new
+recording: the paint studio's call graphs, mined and reported beside the helpers the JavaScript
+port extracted by hand. Bites: Lane 5, Day 5, the `oc` table, `neat`.
+
+### {?} UndoStack
+The owner: a generic Part that would do the site good the way undo did neat. Status: provisional,
+queued behind receipts as Parts (task 13). Not a structure: one more field on the write receipt,
+the previous value (inline when small, by digest in the materials store when large), makes the
+undo stack a query over `px.receipt.*` (writes to an address, newest first, with what they
+replaced). Undo is one Calculation that writes the previous value back, itself recorded, so
+history stays append-only like a revert; redo is the same move forward. For the studio: undo for
+customizer and card edits, "what changed since" in the review panel from the same query, and an
+accidental inspector write is one undo away. JavaScript first (the runtime's set records the
+previous value), Python mirrors the receipt field. No new state store, per AGENTS.md. Bites:
+task 13, `RECORD.md` (one field), `src/runtime.js`, the review panel.
+
+### {?} CardRenderer
+Astra, handing back `astra/discstudio-1`: "The fixed port cannot preserve arbitrary authored
+nodes and styles. Approve extending its interface, or retain the existing generic card renderer?"
+Status: provisional, default taken 2026-09-09: retain the generic renderer. The studio's card is
+authored (nodes, bindings, styles the customizer edits), so the ported `cards.mjs` stays what it
+is, the byte-identical reference for the two promoted layouts used by fixtures and tests, and the
+ported painter draws the art inside the generic renderer (`kind: painted`). No renderer fork, per
+AGENTS.md. Their delivery already did this; the one gap, the generic renderer showing "Add image"
+for painted art, is fixed on their branch before landing. Bites: `src/presentation.js`,
+`port/painter/cards.mjs`.
+
+### {?} Students
+The owner: "due to hashing guarantees this could be an unusually good tool for students." Status:
+provisional, an audience, nothing built. What hashing gives a classroom: the per-Tick record is
+"show your work" made literal; a record that replays byte for byte on the grader's machine proves
+the student's claim about their own program; identical digests on every Tick are the same work,
+whoever typed it; a port across languages is judged by a verifier (the painter port is the
+demonstration). From tonight: the explicability gate is a rubric with no teacher in it, and the
+`{?}` habit is most of learning to program. The caveat to teach first: identical digests prove
+the same computation, not the right answer; a verifier still needs a reference. Default: after
+DiscStudio ships, one experiment: a homework-sized PCR with a hand-off page graded by a cold
+reader. Bites: `LANDING.md` (the gate), `HANDOFF.md` template, the viewer. Owner, later: "personal
+parts and calculations let the agent learn how the student learns": a student's own mount holds
+their Parts and the Calculations they wrote, so a tutoring agent reads how they learn from their
+own records (what they retry, where they write `{?}`, what they undo, how long a Tick takes them),
+never from a profile.

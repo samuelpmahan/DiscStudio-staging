@@ -1,0 +1,153 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T090752Z-task-0",
+  "package": "task-0",
+  "base_sha": "f2e0b8e6e8e2422091239797d04524e2f5feaa49",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python3 -m unittest tests.test_materialize && node --test viewer/test/*.test.mjs && python3 -m unittest discover -s experiments/grouped-ablation -p 'test_materials.py'",
+    "exit": 0,
+    "output_sha256": "9450e5f835bf7346980764256ba870574d431182cde97b35edeccd55dc30d10c"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "6e147ca4946a0796c96e908c6df86092be9b6604adbfa565b1af95bec329b489",
+    "counts": {
+      "library": 123,
+      "experiments/grouped-ablation": 240,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 87,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/CHANGES.md",
+      "bytes": 59243,
+      "sha256": "abb8fa70740a7a9ab4ad2daf02c984dd8e45268e2a68a0fa724ccbf8232af4c9"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-6-cached/interpretation.md",
+      "bytes": 2801,
+      "sha256": "c72ea7e184480c8261a0a803c5bc520cfa1c1e60cf42ab1299060f7db03fef75"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json",
+      "bytes": 6690,
+      "sha256": "527ccd826182dabcacef17da836a4223ef0382679459ab5d119b62ae2323ced9"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/hits.py",
+      "bytes": 5176,
+      "sha256": "1e772a8bcba2d14596f04e1a81cd432ef0947870befcee8a53257837c8b52246"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/materialize_run.py",
+      "bytes": 6046,
+      "sha256": "0e9c954da31fe01325b46d6c52587e150e6b9adadceab6a80bdf0b0ce35e0375"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/run_cached.py",
+      "bytes": 20410,
+      "sha256": "4da91f12a59c0509b2195d9d89ef7d64605c7cfe5a1698e3cd3ed425106ca795"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/test_run_cached.py",
+      "bytes": 13281,
+      "sha256": "388063d9949e422c8dd2e6a2d8d044d5a888c3c204e5cd3266ad87902d787597"
+    },
+    {
+      "path": "pyto/experiments/tasks/0/HANDOFF.md",
+      "bytes": 45922,
+      "sha256": "7619e8cc8e21e844e8fbe5ce5382616c1e40c4cd7dc253928ecab535ec10f886"
+    },
+    {
+      "path": "pyto/experiments/tasks/0/evidence/check_all.txt",
+      "bytes": 104294,
+      "sha256": "de930e38ed3130511353e4c45c05ea077a7d34b3a7cd17265083aa07eadd1b83"
+    },
+    {
+      "path": "pyto/experiments/tasks/0/evidence/verify.txt",
+      "bytes": 19203,
+      "sha256": "a50cd27fc8629e190c53a60803958fc40d86922c49524c164afa80e4f6d4cc28"
+    },
+    {
+      "path": "pyto/experiments/tasks/0/packet.md",
+      "bytes": 42442,
+      "sha256": "5fb739b6dd1dcd6e16973af06dac86cc9651ef1cf74fac8c85ff5698a70125a5"
+    },
+    {
+      "path": "pyto/questions.md",
+      "bytes": 39488,
+      "sha256": "59a845997d54d130a7b812512ba4aac2748f7b8dba3d288f0dee08e35704ef1a"
+    },
+    {
+      "path": "pyto/scripts/check_all.sh",
+      "bytes": 9546,
+      "sha256": "154baed73c7a162c4e2cde35b1820037055c9542c907a8f74b4e5f1e955340a3"
+    },
+    {
+      "path": "pyto/tests/test_materialize.py",
+      "bytes": 41197,
+      "sha256": "da4d527a4234fd725fca0ce0542cc974f3b551996e6a79570cb7c6856172a141"
+    },
+    {
+      "path": "pyto/viewer/README.md",
+      "bytes": 15008,
+      "sha256": "5fd92bf4542d4cdfa43a1de218536a1189f71c0b64f3af8c34c5e5536be38aeb"
+    },
+    {
+      "path": "pyto/viewer/RECORD.md",
+      "bytes": 7734,
+      "sha256": "f4ef2b16e1fea42e0068ac83452a796f16a91baae2c673ab9e5d0f48b174c968"
+    },
+    {
+      "path": "pyto/viewer/adapters.js",
+      "bytes": 32414,
+      "sha256": "a9184a65b21e5b34f20178e61f80f7e2be8c3cb0df63303239a6a41160ce72ca"
+    },
+    {
+      "path": "pyto/viewer/fixtures/pyto-value-kinds.json",
+      "bytes": 19166,
+      "sha256": "e061aa37b72fdfd9791177287d6882c0ba069c92b879213d8d5d7c5de214f614"
+    },
+    {
+      "path": "pyto/viewer/test/adapters.test.mjs",
+      "bytes": 36392,
+      "sha256": "94477a146c2368efa54e59c0b6d4e14e6f1d5092c4c58079b61ff9123577c551"
+    },
+    {
+      "path": "pyto/viewer/test/emit_adapter_records.mjs",
+      "bytes": 2526,
+      "sha256": "8910e6960fd47411170bef5708b321557ec58f07fe1cb1c529c1ca11c23d6de1"
+    },
+    {
+      "path": "pyto/viewer/test/record_schema.py",
+      "bytes": 13448,
+      "sha256": "746d33dc5b439042906322ec6d2054d5d729381ce2321c0f09b0969cfa614a3e"
+    },
+    {
+      "path": "pyto/viewer/test/render.test.mjs",
+      "bytes": 20529,
+      "sha256": "47c3ffe1c109ccaf1097b4b321582cbb80f8e6d5d98a474d692efe9464787723"
+    },
+    {
+      "path": "pyto/viewer/test/test_record_schema.py",
+      "bytes": 21063,
+      "sha256": "9276b4c26f88702cc32761c4dfe6a458f0532e58329279332116e679ddd3af5b"
+    },
+    {
+      "path": "pyto/viewer/tick-viewer.js",
+      "bytes": 21287,
+      "sha256": "091cb383e530b2418ecbb5c0990432c1066cc72f5872674a56698af28e95a212"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-09T09:08:38.925339Z",
+  "result_sha": "7d2448de2e38568967ca14fc8f1a722da7cd7b5d",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

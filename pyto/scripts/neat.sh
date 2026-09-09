@@ -6,35 +6,49 @@
 #   neat show <id>            print the hand-off (what a fresh agent gets)
 #   neat drop <id> <path>...  put those files back to the starting point, repack
 #   neat land <id>            merge into MAIN, verify, receipt, commit, push; EXP/<id> goes away
-#   neat kill <id>            abandon: EXP/<id> and its branch go away, nothing lands
+#   neat kill <id>            abandon: EXP/<id> goes away, nothing lands; exp/<id> is kept (nothing is deleted)
 #   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
+#   neat update <id>          bring MAIN's newer commits into EXP/<id> (a conflict names the files and stops)
 #   neat list                 every experiment and its state
+#   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
 #
-# MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN),
-# with its own .venv so the suite in EXP/<id> tests EXP/<id>'s kernel, not MAIN's. The packet lives
-# inside the experiment at pyto/experiments/tasks/<id>/ so it travels with the branch and lands with
-# the candidate. IDs are plain numbers from 0.
+# MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN).
+# In a pyto repository (pyto/pyproject.toml is there) the copy gets its own .venv so the suite in
+# EXP/<id> tests EXP/<id>'s kernel, not MAIN's, and the packet lives at pyto/experiments/tasks/<id>/;
+# in any other repository there is no venv and the packet lives at .neat/tasks/<id>/. Either way the
+# packet travels with the branch and lands with the candidate. IDs are plain numbers from 0.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(git -C "$HERE" rev-parse --show-toplevel)"
 PY="$ROOT/pyto"
+# The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
+# then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
+# where a Store Python's editable install lands in the user site that -I ignores. The repository is
+# wherever git says it is, so this works when the scripts do not sit in pyto/scripts/.
+if [ -z "${PYTHON:-}" ]; then
+  for _c in "$ROOT/.venv/bin/python" "$ROOT/.venv/Scripts/python.exe"; do
+    [ -x "$_c" ] && PYTHON="$_c" && break
+  done
+fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 EXP="$ROOT/EXP"
 if [ -f "$ROOT/pyto/pyproject.toml" ]; then
   PYTO_MODE=1
   TASKS="pyto/experiments/tasks"
   LAND_REL="pyto/experiments/landings/"
+  BOARD_REL="pyto/BOARD.md"
 else
   PYTO_MODE=0
   TASKS=".neat/tasks"
   LAND_REL=".neat/landings/"
+  BOARD_REL=".neat/BOARD.md"
 fi
 BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
 URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#https://#' || echo '<origin>')"
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,12p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,13p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: "
   grep -m1 "^$1: " "$2" | sed "s/^$1: //"
 }
@@ -46,7 +60,8 @@ next_id() { # the highest id seen anywhere: local copies, landed packets, and ex
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
-  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##'); do
+  # landed tasks on origin's copy of this branch count too: another clone may have landed since we pulled
+  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##') $(git -C "$ROOT" ls-tree --name-only "origin/$BRANCH:$TASKS" 2>/dev/null); do
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
@@ -58,11 +73,16 @@ venv_python() { # <id>
   else echo "$PYTHON"; fi
 }
 packet_of() { echo "$EXP/$1/$TASKS/$1/packet.md"; }
+hostpath() { # Git Bash on Windows: pip and python want D:\... not /d/...; elsewhere the path is unchanged
+  if command -v cygpath >/dev/null 2>&1; then cygpath -w "$1"; else printf '%s\n' "$1"; fi
+}
 need_exp() { [ -d "$EXP/$1" ] || die "no experiment EXP/$1 (neat list)"; }
-status_without_untracked_landings() {
-  local line
+status_without_bookkeeping() { # MAIN's status minus the landing script's own leavings: receipts and the board
+  local line path
   while IFS= read -r line; do
-    case "$line" in "?? $LAND_REL"*) ;; *) printf '%s\n' "$line";; esac
+    path="${line:3}"; path="${path##* -> }"
+    case "$path" in "$LAND_REL"*|"$BOARD_REL") continue;; esac
+    printf '%s\n' "$line"
   done < <(git -C "$ROOT" status --porcelain --untracked-files=all)
 }
 
@@ -75,6 +95,8 @@ cmd_new() {
   id="$(next_id)"; base="$(git -C "$ROOT" rev-parse HEAD)"; subject="$(git -C "$ROOT" log -1 --format=%s)"
   mkdir -p "$EXP"
   git -C "$ROOT" worktree add -q "$EXP/$id" -b "exp/$id" HEAD
+  # Reserve the id everywhere at once: another clone computing its next id sees this branch on origin.
+  git -C "$ROOT" push -q -u origin "exp/$id" 2>/dev/null && echo "  reserved exp/$id on origin" || echo "  (origin not reachable; the id is reserved only here until the first push)"
   mkdir -p "$EXP/$id/$TASKS/$id"
   cat > "$(packet_of "$id")" <<EOF
 # Task $id
@@ -95,15 +117,11 @@ EOF
   if [ "$PYTO_MODE" -eq 1 ]; then
     echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
     "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
-    pip_target="$EXP/$id/pyto[drawing]"
-    if command -v cygpath >/dev/null 2>&1; then
-      pip_target="$(cygpath -w "$EXP/$id/pyto")[drawing]"
+    "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$(hostpath "$EXP/$id/pyto")[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
+    if "$(venv_python "$id")" -c 'import os, sys, pyto; sys.exit(0 if os.path.realpath(pyto.__file__).startswith(os.path.realpath(sys.argv[1])) else 1)' "$(hostpath "$EXP/$id")" 2>/dev/null
+    then echo "  its python imports pyto from EXP/$id"
+    else die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working."
     fi
-    "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$pip_target" 2>&1 | grep -v "^$" | tail -2 || true
-    case "$("$(venv_python "$id")" -c 'import pyto; print(pyto.__file__)' 2>/dev/null)" in
-      "$EXP/$id/"*) echo "  its python imports pyto from EXP/$id";;
-      *) die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working.";;
-    esac
   else
     echo "  plain repository: no venv or pip install"
   fi
@@ -122,6 +140,10 @@ intent, start, verify, allow = f('Intent'), f('Starting point'), f('Verify'), f(
 base = start.split()[0]
 unc = text.split('## Uncertain', 1)[1].strip() if '## Uncertain' in text else ''
 git = lambda *a: subprocess.run(['git', '-C', wt, *a], capture_output=True, text=True).stdout
+# After `neat update` merged MAIN into the copy, the candidate is what the copy adds beyond MAIN
+# as it stands, never MAIN's own commits: diff from the merge base with the working branch.
+merge_base = git('merge-base', 'HEAD', branch).strip() or base
+base = merge_base
 stat = git('diff', '--stat', base, 'HEAD', '--', '.', ':!' + tasks).strip()
 names = [l for l in git('diff', '--name-status', base, 'HEAD', '--', '.', ':!' + tasks).splitlines() if l.strip()]
 cand = '\n'.join('- ' + l.replace('\t', '  ') for l in names) or '- (nothing changed)'
@@ -299,9 +321,7 @@ cmd_kill() {
   local id="${1:-}"; [ -n "$id" ] || usage
   git -C "$ROOT" worktree remove --force "$EXP/$id" 2>/dev/null || true
   rm -rf "$EXP/$id"
-  git -C "$ROOT" branch -D "exp/$id" >/dev/null 2>&1 || true
-  git -C "$ROOT" push -q origin --delete "exp/$id" 2>/dev/null || true
-  echo "task $id abandoned; nothing landed"
+  echo "task $id abandoned; nothing landed. exp/$id is kept (git branch -D exp/$id, and on origin: git push origin --delete exp/$id, when you're sure)"
 }
 
 cmd_undo() {
@@ -309,7 +329,7 @@ cmd_undo() {
   local sha intent parents
   sha="$(git -C "$ROOT" log --format=%H --grep="^land(task-$id): " -n 1)"
   [ -n "$sha" ] || die "no landing commit for task $id (git log --grep 'land(task-$id)')"
-  [ -z "$(status_without_untracked_landings)" ] || die "MAIN is not clean; undo needs a clean tree"
+  [ -z "$(status_without_bookkeeping)" ] || die "MAIN is not clean; undo needs a clean tree"
   intent="$(git -C "$ROOT" log -1 --format=%s "$sha" | sed "s/^land(task-$id): //")"
   parents="$(git -C "$ROOT" rev-list --parents -n 1 "$sha" | wc -w)"
   echo "== undo task $id: $intent  (landing ${sha:0:7})"
@@ -321,6 +341,21 @@ cmd_undo() {
   else
     git -C "$ROOT" checkout -q -- . && git -C "$ROOT" clean -fdq -e "$LAND_REL"
     echo "undo of task $id did not land (see the reason above); MAIN is as it was" >&2; exit 1
+  fi
+}
+
+cmd_update() {
+  local id="${1:-}"; [ -n "$id" ] || usage; need_exp "$id"
+  local wt="$EXP/$id" behind
+  behind="$(git -C "$wt" rev-list --count "HEAD..$BRANCH")"
+  [ "$behind" -gt 0 ] || { echo "EXP/$id already has everything on MAIN"; return 0; }
+  echo "== update EXP/$id: MAIN has $behind newer commit(s)"
+  if git -C "$wt" merge -q --no-edit "$BRANCH" >/dev/null 2>&1; then
+    echo "merged; the suite in EXP/$id is worth a run before packing"
+  else
+    local files; files="$(git -C "$wt" diff --name-only --diff-filter=U | tr '\n' ' ')"
+    git -C "$wt" merge --abort
+    die "MAIN conflicts with EXP/$id in: $files  (regenerated evidence conflicts are re-made on the merged code, not merged by hand: merge in EXP/$id, regenerate, commit, then pack)"
   fi
 }
 
@@ -405,5 +440,6 @@ cmd_list() {
 
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
-  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; list) cmd_list "$@";; selftest) cmd_selftest "$@";; *) usage;;
+  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
+  list) cmd_list "$@";; selftest) cmd_selftest "$@";; *) usage;;
 esac

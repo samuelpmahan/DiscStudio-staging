@@ -1,0 +1,3 @@
+counters: {'requests': 2, 'hits': 1, 'misses': 1, 'writes': 1}
+ms saved this run: 0.071 over 2 observed hit(s)
+wrote D:/pyto-proof-20260909T095714Z-hit ['counters.json', 'interpretation.md', 'reuse-ledger.json']

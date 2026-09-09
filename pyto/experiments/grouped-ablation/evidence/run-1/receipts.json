@@ -14,7 +14,7 @@
     "declared_produces": [
       "scratch.ablation.comparison"
     ],
-    "duration_ms": 0.03186300091329031,
+    "duration_ms": 0.036860001273453236,
     "effective_arg_keys": [
       "all",
       "drop_g0",
@@ -25,9 +25,9 @@
       "baseline"
     ],
     "invocation_id": "compare",
-    "result_sha256": "664991b13ce937d0308131fd0a58cad1d46da85b3d3ea8470aa0468588123f10",
+    "result_sha256": "3cc2c6d22a5b9f0203f8112a7d3a939dc5dd37fe46b992af4fe0096ea0f48535",
     "shadowed_inputs": [],
-    "started_ms": 21829124.753654,
+    "started_ms": 32712071.371266,
     "writes": [
       {
         "address": "scratch.ablation.comparison",
@@ -43,23 +43,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.all"
     ],
-    "duration_ms": 5.663136998919072,
+    "duration_ms": 6.665373999567237,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.all",
-    "result_sha256": "339d487ebda662830c0b8c27b407d46dbdec3fcf957a6ea82c4bf5f68932213f",
+    "result_sha256": "3d35fe728482f5aa2107cf7bb9e223e6f9be01ef8d9e9ae6d17f9769a95d88c9",
     "shadowed_inputs": [],
-    "started_ms": 21829094.444555,
+    "started_ms": 32712036.122098003,
     "writes": [
       {
         "address": "scratch.ablation.model.all",
@@ -75,23 +75,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_g0"
     ],
-    "duration_ms": 3.426687999308342,
+    "duration_ms": 4.169771000306355,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_g0",
-    "result_sha256": "c3dbf808b5a18abe90ca4e4c894594d39d6cc04d35ef319fa693ebb2880c23f6",
+    "result_sha256": "4abdca3cca35bea19da79ce1f3901e6556fb41d69a5bad7a0a84f43b373993dc",
     "shadowed_inputs": [],
-    "started_ms": 21829100.720234,
+    "started_ms": 32712043.67493,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g0",
@@ -107,23 +107,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_g1"
     ],
-    "duration_ms": 3.4429929983161855,
+    "duration_ms": 4.114756997296354,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_g1",
-    "result_sha256": "4777fa0431006f22080d5441811ead16830e000076ae836a0e8f4033fdca374b",
+    "result_sha256": "71f1400ea96449d08a70601040aad29b6e2d885af3b255cfac6bf44dfd06ecbc",
     "shadowed_inputs": [],
-    "started_ms": 21829104.746966,
+    "started_ms": 32712048.650805,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g1",
@@ -139,23 +139,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_g2"
     ],
-    "duration_ms": 3.593920002458617,
+    "duration_ms": 4.233470997860422,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_g2",
-    "result_sha256": "146cb9a2127384cebd3791395664dac37c7cabfff27ea43dff60eca3882cfa17",
+    "result_sha256": "f1398bb12feb1cf1c2a0c8e3e175e3c804c944f3baabab5807ddd40063628e82",
     "shadowed_inputs": [],
-    "started_ms": 21829108.788732,
+    "started_ms": 32712053.510868,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g2",
@@ -171,23 +171,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_g3"
     ],
-    "duration_ms": 3.666838998469757,
+    "duration_ms": 4.08880500253872,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_g3",
-    "result_sha256": "d88892fa98ef8972fb44f56e80d932872a00056b807f10a246b1200e6158f902",
+    "result_sha256": "c00a728b422ba43a93325996b448bef85bda96b9bb94547dcde5915b55e95f83",
     "shadowed_inputs": [],
-    "started_ms": 21829112.96194,
+    "started_ms": 32712058.458843,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g3",
@@ -203,23 +203,23 @@
     "calculation": {
       "address": "fn.ablation.fit",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b",
+      "implementation_sha256": "3a060a4a96fcf624f692496eac627e66d7ae39a8d8b267c05c0fa7619a3e4f8c",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.model.drop_g4"
     ],
-    "duration_ms": 3.381773000000976,
+    "duration_ms": 4.09418200069922,
     "effective_arg_keys": [
       "split",
       "columns",
       "variant"
     ],
     "invocation_id": "fit.drop_g4",
-    "result_sha256": "a0b4dc4d6cd0329b0deff96e06a6610d56e64b73da78ef2ee3e79b7cb69b34fc",
+    "result_sha256": "915f8f3de216b77b9c5eef7a472df71b4c9241c2222ce8707ea8fa152e044784",
     "shadowed_inputs": [],
-    "started_ms": 21829117.401832998,
+    "started_ms": 32712063.265134998,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g4",
@@ -235,22 +235,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.all"
     ],
-    "duration_ms": 0.1721660009934567,
+    "duration_ms": 0.21257199841784313,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.all",
-    "result_sha256": "c1b8ad4982170d36c1888fe8085f55d43187d65f1c2dae420ae265f4f1cbfe6d",
+    "result_sha256": "76a3ac4106d0e15fbacf9a49b2e54a080cf01434f0a16b4b905909dff9d303e7",
     "shadowed_inputs": [],
-    "started_ms": 21829121.434221,
+    "started_ms": 32712068.102974,
     "writes": [
       {
         "address": "scratch.ablation.score.all",
@@ -266,22 +266,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_g0"
     ],
-    "duration_ms": 0.14349299817695282,
+    "duration_ms": 0.1847240018832963,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.drop_g0",
-    "result_sha256": "3cfdced3745464f87adfa833bf7d6c1556b6094929a5de91492182b211eef6c4",
+    "result_sha256": "965351552cd608f2d4fe1ef951d2bc3731946fc1e2e51111f3a6b3a7994411ea",
     "shadowed_inputs": [],
-    "started_ms": 21829122.035794,
+    "started_ms": 32712068.70198,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g0",
@@ -297,22 +297,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_g1"
     ],
-    "duration_ms": 0.1346120006928686,
+    "duration_ms": 0.1723669993225485,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.drop_g1",
-    "result_sha256": "a565360d11ef51f99c79b03399b657522d51f560e32660fd08698ae6e3d197a8",
+    "result_sha256": "65cd4ac56cbc2e464f1061521870b3b67697649cd1b535682c887cd62a311f77",
     "shadowed_inputs": [],
-    "started_ms": 21829122.54844,
+    "started_ms": 32712069.253017,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g1",
@@ -328,22 +328,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_g2"
     ],
-    "duration_ms": 0.13541299995267764,
+    "duration_ms": 0.1876540009106975,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.drop_g2",
-    "result_sha256": "744d5142c6a065cfeeff3b5c01570b3f3678d682166903cfc02bc001811a2957",
+    "result_sha256": "b22a4f0282144d5d9ba527a96d8d3008c83f0aa815e4611d81e27ee0f55c9d5b",
     "shadowed_inputs": [],
-    "started_ms": 21829123.067652,
+    "started_ms": 32712069.787053,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g2",
@@ -359,22 +359,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_g3"
     ],
-    "duration_ms": 0.22115899992058985,
+    "duration_ms": 0.15573600103380159,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.drop_g3",
-    "result_sha256": "6399d6b51b92b97c4be369a5cfb7d995f7d4da48f122866de6d323304296156f",
+    "result_sha256": "29ea6fc4497fecc89fbf2ee20a5ae0e1b83ae1b7a69c22d0802e9ef8a85000b8",
     "shadowed_inputs": [],
-    "started_ms": 21829123.565063,
+    "started_ms": 32712070.338538,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g3",
@@ -390,22 +390,22 @@
     "calculation": {
       "address": "fn.ablation.score",
       "identity_scope": "runtime-function-body",
-      "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0",
+      "implementation_sha256": "9ac1eb0ca9492e7ece93ef16412dc70679207f22ca5f193565c3e18a926eb1c8",
       "limitation": "called helpers, constants, templates, and assets are not covered"
     },
     "declared_consumes": [],
     "declared_produces": [
       "scratch.ablation.score.drop_g4"
     ],
-    "duration_ms": 0.13840799874742515,
+    "duration_ms": 0.18700399959925562,
     "effective_arg_keys": [
       "split",
       "model"
     ],
     "invocation_id": "score.drop_g4",
-    "result_sha256": "3cbfa3e2c5e15101badb26ca3cd7e3331ba77329ae1adcfe72048fe5b1c4c8d2",
+    "result_sha256": "1283b0d3684bcad12172a67dfc689d5e55d3716b0031431d2eb0af9990aae80b",
     "shadowed_inputs": [],
-    "started_ms": 21829124.252867002,
+    "started_ms": 32712070.831806,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g4",
@@ -432,14 +432,14 @@
     "declared_produces": [
       "scratch.ablation.variants"
     ],
-    "duration_ms": 0.023161999706644565,
+    "duration_ms": 0.03483399996184744,
     "effective_arg_keys": [
       "groups"
     ],
     "invocation_id": "select",
     "result_sha256": "543f82368703f91864818dd4f57614824feb4e4407f41feac7d43d6e8e07c1f7",
     "shadowed_inputs": [],
-    "started_ms": 21829085.545798,
+    "started_ms": 32712027.107396,
     "writes": [
       {
         "address": "scratch.ablation.variants",
@@ -466,14 +466,14 @@
     "declared_produces": [
       "scratch.ablation.split"
     ],
-    "duration_ms": 0.04719000207842328,
+    "duration_ms": 0.06470000153058209,
     "effective_arg_keys": [
       "rows"
     ],
     "invocation_id": "split",
-    "result_sha256": "a356f9a95abbaa7e0a2677738ff7d80cb2aab9d8cd8f986d46e53eafcd371e38",
+    "result_sha256": "cefbd6bdda24c1770b8dd863559305b4b4ebc60ccc179fab0a1499297963f4f0",
     "shadowed_inputs": [],
-    "started_ms": 21829088.609532997,
+    "started_ms": 32712030.410506,
     "writes": [
       {
         "address": "scratch.ablation.split",

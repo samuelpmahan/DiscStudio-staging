@@ -1,0 +1,140 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T135010Z-task-17",
+  "package": "task-17",
+  "base_sha": "12c65281bf9999f5d44ff5b1b883594ca9d5cdb0",
+  "result": "verified",
+  "verifier": {
+    "command": "P=.venv/bin/python; [ -x \"$P\" ] || P=.venv/Scripts/python.exe; \"$P\" -m unittest discover -s pyto/experiments/cross-project -q",
+    "exit": 0,
+    "output_sha256": "ae50a2de28a292c2ac956e7c181a35d831efd7b7e8d433444a57ecbad468cebd"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "84e8d19bf2de4796509a3fb0a1c83e0c426da275e698bffe723a931ea728ae68",
+    "counts": {
+      "library": 144,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 240,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 95,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/experiments/cross-project/evidence/run-1/counters.json",
+      "bytes": 63,
+      "sha256": "0b58d27cb8d869545299accdee47c52c70c43b18053fbb0083681d1359e4afa2"
+    },
+    {
+      "path": "pyto/experiments/cross-project/evidence/run-1/cross-project-ledger.json",
+      "bytes": 1711,
+      "sha256": "7797a40b49d9afd5bc6e970e3884cb5a2ee22e6c0284a490d2d63ffa631fb319"
+    },
+    {
+      "path": "pyto/experiments/cross-project/evidence/run-1/interpretation.md",
+      "bytes": 2838,
+      "sha256": "652c25af86f0a39f9950d8fc62ddae0d8b88b28898e3be0a53773354398e5c54"
+    },
+    {
+      "path": "pyto/experiments/cross-project/program.py",
+      "bytes": 7323,
+      "sha256": "081038b79708f15a289242d789b85ed5d2a629d9acd4be17870e0a5962472820"
+    },
+    {
+      "path": "pyto/experiments/cross-project/run.py",
+      "bytes": 16002,
+      "sha256": "80347c370b2b5059acedc7799fec3fb8c2117428d3618eaacbdb2bb865c2b31b"
+    },
+    {
+      "path": "pyto/experiments/cross-project/test_cross_project.py",
+      "bytes": 11130,
+      "sha256": "eec85c9ddb2aca68b5fc3e530c89cc3e669fa66b638164d547fd5f60785a9eef"
+    },
+    {
+      "path": "pyto/experiments/tasks/17/HANDOFF.md",
+      "bytes": 8103,
+      "sha256": "96584e714b7612d1173a512532b2ec47d722ba6e79f9791b42df3e21eea810cb"
+    },
+    {
+      "path": "pyto/experiments/tasks/17/evidence/check_all.txt",
+      "bytes": 111620,
+      "sha256": "3b45c839912a06ac9db1e7f061f77746e628ffb7b921d619af212c41aa1ed979"
+    },
+    {
+      "path": "pyto/experiments/tasks/17/evidence/verify.txt",
+      "bytes": 101,
+      "sha256": "2b913cb20e0b566e7d255b9263aa61674477a199ac3dfa910cdefe7c3dae23a4"
+    },
+    {
+      "path": "pyto/experiments/tasks/17/packet.md",
+      "bytes": 4646,
+      "sha256": "7975cfea1563deb3a5d44b619ae0f3441866c76f596588eb0a35a7e5b00db0f5"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 32556,
+      "sha256": "fa0c392c01e2acf9fcba7bf7656c8a8766ef5e58d958059c03bc55b4c6559b64"
+    },
+    {
+      "path": "pyto/experiments/tasks/16/HANDOFF.md",
+      "bytes": 7054,
+      "sha256": "9d9905108c51a787247d3efe97df82be19c5a7bf05b491902e512bff9b89ad8e"
+    },
+    {
+      "path": "pyto/experiments/tasks/16/evidence/check_all.txt",
+      "bytes": 111027,
+      "sha256": "32c7a7f6c3d8c9a5604f0b18b383244af0dac1bd848e86b3c417914591fa5880"
+    },
+    {
+      "path": "pyto/experiments/tasks/16/evidence/verify.txt",
+      "bytes": 20369,
+      "sha256": "0e5f1b59fdf35a6f256bfe1b7172db519c7d45928678b79283b231a4bee45cc0"
+    },
+    {
+      "path": "pyto/experiments/tasks/16/packet.md",
+      "bytes": 3583,
+      "sha256": "b6bfc31c9b7591180ca2cdb2cd9fa7d2b6f4aac580e3114c76e72ff6925e182a"
+    },
+    {
+      "path": "pyto/viewer/README.md",
+      "bytes": 16045,
+      "sha256": "d8fa705efda88952848511db861d1253f8db36a5503b413f40148560590b6bc6"
+    },
+    {
+      "path": "pyto/viewer/embed.mjs",
+      "bytes": 5082,
+      "sha256": "3691b506a46091a4a1f98eefa3982fa35ad024b6774ee17cc6af85faa21911f4"
+    },
+    {
+      "path": "pyto/viewer/test/playback.test.mjs",
+      "bytes": 4789,
+      "sha256": "5232bc0d0c814697608481f68c8a2dbf9600dfb337281251e19fa79175c6f398"
+    },
+    {
+      "path": "pyto/viewer/test/render.test.mjs",
+      "bytes": 21506,
+      "sha256": "b99f636e3b9fae8c29daff5a81158d883d177bbc52e2c7f1cdcb6f24e43a677e"
+    },
+    {
+      "path": "pyto/viewer/tick-viewer.html",
+      "bytes": 8815,
+      "sha256": "593c1c0c2600bf1c2938fdecbea4a8fd971628ddaf4387d2d0e40904f665d395"
+    },
+    {
+      "path": "pyto/viewer/tick-viewer.js",
+      "bytes": 26657,
+      "sha256": "aea2b89d6ca07733d424821afd86493086a07d2d5a86667ec5578fb2267cd379"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-09T13:51:26.479124Z",
+  "result_sha": "b7efc9f60b6296cf8736ef766c199ce161eb2d75",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

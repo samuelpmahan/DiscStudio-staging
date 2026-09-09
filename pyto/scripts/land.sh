@@ -8,9 +8,18 @@
 #         candidate; the receipt lists every file changed since base, split into claimed (under
 #         the allowed paths) and unclaimed (present, verified with the mixture, not this package's).
 set -euo pipefail
-PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$HERE" && git rev-parse --show-toplevel)"
+# The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
+# then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
+# where a Store Python's editable install lands in the user site that -I ignores. The repository is
+# wherever git says it is, so this works when the scripts do not sit in pyto/scripts/.
+if [ -z "${PYTHON:-}" ]; then
+  for _c in "$ROOT/.venv/bin/python" "$ROOT/.venv/Scripts/python.exe"; do
+    [ -x "$_c" ] && PYTHON="$_c" && break
+  done
+fi
+PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 if [ -f "$ROOT/pyto/pyproject.toml" ]; then
   PY="$ROOT/pyto"
   PYTO_MODE=1
@@ -41,10 +50,12 @@ if [ "$PYTO_MODE" -eq 1 ]; then
   LAND_DIR="$PY/experiments/landings"
   LAND_REL="pyto/experiments/landings/"
   BOARD="$PY/BOARD.md"
+  BOARD_REL="pyto/BOARD.md"
 else
   LAND_DIR="$ROOT/.neat/landings"
   LAND_REL=".neat/landings/"
   BOARD="$ROOT/.neat/BOARD.md"
+  BOARD_REL=".neat/BOARD.md"
 fi
 WORK="$LAND_DIR/$ID"
 BASE_SHA="$(git rev-parse "${BASE:-HEAD}")"
@@ -99,21 +110,23 @@ if git fetch -q origin "$UPSTREAM" 2>/dev/null && ! git merge-base --is-ancestor
 fi
 
 # 0b. A branch candidate: the main tree must be clean, then the branch is merged without committing.
-# Ignore only untracked landing receipts and registered neat worktrees. Other EXP files remain blockers.
+# Refusals leave failed receipts and board lines behind; those are the landing's own bookkeeping, not
+# a candidate, and neither are the registered neat worktrees. Other EXP files remain blockers.
 main_status() {
   local line path worktree
   while IFS= read -r line; do
+    path="${line:3}"; path="${path##* -> }"
+    case "$path" in "$LAND_REL"*|"$BOARD_REL") continue;; esac
     case "$line" in
-      "?? $LAND_REL"*) continue;;
       "?? EXP/"*)
-        path="${line#?? }"; path="${path%/}"; worktree="$ROOT/$path"
+        worktree="$ROOT/${path%/}"
         if git worktree list --porcelain | awk -v worktree="$worktree" '$0 == "worktree " worktree { found = 1 } END { exit !found }'; then continue; fi;;
     esac
     printf '%s\n' "$line"
   done < <(git status --porcelain --untracked-files=all)
 }
 if [ -n "$FROM" ]; then
-  [ -z "$(main_status)" ] || fail "the tree is not clean; a branch can only land into a clean tree"
+  [ -z "$(main_status)" ] || fail "the tree is not clean; a branch can only land into a clean tree (dirty: $(main_status | cut -c4- | sed 's/.* -> //' | tr '\n' ' '))"
   git rev-parse -q --verify "$FROM^{commit}" >/dev/null || fail "no such branch: $FROM"
   [ -n "$BASE" ] || BASE_SHA="$(git merge-base HEAD "$FROM")"
   if ! git merge --no-commit --no-ff -q "$FROM" >/dev/null 2>&1; then

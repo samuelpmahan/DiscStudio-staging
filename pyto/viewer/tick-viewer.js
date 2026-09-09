@@ -11,7 +11,7 @@
  * run under a minimal document shim in `node --test` with no jsdom.
  */
 
-import { validate, bareAddress, tickDurationMs, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords } from './adapters.js';
+import { validate, bareAddress, tickDurationMs, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex } from './adapters.js';
 
 /* ------------------------------------------------------------------ */
 /* small DOM helpers (doc is always explicit)                          */
@@ -120,7 +120,7 @@ export function renderValue(doc, value) {
     if (typeof value.data !== 'string' || !value.data.startsWith(PNG_DATA_URL_PREFIX)) {
       box.appendChild(el(doc, 'p', {
         className: 'note omitted',
-        text: `value not rendered: kind "png-data-url" must be a ${PNG_DATA_URL_PREFIX}... string (RECORD.md:60-61)`
+        text: `value not rendered: kind "png-data-url" must be a ${PNG_DATA_URL_PREFIX}... string (RECORD.md:109-110)`
       }));
     } else {
       box.appendChild(el(doc, 'figure', { className: 'material' }, [
@@ -337,6 +337,53 @@ export function renderRecord(record, { doc = globalThis.document, filter = '' } 
 }
 
 /* ------------------------------------------------------------------ */
+/* watch it think: playback scheduling (pure -- no DOM, no timers)     */
+/* ------------------------------------------------------------------ */
+
+// A run with no recorded durations plays at this fixed pace, unscaled by speed.
+const FIXED_STEP_MS = 400;
+
+function scheduleRound3(value) {
+  return Math.round(value * 1000) / 1000;
+}
+
+/**
+ * Ordered {tick, invocation, at_ms} events: each Calculation "finishes" at
+ * the cumulative sum of the durations recorded before it, in record order,
+ * scaled by speedFactor (1 = real time, 10/100 = that many times slower).
+ */
+export function computeSchedule(record, speedFactor = 1) {
+  const hasDurations = record.ticks.some((tick) => tick.invocations.some((invocation) => typeof invocation.duration_ms === 'number'));
+  const events = [];
+  let cumulative = 0;
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) {
+      if (hasDurations) cumulative += typeof invocation.duration_ms === 'number' ? invocation.duration_ms : 0;
+      else cumulative += FIXED_STEP_MS;
+      events.push({ tick: tick.index, invocation: invocation.id, at_ms: hasDurations ? scheduleRound3(cumulative * speedFactor) : cumulative });
+    }
+  }
+  return events;
+}
+
+/** The record as it stood at atMs, with parts/counters re-derived so it still validates, and the event currently completing. */
+export function scheduleFrame(record, schedule, atMs) {
+  const shown = new Set();
+  let now = null;
+  for (const event of schedule) {
+    if (event.at_ms > atMs) break;
+    shown.add(event.invocation);
+    now = event;
+  }
+  const ticks = [];
+  for (const tick of record.ticks) {
+    const invocations = tick.invocations.filter((invocation) => shown.has(invocation.id));
+    if (invocations.length) ticks.push({ ...tick, invocations });
+  }
+  return { record: { ...record, ticks, parts: derivePartIndex(ticks), counters: deriveCounters(ticks) }, now };
+}
+
+/* ------------------------------------------------------------------ */
 /* loading a record: embedded block, file, drop, ?src=                 */
 /* ------------------------------------------------------------------ */
 
@@ -347,6 +394,34 @@ export function readEmbeddedRecord(doc) {
   const text = (node.textContent || '').trim();
   if (!text) return null;
   return fromPytoRecord(JSON.parse(text));
+}
+
+/**
+ * "Four worlds, one terminal": records baked by `embed.mjs --out worlds.html`
+ * (two-or-more inputs, or `--worlds`), as <script id="records">[{label,
+ * record, error, empty, note}]</script>. `record` is already a validated
+ * pyto-run-record@1; `error` names why a world's input never became one.
+ */
+export function readEmbeddedWorlds(doc) {
+  const node = doc.getElementById ? doc.getElementById('records') : null;
+  if (!node) return null;
+  const text = (node.textContent || '').trim();
+  if (!text) return null;
+  const parsed = JSON.parse(text);
+  return Array.isArray(parsed) && parsed.length ? parsed : null;
+}
+
+/** A world whose input failed validation: loud, naming the reason, never a blank panel. */
+export function renderUnknown(doc, label, reason) {
+  return el(doc, 'div', { className: 'status error unknown-panel' }, [
+    el(doc, 'p', { className: 'unknown-title', text: `UNKNOWN — ${label}` }),
+    el(doc, 'p', { className: 'unknown-reason', text: reason })
+  ]);
+}
+
+/** A world with no input at all (ChainSpot): a labelled empty slot, not a fake record. */
+export function renderEmptySlot(doc, label, note) {
+  return el(doc, 'p', { className: 'none', text: `${label}: ${note}` });
 }
 
 /**
@@ -364,13 +439,104 @@ export function coerceToRecord(parsed) {
   throw new Error('Unrecognized document: expected a pyto-run-record@1, or {pql, receipt} / {receipts} / {records} from a LAB runtime.');
 }
 
+/** Playback controller: Play, Pause, Step, Speed, and the now/clock markers. */
+function createPlayback(doc, output, filterBox, getRecord) {
+  const toggle = doc.getElementById('playback-toggle');
+  const bar = doc.getElementById('playback-bar');
+  if (!toggle || !bar) return { isActive: () => false, render() {}, onRecordChanged() {}, forceOff() {}, autostart() {} };
+
+  const speedSel = doc.getElementById('speed');
+  const nowEl = doc.getElementById('playback-now');
+  const clockEl = doc.getElementById('playback-clock');
+  let active = false;
+  let schedule = [];
+  let shown = 0;
+  let timer = null;
+
+  const clearTimer = () => { if (timer !== null) { clearTimeout(timer); timer = null; } };
+  const speedFactor = () => Number(speedSel ? speedSel.value : 1) || 1;
+
+  const render = () => {
+    while (output.firstChild) output.removeChild(output.firstChild);
+    const record = getRecord();
+    if (!record) return;
+    const atMs = shown ? schedule[shown - 1].at_ms : -1;
+    const { record: partial, now } = scheduleFrame(record, schedule, atMs);
+    output.appendChild(partial.ticks.length
+      ? renderRecord(partial, { doc, filter: filterBox ? filterBox.value : '' })
+      : el(doc, 'p', { className: 'none', text: 'watching for the first Calculation…' }));
+    if (nowEl) nowEl.textContent = now ? `tick ${now.tick} · ${now.invocation}` : 'not started';
+    if (clockEl) clockEl.textContent = `${now ? now.at_ms.toFixed(0) : '0'} ms`;
+  };
+
+  const revealOne = () => {
+    if (shown >= schedule.length) return;
+    shown += 1;
+    render();
+  };
+  const scheduleNext = () => {
+    clearTimer();
+    if (shown >= schedule.length) return;
+    const from = shown ? schedule[shown - 1].at_ms : 0;
+    timer = setTimeout(() => { revealOne(); scheduleNext(); }, Math.max(0, schedule[shown].at_ms - from));
+  };
+  const reset = () => {
+    clearTimer();
+    const record = getRecord();
+    schedule = record ? computeSchedule(record, speedFactor()) : [];
+    shown = 0;
+  };
+
+  toggle.addEventListener('click', () => {
+    active = !active;
+    toggle.setAttribute('aria-pressed', String(active));
+    bar.hidden = !active;
+    if (active) reset(); else clearTimer();
+    render();
+  });
+  const on = (id, fn) => { const node = doc.getElementById(id); if (node) node.addEventListener('click', fn); };
+  on('play-btn', () => { if (active) scheduleNext(); });
+  on('pause-btn', clearTimer);
+  on('step-btn', () => { if (active) { clearTimer(); revealOne(); } });
+  if (speedSel) speedSel.addEventListener('change', () => { if (active) { reset(); render(); } });
+
+  return {
+    isActive: () => active,
+    render,
+    onRecordChanged: () => { if (active) { reset(); render(); } },
+    // A world-picker switch onto a slot with no record: stop and rewind.
+    forceOff: () => {
+      clearTimer();
+      schedule = [];
+      shown = 0;
+      if (active) { active = false; toggle.setAttribute('aria-pressed', 'false'); bar.hidden = true; }
+    },
+    autostart: () => {
+      const params = new URLSearchParams(globalThis.location ? globalThis.location.search : '');
+      const flagged = params.get('play') === '1' || (doc.body && doc.body.getAttribute && doc.body.getAttribute('data-play') === '1');
+      if (!flagged) return;
+      active = true;
+      toggle.setAttribute('aria-pressed', 'true');
+      bar.hidden = false;
+      reset();
+      render();
+      scheduleNext();
+    }
+  };
+}
+
 /** Wire the page: embedded record, ?src=, file picker, drag and drop. */
 export function mount(doc = globalThis.document) {
   const output = doc.getElementById('output');
   const status = doc.getElementById('status');
   const filterBox = doc.getElementById('filter');
   const picker = doc.getElementById('file');
+  const worldWrap = doc.getElementById('world-wrap');
+  const worldSelect = doc.getElementById('world');
   let current = null;
+  let currentEntry = null; // world-picker mode only: the selected {label, record, error, empty, note}
+
+  const playback = createPlayback(doc, output, filterBox, () => current);
 
   const say = (message, isError = false) => {
     status.textContent = message;
@@ -378,7 +544,14 @@ export function mount(doc = globalThis.document) {
   };
 
   const draw = () => {
+    if (playback.isActive()) { playback.render(); return; }
     while (output.firstChild) output.removeChild(output.firstChild);
+    if (currentEntry && !currentEntry.record) {
+      output.appendChild(currentEntry.error != null
+        ? renderUnknown(doc, currentEntry.label, currentEntry.error)
+        : renderEmptySlot(doc, currentEntry.label, currentEntry.note || 'no record on file yet'));
+      return;
+    }
     if (!current) return;
     output.appendChild(renderRecord(current, { doc, filter: filterBox ? filterBox.value : '' }));
   };
@@ -387,6 +560,7 @@ export function mount(doc = globalThis.document) {
     try {
       current = coerceToRecord(parsed);
       say(`${label}: ${current.pcr} · ${current.source.runtime} · ${current.counters.invocations} invocations`);
+      playback.onRecordChanged();
       draw();
     } catch (error) {
       current = null;
@@ -426,11 +600,38 @@ export function mount(doc = globalThis.document) {
     if (file) file.text().then((text) => loadText(text, file.name));
   });
 
+  // Four worlds, one terminal: a picker switch swaps current/currentEntry and
+  // redraws -- never a reload -- and always resets playback state.
+  const worlds = readEmbeddedWorlds(doc);
+  if (worlds && worldSelect) {
+    worlds.forEach((entry, index) => {
+      worldSelect.appendChild(el(doc, 'option', { text: entry.label, attrs: { value: String(index) } }));
+    });
+    const selectWorld = (index) => {
+      const entry = worlds[index];
+      currentEntry = entry;
+      current = entry.record || null;
+      if (current) {
+        playback.onRecordChanged();
+        say(`${entry.label}: ${current.pcr} · ${current.source.runtime} · ${current.counters.invocations} invocations`);
+      } else {
+        playback.forceOff();
+        say(`${entry.label}: ${entry.error || entry.note || 'no record'}`, entry.error != null);
+      }
+      draw();
+    };
+    worldSelect.addEventListener('change', () => selectWorld(Number(worldSelect.value)));
+    if (worldWrap) worldWrap.hidden = false;
+    selectWorld(0);
+    return;
+  }
+
   const embedded = readEmbeddedRecord(doc);
   if (embedded) {
     current = embedded;
     say(`embedded record: ${embedded.pcr} · ${embedded.source.runtime} · ${embedded.counters.invocations} invocations`);
     draw();
+    playback.autostart();
     return;
   }
 
@@ -445,6 +646,7 @@ export function mount(doc = globalThis.document) {
     fetch(src)
       .then((response) => (response.ok ? response.text() : Promise.reject(new Error(`${response.status} ${response.statusText}`))))
       .then((text) => loadText(text, src))
+      .then(() => playback.autostart())
       .catch((error) => say(`${src}: ${error.message}`, true));
     return;
   }

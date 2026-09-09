@@ -113,7 +113,7 @@ class AdapterOutputs(unittest.TestCase):
         self.assertEqual(runtimes, ["chesslab", "discstudio", "pyto", "wumpus"])
 
     def test_the_parts_index_agrees_with_a_third_reading_of_the_rule(self):
-        # RECORD.md:66 calls `parts` derived. Python re-derives it from the
+        # RECORD.md:115 calls `parts` derived. Python re-derives it from the
         # invocations alone and has to land on what JavaScript wrote.
         for name, (_, record) in sorted(self.records.items()):
             with self.subTest(adapter=name):
@@ -134,7 +134,7 @@ class AdapterOutputs(unittest.TestCase):
                 )
 
     def test_a_runtime_that_records_nothing_writes_null_and_never_invents(self):
-        # RECORD.md:65 and :75. ChessLab retains no values and records no
+        # RECORD.md:114 and :124. ChessLab retains no values and records no
         # implementation hash, so those fields are null and the value kind is
         # "omitted" with a note -- the fields are still present.
         _, chesslab = self.records["chesslab"]
@@ -161,7 +161,7 @@ class AdapterOutputs(unittest.TestCase):
     def test_the_round_trip_is_equal_as_JSON_and_not_promised_as_bytes(self):
         # An honest limit, pinned here so nobody keys a digest on the record
         # file: JSON has one number type, so an integral float inside a value
-        # payload is written "0.0" by Python and "0" by JavaScript. RECORD.md:67
+        # payload is written "0.0" by Python and "0" by JavaScript. RECORD.md:116
         # constrains key order and indentation, not the spelling of a number,
         # and the two documents are equal once parsed.
         entry, through_js = self.records["pyto"]
@@ -197,7 +197,7 @@ class TheValidatorActuallyRejects(unittest.TestCase):
         self.assertIs(validate(self.record), self.record)
 
     def test_an_invented_field_is_rejected_wherever_it_appears(self):
-        # "Missing fields are null, never invented" (RECORD.md:65) reads both
+        # "Missing fields are null, never invented" (RECORD.md:114) reads both
         # ways: a field RECORD.md does not define is the invention it forbids.
         for path, expected in [
             ("provenance", "document"),
@@ -238,12 +238,23 @@ class TheValidatorActuallyRejects(unittest.TestCase):
             ("ticks.0.invocations.0.id", "", "ticks[0].invocations[0].id"),
             ("ticks.0.invocations.0.calculation.identity_scope", None,
              "ticks[0].invocations[0].calculation.identity_scope"),
-            # the testimony spelling survives into the record (RECORD.md:52)
+            # the testimony spelling survives into the record (RECORD.md:80)
             ("ticks.0.invocations.0.inputs.groups", "input.ablation.groups",
              "ticks[0].invocations[0].inputs.groups"),
             ("ticks.0.invocations.0.declared_consumes.0", "input.ablation.groups",
              "ticks[0].invocations[0].declared_consumes[0]"),
-            # actual_* are bare addresses, and an array of them (RECORD.md:54)
+            # declared_consumes is exactly the `px:` bindings of `inputs`
+            # (RECORD.md:83-93) -- the rule that lets a reader trust `inputs`
+            # alone (RECORD.md:94-100). Both halves are checked, and each case
+            # isolates one: `fit.all` binds `split` as `fn:split`, so an
+            # `fn:split` entry there IS in `inputs.values()` and only the
+            # spelling rule refuses it; `px:scratch.ablation.not_bound` is
+            # spelled right and only the subset rule refuses it.
+            ("ticks.1.invocations.0.declared_consumes", ["fn:split"],
+             "ticks[1].invocations[0].declared_consumes[0]"),
+            ("ticks.0.invocations.0.declared_consumes.0", "px:scratch.ablation.not_bound",
+             "ticks[0].invocations[0].declared_consumes[0]"),
+            # actual_* are bare addresses, and an array of them (RECORD.md:101)
             ("ticks.0.invocations.0.actual_consumes", "input.ablation.groups",
              "ticks[0].invocations[0].actual_consumes"),
             ("ticks.0.invocations.0.actual_produces.0", 3, "ticks[0].invocations[0].actual_produces[0]"),
@@ -268,7 +279,7 @@ class TheValidatorActuallyRejects(unittest.TestCase):
 
     def test_the_value_kind_rules_of_RECORD_md_59_to_63(self):
         base = "ticks.0.invocations.0.value"
-        # "omitted" has to say why (RECORD.md:63): a null note is not a reason.
+        # "omitted" has to say why (RECORD.md:112): a null note is not a reason.
         self.assertRejects(
             set_at(self.record, base, {"kind": "omitted", "data": None, "note": None}),
             "ticks[0].invocations[0].value.note",
@@ -281,7 +292,7 @@ class TheValidatorActuallyRejects(unittest.TestCase):
             set_at(self.record, base, {"kind": "svg", "data": 12, "note": None}),
             "ticks[0].invocations[0].value.data",
         )
-        # RECORD.md:60-61 fixes the bytes of a png-data-url, because a viewer
+        # RECORD.md:109-110 fixes the bytes of a png-data-url, because a viewer
         # makes them an <img src>. Anything else is refused; the real prefix passes.
         for data in ("https://evil.example/beacon.gif", "javascript:alert(1)//", "data:image/svg+xml,<svg/>", ""):
             with self.subTest(data=data):
@@ -327,13 +338,24 @@ class TheTwoValidatorsAgree(unittest.TestCase):
          "ticks[0].invocations[0].inputs.groups"),
         ("ticks.0.invocations.0.declared_consumes.0", "input.ablation.groups",
          "ticks[0].invocations[0].declared_consumes[0]"),
+        # RECORD.md:83-93: declared_consumes is exactly the `px:` bindings of
+        # `inputs`. Neither runtime may read back a record that declares a Part
+        # read no binding carries -- before this was enforced, the fixture
+        # `viewer/fixtures/pyto-value-kinds.json` shipped six `fn:` entries and
+        # both validators accepted them. One case per half of the rule; see the
+        # table in TheValidatorActuallyRejects for why `ticks[1]` isolates the
+        # spelling half.
+        ("ticks.1.invocations.0.declared_consumes", ["fn:split"],
+         "ticks[1].invocations[0].declared_consumes[0]"),
+        ("ticks.0.invocations.0.declared_consumes.0", "px:scratch.ablation.not_bound",
+         "ticks[0].invocations[0].declared_consumes[0]"),
         ("ticks.0.invocations.0.actual_consumes", "input.ablation.groups",
          "ticks[0].invocations[0].actual_consumes"),
         ("ticks.0.invocations.0.writes.0.kind", "clobber", "ticks[0].invocations[0].writes[0].kind"),
         ("ticks.0.invocations.0.duration_ms", "fast", "ticks[0].invocations[0].duration_ms"),
         ("ticks.0.invocations.0.hit", "yes", "ticks[0].invocations[0].hit"),
         ("ticks.0.invocations.0.value.kind", "binary", "ticks[0].invocations[0].value.kind"),
-        # RECORD.md:60-61 states a shape, not just a name: a viewer puts this
+        # RECORD.md:109-110 states a shape, not just a name: a viewer puts this
         # string into an <img src>, so neither runtime may read back a record
         # that spells an arbitrary URL there.
         ("ticks.0.invocations.0.value",

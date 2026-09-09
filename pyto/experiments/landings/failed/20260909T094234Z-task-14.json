@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T094234Z-task-14",
+  "package": "task-14",
+  "base_sha": "76bc3d2a51c0e5442a0e4e8f519fe7d01484e9f5",
+  "result": "failed",
+  "reason": "verifier exited 1 (see /d/pyto-socratic-20260909/pyto/experiments/landings/20260909T094234Z-task-14/verifier.txt)",
+  "at": "2026-09-09T09:42:37.767562Z"
+}

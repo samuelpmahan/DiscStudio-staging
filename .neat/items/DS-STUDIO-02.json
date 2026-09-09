@@ -55,7 +55,14 @@
   "agent": "Astra direct implementation",
   "status": "review",
   "blockers": [],
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "id": "astra-discstudio-1",
+      "summary": "Ported painter disc-art Calculation and deterministic shelf-sheet Calculation are available for review.",
+      "verification": "npm test and build passed in the integration workspace; embedded browser verification could not start because Playwright is unavailable in the runtime.",
+      "acceptance": null
+    }
+  ],
   "acceptanceRefs": [],
   "promotionRefs": [],
   "resume": "CI emits an exact-commit item/submission under dist/review after fresh tests. Review each item in the in-app neat checklist, export comments, and address those items. No human acceptance is implied."

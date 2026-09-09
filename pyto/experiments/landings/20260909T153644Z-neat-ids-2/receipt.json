@@ -1,0 +1,39 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T153644Z-neat-ids-2",
+  "package": "neat-ids-2",
+  "base_sha": "9fba6607ab253f4c6174aa52df1801b87d521704",
+  "result": "verified",
+  "verifier": {
+    "command": "bash -n pyto/scripts/neat.sh",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "3d23957831380d6268152c792a9db418924a62e4cc6a8e85120a26d036d1a130",
+    "counts": {
+      "library": 144,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 240,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 103,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 19350,
+      "sha256": "31e5d0bab375e115551a98688d115cca13d79f338ca959cd8b05eda5a67f9bc1"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-09T15:37:22.168167Z",
+  "result_sha": "4f56b86c6742598e4b370c8844a4c9c6e77e0eba",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

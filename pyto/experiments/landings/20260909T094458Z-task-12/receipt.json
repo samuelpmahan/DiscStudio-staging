@@ -1,0 +1,89 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T094458Z-task-12",
+  "package": "task-12",
+  "base_sha": "76bc3d2a51c0e5442a0e4e8f519fe7d01484e9f5",
+  "result": "verified",
+  "verifier": {
+    "command": "bash pyto/scripts/proof.sh --selftest",
+    "exit": 0,
+    "output_sha256": "875ed43101694d6d526530dfbaee5ce0d925a58bbe4bae947294536cf41f0181"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "a63cb13785d792c261915a8bc556cce387187443f5e225fc5d2bfbdba51200cc",
+    "counts": {
+      "library": 144,
+      "experiments/grouped-ablation": 240,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 87,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/12/HANDOFF.md",
+      "bytes": 6951,
+      "sha256": "0d4f55d5777a4719a86e8edeca5d33ce44686a932940279e17f47419d64179d4"
+    },
+    {
+      "path": "pyto/experiments/tasks/12/evidence/check_all.txt",
+      "bytes": 115505,
+      "sha256": "8ab70e4d2bdaadb57783111631ec0d4d685f76f186c30b2ef85dc62a675ff456"
+    },
+    {
+      "path": "pyto/experiments/tasks/12/evidence/verify.txt",
+      "bytes": 717,
+      "sha256": "bf4bba19b4aee38972bd2eb81eaecbc87406f3b57a7a4f873c98ed676065cce6"
+    },
+    {
+      "path": "pyto/experiments/tasks/12/packet.md",
+      "bytes": 3305,
+      "sha256": "46ffe40dada6cc7d5ed6a6e7c9552780dcd744a17094b5fa00f1bf77ac4703cc"
+    },
+    {
+      "path": "pyto/scripts/proof.sh",
+      "bytes": 6646,
+      "sha256": "feed75c56651a4207dfc0917c89a69048a0f89c0f50b49e28fd4ba28b7e59ba5"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 29325,
+      "sha256": "ec3ada9c62eaacd5b757c9f14136411dedd60457609d77ae578a4a1448c8e48c"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/test_replay.py",
+      "bytes": 60561,
+      "sha256": "05545a51529cd8a7b54c45c01f44014d64f52c65cee5bf2f063f5735ae7bedf0"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/HANDOFF.md",
+      "bytes": 5313,
+      "sha256": "2c671c5f784191c5ae2c3bb8330258aa4c9b3b32a1ba2a6980f17b6713d47f63"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/evidence/check_all.txt",
+      "bytes": 109208,
+      "sha256": "c86da7bb92baa7f8caf9dec59486c4539e0f2b7c651eca9e6632e91d2848496d"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/evidence/verify.txt",
+      "bytes": 1425,
+      "sha256": "2266c06b3f0cab03a4f97192d63ee542537e3a7120ba0fe9a533ebadfb49c44f"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/packet.md",
+      "bytes": 1930,
+      "sha256": "21a39b4aa01b283600c41388834b9a9f13b376a3d0aaf92082863f1945f82b44"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-09T09:46:13.249377Z",
+  "result_sha": "b274ba6f332eaf9697fb33e24fa85a597144701f",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

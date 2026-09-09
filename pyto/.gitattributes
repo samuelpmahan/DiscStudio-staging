@@ -14,3 +14,8 @@
 # Retained evidence: never convert, the bytes are the record.
 *.patch -text
 *.txt -text
+
+# The three logs are append-only and written from two machines; a merge keeps both sides.
+CHANGES.md merge=union
+BOARD.md merge=union
+questions.md merge=union

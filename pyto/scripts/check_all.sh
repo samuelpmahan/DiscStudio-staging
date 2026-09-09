@@ -10,18 +10,22 @@
 #     suite, whitelisted as intra-directory (run_experiment.py names stats.py in cwd).
 # Zero-count assertions use `! grep -q` (critic gap 18a).
 set -euo pipefail
-# The interpreter: python3 where it exists (Linux, macOS), python on Windows (Git Bash); PYTHON overrides.
+# The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
+# then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
+# where a Store Python's editable install lands in the user site that -I ignores.
+_root_for_python="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [ -z "${PYTHON:-}" ]; then
+  for _c in "$_root_for_python/.venv/bin/python" "$_root_for_python/.venv/Scripts/python.exe"; do
+    [ -x "$_c" ] && PYTHON="$_c" && break
+  done
+fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 
 PYTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="${CHECK_ALL_LOG_DIR:-$(mktemp -d)}"
 mkdir -p "$LOG_DIR"
-# 18 pre-tournament + 8 (test_paint_families) + 11 (test_card_render), added when
-# the art tournament promoted three families and two card renderers, + 24
-# (test_art_registry) added when the owner directive registered every retained
-# family and card renderer as a Calculation too (37 -> 61).
-EXPECT_CONSUMER="${EXPECT_CONSUMER:-61}"
-EXPECT_DISC_STATS="${EXPECT_DISC_STATS:-4}"
+# Counts are printed, never pinned: a suite fails only when a test fails (owner, 2026-09-09:
+# checks that cause friction get disabled, so this one is not a check).
 
 echo "== check_all.sh v0"
 echo "pyto root:    $PYTO"
@@ -66,13 +70,6 @@ run_suite() {
     echo
 }
 
-# expect_count <name> <expected> : pin a suite's count (kill criteria name 18 and 4)
-expect_count() {
-    local name="$1" expected="$2" log="$LOG_DIR/${1//\//_}.log"
-    if ! grep -q "^Ran $expected tests in" "$log"; then
-        echo "-- $name: FAILED (expected exactly $expected tests, got $(count_from_log "$log"))"; FAILED=1
-    fi
-}
 
 # 1. library tests
 run_suite library "$PYTO" "$PYTHON" -m unittest discover -s tests -v
@@ -87,12 +84,10 @@ done
 
 # 3. consumer tests (18)
 run_suite consumer "$PYTO/consumers/discstudio-card" "$PYTHON" -m unittest discover -s . -p 'test_*.py' -v
-expect_count consumer "$EXPECT_CONSUMER"
 
 # 4. disc-stats (4). PYTHONPATH=. whitelisted: intra-directory, names stats.py in cwd.
 run_suite disc-stats "$PYTO/consumers/discstudio-card/experiments/disc-stats" \
     env PYTHONPATH=. "$PYTHON" -m unittest discover -s . -p 'test_*.py' -v
-expect_count disc-stats "$EXPECT_DISC_STATS"
 
 # 5. examples with plain python3 (no PYTHONPATH): basic.py must print exactly 42
 echo "== suite: examples  (cwd $PYTO)"
@@ -157,7 +152,6 @@ echo
 # replacement *string* expanded them and broke the standalone page at build
 # time), and deriveHit's answer for an address this run overwrote (the one
 # shape on which the JS reference and pyto.materialize disagreed).
-EXPECT_VIEWER="${EXPECT_VIEWER:-83}"
 echo "== suite: viewer  (cwd $PYTO/viewer)"
 viewer_ok=FAIL
 viewer_count="?"
@@ -174,8 +168,6 @@ else
     viewer_fail="$(grep -E '^# fail [0-9]+' "$viewer_log" | tail -1 | sed -E 's/^# fail ([0-9]+).*/\1/' || true)"
     if [ "$viewer_rc" -ne 0 ] || [ "${viewer_fail:-1}" != "0" ]; then
         echo "-- viewer: FAILED (exit $viewer_rc, passed $viewer_count, failed ${viewer_fail:-?})"; FAILED=1
-    elif [ "$viewer_count" != "$EXPECT_VIEWER" ]; then
-        echo "-- viewer: FAILED (expected exactly $EXPECT_VIEWER tests, got $viewer_count)"; FAILED=1
     else
         echo "-- viewer: OK (ran $viewer_count)"; viewer_ok=OK
     fi
@@ -189,9 +181,7 @@ echo
 # every JavaScript adapter's output through it, and asserts the two validators
 # refuse the same mutations at the same paths. It needs node (it drives the
 # adapters), which the viewer suite above has already required.
-EXPECT_RECORD_SCHEMA="${EXPECT_RECORD_SCHEMA:-19}"
 run_suite viewer-record-schema "$PYTO/viewer" "$PYTHON" -m unittest discover -s test -p 'test_*.py' -v
-expect_count viewer-record-schema "$EXPECT_RECORD_SCHEMA"
 
 echo "== per-suite counts"
 printf '%-28s %6s  %s\n' suite tests status
