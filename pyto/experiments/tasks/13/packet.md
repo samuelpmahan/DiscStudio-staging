@@ -2,7 +2,7 @@
 
 Intent: questions: one command that prints what is still open at the root with each default, so a session asks from the record instead of re-mining it. neat.sh questions or pyto/scripts/questions.sh
 Starting point: 76bc3d2a51c0e5442a0e4e8f519fe7d01484e9f5 (land(task-11): Mounts: a world (a course, a game, a bag) is mounted above an ordinary PxC by an id outside the address space, so one address means the same thing in every world; ported from ChainSpot's PxCRootMounts with its negative test)
-Verify: none
+Verify: bash pyto/scripts/questions.sh --count
 Allow: pyto/scripts/questions.sh
 Candidate: not packed yet
 Evidence: not packed yet
