@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T214231Z-task-21",
+  "package": "task-21",
+  "base_sha": "7d2448de2e38568967ca14fc8f1a722da7cd7b5d",
+  "result": "failed",
+  "reason": "merge conflict with exp/21 in: pyto/viewer/embed.mjs scripts/browser_test.py src/review-data.js src/runtime.js tests/core.test.js ",
+  "at": "2026-09-09T21:42:31.952357Z"
+}
