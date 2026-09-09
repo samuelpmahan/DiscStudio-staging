@@ -1,0 +1,251 @@
+== check_all.sh v0
+pyto root:    /d/pyto-socratic-20260909/EXP/15/pyto
+logs:         /tmp/tmp.TnRhUWYGDN
+python:       /d/pyto-socratic-20260909/EXP/15/.venv/Scripts/python.exe (Python 3.13.14)
+pyto module:  D:\pyto-socratic-20260909\EXP\15\pyto\src\pyto\__init__.py
+
+== suite: library  (cwd /d/pyto-socratic-20260909/EXP/15/pyto)
+   $ /d/pyto-socratic-20260909/EXP/15/.venv/Scripts/python.exe -m unittest discover -s tests -v
+[tests/test_materialize] sys.path.insert(0, 'D:\\pyto-socratic-20260909\\EXP\\15\\pyto\\experiments\\grouped-ablation')
+[tests/test_materialize] sys.path.insert(0, 'D:\\pyto-socratic-20260909\\EXP\\15\\pyto\\viewer\\test')
+test_address_is_a_frozen_dataclass (test_address.TestDescribesAndDoesNotEnforce.test_address_is_a_frozen_dataclass)
+Kills: ``@dataclass`` in place of ``@dataclass(frozen=True)``. ... ok
+test_kernel_does_not_import_address (test_address.TestDescribesAndDoesNotEnforce.test_kernel_does_not_import_address)
+Kills: adding ``from pyto.address import check`` to core.py. ... ok
+test_module_imports_nothing_from_pyto (test_address.TestDescribesAndDoesNotEnforce.test_module_imports_nothing_from_pyto)
+Kills: adding ``from pyto.core import Part`` to address.py. ... ok
+test_parse_rejects_non_strings (test_address.TestDescribesAndDoesNotEnforce.test_parse_rejects_non_strings)
+Kills: deleting the ``isinstance(address, str)`` guard in parse. ... ok
+test_a_world_used_as_a_segment_is_not_detected (test_address.TestOutsideTheAddressSpace.test_a_world_used_as_a_segment_is_not_detected)
+Kills: adding a world blocklist (``if parsed.second in WORLDS``). ... ok
+test_question_root_is_not_an_address (test_address.TestOutsideTheAddressSpace.test_question_root_is_not_an_address)
+Kills: deleting the ``if parsed.root == QUESTION_ROOT:`` branch. ... ok
+test_reserved_second_segments_are_the_six (test_address.TestReservedSecond.test_reserved_second_segments_are_the_six)
+Kills: dropping ``"pql"`` from ``RESERVED_SECOND``. ... ok
+test_reserved_second_under_another_root_is_reported (test_address.TestReservedSecond.test_reserved_second_under_another_root_is_reported)
+Kills: deleting the ``elif parsed.second in RESERVED_SECOND`` branch. ... ok
+test_reserved_second_under_px_is_accepted (test_address.TestReservedSecond.test_reserved_second_under_px_is_accepted)
+Kills: dropping ``and parsed.root != "px"`` from the reserved branch. ... ok
+test_known_roots_with_a_domain_noun_are_accepted (test_address.TestRoots.test_known_roots_with_a_domain_noun_are_accepted)
+Kills: ``ROOTS = ()`` -- refusing everything. ... ok
+test_roots_are_exactly_px_fn_oc (test_address.TestRoots.test_roots_are_exactly_px_fn_oc)
+Kills: ``ROOTS = ("px", "fn")`` -- dropping ``oc``. ... ok
+test_unknown_root_is_rejected (test_address.TestRoots.test_unknown_root_is_rejected)
+Kills: ``elif False:`` in place of ``elif parsed.root not in ROOTS:``. ... ok
+test_bare_root_has_no_domain_noun (test_address.TestSegments.test_bare_root_has_no_domain_noun)
+Kills: deleting the ``if parsed.second is None:`` branch from check. ... ok
+test_empty_address_is_rejected (test_address.TestSegments.test_empty_address_is_rejected)
+Kills: ``return ()`` in place of ``return ("the address is empty",)``. ... ok
+test_empty_segment_is_rejected (test_address.TestSegments.test_empty_segment_is_rejected)
+Kills: deleting the ``any(segment == "" ...)`` branch from check. ... ok
+test_leading_dot_is_rejected (test_address.TestSegments.test_leading_dot_is_rejected)
+Kills: ``segments = tuple(address.strip(".").split("."))`` in parse. ... ok
+test_parse_splits_root_second_and_rest (test_address.TestSegments.test_parse_splits_root_second_and_rest)
+Kills: ``rest = segments[1:]`` in place of ``segments[2:]``. ... ok
+test_duplicate_writer_rejected (test_first_class.FirstClassTest.test_duplicate_writer_rejected)
+Multiple-writer rejection at declaration (pcr.py:118-123). ... ok
+test_pcr_preserves_direct_result_and_publication_semantics (test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics)
+Part-to-ResultRef rewrite (pcr.py:112-116); into publication (pcr.py:163-164). ... ok
+test_pxc_is_fail_loud_and_pql_is_composable (test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable)
+PxC.set/get (core.py:56-66); PQL.part/prefix/where (pql.py:27-58). ... ok
+test_card_testimonies_consume_render_disc_as_fn_ref (test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref)
+Both cards record inputs {'art': 'fn:render-disc'} (pcr.py:112-116, 156-157). ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Gap 16: PCR.mermaid() (pcr.py:179-219) == Pcr.to_mermaid() (graph.py:116-151). ... ok
+test_published_part_is_the_direct_result_object (test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object)
+Publication (pcr.py:161-164) stores the very object held in results[id]: ... ok
+test_results_keyed_by_invocation_id (test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id)
+PcrRun.results holds one entry per invocation id (pcr.py:162, pcr.py:177). ... ok
+test_shared_mutable_result_is_not_copied_between_consumers (test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers)
+The fn: binding passes results[id] itself, not a copy (pcr.py:156, 161). ... ok
+test_testimony_into_values_are_published_addresses (test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses)
+CalculationTestimony.into is the into Part's address (pcr.py:172). ... ok
+test_direct_result_and_publication_shape (test_graph.PcrGraphTest.test_direct_result_and_publication_shape) ... ok
+test_mermaid_is_a_view_of_same_graph (test_graph.PcrGraphTest.test_mermaid_is_a_view_of_same_graph) ... ok
+test_rejects_duplicate_writer (test_graph.PcrGraphTest.test_rejects_duplicate_writer) ... ok
+test_every_fit_and_score_reads_fn_split_and_is_not_a_hit (test_materialize.DayOneRecord.test_every_fit_and_score_reads_fn_split_and_is_not_a_hit) ... ok
+test_four_ticks_and_fifteen_invocations (test_materialize.DayOneRecord.test_four_ticks_and_fifteen_invocations) ... ok
+test_parts_map_lists_the_twelve_fn_readers_of_the_split_part (test_materialize.DayOneRecord.test_parts_map_lists_the_twelve_fn_readers_of_the_split_part) ... ok
+test_pcr_name_can_be_overridden_for_the_viewer (test_materialize.DayOneRecord.test_pcr_name_can_be_overridden_for_the_viewer) ... ok
+test_receipt_fields_are_joined_by_invocation_id (test_materialize.DayOneRecord.test_receipt_fields_are_joined_by_invocation_id) ... ok
+test_schema_and_pcr_name (test_materialize.DayOneRecord.test_schema_and_pcr_name) ... ok
+test_the_shape_it_refuses_to_emit_is_the_shape_a_reader_refuses (test_materialize.DayOneRecord.test_the_shape_it_refuses_to_emit_is_the_shape_a_reader_refuses)
+Why the refusal above is a refusal and not a null-filled document. ... ok
+test_the_two_invocations_reading_a_preseeded_part_are_the_hits (test_materialize.DayOneRecord.test_the_two_invocations_reading_a_preseeded_part_are_the_hits) ... ok
+test_wall_ms_is_the_sum_of_the_receipt_durations (test_materialize.DayOneRecord.test_wall_ms_is_the_sum_of_the_receipt_durations) ... ok
+test_without_observe_run_record_refuses_instead_of_emitting_nulls (test_materialize.DayOneRecord.test_without_observe_run_record_refuses_instead_of_emitting_nulls)
+A document is `pyto-run-record@1` or it is not tagged as one. ... ok
+test_a_freshly_materialized_day_one_record_obeys_the_same_rule (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_a_freshly_materialized_day_one_record_obeys_the_same_rule) ... ok
+test_the_committed_evidence_record_carries_only_the_px_bindings (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_the_committed_evidence_record_carries_only_the_px_bindings) ... ok
+test_two_part_bindings_keep_binding_order_not_alphabetical_order (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_two_part_bindings_keep_binding_order_not_alphabetical_order) ... ok
+test_materializing_the_same_run_twice_is_byte_identical (test_materialize.Determinism.test_materializing_the_same_run_twice_is_byte_identical) ... ok
+test_two_records_of_two_runs_differ_only_in_durations (test_materialize.Determinism.test_two_records_of_two_runs_differ_only_in_durations) ... ok
+test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set (test_materialize.HitLedger.test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set)
+The second half of the rule: `preexisting` is not the only evidence. ... ok
+test_an_address_produced_earlier_in_the_run_is_not_a_hit (test_materialize.HitLedger.test_an_address_produced_earlier_in_the_run_is_not_a_hit) ... ok
+test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript (test_materialize.HitLedger.test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript)
+The one shape on which the two runtimes used to disagree. ... ok
+test_reading_a_preseeded_part_is_a_hit (test_materialize.HitLedger.test_reading_a_preseeded_part_is_a_hit) ... ok
+test_a_record_of_every_value_kind_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_a_record_of_every_value_kind_validates) ... ok
+test_the_committed_evidence_record_still_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_the_committed_evidence_record_still_validates) ... ok
+test_the_day_one_record_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_the_day_one_record_validates) ... ok
+test_asdict_bytes_are_identical_before_and_after (test_materialize.TestimonyBytesUnchangedByMaterializing.test_asdict_bytes_are_identical_before_and_after) ... ok
+test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel (test_materialize.TickSheets.test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel)
+Drawing degrades per panel; it never aborts mid-directory. ... ok
+test_an_image_value_is_drawn_into_the_sheet (test_materialize.TickSheets.test_an_image_value_is_drawn_into_the_sheet) ... ok
+test_an_svg_value_is_written_beside_the_sheet_unmodified (test_materialize.TickSheets.test_an_svg_value_is_written_beside_the_sheet_unmodified) ... ok
+test_one_png_per_tick_of_the_day_one_program (test_materialize.TickSheets.test_one_png_per_tick_of_the_day_one_program) ... ok
+test_a_cyclic_part_value_leaves_the_rest_of_the_record_intact (test_materialize.ValueKinds.test_a_cyclic_part_value_leaves_the_rest_of_the_record_intact)
+The failure this guards is not one value: it was the whole document. ... ok
+test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error (test_materialize.ValueKinds.test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error)
+RECORD.md:111 assigns "not serializable" to `omitted`, cycles included. ... ok
+test_a_non_serializable_value_never_gets_a_json_kind (test_materialize.ValueKinds.test_a_non_serializable_value_never_gets_a_json_kind) ... ok
+test_a_pil_image_becomes_a_png_data_url (test_materialize.ValueKinds.test_a_pil_image_becomes_a_png_data_url) ... ok
+test_a_plain_string_is_text (test_materialize.ValueKinds.test_a_plain_string_is_text) ... ok
+test_a_set_is_omitted_with_a_note_and_a_digest (test_materialize.ValueKinds.test_a_set_is_omitted_with_a_note_and_a_digest) ... ok
+test_a_string_that_is_already_a_png_data_url_is_png_data_url_as_in_javascript (test_materialize.ValueKinds.test_a_string_that_is_already_a_png_data_url_is_png_data_url_as_in_javascript) ... ok
+test_a_thousand_element_list_keeps_two_hundred_entries_and_says_so (test_materialize.ValueKinds.test_a_thousand_element_list_keeps_two_hundred_entries_and_says_so) ... ok
+test_a_value_nested_past_the_recursion_limit_is_omitted_not_fatal (test_materialize.ValueKinds.test_a_value_nested_past_the_recursion_limit_is_omitted_not_fatal)
+json.dumps raises RecursionError -- neither TypeError nor ValueError. ... ok
+test_a_value_over_the_cap_is_omitted_with_size_and_digest (test_materialize.ValueKinds.test_a_value_over_the_cap_is_omitted_with_size_and_digest) ... ok
+test_svg_is_kind_svg_and_the_document_is_not_modified (test_materialize.ValueKinds.test_svg_is_kind_svg_and_the_document_is_not_modified) ... ok
+test_the_array_cap_is_a_parameter_and_applies_inside_a_dict (test_materialize.ValueKinds.test_the_array_cap_is_a_parameter_and_applies_inside_a_dict) ... ok
+test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed (test_materialize.ValueKinds.test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed)
+PYTHONHASHSEED salts str hashing, so set iteration order differs per process. ... ok
+test_xml_prologue_before_the_svg_root_is_still_svg (test_materialize.ValueKinds.test_xml_prologue_before_the_svg_root_is_still_svg) ... ok
+test_round_trips_through_json_load_with_sorted_keys_and_lf (test_materialize.WriteRecord.test_round_trips_through_json_load_with_sorted_keys_and_lf) ... ok
+test_a_label_never_appears_in_any_address (test_mounts.TestLabelsStayOutOfAddresses.test_a_label_never_appears_in_any_address)
+Kills: ``self._mounted[root].set("px.view.label", text)`` inserted ... ok
+test_a_slice_carries_the_labels_of_the_roots_it_takes (test_mounts.TestLabelsStayOutOfAddresses.test_a_slice_carries_the_labels_of_the_roots_it_takes)
+Kills: deleting the ``if root in self._labels: sliced.set_label(...)`` ... ok
+test_an_unlabelled_mounted_root_has_no_label (test_mounts.TestLabelsStayOutOfAddresses.test_an_unlabelled_mounted_root_has_no_label)
+Kills: ``return self._labels.get(root, root)`` in ``label``. ... ok
+test_get_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_get_of_a_missing_root_raises)
+Kills: ``return self._mounted.get(root)`` in ``get``. ... ok
+test_has_reports_without_raising (test_mounts.TestMissingRootIsLoud.test_has_reports_without_raising)
+Kills: ``return True`` in ``has``. ... ok
+test_labels_of_a_missing_root_raise (test_mounts.TestMissingRootIsLoud.test_labels_of_a_missing_root_raise)
+Kills: deleting the ``if root not in self._mounted`` guard from ... ok
+test_slice_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_slice_of_a_missing_root_raises)
+Kills: ``if not self.has(root): continue`` at the top of ``slice``'s ... ok
+test_kernel_does_not_import_mounts (test_mounts.TestModuleStatus.test_kernel_does_not_import_mounts)
+Kills: adding ``from pyto.mounts import Mounts`` to core.py. ... ok
+test_mounts_does_not_compute_the_root_id (test_mounts.TestModuleStatus.test_mounts_does_not_compute_the_root_id)
+Kills: ``import hashlib`` plus ``root = hashlib.sha256(root.encode()) ... ok
+test_mounts_is_not_re_exported_from_the_package (test_mounts.TestModuleStatus.test_mounts_is_not_re_exported_from_the_package)
+Kills: adding ``from .mounts import Mounts`` to ``__init__.py``. ... ok
+test_a_different_object_for_a_mounted_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_a_different_object_for_a_mounted_root_is_refused)
+Kills: deleting the ``raise ValueError(... already mounted)`` branch. ... ok
+test_an_empty_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_an_empty_root_is_refused)
+Kills: deleting the ``if not isinstance(root, str) or not root:`` guard. ... ok
+test_remounting_the_same_object_is_fine (test_mounts.TestMountingIsIdempotentOrLoud.test_remounting_the_same_object_is_fine)
+Kills: ``if current is not None:`` (dropping ``and current is not pxc``). ... ok
+test_get_returns_the_exact_object_mounted (test_mounts.TestRootStaysOutsideTheAddressSpace.test_get_returns_the_exact_object_mounted)
+Kills: ``return copy.deepcopy(self._mounted[root])`` in ``get``. ... ok
+test_keeps_the_world_id_outside_the_pxc_address_space (test_mounts.TestRootStaysOutsideTheAddressSpace.test_keeps_the_world_id_outside_the_pxc_address_space)
+Kills: a prefix rewrite in ``mount`` -- ``for address in pxc.addresses(): ... ok
+test_mounting_adds_no_address_at_all (test_mounts.TestRootStaysOutsideTheAddressSpace.test_mounting_adds_no_address_at_all)
+Kills: ``pxc.set("px.mount.root", root)`` inserted before ... ok
+test_entries_pair_each_root_with_its_own_pxc_in_order (test_mounts.TestRootsAndEntries.test_entries_pair_each_root_with_its_own_pxc_in_order)
+Kills: ``for root in sorted(self._mounted)`` in ``entries``. ... ok
+test_roots_keep_insertion_order (test_mounts.TestRootsAndEntries.test_roots_keep_insertion_order)
+Kills: ``return tuple(sorted(self._mounted))`` in ``roots``. ... ok
+test_a_write_through_a_slice_is_visible_through_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_a_write_through_a_slice_is_visible_through_the_original)
+Kills: ``sliced.mount(root, copy.deepcopy(self.get(root)))`` in ``slice``. ... ok
+test_slice_is_a_new_mounts_that_does_not_disturb_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_slice_is_a_new_mounts_that_does_not_disturb_the_original)
+Kills: ``sliced = self`` in place of ``sliced = Mounts()``. ... ok
+test_slice_keeps_insertion_order_of_the_requested_roots (test_mounts.TestSliceSharesTheMountedObjects.test_slice_keeps_insertion_order_of_the_requested_roots)
+Kills: ``for root in sorted(roots)`` in ``slice``. ... ok
+test_identity_scope_and_limitation_are_the_chesslab_honesty_fields (test_receipts.FrozenCalculationIdentity.test_identity_scope_and_limitation_are_the_chesslab_honesty_fields) ... ok
+test_implementation_sha256_is_none_for_a_builtin (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_none_for_a_builtin) ... ok
+test_implementation_sha256_is_the_source_digest_and_is_stable (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_the_source_digest_and_is_stable) ... ok
+test_receipt_is_frozen_and_json_serializable_after_asdict (test_receipts.ReceiptShape.test_receipt_is_frozen_and_json_serializable_after_asdict) ... ok
+test_registry_calculations_are_named_functions_not_lambdas (test_receipts.ReceiptShape.test_registry_calculations_are_named_functions_not_lambdas) ... ok
+test_day_1_program_gets_one_receipt_per_invocation (test_receipts.ReceiptsAreOptional.test_day_1_program_gets_one_receipt_per_invocation) ... ok
+test_receipts_empty_when_observe_is_false (test_receipts.ReceiptsAreOptional.test_receipts_empty_when_observe_is_false) ... ok
+test_receipts_keyed_by_invocation_id_when_observe_is_true (test_receipts.ReceiptsAreOptional.test_receipts_keyed_by_invocation_id_when_observe_is_true) ... ok
+test_json_value_digest_is_canonical_json (test_receipts.ResultDigest.test_json_value_digest_is_canonical_json) ... ok
+test_non_json_value_yields_none (test_receipts.ResultDigest.test_non_json_value_yields_none) ... ok
+test_tuple_keys_yield_none (test_receipts.ResultDigest.test_tuple_keys_yield_none) ... ok
+test_args_key_colliding_with_a_bound_input_is_recorded_not_raised (test_receipts.ShadowedInputs.test_args_key_colliding_with_a_bound_input_is_recorded_not_raised) ... ok
+test_no_collision_leaves_shadowed_inputs_empty (test_receipts.ShadowedInputs.test_no_collision_leaves_shadowed_inputs_empty) ... ok
+test_experiment_path_is_inside_this_repository (test_receipts.TestimonyBytesUnchanged.test_experiment_path_is_inside_this_repository) ... ok
+test_observe_on_and_off_produce_identical_tick_bytes (test_receipts.TestimonyBytesUnchanged.test_observe_on_and_off_produce_identical_tick_bytes) ... ok
+test_tick_bytes_equal_the_retained_day_1_testimony (test_receipts.TestimonyBytesUnchanged.test_tick_bytes_equal_the_retained_day_1_testimony)
+Both legs: the retained Day 1 bytes are pinned against an observe=False run ... ok
+test_duration_is_non_negative_and_started_is_monotonic (test_receipts.Timing.test_duration_is_non_negative_and_started_is_monotonic) ... ok
+test_a_result_ref_input_is_not_a_declared_consume (test_receipts.WriteKinds.test_a_result_ref_input_is_not_a_declared_consume) ... ok
+test_an_invocation_without_into_produces_nothing (test_receipts.WriteKinds.test_an_invocation_without_into_produces_nothing) ... ok
+test_declared_and_actual_addresses (test_receipts.WriteKinds.test_declared_and_actual_addresses) ... ok
+test_kinds (test_receipts.WriteKinds.test_kinds) ... ok
+test_constructor_rules_calculation_fn_prefix (test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix)
+core.py:33-34: Calculation address must start with 'fn.'; the callable is not inspected. ... ok
+test_constructor_rules_part_address_non_empty (test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty)
+core.py:18-19: Part('') raises ValueError; any non-empty prefix is accepted (no 'px.' rule). ... ok
+test_non_part_binding_source_fails_at_run (test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run)
+Silent rule (critic gap 13): PCR.calc (pcr.py:112-116) and Tick.calc (pcr.py:46) accept any ... ok
+test_part_binding_not_rewritten_when_writer_declared_after_consumer (test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer)
+Silent rule, pcr.py:112-116: the rewrite happens only at the consumer's declaration, so a ... ok
+test_part_binding_rewritten_to_result_ref_when_writer_declared_first (test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first)
+pcr.py:112-116: consuming a Part that already has a writer in this PCR rewrites the binding to ... ok
+test_pcr_duplicate_id_rejected_across_ticks (test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks)
+pcr.py:109-110: PCR.calc rejects an id already used in any tick of the same PCR. ... ok
+test_pcr_multiple_writers_rejected (test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected)
+pcr.py:118-123: a second invocation declaring the same `into` address raises ValueError. ... ok
+test_tick_calc_bypasses_pcr_duplicate_id_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule)
+Silent rule, pcr.py:33-56 vs 109-110,132: pcr.tick(name).calc skips PCR._ids, so an id used in ... ok
+test_tick_calc_bypasses_pcr_multiple_writer_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule)
+Silent rule, pcr.py:33-56 vs 118-123: pcr.tick(name).calc skips PCR._writers, so a second ... ok
+test_tick_calc_rejects_duplicate_id_within_tick (test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick)
+pcr.py:43-44: Tick.calc rejects an id already present in that same tick. ... ok
+test_args_silently_override_same_named_bound_inputs (test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs)
+Silent rule, pcr.py:159-160: call_args.update(invocation.args) lets an args key shadow a bound ... ok
+test_cross_pcr_consumer_records_px_not_fn (test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn)
+Critic gap 12, pcr.py:88,118-123: the writers map is per PCR, so a second PCR reading a Part ... ok
+test_failure_mid_run_leaves_prior_writes (test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes)
+Critic gap 13, pcr.py:161-164: a Calculation raising mid-run propagates its own exception, no ... ok
+test_missing_part_fails_only_at_run (test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run)
+pcr.py:147-148 -> core.py:58-59: a Part binding with no PxC value is accepted at declaration and ... ok
+test_result_ref_to_unavailable_id_fails_only_at_run (test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run)
+pcr.py:151-155: a ResultRef to an id not yet in results is accepted at declaration and raises ... ok
+test_results_keyed_by_id_not_tick_and_rerun_replaces (test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces)
+pcr.py: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun ... ok
+test_run_registers_calculations_and_rejects_conflicting_address (test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address)
+pcr.py:142 registers every invocation's Calculation on the PxC (core.py:68-72), so two ... ok
+test_tick_order_is_first_mention_not_producer_declaration (test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration)
+pcr.py:91-96,139: ticks execute in the order they were first named, so a consumer in tick B ... ok
+test_pql_cannot_see_calculations (test_semantics.PQLRulesTest.test_pql_cannot_see_calculations)
+pql.py:42-45 read only PxC.items() (core.py:88-89, the _values dict); registration goes to ... ok
+test_pql_one_and_optional_reject_multiple_matches (test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches)
+pql.py:63-67,69-73: with two matches both one() and optional() raise ValueError; values() ... ok
+test_pql_part_missing_is_silent_until_one (test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one)
+pql.py:31-33,63-67,69-73: PQL.part of an unproduced address matches nothing (silent); ... ok
+test_pql_prefix_must_be_non_empty (test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty)
+pql.py:39-40: PQL.prefix('') raises ValueError at construction. ... ok
+test_pql_where_refines_and_matches_are_sorted_by_address (test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address)
+pql.py:42-45,49-55 and core.py:88-89: prefix selection iterates PxC.items(), which is sorted by ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Critic gap 16, pcr.py:179-219 vs graph.py:116-151: the fan-out example authored as executable ... ok
+test_table_projection_drops_provenance (test_semantics.ProjectionTest.test_table_projection_drops_provenance)
+Critic gap 13, core.py:85-89: PxC.items() projects to (address, value) rows only; re-inserting ... ok
+test_pxc_call_autoregisters_object_but_not_string (test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string)
+core.py:77-80: PxC.call with an unregistered Calculation object registers it as a side effect, ... ok
+test_pxc_call_unregistered_string_raises (test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises)
+core.py:81-82: PxC.call by address string with nothing registered raises KeyError. ... ok
+test_pxc_get_missing_raises_keyerror (test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror)
+core.py:58-59: PxC.get of an unproduced address raises KeyError (fail-loud); has() stays False. ... ok
+test_pxc_register_conflict_on_different_callable (test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable)
+core.py:70-71: registering a different callable under an already-registered address raises ... ok
+test_pxc_register_same_callable_is_idempotent (test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent)
+core.py:68-72: re-registering the same object, or a new Calculation wrapping the same callable, ... ok
+test_pxc_set_kinds_new_address_then_replacement_without_versioning (test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning)
+core.py:62-66: set returns PxWrite kind 'new-address' first, 'replacement' after; the old value ... ok
+
+----------------------------------------------------------------------
+Ran 144 tests in 2.029s
+
+OK
+-- library: OK (ran 144)
+
+== suite: experiments/grouped-ablation  (cwd /d/pyto-socratic-20260909/EXP/15/pyto)
+   $ /d/pyto-socratic-20260909/EXP/15/.venv/Scripts/python.exe -m unittest discover -s experiments/grouped-ablation -p test_*.py -v

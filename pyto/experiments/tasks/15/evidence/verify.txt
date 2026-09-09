@@ -1,0 +1,7 @@
+target dir: /d/pyto-proof-20260909T095248Z
+git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging.git /d/pyto-proof-20260909T095248Z
+cd /d/pyto-proof-20260909T095248Z
+python -m venv .venv && .venv/Scripts/python -m pip install -e "./pyto[drawing]"   # the scripts find .venv on their own
+bash pyto/scripts/check_all.sh                                   # every suite, the same table as here
+.venv/Scripts/python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit   # one miss, then two hits, the second from a fresh process
+node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
