@@ -1,0 +1,70 @@
+{
+  "lens": "cross-verification",
+  "lens_full": "Cross-verification gate: lane D's fresh-process replay of lane C's run-2/3/4 retained records, saved-work.json recomputability, interpretation.md vs comparison.json, kill-criterion silence",
+  "day": 2,
+  "round": "final",
+  "pass": true,
+  "retained": [
+    "Independent fresh-process replay (not replay.py: a separate child script under `env -i PATH=... python3 -I -B`, cwd /tmp/auditcwd, sys.flags.isolated=1, env {PATH, LC_CTYPE}) of evidence/run-1, run-2-regroup, run-3-reinput and run-4-from-retained reproduces each run's comparison rows BYTE-identically (json.dumps(rows, indent=2, sort_keys=True)+'\\n' equals the committed comparison.json['rows'] re-serialized) and reproduces record['results'] exactly for all 15/11/15/14 invocations. Non-stdlib modules loaded: only pyto, pyto.core, pyto.pcr, pyto.pql, pyto.graph, retain, calculations, features.",
+    "Lane A's digests do agree with the records, independently verified: replaying each record with PCR.run(pxc, observe=True) in the isolated child gives {id: Receipt.result_sha256} identical to record['results'] AND identical to the committed receipts.json for all four runs (also checked statically: 15/11/15/14 receipt result_sha256 values, zero mismatches).",
+    "Testimony bytes: json.dumps([asdict(t) for t in run.ticks]) is identical with observe=False and observe=True for all four replays and JSON-equal to each run's committed testimony.json['ticks']. testimony.json is {pcr, ticks} only in all four runs (critic gap 18d honored).",
+    "saved-work.json is fully recomputable. Reimplementing compare_local.explain_changes from its documented semantics without importing it reproduces all six lists plus the `reason` map exactly for run-2/3/4; calculations_inherited equals the calculation addresses actually present in each retained program (5/5/4); invocations_skippable_by_digest equals the independent explain_changes[skip_reason]; ms_saved_by_invocation equals evidence/run-1/receipts.json duration_ms for those ids and ms_saved equals round(sum,3); program_lines_changed {program.py:0, calculations.py:0, total:0} matches `git diff --numstat d9dded6 -- program.py calculations.py`, which is empty. No prose counts in these fields.",
+    "interpretation.md statements check out against comparison.json and features.py: run-2's largest |delta| equals max|delta_vs_baseline| over its three drops; run-1's largest matches evidence/run-1/comparison.json; 'this regroup is larger than run-1: False' is correct; the planted-|w|-per-group tables recompute exactly from features.py TRUE_W/GROUPS and CROSS_GROUPS. The plan's predicted +0.9 bound is reported as REFUTED by measurement rather than quietly dropped. run-2 'split digest equal to run-1: True', run-3 'False', run-4 'digest(split) == run-1 results[split]: True' and \"'split' present in this run's program: False\" all verified directly against the retained records.",
+    "Kill criteria did not trigger silently. RECONSTRUCTION-REQUIRED.md is absent anywhere in pyto/, and `git diff d9dded6 -- pyto/experiments/grouped-ablation/program.py pyto/experiments/grouped-ablation/calculations.py` is empty (byte-identical). test_second_experiment.py:102-130 asserts program_lines_changed==0 AND re-runs `git diff --numstat` against DAY2_BASE with a `git merge-base --is-ancestor` check, so a moving HEAD cannot hide an edit.",
+    "Regeneration is a no-op: re-running run_regrouped.py / run_reinput.py / run_from_retained.py into a scratch --out reproduces comparison.json, comparison.md, testimony.json, variants.json, mermaid.mmd, failed-variants.md and interpretation.md byte-identically against the committed evidence; retained.json differs only in retained.commit (the HEAD stamp), and saved-work.json only in ms fields.",
+    "One library change only: `git diff --stat d9dded6 -- pyto/src` touches pyto/src/pyto/pcr.py alone (208+/7-). pql.py untouched. `bash scripts/check_all.sh` exits 0: library 64, experiments/grouped-ablation 170, s3-synthetic 5, consumer 61, disc-stats 4, examples 3, art-registry-md OK."
+  ],
+  "findings": [
+    {
+      "severity": "major",
+      "file": "pyto/experiments/grouped-ablation/replay.py",
+      "claim": "The cross-verification gate does not actually carry lane A's digests, contrary to its own docstring. replay.py's docstring quotes the plan (\"reproduced by lane (b)'s fresh-process replay carrying lane (a)'s digests\"), but the child snippet calls `retain.replay(record, REGISTRY)`, which ends at `pcr.run(pxc)` with observe=False (retain.py:611-640), and then computes result_digests via `retain.digest_of(v)`. retain.digest_of (retain.py:118-125) is an experiment-local reimplementation of pyto.pcr._result_sha256 (src/pyto/pcr.py:161-176). The seam's Receipt.result_sha256 is never read, compared, or asserted anywhere on the experiment side.",
+      "evidence": "`grep -c 'result_sha256\\|receipts' evidence/replay/fresh-process-run-2-regroup.log` returns 0. `grep -n result_sha256 test_retain.py test_replay.py test_grouped_ablation.py test_second_experiment.py second_experiment.py compare_local.py` returns nothing; the only occurrence in the repo outside pcr.py is tests/test_receipts.py:222 (lane A's own unit test). Independently closed the hole: replaying each record with `pcr.run(pxc, observe=True)` in an isolated child gives {id: Receipt.result_sha256} == record['results'] == committed receipts.json for run-1/2/3/4 -- so the claim is true, but nothing in the repository proves it, and a drift in either digest implementation would leave every gate log green.",
+      "required_fix": "Have the child in CHILD_REPLAY_SNIPPET replay with observe=True and add to its report `receipt_digests_equal_record_results` and `receipt_digests_equal_committed_receipts`, both in the `failed` list; log both lines in evidence/replay/fresh-process*.log. Add a test asserting, for each committed run, receipts.json[id]['result_sha256'] == retained.json['results'][id] so the library digest and retain.digest_of cannot drift apart unnoticed.",
+      "short_summary": "Gate's own docstring claim (carries lane A's digests) is unproven in-repo"
+    },
+    {
+      "severity": "major",
+      "file": "pyto/experiments/grouped-ablation/run_from_retained.py",
+      "claim": "`input_parts_changed` in every saved-work.json is an authored literal rather than a measurement, and for run-4 it understates the record. run_regrouped.py:173, run_reinput.py:94 and run_from_retained.py:159 pass hard-coded lists into second_experiment.saved_work, which only sorts them (second_experiment.py:243).",
+      "evidence": "Recomputing the changed external Parts from the two retained records (canonical-JSON compare over the union of record['external'] keys) gives ['input.ablation.groups'] for run-2 and ['input.ablation.rows'] for run-3 -- matching the literals -- but ['input.ablation.rows', 'scratch.ablation.split'] for run-4, where the ledger says only ['scratch.ablation.split']. run-1's externals are {input.ablation.groups, input.ablation.rows}; run-4's are {input.ablation.groups, scratch.ablation.split}: the entire 400-row input Part left the run's boundary and the ledger does not record it. Contradicts the gate's 'reject prose counts' clause and the day's 'every number in a ledger is computed at run time' rule.",
+      "required_fix": "Compute input_parts_changed inside second_experiment.saved_work from record_prior/record_this: `sorted(k for k in set(a['external'])|set(b['external']) if canonical(a['external'].get(k)) != canonical(b['external'].get(k)))`, drop the three literal arguments, and add a test asserting the computed value for run-4 contains both input.ablation.rows and scratch.ablation.split.",
+      "short_summary": "input_parts_changed is an authored literal; run-4's understates the diff"
+    },
+    {
+      "severity": "major",
+      "file": "pyto/experiments/grouped-ablation/replay.py",
+      "claim": "Running the test suite rewrites committed evidence, including the byte-equality oracle. replay.ensure_retained_record writes evidence/run-1/retained.json unconditionally on every call, bypassing the --force refusal that protects every other evidence file. Its docstring's justification is also false: it says retained.json 'has no such run-varying field ... two independent builds are byte-identical', but retained_at.commit embeds HEAD's sha.",
+      "evidence": "`git status --porcelain` was empty before running `bash scripts/check_all.sh` and listed 13 modified tracked files afterwards, among them evidence/run-1/retained.json (retained.commit moved between two commits), 5 evidence/replay/*.log, 4 evidence/replay/refusals/*.log and 2 evidence/tamper/*.json. The consequence is already visible in the committed tree: evidence/run-1/commit.txt disagreed with retained.json's retained.commit at the time this was raised, contradicting the invariant asserted at run.py:304 that retained_at carries the same sha commit.txt does. Restored the tree with `git checkout -- experiments/grouped-ablation/evidence` after the probe.",
+      "required_fix": "Make ensure_retained_record write to a temp path by default and read evidence/run-1/retained.json as an oracle (or gate the write behind the same --force the run scripts use); route the replay/tamper/refusal logs to a temp dir unless replay.py is invoked as a script. Fix the docstring to say retained_at.commit is run-varying, and either drop retained_at from run-1's record or regenerate commit.txt with it so run.py:304's invariant holds.",
+      "short_summary": "Test suite mutates committed evidence it then asserts against"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/experiments/grouped-ablation/run_reinput.py",
+      "line": 46,
+      "claim": "run-3-reinput/interpretation.md labels a three-element slice as the full ranking. run_reinput.py takes `[:3]` of the ranking and prints it as the complete 'Ranking (ablations only)'.",
+      "evidence": "evidence/run-3-reinput/comparison.json['ranking'] has five entries: ['drop_g3','drop_g0','drop_g1','drop_g4','drop_g2']. The two omitted rows are the uninformative ones (drop_g4, drop_g2, both near-zero delta), so a reader of interpretation.md alone would conclude the experiment ran three ablations, not five. No number is wrong; the label is.",
+      "required_fix": "Either render the full computed ranking, or relabel as 'Top three ablations by |delta| (of N, comparison.json ranking)' with N computed from the rows.",
+      "short_summary": "interpretation.md's 3-item ranking is labeled as the full ranking"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/experiments/grouped-ablation/run_reinput.py",
+      "line": 48,
+      "claim": "run_reinput.py hard-codes the claim 'verified across seeds 3, 11, 13, 99 in the completeness critic's checks' into the retained interpretation.md; only seed 11 is retained anywhere.",
+      "evidence": "`grep -rn '13, 99' pyto/` matches only run_reinput.py and research/ULTRACODE-WEEK.md (itself prose). No evidence file records a comparison under seeds 3, 13 or 99. This is the pattern that a provenance lens rejects: every number in the returns should resolve to a retained file.",
+      "required_fix": "Either retain the multi-seed check (a small evidence/seed-sweep.json produced by a test that runs run_experiment over the four seeds and records each ranking) and cite that file, or reword the sentence to cite research/ULTRACODE-WEEK.md as an unretained plan note.",
+      "short_summary": "Multi-seed claim in interpretation.md cites no retained evidence"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/experiments/grouped-ablation/second_experiment.py",
+      "line": 235,
+      "claim": "`calculations_added` can never be non-zero, so the ledger's '0 Calculations added' is not a measurement. second_experiment.py computes `sorted(set(registry_addresses_used) - set(all_registry_addresses))`, and all three call sites pass `all_registry_addresses=sorted(REGISTRY)` while registry_addresses_used comes from retain.registry_from_pcr over a program whose addresses were all resolved out of REGISTRY.",
+      "evidence": "set(used) - set(REGISTRY) is empty by construction for all three runs (verified: used is a subset of the 5 REGISTRY addresses in every case). from_program raises KeyError for any address not in REGISTRY, tested at test_retain.py FromProgram::test_missing_registry_address_raises_keyerror_before_any_execution, so the difference is structurally empty. Adding a genuinely new Calculation on a later day would put it in REGISTRY too and the field would still read [].",
+      "required_fix": "Measure 'added' against the PRIOR run's registry rather than the current one: `sorted(set(registry_addresses_used) - set(record_prior['provider']['registry']))`. It still yields [] for Day 2, but as a result rather than a tautology, and it starts reporting correctly the first time a day adds a Calculation.",
+      "short_summary": "calculations_added is structurally always [], not a measurement"
+    }
+  ]
+}

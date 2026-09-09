@@ -1,0 +1,73 @@
+{
+  "lens": "determinism",
+  "lens_full": "Determinism auditor (Day 2): determinism.log hash-seed rows, digest equality across rows, the LF-converted-src row, 3x replay reproducibility, result_sha256 without default=, and timing exclusion from byte-equality assertions",
+  "day": 2,
+  "round": "final",
+  "pass": false,
+  "retained": [
+    "No blocker: replay and every byte-equality claim hold under independent re-verification. `python3 experiments/grouped-ablation/replay.py` run 3 times: evidence/determinism.log and evidence/registry-hole.log are byte-identical across all three runs AND to the committed tree (sha 1214193b601cdeeb... and 5ab6561a7c74e85e...). The only differences anywhere across the three runs are mkdtemp paths in fresh-process.log / lf-source-drift.log, one __pycache__ listing, and retained.json's `retained.commit` field -- which moved because a concurrent lane committed b20c4e2 mid-audit, not because the generator is nondeterministic.",
+    "determinism.log rows check out and the log's correction of the plan is the correct one. Independently reproduced with `env -i PATH=... PYTHONHASHSEED=n python3 -s -P`: hash_randomization is 0 only for seed=0 and 1 for n=1..4, and hash('pyto') is -729556035718618375 / -13291444081137827 / 1604489765919181924 / 3300665333823433997 / 7906683456969500245 -- exactly the five values in the log, all distinct, Python 3.11.15 matching the version the log states. ULTRACODE-WEEK.md's plain -E note is corrected by gap 3's amendment and the log documents it; the distinctness line is the assertion that could catch a build where the seed stopped taking effect, computed at run time (replay.py:794), not a literal.",
+    "Digests are equal across every determinism row: `digests_match_baseline=True` on all 5 seeds, and the parent compares BOTH child processes per seed against record['results'] (replay.py:779-781, asserted at test_replay.py:816-819). The log cannot go stale: test_replay.py:800 `setUpClass` calls `replay.run_determinism_matrix` live rather than reading a committed file.",
+    "The LF-converted-src row is genuine, all four digests recomputed independently: pyto/src/pyto/core.py and pcr.py really are CRLF (93 and 420 CRLF pairs); installed sha 32a03183.../64cd374a... and LF-converted sha 8133f980.../65e1ba3f... match the log exactly; record_results_sha256 a74557dc7652993c7bf647b8f5f9a64da5dc1e2cd93eaef769c0aeb90d8388b7 is reproducible as sha256 of the canonical JSON of the 15 retained result digests. `used_editable_install: False` is checked with startswith against the scratch package dir, so the row proves the replay ran under a different library copy and still produced identical result digests.",
+    "result_sha256 uses no default= and gives None, not a repr digest, for every non-JSON value probed: set, PxC, dict with tuple keys, a function, a bare object, bytes and complex all return None from both pyto.pcr._result_sha256 (pcr.py:161-176) and retain.digest_of (retain.py:118-123). Critic gap 10 is implemented as amended.",
+    "Timings are absent from the whole replay/determinism chain, not merely excluded from it: evidence/run-1/retained.json contains zero occurrences of duration_ms, started_ms, wall_ms, perf_counter or timings (its top keys are external, program, provider, results, retained), so every byte-equality assertion in test_replay.py is timing-free by construction. The single place where a timing meets a byte-equality assertion is test_second_experiment.py:378.",
+    "The day's hard rule holds, verified independently: on the Day 1 program, `json.dumps([asdict(t) for t in run.ticks])` is byte-identical with observe=True and observe=False (both sha256 ee3ef739264aa4479c78..., 3385 bytes, 0 vs 15 receipts), and equal key-for-key to the committed evidence/run-1/testimony.json ticks. `git diff --stat d9dded6 -- pyto/src` touches pyto/src/pyto/pcr.py only (208+/7-). `board = pxc` unless observe (pcr.py:302-311) and the receipt branch is guarded by `isinstance(board, _TrackedPxC)` (pcr.py:338), so the observe=False path is the d9dded6 call sequence.",
+    "An unrecorded determinism strength worth keeping: `implementation_sha256` is newline-normalized, because inspect.getsource reads through linecache's universal-newline path. Verified by flipping calculations.py's line endings in a scratch dir and re-importing in a fresh process -- all five REGISTRY digests unchanged.",
+    "`bash scripts/check_all.sh` exit 0: library 64, experiments/grouped-ablation 170, experiments/s3-synthetic 5, consumer 61, disc-stats 4, examples 3, art-registry-md OK -- ALL SUITES PASSED."
+  ],
+  "findings": [
+    {
+      "severity": "major",
+      "file": "pyto/experiments/grouped-ablation/test_second_experiment.py",
+      "line": 43,
+      "claim": "The only byte-equality assertion that touches timings excludes receipts.json as a whole file, so ten of the twelve receipt fields -- the entire Day 2 seam payload -- have no determinism assertion anywhere in the repository, and the comment above the constant overstates what the test enforces.",
+      "evidence": "test_second_experiment.py:43 `TIMING_ONLY_FILES = {\"receipts.json\", \"timings.json\"}`; :378-381 sends every name in that set to assertNotEqual and everything else to assertEqual. The comment at :41-42 reads 'wall-clock timing only ... Everything else must be byte-identical', but only started_ms and duration_ms are timings: a receipt in evidence/run-1/receipts.json carries invocation_id, calculation.address, calculation.implementation_sha256, declared_consumes, declared_produces, actual_consumes, actual_produces, writes, result_sha256, effective_arg_keys, shadowed_inputs alongside them (12 field names confirmed by loading the file). grep for result_sha256 and implementation_sha256 across experiments/grouped-ablation/test_*.py returns nothing. Regenerating run-2-regroup twice into scratch dirs and comparing receipts.json with started_ms/duration_ms popped: identical -- the property holds and the exclusion is unnecessarily broad.",
+      "required_fix": "In test_second_experiment.py, stop excluding receipts.json wholesale: parse it, pop started_ms and duration_ms from each receipt, assertEqual the remainder across the two regenerations, and keep an assertNotEqual only for those two fields (or for timings.json). Correct the comment at :41-42 to say which fields, not which files, are allowed to differ.",
+      "short_summary": "receipts.json excluded wholesale from the determinism byte check"
+    },
+    {
+      "severity": "major",
+      "file": "pyto/experiments/grouped-ablation/evidence/OPEN-FINDINGS.md",
+      "line": 38,
+      "claim": "The 'Close it by' recipe for the day's one open item provably cannot produce what it promises: runs 2, 3 and 4 will stamp `-dirty` on any tree, however clean, because regenerating run-1 first makes evidence/run-1 dirt under a watched path that the later scripts do not exclude.",
+      "evidence": "OPEN-FINDINGS.md:38-45 lists run.py, then run_regrouped.py, run_reinput.py, run_from_retained.py, then replay.py, and says 'then confirm every `evidence/*/commit.txt` is 40 hex characters with no suffix' (:45). run.py:55 `WATCHED_PATHS = (HERE, SRC_DIR)` -- HERE is the experiment directory, which contains evidence/. The only exclusion passed is the single directory being written: run.py:290 and second_experiment.py:183,272 all call `commit_sha(..., exclude=(os.path.abspath(out_dir),))`. Measured: run.py regenerated twice into two scratch dirs differs in exactly ['receipts.json', 'saved-work.json', 'timings.json'], so step 1 always leaves evidence/run-1 modified. Measured: with a probe file created under evidence/run-1, `run.dirty_paths(exclude=(evidence/run-2-regroup,))` returns ['pyto/experiments/grouped-ablation/evidence/run-1/ZZ-audit-probe.tmp'] -- a sibling evidence directory is dirt for the next script's stamp.",
+      "required_fix": "Either widen the stamp's exclusion to the whole evidence tree (run.py:290 and second_experiment.py:183,272), or rewrite OPEN-FINDINGS.md:38-45 to say that runs 2-4 legitimately carry `-dirty` under the current WATCHED_PATHS and delete the '40 hex characters with no suffix' acceptance line.",
+      "short_summary": "OPEN-FINDINGS close-it recipe cannot avoid -dirty on runs 2-4"
+    },
+    {
+      "severity": "major",
+      "file": "pyto/experiments/grouped-ablation/evidence/OPEN-FINDINGS.md",
+      "line": 46,
+      "claim": "The acceptance rule the owner is told to apply after regenerating -- only four named things may change, anything else means 'the regeneration was not a no-op and must be explained before the day closes' -- fires on evidence/run-1/saved-work.json, which changes on every regeneration by construction.",
+      "evidence": "OPEN-FINDINGS.md:46-49: 'Only `commit.txt`, `timings.json`, `receipts.json` and each `retained.json`'s `retained.commit` field should change ... a change anywhere else means the regeneration was not a no-op and must be explained before the day closes.' Measured by regenerating run.py twice into scratch dirs: the files that differ are receipts.json, timings.json AND saved-work.json; the saved-work.json diff is exactly its `wall_ms` ({build_program, make_data, pcr.run}) and `wall_ms_total` keys. run-1's saved-work.json is the Day 1 shape and carries those keys, unlike run-2/3/4's, which carry ms_saved instead and are byte-stable.",
+      "required_fix": "Add `evidence/run-1/saved-work.json` (specifically its wall_ms/wall_ms_total keys) to the sentence at OPEN-FINDINGS.md:46-49, or drop the wall-clock keys from run-1's saved-work.json so the stated rule and the artefact agree.",
+      "short_summary": "run-1 saved-work.json changes on every regen, contradicting the stated rule"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/experiments/grouped-ablation/test_grouped_ablation.py",
+      "claim": "No regeneration-determinism test exists for run.py, the run every other artefact is anchored to; the Determinism class covers only the three Day 2 scripts.",
+      "evidence": "test_second_experiment.py:360-395 `class Determinism` has test_run_regrouped_is_deterministic_except_timings, test_run_reinput_..., test_run_from_retained_... and nothing for run.py. In test_grouped_ablation.py the only determinism test is :83 test_ranking_is_deterministic_for_same_seed, which compares a ranking, not the emitted evidence files.",
+      "required_fix": "Add a run.py case to the Determinism class (same two-parents-one-basename shape), with the field-level timing exclusion from finding 1 so run-1/saved-work.json's wall_ms is the excluded part rather than the whole file.",
+      "short_summary": "No regeneration-determinism test covers run.py itself"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/src/pyto/pcr.py",
+      "line": 358,
+      "claim": "`effective_arg_keys` is emitted in insertion order, the day-2 brief specifies sorted order, the one test that touches the order sorts it away, and no CHANGES.md line records the deviation -- so the field's ordering contract is unasserted and unrecorded.",
+      "evidence": "pcr.py:358 `effective_arg_keys=tuple(call_args)` (call_args is `dict(resolved_inputs)` then `.update(invocation.args)`, pcr.py:331-332). research/briefs/day2-brief.md:135 specifies 'sorted keys of the mapping handed to the callable, resolved inputs included'. evidence/run-1/receipts.json shows the compare receipt's effective_arg_keys as unsorted call order. tests/test_receipts.py:311 asserts `sorted(receipt.effective_arg_keys) == [\"other\",\"value\"]`, which cannot distinguish the two. Same class of silent deviation: brief:131 says duration_ms is 'rounded to 3 places'; receipts.json carries an unrounded float.",
+      "required_fix": "Assert the order in tests/test_receipts.py (replace `sorted(receipt.effective_arg_keys)` at :311 with the exact tuple, resolved inputs first then args), and add one line to the CHANGES.md Day 2 entry recording that effective_arg_keys is call order not sorted order, and duration_ms unrounded, against research/briefs/day2-brief.md:135 and :131.",
+      "short_summary": "effective_arg_keys is call order, brief says sorted, unrecorded deviation"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/src/pyto/pcr.py",
+      "line": 161,
+      "claim": "_result_sha256 digests NaN and Infinity through json.dumps' non-standard `NaN`/`Infinity` tokens, so a value no strict JSON parser accepts still receives a digest that the docstring implies is 'canonical JSON'.",
+      "evidence": "pcr.py:161-176 catches only TypeError/ValueError and does not pass allow_nan=False. Probed directly: _result_sha256(float('nan')) and _result_sha256(float('inf')) both return stable digests over JSON's NaN/Infinity extension text; the same holds for retain.canonical_json/digest_of (retain.py:112-123). Deterministic, so critic gap 10's stated concern (a repr carrying a process-dependent object address) is not violated -- the digest is over text no other JSON reader would accept.",
+      "required_fix": "Either pass allow_nan=False in pcr.py:172 and retain.py:114 so NaN/Infinity join the None-digest set with sets, PxC and tuple keys, or state in the pcr.py:161-170 docstring that non-finite floats are digested through JSON's NaN/Infinity extension and are therefore not portable canonical JSON.",
+      "short_summary": "NaN/Infinity get a stable but non-standard-JSON digest"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "lens": "shadow-consumer-bytes",
+  "lens_full": "Shadow + consumer-bytes auditor (Day 2 lane A receipts seam)",
+  "day": 2,
+  "round": "final",
+  "pass": true,
+  "retained": [
+    "(1) SHADOW, receipt side: scratch program planted args={'value':'from-the-args'} against bound input value=Part('px.shadow.src'). args win silently (run.results['shadowed-one'] == 'from-the-args', pxc.get(px.shadow.out) == 'from-the-args') and the receipt records it: shadowed_inputs=('value',), effective_arg_keys=('value',), declared_consumes=('px.shadow.src',), actual_consumes=('px.shadow.src',), writes=[('px.shadow.out','new-address')], result_sha256=05822d5b..., FrozenCalculation('fn.shadow.pick', 41fed3f9...), dataclasses.asdict(receipt) JSON-serializable. Implemented at pyto/src/pyto/pcr.py:362-364.",
+    "(1) SHADOW, edge cases the lane did not report: a ResultRef-bound input shadowed by args is also recorded (shadowed_inputs=('upstream',), declared_consumes=() because a fn: input is not a declared consume, pcr.py:306-310); and an args value EQUAL to the Part value is still recorded as shadowed. Control with no collision: shadowed_inputs=().",
+    "(1) SHADOW, export refusal: all four export paths refuse and name the invocation. retain.to_program(PCR), retain.to_program(PcrRun), retain.retain_run(pxc, run, external, registry=...) and retain.from_program(prog, registry) each raise retain.ShadowedInputError naming 'shadowed-one'/'shadowed-two'. Guard at experiments/grouped-ablation/retain.py:138-143, called from :184 (PCR path), :198 (PcrRun path) and :299 (from_program).",
+    "(1) SHADOW, mutation-checked twice, both in scratch, never in the repo. M-SHADOW (retain._check_shadow patched to a no-op on the imported module object) -> 2 of 55 test_retain tests fail: ExportRefusals::test_shadowing_arg_is_refused_at_export_naming_the_invocation (test_retain.py:143) and ExplainChanges::test_false_unchanged_shadowing_arg_is_reported_as_args_not_missed (test_retain.py:503). M-SHADOWRECEIPT (pcr.py:362-364 replaced with shadowed_inputs=() in a scratch copy of src/pyto on PYTHONPATH) -> 1 of 21 test_receipts tests fails: ShadowedInputs::test_args_key_colliding_with_a_bound_input_is_recorded_not_raised.",
+    "(2) CONSUMER BYTES, pre-seam vs post-seam, independently reproduced. Pre-seam package built from `git show d9dded6:pyto/src/pyto/<each file>` into a scratch dir placed at sys.path[0] (the editable install is a plain path .pth, /usr/local/lib/python3.11/dist-packages/__editable__.pyto_lab-0.1.0.pth, so the insert wins); confirmed loaded by pcr_module_file and by PcrRun_fields == ['pcr','ticks','results'] before vs [...,'receipts'] after. IDENTICAL both sides: card_ticks_raw_sha (len 314) for card_composition.execute_card(test_card_composition.recipe()); card_full_evidence_sha; card_output_sha; art_ticks_raw_sha and art_composition_sha and art_svg_sha for app.render_art_via_pyto({'family':'Orbit Foundry','seed':1234,'targetPx':220,...}).",
+    "(3) DAY 1 TESTIMONY: json.dumps([asdict(t) for t in run.ticks]) for build_program(select_variants({'groups':GROUPS})) on make_data(7,400) is byte-identical pre- and post-seam (sha ee3ef739264aa4479c78ddb37ed2809a3e3e45c470389ca90bd5cc5aced4a64d, len 3385); re-serialized through run.jsonable + json.dumps(indent=2, sort_keys=True) -- exactly how run.py:265 writes the file -- it equals evidence/run-1/testimony.json['ticks'] byte for byte both sides, and testimony.json['pcr'] == run.pcr == 'ablation.grouped'.",
+    "(3) The byte oracle bites: M-BYTES (a trailing `mutant_extra: str = \"observed\"` field appended to CalculationTestimony in a scratch copy) makes tests/test_receipts.py::TestimonyBytesUnchanged::test_tick_bytes_equal_the_retained_day_1_testimony fail, and flips all three independent digests (card, art, day1, day1_matches_retained_run_1 False).",
+    "(4) SCOPE: `git diff --stat d9dded6 -- pyto/src` lists exactly pyto/src/pyto/pcr.py (208+/7-); per-file `git diff --quiet d9dded6` reports __init__.py, core.py, graph.py, neon.py and pql.py all UNCHANGED (PQL untouched). `git diff --stat d9dded6 -- src` is empty and `git status --short -- src` is empty: no JS edits. The 7 deleted lines are the import line plus the six `pxc.`->`board.` call sites in run(). Consumers untouched: `git diff --stat d9dded6 -- pyto/consumers/discstudio-card/app.py card_composition.py` is empty, so the lambda at app.py:45 is pre-existing, not a Day 2 addition.",
+    "(5) SUITES: `bash scripts/check_all.sh` exit 0, ALL SUITES PASSED, on the current tree. evidence/run-1/testimony.json and receipts.json are NOT rewritten by a bare `python3 -m unittest discover -s experiments/grouped-ablation` run (sha unchanged before/after). evidence/run-1/receipts.json keys match dataclasses.fields(Receipt) exactly (12 fields, no missing, no extra) and its calculation blocks match FrozenCalculation exactly (4 fields). scripts/verify_disc_consumer.py:50-52 recomputes moduleSourceSha256 at run time, so nothing pins a stale library hash."
+  ],
+  "findings": [
+    {
+      "severity": "major",
+      "file": "pyto/scripts/check_all.sh",
+      "claim": "An earlier lane report's pasted `$ bash scripts/check_all.sh (exit 0)` per-suite table did not match this tree: it reported consumer 18, experiments/grouped-ablation 31 and \"examples: OK (2 scripts)\" with no art-registry-md row, while the script in the tree pins EXPECT_CONSUMER=61 (check_all.sh:21), runs three example scripts (check_all.sh:98,104,112) and adds an art-registry-md suite (check_all.sh:128-143).",
+      "evidence": "Ran `bash scripts/check_all.sh` at HEAD d8b0c5d: exit 0, ALL SUITES PASSED, per-suite counts library 64 OK, experiments/grouped-ablation 170 OK, experiments/s3-synthetic 5 OK, consumer 61 OK, disc-stats 4 OK, examples 3 OK, art-registry-md - OK. Only the library figure (64) matched the earlier lane's report. check_all.sh:21 reads EXPECT_CONSUMER=61 with the comment \"37 -> 61\", so a run producing \"Ran 18 tests\" for the consumer suite would have been failed by expect_count, not printed as OK.",
+      "required_fix": "This is resolved by the record stage: pyto/experiments/runs/day2/tests.txt now carries the current run's actual table (library 64 / grouped-ablation 170 / s3-synthetic 5 / consumer 61 / disc-stats 4 / examples 3 / art-registry-md), superseding the stale pasted table in the lane's own prose.",
+      "outcome": "no_change_needed",
+      "short_summary": "Earlier lane's pasted check_all table was stale; tests.txt now authoritative"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/CHANGES.md",
+      "claim": "One consumer-visible byte in compositionEvidence DOES change and is nowhere disclosed at the time this finding was raised: app.py's evidence['pyto']['moduleSourceSha256']['pyto.pcr'] moves across the seam. CHANGES.md's testimony-bytes section originally scoped the claim to the ticks payload only and did not say that the sibling identity field in the same dict moves.",
+      "evidence": "Pre/post probe returned art_pyto_moduleSourceSha256 {'pyto.core': unchanged, 'pyto.pcr': 6280fe80...} before and {'pyto.core': unchanged, 'pyto.pcr': 64cd374a...} after; card_composition.py:175 hashes inspect.getsourcefile(Calculation) = core.py, which is unchanged, so card evidence is fully identical while app.py:31-34 PYTO_SOURCE_SHA256 covers pyto.pcr and therefore moves.",
+      "required_fix": "CHANGES.md's Day 2 entry ('One consumer-served byte does move, by design') now names this field, why (a library-identity digest, not testimony), and that verify_disc_consumer.py:50-52 recomputes it, so no retained consumer record goes stale.",
+      "outcome": "fixed",
+      "short_summary": "moduleSourceSha256['pyto.pcr'] move now disclosed in CHANGES.md"
+    },
+    {
+      "severity": "minor",
+      "file": "pyto/docs/seed-manifest.json",
+      "claim": "pcr.py is now the first library module to drift from the extraction seed, and this was not recorded in CHANGES.md or README.md at the time this finding was raised. seed-manifest.json pins the pre-seam bytes; README.md states the six library modules were extracted byte-for-byte from that seed.",
+      "evidence": "Hashing each src/pyto/<name>.py against its seed-manifest entry gives __init__.py, core.py, graph.py, neon.py and pql.py = match, and pcr.py = pre-seam sha -> post-seam sha (investigation.py is ABSENT by design). So library-module drift is 1 today, where it was 0 at d9dded6. research/ULTRACODE-WEEK.md schedules a seed-manifest drift refresh for Day 5.",
+      "required_fix": "Record in CHANGES.md's Day 2 section that this is the first library module to leave the extraction seed, so Day 5's drift refresh starts from a written record rather than a rediscovery.",
+      "outcome": "skipped",
+      "short_summary": "pcr.py's seed-manifest drift is real but deferred to Day 5 per plan"
+    }
+  ]
+}
