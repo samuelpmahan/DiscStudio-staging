@@ -47,6 +47,31 @@ came from the DiscStudio stewardship framing and is withdrawn. Changes:
   Day 2's `implementation_sha256` is the candidate, but its scope excludes helpers and assets
   (ChessLab's own limitation string), so the owner decides what a revision means for the CV stages.
 
+## Reframing 3 (2026-09-09, owner thesis): PxC as a per-user engram table
+
+The owner's thesis: the biggest value of PxC is a common, addressable memory that a user develops
+with agents over time, that weaves itself into whatever is created (receipts embedded in outputs),
+and that becomes reusable per user across projects. Content addressing is the precondition, not
+the mechanism. What the week must add for the thesis to be testable:
+
+- **A durable, per-user materials store** (Day 3): the ChainSpot content-addressed materials port
+  gets a file or sqlite backend at a user-level path, with hit/miss/write counters, so a Part
+  produced in one process or project can be verified and reused in another.
+- **Calculation identity that survives a project boundary** (Days 2 to 3): address plus
+  `implementation_sha256` plus the receipts that show it worked; the Day 3 promotion record is the
+  engram row schema (address, implementation hash, origin run, replay evidence, scope).
+- **A cross-project hit** (Day 5): a second tiny domain in this repository pins pyto, reads the
+  same store, and shows a verified hit on material the first domain produced. Until that runs, the
+  cross-project claim stays `{?} CrossProjectReuse`.
+- **Curation, not accumulation**: a table that grows without the replay-gated, reversible
+  promotion policy is a junk drawer; the SUBDUE comparison (Day 5) is the summarization question
+  (which recurring substructure earns a name).
+
+Agents do not carry memory between sessions; they read what the repository puts first. This
+session rebuilt its understanding from scratch with seven readers because there was no table to
+read. The run records under `pyto/experiments/runs/` and the receipts are the first agent-facing
+entries; the table becomes the entrypoint agents are pointed at.
+
 ## Winner and thesis
 
 **Winner.** Experiment-reuse-first (aggregate 62.5/72 across three judges vs Kernel-first 61.5, Replay-first 54.5, Agent-workshop 53.5, JS-parity 37.5), with five grafts: Kernel-first's replay-gated composition promotion (PromotionRefused / provisional / demote+inline reversibility) and fn.pcr.select round trip; Replay-first's fresh-process boundary (`python3 -I`, scrubbed env) plus hidden-state, determinism (PYTHONHASHSEED x CRLF/LF) and false-unchanged auditors and the digest+ref sidecar for non-JSON values; JS-parity's mutation-kill discipline and 'skip with a named reason, never pass silently' rule; Agent-workshop's CAPTURE.md run record, CHANGES.md pairing and provenance lens (every number in the returns resolves to a retained file); and the environment corrections all three judges converged on (isolated `pip wheel` works here while `--no-build-isolation` fails; arxiv unreachable so SUBDUE cites pyto/research/primary-sources.md; disc-stats needs PYTHONPATH=.; consumer tests need data/).
