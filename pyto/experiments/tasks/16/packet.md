@@ -4,8 +4,44 @@ Intent: watch it think: the tick page plays a record Tick by Tick with play, pau
 Starting point: 12c65281bf9999f5d44ff5b1b883594ca9d5cdb0 (proof: fresh clone on D:/ after task 15)
 Verify: node --test pyto/viewer/test/*.test.mjs
 Allow: pyto/viewer/tick-viewer.html pyto/viewer/tick-viewer.js pyto/viewer/adapters.js pyto/viewer/embed.mjs pyto/viewer/test pyto/viewer/README.md
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 6 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/viewer/README.md
+- M  pyto/viewer/embed.mjs
+- A  pyto/viewer/test/playback.test.mjs
+- M  pyto/viewer/test/render.test.mjs
+- M  pyto/viewer/tick-viewer.html
+- M  pyto/viewer/tick-viewer.js
+
+```
+pyto/viewer/README.md              |  17 ++++-
+ pyto/viewer/embed.mjs              |  18 +++--
+ pyto/viewer/test/playback.test.mjs |  94 ++++++++++++++++++++++++++
+ pyto/viewer/test/render.test.mjs   |  16 +++++
+ pyto/viewer/tick-viewer.html       |  20 ++++++
+ pyto/viewer/tick-viewer.js         | 134 ++++++++++++++++++++++++++++++++++++-
+ 6 files changed, 289 insertions(+), 10 deletions(-)
+```
+
+## Evidence
+
+- verify: `node --test pyto/viewer/test/*.test.mjs` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         144  OK
+    experiments/grouped-ablation    240  OK
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+    viewer                           95  OK
+    viewer-record-schema             19  OK
+    
+    ALL SUITES PASSED
 
 ## Uncertain
 
