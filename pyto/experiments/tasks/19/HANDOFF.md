@@ -1,0 +1,132 @@
+# Task 19: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
+
+You are a fresh agent. Everything you need is on this page and in the files it names. The
+conversation that produced this task is not needed and you will not see it.
+
+## Get the code (once)
+
+```
+git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging DiscStudio-staging     # or: cd into the clone you have
+cd DiscStudio-staging
+git fetch origin exp/19
+python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
+git show origin/exp/19:pyto/experiments/tasks/19/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
+git diff af0bf06 origin/exp/19 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+```
+
+## Why this repository is worth twenty minutes
+
+pyto is a Python transfer of a design the owner proved three times in JavaScript and TypeScript
+(ChainSpot, ChessLab, EmbodiedWumpusWorld): a store of named values (PxC), pure functions over them
+(Calculations), and a program that names which functions run in which order (a PCR, made of Ticks).
+Every run leaves receipts: what each function read and wrote, how long it took, and a digest of its
+source. From receipts you get three things for free: a cache (same inputs and digest, skip the call,
+also across processes), a replay that verifies a shipped record in a fresh process, and a per-Tick
+view of what the algorithm used. The founding need is the last one: the owner's course-map parser
+had to fit five seconds on a phone, and nothing it used was visible. pyto is the workshop where that
+visibility is designed before it is stripped for speed. JavaScript is first class; Python is where
+the design is checked.
+
+Do not take that from this page. In two minutes:
+
+```
+bash pyto/scripts/check_all.sh                                        # nine suites, ~600 tests
+python pyto/experiments/grouped-ablation/run_cached.py --out /tmp/hit  # a miss, then two hits, one from a fresh process
+node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /tmp/hit/ticks.html
+```
+
+The tests were checked by mutation (each guards a specific line). The fixtures for the JavaScript
+port are 440 byte-exact cases. `pyto/questions.md` is where anyone unsure writes `{?} Label: ...`
+and the owner answers; read it before assuming. `pyto/BOARD.md` is the owner's one page.
+
+## What was asked
+
+Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
+
+## Starting point
+
+af0bf062f5bbcd891e5880808641efca8ba172dc (checkpoint: the test's cache step overwrites its own scratch, so a repeated proof cannot trip on the last one). MAIN may have moved since: `git log --oneline af0bf06..origin/claude/python-ultracode-supercharge-st8hnu` shows how far.
+Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
+
+## What changed (the candidate)
+
+- A  pyto/consumers/discstudio-card/port/painter/cards.mjs
+- A  pyto/consumers/discstudio-card/port/painter/core.mjs
+- A  pyto/consumers/discstudio-card/port/painter/families/botanical.mjs
+- A  pyto/consumers/discstudio-card/port/painter/families/cartography.mjs
+- A  pyto/consumers/discstudio-card/port/painter/families/foundry.mjs
+- A  pyto/consumers/discstudio-card/port/painter/families/signal.mjs
+- A  pyto/consumers/discstudio-card/port/painter/painter.mjs
+
+```
+.../discstudio-card/port/painter/cards.mjs         | 987 +++++++++++++++++++++
+ .../discstudio-card/port/painter/core.mjs          | 622 +++++++++++++
+ .../port/painter/families/botanical.mjs            | 588 ++++++++++++
+ .../port/painter/families/cartography.mjs          | 591 ++++++++++++
+ .../port/painter/families/foundry.mjs              | 352 ++++++++
+ .../port/painter/families/signal.mjs               | 347 ++++++++
+ .../discstudio-card/port/painter/painter.mjs       | 162 ++++
+ 7 files changed, 3649 insertions(+)
+```
+
+## Evidence
+
+- verify: `cd pyto/consumers/discstudio-card/port/painter && node verify_port.mjs ./painter.mjs ./cards.mjs` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         144  OK
+    experiments/grouped-ablation    240  OK
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+    viewer                           87  OK
+    viewer-record-schema             19  OK
+    
+    ALL SUITES PASSED
+
+## Uncertain
+
+(The agent working on this writes one line per thing it was unsure about, as
+`{?} Label: description`, and leaves the decision to the owner. Empty means nothing was unsure.)
+
+- {?} libm sin/cos: CPython calls glibc; V8's Math.sin/Math.cos disagree with it by one ulp on ~3.5% of arguments. core.mjs computes sin/cos (and atan2) in 128-bit fixed point instead, which is correctly rounded and so agrees with glibc except where glibc itself is not correctly rounded: 11 of 6009 sampled arguments (0.2%), 3 of 5010 for atan2. No divergence reached a formatted byte in any sample tested (0 of 3000 for `256 + 78*cos(a)` at one decimal), and the four classic families pass, but a tournament family that compares a trig result against a constant could still land on the wrong side of glibc on a case I cannot predict. Matching glibc bit-for-bit would mean porting its s_sin.c, which I did not do.
+- {?} math.hypot: V8's Math.hypot disagrees with glibc on ~30% of pairs; glibc's is correctly rounded on every one of 5500 samples, so core.mjs's `hypot` (exact sum of squares over BigInt, one rounding) matched it 4000/4000. This matters because _families_cartography and _families_botanical branch on it (`math.hypot(x - C, y - C) > 244`), where one ulp flips a branch. Families must import `hypot` from core.mjs, not use Math.hypot; I flagged that in each stub header but cannot enforce it.
+- {?} Promoted families in the studio files: art_registry.py serves pressed-fern, nodding-seedhead and wind-rose from paint_families.py, not from _families_botanical.py / _families_cartography.py, even though those modules hold same-named functions. I put the three in families/botanical.mjs and families/cartography.mjs by studio of origin (the four-file layout the task asked for) and named paint_families.py as their source in each stub header. If the two Python copies have drifted, the registry's copy is the one the fixtures pin.
+- {?} Studio function names: the stubs export the Python names verbatim (halftone_screen, register_mark, hot_foil, chevron_run, score_bug, sweep_clock, contour_basin, fairway_plat, wind_rose, pressed_fern, nodding_seedhead, block_print) plus a RENDERERS map keyed by slug, so the JS keeps the registry's spelling rather than camelCase. Painter.mjs imports the names, so renaming them breaks the dispatch table.
+- {?} Seeds beyond 2**53: PyRandom seeds from abs(seed) over its 32-bit chunks and accepts a BigInt, but a JS number seed larger than 2**53 has already lost bits before it reaches render(). The fixtures only use 3, 7 and 42, so nothing exercises it; a caller with a large seed must pass a BigInt.
+- {?} label.strip()[:10] at target 220: Python strips its own whitespace set (which adds \x1c-\x1f and \x85 to JS's, and excludes U+FEFF) and slices by code point. painter.mjs reproduces both, verified against Python on padded, empty, escaped and astral-emoji labels; the fixtures only ever pass 'Warm Mako', so none of that is pinned by the verifier.
+- {?} cartography `**`: contour-basin uses `frac ** 1.1` and `frac ** 0.85`, wind-rose `bias ** focus`. CPython's float `**` calls libm pow; V8's Math.pow disagrees with it by one ulp on about 10% of arguments (2949 of 30000 sampled pairs drawn from exactly those three shapes), and core.mjs has no correctly-rounded pow to fall back on, so cartography.mjs uses Math.pow. It never reached a formatted byte in anything I could run: all 81 fixture cases pass, and so do 2250 extra cases (250 random seeds x random palettes x 3 targets x 3 families) rendered by CPython and compared by sha256. The exposure is real but unmeasurably rare -- closing it would mean a fixed-point pow in core.mjs beside sin/cos/hypot/atan2, which is the owner's call, not mine.
+- {?} cartography string helpers in the family module: _cartouche needs `label.strip()[:12]` and `len(...)`, which core.mjs does not export (painter.mjs keeps its own private pyStrip for the classic families). Per the task's instruction I added pyStrip/pySlice/pyLen to families/cartography.mjs rather than touching core.mjs, so the same three helpers now exist in two places; if another studio needs them the owner may want them promoted into core.mjs once.
+- {?} wind-rose bytes: I ported the paint_families.py copy per art_registry.py, and diffed it against the _families_cartography.py copy first. The two differ only in the name of the formatter they call -- the studio spells it `n`, the promoted copy `_cn`, and the two functions are the same four lines -- so the choice is unobservable, but the copies are not literally identical text and a future edit to one will not show up in the other.
+- {?} foundry frame helpers are the studio's own, not paint_components': _families_foundry.py carries its own _open/_plate/_rim/_label_plate/_close/_sw/_poly, and they differ from the classic frame in bytes (gradient stops spelled #ffffff/#000000 at .16/.30, rim inner ring at r=203 with opacity .92/.30, and a knockout label plate instead of a bare <text>). families/foundry.mjs therefore reimplements them rather than importing painter.mjs's classic frame; core.mjs's strokeText cannot stand in for _sw either, because _sw always prints one decimal ("7.0") where strokeText prints an int source as "7". If a later cleanup wants one shared frame, these are four separate frames upstream, not one.
+- {?} foundry `**`: halftone-screen uses `t ** 1.35` (and `(R + radius) ** 2`, which is exact). CPython's float `**` calls libm pow and V8's Math.pow is not guaranteed to agree; foundry.mjs uses Math.pow. All 27 halftone-screen cases match, and 1200 extra renders (seeds 0-399 x 3 targets) diffed against CPython matched byte for byte, so no sampled argument disagreed -- but as with cartography's note there is no correctly-rounded pow in core.mjs to fall back on.
+- {?} label plate width is measured AFTER .upper(): `text = label.strip()[:10].upper()` then `width = 16.0 * len(text) + 40.0`, so 'straße' -> 'STRASSE' is 7 characters wide, not 6, and 'ﬁne print' -> 'FINE PRINT' is 10, not 9. foundry.mjs slices by code point before uppercasing and measures the uppercased result the same way; verified against CPython on 15 labels (padded, empty, all-whitespace, U+00A0/U+3000, ß, ﬁ, İ, combining accent, astral emoji) x 8 seeds x 3 targets, 1080/1080 identical. The fixtures only ever pass 'Warm Mako', where the distinction is invisible, so nothing pins it.
+- {?} pyStrip duplicated again: families/foundry.mjs needs Python's str.strip() whitespace set for the label plate and carries its own copy, as families/cartography.mjs does and as painter.mjs does privately. That is three copies of the same six lines now; promoting one pyStrip into core.mjs would be the obvious consolidation, but the task says not to touch core.mjs.
+- {?} signal's `_f` keeps "-0" where botanical's `n` collapses it: `_families_signal.py::_f` is `"{:.1f}".format(v)` with a trailing ".0" trimmed and nothing else, so a small negative prints "-0" (and "-0.4" stays "-0.4"); `_families_botanical.py::n` / `paint_families.py::_bn` add `return "0" if text in ("-0", "")`. families/signal.mjs and families/botanical.mjs therefore carry two different one-decimal formatters, both built on core.mjs's `fmt1`. The fixtures do exercise the difference (score-bug and sweep-clock emit "-0" at several seeds), so this is pinned, not merely suspected -- but it is the kind of thing a future "shared helper" cleanup would quietly break.
+- {?} two spellings of the same stroke floor: signal computes `round(min_output * SIZE / target, 1)` and botanical `round(min_output / (target / SIZE), 1)`. For the three targets both give the same value, and I kept each module's own spelling rather than importing core.mjs's `strokeFloor` (which is botanical's spelling), so neither family depends on the two being equal. If a fourth target is ever added they could disagree.
+- {?} pyStrip duplicated a fourth and fifth time: families/signal.mjs (for `label.strip()[:10]` in the broadcast name plate) and families/botanical.mjs (for `label.strip()[:13]` in the mount plaque) each carry their own copy of Python's str.strip() whitespace set, matching what painter.mjs, cartography.mjs and foundry.mjs already do. Five copies of the same six lines is the strongest argument yet for one `pyStrip` in core.mjs; the task forbade touching core.mjs, so I did not.
+- {?} label measured by code point in signal's name plate: `_label_plate` uses `len(display)` after `label.strip()[:10]` to size the plate, so the width is in code points, not UTF-16 units. signal.mjs slices and counts with `Array.from`, which matches, but the fixtures only ever pass 'Warm Mako', so an astral-character label is unpinned.
+- {?} botanical `mix` has no channel clamp: `paint_families.mix` clamps `t` to [0, 1] and then does `int(round(...))` with no 0..255 clamp, while `_families_signal._hex` clamps the channel instead. Both are ported as written, so a caller passing out-of-range colours would get different behaviour from the two studios -- exactly as in Python.
+- {?} block-print's disc test rides on hypot: `if math.hypot(x - C, y - C) > 244: continue` decides whether a whole motif group is emitted, so one ulp there changes the byte count of the document, not just a digit. families/botanical.mjs imports core.mjs's exact `hypot` for it (and for `taper`); all 27 cases pass, but this is the branch the earlier hypot note was worried about, and it is worth keeping in mind if `hypot` is ever "simplified" to Math.hypot.
+- {?} pressed-fern's unused `opacity` parameter: `frond(color, pairs, opacity, detail, veins, outline="")` never reads `opacity` (the ghost group carries its own `opacity=".42"` instead). I kept the parameter so the call sites read like the Python; it is dead in both languages.
+- {?} cards.mjs carries a sixth and seventh spelling of `_num`/`_f`: botanical's `_num` folds "-0" to "0" (`text if text not in ("", "-0") else "0"`) and signal's `_f` does not (`text or "0"`), so the two card studios print a small negative differently, exactly as the two family studios do. I kept both as written rather than sharing one two-decimal formatter; a cleanup that merges them would silently change signal's bytes.
+- {?} `id="..."` namespacing depends on Python set iteration order: `_namespace` (botanical) and `_art_svg` (signal) do `sorted(set(_ID.findall(...)), key=len, reverse=True)`. Python's str hashing is randomized per process, so ids of equal length come out in an arbitrary order, and the Python output is only deterministic because same-length ids cannot be prefixes of one another (so the replacements commute). cards.mjs sorts by descending length with JS's stable sort and relies on the same argument. A future art family that emitted an id equal to `<prefix><some other id>` would break both languages, differently.
+- {?} botanical's `_ID` is `id="([^"]+)"` with no `\b` while signal's is `\bid="([^"]+)"`: on today's art documents the two find the same set, but an attribute ending in `id` (`gradientid="x"`, or a stray `data-id="x"` — `-` is a word boundary so signal matches that one too) would namespace under one studio and not the other. Ported verbatim, not reconciled.
+- {?} `str.upper()` / `str.strip()` are ASCII-shaped in the port: eyebrows, notes and the winner tag go through `.upper()`, and every field goes through `.strip()`. cards.mjs uses JS `toUpperCase()` and a `\s`-class strip, which differ from Python on 'ß' -> 'SS' (JS agrees), on 'ﬁ' (JS agrees) and on Python's extra whitespace codepoints \x1c-\x1f and \x85 (JS's `\s` excludes those and includes U+FEFF). The fixture cards only carry ASCII, so none of it is pinned. painter.mjs and four family modules each carry a full `pyStrip` for exactly this reason; cards.mjs does not, because no card field is sliced to a fixed length the way a disc label is.
+- {?} int-vs-float is unrecoverable from JSON on the JS side: `_flagged` and `_score_map` branch on `isinstance(value, int)`, and `flight`/`_number` on `isinstance(value, int)` vs `float`. A Python float 3.0 takes a different path from int 3 in `_flagged` (float falls through to None) but prints identically in `flight`. cards.mjs treats every integral JS number as an int, so a card whose `winner` arrived as 0.0 would resolve to participant 0 here and to no winner in Python. The fixtures carry no winner/highlight/scores at all.
+- {?} the four exported renderers, not two: cards.mjs also exports `renderBotanicalBattle` and `renderSignalSingle`, the halves each studio kept "only so the module still self-checks against its tournament renders". card_render.py does not re-export them and the verifier does not cover them, but I ported and checked them (32 layout x details x width combinations plus 6 hand-built edge cards, all sha256-identical to CPython) so the two modules stay whole. If the owner would rather ship only the promoted pair, dropping those two exports costs nothing else.
+- {?} error types are the one thing that does not match: where Python raises `ValueError` ("card object required", "width must be at least 80", "single card needs one participant", "art must be a full <svg> document") cards.mjs throws a plain `Error` with the same message. Confirmed as the sole divergence across the edge-case sweep — 44 of 48 renders identical, the other 4 being this raise on both sides.
+
+## What to do
+
+1. Explain this to the owner in plain words: what was asked, what changed file by file (one line
+   each), what the evidence shows, what is uncertain. Use no term this page does not define.
+2. Ask the owner: land it, drop some files, or send it back. To drop files, from the clone:
+   `bash pyto/scripts/neat.sh drop 19 <path> ...` (they go back to the starting point, the
+   packet is rewritten, the suite runs again).
+3. Land: `bash pyto/scripts/neat.sh land 19`. It merges the candidate into MAIN, runs the suite
+   again on the merged tree, writes a receipt under `pyto/experiments/landings/`, commits
+   `land(task-19): Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
+   If it refuses, it says exactly why, and nothing has changed.
