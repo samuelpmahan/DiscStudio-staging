@@ -40,6 +40,18 @@ node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out
 For Astra or Codex, the owner reuses one sentence forever: "Pull the branch, read the newest file
 in mailbox/to-gpt, do what it says."
 
+## Interrupts
+
+The owner is interrupted for three things only: something they would want to know broke and
+cannot be fixed without them; a decision that changes what gets built and has no safe default; a
+milestone they asked for (the proof passed on their machine, a surface shipped). Everything else
+is a line below, never a message. Defaults are taken and written in the owner's words; undo is a
+sentence. An interrupt has one shape: what happened, in a plain sentence; what it means for the
+owner, in one; what they can say, with the default named. No labels, receipts or paths. Knowing
+it works is three lines, read in the morning: the proof line (green or red on D:/ in a fresh
+clone), the product page, and the tally of landings and refusals with each reason. The owner did
+not write this rule and can veto it in a sentence.
+
 ## Today
 
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
@@ -83,6 +95,7 @@ the day so far, in plain words.
 - 2026-09-09 08:21 **landed** `task-1`: AHI runs on the owner's Windows D:/: neat new works (host path for pip, python checks the install), the ablation fixture is bit-portable (no libm), the card server drains a 413 body, stripped child environments keep SystemDrive (65 files since 8604a0c, suites green, receipt 20260909T081928Z-task-1)
 - 2026-09-09 08:16 **refused** `task-1`: MAIN is behind origin/HEAD by  commit(s) (someone landed elsewhere); run: git pull --rebase origin HEAD  then land again
 - 2026-09-09 08:13 **landed** `windows-venv`: the scripts find the repository's .venv on their own, so isolated child processes import pyto on Windows too; the D:/ commands make that venv (4 files since 291b7f7, suites green, receipt 20260909T081311Z-windows-venv)
+- 2026-09-09 11:20 Owner: "I want to know the things work but I shouldn't have to define an interrupt schema." The schema is now the system's own rule (section "Interrupts" above): three reasons to interrupt, one shape, three morning lines that say it works.
 - 2026-09-09 11:05 Owner: is it making my life easier? Not yet: tonight added commands, prompts to paste and a relay. Rule from here: the commands are for agents; the owner says things and reads this page. "The test" is now one sentence to a session; Astra and Codex get one fixed sentence forever; the `{?}` root is read to the owner, never by the owner.
 - 2026-09-09 10:20 Owner: go big, one more: a Fable uses Sonnets to self-improve in branching manners that must remain human explicable. Running now: Sonnets mine the record for small useful changes to the loop itself, each becomes a neat task in its own copy, and a cold reader who sees only the hand-off must explain it correctly before it may land (the explicability gate, now in LANDING.md). Losers stay packed.
 - 2026-09-09 08:15 **refused** `task-1`: MAIN is behind origin/claude/python-ultracode-supercharge-st8hnu by 2 commit(s) (someone landed elsewhere); run: git pull --rebase origin claude/python-ultracode-supercharge-st8hnu  then land again
