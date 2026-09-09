@@ -554,10 +554,11 @@ into one rule; PQL is then `ls` and `grep` over all of them, the viewer is `cat`
 (a `receipt` mount or segment written under `observe=True`), `materialize.py`, `neat`.
 
 ### {?} OvernightLanding
-What may land while the owner sleeps? Status: provisional, taken 2026-09-09 from "keep everything"
-and "landing I can control": tools, tests, docs, Windows fixes and DiscStudio product code land
-on a green verifier and suite, with a receipt and a Today line; anything that changes what the
-kernel means (receipts as Parts, `oc`, root enforcement) is packed with a hand-off and waits for
-"land N" in the morning. Nothing is deleted; a losing attempt stays as a packed task. Bites:
-tonight's queue on the board.
+What may land while the owner sleeps? Status: resolved 2026-09-09 by owner: "I want minimal hard
+stops ... I can't keep track of git and I need to keep track of this. Like go wild too but it's
+gotta augment me. AHI." So: everything that passes its verifier and the suite lands, kernel
+changes included, with a receipt and a Today line; a decision taken by default is written here in
+the owner's words with the default; `neat undo <id>` reverts a landed task with its own receipt,
+so control is a way back, not a gate. Nothing is deleted; a losing attempt stays as a packed task.
+Bites: tonight's queue on the board, `neat.sh`.
 

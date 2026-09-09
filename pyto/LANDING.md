@@ -15,6 +15,7 @@ bash pyto/scripts/neat.sh show 0                -> the hand-off a fresh agent ex
 bash pyto/scripts/neat.sh land 0                -> merge into MAIN, verify there, receipt, commit, push; EXP/0 gone
 bash pyto/scripts/neat.sh drop 0 <path> ...     -> "I like two of the three files": back to the start, repacked
 bash pyto/scripts/neat.sh kill 0                -> abandon, nothing lands
+bash pyto/scripts/neat.sh undo 0                -> a landed task back out of MAIN: revert, verify, receipt, push
 bash pyto/scripts/neat.sh list
 ```
 
@@ -25,6 +26,9 @@ it travels with the branch to any machine and lands with the candidate; the hand
 fresh agent how to clone, why the repository is worth its time, and what to explain and do.
 `neat land` is `land.sh --from exp/<id>` with the packet's Verify and Allow, so everything below
 holds for it too. Underneath: EXP/<id> is a git worktree on branch `exp/<id>`, deleted at landing.
+Control is a way back, not a gate (owner, 2026-09-09: "minimal hard stops"): `neat undo <id>`
+reverts a landed task through the same protocol, so the owner never needs git to take something
+back, and nothing waits on the owner to go in.
 
 ## The words
 

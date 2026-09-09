@@ -7,6 +7,7 @@
 #   neat drop <id> <path>...  put those files back to the starting point, repack
 #   neat land <id>            merge into MAIN, verify, receipt, commit, push; EXP/<id> goes away
 #   neat kill <id>            abandon: EXP/<id> and its branch go away, nothing lands
+#   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
 #   neat list                 every experiment and its state
 #
 # MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN),
@@ -25,7 +26,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,11p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,12p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: "
   grep -m1 "^$1: " "$2" | sed "s/^$1: //"
 }
@@ -269,6 +270,26 @@ cmd_kill() {
   echo "task $id abandoned; nothing landed"
 }
 
+cmd_undo() {
+  local id="${1:-}"; [ -n "$id" ] || usage
+  local sha intent parents
+  sha="$(git -C "$ROOT" log --format=%H --grep="^land(task-$id): " -n 1)"
+  [ -n "$sha" ] || die "no landing commit for task $id (git log --grep 'land(task-$id)')"
+  [ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all | grep -v '^?? pyto/experiments/landings/')" ] || die "MAIN is not clean; undo needs a clean tree"
+  intent="$(git -C "$ROOT" log -1 --format=%s "$sha" | sed "s/^land(task-$id): //")"
+  parents="$(git -C "$ROOT" rev-list --parents -n 1 "$sha" | wc -w)"
+  echo "== undo task $id: $intent  (landing ${sha:0:7})"
+  if [ "$parents" -gt 2 ]; then git -C "$ROOT" revert --no-commit -m 1 "$sha" >/dev/null 2>&1 || { git -C "$ROOT" revert --abort; die "the revert conflicts with later landings in: $(git -C "$ROOT" diff --name-only --diff-filter=U | tr '\n' ' ')"; }
+  else git -C "$ROOT" revert --no-commit "$sha" >/dev/null 2>&1 || { git -C "$ROOT" revert --abort; die "the revert conflicts with later landings in: $(git -C "$ROOT" diff --name-only --diff-filter=U | tr '\n' ' ')"; }; fi
+  git -C "$ROOT" reset -q  # leave the revert as ordinary dirty files for land.sh to claim
+  if bash "$HERE/land.sh" "undo-task-$id" --message "undo task $id: $intent"; then
+    echo "task $id is out of MAIN; its packet and landing stay in history (git log --grep 'task-$id')"
+  else
+    git -C "$ROOT" checkout -q -- . && git -C "$ROOT" clean -fdq -e pyto/experiments/landings
+    echo "undo of task $id did not land (see the reason above); MAIN is as it was" >&2; exit 1
+  fi
+}
+
 cmd_list() {
   local d id packet base n state
   printf '%-4s %-8s %-6s %s\n' id state files intent
@@ -287,5 +308,5 @@ cmd_list() {
 
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
-  land) cmd_land "$@";; kill) cmd_kill "$@";; list) cmd_list "$@";; *) usage;;
+  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; list) cmd_list "$@";; *) usage;;
 esac
