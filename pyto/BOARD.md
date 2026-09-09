@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 09:10 **landed** `neat-update`: neat update brings MAIN into a copy; a packet's candidate is measured from the merge base, so MAIN's own commits never count as the task's change (2 files since 7d2448d, suites green, receipt 20260909T090927Z-neat-update)
 - 2026-09-09 09:08 **landed** `task-0`: Day 3 close-out: the record contract says what both runtimes do (declared_consumes, nested array cap), run_cached derives hit or miss from counters, viewer and materializer agree on every fixture (24 files since f2e0b8e, suites green, receipt 20260909T090752Z-task-0)
 - 2026-09-09 09:05 **refused** `task-0`: merge conflict with exp/0 in: pyto/experiments/grouped-ablation/evidence/run-6-cached/interpretation.md pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json 
 - 2026-09-09 09:02 **landed** `task-2`: Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing (145 files since 50ec3f7, suites green, receipt 20260909T090128Z-task-2)

@@ -16,6 +16,7 @@ bash pyto/scripts/neat.sh land 0                -> merge into MAIN, verify there
 bash pyto/scripts/neat.sh drop 0 <path> ...     -> "I like two of the three files": back to the start, repacked
 bash pyto/scripts/neat.sh kill 0                -> abandon, nothing lands
 bash pyto/scripts/neat.sh undo 0                -> a landed task back out of MAIN: revert, verify, receipt, push
+bash pyto/scripts/neat.sh update 0              -> MAIN's newer commits into EXP/0 (a conflict names the files and stops)
 bash pyto/scripts/neat.sh list
 ```
 
