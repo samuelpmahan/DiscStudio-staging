@@ -18,7 +18,12 @@ bash pyto/scripts/neat.sh kill 0                -> abandon, nothing lands
 bash pyto/scripts/neat.sh undo 0                -> a landed task back out of MAIN: revert, verify, receipt, push
 bash pyto/scripts/neat.sh update 0              -> MAIN's newer commits into EXP/0 (a conflict names the files and stops)
 bash pyto/scripts/neat.sh list
+bash pyto/scripts/land.sh --note "one plain line"  -> onto the board under Today, committed, pushed; no receipt
 ```
+
+The board says when a task starts, not only when it lands: `neat new` writes a **started** line
+with the intent, `neat kill` a **killed** line, so the owner sees what is coming before a **landed**
+line appears. Both go through `land.sh --note`. A note is not a claim; only a landing is.
 
 Every task carries a packet at `pyto/experiments/tasks/<id>/`: Intent (what you asked), Starting
 point (what MAIN was), Candidate (exactly what changed), Evidence (what was checked, exit codes,
