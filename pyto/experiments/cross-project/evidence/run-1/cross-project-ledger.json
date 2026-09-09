@@ -1,0 +1,62 @@
+{
+  "bag_n": 12,
+  "bag_seed": 1,
+  "final_counters": {
+    "hits": 1,
+    "misses": 3,
+    "requests": 4,
+    "writes": 3
+  },
+  "hits_before_any_shelf_write": 1,
+  "materials_root_process_is_temp": true,
+  "resolutions": [
+    {
+      "counters_delta": {
+        "hits": 1,
+        "misses": 0,
+        "requests": 1,
+        "writes": 0
+      },
+      "material": "fn.ablation.split (shared)"
+    },
+    {
+      "counters_delta": {
+        "hits": 0,
+        "misses": 1,
+        "requests": 1,
+        "writes": 1
+      },
+      "material": "fn.shelf.stabilityHistogram (own)"
+    },
+    {
+      "counters_delta": {
+        "hits": 0,
+        "misses": 1,
+        "requests": 1,
+        "writes": 1
+      },
+      "material": "fn.shelf.pickToCarry (own)"
+    }
+  ],
+  "shared_material": {
+    "calculation": "fn.ablation.split",
+    "consumer": "cross-project/shelf (domain B)",
+    "digest_committed_by_domain_a": "cefbd6bdda24c1770b8dd863559305b4b4ebc60ccc179fab0a1499297963f4f0",
+    "digest_committed_citation": "pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json",
+    "digest_committed_cross_check_citation": "pyto/experiments/grouped-ablation/evidence/run-1/receipts.json",
+    "digest_equal": true,
+    "digest_this_run": "cefbd6bdda24c1770b8dd863559305b4b4ebc60ccc179fab0a1499297963f4f0",
+    "key": "31e1e57286cf7682aa074cb16ad11bc4f41032f78f9af19a12d528e02bb21fa7",
+    "producer": "grouped-ablation (domain A)",
+    "revision": "8674a964aba6e3cf16317f233884204439271c1853c0f945548a4a625e05bc86",
+    "seeded_by_domain_a": true,
+    "source": {
+      "n": 400,
+      "seed": 7
+    }
+  },
+  "shelf_testimony_ticks": [
+    "Shelf"
+  ],
+  "writes_before_any_shelf_write": 0
+}
