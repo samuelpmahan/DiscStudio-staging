@@ -228,6 +228,71 @@ class NonJSONValueSidecar(unittest.TestCase):
         self.assertEqual(store.counters, {"requests": 2, "hits": 0, "misses": 2, "writes": 2})
 
 
+class CorruptValueFileIsNotAHit(unittest.TestCase):
+    """A value file that will not read back is a miss, not a half-counted hit.
+
+    `material()` used to increment `hits` before `load_value()` ran, so a truncated
+    or hand-edited `<key>.json` recorded a hit and *then* raised: a ledger claiming
+    reuse of a value nobody ever read, in which hits + misses no longer accounted
+    for requests. The rule the module states for a sidecar-only key -- recompute
+    rather than silently pretend to be cached -- applies here too.
+    """
+
+    ADDRESS = "fn.materials-test.corrupt"
+
+    def _run(self, store, calc, pxc=None):
+        return materials.material(
+            pxc or PxC(), revision="r1", source={"n": 3}, calculation=calc, args={}, store=store
+        )
+
+    def test_a_truncated_value_file_recomputes_and_counts_a_miss(self):
+        from pyto import Calculation
+        calls = {"n": 0}
+
+        def counting_calc(args):
+            calls["n"] += 1
+            return {"n": 3}
+
+        calc = Calculation(self.ADDRESS, counting_calc)
+        store = _fresh_store()
+        self.assertEqual(self._run(store, calc), {"n": 3})
+        self.assertEqual(store.counters, {"requests": 1, "hits": 0, "misses": 1, "writes": 1})
+
+        key = materials.material_key(revision="r1", source={"n": 3}, args={})
+        value_file = store.root / f"{key}.json"
+        self.assertTrue(value_file.is_file())
+        value_file.write_text('{"n": 3', encoding="utf-8")  # truncated mid-object
+
+        # No exception escapes, the Calculation runs again, and the ledger says so.
+        self.assertEqual(self._run(store, calc), {"n": 3})
+        self.assertEqual(calls["n"], 2)
+        self.assertEqual(store.counters, {"requests": 2, "hits": 0, "misses": 2, "writes": 2})
+        self.assertEqual(
+            store.counters["hits"] + store.counters["misses"], store.counters["requests"],
+            "hits + misses must still account for every request",
+        )
+        # The miss path rewrote the file, so the next ask is an honest disk hit.
+        self.assertEqual(self._run(store, calc), {"n": 3})
+        self.assertEqual(calls["n"], 2)
+        self.assertEqual(store.counters, {"requests": 3, "hits": 1, "misses": 2, "writes": 2})
+
+    def test_a_stored_null_is_still_a_hit(self):
+        """The sentinel for a failed load is not None: `null` is a legal cached value."""
+        from pyto import Calculation
+        calls = {"n": 0}
+
+        def none_calc(args):
+            calls["n"] += 1
+            return None
+
+        calc = Calculation(self.ADDRESS, none_calc)
+        store = _fresh_store()
+        self.assertIsNone(self._run(store, calc))
+        self.assertIsNone(self._run(store, calc))  # fresh PxC, disk hit
+        self.assertEqual(calls["n"], 1, "a stored null must not be recomputed")
+        self.assertEqual(store.counters, {"requests": 2, "hits": 1, "misses": 1, "writes": 1})
+
+
 class HitLedger(unittest.TestCase):
     def test_calculation_hits_and_part_hits_on_the_day1_program(self):
         """15 invocations: select, split, 6x(fit,score), compare. `select` and `split`

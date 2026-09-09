@@ -281,6 +281,16 @@ class TheValidatorActuallyRejects(unittest.TestCase):
             set_at(self.record, base, {"kind": "svg", "data": 12, "note": None}),
             "ticks[0].invocations[0].value.data",
         )
+        # RECORD.md:60-61 fixes the bytes of a png-data-url, because a viewer
+        # makes them an <img src>. Anything else is refused; the real prefix passes.
+        for data in ("https://evil.example/beacon.gif", "javascript:alert(1)//", "data:image/svg+xml,<svg/>", ""):
+            with self.subTest(data=data):
+                self.assertRejects(
+                    set_at(self.record, base, {"kind": "png-data-url", "data": data, "note": None}),
+                    "ticks[0].invocations[0].value.data",
+                )
+        good = set_at(self.record, base, {"kind": "png-data-url", "data": "data:image/png;base64,iVBORw0KGgo=", "note": None})
+        self.assertIs(validate(good), good)
         # `json` accepts any JSON value, null included: the kind says how to
         # read `data`, not that the value was non-empty.
         ok = set_at(self.record, base, {"kind": "json", "data": None, "note": None})
@@ -323,6 +333,12 @@ class TheTwoValidatorsAgree(unittest.TestCase):
         ("ticks.0.invocations.0.duration_ms", "fast", "ticks[0].invocations[0].duration_ms"),
         ("ticks.0.invocations.0.hit", "yes", "ticks[0].invocations[0].hit"),
         ("ticks.0.invocations.0.value.kind", "binary", "ticks[0].invocations[0].value.kind"),
+        # RECORD.md:60-61 states a shape, not just a name: a viewer puts this
+        # string into an <img src>, so neither runtime may read back a record
+        # that spells an arbitrary URL there.
+        ("ticks.0.invocations.0.value",
+         {"kind": "png-data-url", "data": "https://evil.example/beacon.gif", "note": None},
+         "ticks[0].invocations[0].value.data"),
         ("counters.invocations", 99, "counters.invocations"),
         ("counters.hits", 1, "counters.hits"),
         ("counters.wall_ms", "quick", "counters.wall_ms"),
