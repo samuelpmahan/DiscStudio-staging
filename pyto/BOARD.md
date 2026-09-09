@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 13:51 **landed** `task-17`: cross-project hit: a second tiny domain reads the same per-user materials store and gets a verified hit on material the ablation experiment produced, with counters and a receipt (25 files since 12c6528, suites green, receipt 20260909T135010Z-task-17)
 - 2026-09-09 13:41 **landed** `task-16`: watch it think: the tick page plays a record Tick by Tick with play, pause and step, each Calculation's reads, writes and value appearing when it finished, at recorded speed or slower (10 files since 12c6528, suites green, receipt 20260909T134004Z-task-16)
 - 2026-09-09 09:58 **proof** green: fresh clone of c58032c, 6 steps, all green, receipt 20260909T095714Z-proof
 - 2026-09-09 09:56 **landed** `task-15`: proof.sh gives each run its own output dir: the board's pyto-hit path is substituted like the clone path, so a second proof on one machine cannot trip over the first (6 files since 3b6c3ae, suites green, receipt 20260909T095540Z-task-15)
