@@ -10,8 +10,14 @@
 set -euo pipefail
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PY="$(cd "$HERE/.." && pwd)"
-ROOT="$(cd "$PY/.." && pwd)"
+ROOT="$(cd "$HERE" && git rev-parse --show-toplevel)"
+if [ -f "$ROOT/pyto/pyproject.toml" ]; then
+  PY="$ROOT/pyto"
+  PYTO_MODE=1
+else
+  PY="$ROOT"
+  PYTO_MODE=0
+fi
 cd "$ROOT"
 
 PACKAGE="${1:-}"; shift || true
@@ -31,21 +37,42 @@ done
 
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 ID="${STAMP}-${PACKAGE//[^A-Za-z0-9._-]/_}"
-LAND_DIR="$PY/experiments/landings"
+if [ "$PYTO_MODE" -eq 1 ]; then
+  LAND_DIR="$PY/experiments/landings"
+  LAND_REL="pyto/experiments/landings/"
+  BOARD="$PY/BOARD.md"
+else
+  LAND_DIR="$ROOT/.neat/landings"
+  LAND_REL=".neat/landings/"
+  BOARD="$ROOT/.neat/BOARD.md"
+fi
 WORK="$LAND_DIR/$ID"
 BASE_SHA="$(git rev-parse "${BASE:-HEAD}")"
 board() { # one plain line for the owner, newest first under "## Today" on pyto/BOARD.md
-  "$PYTHON" - "$PY/BOARD.md" "$1" <<'PYEOF'
+  "$PYTHON" - "$BOARD" "$1" "$PYTO_MODE" <<'PYEOF'
 import sys, datetime
-path, line = sys.argv[1:3]
+path, line, pyto_mode = sys.argv[1:4]
 stamp = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M')
-text = open(path).read()
+try:
+    text = open(path).read()
+except FileNotFoundError:
+    if pyto_mode == '0':
+        text = '# Neat Board\n\n## Today\n\nOne line per landing attempt, newest first, written by the landing script.\n'
+    else:
+        raise
 marker = '## Today\n'
 if marker not in text:
-    text = text.replace('\n## Lane 1', '\n' + marker + '\nOne line per landing attempt, newest first, written by the landing script.\n\n\n## Lane 1', 1)
+    if pyto_mode == '0':
+        text = text.rstrip() + '\n\n' + marker + '\nOne line per landing attempt, newest first, written by the landing script.\n'
+    else:
+        text = text.replace('\n## Lane 1', '\n' + marker + '\nOne line per landing attempt, newest first, written by the landing script.\n\n\n## Lane 1', 1)
 head, tail = text.split(marker, 1)
-intro, rest = tail.split('\n\n', 1)
-open(path, 'w').write(head + marker + intro + '\n\n- ' + stamp + ' ' + line + '\n' + rest)
+if '\n\n' in tail:
+    intro, rest = tail.split('\n\n', 1)
+    text = head + marker + intro + '\n\n- ' + stamp + ' ' + line + '\n' + rest
+else:
+    text = head + marker + tail.rstrip() + '\n\n- ' + stamp + ' ' + line + '\n'
+open(path, 'w').write(text)
 PYEOF
 }
 fail() { # reason
@@ -81,7 +108,7 @@ fi
 
 # 1. Clean start: the dirty files are what this landing will commit; files committed since --base are
 #    part of the candidate too (checkpoints never claim, landings do).
-DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
+DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v "^$LAND_REL" || true)"
 SINCE="$(git diff --name-only "$BASE_SHA" HEAD)"
 CHANGED="$(printf '%s\n%s\n' "$SINCE" "$DIRTY" | grep -v '^$' | sort -u || true)"
 [ -n "$CHANGED" ] || fail "nothing to land: the tree is clean and nothing changed since $BASE_SHA"
@@ -108,14 +135,19 @@ if [ -n "$VERIFY" ]; then
 fi
 echo "== check_all"
 CHECK_EXIT=0
-bash "$PY/scripts/check_all.sh" > "$WORK/check_all.txt" 2>&1 || CHECK_EXIT=$?
-tail -12 "$WORK/check_all.txt"
-[ $CHECK_EXIT -eq 0 ] || fail "check_all exited $CHECK_EXIT (see $WORK/check_all.txt)"
+if [ "$PYTO_MODE" -eq 1 ]; then
+  bash "$PY/scripts/check_all.sh" > "$WORK/check_all.txt" 2>&1 || CHECK_EXIT=$?
+  tail -12 "$WORK/check_all.txt"
+  [ $CHECK_EXIT -eq 0 ] || fail "check_all exited $CHECK_EXIT (see $WORK/check_all.txt)"
+else
+  echo "== plain mode: packet verifier is the suite"
+  : > "$WORK/check_all.txt"
+fi
 
 # 4. Record.
-"$PYTHON" - "$WORK/receipt.json" "$ID" "$PACKAGE" "$BASE_SHA" "$VERIFY" "$WORK" "$DRY" "$ALLOW" "$CHANGED" <<'EOF'
+"$PYTHON" - "$WORK/receipt.json" "$ID" "$PACKAGE" "$BASE_SHA" "$VERIFY" "$WORK" "$DRY" "$ALLOW" "$CHANGED" "$PYTO_MODE" <<'EOF'
 import json, sys, subprocess, hashlib, os, datetime
-path, lid, package, base, verify, work, dry, allow, changed_list = sys.argv[1:10]
+path, lid, package, base, verify, work, dry, allow, changed_list, pyto_mode = sys.argv[1:11]
 allowed = allow.split()
 root = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True, text=True).stdout.strip()
 files = [f for f in changed_list.splitlines() if f.strip()]
@@ -137,6 +169,9 @@ receipt = {"schema": "pyto-landing-receipt@1", "id": lid, "package": package, "b
            "check_all": {"exit": 0, "output_sha256": sha(os.path.join(work, 'check_all.txt')), "counts": counts},
            "claimed": claimed, "unclaimed": unclaimed, "landed_by": os.environ.get('PYTO_LANDER', 'session'), "at": datetime.datetime.utcnow().isoformat() + 'Z',
            "result_sha": None, "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"}
+if pyto_mode == '0':
+    receipt['check_all'] = None
+    receipt['note'] = 'plain mode: suite is the packet Verify command' if verify else 'plain mode: no verification command was requested'
 json.dump(receipt, open(path, 'w'), indent=2)
 # fill the previous landing's result_sha (the commit that carried its receipt)
 land_dir = os.path.dirname(work)
@@ -158,7 +193,7 @@ if [ $DRY -eq 1 ]; then
 fi
 
 # 5. Commit and push. Only the files that were dirty at the start; if the tree moved meanwhile, stop.
-NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
+NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v "^$LAND_REL" || true)"
 if [ "$(printf '%s\n' "$NOW" | grep -v '^$' | sort -u)" != "$(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u)" ]; then
   delta="$(diff <(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u) <(printf '%s\n' "$NOW" | grep -v '^$' | sort -u) | grep '^[<>]' | sed 's/^</ gone:/; s/^>/ new:/' | tr '\n' ' ')"
   fail "the tree changed while the suites ran (someone is writing); nothing committed. Changed:$delta"
@@ -167,10 +202,15 @@ while IFS= read -r f; do [ -n "$f" ] && git add -A -- "$f"; done <<< "$DIRTY"
 git add -A -- "$LAND_DIR"
 LINE="${MESSAGE:-verified candidate}"
 board "**landed** \`$PACKAGE\`: $LINE ($(printf '%s\n' "$CHANGED" | grep -c . || true) files since ${BASE_SHA:0:7}, suites green, receipt $ID)"
-git add -A -- "$PY/BOARD.md"
+git add -A -- "$BOARD"
+if [ "$PYTO_MODE" -eq 1 ]; then
+  RECEIPT_LABEL="pyto/experiments/landings/$ID/receipt.json"
+else
+  RECEIPT_LABEL=".neat/landings/$ID/receipt.json"
+fi
 git commit -q -m "land($PACKAGE): $LINE
 
-Landing receipt: pyto/experiments/landings/$ID/receipt.json
+Landing receipt: $RECEIPT_LABEL
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_014pqrhfQfjpSAYTvH8j3y93"
