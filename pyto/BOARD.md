@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 Owner: "max telemetry"; the record keeps its commit and the stamp must name a landed commit. Owner: the past month of GitHub is the proof the process works. Seven answers in the root now.
 - 2026-09-09 08:22 Fresh-clone proof on D:/ (owner: "I need proof im not one of them"): clone of 3b8b5e5, venv, install; one miss then one hit from a fresh process; the tick page rendered; the suite red on one test only: the record's `retained.commit` names a working-tree sha that no clone has. Lane 4's prompt, with evidence.
 - 2026-09-09 08:21 **landed** `task-1`: AHI runs on the owner's Windows D:/: neat new works (host path for pip, python checks the install), the ablation fixture is bit-portable (no libm), the card server drains a 413 body, stripped child environments keep SystemDrive (65 files since 8604a0c, suites green, receipt 20260909T081928Z-task-1)
 - 2026-09-09 08:16 **refused** `task-1`: MAIN is behind origin/HEAD by  commit(s) (someone landed elsewhere); run: git pull --rebase origin HEAD  then land again
@@ -183,8 +184,10 @@ wrote, took, and whether it was a hit. Agents annotate on the anchor (pcr, tick,
 plus a grid coordinate for images, so notes carry meaning rather than being dumb receipts. The
 `{?}` root is where an agent says "I was confused here"; the owner answers; the answer stays.
 
-**Open prompt.** *Should a saved run remember its commit?* It makes every record comparison
-break on the next commit. Default if unanswered: remove the field; git and receipts already know.
+**Open prompt.** none. *Should a saved run remember its commit?* Owner (2026-09-09): "let's say max
+telemetry since ur gonna try to selfbootstrap and go ham overnight lol". The field stays; a stamp
+must name a landed commit, never a working-tree sha (the fresh-clone proof went red on exactly
+that); the proof run after each landing is the check.
 
 **Stands.** Observability ledger written; Day 3 builds the render and the materializer.
 

@@ -166,7 +166,7 @@ art tourney went from 'this is a function registry' to talking bout AIOS and fun
 and Claude has not been helpful on this project for like 2 weeks while I did this generalization
 and then suddenly THAT happens". Filed as: the skeptic is the owner five hours from now; the proof
 is what that reader can run from a fresh clone on D:/ and cannot dismiss, and its result is
-written on the board as a result, never as a claim. First run, 2026-09-09 08:22, fresh clone of
+written on the board as a result, never as a claim. Owner, later: "My entire past month of GitHub is proof this process works." First run, 2026-09-09 08:22, fresh clone of
 3b8b5e5 into `D:/pyto-fresh-20260909`, the board's commands verbatim: the venv and install
 worked; `run_cached.py` gave one miss and one hit with a write, from a fresh process; the tick
 page rendered (296 KB); the suite was red on one test and its nested twin:
@@ -174,6 +174,17 @@ page rendered (296 KB); the suite was red on one test and its nested twin:
 the evidence, which exists in no clone. Every other suite was green. That failure is Lane 4's
 open prompt made concrete. Bites: `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`, Lane 4;
 the proof run after every landing.
+
+### {?} RecordRemembersCommit
+Should a saved run remember its commit at all?
+Status: resolved 2026-09-09 by owner. "I made neat to not care about git but let's say max
+telemetry since ur gonna try to selfbootstrap and go ham overnight lol". So the field stays, and
+the record may carry more, not less: neat is what spares the owner git, the stamp's job is to be
+true. Consequence for the fresh-clone failure (`{?} ProofShape`): a stamp must name a landed
+commit that every clone has, never a working-tree sha; evidence regenerated inside an experiment
+is stamped at its landing base, and the proof run after each landing is the check. Bites: Lane 4's
+open prompt (closed), `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`,
+`experiments/grouped-ablation/run.py:235-265`, `replay.py`, the landing script.
 
 ## Questions I resolved alone and should have asked (recorded late, 2026-09-09)
 
