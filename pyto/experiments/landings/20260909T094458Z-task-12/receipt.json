@@ -1,17 +1,17 @@
 {
   "schema": "pyto-landing-receipt@1",
-  "id": "20260909T094315Z-task-14",
-  "package": "task-14",
+  "id": "20260909T094458Z-task-12",
+  "package": "task-12",
   "base_sha": "76bc3d2a51c0e5442a0e4e8f519fe7d01484e9f5",
   "result": "verified",
   "verifier": {
-    "command": "P=.venv/bin/python; [ -x \"$P\" ] || P=.venv/Scripts/python.exe; (cd pyto/experiments/grouped-ablation && \"../../../$P\" -m unittest test_replay.DeterminismMatrix -q)",
+    "command": "bash pyto/scripts/proof.sh --selftest",
     "exit": 0,
-    "output_sha256": "0b0de488b3c7acfd04bc24766b24b6ac8a0cf3729917ff27042300134a76ef71"
+    "output_sha256": "875ed43101694d6d526530dfbaee5ce0d925a58bbe4bae947294536cf41f0181"
   },
   "check_all": {
     "exit": 0,
-    "output_sha256": "1de4597ed160c99c09dc7bda7b5dfc60df6dc91775621f45d19d493381c5d535",
+    "output_sha256": "a63cb13785d792c261915a8bc556cce387187443f5e225fc5d2bfbdba51200cc",
     "counts": {
       "library": 144,
       "experiments/grouped-ablation": 240,
@@ -24,6 +24,38 @@
     }
   },
   "claimed": [
+    {
+      "path": "pyto/experiments/tasks/12/HANDOFF.md",
+      "bytes": 6951,
+      "sha256": "0d4f55d5777a4719a86e8edeca5d33ce44686a932940279e17f47419d64179d4"
+    },
+    {
+      "path": "pyto/experiments/tasks/12/evidence/check_all.txt",
+      "bytes": 115505,
+      "sha256": "8ab70e4d2bdaadb57783111631ec0d4d685f76f186c30b2ef85dc62a675ff456"
+    },
+    {
+      "path": "pyto/experiments/tasks/12/evidence/verify.txt",
+      "bytes": 717,
+      "sha256": "bf4bba19b4aee38972bd2eb81eaecbc87406f3b57a7a4f873c98ed676065cce6"
+    },
+    {
+      "path": "pyto/experiments/tasks/12/packet.md",
+      "bytes": 3305,
+      "sha256": "46ffe40dada6cc7d5ed6a6e7c9552780dcd744a17094b5fa00f1bf77ac4703cc"
+    },
+    {
+      "path": "pyto/scripts/proof.sh",
+      "bytes": 6646,
+      "sha256": "feed75c56651a4207dfc0917c89a69048a0f89c0f50b49e28fd4ba28b7e59ba5"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 29325,
+      "sha256": "ec3ada9c62eaacd5b757c9f14136411dedd60457609d77ae578a4a1448c8e48c"
+    },
     {
       "path": "pyto/experiments/grouped-ablation/test_replay.py",
       "bytes": 60561,
@@ -50,9 +82,8 @@
       "sha256": "21a39b4aa01b283600c41388834b9a9f13b376a3d0aaf92082863f1945f82b44"
     }
   ],
-  "unclaimed": [],
   "landed_by": "session",
-  "at": "2026-09-09T09:44:33.415152Z",
-  "result_sha": "f6af4659a9e92bc664f295e60563fc6d9ae9d224",
+  "at": "2026-09-09T09:46:13.249377Z",
+  "result_sha": null,
   "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
 }
