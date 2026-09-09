@@ -30,10 +30,15 @@ usage() { sed -n '4,12p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: "
   grep -m1 "^$1: " "$2" | sed "s/^$1: //"
 }
-next_id() {
+next_id() { # the highest id seen anywhere: local copies, landed packets, and exp/* branches here or on origin
   local max=-1 d n
+  git -C "$ROOT" fetch -q origin 'refs/heads/exp/*:refs/remotes/origin/exp/*' 2>/dev/null || true
   for d in "$EXP"/*/ "$ROOT/$TASKS"/*/; do
     [ -d "$d" ] || continue; n="$(basename "$d")"
+    case "$n" in ''|*[!0-9]*) continue;; esac
+    [ "$n" -gt "$max" ] && max="$n"
+  done
+  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##'); do
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
