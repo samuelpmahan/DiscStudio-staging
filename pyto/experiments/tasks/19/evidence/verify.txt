@@ -1,4 +1,4 @@
-families: 432/432 byte-identical in 895 ms
+families: 432/432 byte-identical in 1138 ms
   block-print           27/27
   chevron-run           27/27
   contour-basin         27/27

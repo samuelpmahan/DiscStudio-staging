@@ -1,4 +1,4 @@
-# Task 15: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
+# Task 19: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
 
 You are a fresh agent. Everything you need is on this page and in the files it names. The
 conversation that produced this task is not needed and you will not see it.
@@ -8,10 +8,10 @@ conversation that produced this task is not needed and you will not see it.
 ```
 git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging DiscStudio-staging     # or: cd into the clone you have
 cd DiscStudio-staging
-git fetch origin exp/15
+git fetch origin exp/19
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
-git show origin/exp/15:pyto/experiments/tasks/15/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff af0bf06 origin/exp/15 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git show origin/exp/19:pyto/experiments/tasks/19/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
+git diff af0bf06 origin/exp/19 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -124,9 +124,9 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 1. Explain this to the owner in plain words: what was asked, what changed file by file (one line
    each), what the evidence shows, what is uncertain. Use no term this page does not define.
 2. Ask the owner: land it, drop some files, or send it back. To drop files, from the clone:
-   `bash pyto/scripts/neat.sh drop 15 <path> ...` (they go back to the starting point, the
+   `bash pyto/scripts/neat.sh drop 19 <path> ...` (they go back to the starting point, the
    packet is rewritten, the suite runs again).
-3. Land: `bash pyto/scripts/neat.sh land 15`. It merges the candidate into MAIN, runs the suite
+3. Land: `bash pyto/scripts/neat.sh land 19`. It merges the candidate into MAIN, runs the suite
    again on the merged tree, writes a receipt under `pyto/experiments/landings/`, commits
-   `land(task-15): Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
+   `land(task-19): Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
    If it refuses, it says exactly why, and nothing has changed.
