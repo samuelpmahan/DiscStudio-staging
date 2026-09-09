@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent
 
 class SandboxTest(unittest.TestCase):
     def setUp(self):
+        (ROOT / "data").mkdir(exist_ok=True)  # the studio's runtime dir; absent in a fresh clone
         self.tmp = tempfile.TemporaryDirectory(dir=ROOT / "data")
         self.root = Path(self.tmp.name)
         (self.root / "data" / "recipes").mkdir(parents=True)

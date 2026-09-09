@@ -22,6 +22,21 @@ and land only verified work with a receipt; every landing writes one line here; 
 opens from disk; Astra is reached through the mailbox in the repository. Everything on this board
 is judged by whether it moves that.
 
+Run it, in Git Bash, with Python 3.11+ and Node 22 installed (Playwright is optional; its tests
+skip when the browser is absent):
+
+```
+git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging.git /d/DiscStudio-staging
+cd /d/DiscStudio-staging
+python -m pip install -e "./pyto[drawing]"
+bash pyto/scripts/check_all.sh                                   # every suite, the same table as here
+python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit   # one miss, then two hits, the second from a fresh process
+node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
+```
+
+The last two lines are the hit and the room to look at it. Landing from there is
+`bash pyto/scripts/land.sh <package>`; the receipt and this log follow.
+
 ## Today
 
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are

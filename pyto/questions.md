@@ -378,3 +378,56 @@ by owner: AHI is Augmented Human Intelligence, human centric, AI extends. The te
 loop (board, `{?}` root, landing with receipts, record viewer, mailbox) running from a clone on
 the owner's Windows D:/ drive. The owner also confirmed `{?}` is good: the human stays the root.
 Bites: everything; Windows-safety of scripts, suites and `px`.
+
+## From the four re-mined ChainSpot tips (2026-09-09, mining appendix)
+
+### {?} PartialWritesOnFailure
+ChainSpot's S1 lane keeps a failed Tick's earlier writes visible in its fork and defers partial
+records (`fa44a45` REVIEW.md:13); Wumpus rolls back. Status: open, lean keep writes and record
+the failure; rollback is a Calculation-level choice (`{?} TransactionalTick` now has prior art
+both ways). Bites: `PCR.run` failure path.
+
+### {?} ThreeReceiptShapes
+One ChainSpot tip carries three receipt vocabularies at once. Status: provisional: pyto has one,
+`pyto-run-record@1`, and every lane writes it; an experimental lane that forks its own fails
+landing. Bites: `viewer/RECORD.md`.
+
+### {?} MaterializerAsTemplate
+A plain script that runs the PCR, queries the finished store by address, asserts a partition
+invariant, then renders (`fa44a45` render-badge-ownership.cjs) predates neon-first by hours.
+Status: provisional yes: that shape is `embed.mjs` plus a check; keep the six-section layout for
+the page. Bites: Day 3.
+
+### {?} PqlRunRootStatus
+`px.pql.<Name>` has two independent ChainSpot precedents. Status: open, lean: `pql` joins the
+reserved second segments (`scratch`, `view`, `proposal`, `run`, `pql`). Bites: round five.
+
+### {?} MatrixAddressRoot
+`matrix.material.<key>` is a live unprefixed cache address in shipped LAB tooling. Status: open,
+lean: cache keys are content digests under the materials store, never addresses; no exemption
+from the three roots. Bites: `materials.py`.
+
+### {?} TelemetryGateRule
+A value computed only for logging must never influence its own Calculation's output. Status:
+provisional adopt as a receipt-design rule; enforcement is the byte-identity test with `observe`
+on and off. Bites: `{?} ObservationSeam`.
+
+### {?} TruthTaintAsReceiptField
+ChainSpot marks truth-assisted evaluations with a mode so no consumer treats them as production
+evidence. Status: open, lean adopt as a field on the record (`blind`, `truth-assisted`,
+`proposal`); the concrete mechanism for `{?} ProposalsNotFacts`. Bites: `RECORD.md`.
+
+### {?} VisibilityAxisInOracle
+A truth-holder can mark a case UNKNOWN, so a miss is neither pass nor fail. Status: open, lean
+add the third bucket to replay verification. Bites: `replay.py`.
+
+### {?} SnapshotVsMaterialization
+A whole-board serialized snapshot, digest-gated, is a third storage answer. Status: open, lean
+workshop-only; per-address declared kind stays the runtime answer. Bites: materials store.
+
+### {?} CustodyReceiptFamily, {?} OperationLevelReceiptWrapper, {?} ForkAsTickTransaction,
+### {?} ReceiptWordCollision, {?} ScratchRootOrigin, {?} TelemetryGateBoundary
+Status: open; described in the mining appendix. Lean: custody facts are ordinary Parts; the
+feature-set envelope stays out of the kernel; fork isolation is tournament isolation, not
+rollback; keep the word receipt for the run record only; `scratch` was incidental and round five
+settles it; enforcement is the byte-identity test, not prose.
