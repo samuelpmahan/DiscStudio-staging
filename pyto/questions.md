@@ -64,6 +64,23 @@ Constrain possibilities, or anchor and grow?
 Status: resolved 2026-09-09 by owner. Give a crystal an anchor and watch it grow. Refusal lists in
 the plan mean "not this week", never design limits.
 
+### {?} WarmupBudget
+Does a storage or vision dependency's load time count against the 5000 ms budget?
+Status: resolved 2026-09-09 by owner. Yes. DuckDB was tried and archived because it took 5.3 s to
+warm, slower than the target; OpenCV is excluded for the same reason. A backend or library is
+judged first by cold-start cost in the browser, which is why every LAB is dependency-free JS.
+Bites: `{?} StorageKinds` (a specialized backend must warm inside the budget or it is not a
+backend for the runtime, only for the workshop), `research/library-candidates.md`, Day 5 budget
+ledger.
+
+### {?} WhoWritesJS
+JS is first class, and the owner does not write TS or JS. Who writes it?
+Status: resolved 2026-09-09 by owner and agent. Agents write it; the owner directs and inspects
+through the PxC vocabulary, receipts, the PCR render and this root. That is how DiscStudio,
+ChessLab and Wumpus were built (`research/github-growth-review.md`), and it is the reason the
+human-facing surfaces (record, render, `{?}`) come before more code. Bites: every brief must be
+executable cold by an agent and inspectable by a non-JS reader.
+
 ## Questions I resolved alone and should have asked (recorded late, 2026-09-09)
 
 ### {?} PlanPrimacy
@@ -97,8 +114,8 @@ which is the only thing it exists to say. The whole `evidence/` tree is now excl
 uncommitted edits to any producing source still stamp `-dirty`. The owner may prefer
 the opposite reading -- a regenerated-but-uncommitted evidence tree is also a state no
 commit describes -- in which case the fix is to delete `evidence_excludes` and accept a
-permanent `-dirty`. Bites: `experiments/grouped-ablation/run.py:229-257`,
-`second_experiment.py:184,278`, `replay.py:151`, every `evidence/*/commit.txt`.
+permanent `-dirty`. Bites: `experiments/grouped-ablation/run.py:235-265`,
+`second_experiment.py:184,325`, `replay.py:178`, every `evidence/*/commit.txt`.
 
 ### {?} VerificationOracleStamp
 The retained-record oracle compares everything except `retained.commit`.
@@ -110,7 +127,7 @@ about the working tree at the moment of retaining and would otherwise turn the o
 into a test of whether anyone has committed since. The stamp is checked separately, on
 its shape and on git knowing the sha. An owner who wants the stamp inside the oracle
 would have to accept that the record must be regenerated after every commit. Bites:
-`experiments/grouped-ablation/replay.py:171-235`, `test_replay.py`.
+`experiments/grouped-ablation/replay.py:185-249`, `test_replay.py`.
 
 ### {?} InputPartsChangedScope
 `input_parts_changed` counts an input Part that one run reads and the other does not.
@@ -121,7 +138,7 @@ both records' external addresses. run-4 therefore reports both
 `scratch.ablation.split` (added), where the old literal named only the addition. The
 owner may prefer the narrower reading -- "the input Parts of THIS run that changed" --
 which would list only the addition and leave the removal to `explain_changes`. Bites:
-`experiments/grouped-ablation/second_experiment.py:220-249`, every
+`experiments/grouped-ablation/second_experiment.py:202-249`, every
 `evidence/run-*/saved-work.json`.
 
 ## Open, from the plan and the days
