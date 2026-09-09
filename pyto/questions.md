@@ -196,6 +196,44 @@ as Day 3 bleed rather than suite growth needing a pin. The owner may prefer the
 suite counted as it stands on disk. Bites: `scripts/check_all.sh` (grouped-ablation
 carries no pin today), `experiments/runs/day2/meta.json` `counts_note`.
 
+## Five questions from Astra (GPT-6, via the owner, 2026-09-10), answered by this session
+
+### {?} GuardEnforcement
+An agent writes through a shell command instead of the editor. Is that caught before or after?
+Status: after, today. The only guard is `git status` after the suites (`test_replay.py::CheckAllLeavesTheTreeClean`).
+The design answer is the `oc` rule on the board: effects happen only through named OperationalCalculations
+with receipts, allowed by name. Not enforced for agents yet; a pre-commit check (tidy's hook) is the
+cheapest enforcement. Open.
+
+### {?} StaleContext
+An agent reads B to edit A; B changes. Is the proposed edit recognized as stale?
+Status: for Parts, yes: receipts record `actual_consumes` with digests and `explain_changes` flags an
+input whose digest moved. For files agents read outside PxC, no. The fix is the same mechanism:
+agent reads as `oc` receipts carrying file digests, so staleness is a digest mismatch. Open.
+
+### {?} ConflictingEvidence
+The tracker says done; the latest tests failed. Are both kept and the disagreement exposed?
+Status: by rule, yes: neat keeps declared intent separate from produced facts, and the board never
+derives "done" from either alone. By tooling, not yet: the neat brief's board program is where
+both facts become Parts and the disagreement becomes a row. Open until neat lands it.
+
+### {?} Recovery
+The orchestrator stops halfway. On restart, can it tell proposed, written and checked apart?
+Status: per day, yes: `experiments/runs/dayN/` holds prompt (proposed), diff.patch (written),
+verdicts and tests.txt (checked), and workflows resume from a journal with cached results. Mid-lane,
+partial: an agent's uncommitted edits are visible only as a diff without a receipt. Same fix as
+above. Partial.
+
+### {?} Completion
+Tests pass but the result misses the request. What keeps "execution succeeded" from becoming "done"?
+Status: acceptance is a human fact and is never derived from tests (`AGENTS.md`: never record
+acceptance on the owner's behalf; neat's AcceptanceReference names the human). The board's
+prompts and each brief's "what to hand back" are the request; verification is the other column.
+Rule exists; the tooling that refuses to mark done without the human row is neat's. Open.
+
+One mechanism answers all five: every agent read and write becomes an `oc` receipt with a digest,
+and "done" is a human Part. That is the agent-git the owner described, stated as two rules.
+
 ## Open, from the plan and the days
 
 ### {?} ExternalInputBoundary
