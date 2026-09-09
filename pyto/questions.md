@@ -186,6 +186,28 @@ is stamped at its landing base, and the proof run after each landing is the chec
 open prompt (closed), `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`,
 `experiments/grouped-ablation/run.py:235-265`, `replay.py`, the landing script.
 
+### {?} RenderersForUsers
+Should the studio stay static with the Python card renderers ported to JS and proven
+byte-identical, or get a backend?
+Status: resolved 2026-09-09 by owner, by default. Owner: "Bruh idk what you're saying. Idk any of
+this it just happened." Default taken: port to JS with digest equality (same inputs, same SVG
+bytes in both runtimes, the record is the proof), the site stays static, Python stays the
+workshop where formats are designed and verified before they ship. Plain words: the studio is a
+website with no server, browsers cannot run Python, so the drawers are rewritten in the browser's
+language and the rewrite is proven identical byte for byte. Bites: Lane 2's open prompt (closed),
+the DiscShelf and OnTheCourse brief, Astra's painter-port package.
+
+### {?} StableAndExplainable
+What does the owner need from the kernel, given they do not want to know how it works?
+Status: resolved 2026-09-09 by owner. "My Adaptiva work was all java so I can basically write sick
+services above the os so that's why it needs to be stable and explainable. I know nothing. U
+explain it. That's why this works." Filed as the working contract: the kernel is the stable layer
+the owner writes services above, the way Adaptiva's services sat above Windows; every question to
+the owner comes with a plain-words explanation and a default; the agent explains, the owner
+decides at the altitude of the services; "it just happened" is fine, the record is what makes it
+explainable after the fact. Bites: every prompt on the board; `LANDING.md`'s explicability gate;
+the hand-off primer (`{?} ConvincingAFreshAgent`).
+
 ## Questions I resolved alone and should have asked (recorded late, 2026-09-09)
 
 ### {?} PlanPrimacy

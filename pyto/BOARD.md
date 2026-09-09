@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 Owner on the last open prompt: "I know nothing. U explain it. That's why this works." Renderers port to JS by default, site stays static. No open prompts left on the board; nine answers in the root tonight.
 - 2026-09-09 Owner: "max telemetry"; the record keeps its commit and the stamp must name a landed commit. Owner: the past month of GitHub is the proof the process works. Seven answers in the root now.
 - 2026-09-09 08:22 Fresh-clone proof on D:/ (owner: "I need proof im not one of them"): clone of 3b8b5e5, venv, install; one miss then one hit from a fresh process; the tick page rendered; the suite red on one test only: the record's `retained.commit` names a working-tree sha that no clone has. Lane 4's prompt, with evidence.
 - 2026-09-09 08:21 **landed** `task-1`: AHI runs on the owner's Windows D:/: neat new works (host path for pip, python checks the install), the ablation fixture is bit-portable (no libm), the card server drains a 413 body, stripped child environments keep SystemDrive (65 files since 8604a0c, suites green, receipt 20260909T081928Z-task-1)
@@ -137,13 +138,10 @@ order: DiscShelf, OnTheCourse, formats (export and import), the PCR render insid
 reducer in both runtimes, competition Ticks with proposals written to `proposal.disc.*`, review
 and comments on the (pcr, tick, invocation, part) anchor.
 
-**Open prompt.** *Where do the Python renderers run for users?* The studio is a static site
-(GitHub Pages, no backend by design), so the promoted Python card renderers cannot serve users as
-they are. Two roads: port them to JS with the record as the proof (the same inputs must give the
-same SVG bytes in both runtimes; the SVG builders are arithmetic and string formatting, so the
-port is mechanical and checkable), or add a backend. Default if unanswered: port with digest
-equality, keep the site static; Python stays the workshop where formats are designed, judged and
-verified before they ship.
+**Open prompt.** none. *Where do the Python renderers run for users?* Owner (2026-09-09): "idk what
+you're saying. Idk any of this it just happened." Default taken: port to JS with digest equality,
+the site stays static, Python is the workshop. The owner's contract, same night: "it needs to be
+stable and explainable. I know nothing. U explain it. That's why this works."
 
 **Stands.** Briefs written: Day 2 (as a bake-off reference), neat and tidy. Next brief: DiscShelf
 and OnTheCourse formats, written once Day 3 returns the viewer's real API so the studio can show
