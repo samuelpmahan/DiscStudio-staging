@@ -18,7 +18,7 @@ these that applies, in this order:
     digest       everything above is identical and the retained result digest differs
 
 The order matters: `args` outranks `digest` so an args key that shadows a bound
-input (pcr.py:159-160 lets args win silently) is reported as an authored change,
+input (pcr.py:331-332 lets args win silently) is reported as an authored change,
 not as an unexplained digest drift; and `external` outranks `digest` so an
 unchanged program over changed input data is explained rather than called
 "unchanged program, mystery result".
@@ -65,7 +65,7 @@ def consumers_of(program: Mapping[str, Any], ref: str) -> list[str]:
 
     A px: ref also lists the ids that read the Part *address* written by another
     invocation's `into`, which is how a cross-PCR program (writers are per PCR,
-    pcr.py:118-123) still shows its edges.
+    pcr.py:267-272) still shows its edges.
     """
     program = _program_of(program)
     if not (ref.startswith(PX) or ref.startswith(FN)):

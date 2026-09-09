@@ -58,7 +58,7 @@ EXTERNAL_ADDRESSES = (ROWS.address, GROUPS_PART.address)  # what retain_run seed
 
 
 def jsonable(value):
-    """asdict() keeps TickTestimony.calculations as a tuple (pcr.py:73); JSON has only lists."""
+    """asdict() keeps TickTestimony.calculations as a tuple (pcr.py:75); JSON has only lists."""
     if isinstance(value, (list, tuple)):
         return [jsonable(v) for v in value]
     if isinstance(value, dict):

@@ -1,7 +1,7 @@
 """build_program(variants) -> PCR with ticks Prepare / Fit / Score / Compare.
 
 The variant family is unrolled by the experiment-local family() helper because
-PCR.calc needs every invocation at authoring time (pcr.py:99-133); the selector
+PCR.calc needs every invocation at authoring time (pcr.py:247-282); the selector
 also runs inside the PCR so testimony records that the variant list is a
 Calculation result, and run.py asserts the two agree.
 """
@@ -34,7 +34,7 @@ def family(pcr: PCR, variants: list[dict]) -> dict[str, Part]:
     Ids fit.<key> / score.<key>; Parts scratch.ablation.model.<key> and
     scratch.ablation.score.<key>. Both bind split=SPLIT, which the PCR rewrites
     to ResultRef('split') because 'split' was declared as its writer earlier
-    (pcr.py:112-116), so testimony records inputs['split'] == 'fn:split'.
+    (pcr.py:261-265), so testimony records inputs['split'] == 'fn:split'.
     """
     scores: dict[str, Part] = {}
     for variant in variants:

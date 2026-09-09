@@ -135,7 +135,7 @@ class ExportRefusals(unittest.TestCase):
         pcr = PCR("shadow.probe")
         pcr.calc("T", ECHO, id="echo-1", v=Part("px.probe.v"), args={"v": "from-args"}, into="px.probe.out")
         run = pcr.run(pxc)
-        # pyto lets the arg win silently (pcr.py:159-160) while the testimony still
+        # pyto lets the arg win silently (pcr.py:331-332) while the testimony still
         # says the value came from the Part: exactly the record that must not exist.
         self.assertEqual(pxc.get("px.probe.out"), {"v": "from-args"})
         self.assertEqual(run.ticks[0].calculations[0].inputs, {"v": "px:px.probe.v"})
@@ -156,7 +156,7 @@ class ExportRefusals(unittest.TestCase):
     def test_input_named_like_a_pcr_calc_parameter_is_refused(self):
         """An input called `args`/`into`/`id` cannot be rebuilt through PCR.calc.
 
-        PCR.calc takes those as keyword-only parameters (pcr.py:88-96), so
+        PCR.calc takes those as keyword-only parameters (pcr.py:252-256), so
         `**inputs` can never carry them: such a program is only reachable by
         hand-editing retained JSON, which is exactly when a silent misbinding
         would be worst. Both directions refuse.
@@ -168,7 +168,7 @@ class ExportRefusals(unittest.TestCase):
         with self.assertRaises(retain.RetainError) as caught:
             retain.to_program(pcr)
         self.assertIn("reserved-1", str(caught.exception))
-        self.assertIn("pcr.py:88-96", str(caught.exception))
+        self.assertIn("pcr.py:252-256", str(caught.exception))
 
         hand_written = {"name": "reserved.probe", "ticks": [{"name": "T", "calculations": [
             {"id": "reserved-1", "calculation": "fn.probe.record",
@@ -484,7 +484,7 @@ class ExplainChanges(unittest.TestCase):
 
         retain.to_program refuses to export such a program, so this record is
         hand-written; the point is that a comparison over `inputs` alone would
-        call the invocation unchanged (pcr.py:159-160 lets args win silently).
+        call the invocation unchanged (pcr.py:331-332 lets args win silently).
         """
         def edit(entry):
             if entry["id"] == "score.all":

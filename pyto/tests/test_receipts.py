@@ -132,13 +132,28 @@ class TestimonyBytesUnchanged(unittest.TestCase):
         self.assertEqual(ticks_json(off), ticks_json(on))
 
     def test_tick_bytes_equal_the_retained_day_1_testimony(self):
+        """Both legs: the retained Day 1 bytes are pinned against an observe=False run
+        AND against an observe=True one.
+
+        The unobserved leg has to be built here. `run_experiment` is no longer an
+        observe=False caller: this day's change to run.py made it pass observe=True
+        (experiments/grouped-ablation/run.py:92), so comparing only `run_experiment`
+        against `build_day1(observe=True)` would compare observation on against
+        observation on and never touch the retained file's unobserved lineage
+        (fixer round 2, finding 11).
+        """
         with open(RUN_1, encoding="utf-8") as handle:
             retained = json.load(handle)
-        run = run_experiment(SEED, N)["run"]  # run.py's own helper, observe absent -> default False
+        unobserved = build_day1(observe=False)[2]
+        run = run_experiment(SEED, N)["run"]  # run.py:92 passes observe=True
         observed = build_day1(observe=True)[2]
         self.assertEqual(retained["pcr"], run.pcr)
-        self.assertEqual(sorted_ticks_json(retained["ticks"]), sorted_ticks_json([asdict(t) for t in run.ticks]))
-        self.assertEqual(sorted_ticks_json(retained["ticks"]), sorted_ticks_json([asdict(t) for t in observed.ticks]))
+        self.assertEqual(retained["pcr"], unobserved.pcr)
+        retained_ticks = sorted_ticks_json(retained["ticks"])
+        self.assertEqual(retained_ticks, sorted_ticks_json([asdict(t) for t in unobserved.ticks]))
+        self.assertEqual(retained_ticks, sorted_ticks_json([asdict(t) for t in run.ticks]))
+        self.assertEqual(retained_ticks, sorted_ticks_json([asdict(t) for t in observed.ticks]))
+        self.assertEqual(ticks_json(unobserved), ticks_json(observed))
         self.assertEqual(ticks_json(run), ticks_json(observed))
 
     def test_experiment_path_is_inside_this_repository(self):
@@ -255,7 +270,7 @@ class WriteKinds(unittest.TestCase):
         self.assertEqual(receipt.actual_produces, ())
 
     def test_a_result_ref_input_is_not_a_declared_consume(self):
-        # pcr.py:112-116 rewrites a Part bound to an already-written address into a
+        # pcr.py:261-265 rewrites a Part bound to an already-written address into a
         # ResultRef; declared_consumes is the bound *Part* addresses only.
         pxc = PxC()
         pxc.set(Part("input.v"), 3)
@@ -270,7 +285,7 @@ class WriteKinds(unittest.TestCase):
 
 class ShadowedInputs(unittest.TestCase):
     def test_args_key_colliding_with_a_bound_input_is_recorded_not_raised(self):
-        # pcr.py:159-160 call_args.update(invocation.args) overrides silently; the receipt
+        # pcr.py:331-332 call_args.update(invocation.args) overrides silently; the receipt
         # records it. {?} ShadowRule (research/lab-transfer-ledger.md:65-67) stays open:
         # the JS reader fails loud (src/core/exec.js:58), pyto still does not.
         pxc = PxC()

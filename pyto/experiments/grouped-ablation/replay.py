@@ -11,7 +11,14 @@ critic gap 3 on the PYTHONHASHSEED/`-I` interaction):
    logged per experiments/CAPTURE.md, "sys.path: what is logged and what is
    forbidden" -- then imports only `pyto`, `calculations` (which imports only
    `pyto` and `features`, calculations.py:16) and `retain`, replays, and reports
-   comparison rows and result digests. -> evidence/replay/fresh-process.log
+   comparison rows and result digests, and ends in one terminal `VERDICT:` line
+   folding in the four refusals the PARENT makes (module sources, leaked modules,
+   comparison rows, result digests) -- `child failed checks: []` is NOT the
+   verdict, because two forgeries reach the child cleanly and are caught only in
+   the parent (fixer round 2, findings 2 and 3).
+   -> evidence/replay/fresh-process.log, and, over lane C's three retained records
+   (`cross_verify_lane_c_runs`, fixer round 2, finding 13),
+   evidence/replay/fresh-process-run-{2-regroup,3-reinput,4-from-retained}.log
 2. Tamper: copy the retained program, edit one variant's `args.columns`, replay,
    and confirm the digest change is local to that variant's fit/score (and to
    `compare`, which aggregates every score -- documented, not hidden).
@@ -82,6 +89,25 @@ DETERMINISM_LOG = os.path.join(EVIDENCE, "determinism.log")
 LF_DRIFT_LOG = os.path.join(EVIDENCE, "lf-source-drift.log")
 
 SEED, ROWS_N = 7, 400  # the committed evidence/run-1 pipeline (run.py main() defaults)
+
+# Lane C's runs, so lane D's fresh-process gate covers every retained record and not
+# only run-1 (fixer round 2, finding 13). Each row is (label, evidence dir, declared
+# external addresses); run-4 replays from a retained split, so its declared inputs
+# differ from run.EXTERNAL_ADDRESSES and are named here rather than assumed. The
+# addresses are read back out of the committed record by cross_verify_lane_c_runs and
+# checked against these, so a silent change to a run's boundary fails rather than
+# redefining what the gate expects.
+LANE_C_RUNS: tuple[tuple[str, str, tuple[str, ...]], ...] = (
+    ("run-2-regroup", os.path.join(EVIDENCE, "run-2-regroup"), EXTERNAL_ADDRESSES),
+    ("run-3-reinput", os.path.join(EVIDENCE, "run-3-reinput"), EXTERNAL_ADDRESSES),
+    ("run-4-from-retained", os.path.join(EVIDENCE, "run-4-from-retained"),
+     ("input.ablation.groups", "scratch.ablation.split")),
+)
+
+
+def lane_c_log_path(label: str) -> str:
+    """evidence/replay/fresh-process-<label>.log for one of LANE_C_RUNS."""
+    return os.path.join(REPLAY_DIR, f"fresh-process-{label}.log")
 
 PYTHON = sys.executable
 STRIPPED_ENV = {"PATH": os.environ.get("PATH", "")}
@@ -237,37 +263,67 @@ def purge_experiment_bytecode() -> list[str]:
     return sorted(removed)
 
 
-def run_fresh_process_replay(record: dict, record_path: str | None = None, log_path: str | None = None) -> dict:
+def run_fresh_process_replay(
+    record: dict,
+    record_path: str | None = None,
+    log_path: str | None = None,
+    comparison_path: str | None = None,
+    testimony_path: str | None = None,
+    expected_externals: tuple[str, ...] | None = None,
+) -> dict:
     """`python3 -I -B -c <snippet>` from a cwd outside the repo, env stripped to PATH.
 
-    Returns the parsed child report; writes evidence/replay/fresh-process.log with
-    the command line, sys.path before/after, sorted(sys.modules) -- the proof that
-    nothing beyond `pyto` + `calculations` (+ `features`, its own import) + `retain`
-    was on the child's module table -- and the four checks the child makes before it
-    trusts the record (fixer round 1, findings 1, 3 and 6):
+    Returns the parsed child report; writes a log (default
+    evidence/replay/fresh-process.log) with the command line, sys.path before/after,
+    sorted(sys.modules) -- the proof that nothing beyond `pyto` + `calculations`
+    (+ `features`, its own import) + `retain` was on the child's module table -- the
+    four checks the child makes before it trusts the record (fixer round 1, findings
+    1, 3 and 6), and a terminal `VERDICT:` line.
 
-    * the record's program ticks are the committed evidence/run-1/testimony.json
-      ticks, so a record that deleted a step cannot pass as run-1's;
-    * the record's external addresses are exactly run.EXTERNAL_ADDRESSES, so an
+    The child's four checks are:
+
+    * the record's program ticks are the committed testimony.json ticks for the run
+      being replayed, so a record that deleted a step cannot pass as that run's;
+    * the record's external addresses are exactly the run's declared inputs, so an
       address the program is supposed to compute cannot be pre-seeded;
     * retain.verify_provider agrees on the pyto modules and on every per-address
       provider source hash;
     * the child's own sha256 of calculations.py equals the one the record claims,
       which is what -B plus the __pycache__ purge make meaningful.
+
+    Four more refusals are the PARENT's, and `child failed checks: []` does not
+    imply them (fixer round 2, findings 2 and 4): the child read the same module
+    sources the parent sees on disk, no module leaked past
+    `_ALLOWED_TOP_LEVEL_MODULES`, the child's comparison rows are byte-identical to
+    the committed comparison.json, and its recomputed result digests equal
+    `record["results"]`. Two forgeries reach the child cleanly and are caught only
+    here -- a value-forged record with recomputed digests (rows differ) and a
+    registry-forged record whose provider block is byte-identical to the honest one
+    because `retain.provider_identity` is module-granular (digests differ). So the
+    VERDICT line, not `child failed checks`, is this function's answer: it is
+    `VERDICT: accepted` only when all eight hold, and otherwise
+    `VERDICT: refused (<reasons>)` naming each one that did not.
+
+    `record_path`/`comparison_path`/`testimony_path`/`expected_externals` default to
+    evidence/run-1's; passing another run's makes this the cross-verification gate
+    over run-2/3/4 as well (fixer round 2, finding 13).
     """
     os.makedirs(REPLAY_DIR, exist_ok=True)
     record_path = RETAINED_PATH if record_path is None else record_path
     log_path = FRESH_PROCESS_LOG if log_path is None else log_path
+    comparison_path = COMPARISON_PATH if comparison_path is None else comparison_path
+    testimony_path = TESTIMONY_PATH if testimony_path is None else testimony_path
+    expected_externals = EXTERNAL_ADDRESSES if expected_externals is None else expected_externals
     purged = purge_experiment_bytecode()
     workdir = tempfile.mkdtemp(prefix="replay-cwd-")  # outside the repository on purpose
     try:
         assert not os.path.abspath(workdir).startswith(os.path.normpath(os.path.join(HERE, "..", "..", ".."))), (
             "fresh-process cwd must be outside the repository"
         )
-        expected_externals = json.dumps(sorted(EXTERNAL_ADDRESSES))
+        expected_externals_json = json.dumps(sorted(expected_externals))
         args = [
             PYTHON, "-I", "-B", "-c", CHILD_REPLAY_SNIPPET,
-            HERE, record_path, TESTIMONY_PATH, expected_externals,
+            HERE, record_path, testimony_path, expected_externals_json,
         ]
         completed = subprocess.run(
             args, cwd=workdir, env=dict(STRIPPED_ENV), capture_output=True, text=True, timeout=60
@@ -275,6 +331,8 @@ def run_fresh_process_replay(record: dict, record_path: str | None = None, log_p
         lines = [
             "# Day 2 Lane D: fresh-process replay",
             f"record: {record_path}",
+            f"committed comparison: {comparison_path}",
+            f"committed testimony: {testimony_path}",
             f"command: {args!r}",
             f"cwd (outside repo): {workdir}",
             f"env: {STRIPPED_ENV!r}",
@@ -288,6 +346,7 @@ def run_fresh_process_replay(record: dict, record_path: str | None = None, log_p
         except ValueError:
             lines.append("--- child stdout (not JSON) ---")
             lines.append(completed.stdout)
+            lines.append("VERDICT: refused (child produced no JSON report)")
             _write_lf(log_path, "\n".join(lines) + "\n")
             raise RuntimeError(f"fresh-process replay child failed (see {log_path})")
         lines.append(f"child sys.dont_write_bytecode (python3 -B): {report['dont_write_bytecode']}")
@@ -303,8 +362,8 @@ def run_fresh_process_replay(record: dict, record_path: str | None = None, log_p
         )
         lines.append(f"new modules outside {{pyto, calculations, features, retain}}: {leaked!r}")
         lines.append(
-            f"record program ticks identical to the committed evidence/run-1/testimony.json ticks: "
-            f"{report['program_matches_committed_testimony']}"
+            f"record program ticks identical to the committed {os.path.basename(os.path.dirname(testimony_path))}"
+            f"/testimony.json ticks: {report['program_matches_committed_testimony']}"
         )
         lines.append(
             f"record external addresses {report['record_externals']!r} equal the declared inputs "
@@ -326,30 +385,77 @@ def run_fresh_process_replay(record: dict, record_path: str | None = None, log_p
             f"calculations.py sha256 the record claims {report['claimed_provider_source_sha256']!r} equals the "
             f"one the child computed: {report['calculations_source_matches_record']}"
         )
-        with open(COMPARISON_PATH, encoding="utf-8") as handle:
+        with open(comparison_path, encoding="utf-8") as handle:
             committed_rows = json.load(handle)["rows"]
         rows_equal = report["comparison_rows"] == committed_rows
         digests_equal = report["result_digests"] == record["results"]
+        sources_equal = parent_source_sha256 == report["source_sha256"]
         lines.append(f"comparison.json rows byte-identical: {rows_equal}")
         lines.append(f"result digests identical to record['results']: {digests_equal}")
         lines.append(f"child failed checks: {report['failed_checks']!r}")
-        _write_lf(log_path, "\n".join(lines) + "\n")
-        if report["failed_checks"] or completed.returncode != 0:
-            raise AssertionError(
-                f"fresh-process replay refused the record: failed checks "
-                f"{report['failed_checks']!r}, returncode {completed.returncode} (see {log_path})"
-            )
-        if parent_source_sha256 != report["source_sha256"]:
-            raise AssertionError("fresh-process replay: the child read different module sources than the parent")
+
+        # The verdict folds the child's own checks together with the four the parent
+        # makes, so no refused record can produce an accepted-looking log
+        # (fixer round 2, finding 3).
+        reasons = []
+        if report["failed_checks"]:
+            reasons.append(f"child failed checks {report['failed_checks']!r}")
+        if completed.returncode != 0:
+            reasons.append(f"child returncode {completed.returncode}")
+        if not sources_equal:
+            reasons.append("child read different module sources than the parent")
         if leaked:
-            raise AssertionError(f"fresh-process replay leaked modules: {leaked}")
+            reasons.append(f"modules leaked beyond the allowed set: {leaked!r}")
         if not rows_equal:
-            raise AssertionError("fresh-process replay: comparison.json rows differ")
+            reasons.append("comparison rows differ from the committed comparison.json")
         if not digests_equal:
-            raise AssertionError("fresh-process replay: result digests differ")
+            reasons.append("result digests differ from record['results']")
+        verdict = "VERDICT: accepted" if not reasons else f"VERDICT: refused ({'; '.join(reasons)})"
+        lines.append(verdict)
+        _write_lf(log_path, "\n".join(lines) + "\n")
+        if reasons:
+            raise AssertionError(
+                f"fresh-process replay refused {record_path}: {'; '.join(reasons)} (see {log_path})"
+            )
         return report
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
+
+
+def cross_verify_lane_c_runs() -> dict[str, dict]:
+    """Run the fresh-process gate over every lane-C retained record, not just run-1.
+
+    The Day 2 plan's cross-verification gate is "lane (c)'s outputs must be
+    reproduced by lane (b)'s fresh-process replay carrying lane (a)'s digests". Run-1
+    had retained evidence and a test; run-2/3/4 did not, so nothing in the repository
+    replayed them and nothing would have caught future drift (fixer round 2, finding
+    13). Each run is replayed against its OWN committed comparison.json,
+    testimony.json and retained.json["results"], and each leaves
+    evidence/replay/fresh-process-<label>.log ending in its VERDICT line.
+
+    Returns {label: child report}. Raises AssertionError (through
+    run_fresh_process_replay) on the first refusal, leaving that run's log behind.
+    """
+    reports: dict[str, dict] = {}
+    for label, directory, externals in LANE_C_RUNS:
+        record_path = os.path.join(directory, "retained.json")
+        with open(record_path, encoding="utf-8") as handle:
+            record = json.load(handle)
+        declared = tuple(sorted(record.get("external") or {}))
+        if declared != tuple(sorted(externals)):
+            raise AssertionError(
+                f"{label}: retained externals {declared} are not the declared inputs "
+                f"{tuple(sorted(externals))} LANE_C_RUNS names"
+            )
+        reports[label] = run_fresh_process_replay(
+            record,
+            record_path=record_path,
+            log_path=lane_c_log_path(label),
+            comparison_path=os.path.join(directory, "comparison.json"),
+            testimony_path=os.path.join(directory, "testimony.json"),
+            expected_externals=externals,
+        )
+    return reports
 
 
 def _source_sha256(names: tuple[str, ...]) -> dict[str, str]:
@@ -374,21 +480,31 @@ _ALLOWED_TOP_LEVEL_MODULES = {
 # ------------------------------------------------------------------- 2. tamper
 
 
-def run_tamper_check(record: dict) -> dict:
+def run_tamper_check(record: dict, replay_fn=None) -> dict:
     """Edit one variant's `args.columns` in a copy; only its fit/score (and the
     downstream `compare`, which aggregates every score) may change digest.
 
-    Both sides replay from a deep copy of the caller's record and the record's own
-    canonical bytes are re-checked afterwards (fixer round 1, finding 2): retain.replay
-    now seeds the PxC from copies, and this belt records that the baseline replay left
-    the record it was handed byte-identical, so a future Calculation that mutates an
-    input in place cannot make both sides of this report inherit the mutation.
+    Both sides replay from a deep copy of the caller's record, so a mutation on one
+    side cannot contaminate the other (fixer round 1, finding 2).
+    `record_unchanged_by_baseline_replay` compares the bytes of **the copy that was
+    actually handed to the baseline replay**, before and after that replay. It used
+    to compare the caller's `record` -- an object the baseline replay was never
+    given -- which made it `json.dumps(record) == json.dumps(record)` by
+    construction: it could not be False, and a Calculation rewriting the program in
+    place still produced a clean-looking report (fixer round 2, finding 4). Measured
+    on the handed object it is a real check of what the baseline replay did, and
+    `replay_fn` (default `retain.replay`) exists so a test can supply a replay that
+    does mutate and watch the flag go False.
     """
     os.makedirs(TAMPER_DIR, exist_ok=True)
-    record_bytes_before = json.dumps(record, sort_keys=True)
-    baseline_pxc_results = retain.replay(copy.deepcopy(record), REGISTRY)[1].results
+    replay_fn = retain.replay if replay_fn is None else replay_fn
+    handed_to_baseline = copy.deepcopy(record)
+    handed_bytes_before = json.dumps(handed_to_baseline, sort_keys=True)
+    baseline_pxc_results = replay_fn(handed_to_baseline, REGISTRY)[1].results
     baseline_digests = {k: retain.digest_of(v) for k, v in baseline_pxc_results.items()}
-    record_unchanged_by_baseline_replay = json.dumps(record, sort_keys=True) == record_bytes_before
+    record_unchanged_by_baseline_replay = (
+        json.dumps(handed_to_baseline, sort_keys=True) == handed_bytes_before
+    )
 
     tampered = copy.deepcopy(record)
     target_id = "fit.drop_g0"
@@ -411,7 +527,7 @@ def run_tamper_check(record: dict) -> dict:
     assert entry["args"]["columns"] != original_columns, "tamper edit must be a real change"
 
     retain.write_record(tampered, TAMPER_RECORD)
-    _, tampered_run = retain.replay(tampered, REGISTRY)
+    _, tampered_run = replay_fn(tampered, REGISTRY)
     tampered_digests = {k: retain.digest_of(v) for k, v in tampered_run.results.items()}
 
     expected_to_change = {target_id, "score.drop_g0", "compare"}
@@ -442,7 +558,8 @@ def run_tamper_check(record: dict) -> dict:
     if not record_unchanged_by_baseline_replay:
         raise AssertionError(
             "tamper test: the baseline replay mutated the record it was handed, so the report's "
-            "two sides are not independent (fixer round 1, finding 2)"
+            "two sides are not independent (fixer round 1, finding 2; fixer round 2, finding 4 "
+            "made this flag able to be False)"
         )
     if unexpected:
         raise AssertionError(f"tamper test: unexpected digest changes at {unexpected}")
@@ -769,6 +886,8 @@ def main() -> int:
     print("wrote", RETAINED_PATH)
     run_fresh_process_replay(record)
     print("wrote", FRESH_PROCESS_LOG)
+    cross_verify_lane_c_runs()
+    print("wrote", *[lane_c_log_path(label) for label, _dir, _ext in LANE_C_RUNS])
     run_tamper_check(record)
     print("wrote", TAMPER_REPORT, TAMPER_RECORD)
     run_registry_hole_check(record)

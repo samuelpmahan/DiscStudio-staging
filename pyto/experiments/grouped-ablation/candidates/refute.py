@@ -15,7 +15,7 @@ roundtrip       export -> json.dumps/loads -> restore(registry) -> run on a fres
                 calculation entries must be identical to the testimony entries
                 (no translation layer between what a run testifies and what is kept).
 expressiveness  the schema must be able to hold an `fn:` direct-result reference
-                (pcr.py:112-123) and an invocation with `into=None` (pcr.py:29).
+                (pcr.py:261-272) and an invocation with `into=None` (pcr.py:29).
 leakage         the exported document must serialise with json.dumps and no
                 `default=`, contain neither "lambda" nor "<function", and a program
                 carrying a callable in args must be refused at export.

@@ -18,7 +18,7 @@ program  {"name": str,
                                        "into": "<address>" | None}]}]}
 
 The calculation entries are byte-identical to the entries of
-`dataclasses.asdict(TickTestimony)` (pcr.py:59-75), which is why the testimony
+`dataclasses.asdict(TickTestimony)` (pcr.py:63-75), which is why the testimony
 shape wins the candidates/ comparison: no translation layer sits between what a
 run testifies and what is retained.
 
@@ -38,7 +38,7 @@ Rules this module enforces
 --------------------------
 * Shadow rule (LAB transfer ledger, "Shadow rejection"; src/core/exec.js:45 and
   :58): an `args` key equal to a bound input name is refused **at export**,
-  naming the invocation. pyto lets args win silently (pcr.py:159-160), so a
+  naming the invocation. pyto lets args win silently (pcr.py:331-332), so a
   retained program carrying such a key would replay a value the testimony does
   not explain. Refusing at export leaves pcr.py untouched ({?} ShadowRule).
 * `graph.Pcr.to_pcr_dict()` output is refused by `from_program`: Pcr does not
@@ -85,7 +85,7 @@ from pyto.pcr import Invocation, ResultRef  # pyto/__init__.py:1-23 omits Invoca
 
 PX = "px:"
 FN = "fn:"
-# PCR.calc takes these as keyword-only parameters (pcr.py:88-96), so an input
+# PCR.calc takes these as keyword-only parameters (pcr.py:252-256), so an input
 # named like one of them cannot be rebuilt through **inputs.
 RESERVED_INPUT_NAMES = ("id", "into", "args")
 PROVIDER_MODULES = ("core.py", "pcr.py")
@@ -141,7 +141,7 @@ def _check_shadow(invocation_id: str, input_names: Iterable[str], args: Mapping[
         raise ShadowedInputError(
             f"retain: invocation '{invocation_id}' has args {shadowed} shadowing bound "
             f"input(s) of the same name; pyto would let args win silently "
-            f"(pcr.py:159-160) while the LAB fails loud (src/core/exec.js:45, :58), "
+            f"(pcr.py:331-332) while the LAB fails loud (src/core/exec.js:45, :58), "
             f"so the program is refused at export"
         )
 
@@ -151,7 +151,7 @@ def _check_reserved(invocation_id: str, input_names: Iterable[str]) -> None:
     if clashing:
         raise RetainError(
             f"retain: invocation '{invocation_id}' binds input(s) {clashing}, which are "
-            f"keyword-only parameters of PCR.calc (pcr.py:88-96) and could not be "
+            f"keyword-only parameters of PCR.calc (pcr.py:252-256) and could not be "
             f"rebuilt from the retained program"
         )
 
@@ -178,7 +178,7 @@ def _entry_from_invocation(invocation: Invocation) -> dict[str, Any]:
             raise RetainError(
                 f"retain: invocation '{invocation.id}' input '{name}' is bound to a "
                 f"{type(source).__name__}; only Part and ResultRef are retainable "
-                f"(pcr.py:147-157)"
+                f"(pcr.py:319-329)"
             )
     _check_reserved(invocation.id, inputs)
     _check_shadow(invocation.id, inputs, invocation.args)
@@ -266,10 +266,19 @@ def _walk_entries(program: Mapping[str, Any]) -> list[tuple[str, Mapping[str, An
 
 
 def from_program(program: Mapping[str, Any], registry: Mapping[str, Any]) -> PCR:
-    """Rebuild a PCR through PCR.calc so writer/id rules re-apply (pcr.py:99-133).
+    """Rebuild a PCR through PCR.calc so writer/id rules re-apply (pcr.py:247-282).
 
     Every calculation address is resolved against `registry` *before* the PCR is
     built, so a registry hole raises KeyError naming the address and nothing runs.
+
+    `args` is **deep-copied** out of the record for the same reason `replay` copies
+    the externals (fixer round 2, finding 6): `PCR.calc` stores `dict(args or {})`
+    (pcr.py:56), a shallow copy, so without this the rebuilt `Invocation.args`
+    nested values would still be the caller's record objects and a Calculation that
+    mutated one in place -- `args["columns"].pop()` -- would rewrite the retained
+    record it was replaying, in memory, on both sides of any comparison built from
+    it. The retain direction never had this hole: `to_program` goes through
+    `dataclasses.asdict` (retain.py:196).
     """
     entries = _walk_entries(program)
     missing = sorted({entry.get("calculation") for _, entry in entries} - set(registry))
@@ -285,7 +294,7 @@ def from_program(program: Mapping[str, Any], registry: Mapping[str, Any]) -> PCR
         if not isinstance(invocation_id, str) or not invocation_id:
             raise NotAProgramError(f"retain.from_program: {tick_name} holds a calculation without an 'id'")
         inputs_spec = entry.get("inputs") or {}
-        args = dict(entry.get("args") or {})
+        args = copy.deepcopy(dict(entry.get("args") or {}))  # finding 6: pcr.py:56 copies shallowly
         _check_reserved(invocation_id, inputs_spec)
         _check_shadow(invocation_id, inputs_spec, args)
         inputs: dict[str, Any] = {}
@@ -410,6 +419,22 @@ def provider_identity(registry: Mapping[str, Any]) -> dict[str, Any]:
     library copy on purpose and must not be refused. The fresh-process replay
     child asserts `verify_provider(...)["agrees"]` and logs the accept/mismatch
     line (fixer round 1, finding 3).
+
+    Identity scope: **module source file, not function** -- stated here the way
+    `pyto.pcr.FrozenCalculation.limitation` states its own (pcr.py:92). Each
+    registry entry's row is {"module": <the callable's module name>,
+    "source_sha256": sha256 of that module's source FILE} (`_module_source_sha256`,
+    retain.py:401-408), so every address served out of calculations.py carries one
+    and the same digest. A registry whose address points at a DIFFERENT function of
+    the same module -- or at any callable whose `__module__` names that module --
+    therefore produces a provider block byte-identical to the honest one, and
+    `verify_provider` agrees with it. Provider identity is not what catches that
+    forgery; the result digests are, and `replay.run_fresh_process_replay` refuses
+    on them (test_replay.py::ProviderIdentityIsModuleGranular, fixer round 2,
+    finding 3). A per-function digest -- the `sha256(inspect.getsource(callable))`
+    the Day 2 seam computes for `FrozenCalculation.implementation_sha256`
+    (pcr.py:152-160) -- would close it, at the cost of a new provider shape in every
+    retained record; it is recorded in evidence/OPEN-FINDINGS.md, not taken here.
     """
     library_dir = os.path.dirname(os.path.abspath(pyto.core.__file__))
     modules = {}
@@ -593,7 +618,12 @@ def replay(record: Mapping[str, Any], registry: Mapping[str, Any]) -> tuple[PxC,
 
     Each external value is seeded as a **deep copy** (finding 2): the PxC value and
     `run.results[id]` are the same object (pcr.py:334-336), so an in-place mutation
-    by a Calculation would otherwise reach back into the caller's record.
+    by a Calculation would otherwise reach back into the caller's record. The
+    program's `args` are deep-copied too, by `from_program` (retain.py:288, fixer
+    round 2, finding 6) -- `PCR.calc` keeps only a shallow `dict(args or {})`
+    (pcr.py:56), so a nested arg value would otherwise stay the caller's object.
+    Between the two, replaying a record cannot change that record's bytes whatever
+    the registry's Calculations do to what they are handed.
 
     Externals held as {"digest", "ref"} are not reconstructed here: a digest is not
     a value. Such a record replays only if the caller seeds those addresses itself.

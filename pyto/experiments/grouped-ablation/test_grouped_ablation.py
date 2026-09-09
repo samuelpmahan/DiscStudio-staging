@@ -111,7 +111,7 @@ class GroupedAblationTestimony(unittest.TestCase):
         self.assertEqual(by_id["split"]["inputs"], {"rows": "px:input.ablation.rows"})
 
     def test_no_args_key_collides_with_a_bound_input_name(self):
-        # pcr.py:159-160 call_args.update(invocation.args) silently overrides same-named inputs.
+        # pcr.py:331-332 call_args.update(invocation.args) silently overrides same-named inputs.
         for tick in self.testimony["ticks"]:
             for calc in tick["calculations"]:
                 with self.subTest(id=calc["id"]):
@@ -120,7 +120,7 @@ class GroupedAblationTestimony(unittest.TestCase):
     def test_testimony_json_round_trip_equals_asdict(self):
         run = self.result["run"]
         as_dict = {"pcr": run.pcr, "ticks": [dataclasses.asdict(tick) for tick in run.ticks]}
-        # asdict keeps the tuple field (pcr.py:73); the only difference after JSON is tuple -> list.
+        # asdict keeps the tuple field (pcr.py:75); the only difference after JSON is tuple -> list.
         self.assertIsInstance(as_dict["ticks"][0]["calculations"], tuple)
         self.assertEqual(json.loads(json.dumps(self.testimony)), self.testimony)
         self.assertEqual(json.loads(json.dumps(as_dict)), jsonable(as_dict))

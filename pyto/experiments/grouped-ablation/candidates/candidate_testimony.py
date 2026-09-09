@@ -1,7 +1,7 @@
 """Candidate A (testimony-shaped) -- SURVIVOR, merged as ../retain.py.
 
 Retained calculation entries are exactly the fields of CalculationTestimony
-(pcr.py:59-65): {id, calculation, inputs: {name: 'px:<addr>'|'fn:<id>'}, args, into}.
+(pcr.py:63-69): {id, calculation, inputs: {name: 'px:<addr>'|'fn:<id>'}, args, into}.
 This file is the candidate's adapter to the shared lens harness in refute.py; the
 implementation under test is ../retain.py itself, so the lens verdicts describe
 merged code, not a copy of it.
