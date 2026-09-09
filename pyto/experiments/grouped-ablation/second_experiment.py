@@ -30,7 +30,7 @@ if HERE not in sys.path:
 
 import compare_local  # noqa: E402
 import retain  # noqa: E402
-from features import FEATURES, TRUE_W  # noqa: E402
+from features import FEATURES, TRUE_W, _total  # noqa: E402
 from program import BASELINE_KEY  # noqa: E402
 from run import (  # noqa: E402
     UNINFORMATIVE_DELTA,
@@ -79,7 +79,7 @@ def planted_weight_of_variant(variant: Mapping[str, Any], groups: Mapping[str, l
     h0/h1/h2 grouping without a name-lookup mismatch.
     """
     columns = [column for name in variant["drop"] for column in groups[name]]
-    return sum(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
+    return _total(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
 
 
 def failed_variants(comparison: list[dict], groups: Mapping[str, list[str]]) -> list[dict]:
@@ -113,7 +113,7 @@ def comparison_markdown(*, title: str, seed: int, n: int, groups: Mapping[str, l
         weight = (
             planted_weight_of_variant(by_key[row["variant"]], groups)
             if row["variant"] != BASELINE_KEY
-            else sum(abs(w) for w in TRUE_W)
+            else _total(abs(w) for w in TRUE_W)
         )
         lines.append(f"| {row['rank']} | {row['variant']} | {row['rmse']:.4f} | {row['delta_vs_baseline']:+.4f} | {weight:.1f} |")
     lines.append("")

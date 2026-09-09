@@ -10,6 +10,19 @@ from __future__ import annotations
 
 import random
 
+
+def _total(values) -> float:
+    """Left-to-right IEEE addition, bit-identical on every platform and Python version.
+
+    Not `sum()`: since Python 3.12 the builtin sums floats with Neumaier compensation,
+    so the same draws give different last bits on 3.11 (naive) and 3.13 (compensated).
+    This fixture's evidence is byte-compared across the owner's machines, which run both.
+    """
+    total = 0.0
+    for value in values:
+        total += value
+    return total
+
 FEATURES: tuple[str, ...] = tuple(f"f{i:02d}" for i in range(15))
 GROUPS: dict[str, list[str]] = {f"g{k}": list(FEATURES[3 * k : 3 * k + 3]) for k in range(5)}
 
@@ -23,7 +36,7 @@ def planted_weight_by_group() -> dict[str, float]:
     """Sum of |planted weight| per group; zero means the group is uninformative."""
     weights = {}
     for group, columns in GROUPS.items():
-        weights[group] = sum(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
+        weights[group] = _total(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
     return weights
 
 
@@ -40,7 +53,7 @@ def _standard_normal(rng: random.Random) -> float:
     byte-comparison. Irwin-Hall trades a bit of tail accuracy (values are bounded
     to +/-6) for being reproducible everywhere; nothing here needs exact normality.
     """
-    return sum(rng.random() for _ in range(12)) - 6.0
+    return _total(rng.random() for _ in range(12)) - 6.0
 
 
 def make_data(seed: int, n: int = 400) -> list[list]:
@@ -49,6 +62,6 @@ def make_data(seed: int, n: int = 400) -> list[list]:
     rows: list[list] = []
     for _ in range(n):
         x = [_standard_normal(rng) for _ in FEATURES]
-        y = sum(w * v for w, v in zip(TRUE_W, x)) + _standard_normal(rng) * NOISE_SD
+        y = _total(w * v for w, v in zip(TRUE_W, x)) + _standard_normal(rng) * NOISE_SD
         rows.append([x, y])
     return rows
