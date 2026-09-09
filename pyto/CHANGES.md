@@ -684,3 +684,66 @@ overwritten address). `scripts/check_all.sh:150-158` pins the viewer count and i
 no other expected count moved. `bash pyto/scripts/check_all.sh`: ALL SUITES PASSED
 (library 103, experiments/grouped-ablation 230, experiments/s3-synthetic 5, consumer 61,
 disc-stats 4, examples 3, art-registry-md, viewer 83, viewer-record-schema 19).
+
+## Day 3+ (base f2e0b8e): `pyto/src/pyto/mounts.py`, the world as a mount id
+
+**A world is an id above an ordinary PxC, and it never enters an address.** Round four
+put `disc`, `chess`, `wumpus`, `neat`, `tidy` inside the address as segments; ChainSpot had
+already decided the other way and written a test for it — "The root is intentionally
+external to PxC's semantic address space" (`43e6ea3:packages/alg/src/exec/mounts.ts:3-8`,
+quoted at `research/chainspot-branch-mining.md:40-48`), with
+`expect(dash.has('px.DashsTrack.s1.badges')).toBe(false)`
+(`43e6ea3:tests/unit/pxcRootMounts.test.ts:6-18`, quoted at
+`research/chainspot-branch-mining.md:56-65`). Section 6 item 1
+(`research/chainspot-branch-mining.md:411`) ranks the port first and says the negative test
+is the point: "it is what stops the LAB name from creeping into addresses".
+`questions.md:407-411` (`{?} AddressRootIsAMount`) leans adopt, and the same entry's
+earlier copy records that "Python has no mount type at all" and that the default taken is
+`PartyMountType` — "build the Python mount type in round five, since nothing else prevents
+collisions" (`questions.md:129,139-140`).
+
+**`Mounts` is 89 lines and six methods plus a side map** (`src/pyto/mounts.py:37-89`):
+`mount(root, pxc)`, `has(root)`, `get(root)`, `roots()` in insertion order, `entries()`,
+and `slice(roots)` returning a new `Mounts` that shares the same PxC objects
+(`mounts.py:70-77`) — a write through a slice is visible through the original, which is
+the "cheap root-level slice; mounted PxCs themselves are shared" of
+`43e6ea3:…/mounts.ts:11-22`. The human label lives beside the mounts, never in an address:
+`set_label`/`label` (`mounts.py:79-89`), after
+`43e6ea3:scripts/warm-dev-pxc-roots.mjs:46-48`. **No address rewriting happens anywhere** —
+`mount` stores the object and writes nothing into it (`mounts.py:44-51`), `get` returns the
+exact object (`mounts.py:56-60`) — so a value at `px.badges.px` is reached only as
+`mounts.get(root).get("px.badges.px")`.
+
+**Both errors are loud, as in the reference.** Re-mounting the *same* object is a no-op;
+a *different* object under a mounted root raises `ValueError` naming the root
+(`mounts.py:49-50`, after `43e6ea3:…/mounts.ts:32-34`), and a missing root raises
+`KeyError` from `get`, `slice`, `set_label` and `label` rather than returning `None`
+(`mounts.py:58-59,74,81-82,87-88`, after `43e6ea3:…/mounts.ts:40`). An empty or non-`str`
+root is refused at `mount` (`mounts.py:46-47`), the way `Part` refuses an empty address
+(`core.py:17-19`).
+
+**The id is expected to be content-derived; `Mounts` does not compute it.** ChainSpot's
+root is `sha256(WxH:sha256(rgba))` (`43e6ea3:packages/alg/src/exec/operations.ts:688,707`;
+`questions.md:413-416`, `{?} RootIdIsContent`). `Mounts` accepts any non-empty string and
+`tests/test_mounts.py:243-253` asserts `hashlib` never appears in the module, so the digest
+stays the caller's job and this file has no opinion about how a world is named.
+
+**Nothing in the kernel moved.** `core.py`, `pcr.py`, `pql.py`, `graph.py` and
+`__init__.py` are untouched; the module is reached as `from pyto.mounts import Mounts`, the
+status `pyto.address` and `pyto.materialize` have, and two tests pin that
+(`tests/test_mounts.py:227-241`). `mounts.py` imports `PxC` only under `TYPE_CHECKING`
+(`mounts.py:31-32`), so at runtime it depends on nothing.
+
+**Counts.** `library` 120 → 141 (`tests/test_mounts.py`, 21 tests, 21 of 21 mutations
+killed one at a time with the file restored after each: the prefix rewrite in `mount`, a
+stray `px.mount.root` write, a copying `get`, the dropped `is not pxc` half of the guard,
+the deleted already-mounted raise, the deleted empty-root guard, `get` degraded to
+`.get(root)`, `has` returning `True`, `slice` skipping a missing root, the deleted
+`set_label` guard, `sorted()` in `roots`, `entries` and `slice`, a deep-copying `slice`,
+`sliced = self`, a `px.view.label` write in `set_label`, `label` falling back to the root,
+the dropped label carry in `slice`, a `mounts` import added to `core.py`, a re-export added
+to `__init__.py`, and a `hashlib` digest computed inside `mount`). No suite count is
+pinned for `library` (`scripts/check_all.sh:86`), so that file is unchanged.
+`bash pyto/scripts/check_all.sh`: ALL SUITES PASSED (library 141,
+experiments/grouped-ablation 230, experiments/s3-synthetic 5, consumer 61, disc-stats 4,
+examples 3, art-registry-md, viewer 83, viewer-record-schema 19).
