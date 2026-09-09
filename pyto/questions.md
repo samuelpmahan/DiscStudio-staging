@@ -640,3 +640,19 @@ browser build, out of the runtime by the cold-start rule); the runtime needs onl
 loop over one user's few hundred vectors. Default: an experiment `near-hit` when CV returns, one
 number (how often the nearest prior course is a good proposal), nothing before DiscStudio ships.
 Bites: the materials store, the record's `hit` field, Day 5.
+
+### {?} ResidueMining
+The owner: could SUBDUE-style mining find shared substructure in ANN logs, or be the CV substrate
+itself, detecting residue pixels? Status: provisional. ANN logs: real but plain clustering finds
+the same cliques. The residue: yes, and it fits the LAB: every stage already writes
+`px.remaining.after<Stage>`; turn the last residue into a labelled component graph (colour, size,
+shape labels; touching, above, left, same-screen-region edges) and SUBDUE finds the arrangements
+that repeat across courses, which are the objects no stage exists for yet (the S3 iOS map-chrome
+false positives are residue structure fixed to screen position). Its output is a candidate with
+evidence (instances, compression, where), the owner names it, it becomes
+`fn.disc.detect.<name>`, receipts show hits, the residue shrinks: promotion with evidence, the
+Lane 5 claim. The same algorithm over run records (Ticks to Calculations to Parts) finds recurring
+sub-programs, the Day 5 plan. Default: workshop only, Python, after DiscStudio ships, needing the
+dev course images; the one piece that can land any time is a scalar Part with the count of
+unclaimed pixels per Tick, which makes competition Ticks scoreable. Bites: Day 5, Lane 5, the
+competition Ticks, `research/primary-sources.md` (Cook and Holder 1994).
