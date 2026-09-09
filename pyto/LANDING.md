@@ -51,6 +51,22 @@ On any failure at steps 1 to 3: nothing is committed except a failed receipt und
 `pyto/experiments/landings/failed/` with the reason, the tree is left as it was for inspection,
 and the findings go back to whoever sent the candidate.
 
+## Writers
+
+The main tree has one writer: whoever is landing. Everyone else works in a prefixed copy of the
+whole tree and hands back a branch:
+
+```
+git worktree add /home/user/wt/<package> -b wip/<package>     # the copy; agents work only there
+pyto/scripts/land.sh <package> --from wip/<package> ...        # compile it back: merge, verify, receipt
+```
+
+A copy of the whole tree is the prefixed copy at the right grain: git already knows how to compile
+it (merge), imports need no renaming, and two copies never race. There is no lock. A writer that
+dies leaves a stale copy that blocks nobody; when its branch no longer merges, the landing refuses
+with the conflicting files and nothing changes. Astra's hand-backs (`astra/<team>/<package>`) are
+the same thing from outside. The landing removes the copy and its branch when it succeeds.
+
 ## Rules that do not bend
 
 - No `git add -A` without the scope check. No commit with a failing suite. No landing while the

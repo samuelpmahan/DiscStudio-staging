@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Landing protocol, executable form. See pyto/LANDING.md.
-#   pyto/scripts/land.sh <package> [--verify "<command>"] [--allow "<path> <path>..."] [--base <sha>] [--dry-run] [--message "<one line>"]
+#   pyto/scripts/land.sh <package> [--from <branch>] [--verify "<command>"] [--allow "<path> <path>..."] [--base <sha>] [--dry-run] [--message "<one line>"]
+# --from: the candidate is a branch (a writer's prefixed copy of the tree, or an Astra hand-back).
+#         It is merged into the working branch without committing; a conflict stops the landing
+#         with nothing changed; the landing commit is the merge commit.
 # --base: the commit the package started from. Checkpoint commits since then are part of the
 #         candidate; the receipt lists every file changed since base, split into claimed (under
 #         the allowed paths) and unclaimed (present, verified with the mixture, not this package's).
@@ -12,12 +15,13 @@ cd "$ROOT"
 
 PACKAGE="${1:-}"; shift || true
 [ -n "$PACKAGE" ] || { echo "usage: land.sh <package> [--verify cmd] [--allow paths] [--base sha] [--dry-run] [--message line]" >&2; exit 2; }
-VERIFY=""; ALLOW=""; DRY=0; MESSAGE=""; BASE=""
+VERIFY=""; ALLOW=""; DRY=0; MESSAGE=""; BASE=""; FROM=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --verify) VERIFY="$2"; shift 2;;
     --allow) ALLOW="$2"; shift 2;;
     --base) BASE="$2"; shift 2;;
+    --from) FROM="$2"; shift 2;;
     --dry-run) DRY=1; shift;;
     --message) MESSAGE="$2"; shift 2;;
     *) echo "unknown option $1" >&2; exit 2;;
@@ -30,6 +34,7 @@ LAND_DIR="$PY/experiments/landings"
 WORK="$LAND_DIR/$ID"
 BASE_SHA="$(git rev-parse "${BASE:-HEAD}")"
 fail() { # reason
+  if [ -n "$FROM" ] && git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then git merge --abort; fi
   mkdir -p "$LAND_DIR/failed"
   python3 - "$LAND_DIR/failed/$ID.json" "$PACKAGE" "$BASE_SHA" "$1" <<'EOF'
 import json, sys, datetime
@@ -40,6 +45,16 @@ EOF
   echo "failed receipt: $LAND_DIR/failed/$ID.json" >&2
   exit 1
 }
+
+# 0. A branch candidate: the main tree must be clean, then the branch is merged without committing.
+if [ -n "$FROM" ]; then
+  [ -z "$(git status --porcelain --untracked-files=all)" ] || fail "the tree is not clean; a branch can only land into a clean tree"
+  git rev-parse -q --verify "$FROM^{commit}" >/dev/null || fail "no such branch: $FROM"
+  [ -n "$BASE" ] || BASE_SHA="$(git merge-base HEAD "$FROM")"
+  if ! git merge --no-commit --no-ff -q "$FROM" >/dev/null 2>&1; then
+    fail "merge conflict with $FROM in: $(git diff --name-only --diff-filter=U | tr '\n' ' ')"
+  fi
+fi
 
 # 1. Clean start: the dirty files are what this landing will commit; files committed since --base are
 #    part of the candidate too (checkpoints never claim, landings do).
@@ -116,7 +131,11 @@ if prev and dry != '1':
 print(json.dumps({k: receipt[k] for k in ('id', 'package', 'base_sha', 'result')} | {"claimed": len(claimed), "unclaimed": len(unclaimed)}))
 EOF
 
-if [ $DRY -eq 1 ]; then echo "== dry run: would commit $(printf '%s\n' "$DIRTY" | grep -c . || true) dirty files and the receipt as land($PACKAGE)"; rm -rf "$WORK"; exit 0; fi
+if [ $DRY -eq 1 ]; then
+  echo "== dry run: would commit $(printf '%s\n' "$DIRTY" | grep -c . || true) dirty files and the receipt as land($PACKAGE)"; rm -rf "$WORK"
+  if [ -n "$FROM" ]; then git merge --abort; fi
+  exit 0
+fi
 
 # 5. Commit and push. Only the files that were dirty at the start; if the tree moved meanwhile, stop.
 NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
@@ -134,3 +153,9 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_014pqrhfQfjpSAYTvH8j3y93"
 git push -q -u origin "$(git rev-parse --abbrev-ref HEAD)"
 echo "LANDED $(git rev-parse --short HEAD) $PACKAGE"
+if [ -n "$FROM" ]; then
+  git branch -d "$FROM" >/dev/null 2>&1 && echo "deleted local branch $FROM" || true
+  case "$FROM" in origin/*) echo "remote branch stays until you run: git push origin --delete ${FROM#origin/}";; esac
+  wt="$(git worktree list --porcelain | awk -v b="refs/heads/$FROM" '$1=="worktree"{w=$2} $1=="branch"&&$2==b{print w}')"
+  [ -z "$wt" ] || { git worktree remove --force "$wt" && echo "removed copy $wt"; }
+fi

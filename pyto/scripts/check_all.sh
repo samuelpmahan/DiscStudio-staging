@@ -147,11 +147,15 @@ echo
 # research/ULTRACODE-WEEK.md Reframing 4), so its Node 22 tests are a suite here
 # and not an optional extra. A missing node fails loudly with a named reason
 # rather than passing silently.
-# 77 after Day 3's build, + 4 for the fixer round: a hostile Part address
+# 77 after Day 3's build, + 4 for fixer round 1: a hostile Part address
 # (`__proto__`/`constructor`) through derivePartIndex, validate refusing a
 # png-data-url that is not one, materialize never emitting one it would
-# refuse, and the render-site fallback for the same.
-EXPECT_VIEWER="${EXPECT_VIEWER:-81}"
+# refuse, and the render-site fallback for the same. + 2 for fixer round 2: a
+# record carrying `$&`/`` $` ``/`$'` embedded literally by embed.mjs (a
+# replacement *string* expanded them and broke the standalone page at build
+# time), and deriveHit's answer for an address this run overwrote (the one
+# shape on which the JS reference and pyto.materialize disagreed).
+EXPECT_VIEWER="${EXPECT_VIEWER:-83}"
 echo "== suite: viewer  (cwd $PYTO/viewer)"
 viewer_ok=FAIL
 viewer_count="?"

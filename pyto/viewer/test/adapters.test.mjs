@@ -92,6 +92,22 @@ test('deriveHit: a px: binding not produced earlier in the run is a hit', () => 
   assert.equal(deriveHit([], produced, true), true, 'the runtime reported reuse');
 });
 
+test('deriveHit: an address this run overwrote is not a hit, however it started life', () => {
+  // The reference rule for the one shape the two runtimes disagreed on: a Part
+  // that existed before the run, was refined by an earlier invocation of it, and
+  // is then read again. Nothing was reused -- the reader sees the freshly
+  // computed value -- and RECORD.md:55-56 excludes it in its own parenthetical
+  // ("whose address was not produced by an earlier invocation of the same run").
+  // deriveHit never consults a preexisting set, so `produced` alone decides;
+  // pyto.materialize.run_record now says the same, pinned in
+  // pyto/tests/test_materialize.py
+  // (HitLedger.test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript).
+  const before = new Set();
+  assert.equal(deriveHit(['px:shared.counter'], before), true, 'first read: nothing produced it yet');
+  const after = new Set(['shared.counter']);
+  assert.equal(deriveHit(['px:shared.counter'], after), false, 'this run wrote it; nothing was reused');
+});
+
 test('pyto record: hits are exactly the invocations that read a preexisting Part', () => {
   const record = fromPytoRecord(pytoDoc);
   const hits = invocations(record).filter((invocation) => invocation.hit).map((invocation) => invocation.id);
