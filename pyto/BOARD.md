@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 07:39 **landed** `landing-protocol`: one script, one receipt per landing, checkpoints labelled; neat as the caveman front (96 files since 4641ea8, suites green, receipt 20260909T073836Z-landing-protocol)
 - 2026-09-09 07:38 **landed** `windows-safety`: digests ignore line endings, kernel LF, evidence regenerated, harness path from its own location, child processes keep SystemRoot on Windows (37 files since b2a2848, suites green, receipt 20260909T073723Z-windows-safety)
 - 2026-09-09 07:34 **refused** `windows-safety`: the tree changed while the suites ran (someone is writing); nothing committed
 - 2026-09-09 07:33 **refused** `windows-safety`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T073247Z-windows-safety/check_all.txt)

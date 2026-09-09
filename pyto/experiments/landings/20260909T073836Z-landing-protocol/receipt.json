@@ -1,17 +1,17 @@
 {
   "schema": "pyto-landing-receipt@1",
-  "id": "20260909T073723Z-windows-safety",
-  "package": "windows-safety",
-  "base_sha": "b2a284825708cd592bb0043eec59f1a88afb07b8",
+  "id": "20260909T073836Z-landing-protocol",
+  "package": "landing-protocol",
+  "base_sha": "4641ea82ebe8ac3c3c0c0bf19a7b7eb2996f30bb",
   "result": "verified",
   "verifier": {
-    "command": "bash -c '! git ls-files --eol -- pyto | grep w/crlf | grep -v attr/-text | grep -q .' && echo 'no CRLF text files under pyto (retained .patch/.txt evidence keeps its bytes by attribute)'",
-    "exit": 0,
-    "output_sha256": "a8304524607a18829f2896b55b4f2d39d06e320fbac2403c6ffa7462a3019887"
+    "command": null,
+    "exit": null,
+    "output_sha256": null
   },
   "check_all": {
     "exit": 0,
-    "output_sha256": "ae8a45d416d08bcb66d3f08f2966e4ee5d143bad33cee99acbfc4da5dc07b4ee",
+    "output_sha256": "45221fff247630659b91afe8180d28d8ea3e72ddc5182594399562269432c35a",
     "counts": {
       "library": 103,
       "experiments/grouped-ablation": 230,
@@ -25,9 +25,14 @@
   },
   "claimed": [
     {
-      "path": "pyto/BOARD.md",
-      "bytes": 14927,
-      "sha256": "84cbe6b230002a0d593f79f8f3cdc33fdadc5eb8ac5293332aa6621511b352f2"
+      "path": ".gitignore",
+      "bytes": 154,
+      "sha256": "6442f2b13af43fa2b2960f16dbc9c22dd931ccdcf50024a88d9d4d0264f2489f"
+    },
+    {
+      "path": "mailbox/to-gpt/0001-landing-and-handback.md",
+      "bytes": 2586,
+      "sha256": "7c76fc6675df2b406474f9dbe9df04c70324250cd00ff36418539f87db7faa12"
     },
     {
       "path": "pyto/LANDING.md",
@@ -35,9 +40,61 @@
       "sha256": "d754b1dbdca946d493131d391583710a23ff99737dfb9c13c536f8e6092814df"
     },
     {
+      "path": "pyto/research/briefs/ASTRA.md",
+      "bytes": 7641,
+      "sha256": "608d567cf624750e6d0e7c4e23348737b95c17eebce2df343208e0c494eaec5c"
+    },
+    {
+      "path": "pyto/scripts/land.sh",
+      "bytes": 9956,
+      "sha256": "ccb7009a9e7aa3f6c794359053acf15f418dd3ec230be3657165926eaf9fff2b"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 14726,
+      "sha256": "6fa41de5bd1e85d9c966d6060b27f427a5798948be01386f64cfffd7d003b6bb"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/.gitattributes",
+      "bytes": 431,
+      "sha256": "2476e4ce3a6735c44d725e1a8c02897bab7fb8373c264b9f1ed259e628ed7f5b"
+    },
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 15196,
+      "sha256": "0c076c59711ba56956cca15032614d68d54558f20675269f041fe2bffbb4b586"
+    },
+    {
+      "path": "pyto/CHANGES.md",
+      "bytes": 47971,
+      "sha256": "cd97ee564cc626f06edfd2acf3004a21a5ab977c9feb21c15f051ce5da2cde57"
+    },
+    {
+      "path": "pyto/consumers/discstudio-card/test_paint_families.py",
+      "bytes": 11516,
+      "sha256": "d2e34d5c457b853d7c9bafaa3e86f4884d776288e55910900fc826f806f3aa14"
+    },
+    {
+      "path": "pyto/consumers/discstudio-card/test_sandbox.py",
+      "bytes": 4423,
+      "sha256": "58e0230541d84e2d48c8639fc2bb87819acbbcd4d8658f6531d225e95d33f0a1"
+    },
+    {
       "path": "pyto/experiments/art-tournament/harness/fixtures.py",
       "bytes": 2445,
       "sha256": "bf18ed34e5f7835bc1d08c03c826cdadf27ea9541c13a407cff3e6c290db9d7b"
+    },
+    {
+      "path": "pyto/experiments/art-tournament/harness/render_svg.py",
+      "bytes": 3893,
+      "sha256": "413a6a0e4d5250fc853439f80c02a1c4fa1626dafc44146e464a0b4f02112cc0"
+    },
+    {
+      "path": "pyto/experiments/art-tournament/studios/signal/build_preview.py",
+      "bytes": 7192,
+      "sha256": "c825ed275a0d79db243953b6e23c30ce70da664ead67d58a52342c33a046ee76"
     },
     {
       "path": "pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json",
@@ -103,6 +160,11 @@
       "path": "pyto/experiments/grouped-ablation/evidence/run-1/retained.json",
       "bytes": 219621,
       "sha256": "7864f846268e9decaeea72d3ea848924cea47d4641654b7482da9dc8ee6dd0a3"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-1/tick-viewer.html",
+      "bytes": 296307,
+      "sha256": "5b3000820c24ed367ad00e503b385328545314d0e3f24e05767c529cf9dd66a9"
     },
     {
       "path": "pyto/experiments/grouped-ablation/evidence/run-2-regroup/commit.txt",
@@ -200,19 +262,138 @@
       "sha256": "9b099fef0d2a7788946adfa373d03295fba1751ef524354a656f707a1c0dafa4"
     },
     {
-      "path": "pyto/scripts/land.sh",
-      "bytes": 9956,
-      "sha256": "ccb7009a9e7aa3f6c794359053acf15f418dd3ec230be3657165926eaf9fff2b"
+      "path": "pyto/experiments/runs/day3/diff.patch",
+      "bytes": 4683811,
+      "sha256": "ede8df8dd9c00d4e6ddd364dd3b00839fbc3e36cfeab3879c407173def7690df"
     },
     {
-      "path": "pyto/scripts/neat.sh",
-      "bytes": 14726,
-      "sha256": "6fa41de5bd1e85d9c966d6060b27f427a5798948be01386f64cfffd7d003b6bb"
+      "path": "pyto/experiments/runs/day3/meta.json",
+      "bytes": 12167,
+      "sha256": "9a3924633815c7a48cc565c55cdddc0fb7a1ac8ca4f2fd4bc1cc1bc2a85b01dc"
+    },
+    {
+      "path": "pyto/experiments/runs/day3/prompt.md",
+      "bytes": 10522,
+      "sha256": "4e563c009271be977b00187d7de6f56ce0d4814b67cb4442b37c8de5820c26e1"
+    },
+    {
+      "path": "pyto/experiments/runs/day3/tests.txt",
+      "bytes": 127321,
+      "sha256": "341fc9ee9259dc29701babaa6c7f1b53e8680c7b1dfb3b2d223c4f68e330fb71"
+    },
+    {
+      "path": "pyto/experiments/runs/day3/untested.md",
+      "bytes": 14578,
+      "sha256": "a00be4160776ac4bbfbe52a8e9809e8c7b23992c3c56690329b301c48ab42a83"
+    },
+    {
+      "path": "pyto/experiments/runs/day3/verdicts/adversarial-values.json",
+      "bytes": 10303,
+      "sha256": "43aa9c0f41039ca59522c9e02bcae27a912c737b47a6a29e99ecac105e8c239c"
+    },
+    {
+      "path": "pyto/experiments/runs/day3/verdicts/day3-verify.json",
+      "bytes": 9546,
+      "sha256": "94f80f115060a7db559eca4bad381c25b8af5f7009cc44f00eedda4eb2ed534d"
+    },
+    {
+      "path": "pyto/experiments/runs/day3/verdicts/schema-round-trip.json",
+      "bytes": 7830,
+      "sha256": "c2f93e4882f4d5020c7c97747b315a7e208f4d3d522b38b58b2f9cc99c2679b6"
+    },
+    {
+      "path": "pyto/questions.md",
+      "bytes": 29249,
+      "sha256": "19c1c34688cb17a270cc1055ad090b096806a9cfd013540ffe866aafa4e9eba7"
+    },
+    {
+      "path": "pyto/research/chainspot-branch-mining.json",
+      "bytes": 274001,
+      "sha256": "161d3e6208340f6268fbf4c3383066eb32e5587bf783b350f6c1accbc2a0b1e9"
+    },
+    {
+      "path": "pyto/research/chainspot-branch-mining.md",
+      "bytes": 112837,
+      "sha256": "002c6880f0e24a83b5b1d3ebcb0e50a6ed9ebb8e2e305de7af701e9a08c4eece"
+    },
+    {
+      "path": "pyto/scripts/check_all.sh",
+      "bytes": 10062,
+      "sha256": "eafedfff8dbb8c82e2b2aaa72b1807ec73bd3b01a05b89d9700b8570dee9bd59"
+    },
+    {
+      "path": "pyto/src/pyto/__init__.py",
+      "bytes": 468,
+      "sha256": "365e676f3d3acb57a08134c6d6112b93e297c88a113e0b4308cd11182d8ac34c"
+    },
+    {
+      "path": "pyto/src/pyto/core.py",
+      "bytes": 3160,
+      "sha256": "8133f980896366b4e11afb9e608710bec46e1e98b95be00ac1b334e7ba420fae"
+    },
+    {
+      "path": "pyto/src/pyto/graph.py",
+      "bytes": 5245,
+      "sha256": "191f24f7cebb5680278b676fd3a13277a708afcabb150d2d5883dab5e7736fd0"
+    },
+    {
+      "path": "pyto/src/pyto/materialize.py",
+      "bytes": 28580,
+      "sha256": "81fa350d58df02447fc59c35559d7024af3193ea34112218439216854ca214d0"
+    },
+    {
+      "path": "pyto/src/pyto/neon.py",
+      "bytes": 6792,
+      "sha256": "9726b2259a5a419fc82a820201f7f47a341e9280f8294b5092fd58162015768f"
+    },
+    {
+      "path": "pyto/src/pyto/pcr.py",
+      "bytes": 16574,
+      "sha256": "50accca6212dd3e5d9f1fe3f9de8a6477e1c4ce137eca162668c724d36802878"
+    },
+    {
+      "path": "pyto/src/pyto/pql.py",
+      "bytes": 2276,
+      "sha256": "fa84d0175eb96725464ff4d0e9cee7a7385c879fd0d84fde18ffad4c555ee906"
+    },
+    {
+      "path": "pyto/tests/test_graph.py",
+      "bytes": 2043,
+      "sha256": "cde669df227f7c72ce93fb01817138f120833da556706e6f1e2ce7054a53f65a"
+    },
+    {
+      "path": "pyto/tests/test_materialize.py",
+      "bytes": 35810,
+      "sha256": "754e0a94c7188cb81be3870aba4d376063e614e1cda2febce411770073b83589"
+    },
+    {
+      "path": "pyto/tests/test_receipts.py",
+      "bytes": 16527,
+      "sha256": "d2e37aad21155edaa0e53bb842bb2e7f271ada347947c150612a5a06af4351c9"
+    },
+    {
+      "path": "pyto/viewer/RECORD.md",
+      "bytes": 4540,
+      "sha256": "35b07495e39d12704cf552e6dd0c4a06ccbe709497fca94d3a10d2aaa8222ed0"
+    },
+    {
+      "path": "pyto/viewer/embed.mjs",
+      "bytes": 4771,
+      "sha256": "d58577a7c8bb87fe0bebe6c1cb37d04c3d4a442ff045bf6e463480a1c18f7162"
+    },
+    {
+      "path": "pyto/viewer/test/adapters.test.mjs",
+      "bytes": 26247,
+      "sha256": "fd098a8ba657709695d7c0ad421e5c27be6661c08cc42c15113a0eb3fbd830aa"
+    },
+    {
+      "path": "pyto/viewer/test/embed.test.mjs",
+      "bytes": 9819,
+      "sha256": "f5def736aa02aabeb6f959d3935b5ad87fbfd0e4c8a0677ef7cb6bb9280fb514"
     }
   ],
-  "unclaimed": [],
   "landed_by": "session",
-  "at": "2026-09-09T07:38:00.984384Z",
-  "result_sha": "a5404b1f944fa46d677aaa3aaa2ee73e21c16226",
+  "at": "2026-09-09T07:39:14.600366Z",
+  "result_sha": null,
   "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
 }
