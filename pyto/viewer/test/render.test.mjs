@@ -222,6 +222,31 @@ test('json is collapsible, text is a pre, png-data-url is an img, omitted is the
   assert.equal(withClass(omitted, 'omitted')[0].textContent, 'over the cap');
 });
 
+test('a png-data-url that is not a PNG data URL never reaches an <img src>', () => {
+  // The record is data, and <img src> is a fetch. RECORD.md:60-61 fixes the
+  // shape; adapters.js refuses anything else, and the render site re-checks so
+  // a record that reached the DOM by some other path still makes no request
+  // from a page whose premise is that it makes none.
+  for (const data of ['https://evil.example/beacon.gif?record=opened', 'javascript:alert(1)//', 'data:image/svg+xml,<svg/>']) {
+    const box = renderValue(doc, { kind: 'png-data-url', data, note: null });
+    assert.equal(all(box, 'img').length, 0, `an <img> was created for ${data}`);
+    assert.equal(all(box, 'figure').length, 0);
+    const refused = withClass(box, 'omitted');
+    assert.equal(refused.length, 1);
+    assert.match(refused[0].textContent, /must be a data:image\/png;base64,\.\.\. string/);
+    assert.ok(!textOf(box).includes('evil.example'), 'the rejected URL is not echoed into the page');
+  }
+  // And a whole record of them never gets as far as the renderer: renderRecord
+  // validates first, so the fallback above is the second line, not the only one.
+  const hostile = structuredClone(record);
+  for (const tick of hostile.ticks) {
+    for (const invocation of tick.invocations) {
+      invocation.value = { kind: 'png-data-url', data: 'https://evil.example/beacon.gif', note: null };
+    }
+  }
+  assert.throws(() => renderRecord(hostile, { doc }), /value\.data: expected a string beginning/);
+});
+
 test('a note is rendered beside the material it qualifies', () => {
   const box = renderValue(doc, { kind: 'text', data: 'x', note: 'array truncated: showing the first 200 of 255 entries' });
   const notes = withClass(box, 'note').map((n) => n.textContent);

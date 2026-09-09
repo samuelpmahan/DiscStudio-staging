@@ -310,6 +310,11 @@ export function derivePartIndex(ticks) {
     }
     return parts[address];
   };
+  // Spread, not assignment, to hand back the shape JSON.parse gives a consumer
+  // reading the same index off disk: a plain object carrying `__proto__` as an
+  // own data property. `{ ...map }` copies with CreateDataProperty, so the
+  // hostile name stays a row here too; `Object.assign` would not.
+  const plain = () => ({ ...parts });
   const produced = new Set();
   // A `fn:<id>` binding is a read of the Part that invocation wrote: pcr.py:112-116
   // rewrites a Part binding into the producing invocation's ResultRef, and the
@@ -349,7 +354,7 @@ export function derivePartIndex(ticks) {
       }
     }
   }
-  return parts;
+  return plain();
 }
 
 export function deriveCounters(ticks, wallMs = null) {
@@ -459,7 +464,7 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
       const bindings = calculation.with ?? {};
       // Null-prototype for the same reason as derivePartIndex: a binding named
       // `__proto__` on a `{}` would set the prototype and drop the binding.
-      const inputs = Object.create(null);
+      const inputs = Object.create(null);   // filled below, spread into a plain object
       const declared = [];
       const actual = [];
       for (const [key, address] of Object.entries(bindings)) {
@@ -482,7 +487,7 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
           implementation_sha256: null,
           identity_scope: revision === null ? 'registered-address-only' : `registered-address-and-revision:${revision}`
         },
-        inputs,
+        inputs: { ...inputs },
         args: isPlainObject(calculation.args) ? calculation.args : {},
         into,
         declared_consumes: declared,

@@ -40,6 +40,8 @@ generalized from one CV material to any registered ``pyto.Calculation``:
 
     1. ``pxc.has(address)``     -> in-PxC hit:  ``return pxc.get(address)``
     2. ``store.has_value(key)`` -> disk hit:    load, ``pxc.set(address, value)``, return
+                                                 (a file that does not read back as
+                                                 JSON is not a hit -- it falls to 3)
     3. otherwise                -> miss:        ``value = pxc.call(calculation, args)``;
                                                  ``pxc.set(address, value)``; ``store.save(key, value)``
 
@@ -111,6 +113,17 @@ def default_root() -> Path:
 
 def _fresh_counters() -> dict[str, int]:
     return {"requests": 0, "hits": 0, "misses": 0, "writes": 0}
+
+
+class _LoadFailed:
+    """Sentinel for "the file is there but did not read back as a value".
+
+    A distinct object rather than ``None`` because ``None`` is itself a
+    legitimate cached value (``null`` in the stored JSON).
+    """
+
+
+_LOAD_FAILED = _LoadFailed()
 
 
 @dataclass
@@ -214,10 +227,20 @@ def material(
         return pxc.get(address)
 
     if store.has_value(key):
-        store.counters["hits"] += 1
-        value = store.load_value(key)
-        pxc.set(address, value)
-        return value
+        # The hit is counted after the load, not before it. A truncated or
+        # hand-edited `<key>.json` used to be counted as a hit and *then* raise,
+        # leaving a ledger that claimed reuse of a value nobody ever read and in
+        # which hits + misses no longer accounted for requests. A file that will
+        # not load is not a cached value; degrade to the miss path, which is the
+        # same honesty rule the module docstring states for a sidecar-only key.
+        try:
+            value = store.load_value(key)
+        except (OSError, ValueError):
+            value = _LOAD_FAILED
+        if value is not _LOAD_FAILED:
+            store.counters["hits"] += 1
+            pxc.set(address, value)
+            return value
 
     store.counters["misses"] += 1
     value = pxc.call(calculation, args)

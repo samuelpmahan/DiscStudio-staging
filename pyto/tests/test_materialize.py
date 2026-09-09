@@ -277,6 +277,23 @@ class ValueKinds(unittest.TestCase):
         self.assertEqual(value["kind"], "text")
         self.assertEqual(value["data"], "not an svg, just text")
 
+    def test_a_string_that_is_already_a_png_data_url_is_png_data_url_as_in_javascript(self):
+        # adapters.js:262-264 is the reference (ULTRACODE-WEEK.md Reframing 4,
+        # "JS is first class") and viewer/test/adapters.test.mjs pins it there.
+        # Without this branch the same Part reads as a picture from a DiscStudio
+        # record and as a wall of base64 from a pyto one.
+        url = "data:image/png;base64,iVBORw0KGgo="
+        rendered = render_value(url)
+        self.assertEqual(rendered["kind"], "png-data-url")
+        self.assertEqual(rendered["data"], url)
+        self.assertIsNone(rendered["note"])
+        # The test is on the raw string, not a stripped one: `data` is what a
+        # viewer puts in an <img src>, and RECORD.md:60-61 fixes those bytes.
+        self.assertEqual(render_value("   " + url)["kind"], "text")
+        self.assertEqual(render_value("data:image/svg+xml,<svg/>")["kind"], "text")
+        # An SVG document still wins, in that order.
+        self.assertEqual(render_value(SVG_DOCUMENT)["kind"], "svg")
+
     def test_a_set_is_omitted_with_a_note_and_a_digest(self):
         value = self._value("fn.spec.set", emit_set)
         self.assertEqual(value["kind"], "omitted")

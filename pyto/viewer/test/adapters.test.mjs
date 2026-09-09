@@ -20,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 import {
-  SCHEMA, MAX_ARRAY_ENTRIES, MAX_VALUE_BYTES,
+  SCHEMA, MAX_ARRAY_ENTRIES, MAX_VALUE_BYTES, PNG_DATA_URL_PREFIX,
   validate, RecordSchemaError, materialize, deriveHit, derivePartIndex, bareAddress,
   fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords
 } from '../adapters.js';
@@ -382,4 +382,83 @@ test('the record pyto.materialize wrote for grouped-ablation run-1 validates unc
   assert.deepEqual(hits, ['select', 'split']);
   assert.equal(record.counters.hits, 2);
   assert.deepEqual(derivePartIndex(record.ticks), record.parts, 'the writer/reader index agrees with the invocations');
+});
+
+/* ---------------------------------------------------------------- */
+/* hostile record data                                               */
+/* ---------------------------------------------------------------- */
+
+test('a Part address named __proto__ or constructor is an ordinary row, not a prototype write', () => {
+  // Every non-pyto adapter reaches derivePartIndex, and a Part address is data
+  // the record chose. On a `{}` index these names resolve to Object.prototype
+  // and Object, so the index answers for addresses no run wrote and the page's
+  // own prototype chain is what a record edits.
+  const record = fromDiscStudioReceipt({
+    PrincipleComponentRender: 'hostile',
+    Ticks: [{
+      name: 'T',
+      Calculations: [
+        { call: 'fn.a', with: { raw: '__proto__' }, into: 'constructor' },
+        { call: 'fn.b', with: { seed: 'constructor' }, into: 'out.clean' }
+      ]
+    }]
+  }, null);
+
+  assert.equal({}.preexisting, undefined, 'Object.prototype was not written through');
+  assert.equal({}.written_by, undefined);
+  assert.deepEqual(
+    Object.keys(record.parts).sort(),
+    ['__proto__', 'constructor', 'out.clean'],
+    'each hostile address is its own row'
+  );
+  const row = (address) => Object.getOwnPropertyDescriptor(record.parts, address).value;
+  assert.equal(row('__proto__').preexisting, true);
+  assert.deepEqual(row('__proto__').read_by, ['constructor']);
+  assert.equal(row('constructor').written_by, 'constructor');
+  assert.equal(row('constructor').preexisting, false, 'written before it was read in this run');
+  // The index is handed back as an own-property map, the same shape a consumer
+  // gets from JSON.parse, so the hostile name survives the wire form as a row.
+  const round = JSON.parse(JSON.stringify(record)).parts;
+  assert.deepEqual(Object.keys(round).sort(), ['__proto__', 'constructor', 'out.clean']);
+  assert.deepEqual(derivePartIndex(record.ticks), round, 'the index round-trips through JSON unchanged');
+
+  // The binding *name* is record data too: a `with` key of `__proto__` must land
+  // in `inputs` rather than silently setting the prototype of the inputs map.
+  // Built through JSON.parse, which is how such a map actually arrives and the
+  // only way to spell it: a `{ __proto__: ... }` literal sets the prototype.
+  const spelled = fromDiscStudioReceipt(JSON.parse(
+    '{"PrincipleComponentRender":"hostile.names","Ticks":[{"name":"T","Calculations":[{"call":"fn.a","with":{"__proto__":"input.rows"},"into":"out"}]}]}'
+  ), null);
+  assert.deepEqual(Object.entries(spelled.ticks[0].invocations[0].inputs), [['__proto__', 'px:input.rows']]);
+  assert.equal({}.preexisting, undefined, 'still no prototype write after the second record');
+});
+
+test('validate rejects a png-data-url whose data is not a PNG data URL', () => {
+  // RECORD.md:60-61 states the shape, and tick-viewer.js puts this string into
+  // an <img src>: unchecked, a record chooses an outbound request from a page
+  // whose premise is that it makes none.
+  for (const data of ['https://evil.example/beacon.gif?record=opened', 'javascript:alert(1)//', 'data:image/svg+xml,<svg/>', '']) {
+    const clone = structuredClone(pytoDoc);
+    clone.ticks[0].invocations[0].value = { kind: 'png-data-url', data, note: null };
+    const error = caught(() => validate(clone));
+    assert.ok(error instanceof RecordSchemaError, `expected RecordSchemaError for ${JSON.stringify(data)}, got ${error}`);
+    assert.equal(error.path, 'ticks[0].invocations[0].value.data');
+    assert.match(error.message, /data:image\/png;base64,/);
+  }
+  const ok = structuredClone(pytoDoc);
+  ok.ticks[0].invocations[0].value = { kind: 'png-data-url', data: `${PNG_DATA_URL_PREFIX}iVBORw0KGgo=`, note: null };
+  assert.equal(validate(ok), ok);
+});
+
+test('materialize never classifies a string as png-data-url that validate would refuse', () => {
+  // The classification is on the raw string, not a trimmed head, so what
+  // materialize emits is always readable back by validate.
+  const leading = materialize(`   ${PNG_DATA_URL_PREFIX}iVBORw0KGgo=`);
+  assert.equal(leading.kind, 'text', 'a leading-whitespace data URL is text, not a png-data-url');
+  for (const raw of ['plain', `   ${PNG_DATA_URL_PREFIX}iVBORw0KGgo=`, `${PNG_DATA_URL_PREFIX}iVBORw0KGgo=`]) {
+    const block = materialize(raw);
+    const clone = structuredClone(pytoDoc);
+    clone.ticks[0].invocations[0].value = block;
+    assert.equal(validate(clone), clone, `materialize(${JSON.stringify(raw)}) is not a valid value block`);
+  }
 });
