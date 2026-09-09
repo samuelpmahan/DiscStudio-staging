@@ -1,0 +1,36 @@
+# Every push to main builds one zip of the tree (git archive of HEAD: tracked files only, no .git,
+# no EXP/, no venvs) and attaches it to the release tagged "latest", so an agent anywhere can grab
+# the whole bundle with one URL:
+#   https://github.com/samuelpmahan/neat-pyto-ds-bundle/releases/latest/download/neat-pyto-ds-bundle.zip
+name: Bundle
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: bundle
+  cancel-in-progress: true
+jobs:
+  bundle:
+    if: github.repository == 'samuelpmahan/neat-pyto-ds-bundle'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the zip
+        run: |
+          printf 'commit %s\nbuilt %s\nrepo %s\n' "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$GITHUB_REPOSITORY" > BUNDLE-COMMIT.txt
+          git archive --format=zip --prefix=neat-pyto-ds-bundle/ --add-file=BUNDLE-COMMIT.txt -o neat-pyto-ds-bundle.zip HEAD
+          unzip -l neat-pyto-ds-bundle.zip | tail -1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: neat-pyto-ds-bundle
+          path: neat-pyto-ds-bundle.zip
+      - name: Attach to the "latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view latest >/dev/null 2>&1 || gh release create latest --title "latest" --notes "always the newest main"
+          gh release upload latest neat-pyto-ds-bundle.zip --clobber
+          gh release edit latest --notes "commit $GITHUB_SHA, built $(date -u +%Y-%m-%dT%H:%M:%SZ). Grab: releases/latest/download/neat-pyto-ds-bundle.zip"
