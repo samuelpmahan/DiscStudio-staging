@@ -479,3 +479,305 @@ Status: open. Bites: whether the neon-sheet port carries a known-defect caveat.
 ### {?} MiningCoverage
 Seven branch tips were not mined: `f3ecab3` (`task/quick-anno-python-proof`), `fa44a45` (`review/s1-ownership`, which is the base the Mermaid proof names at `b5a6ae0:experiments/mermaid-s0-s1/HANDOFF.md:3`), `52417a9`, `116c984`, `5433854`, `b9d05cd`, `881c7e5`. `fa44a45` in particular is the parent of the two tips this brief most depends on. Should it be mined before round five closes?
 Status: open.
+
+---
+
+# Appendix: the four tips re-mined in plain text (2026-09-09, wf_ccf03ee0-338)
+
+Returned as markdown after their first readers failed on JSON output. Unedited.
+
+## fa44a45 (review/s1-ownership-fa44a45)
+
+### What it is
+
+`fa44a4505d9aafbf6d2d21a12400298edb7fa96d`, "Wire S1 white recognition and badge ownership through PCR," authored 2026-09-07T00:13:10-05:00 by Samuel Mahan, single branch `review/s1-ownership-fa44a45` (`git for-each-ref --contains fa44a45`). Like the eight mined tips, it is a grafted root — `git show -s --format=%P fa44a45` is empty — so `git diff --stat main fa44a45` is a whole-tree comparison, not a semantic diff, exactly the caveat section 1 already establishes.
+
+New genealogy the synthesis didn't have: this tip **is** the base the Mermaid review names — `b5a6ae0:experiments/mermaid-s0-s1/HANDOFF.md:3` reads "Base: fa44a4505d9aafbf6d2d21a12400298edb7fa96d" — and it is also the direct completion of `5607611`'s stub. `5607611:packages/alg/src/stages/S1/exp/badge-assembly/PrincipleComponentRender.yaml:87` ends the file with `# Partial S1: digit recognition and final Badge/muted/remaining outputs follow.`; `fa44a45`'s copy of the same file replaces that comment with the `WhiteDigitRecognition` and `BadgeOutputs` Ticks verbatim (`fa44a45:packages/alg/src/stages/S1/exp/badge-assembly/PrincipleComponentRender.yaml:87-137`), committed 3h12m after `5607611` in the same timezone (`git log --date=iso-strict`: `5607611` 21:01:21-05:00, `fa44a45` 00:13:10-05:00). So the corpus's timeline is `5607611` (stub) → `fa44a45` (this tip, fills the stub) → `b5a6ae0` (Mermaid review built on `fa44a45`) → the quick_anno Python transfers, which is a tighter chain than section 1's table shows.
+
+The tip's payload is `packages/alg/src/stages/S1/exp/badge-assembly/{stage,ownership,white-recognition,index}.ts` plus the completed `PrincipleComponentRender.yaml`, and a self-contained review artifact at `review/s1-ownership/{README.md,receipt.json,source.png,ownership.png}`.
+
+### Addressing
+
+Same two-root discipline as every other tip: only `px.` and `fn.` appear as address roots anywhere in `packages/alg`, `docs`, `experiments`, or `scripts` (`grep -rniE '\broot\b|\bmount' packages/alg/src/exec docs experiments` returns only filesystem/root-cause hits, never an address root). No mounts model exists yet — `packages/alg/src/exec/mounts.ts` and `tests/unit/pxcRootMounts.test.ts` are both absent from this tree (`git ls-tree fa44a45` returns nothing for either path) — so the mounts decision in `43e6ea3` postdates this checkpoint. There is also no `scratch.*` root: this tip is pure TypeScript, and `quick_anno_py` (where `scratch.*` first appears) does not exist here at all (`find fa44a45 -iname 'quick_anno*'` is empty).
+
+What this tip adds to section 2d's census: it is the **origin** of the "public, stage-free" addresses the synthesis quotes from the later Mermaid file. `px.badges.objects`, `px.badges.px`, `px.badges.muted`, and `px.remaining.afterBadges` are written here first, by real TypeScript, not just diagrammed later:
+
+> `into: px.badges.objects` … `into: px.badges.px` … `into: px.badges.muted` … `into: px.remaining.afterBadges`
+> — `fa44a45:packages/alg/src/stages/S1/exp/badge-assembly/PrincipleComponentRender.yaml:117,123,130,137`
+
+`px.view.partsInspector` also already exists here, one commit earlier than the `8cdddec` archive the synthesis cites for the same address:
+
+> `const viewAddress = 'px.view.partsInspector';`
+> — `fa44a45:src/lib/parts-inspector/PartInspector.svelte:20`
+
+### Viewer and PCR render
+
+`packages/alg/src/exec/contract.ts`, `src/lib/evidence-workbench/PcrInspectionHost.svelte`, and `TickInspection.svelte` are present at the same blob hashes the synthesis found byte-identical across all eight mined tips (`62b5d75`, `30ffdf2`, `0bf6b00` respectively, via `git ls-tree fa44a45 -r`), extending the "stable substrate" claim to nine tips rather than eight — this checkpoint was authored on top of the same fixed contract and viewer, not before it.
+
+The distinctive addition here is a viewer path neither Storybook nor DuckDB uses: a plain Node CJS script that runs the real production PCR, queries its completed `pxc` by address, and self-checks before rendering:
+
+> `const badges=r.pxc.get('px.badges.objects'),owned=r.pxc.get('px.badges.px'),muted=r.pxc.get('px.badges.muted'),remaining=r.pxc.get('px.remaining.afterBadges');`
+> `if(counts.some(n=>n!==1))throw Error('Pixel partition has an overlap or omission');`
+> — `fa44a45:scripts/render-badge-ownership.cjs:10,12`
+
+This is a working, minimal answer to the split section 2 (Viewer) calls out as unresolved — "the value-bearing surface is Stage-keyed and PCR-blind... the Tick-keyed surface is structure-only and value-blind." This script is neither: it runs the actual `createStage(yaml)` PCR, reads its Tick outputs by address, and renders per-badge crops with an exhaustiveness assertion, all in one file, no build step, no Storybook. It predates the "neon-first" quick_anno convention by about four hours and uses the same idea (cyan/pink pixel overlay, per-object crops, a border-exclusion bbox) without naming it.
+
+### Storage
+
+No specialized backend exists in this tip — `grep -rli duckdb` over the whole tree returns nothing. Storage is the in-memory `PxC` fork model already implicit in the stable contract: `stage.ts:39` calls `pxc.fork()` per variant, and results are read back with plain `pxc.get`/`pxc.set`. The experimental runner here (`invokePql`) does not use the `ArtifactRef`/`ArtifactKind` machinery in `contract.ts` at all — it carries raw values "held by reference rather than copied" (`fa44a45:packages/alg/src/exec/pql.ts:20-22`), with no `sha256`, no declared kind, no `uri`. So the declared-kind facade the synthesis credits to the DuckDB archive is present in the codebase at this commit but unused by this particular experimental path — a live example of `{?} StorageKinds`'s "backend chosen by kind" answer sitting beside code that ignores it entirely.
+
+### Materialization and Ticks
+
+The PQL shape here is exactly the authored-YAML format the synthesis documents (`call`/`with`/`args`/`into` inside named `Ticks`), confirmed at its origin:
+
+> ```
+> export interface PqlCalculation {
+>   readonly call: `fn.${string}`;
+>   readonly with: Readonly<Record<string, string>>;
+>   readonly args: Readonly<Record<string, unknown>>;
+>   readonly into: string;
+> }
+> export interface PqlTick { readonly name: string; readonly Calculations: readonly PqlCalculation[]; }
+> ```
+> — `fa44a45:packages/alg/src/exec/pql.ts:4-13`
+
+The ABFeature run harness executes Default plus every registered feature as independent forks, and failure in one does not abort the others or discard earlier writes in that fork — direct, dated evidence for two open root questions:
+
+> "Variant failures produce failed results and do not suppress later variants. Earlier writes in the failed fork remain available; partial Calculation records are not yet returned."
+> — `fa44a45:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:13`
+
+This answers `{?} TransactionalTick` in the negative for this lane (no rollback; a failed Tick's prior writes persist in its fork) and names `{?} PartialExecutionRecords` as an explicit open label rather than an oversight (`REVIEW.md:24`, `{PartialExecutionRecords}`).
+
+### Receipts and telemetry
+
+Three incompatible receipt shapes coexist in this one tip, unreconciled: (1) the stable, unused-here `Receipt` interface in `contract.ts` (typed, digest-bearing, byte-identical to every other tip); (2) the experimental `PqlRun`/`PqlTickRecord` shape, which is untyped-for-identity and reference-holding, with no digest, no duration, no kind (`pql.ts:18-31`); and (3) the review script's own ad hoc `receipt.json`, which has yet a third vocabulary (`rule`, `reviewMarginPx`, `owned`/`muted`/`remaining`/`total`, `perBadge`) with no `sha256` and no `opId`:
+
+> `const receipt={rule:'outer-border-bbox',reviewMarginPx:8,marginPurpose:'view-only exterior context; not an ownership allowance',partition:'every raster pixel exactly once',source,executionMs:r.executionMs,owned:owned.pixels.length,...}`
+> — `fa44a45:scripts/render-badge-ownership.cjs:16`
+
+No `telemetry` concept exists in code anywhere in this tree (`grep -rli telemetry` hits only unrelated docs and `package-lock.json`). This is missing, recorded as such.
+
+### Reusable now
+
+The S1 badge-assembly module (`stage.ts`, `ownership.ts`, `white-recognition.ts`, the completed YAML) is a small, complete, real algorithm end to end — from raw raster to `px.badges.objects`/`px`/`muted`/`px.remaining.afterBadges` — with a working, dependency-light materializer script that queries by address and self-verifies a pixel partition before rendering. That combination (Tick-keyed execution, value-bearing render, address-driven query, no Storybook/DuckDB/build step) is closer to what pyto's Day 3 PCR render needs than either half the synthesis found split apart in the later tips.
+
+### Quotes
+
+- "PrincipleComponentRender.yaml owns the full experimental S1 order and arguments." — `fa44a45:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:7`
+- "Variant failures produce failed results and do not suppress later variants. Earlier writes in the failed fork remain available; partial Calculation records are not yet returned." — `fa44a45:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:13`
+- "View controls perform no CV calculations." — `fa44a45:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:14`
+- "Refinement must preserve Badge identity, source coordinates, existing constituent Parts, and visibility of unexplained interior and exterior residue." — `fa44a45:review/s1-ownership/README.md:27-28`
+- "S1 is not frozen or deployed." — `fa44a45:review/s1-ownership/README.md:38`
+- "Actual input and output values, held by reference rather than copied." — `fa44a45:packages/alg/src/exec/pql.ts:21`
+- `const viewAddress = 'px.view.partsInspector';` — `fa44a45:src/lib/parts-inspector/PartInspector.svelte:20`
+
+### Questions for the owner
+
+{?} ThreeReceiptShapes: This tip carries three unreconciled receipt vocabularies at once (typed `Receipt` in `contract.ts`, reference-holding `PqlRun`, ad hoc `receipt.json`). Should pyto commit to one shape now rather than let an experimental lane fork its own the way this one did?
+
+{?} PartialWritesOnFailure: `REVIEW.md:13` shows a failed Tick's earlier writes staying visible in that fork, with partial Calculation records explicitly deferred. Does the owner want pyto's Tick semantics to keep partial writes on failure (this precedent) or roll the fork back — this is `{?} TransactionalTick` and `{?} PartialExecutionRecords` with concrete prior art now, not just an open label.
+
+{?} MaterializerAsTemplate: `scripts/render-badge-ownership.cjs` is a full address-driven, self-checking, no-build viewer three hours older than "neon-first" and four commits older than DuckDB. Should this script's shape — plain script, query completed run by address, assert a partition invariant, then render — be the literal template for pyto's `viewer/tick-viewer.html`, ahead of copying layout from `TickInspection.svelte`?
+
+{?} ScratchRootOrigin: `scratch.*` (first seen in `19b9b92`) has no ancestor in this tip at all — TS scratch material here stays under `px.s1.exp.*`. Was `scratch.*` a deliberate Python-side root decision or an incidental naming choice during the port? Bites section 2d's "sharpest unresolved addressing conflict."
+
+## 52417a9 (investigate/s1-badge-pixels-5607611)
+
+### What it is
+
+An investigation-only commit, authored 2026-09-06 21:30:52 (`git log -1 --format=%B 52417a9`: "investigation: record S1 badge pixel findings across dev set"), branched from the same checkpoint the mining synthesis already covers as tip `5607611` — `52417a9:investigations/s1-badge-pixels/README.md:3` states "Base checkpoint: `56076112878edf4ac167d97c66f9f83082abe2b1`" and forbids touching the implementation branch: "Implementation continues on lab/s0-viewer... Do not merge or modify the implementation branch as part of this investigation." (`52417a9:investigations/s1-badge-pixels/README.md:4-5`). Its own commit metadata records a real parent, `135b2503a293ad97b1801972f4532e0ffd815ea3` (`git cat-file -p 52417a9`), which this shallow clone does not hold (`git cat-file -t 135b2503a293ad97b1801972f4532e0ffd815ea3` → "bad object") — a small correction to the synthesis's blanket claim that `%P` is empty for "all eight" tips: that was true only of the eight tips it mined, not of this ninth one, and `git diff --stat main 52417a9` (1,264 files, +155,539/-139,825) remains non-semantic for the same reason the synthesis names for the others.
+
+The investigation asks one question: is the ~5–6% of pixels inside the S1 badge detector's footprint that no thresholded Part owns (`px.s1.exp.maskComponents.part.blackComponents` / `whiteComponents`, see below) recoverable material or noise. It ships three markdown documents, one PNG, and a Node probe script under a new corpus location, `investigations/s1-badge-pixels/` — a fourth top-level home for CV findings alongside the synthesis's `docs/`, `docs/orchestration/`, and `docs/handoffs/`.
+
+### Addressing
+
+Confirms the synthesis's §2b reading exactly: the S1 experimental PCR YAML this tip investigates is the identical file cited there, using `px.s1.exp.maskComponents.part.blackMask` / `px.s1.exp.badgeAssembly.badgeCandidates` and `fn.s1.exp.*` calls (`52417a9:packages/alg/src/stages/S1/exp/badge-assembly/PrincipleComponentRender.yaml:1-12,44`).
+
+It adds one addressing fact the synthesis missed for this line: a reserved second segment, `px.pql.<PrincipleComponentRender name>`, where the experimental PQL/PCR interpreter self-publishes its own execution record as an ordinary Part — `pxc.set(\`px.pql.${composition.PrincipleComponentRender}\`, run)` (`52417a9:packages/alg/src/exec/pql.ts:108`), and, for the ABFeature tournament wrapper, an array of per-variant records at `px.pql.<Name>.results` — `pxc.set(\`px.pql.${composition.PrincipleComponentRender}.results\`,results)` (`52417a9:packages/alg/src/exec/stage.ts:43`), stated in prose at `52417a9:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:12` and pinned by tests at `52417a9:tests/unit/pql.test.ts:24` and `52417a9:tests/unit/pql-stage.test.ts:22`. This sits alongside the synthesis's `px.view.*` finding as a second precedent for a reserved-but-unenforced `px.` second segment carrying execution history rather than production values — direct support for round-five's proposed `px.run.<name>` segment, and a small addition to the "two unreconciled scratch conventions" finding (synthesis §2d): counting `px.pql.*`, the corpus now has three places execution-derived material can land (`px.<stage>.exp.*` TS scratch, `scratch.*` Python root, `px.pql.*` run records), none cross-validated against the others.
+
+No mount/root-external-to-address material appears anywhere in this tip — consistent with, not contradicting, the synthesis's "missing" finding for `5607611`, since this investigation was committed ~2 hours before `lab/pxc-root-mounts` (21:30:52 vs `43e6ea3` at 23:27:11).
+
+### Viewer and PCR render
+
+`TickInspection.svelte` and `PcrInspectionHost.svelte` are present and byte-identical to the other eight tips (blobs `0bf6b00`/`30ffdf2`, `git ls-tree 52417a9`), extending the mining preamble's "stable substrate" claim to a ninth tip. But this investigation does not use that shared surface. It ships its own private inspector instead: "One Node host replaces three experiment hosts... a standalone inspector; staging integration remains pending" and "The shared browser-safe JS renderer produces SVG from exact pixel membership... View controls perform no CV calculations" (`52417a9:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:5,10`). That is a third, independently-built inspection surface — distinct from both the shared evidence-workbench Svelte host and the Mermaid-driven S0 viewer the synthesis already names — reinforcing rather than resolving the synthesis's §3 "Avoid: the split ChainSpot never closed" finding.
+
+The investigation's own probe script confirms that split at the code level: `dev-set-probe.mjs` walks `ok.run.ticks` / `tick.calculations` directly off the raw `PqlRun` object to find `badgeCandidates` (`52417a9:investigations/s1-badge-pixels/dev-set-probe.mjs:85-87`) rather than reading anything through a Receipt or a viewer — it had to hand-traverse Tick/Calculation records because no receipt-shaped surface exposed the value it needed.
+
+### Storage
+
+Nothing — no DuckDB, no `ArtifactKind` selection, recorded as missing rather than inferred. This precedes the DuckDB archive (`8cdddec`, committed 22:42:06) by about 70 minutes and by content, so its absence here is chronological, not a disagreement with that tip. The investigation's own outputs (`dev-set-report.json`, `DEV-SET-SUMMARY.md`) are generated to `dev-set-output/` and are not present in this tip's tree, extending the synthesis's "outputs regenerated, never committed" convention (§5 item 6) from the three quick_anno Python stages to a fourth, earlier TypeScript investigation line. Separately, `artifacts/custody-receipts/*.custody.receipt.txt` (`52417a9:artifacts/custody-receipts/DashsTrack.custody.receipt.txt`) is a chain-of-custody log for raw source images — a second, unrelated sense of "receipt" in this corpus that should not be conflated with `contract.ts`'s `Receipt` when transferring vocabulary into pyto.
+
+### Materialization and Ticks
+
+The investigation follows the neon/crop-first, identity-precedes-geometry discipline the synthesis credits to the later Python `quick_anno` line (`6309ff1`, `82f8fc9`) — but does so first, in TypeScript, roughly a day earlier: it ships one comparison image per course ("Each pair is original / cyan detected plus magenta unaccounted," `52417a9:investigations/s1-badge-pixels/README.md:17`) and refuses to assume the cause of a gap: "Antialiasing is a hypothesis, not yet a classification." (`52417a9:investigations/s1-badge-pixels/README.md:20`). This suggests the discipline originates here, not in the Python transfer — worth folding into synthesis §5 as a correction of order, not of substance.
+
+`stage.ts` introduces `pxc.fork()` for per-variant isolation: "A PxC fork snapshots slot and function maps. It shares immutable values, including raster buffers. Each run's writes stay in its own fork." (`52417a9:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:11`; mechanism at `52417a9:packages/alg/src/exec/stage.ts:27-43`). This is a concrete, shipped partial answer to pyto's open `{?} TransactionalTick`: not rollback-within-a-Tick, but fork-per-variant so a failed feature's partial writes never contaminate `Default` or any sibling variant.
+
+The same file's `invokePql` throws loud rather than silently on args/inputs collision — `throw new Error(\`Argument '${name}' shadows a named input.\`)` (`52417a9:packages/alg/src/exec/pql.ts:97`) — a second, independent PQL implementation that treats the shadow case as fatal, adding a data point to (not contradicting) pyto's `{?} SilentRules`, which concerns the production `contract.ts` engine specifically.
+
+REVIEW.md's own open label, `{PartPublication}: canonical child addresses and sourceTickId stamping remain unset by the generic runner` (`52417a9:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:22`), is independently unresolved territory matching pyto's `{?} ObservationSeam`.
+
+### Receipts and telemetry
+
+No `contract.ts`-shaped `Receipt` appears anywhere in this tip's investigation code; the experimental `PqlRun` carries only `call`/`actualCall`/`args`/`inputs`/`output` per Calculation (`52417a9:packages/alg/src/exec/pql.ts:18-23`) — no `opId`, no `artifacts`, no `probes`, no `writes[]` testimony, a strictly thinner record than the production Receipt the synthesis quotes.
+
+This tip's tree also carries a real, twice-stated telemetry-vs-decision rule, unrelated to the investigation itself but directly reusable: a diagnostic gray-pixel count in the ported Tee family logic "was **printed in the sweep log and nothing else**... It never selected or rejected anything... 'LAB gray payload (145 <= max(R,G,B) <= 175) was DIAGNOSTIC ONLY. It never selected/rejected this family. Do not add a gray kill rule.'" (`52417a9:docs/unported/g3-intact-tee-family.md:108`, restated at `:244` and `docs/unported/README.md:88`). This names exactly the failure mode pyto's Receipt/testimony boundary (`{?} ObservationSeam`) should guard against: a number computed for observation must never covertly become a gate.
+
+### Reusable now
+
+- `pxc.fork()` per-variant isolation (`stage.ts:27-43`) is directly portable to pyto's tournament execution (`consumers/discstudio-card/art_registry.py`, `{?} KeepLosers`): isolate every variant's writes at the store layer instead of the registry layer.
+- The telemetry-must-never-gate rule (`docs/unported/g3-intact-tee-family.md:108,244`) is a named anti-pattern pyto's receipt design should cite explicitly.
+- `px.pql.<Name>` self-published run records (`pql.ts:108`, `stage.ts:43`) give round-five's `px.run.<name>` proposal a second working ancestor beyond `px.view.*`.
+- `dev-set-probe.mjs`'s pattern — run one experimental PCR across N corpus courses, aggregate plus per-course table, call out the one qualitative outlier by name (Heritage's 90.78% candidate, `52417a9:investigations/s1-badge-pixels/DEV-SET-INVESTIGATION.md:56-69`) — is a ready template for `{?} CrossProjectReuse` regression checks.
+
+### Quotes
+
+> "Dash's Track yields 18 badge candidates, containing 37,295 unique pixels... 94.34845% coverage."
+> — `52417a9:investigations/s1-badge-pixels/README.md:8-10`
+
+> "The enclosed `UnaccountedPx` are overwhelmingly threshold-transition pixels at boundaries between already-associated semantic Parts, not unexplained interior material."
+> — `52417a9:investigations/s1-badge-pixels/INVESTIGATION.md:10`
+
+> "A PxC fork snapshots slot and function maps. It shares immutable values, including raster buffers. Each run's writes stay in its own fork."
+> — `52417a9:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:11`
+
+> `if (Object.hasOwn(args,name)) throw new Error(\`Argument '${name}' shadows a named input.\`);`
+> — `52417a9:packages/alg/src/exec/pql.ts:97`
+
+> "'LAB gray payload (145 <= max(R,G,B) <= 175) was DIAGNOSTIC ONLY. It never selected/rejected this family. Do not add a gray kill rule.'"
+> — `52417a9:docs/unported/g3-intact-tee-family.md:108`
+
+> "One Node host replaces three experiment hosts... a standalone inspector; staging integration remains pending."
+> — `52417a9:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:10`
+
+> "{PartPublication}: canonical child addresses and sourceTickId stamping remain unset by the generic runner."
+> — `52417a9:packages/alg/src/stages/S1/exp/badge-assembly/REVIEW.md:22`
+
+### Questions for the owner
+
+{?} PqlRunRootStatus: Should `px.pql.<Name>` become a formally reserved second segment (like `px.view.*`) in pyto's address tree, given it now has two independent ChainSpot precedents (`pql.ts:108`, `stage.ts:43`)? Bites: round-five address tree, `{?} ObservationSeam`.
+
+{?} ForkAsTickTransaction: Is per-variant `pxc.fork()` (`stage.ts:27-43`) an acceptable substitute for `{?} TransactionalTick`'s rollback semantics, or does pyto still need true intra-Tick rollback separately from tournament isolation?
+
+{?} TelemetryGateRule: Should pyto adopt the ChainSpot rule verbatim — a value computed only for logging/inspection must never influence its own Calculation's output — as a receipt-design constraint, not just a convention note?
+
+{?} ReceiptWordCollision: Given `custody.receipt.txt` and `contract.ts`'s `Receipt` are unrelated concepts sharing one English word in ChainSpot, should pyto rename one of its own uses to avoid the same ambiguity when transferring vocabulary?
+
+## b9d05cd (lab/dashs-ternary-edge-pattern)
+
+Commit message: "Preserve Dash matrix source galleries, shared readings, and resumed H18 proof / Archive includes all 72 Dash variant outcomes, 20 explicit missing-seed rows, independent connection/spacing checks, numerical profiles, and a filterable source gallery. Add directly viewable H18/H16 comparisons and immutable resumed H18 measurements." (`git log -1 --format=%B b9d05cd`). It is a grafted root (`git show -s --format=%P b9d05cd` empty), so `git diff --stat main b9d05cd` is a whole-tree comparison, not semantic (1244 files, +154056/-139825) — consistent with the existing synthesis's note that this applies to all eight mined tips (`chainspot-branch-mining.md:30`). This tip previously failed the mining agent on output formatting (`questions.md:353-355`); this pass reads it directly.
+
+### What it is
+
+Not one experiment but a checkpoint archive of five sibling investigations under `experiments/dashs-track-edge-sensing/`, all diagnostic sensing prototypes over the 18 DashsTrack holes, explicitly not a fix to pathfinding: "It is an additive experiment checkpoint. It does not modify clean stages or claim to have fixed pathfinding." (`b9d05cd:experiments/dashs-track-edge-sensing/README.md:5-6`). The five: `ternary-edge` (fixed-ray RGB material classifier, EDGE/RIBBON/TERRAIN/UNKNOWN), `bend-follower` (beam-search paired-boundary tracker, capped at 90 poses), `dash-transition-render` (whole-raster Gaussian-derivative transition field, no seeds at all), `straight-edge-pattern` (opposite-wave anomaly search on straight holes), and `matrix-review` (a Sweep-matrix harness running 72 variant outcomes across all 18 holes plus 20 missing-seed rows). Confirms the earlier synthesis's structural finding directly: `packages/alg/src/exec/contract.ts` in this tip is the same blob `62b5d75` as all eight previously mined tips, and `PcrInspectionHost.svelte`/`TickInspection.svelte` are blob-identical too (`30ffdf2`, `0bf6b00`) — this ninth tip is authored on the identical stable substrate, not a fork of it.
+
+### Addressing
+
+This tip adds a concrete, previously-uncited data point to the `SlotRef`-openness finding already in the synthesis (§2c, `contract.ts:15-23`): production LAB code writes a Part address with **no** `px.`/`fn.` prefix at all. `scripts/chainspot-lab/sweep/matrix/materials.ts:347` computes `const materialAddress = \`matrix.material.${key}\`;` and then does `input.board.has(materialAddress)` / `input.board.set(materialAddress, material)` (`b9d05cd:scripts/chainspot-lab/sweep/matrix/materials.ts:350,354`) against `board: PxC` (imported as `import { pxFn, type PxC } from '@chainspot/alg/exec/board'`, `:18`). This is a real PxC write in shipped tooling, not a hypothetical: `PxC` is documented as "PxC's browser-safe address space" and `ExecBoard` is kept only "as a compatibility name because this is the existing production board evolving in place" (`b9d05cd:packages/alg/src/exec/board.ts:38-39`). Same pattern in the gateway adapter: `board.set('ternary.sourceSpec',{outDir})` and `board.set('ternary.materialTrace',trace)` (`b9d05cd:experiments/dashs-track-edge-sensing/ternary-edge/run_gateway.cjs:29,22`) — `ternary.sourceSpec`/`ternary.materialTrace` are declared consumes/produces on a real `ABFeatureSet` feature (`:25-26`) and appear as `declaredConsumes`/`writes` in the resulting receipt with no `px.` prefix (see Receipts below). This does not contradict the existing synthesis — it already found unprefixed `SlotRef` examples in `contract.ts` itself — but it upgrades the finding from "the type allows it" to "a live, currently-used LAB tool does it, at the top level, for the actual matrix cache." Where the synthesis proposed adopting a `scratch.*`-under-`px.` or reserved-segment discipline (§2e), this tip is a fresh instance of exactly the unenforced-root problem the synthesis already flagged at §2d ("ChainSpot has two answers to the same question… neither validates it") — now a third instance (`matrix.*`) alongside `scratch.*` (Python) and bare `badgeStage.*` (contract.ts examples). No mount, `px.view.*`, or content-digest-root construct appears anywhere in this tip — **missing**, consistent with §2d/§2e's finding that the mounts design is specific to `43e6ea3`.
+
+### Viewer and PCR render
+
+**Missing.** Nothing in this tip renders through `TickInspection.svelte`, `PcrInspectionHost.svelte`, `/lab/pcr`, or any PCR/Tick construct. `packages/alg/src/exec/pcr.ts` and `packages/alg/src/exec/gateway.ts` are present in the tree (shared substrate) but nothing under `experiments/dashs-track-edge-sensing/` imports or exercises them; `grep -ril "PrincipleComponentRender"` over the whole tip returns zero hits. All rendering here is bespoke: `matrix-review/render.py` (source comparison plots, "Green marks a sensor acceptance", `b9d05cd:experiments/dashs-track-edge-sensing/matrix-review/README.md:34`), `matrix-review/gallery.py` (filterable failure-group gallery, `:31,34`), `bend-follower/render.py` (evidence renderer that "does not run sensing, sample pixels, read annotation/target files, select a winner, or draw alternate paths", `b9d05cd:experiments/dashs-track-edge-sensing/bend-follower/README.md:3`), and `dash-transition-render`'s Matplotlib fields. These are single-purpose Python/JS scripts writing static JPEG/PNG, with no Storybook, SvelteKit, or per-Tick six-section layout — `{?} StorybookAsVehicle`'s lean (copy layout, discard toolchain, `questions.md:332-335`) is unaffected; this tip simply never used the toolchain in either direction.
+
+### Storage
+
+No DuckDB, no relational backend — `grep -ril duckdb` over the tip is empty. Storage here is: (a) the `PxC`/`ExecBoard` in-memory cache described above (`matrix.material.<key>`), with explicit hit/miss/write counters (`MatrixMaterialCounters`, `b9d05cd:scripts/chainspot-lab/sweep/matrix/materials.ts:31-38`) — a concrete, code-level instance of `{?} HitDefinition`'s "any Part or Calculation being used is a hit" (`questions.md:28-31`), now with real counter fields (`requests`, `hits`, `misses`, `writes`, `profileHits`, `profileMisses`, `profileWrites`); and (b) flat content-addressed files: `output/transition-fields.npz` ("regenerate instead of committing its ~140MB contents", `b9d05cd:experiments/dashs-track-edge-sensing/dash-transition-render/README.md:44`), `output/bands.json`, and `SOURCE-FREEZE.json` with an aggregate SHA-256 (`b9d05cd:experiments/dashs-track-edge-sensing/BEND-FOLLOWER-REVIEW.md:7-8`). No `ArtifactKind` union or declared-kind dispatch appears in this tip's own code — it relies on the shared `contract.ts` substrate only where it goes through the ABFeature gateway (ternary-edge), and plain files everywhere else. This is consistent with the synthesis's §4 point 5 finding that non-gateway experiment storage on this codebase is "filename-as-address, with no kind and no digest" — matrix-review and dash-transition-render are further examples of that same pattern, not a counterexample.
+
+### Materialization and Ticks
+
+No `Tick`, `PrincipleComponentRender`, or PCR composition anywhere in this tip's own code (grep confirms `\bTick\b` hits are all in the shared `packages/alg/src/exec/*.ts` substrate, never invoked here). The closest local analogue is the `ABFeatureSet` operation/feature model used by `ternary-edge` and `bend-follower`'s gateway adapters — one `OperationSpec` per feature (`ternary-edge.sample-and-classify`), OFF/ON ablation runs, single operation per run. This matches the synthesis's own framing of ABFeatureSet/PCR as a stable substrate the branches sit on top of, but here the tip stays one level below PCR (operations, not Ticks). Materializer conventions match the synthesis's §5 list closely and add confirming citations: **neon-first is absent here** — this tip predates or bypasses the quick_anno neon convention; instead its acceptance discipline is "source-visible result" tables with named pixel positions (`b9d05cd:experiments/dashs-track-edge-sensing/ternary-review/RESULTS.md:11-17`), functionally the same "identity precedes geometry" spirit (§5 point 2) applied via cross-section review rather than crops. The matrix-review README explicitly states the LAB-cache identity fields — "source bytes, frame, seed, masks, sensor parameters and calculation revision" (`b9d05cd:experiments/dashs-track-edge-sensing/matrix-review/README.md:23`) — which is a textual answer to `{?} CacheInvalidation` (what a revision means for a CV stage, `questions.md:244-247`): revision here is a named field alongside source/frame/seed/masks/params, not a single content hash, closer to ChessLab's own `implementation_sha256`-excludes-helpers compromise the synthesis already flagged as a limitation (§ "The production Receipt is the target shape").
+
+### Receipts and telemetry
+
+Two receipt shapes worth the owner's attention, both real (not proposed):
+
+1. **A one-level-up wrapper around the per-Tick `Receipt` shape**, from a real run: `gateway-receipt.json` carries `featureId`, `traceHash`, and OFF/ON pairs each with `runId`, `invocation`, `setId`, `planFingerprint`, `ownedFeatureIds`, `enabledFeatureIds`, `manifestHash`, wrapping an `operations[]` array whose single entry is a byte-for-byte match to the synthesized `Receipt` fields (`opId`, `frozenCalculations` with `identityScope`/`limitation`, `declaredConsumes`/`declaredProduces`/`actualConsumes`/`actualProduces`, `writes` with `kind: "new-address"`, `probes: []`, `artifacts: []`) — `b9d05cd:experiments/dashs-track-edge-sensing/ternary-edge/output/gateway/gateway-receipt.json`. This confirms the synthesis's target `Receipt` shape end-to-end from a live gateway run, and shows the `writes[].kind` two-value convention (`"new-address"` vs `"replacement"`, per §4 point 3) is live in TypeScript too, not just the Python `core.py:62-66` citation already in the synthesis.
+2. **A wholly different receipt schema for identity/lineage**, not mentioned anywhere in the existing synthesis: `artifacts/custody-receipts/DashsTrack.custody.receipt.txt`, `schema=chainspot-chain-of-custody@1`, per-Tee rows of `summary`, `evidenceRefs`, a `GAP: none (lineage complete)` line, and an `assignment: producer=… score=… rank=… ownership=selected` line (`b9d05cd:artifacts/custody-receipts/DashsTrack.custody.receipt.txt:1-10`). This is the receipt analogue for object-identity/assignment provenance (which Tee got which Badge/Basket and why) rather than for Calculation execution — a third receipt family (execution receipt, custody receipt, matrix-material cache counters) that the owner's engram-table thesis would need to reconcile or explicitly keep separate. **Missing:** no telemetry aggregation across runs (no dashboards, no time-series); each artifact is a single-run snapshot.
+
+### Reusable now
+
+- The `ABFeatureSet` OFF/ON ablation-receipt pattern (`run_gateway.cjs:25-36`) is a small, portable template for wrapping any experimental Python producer behind a declared-slot gateway with an assertable contract (`gateway ABFeature contract failed` check, `:36`) — directly reusable for pyto's own gateway-shaped experiments.
+- `MatrixMaterialCounters` (`materials.ts:31-38`) is a ready-made concrete shape for `{?} HitDefinition`'s hit/miss bookkeeping, one level more detailed (separate profile vs. material counters) than anything cited so far.
+- The chain-of-custody receipt schema is a reusable pattern for any pipeline needing per-object provenance separate from per-Tick execution receipts.
+
+### Quotes
+
+- "It is an additive experiment checkpoint. It does not modify clean stages or claim to have fixed pathfinding." — `b9d05cd:experiments/dashs-track-edge-sensing/README.md:5-6`
+- "const materialAddress = \`matrix.material.${key}\`;" — `b9d05cd:scripts/chainspot-lab/sweep/matrix/materials.ts:347`
+- "PxC's browser-safe address space. ExecBoard remains as a compatibility name because this is the existing production board evolving in place, not a second synchronized store." — `b9d05cd:packages/alg/src/exec/board.ts:38-40`
+- "This is fixed-heading sensing; it has not changed steering or demonstrated Badge-to-C2 tracking." — `b9d05cd:experiments/dashs-track-edge-sensing/ternary-review/RESULTS.md:3`
+- "A count that matches expectation is not evidence, and a bounding box is not an identity." (cited already for `6309ff1`; not present in `b9d05cd` — noting no equivalent identity-precedes-geometry line exists in this tip's own text, closest is the RESULTS.md source-visible tables above) — **missing** in this tip.
+- "This is an approximate bounded search, not globally optimal fast marching." — `b9d05cd:experiments/dashs-track-edge-sensing/BEND-FOLLOWER-REVIEW.md:53`
+- "Do not turn same-pixel model agreement into independent confidence." — `b9d05cd:experiments/dashs-track-edge-sensing/README.md:62`
+- "GAP: none (lineage complete)" — `b9d05cd:artifacts/custody-receipts/DashsTrack.custody.receipt.txt:6`
+
+### Questions for the owner
+
+{?} MatrixAddressRoot: `matrix.material.<key>` is a live, unprefixed PxC address in shipped LAB tooling (`materials.ts:347`) — a third scratch/cache convention alongside ChainSpot's `px.<stage>.exp.*` and Python's `scratch.*`. Should pyto's `scratch`-root decision (round five) also cover cache-shaped addresses like this, or is a cache key exempt from the `px.`/`fn.` discipline entirely?
+
+{?} CustodyReceiptFamily: the chain-of-custody schema (`chainspot-chain-of-custody@1`) records per-object assignment/lineage and is structurally unlike the per-Tick execution `Receipt`. Does pyto's receipt design need a second, explicit receipt family for object identity/provenance, or should custody facts become ordinary Parts read by a Calculation the way everything else is?
+
+{?} OperationLevelReceiptWrapper: the gateway receipt here wraps per-Tick-shaped operation records inside an OFF/ON `ABFeatureSet`-level envelope (`setId`, `enabledFeatureIds`, `manifestHash`). Is this outer envelope something pyto's `PcrRun`/materializer should also carry (e.g., which features/knobs were enabled for a given render), or is it ChainSpot-specific ablation machinery that should stay out of pyto's kernel?
+
+## 881c7e5 (lab/stage-aware-dev4)
+
+### What it is
+
+A dated investigation checkpoint (2026-09-05, one day before the eight previously-mined tips begin) that builds a **truth-assisted referee** for LAB's Sweep pipeline: given a retained Stage run and an annotation file, it restores the actual PxC (no re-execution), does maximum-cardinality bipartite matching between annotated holes and detected objects with a fixed pixel tolerance, and renders a verdict per Stage that distinguishes genuine misses from Tees the annotator never marked visible. Commit message: "Add stage-aware LAB referee with one-to-one scoring, visibility obligations and native diagnostics" (`881c7e5` commit message). `git diff --stat main 881c7e5` is a whole-tree comparison (no merge-base, matching the pattern already noted for the other eight tips) — 1140 files, +110488/-139825 — because `main` (`b1f4c83`) predates the entire LAB CLI (`Scope`/`Search`/`Traverse`/`Sweep`) this tip is built on.
+
+`packages/alg/src/exec/contract.ts` is byte-identical here to the stable blob already established across all eight mined tips (`62b5d75`), as are `src/lib/evidence-workbench/PcrInspectionHost.svelte` (`30ffdf2`) and `TickInspection.svelte` (`0bf6b00`) — confirmed via `git ls-tree 881c7e5`. So this tip sits on the same production substrate; it does not touch it. What it adds instead is grading/diagnostic tooling one layer up, in `scripts/chainspot-lab/`.
+
+### Addressing
+
+**Nothing new, and this is itself informative.** Grepping the extracted tip for `PrincipleComponentRender`, `PQL`, `.mount(`, and `RootMount` returns zero hits; `px\.` appears in 50 files but only in the pre-existing S0-S3 production shape (`px.badges`, `px.baskets`, `px.tees`, `px.source.fullImage`, `px.tees.exp.pcr`, `px.tees.exp.selectionFn` — sampled via `git -C /home/user/samuelpmahan/chainspot show 881c7e5:...`). The `px.<domain>.exp.<name>` scratch shape the synthesis flags as one half of `{?} ScratchRootConflict` (§2d of the mining doc) is already present here a day before `5607611`/`b5a6ae0` — it isn't new to this tip, just further evidence it predates the root-mounts decision entirely. `docs/lab/stage-aware-dev4/DECISIONS.md` and `AUDIT.md` (`881c7e5:docs/lab/stage-aware-dev4/DECISIONS.md:1-39`, `881c7e5:docs/lab/stage-aware-dev4/AUDIT.md:1-15`) never mention a root, mount, or namespace decision — the only "namespace" word in the tip is a UI concept, Search Pages: "Pages are visibility/mutation namespaces, not raster copies" (`881c7e5:scripts/chainspot-lab/README.md:185`), unrelated to PxC addressing. **Missing**, confirmed rather than inferred: this branch does no addressing work at all; it consumes existing addresses read-only.
+
+### Viewer and PCR render
+
+`packages/alg/src/exec/pcr.ts` (93 lines) restates the design principle already known from the synthesis — a PCR composes already-produced Tick testimony and never executes: "PCR has deliberately no run() method: the production gateway is the only execution authority and hands this function the receipts it already produced" (`881c7e5:packages/alg/src/exec/pcr.ts:17-19`). This file's content matches the shape the synthesis describes for the shared substrate; it is not itself an experiment in this tip. Storybook appears in 20 files but only as the pre-existing per-Tick viewer infrastructure already documented in the synthesis §3 — this tip adds no new viewer surface. What this tip *does* add is a separate, non-Storybook diagnostic render: `makeLabeledContactSheet` composes per-hole crop images into one labeled PNG contact sheet (`881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:8,135`), one crop per Tee with an ownership overlay in magenta over accepted pixels (`881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:93-101,133`) — a CLI/file-based inspection artifact, not a browser page, closer in spirit to the "neon-first" materializer convention from the quick_anno tips than to the Svelte viewer.
+
+### Storage
+
+A concrete mechanism not present in the eight already-mined tips: the whole PxC board is serialized with Node's V8 `serialize`/`deserialize` into a flat `pxc.bin` file, one `[address, value]` pair per declared address, and restored later without re-running anything:
+
+> "Explicit address custody: no reflection into a board's private storage." — `881c7e5:scripts/chainspot-lab/sweep/pxcSnapshot.ts:5`
+
+Restoration is checksum-gated at read time: `readStageState` recomputes `digest(bytes)` against `receipt.artifacts.pxc.sha256` and throws "Retained PxC checksum mismatch" on drift, and separately re-hashes the original source image against `receipt.identity.inputSha256`, throwing "Source changed since the retained Sweep" (`881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:106-108`). This is a third storage answer alongside the DuckDB-Wasm archive and the quick_anno flat-file convention already synthesized: a full-board binary snapshot, addressed by content digest, restored cold with no dependency warm-up cost — directly relevant to `{?} WarmupBudget` and `{?} StorageKinds` as a workshop-grade backend that costs nothing to start.
+
+### Materialization and Ticks
+
+No change to the Tick/testimony contract — same byte-identical `contract.ts`. What this tip contributes is a *consumer* discipline for materialized state: the referee never re-executes a detector, only reads what a prior Sweep already retained, stated as a hard rule in the file's own header comment ("Reads the actual Stage PxC. Never executes a detector or writes truth into PxC." — `881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:1-3`) and reinforced in the checkpoint doc: "No Stage promoted or frozen. Frozen clean/ untouched." (`881c7e5:docs/lab/stage-aware-dev4/DECISIONS.md:39`). It also names a batch-level receipt aggregation that spans Ticks rather than reporting one: Sweep's batch mode writes `summary.txt`/`summary.json` per batch root with fields — badges, baskets, raw rings, pre-family tees, visible tees, visible deficit, operation count, runtime, conformance drift, status — each traced to a specific drawable/receipt field (`881c7e5:scripts/chainspot-lab/README.md:232`), including "conformance drift counts receipts whose actual consumes/produces omit a declared slot" — the same declared-vs-actual divergence check the synthesis's §3 flags as viewer-worthy, here computed as a cross-run aggregate statistic instead of a per-Tick warning.
+
+### Receipts and telemetry
+
+Two receipt-adjacent conventions worth carrying into pyto that the synthesis's `Receipt` walkthrough doesn't cover:
+
+1. **A truth-taint field baked into the receipt schema, not a side note.** The audit receipt is explicitly tagged `mode:'TRUTH-ASSISTED-EVALUATION-ONLY'` (`881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:136`), and the LAB CLI records a parallel `TRUTH-TAINT` command-log entry whenever ground truth is used, then refuses a test run that reuses a tainted log: "A later test run reusing a command log that already contains truth taint also fails; use a fresh `LAB_COMMAND_LOG` for an independent test." (`881c7e5:scripts/chainspot-lab/README.md:66`). This is a stronger, enforced version of pyto's "declared vs actual" idea — provenance of *how a value was obtained* (truth-assisted vs blind) travels with the receipt and can fail a run outright, not just warn a viewer.
+2. **Telemetry that must never become a filter, stated as a rule with teeth.** `docs/unported/g3-intact-tee-family.md` documents a diagnostic-only signal that was deliberately kept out of any gate: "LAB gray payload (145 <= max(R,G,B) <= 175) was DIAGNOSTIC ONLY. It never selected/rejected this family. Do not add a gray kill rule." (`881c7e5:docs/unported/g3-intact-tee-family.md:108`), repeated as rule 8 of a numbered port checklist: "Never add a gray-payload gate... Twice-stated in the source docs, restated here." (`881c7e5:docs/unported/g3-intact-tee-family.md:244`), and again in the unported README's table (`881c7e5:docs/unported/README.md:88`). The `{?} ObservationSeam` question in `pyto/questions.md:271-273` (should digests/durations live in `receipts` vs. testimony fields) has a sharper ChainSpot precedent here than in the synthesis: telemetry values are legitimate to record but must be structurally incapable of being read by any Calculation as a decision input — "If you want its telemetry back, emit it on a drawable," never a gate.
+
+### Reusable now
+
+- **`matchObjects`** (`881c7e5:scripts/chainspot-lab/sweep/verdict.ts` — actually `stageAudit.ts:25-50`): a dependency-free Hungarian-algorithm maximum-cardinality, minimum-distance matcher with dummy columns so an implausible match is never forced, and unique-identity/finite-coordinate validation that throws rather than silently coercing. Directly reusable for pyto's own truth-comparison tooling (`{?} VerificationOracleStamp` territory).
+- **Visibility as independent evaluator metadata, never inferred from detection.** `judgeVisibleTees` treats `PARTIAL`/`INVISIBLE`/`UNKNOWN` truth labels as inputs a grader must be handed, not derived: "An unreviewed missing target makes S3 UNKNOWN, not PASS." (`881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:52-54`). This is a clean, testable answer to how a receipt-based grader should treat "the annotator didn't say" versus "the detector missed it" — pyto's `explain_changes`/oracle work has no equivalent axis yet.
+- **`classifyBadges`** (`881c7e5:scripts/chainspot-lab/scoreboard/verdict.ts:63-96`): a pure, corpus-free five-way verdict classifier (OK/GARBAGE-LABEL/LOW-CONFIDENCE/COLLISION/UNREAD) with a documented, evidence-derived threshold (`881c7e5:scripts/chainspot-lab/scoreboard/verdict.ts:30-40`) — a template for pyto Calculations that need a defensible knob instead of a magic number.
+- **The `./lab` cold-start discoverability contract** (`881c7e5:scripts/chainspot-lab/README.md:19-42`): `--help`/`tutorial`/`scope --help` work before `npm install`; a TypeScript-backed command fails loudly with the exact fix ("Run: ./lab setup") rather than a stack trace. Matches pyto's `{?} WhoWritesJS` requirement that "every brief must be executable cold by an agent."
+
+### Quotes
+
+- `881c7e5:packages/alg/src/exec/pcr.ts:17-19` — "PCR has deliberately no run() method: the production gateway is the only execution authority and hands this function the receipts it already produced."
+- `881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:1-3` — "Reads the actual Stage PxC. Never executes a detector or writes truth into PxC."
+- `881c7e5:scripts/chainspot-lab/sweep/stageAudit.ts:52-54` — "Visibility is independent evaluator metadata, never guessed from whether ALG found the object. An unreviewed missing target makes S3 UNKNOWN, not PASS."
+- `881c7e5:scripts/chainspot-lab/sweep/pxcSnapshot.ts:5` — "Explicit address custody: no reflection into a board's private storage."
+- `881c7e5:docs/lab/stage-aware-dev4/AUDIT.md:9` — "Auditor declares that uncertainty and uses the owner's 7 px total forgiveness; it does not optimize per-course shifts against coordinates or silently weaken production truth matching."
+- `881c7e5:docs/unported/g3-intact-tee-family.md:108` — "LAB gray payload (145 <= max(R,G,B) <= 175) was DIAGNOSTIC ONLY. It never selected/rejected this family. Do not add a gray kill rule."
+- `881c7e5:scripts/chainspot-lab/README.md:66` — "A later test run reusing a command log that already contains truth taint also fails; use a fresh `LAB_COMMAND_LOG` for an independent test."
+- `881c7e5:scripts/chainspot-lab/README.md:230` — "It never loads Annotation truth implicitly. A normal single-image Sweep remains unchanged."
+
+### Questions for the owner
+
+{?} SnapshotVsMaterialization: `pxc.bin` (whole-board V8 serialize, digest-gated) is a third storage answer beyond the DuckDB archive and quick_anno flat files. Should pyto's materials store treat a full-board content-addressed snapshot as a first-class backend kind, or is per-address kind (already leaning-adopted) sufficient and this stays workshop-only?
+
+{?} TruthTaintAsReceiptField: should pyto's `Receipt`/testimony carry an explicit provenance mode (blind vs. truth-assisted vs. proposal) the way `mode:'TRUTH-ASSISTED-EVALUATION-ONLY'` does here, so a downstream consumer can refuse to treat a tainted result as production evidence — this looks like a concrete mechanism for `{?} ProposalsNotFacts` and `{?} ConflictingEvidence`.
+
+{?} VisibilityAxisInOracle: pyto's replay/oracle work (`{?} VerificationOracleStamp`, `{?} InputPartsChangedScope`) has no equivalent to "the truth-holder marked this UNKNOWN, so a miss is neither pass nor fail." Should the oracle contract add a third outcome bucket beyond match/mismatch?
+
+{?} TelemetryGateBoundary: is there an enforcement mechanism intended for pyto analogous to ChainSpot's repeated documentation-only rule against gray-payload gating, or does pyto rely on the same "state it twice in prose" discipline?

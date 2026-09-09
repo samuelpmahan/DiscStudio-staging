@@ -100,7 +100,8 @@ def canonical_sha256(value) -> str:
 
 
 def source_sha256(function) -> str:
-    return hashlib.sha256(inspect.getsource(function).encode("utf-8")).hexdigest()
+    """The digest the kernel computes: source text with CRLF normalized to LF (pcr.py)."""
+    return hashlib.sha256(inspect.getsource(function).replace("\r\n", "\n").encode("utf-8")).hexdigest()
 
 
 def ticks_json(run) -> str:

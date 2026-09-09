@@ -150,12 +150,17 @@ def _address(part: Part[Any] | str) -> str:
 
 
 def _implementation_sha256(function: Any) -> str | None:
-    """sha256 of inspect.getsource(function), or None when the source is unavailable."""
+    """sha256 of inspect.getsource(function) with line endings normalized to LF, or None
+    when the source is unavailable.
+
+    Normalized so the digest is the same on every checkout: a Windows clone with CRLF
+    endings must not make every retained record look like its implementation changed.
+    """
     try:
         source = inspect.getsource(function)
     except (OSError, TypeError):
         return None
-    return hashlib.sha256(source.encode("utf-8")).hexdigest()
+    return hashlib.sha256(source.replace("\r\n", "\n").encode("utf-8")).hexdigest()
 
 
 def _result_sha256(value: Any) -> str | None:

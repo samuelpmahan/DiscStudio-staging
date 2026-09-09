@@ -1,0 +1,16 @@
+# Every text file under pyto checks out with LF endings on every platform, so digests over
+# source text and fixture bytes are the same on a Windows clone as here. Binaries are left alone.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.whl binary
+*.zip binary
+# Retained evidence: never convert, the bytes are the record.
+*.patch -text
+*.txt -text
