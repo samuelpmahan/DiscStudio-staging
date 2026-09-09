@@ -630,3 +630,13 @@ the owner's words with the default; `neat undo <id>` reverts a landed task with 
 so control is a way back, not a gate. Nothing is deleted; a losing attempt stays as a packed task.
 Bites: tonight's queue on the board, `neat.sh`.
 
+
+### {?} NearHit
+The owner pointed at Annoy (approximate nearest neighbours, read-only mmapped index shared by
+processes). Status: provisional: the cache today hits only on identical bytes; a near hit would
+reduce a course screenshot to a small vector and reuse the nearest already-parsed course's Parts
+as proposals, confirmed by the parser inside the budget. Annoy is a workshop tool (C++, no
+browser build, out of the runtime by the cold-start rule); the runtime needs only a brute-force
+loop over one user's few hundred vectors. Default: an experiment `near-hit` when CV returns, one
+number (how often the nearest prior course is a good proposal), nothing before DiscStudio ships.
+Bites: the materials store, the record's `hit` field, Day 5.
