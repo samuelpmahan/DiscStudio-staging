@@ -80,7 +80,8 @@ fi
 
 # 0b. A branch candidate: the main tree must be clean, then the branch is merged without committing.
 if [ -n "$FROM" ]; then
-  [ -z "$(git status --porcelain --untracked-files=all)" ] || fail "the tree is not clean; a branch can only land into a clean tree"
+  # Refusals leave failed receipts and board lines behind; those are the landing's own bookkeeping, not a candidate.
+  [ -z "$(git status --porcelain --untracked-files=all | cut -c4- | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$')" ] || fail "the tree is not clean; a branch can only land into a clean tree (dirty: $(git status --porcelain --untracked-files=all | cut -c4- | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$' | tr '\n' ' '))"
   git rev-parse -q --verify "$FROM^{commit}" >/dev/null || fail "no such branch: $FROM"
   [ -n "$BASE" ] || BASE_SHA="$(git merge-base HEAD "$FROM")"
   if ! git merge --no-commit --no-ff -q "$FROM" >/dev/null 2>&1; then
@@ -90,7 +91,7 @@ fi
 
 # 1. Clean start: the dirty files are what this landing will commit; files committed since --base are
 #    part of the candidate too (checkpoints never claim, landings do).
-DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
+DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$' || true)"
 SINCE="$(git diff --name-only "$BASE_SHA" HEAD)"
 CHANGED="$(printf '%s\n%s\n' "$SINCE" "$DIRTY" | grep -v '^$' | sort -u || true)"
 [ -n "$CHANGED" ] || fail "nothing to land: the tree is clean and nothing changed since $BASE_SHA"
@@ -167,7 +168,7 @@ if [ $DRY -eq 1 ]; then
 fi
 
 # 5. Commit and push. Only the files that were dirty at the start; if the tree moved meanwhile, stop.
-NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
+NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$' || true)"
 if [ "$(printf '%s\n' "$NOW" | grep -v '^$' | sort -u)" != "$(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u)" ]; then
   delta="$(diff <(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u) <(printf '%s\n' "$NOW" | grep -v '^$' | sort -u) | grep '^[<>]' | sed 's/^</ gone:/; s/^>/ new:/' | tr '\n' ' ')"
   fail "the tree changed while the suites ran (someone is writing); nothing committed. Changed:$delta"

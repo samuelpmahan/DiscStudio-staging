@@ -42,6 +42,13 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 08:41 **refused** `task-7`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
+- 2026-09-09 08:41 **refused** `task-5`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
+- 2026-09-09 08:41 **refused** `task-4`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
+- 2026-09-09 08:41 **refused** `landing-bookkeeping`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084119Z-landing-bookkeeping/check_all.txt)
+- 2026-09-09 08:40 **refused** `task-7`: the tree is not clean; a branch can only land into a clean tree
+- 2026-09-09 08:40 **refused** `task-5`: the tree is not clean; a branch can only land into a clean tree
+- 2026-09-09 08:40 **refused** `task-4`: the tree is not clean; a branch can only land into a clean tree
 - 2026-09-09 08:45 **refused** task 9 by the explicability gate: the hand-off's narrative claimed land.sh is exercised "two ways" and misplaced the BOARD.md reset, when check_land_refusals.sh actually makes three calls (no-args, unknown branch, dirty-outside-allow) with the reset sitting between the second and third; it stays packed (neat show 9)
 - 2026-09-09 The Socratic session read the night's 92 commits and the docs at the tip (owner: "figure out what you're not getting"). What it was not getting: the test is the per-Tick page showing what each Calculation read and wrote with the value present, from both runtimes, not a suite run; the founding need is observability and the roadbumps were agent-context failures, which this session reproduced by repo-hunting; two agents talk to the owner at once, so "resolved" means resolved against the branch tip, where the explicability gate and `neat undo` already were; the owner's vocabulary (AHI, everything is a Part, fn and oc, checkpoint versus landed, green names a receipt) is the record's. Codex's unpushed Day 2 on D:/ holds evidence the branch lacks: two implementations of one brief cannot read each other's records, and digests drift between Python 3.11 and 3.14.
 - 2026-09-09 Owner on the last open prompt: "I know nothing. U explain it. That's why this works." Renderers port to JS by default, site stays static. No open prompts left on the board; nine answers in the root tonight.

@@ -293,7 +293,7 @@ cmd_undo() {
   local sha intent parents
   sha="$(git -C "$ROOT" log --format=%H --grep="^land(task-$id): " -n 1)"
   [ -n "$sha" ] || die "no landing commit for task $id (git log --grep 'land(task-$id)')"
-  [ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all | grep -v '^?? pyto/experiments/landings/')" ] || die "MAIN is not clean; undo needs a clean tree"
+  [ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all | cut -c4- | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$')" ] || die "MAIN is not clean; undo needs a clean tree"
   intent="$(git -C "$ROOT" log -1 --format=%s "$sha" | sed "s/^land(task-$id): //")"
   parents="$(git -C "$ROOT" rev-list --parents -n 1 "$sha" | wc -w)"
   echo "== undo task $id: $intent  (landing ${sha:0:7})"
