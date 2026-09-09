@@ -12,6 +12,8 @@
 #   neat list                 every experiment and its state
 #   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
 #
+# The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
+# owner sees what is coming; those lines go through land.sh --note (commit and push, no receipt).
 # MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN).
 # In a pyto repository (pyto/pyproject.toml is there) the copy gets its own .venv so the suite in
 # EXP/<id> tests EXP/<id>'s kernel, not MAIN's, and the packet lives at pyto/experiments/tasks/<id>/;
@@ -113,6 +115,7 @@ Evidence: not packed yet
 (The agent working on this writes one line per thing it was unsure about, as
 \`{?} Label: description\`, and leaves the decision to the owner. Empty means nothing was unsure.)
 EOF
+  bash "$HERE/land.sh" --note "**started** \`task-$id\`: $intent (copy EXP/$id; it lands only on green, with a receipt, or is killed)"
   echo "Task $id: EXP/$id is a copy of MAIN at ${base:0:7}. Work there."
   if [ "$PYTO_MODE" -eq 1 ]; then
     echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
@@ -321,6 +324,7 @@ cmd_kill() {
   local id="${1:-}"; [ -n "$id" ] || usage
   git -C "$ROOT" worktree remove --force "$EXP/$id" 2>/dev/null || true
   rm -rf "$EXP/$id"
+  bash "$HERE/land.sh" --note "**killed** \`task-$id\`: nothing landed; exp/$id is kept"
   echo "task $id abandoned; nothing landed. exp/$id is kept (git branch -D exp/$id, and on origin: git push origin --delete exp/$id, when you're sure)"
 }
 

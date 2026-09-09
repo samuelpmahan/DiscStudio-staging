@@ -1,0 +1,8 @@
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+selftest new: pass
+selftest packet sections: pass
+selftest landing commit: pass
+selftest origin branch removal: pass
+selftest board: pass
+selftest undo clean: pass

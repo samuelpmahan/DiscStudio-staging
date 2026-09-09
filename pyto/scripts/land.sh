@@ -29,8 +29,15 @@ else
 fi
 cd "$ROOT"
 
+# land.sh --note "<one plain line>": write the line under "## Today", commit it, push it. No verify,
+# no receipt: a note is not a claim. neat uses it so the board says when a task starts or is killed.
+NOTE=""
+if [ "${1:-}" = "--note" ]; then
+  NOTE="${2:-}"; [ -n "$NOTE" ] || { echo 'usage: land.sh --note "<one plain line>"' >&2; exit 2; }
+  set -- note
+fi
 PACKAGE="${1:-}"; shift || true
-[ -n "$PACKAGE" ] || { echo "usage: land.sh <package> [--verify cmd] [--allow paths] [--base sha] [--dry-run] [--message line]" >&2; exit 2; }
+[ -n "$PACKAGE" ] || { echo "usage: land.sh <package> [--verify cmd] [--allow paths] [--base sha] [--dry-run] [--message line]   |   land.sh --note \"<line>\"" >&2; exit 2; }
 VERIFY=""; ALLOW=""; DRY=0; MESSAGE=""; BASE=""; FROM=""
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -101,6 +108,16 @@ EOF
   echo "failed receipt: $LAND_DIR/failed/$ID.json" >&2
   exit 1
 }
+
+if [ -n "$NOTE" ]; then
+  NOTE="${NOTE//$'\n'/ }"
+  board "$NOTE"
+  git add -- "$BOARD_REL"
+  git commit -q -m "board: ${NOTE:0:72}" -- "$BOARD_REL"
+  if git push -q -u origin "$(git rev-parse --abbrev-ref HEAD)" 2>/dev/null; then echo "board: $NOTE"
+  else echo "board: $NOTE  (committed here, not pushed: origin not reachable or MAIN is behind it; git pull --rebase then git push)"; fi
+  exit 0
+fi
 
 # 0a. Two clones land into one branch (the owner's D:/ and the cloud), so MAIN must not be behind
 #     origin: what the suites verify here must be what gets pushed.
