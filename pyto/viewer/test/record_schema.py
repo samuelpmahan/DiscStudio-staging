@@ -31,6 +31,7 @@ VALUE_KINDS = ("json", "text", "svg", "png-data-url", "omitted")  # RECORD.md:59
 WRITE_KINDS = ("new-address", "refinement", "replacement")
 MAX_VALUE_BYTES = 262144                          # RECORD.md:63
 MAX_ARRAY_ENTRIES = 200                           # RECORD.md:64
+PNG_DATA_URL_PREFIX = "data:image/png;base64,"    # RECORD.md:60-61
 
 DOCUMENT_KEYS = ("schema", "pcr", "source", "ticks", "parts", "counters")
 SOURCE_KEYS = ("runtime", "version", "commit")
@@ -156,6 +157,14 @@ def _value(block, path):
         pass
     else:
         _str(data, f"{path}.data", non_empty=False)
+        # RECORD.md:60-61 does not merely name the kind, it states the shape:
+        # "data is a `data:image/png;base64,...` string". A viewer puts this
+        # string into an <img src>, so the clause is checked, not assumed.
+        if kind == "png-data-url" and not data.startswith(PNG_DATA_URL_PREFIX):
+            _fail(
+                f"{path}.data",
+                f'expected a string beginning "{PNG_DATA_URL_PREFIX}" for kind "png-data-url", got {_show(data)}',
+            )
     return block
 
 

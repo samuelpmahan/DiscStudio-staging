@@ -22,6 +22,9 @@ export const RUNTIMES = ['pyto', 'discstudio', 'chesslab', 'wumpus'];
 export const VALUE_KINDS = ['json', 'text', 'svg', 'png-data-url', 'omitted'];
 export const WRITE_KINDS = ['new-address', 'refinement', 'replacement'];
 
+/** RECORD.md:60-61: a `png-data-url` value's data is exactly this shape. */
+export const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
+
 const encoder = new TextEncoder();
 
 function utf8Length(text) {
@@ -119,6 +122,12 @@ function validateValue(value, path) {
     if (typeof value.note !== 'string' || !value.note.length) fail(`${path}.note`, 'kind "omitted" must say why in note');
   } else if (kind !== 'json') {
     requireString(value.data, `${path}.data`, { nonEmpty: false });
+    // RECORD.md:60-61 states the shape; tick-viewer.js:118 puts this string
+    // straight into an <img src>, so an unchecked kind is an outbound request
+    // the record chose. Enforce the clause here rather than trusting a producer.
+    if (kind === 'png-data-url' && !value.data.startsWith(PNG_DATA_URL_PREFIX)) {
+      fail(`${path}.data`, `expected a string beginning ${JSON.stringify(PNG_DATA_URL_PREFIX)} for kind "png-data-url", got ${show(value.data)}`);
+    }
   } else if (value.data === undefined) {
     fail(`${path}.data`, 'expected a JSON value, got undefined');
   }
@@ -250,7 +259,9 @@ export function materialize(raw, { digest = null, note = null } = {}) {
     const head = raw.slice(0, 400).trimStart();
     let kind = 'text';
     if (head.startsWith('<svg') || (head.startsWith('<?xml') && head.includes('<svg'))) kind = 'svg';
-    else if (head.startsWith('data:image/png;base64,')) kind = 'png-data-url';
+    // Tested on `raw`, not on the trimmed `head`: the classification has to
+    // agree with validateValue, which reads the bytes that land in `data`.
+    else if (raw.startsWith(PNG_DATA_URL_PREFIX)) kind = 'png-data-url';
     return capped({ kind, data: raw, note }, utf8Length(raw), digest);
   }
   let data = raw;
@@ -284,8 +295,21 @@ function capped(block, bytes, digest) {
  * invocation in this record produced it.
  */
 export function derivePartIndex(ticks) {
-  const parts = {};
-  const entry = (address) => (parts[address] ??= { written_by: null, read_by: [], preexisting: false });
+  // A Part address is record data, so it can be `__proto__` or `constructor`.
+  // On a `{}` map those names reach Object.prototype instead of an own slot:
+  // the index would answer for addresses no run wrote, and mutate the page's
+  // prototype chain. A null-prototype map has no inherited names to hit, and
+  // hasOwnProperty decides existence rather than truthiness.
+  const parts = Object.create(null);
+  const entry = (address) => {
+    if (!Object.prototype.hasOwnProperty.call(parts, address)) {
+      Object.defineProperty(parts, address, {
+        value: { written_by: null, read_by: [], preexisting: false },
+        enumerable: true, writable: true, configurable: true
+      });
+    }
+    return parts[address];
+  };
   const produced = new Set();
   // A `fn:<id>` binding is a read of the Part that invocation wrote: pcr.py:112-116
   // rewrites a Part binding into the producing invocation's ResultRef, and the
@@ -433,7 +457,9 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
       const step = trace[flat] ?? null;
       flat += 1;
       const bindings = calculation.with ?? {};
-      const inputs = {};
+      // Null-prototype for the same reason as derivePartIndex: a binding named
+      // `__proto__` on a `{}` would set the prototype and drop the binding.
+      const inputs = Object.create(null);
       const declared = [];
       const actual = [];
       for (const [key, address] of Object.entries(bindings)) {

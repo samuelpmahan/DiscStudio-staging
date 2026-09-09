@@ -46,6 +46,7 @@ SCHEMA = "pyto-run-record@1"
 RUNTIME = "pyto"
 VALUE_CAP_BYTES = 262144  # RECORD.md:63 -- 256 KB
 ARRAY_CAP = 200  # RECORD.md:64
+PNG_DATA_URL_PREFIX = "data:image/png;base64,"  # RECORD.md:60-61, adapters.js:26
 
 __all__ = ["SCHEMA", "run_record", "write_record", "tick_sheets"]
 
@@ -118,7 +119,7 @@ def _png_data_url(image: Any) -> str:
 
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
-    return "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
+    return PNG_DATA_URL_PREFIX + base64.b64encode(buffer.getvalue()).decode("ascii")
 
 
 def _omitted(note: str) -> dict[str, Any]:
@@ -154,7 +155,18 @@ def render_value(
         return _capped({"kind": "png-data-url", "data": data, "note": None}, value_cap_bytes)
 
     if isinstance(value, str):
-        kind = "svg" if _is_svg(value) else "text"
+        # The order and the tests are adapters.js:262-264's, which is the
+        # reference (ULTRACODE-WEEK.md Reframing 4, "JS is first class"): svg
+        # first, then a PNG data URL, else text. Without the second test a
+        # string that is already a rendered image is `text` in a pyto record and
+        # `png-data-url` in a DiscStudio one, and the same Part shows as a wall
+        # of base64 in one viewer pane and as a picture in the other.
+        if _is_svg(value):
+            kind = "svg"
+        elif value.startswith(PNG_DATA_URL_PREFIX):
+            kind = "png-data-url"
+        else:
+            kind = "text"
         return _capped({"kind": kind, "data": value, "note": None}, value_cap_bytes)
 
     lengths: list[int] = []

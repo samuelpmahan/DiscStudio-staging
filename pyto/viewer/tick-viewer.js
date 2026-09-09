@@ -11,7 +11,7 @@
  * run under a minimal document shim in `node --test` with no jsdom.
  */
 
-import { validate, bareAddress, tickDurationMs, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords } from './adapters.js';
+import { validate, bareAddress, tickDurationMs, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords } from './adapters.js';
 
 /* ------------------------------------------------------------------ */
 /* small DOM helpers (doc is always explicit)                          */
@@ -114,10 +114,20 @@ export function renderValue(doc, value) {
     ]);
     box.appendChild(figure);
   } else if (value.kind === 'png-data-url') {
-    box.appendChild(el(doc, 'figure', { className: 'material' }, [
-      el(doc, 'img', { className: 'png', attrs: { src: value.data, alt: 'PNG Part value', loading: 'lazy' } }),
-      el(doc, 'figcaption', { text: `png-data-url · ${value.data.length} chars` })
-    ]));
+    // adapters.js validateValue already refuses any other shape; re-check at the
+    // render site so a record that reached the DOM by another path still cannot
+    // turn an <img src> into an outbound request from a page with no network.
+    if (typeof value.data !== 'string' || !value.data.startsWith(PNG_DATA_URL_PREFIX)) {
+      box.appendChild(el(doc, 'p', {
+        className: 'note omitted',
+        text: `value not rendered: kind "png-data-url" must be a ${PNG_DATA_URL_PREFIX}... string (RECORD.md:60-61)`
+      }));
+    } else {
+      box.appendChild(el(doc, 'figure', { className: 'material' }, [
+        el(doc, 'img', { className: 'png', attrs: { src: value.data, alt: 'PNG Part value', loading: 'lazy' } }),
+        el(doc, 'figcaption', { text: `png-data-url · ${value.data.length} chars` })
+      ]));
+    }
   } else if (value.kind === 'text') {
     box.appendChild(el(doc, 'pre', { className: 'text', text: value.data }));
   } else {
