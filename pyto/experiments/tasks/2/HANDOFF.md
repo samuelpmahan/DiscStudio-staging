@@ -1,13 +1,54 @@
-# Task 2
+# Task 2: Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing
 
-Intent: Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing
-Starting point: 50ec3f7b87108ebe6d9bc5f0e448bfbbc4a8dca3 (checkpoint: neat ids count origin's exp branches; board: undo tested)
-Verify: cd pyto && python3 -m unittest tests.test_address
-Allow: any
-Candidate: 3 files, see below
-Evidence: suite exit 0, see below
+You are a fresh agent. Everything you need is on this page and in the files it names. The
+conversation that produced this task is not needed and you will not see it.
 
-## Candidate
+## Get the code (once)
+
+```
+git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging DiscStudio-staging     # or: cd into the clone you have
+cd DiscStudio-staging
+git fetch origin exp/2
+python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
+git show origin/exp/2:pyto/experiments/tasks/2/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
+git diff 50ec3f7 origin/exp/2 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+```
+
+## Why this repository is worth twenty minutes
+
+pyto is a Python transfer of a design the owner proved three times in JavaScript and TypeScript
+(ChainSpot, ChessLab, EmbodiedWumpusWorld): a store of named values (PxC), pure functions over them
+(Calculations), and a program that names which functions run in which order (a PCR, made of Ticks).
+Every run leaves receipts: what each function read and wrote, how long it took, and a digest of its
+source. From receipts you get three things for free: a cache (same inputs and digest, skip the call,
+also across processes), a replay that verifies a shipped record in a fresh process, and a per-Tick
+view of what the algorithm used. The founding need is the last one: the owner's course-map parser
+had to fit five seconds on a phone, and nothing it used was visible. pyto is the workshop where that
+visibility is designed before it is stripped for speed. JavaScript is first class; Python is where
+the design is checked.
+
+Do not take that from this page. In two minutes:
+
+```
+bash pyto/scripts/check_all.sh                                        # nine suites, ~600 tests
+python pyto/experiments/grouped-ablation/run_cached.py --out /tmp/hit  # a miss, then two hits, one from a fresh process
+node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /tmp/hit/ticks.html
+```
+
+The tests were checked by mutation (each guards a specific line). The fixtures for the JavaScript
+port are 440 byte-exact cases. `pyto/questions.md` is where anyone unsure writes `{?} Label: ...`
+and the owner answers; read it before assuming. `pyto/BOARD.md` is the owner's one page.
+
+## What was asked
+
+Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing
+
+## Starting point
+
+50ec3f7b87108ebe6d9bc5f0e448bfbbc4a8dca3 (checkpoint: neat ids count origin's exp branches; board: undo tested). MAIN may have moved since: `git log --oneline 50ec3f7..origin/claude/python-ultracode-supercharge-st8hnu` shows how far.
+Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
+
+## What changed (the candidate)
 
 - A  pyto/scripts/address_census.py
 - A  pyto/src/pyto/address.py
@@ -183,3 +224,15 @@ pyto/scripts/address_census.py | 325 +++++++++++++++++++++++++++++++++++++++++
   is the output of the tree as it stands after this append. The entry quoting "4660 to 4662" above
   is stale against those totals for the same reason, and every future append to this file will move
   them again unless the packet is excluded from the scan -- the owner call already recorded there.
+
+## What to do
+
+1. Explain this to the owner in plain words: what was asked, what changed file by file (one line
+   each), what the evidence shows, what is uncertain. Use no term this page does not define.
+2. Ask the owner: land it, drop some files, or send it back. To drop files, from the clone:
+   `bash pyto/scripts/neat.sh drop 2 <path> ...` (they go back to the starting point, the
+   packet is rewritten, the suite runs again).
+3. Land: `bash pyto/scripts/neat.sh land 2`. It merges the candidate into MAIN, runs the suite
+   again on the merged tree, writes a receipt under `pyto/experiments/landings/`, commits
+   `land(task-2): Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
+   If it refuses, it says exactly why, and nothing has changed.
