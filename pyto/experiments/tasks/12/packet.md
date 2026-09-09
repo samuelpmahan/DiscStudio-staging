@@ -2,8 +2,8 @@
 
 Intent: proof: the test as one script. proof.sh clones the branch fresh into a temp dir on this drive, runs the board's commands verbatim, writes one Today line with the result and a receipt under pyto/experiments/landings/proofs/
 Starting point: 76bc3d2a51c0e5442a0e4e8f519fe7d01484e9f5 (land(task-11): Mounts: a world (a course, a game, a bag) is mounted above an ordinary PxC by an id outside the address space, so one address means the same thing in every world; ported from ChainSpot's PxCRootMounts with its negative test)
-Verify: none
-Allow: pyto/scripts/proof.sh pyto/experiments/landings/proofs
+Verify: bash pyto/scripts/proof.sh --selftest
+Allow: pyto/scripts/proof.sh pyto/experiments/proofs
 Candidate: not packed yet
 Evidence: not packed yet
 

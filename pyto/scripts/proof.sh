@@ -58,7 +58,7 @@ if [ "$SELFTEST" -eq 1 ]; then
   exit 1
 fi
 RECEIPT_STEM="${STAMP}-proof"
-RECEIPT_DIR="$PY/experiments/landings/proofs"
+RECEIPT_DIR="$PY/experiments/proofs"
 LOG_DIR="$RECEIPT_DIR/$RECEIPT_STEM"
 mkdir -p "$LOG_DIR"
 RESULTS_FILE="$(mktemp)"; COMMANDS_FILE="$(mktemp)"
