@@ -1,12 +1,11 @@
 /** Printable DiscShelf sheet calculation using the shared domain Parts. */
 import { render as paintDisc } from '../../pyto/consumers/discstudio-card/port/painter/painter.mjs';
-import { prepareDiscArt } from '../presentation.js';
+import { prepareDiscArt, artInner } from '../presentation.js';
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const asMap = (value) => Array.isArray(value) ? Object.fromEntries(value.map((item) => [item.id, item])) : (value || {});
 const hashSeed = (text) => { let h = 2166136261; for (const c of String(text)) h = Math.imul(h ^ c.codePointAt(0), 16777619); return h >>> 0; };
 const flight = (mold) => ['speed', 'glide', 'turn', 'fade'].map((key) => mold?.flight?.[key] ?? '—').join(' / ');
-const artInner = (svg) => { const root = /<svg\b[^>]*>/s.exec(svg), close = svg.lastIndexOf('</svg>'); if (!root || close < root.index + root[0].length) throw new Error('Painter returned malformed SVG.'); const inner = svg.slice(root.index + root[0].length, close); if (/<\/?svg\b/i.test(inner)) throw new Error('Painter art contains a nested SVG root.'); return inner; };
 
 /** Inputs are shared-world Parts: bag, discs, molds, manufacturers. */
 export function shelfSheet({ bag, discs, molds, manufacturers, family = 'orbit-foundry', columns = 4 } = {}) {

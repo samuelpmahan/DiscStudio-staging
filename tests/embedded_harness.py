@@ -16,7 +16,14 @@ def module(path):
   start,rel,end=m.groups()
   if not rel.startswith('.'):return m.group(0)
   return start+module(path.parent/rel)+end
- source=re.sub(r"(from\s*['\"]|import\s*['\"])([^'\"]+)(['\"])",sub,source)
+ # Only real import lines are rewritten (single-line imports, and the closing `} from '...'` of a
+ # multi-line one): a comment or string that merely mentions an import must not be inlined, and a
+ # module that mentions itself must not recurse.
+ def line_sub(line):
+  head=line.lstrip()
+  if not (head.startswith('import ') or head.startswith('export ') or head.startswith('} from ')):return line
+  return re.sub(r"(from\s*['\"]|import\s*['\"])([^'\"]+)(['\"])",sub,line)
+ source='\n'.join(line_sub(l) for l in source.split('\n'))
  source=source.replace("new URL('../build-info.json', import.meta.url)",json.dumps('data:application/json,'+json.dumps({'commit':'local-DOM-check','fingerprint':'local-DOM-check'})))
  uri='data:text/javascript;base64,'+base64.b64encode(source.encode()).decode()
  cache[path]=uri

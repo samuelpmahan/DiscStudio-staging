@@ -145,3 +145,13 @@ test('large authored cards and a twelve-disc row still fit the export frame', ()
   assert.equal(scene.cardCount, 12);
   assert.ok(b.x >= 0 && b.y >= 0 && b.x + b.width <= 1920 && b.y + b.height <= 1080);
 });
+
+test('a disc without a photo shows painted art inside the generic card, never the Add image placeholder', () => {
+  const r = make(), rendered = r.card('buzzz-mint', 'broadcast', context);
+  const svg = typeof rendered.svg === 'string' ? rendered.svg : rendered.markup;
+  const art = r.pxc.get(rendered.run.trace.find(step => step.call === 'fn.disc.art').output);
+  assert.equal(art.kind, 'painted');
+  assert.doesNotMatch(svg, /Add image/);
+  assert.match(svg, /viewBox="0 0 512 512"/);
+  assert.ok(svg.includes(painterRender(...art.inputs).split('\n')[1].slice(0, 40)), 'the card embeds the painter markup');
+});

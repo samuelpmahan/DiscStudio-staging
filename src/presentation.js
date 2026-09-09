@@ -37,6 +37,8 @@ const paintColor = (value, fallback) => {
   return /^#[0-9a-f]{6}$/i.test(sanitized) ? sanitized : fallback;
 };
 const display = (value, unit) => value == null || value === '' ? '—' : Array.isArray(value) ? value.join(' · ') : typeof value === 'boolean' ? (value ? 'Yes' : 'No') : `${value}${unit ? ` ${unit}` : ''}`;
+/** The inner markup of a painter SVG document, for embedding inside a card or a sheet. */
+export const artInner = (svg) => { const root = /<svg\b[^>]*>/s.exec(svg), close = svg.lastIndexOf('</svg>'); if (!root || close < root.index + root[0].length) throw new Error('Painter returned malformed SVG.'); const inner = svg.slice(root.index + root[0].length, close); if (/<\/?svg\b/i.test(inner)) throw new Error('Painter art contains a nested SVG root.'); return inner; };
 export function composeCard({ fields, art, preset, entry = null }) {
   const byPath = Object.fromEntries(fields.map(f => [f.path, f]));
   const warnings = [];
@@ -59,7 +61,7 @@ function renderNode(n, card, uid) {
     else image = safeImage(n.value) ? { kind: 'photo', src: n.value } : null;
     let markup = '';
     if (image?.kind === 'photo') markup = `<image href="${esc(image.src)}" width="${n.w}" height="${n.h}" preserveAspectRatio="${n.fit === 'cover' ? 'xMidYMid slice' : 'xMidYMid meet'}"/>`;
-    else if (image?.kind === 'sample') markup = `<svg width="${n.w}" height="${n.h}" viewBox="0 0 120 120">${image.markup}</svg>`;
+    else if (image?.kind === 'painted') markup = `<svg width="${n.w}" height="${n.h}" viewBox="0 0 512 512" preserveAspectRatio="${n.fit === 'cover' ? 'xMidYMid slice' : 'xMidYMid meet'}">${artInner(image.svg)}</svg>`;
     else markup = `<rect width="${n.w}" height="${n.h}" fill="#dce3d6"/><text x="${n.w / 2}" y="${n.h / 2}" text-anchor="middle" font-size="12" fill="#42574c">Add image</text>`;
     return `<g data-node="${esc(n.id)}" transform="translate(${n.x} ${n.y})"><defs><clipPath id="${clip}"><rect width="${n.w}" height="${n.h}" rx="${Math.max(0, Math.min(n.radius || 0, n.w / 2))}"/></clipPath></defs><g clip-path="url(#${clip})">${markup}</g></g>`;
   }
