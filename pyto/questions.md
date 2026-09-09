@@ -140,6 +140,41 @@ relabel the two fixtures "pre-mount, illustrative", do not rewrite); PartyMountT
 build the Python mount type in round five, since nothing else prevents collisions). Bites: round
 five, `core.py`, `adapters.js`, `materials.py`, Day 5.
 
+### {?} Purpose
+What is all of this for?
+Status: resolved 2026-09-09 by owner. "the point of all this is to explore things idk that I want
+to." and "im not linus torvalds I just did lots of weird systems programming but all in Java at
+Adaptiva basically being a ghost behind Windows managing and optimizing everything so I have a
+weird OS insticnt but 0 understanding". Filed as: pyto is an exploration instrument for its owner;
+questions to the owner are invitations to explore in OS-instinct vocabulary, never decisions that
+need the theory. Bites: every prompt on the board; `{?} AddressRootIsAMount` (why it went by
+default).
+
+### {?} TheTestSeen
+When it works on D:/, what is the first thing the owner wants to see?
+Status: resolved 2026-09-09 by owner. "every delulu out there thinks they have AIOS. I need proof
+im not one of them". Filed as: not a demo, proof a skeptic can run and cannot talk around. Bites:
+"The test" on the board; the fresh-clone proof below.
+
+### {?} ProofShape
+Who is the skeptic, and what must fail to break?
+Status: resolved 2026-09-09 by owner. "Uh me in 5 hours might be skeptical this is all worth it
+but in general every kook thinks they have an ai os. Not every kook worked at Adaptiva which
+manages mega corporate fleets. I turned my cv alg into workflow engine (like they had but yknow
+generic stuff nothing protectable). Then kept chasing primitives then an agent I started with an
+art tourney went from 'this is a function registry' to talking bout AIOS and function schedulers
+and Claude has not been helpful on this project for like 2 weeks while I did this generalization
+and then suddenly THAT happens". Filed as: the skeptic is the owner five hours from now; the proof
+is what that reader can run from a fresh clone on D:/ and cannot dismiss, and its result is
+written on the board as a result, never as a claim. First run, 2026-09-09 08:22, fresh clone of
+3b8b5e5 into `D:/pyto-fresh-20260909`, the board's commands verbatim: the venv and install
+worked; `run_cached.py` gave one miss and one hit with a write, from a fresh process; the tick
+page rendered (296 KB); the suite was red on one test and its nested twin:
+`retained.commit` names `dbc069dd…-dirty`, a working-tree sha from the experiment that produced
+the evidence, which exists in no clone. Every other suite was green. That failure is Lane 4's
+open prompt made concrete. Bites: `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`, Lane 4;
+the proof run after every landing.
+
 ## Questions I resolved alone and should have asked (recorded late, 2026-09-09)
 
 ### {?} PlanPrimacy
