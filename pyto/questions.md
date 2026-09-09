@@ -666,3 +666,15 @@ proposal with evidence, the owner names it, it becomes a Calculation or a neat c
 become Parts when receipts (task 13) and the `oc` table land. First substrate, needing no new
 recording: the paint studio's call graphs, mined and reported beside the helpers the JavaScript
 port extracted by hand. Bites: Lane 5, Day 5, the `oc` table, `neat`.
+
+### {?} UndoStack
+The owner: a generic Part that would do the site good the way undo did neat. Status: provisional,
+queued behind receipts as Parts (task 13). Not a structure: one more field on the write receipt,
+the previous value (inline when small, by digest in the materials store when large), makes the
+undo stack a query over `px.receipt.*` (writes to an address, newest first, with what they
+replaced). Undo is one Calculation that writes the previous value back, itself recorded, so
+history stays append-only like a revert; redo is the same move forward. For the studio: undo for
+customizer and card edits, "what changed since" in the review panel from the same query, and an
+accidental inspector write is one undo away. JavaScript first (the runtime's set records the
+previous value), Python mirrors the receipt field. No new state store, per AGENTS.md. Bites:
+task 13, `RECORD.md` (one field), `src/runtime.js`, the review panel.
