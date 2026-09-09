@@ -1,0 +1,208 @@
+{
+  "day": 2,
+  "base_sha": "d9dded6",
+  "commit_sha": "pending",
+  "date": "2026-09-09",
+  "agents": [
+    {
+      "lane": "A",
+      "role": "library seam, characterization-first: tests/test_receipts.py written before the field existed (first run: ImportError FrozenCalculation), then FrozenCalculation/Receipt/_TrackedPxC/PcrRun.receipts/PCR.run(observe=) landed in pyto/src/pyto/pcr.py; test_semantics.py's field-tuple test updated to the one Day 1 assertion the seam moved; CHANGES.md Day 2 entry started",
+      "targets": [
+        "pyto/src/pyto/pcr.py",
+        "pyto/tests/test_receipts.py",
+        "pyto/tests/test_semantics.py",
+        "pyto/CHANGES.md"
+      ]
+    },
+    {
+      "lane": "B",
+      "role": "retain.py exporter/importer/registry (to_program/from_program/retain_run), compare_local.py (explain_changes, gap 4), pql_document.py candidate schema work, disc-stats sidecar retention (gap 12); test_retain.py",
+      "targets": [
+        "pyto/experiments/grouped-ablation/retain.py",
+        "pyto/experiments/grouped-ablation/compare_local.py",
+        "pyto/experiments/grouped-ablation/pql_document.py",
+        "pyto/experiments/grouped-ablation/test_retain.py"
+      ]
+    },
+    {
+      "lane": "C",
+      "role": "run_regrouped.py, run_reinput.py, run_from_retained.py, second_experiment.py (shared saved-work ledger, ms_saved from run-1 receipts.json); evidence/run-{2-regroup,3-reinput,4-from-retained}/ with interpretation.md; test_second_experiment.py (170-test grouped-ablation suite grew from Day 1's 31)",
+      "targets": [
+        "pyto/experiments/grouped-ablation/run_regrouped.py",
+        "pyto/experiments/grouped-ablation/run_reinput.py",
+        "pyto/experiments/grouped-ablation/run_from_retained.py",
+        "pyto/experiments/grouped-ablation/second_experiment.py",
+        "pyto/experiments/grouped-ablation/test_second_experiment.py",
+        "pyto/experiments/grouped-ablation/evidence/run-2-regroup/",
+        "pyto/experiments/grouped-ablation/evidence/run-3-reinput/",
+        "pyto/experiments/grouped-ablation/evidence/run-4-from-retained/"
+      ]
+    },
+    {
+      "lane": "D",
+      "role": "replay.py (fresh-process python3 -I replay, tamper test, registry-hole test, PYTHONHASHSEED matrix per gap 3, sys.path.insert discipline per gap 9, cross-verification of lane C's runs); test_replay.py; evidence/replay/, evidence/tamper/, evidence/determinism.log, evidence/registry-hole.log, evidence/lf-source-drift.log",
+      "targets": [
+        "pyto/experiments/grouped-ablation/replay.py",
+        "pyto/experiments/grouped-ablation/test_replay.py",
+        "pyto/experiments/grouped-ablation/evidence/replay/",
+        "pyto/experiments/grouped-ablation/evidence/tamper/",
+        "pyto/experiments/grouped-ablation/evidence/determinism.log",
+        "pyto/experiments/grouped-ablation/evidence/registry-hole.log",
+        "pyto/experiments/grouped-ablation/evidence/lf-source-drift.log"
+      ]
+    },
+    {
+      "lane": "cold-reader",
+      "role": "extracted pyto at d9dded6 to a scratch tree, ran check_all.sh and the two unittest discovers against the base commit, probed the fn.ablation.rmse / retained.json / testimony-byte-equality / tamper-test ambiguities in the Day 2 brief before any lane wrote code; recorded 9+ blocker/major ambiguities that fed the Day 2 brief v2 (commit 5c557bc)",
+      "targets": [
+        "pyto/experiments/runs/day2/brief-cold-read.json"
+      ]
+    },
+    {
+      "lane": "hidden-state-lens",
+      "round": "final",
+      "role": "adversarial verify: REGISTRY-mutation attacks (before and after retain), PxC pre-seeding in four shapes, results-aliasing analysis, sys.path/PYTHONPATH discipline in the committed fresh-process.log; found the module-leak check audits only new_modules (not the resident sys.modules table) and three evidence-hygiene majors",
+      "targets": [
+        "pyto/experiments/runs/day2/verdicts/hidden-state.json"
+      ]
+    },
+    {
+      "lane": "determinism-lens",
+      "round": "final",
+      "role": "reproduced determinism.log's hashseed rows, digest equality across rows, the LF-converted-src row, and 3x replay reproducibility independently; found receipts.json excluded wholesale from the determinism byte check and two OPEN-FINDINGS.md close-it procedures that cannot produce what they promise",
+      "targets": [
+        "pyto/experiments/runs/day2/verdicts/determinism.json"
+      ]
+    },
+    {
+      "lane": "shadow-consumer-bytes-lens",
+      "round": "final",
+      "role": "planted an args key colliding with a bound Part input and confirmed silent override + recorded shadowed_inputs + refusal at all four retain.py export paths; diffed compositionEvidence bytes pre/post seam for both consumer entrypoints; verdict PASS with three findings (one already fixed in CHANGES.md, one deferred to Day 5 by design, one stale-report finding resolved by this record stage's tests.txt)",
+      "targets": [
+        "pyto/experiments/runs/day2/verdicts/shadow-consumer-bytes.json"
+      ]
+    },
+    {
+      "lane": "cross-verification-lens",
+      "round": "final",
+      "role": "independent fresh-process replay of lane C's run-2/3/4 retained records outside replay.py; recomputed saved-work.json from first principles; checked interpretation.md prose against comparison.json and features.py; confirmed no kill criterion fired; verdict PASS with three majors (the gate's own digest-carrying claim is unproven in-repo, input_parts_changed is an authored literal, test suite mutates the evidence it asserts against) and three minors",
+      "targets": [
+        "pyto/experiments/runs/day2/verdicts/cross-verification.json"
+      ]
+    },
+    {
+      "lane": "fixer-round-1",
+      "role": "closed findings from an earlier verify pass: provider_identity carried but comparison left to the caller (retain.verify_provider added); a predicted +0.9 RMSE bound refuted by measurement and recorded rather than dropped; evidence/OPEN-FINDINGS.md round 1 opened (commit.txt -dirty suffix, second-library-change question)",
+      "targets": [
+        "pyto/CHANGES.md",
+        "pyto/experiments/grouped-ablation/retain.py",
+        "pyto/experiments/grouped-ablation/evidence/OPEN-FINDINGS.md"
+      ]
+    },
+    {
+      "lane": "fixer-round-2",
+      "role": "regeneration order fixed (run-1 first, then 2-4) and pinned by CommittedEvidenceResolvesToCommittedRunOne; replay VERDICT line folding parent+child checks; provider_identity module-granularity documented; args/externals aliasing closed on both sides; tamper report's independence flag corrected; cross_verify_lane_c_runs added; evidence/OPEN-FINDINGS.md round 2 opened",
+      "targets": [
+        "pyto/experiments/grouped-ablation/replay.py",
+        "pyto/experiments/grouped-ablation/retain.py",
+        "pyto/experiments/grouped-ablation/second_experiment.py",
+        "pyto/experiments/grouped-ablation/test_replay.py",
+        "pyto/experiments/grouped-ablation/test_retain.py",
+        "pyto/experiments/grouped-ablation/test_second_experiment.py",
+        "pyto/experiments/grouped-ablation/evidence/OPEN-FINDINGS.md",
+        "pyto/CHANGES.md"
+      ]
+    },
+    {
+      "lane": "record",
+      "role": "record stage: ran scripts/check_all.sh and unittest discover -s tests -v into tests.txt; wrote prompt.md (Day 2 section + gaps 3/4/9/10/12/14/18a/18d/19 + lab-transfer-ledger.md Day 2 paragraph), the four final-round lens verdicts (hidden-state, determinism, shadow-consumer-bytes, cross-verification), diff.patch, meta.json; confirmed CHANGES.md's Day 2 entry already cites docs/PYTHON-LAB-STEWARDSHIP.md:53/:62 and states why the seam is not the replay seam (gap 14); added questions.md with {?} SeamGate and {?} Telemetry (gap 19); wrote the completeness critic in untested.md",
+      "targets": [
+        "pyto/experiments/runs/day2/tests.txt",
+        "pyto/experiments/runs/day2/prompt.md",
+        "pyto/experiments/runs/day2/diff.patch",
+        "pyto/experiments/runs/day2/verdicts/",
+        "pyto/experiments/runs/day2/meta.json",
+        "pyto/experiments/runs/day2/untested.md",
+        "pyto/experiments/grouped-ablation/questions.md"
+      ]
+    }
+  ],
+  "tokens": null,
+  "notes": "brief-cold-read.json and tests.txt existed before this record-stage agent ran (produced by an earlier lane/checkpoint); this agent added the unittest-discover -v run on top of the existing check_all.sh output rather than regenerating tests.txt from scratch, per CAPTURE.md's 'tests.txt must end with ALL SUITES PASSED' rule -- verified the file still ends with that line. Lane A/B/C/D attribution, the fixer-round summaries, and the cold-reader entry are derived from pyto/CHANGES.md's 'Fixer round N decisions' sections, pyto/experiments/grouped-ablation/evidence/OPEN-FINDINGS.md's 'Round 1'/'Round 2' sections, the Day 2 plan's own lane lettering (a/b/c workflow shape), and this repository's commit history (d9dded6..HEAD, 22 commits) -- not from a harness report of who ran when, since checkpoint commits interleave Day 2 work with a concurrent art-tournament lane. head_sha_at_record is the working tree's HEAD at the time this record stage ran; commit_sha stays 'pending' until the orchestrator commits (CAPTURE.md). Known open items surfaced by the final lens round and left for a fixer round 3 (not this agent's job): hidden-state finding on the module-leak check (new_modules vs the resident sys_modules table), determinism finding on receipts.json being excluded wholesale from the byte-equality check, cross-verification finding that the gate's own docstring claim (carrying lane A's digests) is unproven by any in-repo assertion, and the two OPEN-FINDINGS.md close-it procedures that cannot produce what they promise under the current WATCHED_PATHS/exclude scheme. None of these are blockers: check_all.sh exits 0 and the hard rule (one pcr.py-only library change, testimony bytes unchanged) holds under three independent re-verifications (hidden-state, determinism, shadow-consumer-bytes lenses) plus the cross-verification gate.",
+  "agent_count": {
+    "lanes": 4,
+    "cold_reader": 1,
+    "lens_rounds": 4,
+    "fixers": 2,
+    "record": 1,
+    "total": 12,
+    "note": "fixer count derived from pyto/CHANGES.md's 'Fixer round 1/2 decisions' headings and evidence/OPEN-FINDINGS.md's 'Round 1'/'Round 2' sections, not from a harness report; lens_rounds counts only the final round captured in verdicts/ (earlier verify passes that fixer rounds 1-2 respond to are not separately filed)"
+  },
+  "lens_rounds": 1,
+  "check_all": {
+    "exit": 0,
+    "counts": {
+      "library": 64,
+      "experiments/grouped-ablation": 170,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "art-registry-md": "OK (regenerated, matches committed ART-REGISTRY.md)"
+    },
+    "unittest_total": 304,
+    "tests_txt_last_line": "ALL SUITES PASSED"
+  },
+  "head_sha_at_record": "d8b0c5d98e7f2b81e470d48ae3585a564719390d",
+  "commits_since_base": [
+    "d80ec56",
+    "ef0259f",
+    "4f9bcb6",
+    "5c557bc",
+    "487db0f",
+    "07e1be2",
+    "a73e73d",
+    "b0e9cab",
+    "f2d0677",
+    "68779db",
+    "7bed708",
+    "9f71d63",
+    "aa9ec7b",
+    "df1f33f",
+    "8fe5db1",
+    "5528a4c",
+    "b20c4e2",
+    "1a98828",
+    "64d887b",
+    "d8b0c5d"
+  ],
+  "diff_patch": {
+    "command": "git diff d9dded6 -- pyto ':(exclude)pyto/experiments/runs' ':(exclude)pyto/experiments/art-tournament' ':(exclude)pyto/consumers/discstudio-card'",
+    "files": 93,
+    "lines": 70293,
+    "src_diff_isolated": "git diff --stat d9dded6 -- pyto/src -> pyto/src/pyto/pcr.py | 215 +++++++++++++++++++++++++++++++++++++++++++++++++-- (1 file changed, 208 insertions(+), 7 deletions(-)) -- confirms the day's hard rule: exactly one library file touched"
+  },
+  "untracked_at_record": {
+    "working_tree_status": "clean: `git status --porcelain` returns nothing at HEAD d8b0c5d; every file this record stage lists was newly written by this agent and is untracked only until the orchestrator's next commit",
+    "new_files_written_by_record_stage": [
+      "pyto/experiments/runs/day2/prompt.md",
+      "pyto/experiments/runs/day2/diff.patch",
+      "pyto/experiments/runs/day2/meta.json",
+      "pyto/experiments/runs/day2/untested.md",
+      "pyto/experiments/runs/day2/verdicts/hidden-state.json",
+      "pyto/experiments/runs/day2/verdicts/determinism.json",
+      "pyto/experiments/runs/day2/verdicts/shadow-consumer-bytes.json",
+      "pyto/experiments/runs/day2/verdicts/cross-verification.json",
+      "pyto/experiments/grouped-ablation/questions.md"
+    ],
+    "modified_tracked_at_record": [
+      "pyto/experiments/runs/day2/tests.txt (unittest discover -s tests -v run appended per the record-stage instruction)"
+    ]
+  },
+  "open_findings": {
+    "major": 9,
+    "minor": 9,
+    "blocking": 0,
+    "detail": "hidden-state: 4 major (module-leak delta-only check; OPEN-FINDINGS close-it procedure unreachable; check_all.sh rewrites 13 committed evidence files it asserts on; two digest columns pinned by nothing) + 1 minor (art-tournament fixtures.py hardcoded path, pre-existing/out of Day 2 scope); determinism: 3 major (receipts.json excluded wholesale from byte-equality; two OPEN-FINDINGS close-it/acceptance-rule mismatches) + 3 minor (no run.py determinism case; effective_arg_keys order undocumented; NaN/Infinity digest is stable but non-standard-JSON); shadow-consumer-bytes: 0 major, 1 minor open (seed-manifest drift deferred to Day 5 by design) + 2 resolved (stale check_all table superseded by this record's tests.txt; moduleSourceSha256 move now disclosed in CHANGES.md); cross-verification: 3 major (gate's digest-carrying claim unproven in-repo; input_parts_changed is a literal; test suite mutates evidence it asserts against) + 3 minor (interpretation.md ranking mislabeled; unretained multi-seed claim; calculations_added structurally always empty)"
+  }
+}
