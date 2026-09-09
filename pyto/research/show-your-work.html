@@ -1,0 +1,238 @@
+<title>Show Your Work</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --paper: #F5F7F4;
+    --ink: #1B2630;
+    --muted: #5B6A75;
+    --rule: #D3DADD;
+    --panel: #ECEFEC;
+    --pencil: #B8352A;
+    --stamp: #2F6F4E;
+    --stamp-bg: #E4F0E8;
+    --pencil-bg: #F8E8E5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #141A1F;
+      --ink: #E6EAEC;
+      --muted: #9AA7B0;
+      --rule: #2B353D;
+      --panel: #1C242B;
+      --pencil: #E0604F;
+      --stamp: #6FBF8F;
+      --stamp-bg: #1B2E25;
+      --pencil-bg: #33211F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #141A1F;
+    --ink: #E6EAEC;
+    --muted: #9AA7B0;
+    --rule: #2B353D;
+    --panel: #1C242B;
+    --pencil: #E0604F;
+    --stamp: #6FBF8F;
+    --stamp-bg: #1B2E25;
+    --pencil-bg: #33211F;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    padding: 0 20px;
+    padding-block: 40px 72px;
+  }
+  main { max-width: 66ch; margin: 0 auto; }
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(38px, 7vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    margin: 0 0 18px;
+    text-wrap: balance;
+  }
+  .lede {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(20px, 3.2vw, 24px);
+    line-height: 1.35;
+    margin: 0 0 40px;
+    text-wrap: balance;
+  }
+  h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.15;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  section { border-top: 1px solid var(--rule); padding-top: 22px; margin-top: 34px; }
+  section > .eyebrow { margin-bottom: 8px; }
+  p { margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  li b, p b { font-weight: 600; }
+  .desks {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch;
+    margin: 18px 0 6px;
+  }
+  .desk {
+    flex: 1 1 120px;
+    border: 1px solid var(--rule);
+    background: var(--panel);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .desk .k {
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 4px;
+  }
+  .desk.main { flex-basis: 100%; border-color: var(--ink); }
+  .cap { font-size: 14px; color: var(--muted); margin: 8px 0 0; }
+  pre.receipt {
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    padding: 14px 16px;
+    margin: 16px 0 8px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  pre.receipt .c { color: var(--muted); }
+  pre.receipt .ok { color: var(--stamp); font-weight: 500; }
+  table {
+    border-collapse: collapse; width: 100%;
+    font-size: 15px; margin: 14px 0 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  th, td { text-align: left; padding: 9px 10px 9px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  td.n { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; white-space: nowrap; width: 1%; padding-right: 18px; }
+  .stamp {
+    display: inline-block; font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--stamp); background: var(--stamp-bg);
+    padding: 2px 8px; border: 1px solid var(--stamp);
+  }
+  .pencil {
+    border-left: 4px solid var(--pencil);
+    background: var(--pencil-bg);
+    padding: 14px 18px;
+    margin: 8px 0 0;
+  }
+  .pencil .eyebrow { color: var(--pencil); margin-bottom: 6px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px 24px; }
+  .grid2 > div { border-top: 2px solid var(--ink); padding-top: 8px; }
+  .grid2 .k { font-weight: 600; display: block; margin-bottom: 4px; }
+  footer { margin-top: 44px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 14px; }
+  a { color: inherit; }
+  a:focus-visible { outline: 2px solid var(--pencil); outline-offset: 2px; }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<main>
+  <p class="eyebrow">Board brief · five minutes · September 10, 2026</p>
+  <h1>Show Your Work</h1>
+  <p class="lede">The site has not changed in two months. What changed is underneath it: a workspace where a person and several AI agents work at once, and every step leaves a receipt a student could be graded on.</p>
+
+  <section>
+    <p class="eyebrow">01 · What it is</p>
+    <h2>A workspace, not a chatbot</h2>
+    <p>Think of a school computer lab. There is one shared machine that holds the real work, and a row of desks. Each agent gets its own desk: an isolated copy of the project with its own tools. When a desk's work is ready, it is checked and moved onto the shared machine. That move is called a landing, and every landing writes a receipt. Anything that landed can be undone. The person in charge reads one page.</p>
+    <div class="desks">
+      <div class="desk main"><span class="k">The shared machine</span>The real project. Nothing gets here without a receipt.</div>
+      <div class="desk"><span class="k">Desk 1</span>Agent builds the shelf sheet</div>
+      <div class="desk"><span class="k">Desk 2</span>Agent ports the painter</div>
+      <div class="desk"><span class="k">Desk 3</span>Agent writes a test</div>
+    </div>
+    <p class="cap">Desks are created and torn down in minutes. Two people on two machines used the same shared machine today without stepping on each other.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">02 · Why it is educational</p>
+    <h2>Every step is "show your work," made literal</h2>
+    <p>A program run in this workspace leaves a record of each step: what it read, what it wrote, how long it took, and a fingerprint of the code that did it. That record can be replayed on another machine, byte for byte. The student's claim about their own program becomes something a grader can check rather than take on trust.</p>
+    <pre class="receipt"><span class="c"># one real receipt, abridged (task-21, tonight)</span>
+schema    pyto-landing-receipt@1
+package   task-21
+base      0b502d01
+result    <span class="ok">verified</span>
+verifier  npm test &amp;&amp; node --test ... &amp;&amp; browser_test.py --embedded
+suite     574 tests, nine suites, all green
+claimed   18 files    unclaimed 3
+landed    2026-09-09 21:49 UTC</pre>
+    <ul>
+      <li><b>Replay proves.</b> Same inputs and same code fingerprints give the same result on the grader's machine. Identical fingerprints on two students' steps are the same work, whoever typed it.</li>
+      <li><b>Undo is free.</b> Every landing can be reverted with one command, and the revert leaves its own receipt. Students can be brave.</li>
+      <li><b>A rubric with no teacher in it.</b> Before an agent's change may land, a cold reader who has seen only the hand-off page must explain, in plain words, what changed and why. If the explanation does not match the real change, it is refused. Tonight one change was refused this way, its hand-off was fixed, and it passed on the second read.</li>
+      <li><b>The question habit.</b> Anyone unsure writes a one-line question at the root of the project instead of guessing. That habit is most of learning to program. There are 91 such questions on record today.</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="eyebrow">03 · What is proven today</p>
+    <h2>Not a slide. It runs.</h2>
+    <table>
+      <tr><th>Fact</th><th>How it was shown</th></tr>
+      <tr><td class="n"><span class="stamp">green</span></td><td>The whole loop runs from a fresh download on an ordinary Windows laptop. One script does it and writes its own receipt.</td></tr>
+      <tr><td class="n">31</td><td>Changes landed today with receipts, from two machines into one shared branch.</td></tr>
+      <tr><td class="n">26</td><td>Attempts refused today, each with a written reason. Refusals are kept, not hidden.</td></tr>
+      <tr><td class="n">584</td><td>Automated tests across ten suites, every one green at every landing.</td></tr>
+      <tr><td class="n">1</td><td>Change refused by the cold-reader gate, corrected, and landed on the second read.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="eyebrow">04 · The first student piece</p>
+    <h2>Built tonight, through the workspace itself</h2>
+    <p>Until this evening the only tenant of the workspace was my own DiscStudio site. The first student-facing piece now exists, landed with its own receipt (task 23) and checked by the same suite as everything else. It is small on purpose: homework-sized.</p>
+    <div class="grid2">
+      <div><span class="k">A homework-sized program</span>Twelve class scores in. Five steps out: parse, mean, median, letter grades, a text histogram. Each step leaves a receipt.</div>
+      <div><span class="k">A hand-off page</span>The student writes what they built, one line per step, which files they touched, and what they were unsure about.</div>
+      <div><span class="k">A mechanical grade</span>Four checks: the record is well formed; a fresh process replays it byte for byte; every step's receipt matches today's code; the hand-off names every step and file.</div>
+      <div><span class="k">A cold reader</span>Someone who has seen only the hand-off says what the program does. That comparison is the real grade, and it is deliberately not automated.</div>
+    </div>
+    <pre class="receipt"><span class="c"># grade.py on the committed run, tonight</span>
+PASS  1 contract   validates as pyto-run-record@1 (5 invocations)
+PASS  2 replay     fresh process reproduced 9877 bytes, byte for byte
+PASS  3 receipts   5 of 5 steps: source digest is today's source
+PASS  4 hand-off   names all 5 steps and all 8 files
+mechanical: <span class="ok">4 of 4</span>
+not mechanical, and the actual grade: whether a cold reader
+can say what this program does from the hand-off alone.</pre>
+    <p class="cap">Ten tests guard it, including a tampered record and a hand-off with one step missing, both of which fail the right check and only that check.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">05 · The caveat to say first</p>
+    <div class="pencil">
+      <p class="eyebrow">Red pencil</p>
+      <p><b>Identical fingerprints prove the same computation, not the right answer.</b> A grader still needs a reference solution. The workspace makes work visible and checkable. It does not decide what is correct.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">06 · The decision in front of the board</p>
+    <h2>One experiment, one term</h2>
+    <p>Whether the homework-sized piece above is worth running with real students for one term. What it would need: a small group, a teacher willing to be the reference, and a rule that a student's records stay on their own machine unless they choose to share them. What it would answer: does a record that shows every step change how students explain their own programs.</p>
+  </section>
+
+  <footer>Prepared for the Homeroom Heroes board meeting, from the project's own receipts and board log as of the evening of September 9, 2026. Every number above names a file in the repository.</footer>
+</main>
