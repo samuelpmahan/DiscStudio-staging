@@ -73,6 +73,25 @@ Bites: `{?} StorageKinds` (a specialized backend must warm inside the budget or 
 backend for the runtime, only for the workshop), `research/library-candidates.md`, Day 5 budget
 ledger.
 
+### {?} PerAppBudget
+Is the cold-start budget global?
+Status: resolved 2026-09-09 by owner. No, per application. ChainSpot needs extreme single-purpose
+speed; neat can use the same runtime to render a board cheaply, but its ticket storage is a
+different story: durable and larger, not budget-bound. A backend is therefore chosen per
+namespace against that application's declared budget, and the choice is itself a recorded
+decision. Bites: `{?} StorageKinds`, the mounts model (`lab/pxc-root-mounts`), a per-namespace
+budget Part.
+
+### {?} PortableKernel
+Is this becoming a portable AI Linux?
+Status: provisional, owner's framing 2026-09-09. The correspondence: PxC plus PCR and Ticks as the
+kernel; namespaces as mount points; storage backends as filesystems chosen per mount; PQL as the
+shell; the PCR render as the terminal; receipts as the syscall trace; the `{?}` root as the
+questions a session boots on; LABs as distributions; JS and Python as two architectures the same
+programs run on. What it is not: there is no scheduler and Ticks are sequential. The design rule
+that follows: keep the kernel tiny and build only the two mounts that exist today (ChainSpot's fast
+raster material, neat's durable tickets); let the third mount name itself.
+
 ### {?} WhoWritesJS
 JS is first class, and the owner does not write TS or JS. Who writes it?
 Status: resolved 2026-09-09 by owner and agent. Agents write it; the owner directs and inspects
