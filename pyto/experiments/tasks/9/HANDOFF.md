@@ -81,6 +81,7 @@ pyto/scripts/check_land_refusals.sh | 100 ++++++++++++++++++++++++++++++++++++
 
 - {?} BadPackageName: the intent named "bad package name" as one of the three refusal paths, but land.sh has no format check on the package string at all -- only a missing-package check ("usage: land.sh ...", exit 2, no receipt, since it never reaches fail()). I tested that no-argument case instead and treated it as the intended meaning; if the owner meant something else by "bad", nothing here catches it.
 - {?} BoardRewriteReset: every refusal calls board(), which rewrites the tracked pyto/BOARD.md in place before the receipt is written; the check resets BOARD.md with `git checkout` between refusals so the next one's scope check only sees the file that test introduces as dirty. That reset is standing in for "someone lands after a refusal, wiping its own board line" -- true in the real repo too, just not usually noticed inside one script's runtime.
+- Explicability: refused once (the Verify line named two land.sh calls; the script makes three). Verify line rewritten to name all three and the board reset; a fresh cold reader then described the diff correctly (one file, three calls, exit 2/1/1, tree untouched). Gate passed 2026-09-09 21:55.
 
 ## What to do
 
