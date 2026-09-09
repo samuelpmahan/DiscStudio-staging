@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 09:02 **landed** `task-2`: Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing (145 files since 50ec3f7, suites green, receipt 20260909T090128Z-task-2)
 - 2026-09-09 09:01 **landed** `suite-hygiene`: the experiment suite proves it changes nothing under pyto/src, instead of demanding a pristine tree that no branch landing can satisfy mid-merge (1 files since 67112e7, suites green, receipt 20260909T090043Z-suite-hygiene)
 - 2026-09-09 08:59 **refused** `task-2`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T085915Z-task-2/check_all.txt)
 - 2026-09-09 08:52 **landed** `task-7`: Add a fast check that every bullet under BOARD.md's '## Today' starts with the exact '- YYYY-MM-DD HH:MM ' stamp the landing script's board() function writes, so a bug in that heredoc that corrupts the owner's one-page log is caught mechanically instead of by eyeballing. (121 files since 1b38f28, suites green, receipt 20260909T085216Z-task-7)
