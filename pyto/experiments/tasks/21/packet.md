@@ -21,15 +21,15 @@ Evidence: suite exit 0, see below
 
 ```
 .neat/items/DS-STUDIO-02.json |  6 ++++
- pyto/viewer/embed.mjs         | 62 ++++++++++++++++++++++++++++++++---------
- scripts/browser_test.py       | 43 ++++++++++++++++++++++++++--
+ pyto/viewer/embed.mjs         | 82 +++++++++++++++++++++++++++++++------------
+ scripts/browser_test.py       | 45 +++++++++++++++++++++---
  scripts/build.mjs             |  2 +-
  scripts/review_checkpoint.mjs |  2 +-
- src/app.js                    | 45 ++++++++++++++++++++++++++++--
+ src/app.js                    | 45 ++++++++++++++++++++++--
  src/review-data.js            |  3 +-
- src/runtime.js                | 19 ++++++++++++-
- tests/core.test.js            | 65 +++++++++++++++++++++++++++++++++++++++++++
- 9 files changed, 224 insertions(+), 23 deletions(-)
+ src/runtime.js                | 19 +++++++++-
+ tests/core.test.js            | 65 ++++++++++++++++++++++++++++++++++
+ 9 files changed, 236 insertions(+), 33 deletions(-)
 ```
 
 ## Evidence
@@ -37,17 +37,17 @@ Evidence: suite exit 0, see below
 - verify: `npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded` exit 0 (evidence/verify.txt)
 - suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
     suite                         tests  status
-    library                         123  OK
+    library                         144  OK
+    experiments/cross-project         9  OK
     experiments/grouped-ablation    240  OK
+    experiments/hiding-primitives      6  OK
     experiments/s3-synthetic          5  OK
     consumer                         61  OK
     disc-stats                        4  OK
     examples                          3  OK
     art-registry-md                   -  OK
-    viewer                           87  OK
+    viewer                          103  OK
     viewer-record-schema             19  OK
-    
-    ALL SUITES PASSED
 
 ## Uncertain
 

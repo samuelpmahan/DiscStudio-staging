@@ -1,6 +1,6 @@
 == check_all.sh v0
 pyto root:    /home/user/DiscStudio-staging/EXP/21/pyto
-logs:         /tmp/tmp.5R3MYeMeDJ
+logs:         /tmp/tmp.b0x1MZQTu2
 python:       /home/user/DiscStudio-staging/EXP/21/.venv/bin/python (Python 3.11.15)
 pyto module:  /home/user/DiscStudio-staging/pyto/src/pyto/__init__.py
 
@@ -114,6 +114,48 @@ test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed (tes
 PYTHONHASHSEED salts str hashing, so set iteration order differs per process. ... ok
 test_xml_prologue_before_the_svg_root_is_still_svg (test_materialize.ValueKinds.test_xml_prologue_before_the_svg_root_is_still_svg) ... ok
 test_round_trips_through_json_load_with_sorted_keys_and_lf (test_materialize.WriteRecord.test_round_trips_through_json_load_with_sorted_keys_and_lf) ... ok
+test_a_label_never_appears_in_any_address (test_mounts.TestLabelsStayOutOfAddresses.test_a_label_never_appears_in_any_address)
+Kills: ``self._mounted[root].set("px.view.label", text)`` inserted ... ok
+test_a_slice_carries_the_labels_of_the_roots_it_takes (test_mounts.TestLabelsStayOutOfAddresses.test_a_slice_carries_the_labels_of_the_roots_it_takes)
+Kills: deleting the ``if root in self._labels: sliced.set_label(...)`` ... ok
+test_an_unlabelled_mounted_root_has_no_label (test_mounts.TestLabelsStayOutOfAddresses.test_an_unlabelled_mounted_root_has_no_label)
+Kills: ``return self._labels.get(root, root)`` in ``label``. ... ok
+test_get_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_get_of_a_missing_root_raises)
+Kills: ``return self._mounted.get(root)`` in ``get``. ... ok
+test_has_reports_without_raising (test_mounts.TestMissingRootIsLoud.test_has_reports_without_raising)
+Kills: ``return True`` in ``has``. ... ok
+test_labels_of_a_missing_root_raise (test_mounts.TestMissingRootIsLoud.test_labels_of_a_missing_root_raise)
+Kills: deleting the ``if root not in self._mounted`` guard from ... ok
+test_slice_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_slice_of_a_missing_root_raises)
+Kills: ``if not self.has(root): continue`` at the top of ``slice``'s ... ok
+test_kernel_does_not_import_mounts (test_mounts.TestModuleStatus.test_kernel_does_not_import_mounts)
+Kills: adding ``from pyto.mounts import Mounts`` to core.py. ... ok
+test_mounts_does_not_compute_the_root_id (test_mounts.TestModuleStatus.test_mounts_does_not_compute_the_root_id)
+Kills: ``import hashlib`` plus ``root = hashlib.sha256(root.encode()) ... ok
+test_mounts_is_not_re_exported_from_the_package (test_mounts.TestModuleStatus.test_mounts_is_not_re_exported_from_the_package)
+Kills: adding ``from .mounts import Mounts`` to ``__init__.py``. ... ok
+test_a_different_object_for_a_mounted_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_a_different_object_for_a_mounted_root_is_refused)
+Kills: deleting the ``raise ValueError(... already mounted)`` branch. ... ok
+test_an_empty_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_an_empty_root_is_refused)
+Kills: deleting the ``if not isinstance(root, str) or not root:`` guard. ... ok
+test_remounting_the_same_object_is_fine (test_mounts.TestMountingIsIdempotentOrLoud.test_remounting_the_same_object_is_fine)
+Kills: ``if current is not None:`` (dropping ``and current is not pxc``). ... ok
+test_get_returns_the_exact_object_mounted (test_mounts.TestRootStaysOutsideTheAddressSpace.test_get_returns_the_exact_object_mounted)
+Kills: ``return copy.deepcopy(self._mounted[root])`` in ``get``. ... ok
+test_keeps_the_world_id_outside_the_pxc_address_space (test_mounts.TestRootStaysOutsideTheAddressSpace.test_keeps_the_world_id_outside_the_pxc_address_space)
+Kills: a prefix rewrite in ``mount`` -- ``for address in pxc.addresses(): ... ok
+test_mounting_adds_no_address_at_all (test_mounts.TestRootStaysOutsideTheAddressSpace.test_mounting_adds_no_address_at_all)
+Kills: ``pxc.set("px.mount.root", root)`` inserted before ... ok
+test_entries_pair_each_root_with_its_own_pxc_in_order (test_mounts.TestRootsAndEntries.test_entries_pair_each_root_with_its_own_pxc_in_order)
+Kills: ``for root in sorted(self._mounted)`` in ``entries``. ... ok
+test_roots_keep_insertion_order (test_mounts.TestRootsAndEntries.test_roots_keep_insertion_order)
+Kills: ``return tuple(sorted(self._mounted))`` in ``roots``. ... ok
+test_a_write_through_a_slice_is_visible_through_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_a_write_through_a_slice_is_visible_through_the_original)
+Kills: ``sliced.mount(root, copy.deepcopy(self.get(root)))`` in ``slice``. ... ok
+test_slice_is_a_new_mounts_that_does_not_disturb_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_slice_is_a_new_mounts_that_does_not_disturb_the_original)
+Kills: ``sliced = self`` in place of ``sliced = Mounts()``. ... ok
+test_slice_keeps_insertion_order_of_the_requested_roots (test_mounts.TestSliceSharesTheMountedObjects.test_slice_keeps_insertion_order_of_the_requested_roots)
+Kills: ``for root in sorted(roots)`` in ``slice``. ... ok
 test_identity_scope_and_limitation_are_the_chesslab_honesty_fields (test_receipts.FrozenCalculationIdentity.test_identity_scope_and_limitation_are_the_chesslab_honesty_fields) ... ok
 test_implementation_sha256_is_none_for_a_builtin (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_none_for_a_builtin) ... ok
 test_implementation_sha256_is_the_source_digest_and_is_stable (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_the_source_digest_and_is_stable) ... ok
@@ -200,10 +242,35 @@ test_pxc_set_kinds_new_address_then_replacement_without_versioning (test_semanti
 core.py:62-66: set returns PxWrite kind 'new-address' first, 'replacement' after; the old value ... ok
 
 ----------------------------------------------------------------------
-Ran 123 tests in 1.853s
+Ran 144 tests in 1.845s
 
 OK
--- library: OK (ran 123)
+-- library: OK (ran 144)
+
+== suite: experiments/cross-project  (cwd /home/user/DiscStudio-staging/EXP/21/pyto)
+   $ /home/user/DiscStudio-staging/EXP/21/.venv/bin/python -m unittest discover -s experiments/cross-project -p test_*.py -v
+test_committed_run1_evidence_has_no_absolute_checkout_paths (test_cross_project.CommittedEvidenceIsPortable.test_committed_run1_evidence_has_no_absolute_checkout_paths) ... ok
+test_shared_hit_digest_matches_ablation_committed_evidence (test_cross_project.DigestVerification.test_shared_hit_digest_matches_ablation_committed_evidence)
+Step C's whole point: the value read back through the shared store must ... ok
+test_second_run_in_fresh_child_process_hits_everything (test_cross_project.FreshChildProcess.test_second_run_in_fresh_child_process_hits_everything)
+A genuinely fresh `python3 -I` process, told only PYTO_MATERIALS_DIR (env ... ok
+test_no_ablation_files_duplicated_into_cross_project (test_cross_project.NoCodeCopied.test_no_ablation_files_duplicated_into_cross_project)
+This experiment must not carry its own calculations.py/features.py/ ... ok
+test_refuses_to_overwrite_existing_out_dir_without_force (test_cross_project.RefusesOverwrite.test_refuses_to_overwrite_existing_out_dir_without_force) ... ok
+test_changing_a_shelf_revision_string_is_a_miss_not_a_hit (test_cross_project.RevisionChangeIsAMiss.test_changing_a_shelf_revision_string_is_a_miss_not_a_hit)
+program.HISTOGRAM_REVISION, mutated, must produce a DIFFERENT key and ... ok
+test_empty_store_is_seeded_by_domain_a_then_hits (test_cross_project.SeedingAndHitting.test_empty_store_is_seeded_by_domain_a_then_hits)
+On a genuinely empty store, Step A must produce the ablation material ... ok
+test_prepopulated_store_gives_one_hit_and_misses_for_shelf_calcs_before_any_write (test_cross_project.SeedingAndHitting.test_prepopulated_store_gives_one_hit_and_misses_for_shelf_calcs_before_any_write)
+Pre-seed only the ablation material (as run_cached.py, or a prior domain-A ... ok
+test_shared_material_key_equals_ablation_committed_key (test_cross_project.SharedKeyMatchesAblation.test_shared_material_key_equals_ablation_committed_key)
+Kills a mutation to SHARED_SOURCE/SHARED_SEED/SHARED_N in program.py: the ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.310s
+
+OK
+-- experiments/cross-project: OK (ran 9)
 
 == suite: experiments/grouped-ablation  (cwd /home/user/DiscStudio-staging/EXP/21/pyto)
    $ /home/user/DiscStudio-staging/EXP/21/.venv/bin/python -m unittest discover -s experiments/grouped-ablation -p test_*.py -v
@@ -534,10 +601,31 @@ test_split_digest_equal_between_run_1_and_run_2_regroup (test_second_experiment.
 test_sys_path_insert_is_intra_repo (test_second_experiment.SysPathDiscipline.test_sys_path_insert_is_intra_repo) ... ok
 
 ----------------------------------------------------------------------
-Ran 240 tests in 23.343s
+Ran 240 tests in 22.482s
 
 OK
 -- experiments/grouped-ablation: OK (ran 240)
+
+== suite: experiments/hiding-primitives  (cwd /home/user/DiscStudio-staging/EXP/21/pyto)
+   $ /home/user/DiscStudio-staging/EXP/21/.venv/bin/python -m unittest discover -s experiments/hiding-primitives -p test_*.py -v
+test_instances_survive_relabelling_of_unrelated_nodes (test_mine.Miner.test_instances_survive_relabelling_of_unrelated_nodes) ... ok
+test_planted_motif_is_the_top_result (test_mine.Miner.test_planted_motif_is_the_top_result) ... ok
+test_reads_stay_inside_the_studio (test_mine.Miner.test_reads_stay_inside_the_studio) ... ok
+test_the_report_is_deterministic (test_mine.Miner.test_the_report_is_deterministic) ... ok
+test_two_instances_pay_and_one_does_not (test_mine.Miner.test_two_instances_pay_and_one_does_not) ... ok
+test_every_mutation_is_killed (test_mine.Mutations.test_every_mutation_is_killed) ... /home/user/DiscStudio-staging/EXP/21/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/EXP/21/pyto/experiments/hiding-primitives/graphs.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/21/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/EXP/21/pyto/experiments/hiding-primitives/subdue.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 6.121s
+
+OK
+-- experiments/hiding-primitives: OK (ran 6)
 
 == suite: experiments/s3-synthetic  (cwd /home/user/DiscStudio-staging/EXP/21/pyto)
    $ /home/user/DiscStudio-staging/EXP/21/.venv/bin/python -m unittest discover -s experiments/s3-synthetic -p test_*.py -v
@@ -554,7 +642,7 @@ test_sys_path_insert_is_intra_repo (test_s3_synthetic.S3SyntheticSnapshot.test_s
 The only sys.path insert points inside this repository (CAPTURE.md sys.path rule). ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.002s
+Ran 5 tests in 0.001s
 
 OK
 -- experiments/s3-synthetic: OK (ran 5)
@@ -638,7 +726,7 @@ test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejec
 test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
 
 ----------------------------------------------------------------------
-Ran 61 tests in 3.183s
+Ran 61 tests in 2.711s
 
 OK
 -- consumer: OK (ran 61)
@@ -672,535 +760,631 @@ TAP version 13
 # Subtest: the pyto fixture is the Python materializer output byte for byte
 ok 1 - the pyto fixture is the Python materializer output byte for byte
   ---
-  duration_ms: 2.219178
+  duration_ms: 2.196936
   type: 'test'
   ...
 # Subtest: every adapter output passes validate
 ok 2 - every adapter output passes validate
   ---
-  duration_ms: 6.920731
+  duration_ms: 6.688618
   type: 'test'
   ...
 # Subtest: fromPytoRecord is a validating pass-through, from an object or a string
 ok 3 - fromPytoRecord is a validating pass-through, from an object or a string
   ---
-  duration_ms: 3.487533
+  duration_ms: 3.840916
   type: 'test'
   ...
 # Subtest: deriveHit: a px: binding not produced earlier in the run is a hit
 ok 4 - deriveHit: a px: binding not produced earlier in the run is a hit
   ---
-  duration_ms: 0.137115
+  duration_ms: 0.166818
   type: 'test'
   ...
 # Subtest: deriveHit: an address this run overwrote is not a hit, however it started life
 ok 5 - deriveHit: an address this run overwrote is not a hit, however it started life
   ---
-  duration_ms: 0.176479
+  duration_ms: 0.116624
   type: 'test'
   ...
 # Subtest: pyto record: hits are exactly the invocations that read a preexisting Part
 ok 6 - pyto record: hits are exactly the invocations that read a preexisting Part
   ---
-  duration_ms: 0.319177
+  duration_ms: 0.472635
   type: 'test'
   ...
 # Subtest: DiscStudio: reused === true makes every invocation of the second run a hit
 ok 7 - DiscStudio: reused === true makes every invocation of the second run a hit
   ---
-  duration_ms: 2.200017
+  duration_ms: 2.266243
   type: 'test'
   ...
 # Subtest: DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
 ok 8 - DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
   ---
-  duration_ms: 0.74234
+  duration_ms: 0.659302
   type: 'test'
   ...
 # Subtest: DiscStudio adapter also accepts a live run of src/runtime.js
 ok 9 - DiscStudio adapter also accepts a live run of src/runtime.js
   ---
-  duration_ms: 16.309762
+  duration_ms: 33.173905
   type: 'test'
   ...
 # Subtest: ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
 ok 10 - ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
   ---
-  duration_ms: 0.635628
+  duration_ms: 1.165791
   type: 'test'
   ...
 # Subtest: Wumpus: values are present and the SVG Part is classified as svg
 ok 11 - Wumpus: values are present and the SVG Part is classified as svg
   ---
-  duration_ms: 0.561534
+  duration_ms: 0.414214
   type: 'test'
   ...
 # Subtest: materialize classifies text, svg, png data URLs and JSON
 ok 12 - materialize classifies text, svg, png data URLs and JSON
   ---
-  duration_ms: 0.193302
+  duration_ms: 0.171709
   type: 'test'
   ...
 # Subtest: materialize honours RECORD.md size and array caps
 ok 13 - materialize honours RECORD.md size and array caps
   ---
-  duration_ms: 0.753232
+  duration_ms: 0.979147
   type: 'test'
   ...
 # Subtest: materialize truncates nested arrays exactly as the Python materializer does
 ok 14 - materialize truncates nested arrays exactly as the Python materializer does
   ---
-  duration_ms: 0.703261
+  duration_ms: 2.085032
   type: 'test'
   ...
 # Subtest: materialize still reaches omitted for a cycle hidden past the array cap
 ok 15 - materialize still reaches omitted for a cycle hidden past the array cap
   ---
-  duration_ms: 0.231602
+  duration_ms: 0.251562
   type: 'test'
   ...
 # Subtest: materialize counts UTF-8 bytes, not characters
 ok 16 - materialize counts UTF-8 bytes, not characters
   ---
-  duration_ms: 1.316304
+  duration_ms: 1.5367
   type: 'test'
   ...
 # Subtest: derivePartIndex names the writer, the readers and what preexisted
 ok 17 - derivePartIndex names the writer, the readers and what preexisted
   ---
-  duration_ms: 0.390026
+  duration_ms: 0.363812
   type: 'test'
   ...
 # Subtest: bareAddress strips only the testimony marker
 ok 18 - bareAddress strips only the testimony marker
   ---
-  duration_ms: 0.080339
+  duration_ms: 0.077202
   type: 'test'
   ...
 # Subtest: validate rejects schema and names schema
 ok 19 - validate rejects schema and names schema
   ---
-  duration_ms: 1.488222
+  duration_ms: 0.758215
   type: 'test'
   ...
 # Subtest: validate rejects pcr and names pcr
 ok 20 - validate rejects pcr and names pcr
   ---
-  duration_ms: 0.583086
+  duration_ms: 0.571571
   type: 'test'
   ...
 # Subtest: validate rejects source.runtime and names source.runtime
 ok 21 - validate rejects source.runtime and names source.runtime
   ---
-  duration_ms: 0.49256
+  duration_ms: 0.466138
   type: 'test'
   ...
 # Subtest: validate rejects source.commit and names source.commit
 ok 22 - validate rejects source.commit and names source.commit
   ---
-  duration_ms: 0.408677
+  duration_ms: 0.442844
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.index and names ticks[0].index
 ok 23 - validate rejects ticks.0.index and names ticks[0].index
   ---
-  duration_ms: 0.329532
+  duration_ms: 0.442472
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.name and names ticks[0].name
 ok 24 - validate rejects ticks.0.name and names ticks[0].name
   ---
-  duration_ms: 0.323745
+  duration_ms: 0.32978
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
 ok 25 - validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
   ---
-  duration_ms: 0.450977
+  duration_ms: 1.342677
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
 ok 26 - validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
   ---
-  duration_ms: 0.382575
+  duration_ms: 0.362811
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
 ok 27 - validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
   ---
-  duration_ms: 0.927111
+  duration_ms: 0.452778
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
 ok 28 - validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
   ---
-  duration_ms: 0.436435
+  duration_ms: 0.348666
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
 ok 29 - validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
   ---
-  duration_ms: 0.319182
+  duration_ms: 0.311352
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
 ok 30 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
   ---
-  duration_ms: 0.408061
+  duration_ms: 0.383407
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
 ok 31 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
   ---
-  duration_ms: 0.320901
+  duration_ms: 0.363887
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
 ok 32 - validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
   ---
-  duration_ms: 0.315506
+  duration_ms: 0.31607
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
 ok 33 - validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
   ---
-  duration_ms: 0.372263
+  duration_ms: 0.972618
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
 ok 34 - validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
   ---
-  duration_ms: 0.395571
+  duration_ms: 0.425847
   type: 'test'
   ...
 # Subtest: validate rejects counters.invocations and names counters.invocations
 ok 35 - validate rejects counters.invocations and names counters.invocations
   ---
-  duration_ms: 1.343344
+  duration_ms: 0.612801
   type: 'test'
   ...
 # Subtest: validate rejects counters.hits and names counters.hits
 ok 36 - validate rejects counters.hits and names counters.hits
   ---
-  duration_ms: 0.564185
+  duration_ms: 0.468607
   type: 'test'
   ...
 # Subtest: validate rejects counters.computed and names counters.computed
 ok 37 - validate rejects counters.computed and names counters.computed
   ---
-  duration_ms: 0.461956
+  duration_ms: 0.41708
   type: 'test'
   ...
 # Subtest: validate rejects counters.wall_ms and names counters.wall_ms
 ok 38 - validate rejects counters.wall_ms and names counters.wall_ms
   ---
-  duration_ms: 0.428129
+  duration_ms: 0.440121
   type: 'test'
   ...
 # Subtest: validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
 ok 39 - validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
   ---
-  duration_ms: 0.334137
+  duration_ms: 0.303983
   type: 'test'
   ...
 # Subtest: validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
 ok 40 - validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
   ---
-  duration_ms: 0.250714
+  duration_ms: 0.160377
   type: 'test'
   ...
 # Subtest: validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
 ok 41 - validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
   ---
-  duration_ms: 0.174195
+  duration_ms: 0.1515
   type: 'test'
   ...
 # Subtest: validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
 ok 42 - validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
   ---
-  duration_ms: 0.156229
+  duration_ms: 0.212588
   type: 'test'
   ...
 # Subtest: the synthetic record carries the four value kinds the real run never produces
 ok 43 - the synthetic record carries the four value kinds the real run never produces
   ---
-  duration_ms: 0.248445
+  duration_ms: 0.959525
   type: 'test'
   ...
 # Subtest: validate rejects a declared_consumes entry spelled fn:, naming the path
 ok 44 - validate rejects a declared_consumes entry spelled fn:, naming the path
   ---
-  duration_ms: 1.895312
+  duration_ms: 0.51568
   type: 'test'
   ...
 # Subtest: validate rejects a declared_consumes entry that inputs does not carry, naming the path
 ok 45 - validate rejects a declared_consumes entry that inputs does not carry, naming the path
   ---
-  duration_ms: 0.556732
+  duration_ms: 0.626197
   type: 'test'
   ...
 # Subtest: validate rejects a duplicate invocation id, because ids anchor annotations
 ok 46 - validate rejects a duplicate invocation id, because ids anchor annotations
   ---
-  duration_ms: 0.574893
+  duration_ms: 0.386729
   type: 'test'
   ...
 # Subtest: validate rejects a malformed parts entry with the address in the path
 ok 47 - validate rejects a malformed parts entry with the address in the path
   ---
-  duration_ms: 0.497058
+  duration_ms: 0.501348
   type: 'test'
   ...
 # Subtest: validate rejects a non-object document
 ok 48 - validate rejects a non-object document
   ---
-  duration_ms: 0.20529
+  duration_ms: 0.123996
   type: 'test'
   ...
 # Subtest: the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
 ok 49 - the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
   ---
-  duration_ms: 1.705126
+  duration_ms: 1.454642
   type: 'test'
   ...
 # Subtest: a Part address named __proto__ or constructor is an ordinary row, not a prototype write
 ok 50 - a Part address named __proto__ or constructor is an ordinary row, not a prototype write
   ---
-  duration_ms: 0.407789
+  duration_ms: 0.398118
   type: 'test'
   ...
 # Subtest: validate rejects a png-data-url whose data is not a PNG data URL
 ok 51 - validate rejects a png-data-url whose data is not a PNG data URL
   ---
-  duration_ms: 1.822614
+  duration_ms: 2.160519
   type: 'test'
   ...
 # Subtest: materialize never classifies a string as png-data-url that validate would refuse
 ok 52 - materialize never classifies a string as png-data-url that validate would refuse
   ---
-  duration_ms: 4.302465
+  duration_ms: 1.675244
   type: 'test'
   ...
 # Subtest: coerceToRecord accepts a record and every raw runtime document
 ok 53 - coerceToRecord accepts a record and every raw runtime document
   ---
-  duration_ms: 12.444732
+  duration_ms: 11.613354
   type: 'test'
   ...
 # Subtest: readEmbeddedRecord reads the block, and returns null when it is empty
 ok 54 - readEmbeddedRecord reads the block, and returns null when it is empty
   ---
-  duration_ms: 5.397828
+  duration_ms: 6.256979
   type: 'test'
   ...
 # Subtest: embeddableJson escapes every character that could end the script element
 ok 55 - embeddableJson escapes every character that could end the script element
   ---
-  duration_ms: 0.367309
+  duration_ms: 0.230773
   type: 'test'
   ...
 # Subtest: buildPage inlines the viewer and embeds the record, with no module graph left
 ok 56 - buildPage inlines the viewer and embeds the record, with no module graph left
   ---
-  duration_ms: 17.176777
+  duration_ms: 10.511104
   type: 'test'
   ...
 # Subtest: embedFile converts a raw runtime document on the way in
 ok 57 - embedFile converts a raw runtime document on the way in
   ---
-  duration_ms: 6.624287
+  duration_ms: 6.741019
   type: 'test'
   ...
 # Subtest: embedFile refuses a document that is not a record and not a known runtime shape
 ok 58 - embedFile refuses a document that is not a record and not a known runtime shape
   ---
-  duration_ms: 1.371285
+  duration_ms: 0.483364
   type: 'test'
   ...
 # Subtest: buildPage fails loudly when the page and the embedder drift apart
 ok 59 - buildPage fails loudly when the page and the embedder drift apart
   ---
-  duration_ms: 5.281924
+  duration_ms: 3.603395
   type: 'test'
   ...
 # Subtest: node embed.mjs record.json > page.html writes the same page from the command line
 ok 60 - node embed.mjs record.json > page.html writes the same page from the command line
   ---
-  duration_ms: 111.163982
+  duration_ms: 125.967745
   type: 'test'
   ...
 # Subtest: the CLI exits 2 with a usage line when no record is named
 ok 61 - the CLI exits 2 with a usage line when no record is named
   ---
-  duration_ms: 47.534924
+  duration_ms: 49.840118
   type: 'test'
   ...
 # Subtest: the inlined bundle is valid module syntax with no duplicate top-level bindings
 ok 62 - the inlined bundle is valid module syntax with no duplicate top-level bindings
   ---
-  duration_ms: 33.467928
+  duration_ms: 38.155883
   type: 'test'
   ...
 # Subtest: a record carrying $&, $` and $' is embedded literally, not expanded
 ok 63 - a record carrying $&, $` and $' is embedded literally, not expanded
   ---
-  duration_ms: 3.193779
+  duration_ms: 3.452522
+  type: 'test'
+  ...
+# Subtest: loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
+ok 64 - loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
+  ---
+  duration_ms: 1.143908
+  type: 'test'
+  ...
+# Subtest: buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
+ok 65 - buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
+  ---
+  duration_ms: 12.013992
+  type: 'test'
+  ...
+# Subtest: a bad input becomes a world entry naming the failure, never a blank page or an aborted build
+ok 66 - a bad input becomes a world entry naming the failure, never a blank page or an aborted build
+  ---
+  duration_ms: 1.371657
+  type: 'test'
+  ...
+# Subtest: node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
+ok 67 - node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
+  ---
+  duration_ms: 51.82104
+  type: 'test'
+  ...
+# Subtest: --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
+ok 68 - --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
+  ---
+  duration_ms: 76.04591
+  type: 'test'
+  ...
+# Subtest: computeSchedule orders events exactly as the record does: Tick order, then invocation order
+ok 69 - computeSchedule orders events exactly as the record does: Tick order, then invocation order
+  ---
+  duration_ms: 2.311944
+  type: 'test'
+  ...
+# Subtest: at 1x, at_ms is the cumulative sum of recorded durations, strictly increasing
+ok 70 - at 1x, at_ms is the cumulative sum of recorded durations, strictly increasing
+  ---
+  duration_ms: 0.361974
+  type: 'test'
+  ...
+# Subtest: the last event lands on the run total, at 1x and scaled by speed
+ok 71 - the last event lands on the run total, at 1x and scaled by speed
+  ---
+  duration_ms: 0.221679
+  type: 'test'
+  ...
+# Subtest: speed scales every event proportionally, not just the last one
+ok 72 - speed scales every event proportionally, not just the last one
+  ---
+  duration_ms: 0.216336
+  type: 'test'
+  ...
+# Subtest: a run with no durations recorded plays at a fixed 400 ms per Calculation, unaffected by speed
+ok 73 - a run with no durations recorded plays at a fixed 400 ms per Calculation, unaffected by speed
+  ---
+  duration_ms: 2.176464
+  type: 'test'
+  ...
+# Subtest: scheduleFrame reveals Ticks and Calculations in order and never a partial Tick out of sequence
+ok 74 - scheduleFrame reveals Ticks and Calculations in order and never a partial Tick out of sequence
+  ---
+  duration_ms: 1.098026
+  type: 'test'
+  ...
+# Subtest: scheduleFrame keeps counters and the Part index honest for the partial record
+ok 75 - scheduleFrame keeps counters and the Part index honest for the partial record
+  ---
+  duration_ms: 0.287718
   type: 'test'
   ...
 # Subtest: the real record renders as four Tick sections and fifteen invocation rows
-ok 64 - the real record renders as four Tick sections and fifteen invocation rows
+ok 76 - the real record renders as four Tick sections and fifteen invocation rows
   ---
-  duration_ms: 16.284708
+  duration_ms: 11.563187
   type: 'test'
   ...
 # Subtest: one section per Tick, in order, with index, name and invocation count
-ok 65 - one section per Tick, in order, with index, name and invocation count
+ok 77 - one section per Tick, in order, with index, name and invocation count
   ---
-  duration_ms: 5.865413
+  duration_ms: 5.751624
   type: 'test'
   ...
 # Subtest: an invocation row carries id, address, short implementation hash, pill, duration and digest
-ok 66 - an invocation row carries id, address, short implementation hash, pill, duration and digest
+ok 78 - an invocation row carries id, address, short implementation hash, pill, duration and digest
   ---
-  duration_ms: 1.886916
+  duration_ms: 2.058441
   type: 'test'
   ...
 # Subtest: hit and computed pills follow the record, never the renderer
-ok 67 - hit and computed pills follow the record, never the renderer
+ok 79 - hit and computed pills follow the record, never the renderer
   ---
-  duration_ms: 3.249608
+  duration_ms: 3.545506
   type: 'test'
   ...
 # Subtest: reads show declared beside actual and highlight a divergence
-ok 68 - reads show declared beside actual and highlight a divergence
+ok 80 - reads show declared beside actual and highlight a divergence
   ---
-  duration_ms: 1.33459
+  duration_ms: 1.602425
   type: 'test'
   ...
 # Subtest: a fn: binding is shown as an earlier invocation result, not as a store read
-ok 69 - a fn: binding is shown as an earlier invocation result, not as a store read
+ok 81 - a fn: binding is shown as an earlier invocation result, not as a store read
   ---
-  duration_ms: 0.219093
+  duration_ms: 0.330969
   type: 'test'
   ...
 # Subtest: writes carry their kind
-ok 70 - writes carry their kind
+ok 82 - writes carry their kind
   ---
-  duration_ms: 0.164631
+  duration_ms: 0.213402
   type: 'test'
   ...
 # Subtest: an invocation that records no writes says so instead of rendering an empty list
-ok 71 - an invocation that records no writes says so instead of rendering an empty list
+ok 83 - an invocation that records no writes says so instead of rendering an empty list
   ---
-  duration_ms: 0.165844
+  duration_ms: 0.392735
   type: 'test'
   ...
 # Subtest: an svg value containing <script> renders as an <img> data URL and creates no script node
-ok 72 - an svg value containing <script> renders as an <img> data URL and creates no script node
+ok 84 - an svg value containing <script> renders as an <img> data URL and creates no script node
   ---
-  duration_ms: 0.573769
+  duration_ms: 0.634591
   type: 'test'
   ...
 # Subtest: a whole record whose Parts are hostile SVG still produces no script node
-ok 73 - a whole record whose Parts are hostile SVG still produces no script node
+ok 85 - a whole record whose Parts are hostile SVG still produces no script node
   ---
-  duration_ms: 7.9645
+  duration_ms: 4.494705
   type: 'test'
   ...
 # Subtest: json is collapsible, text is a pre, png-data-url is an img, omitted is the note
-ok 74 - json is collapsible, text is a pre, png-data-url is an img, omitted is the note
+ok 86 - json is collapsible, text is a pre, png-data-url is an img, omitted is the note
   ---
-  duration_ms: 0.562627
+  duration_ms: 0.69634
   type: 'test'
   ...
 # Subtest: a png-data-url that is not a PNG data URL never reaches an <img src>
-ok 75 - a png-data-url that is not a PNG data URL never reaches an <img src>
+ok 87 - a png-data-url that is not a PNG data URL never reaches an <img src>
   ---
-  duration_ms: 2.040846
+  duration_ms: 1.898016
   type: 'test'
   ...
 # Subtest: a note is rendered beside the material it qualifies
-ok 76 - a note is rendered beside the material it qualifies
+ok 88 - a note is rendered beside the material it qualifies
   ---
-  duration_ms: 0.12051
+  duration_ms: 0.168801
   type: 'test'
   ...
 # Subtest: toBase64 and svgDataUrl survive non-Latin1 text
-ok 77 - toBase64 and svgDataUrl survive non-Latin1 text
+ok 89 - toBase64 and svgDataUrl survive non-Latin1 text
   ---
-  duration_ms: 0.098885
+  duration_ms: 0.116019
   type: 'test'
   ...
 # Subtest: an empty filter keeps every row
-ok 78 - an empty filter keeps every row
+ok 90 - an empty filter keeps every row
   ---
-  duration_ms: 0.080875
+  duration_ms: 0.112938
   type: 'test'
   ...
 # Subtest: a substring filter narrows rows to the matching addresses
-ok 79 - a substring filter narrows rows to the matching addresses
+ok 91 - a substring filter narrows rows to the matching addresses
   ---
-  duration_ms: 0.731007
+  duration_ms: 0.654669
   type: 'test'
   ...
 # Subtest: a trailing * filters by address prefix, the way PQL.prefix describes itself
-ok 80 - a trailing * filters by address prefix, the way PQL.prefix describes itself
+ok 92 - a trailing * filters by address prefix, the way PQL.prefix describes itself
   ---
-  duration_ms: 0.268879
+  duration_ms: 0.344243
   type: 'test'
   ...
 # Subtest: the filter matches calculation addresses and tick names too, case-insensitively
-ok 81 - the filter matches calculation addresses and tick names too, case-insensitively
+ok 93 - the filter matches calculation addresses and tick names too, case-insensitively
   ---
-  duration_ms: 1.210045
+  duration_ms: 1.293065
   type: 'test'
   ...
 # Subtest: matchesFilter and searchTerms agree on what an invocation can be found by
-ok 82 - matchesFilter and searchTerms agree on what an invocation can be found by
+ok 94 - matchesFilter and searchTerms agree on what an invocation can be found by
   ---
-  duration_ms: 0.192208
+  duration_ms: 0.32429
   type: 'test'
   ...
 # Subtest: renderRecord reports what the filter narrowed and says so when nothing matches
-ok 83 - renderRecord reports what the filter narrowed and says so when nothing matches
+ok 95 - renderRecord reports what the filter narrowed and says so when nothing matches
   ---
-  duration_ms: 1.143462
+  duration_ms: 1.561857
   type: 'test'
   ...
 # Subtest: the header shows pcr, source and counters
-ok 84 - the header shows pcr, source and counters
+ok 96 - the header shows pcr, source and counters
   ---
-  duration_ms: 2.65611
+  duration_ms: 2.996388
   type: 'test'
   ...
 # Subtest: the Part index lists every address with its writer, readers and preexisting flag
-ok 85 - the Part index lists every address with its writer, readers and preexisting flag
+ok 97 - the Part index lists every address with its writer, readers and preexisting flag
   ---
-  duration_ms: 0.313061
+  duration_ms: 0.386546
   type: 'test'
   ...
 # Subtest: an empty Part index says so
-ok 86 - an empty Part index says so
+ok 98 - an empty Part index says so
   ---
-  duration_ms: 0.078906
+  duration_ms: 0.122304
   type: 'test'
   ...
 # Subtest: renderRecord validates before it renders
-ok 87 - renderRecord validates before it renders
+ok 99 - renderRecord validates before it renders
   ---
-  duration_ms: 4.148983
+  duration_ms: 1.402532
   type: 'test'
   ...
-1..87
-# tests 87
+# Subtest: a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
+ok 100 - a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
+  ---
+  duration_ms: 0.198129
+  type: 'test'
+  ...
+# Subtest: a world with no input at all is a labelled empty slot, never a faked record
+ok 101 - a world with no input at all is a labelled empty slot, never a faked record
+  ---
+  duration_ms: 0.108335
+  type: 'test'
+  ...
+# Subtest: the page carries a playback toggle and its control bar, wired to mount()
+ok 102 - the page carries a playback toggle and its control bar, wired to mount()
+  ---
+  duration_ms: 0.335891
+  type: 'test'
+  ...
+# Subtest: the page carries a hidden world picker and an empty records block for embed.mjs --worlds
+ok 103 - the page carries a hidden world picker and an empty records block for embed.mjs --worlds
+  ---
+  duration_ms: 0.308171
+  type: 'test'
+  ...
+1..103
+# tests 103
 # suites 0
-# pass 87
+# pass 103
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 346.40765
--- viewer: OK (ran 87)
+# duration_ms 504.670768
+-- viewer: OK (ran 103)
 
 == suite: viewer-record-schema  (cwd /home/user/DiscStudio-staging/EXP/21/pyto/viewer)
    $ /home/user/DiscStudio-staging/EXP/21/.venv/bin/python -m unittest discover -s test -p test_*.py -v
@@ -1225,21 +1409,23 @@ test_the_unmutated_record_passes (test_record_schema.TheValidatorActuallyRejects
 test_the_value_kind_rules_of_RECORD_md_59_to_63 (test_record_schema.TheValidatorActuallyRejects.test_the_value_kind_rules_of_RECORD_md_59_to_63) ... ok
 
 ----------------------------------------------------------------------
-Ran 19 tests in 0.638s
+Ran 19 tests in 0.621s
 
 OK
 -- viewer-record-schema: OK (ran 19)
 
 == per-suite counts
 suite                         tests  status
-library                         123  OK
+library                         144  OK
+experiments/cross-project         9  OK
 experiments/grouped-ablation    240  OK
+experiments/hiding-primitives      6  OK
 experiments/s3-synthetic          5  OK
 consumer                         61  OK
 disc-stats                        4  OK
 examples                          3  OK
 art-registry-md                   -  OK
-viewer                           87  OK
+viewer                          103  OK
 viewer-record-schema             19  OK
 
 ALL SUITES PASSED
