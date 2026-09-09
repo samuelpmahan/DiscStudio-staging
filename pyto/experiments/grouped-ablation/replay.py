@@ -362,8 +362,9 @@ def run_fresh_process_replay(
         )
         lines.append(f"new modules outside {{pyto, calculations, features, retain}}: {leaked!r}")
         lines.append(
-            f"record program ticks identical to the committed {os.path.basename(os.path.dirname(testimony_path))}"
-            f"/testimony.json ticks: {report['program_matches_committed_testimony']}"
+            f"record program ticks identical to the committed "
+            f"{os.path.relpath(testimony_path, HERE)} ticks: "
+            f"{report['program_matches_committed_testimony']}"
         )
         lines.append(
             f"record external addresses {report['record_externals']!r} equal the declared inputs "

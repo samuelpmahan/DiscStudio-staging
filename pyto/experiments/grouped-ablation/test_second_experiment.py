@@ -290,6 +290,73 @@ class InterpretationFiles(ThreeRunsGenerated):
         self.assertIn(f"seed={run_reinput.SEED}", text)
 
 
+@unittest.skipUnless(os.path.isdir(RUN_1), "evidence/run-1 not generated yet")
+class CommittedEvidenceResolvesToCommittedRunOne(unittest.TestCase):
+    """The COMMITTED run-2/3/4 ledgers must resolve against the COMMITTED run-1 receipts.
+
+    Fixer round 2, finding 7 and finding 12: `ms_saved` / `ms_saved_by_invocation` are
+    wall-clock durations read out of `evidence/run-1/receipts.json`
+    (second_experiment.py:230-248), and they sit in `saved-work.json`, which
+    `Determinism` byte-compares. `TimingsAndSavedWork` already asserts the same
+    equality -- but only against runs it regenerates itself into temp dirs, so run-1
+    could be (and was) regenerated on its own, leaving all three committed ledgers
+    quoting a duration that appears in no retained receipts file, and
+    `interpretation.md` stating it as a fact about a file it no longer matched.
+    Nothing in the suite noticed, because two fresh regenerations read the same frozen
+    run-1 and agreed with each other.
+
+    This class reads only what is on disk. Regenerating run-1 without regenerating
+    runs 2-4 fails here, naming the command (see CHANGES.md, "run-1 first").
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.receipts_1 = _load(RUN_1, "receipts.json")
+
+    def _committed(self, name: str) -> str:
+        path = os.path.join(EVIDENCE, name)
+        self.assertTrue(os.path.isdir(path), f"committed evidence/{name} is missing")
+        return path
+
+    def test_every_committed_ms_saved_entry_is_a_committed_run_1_duration(self):
+        for name in ("run-2-regroup", "run-3-reinput", "run-4-from-retained"):
+            with self.subTest(run=name):
+                out = self._committed(name)
+                payload = _load(out, "saved-work.json")
+                by_invocation = payload["ms_saved_by_invocation"]
+                self.assertTrue(by_invocation, f"{name} claims no saved work at all")
+                for invocation_id, ms in by_invocation.items():
+                    self.assertIn(invocation_id, self.receipts_1, f"{name}/{invocation_id}")
+                    self.assertEqual(
+                        ms,
+                        self.receipts_1[invocation_id]["duration_ms"],
+                        f"evidence/{name}/saved-work.json is stale against "
+                        f"evidence/run-1/receipts.json; regenerate it with "
+                        f"`python3 run_regrouped.py|run_reinput.py|run_from_retained.py "
+                        f"--out evidence/{name} --force`",
+                    )
+                self.assertEqual(
+                    payload["ms_saved"], round(sum(by_invocation.values()), 3)
+                )
+
+    def test_every_committed_interpretation_quotes_its_own_ms_saved(self):
+        """run_regrouped.py:123, run_reinput.py:54 and run_from_retained.py:92 print
+        `ms saved (...): <n>` into interpretation.md; the ledger and the prose must be
+        the same number."""
+        for name in ("run-2-regroup", "run-3-reinput", "run-4-from-retained"):
+            with self.subTest(run=name):
+                out = self._committed(name)
+                ms_saved = _load(out, "saved-work.json")["ms_saved"]
+                text = _read(out, "interpretation.md")
+                line = next(l for l in text.splitlines() if "ms saved (" in l)
+                self.assertEqual(line.rsplit(": ", 1)[1], str(ms_saved), line)
+
+    def test_the_committed_prior_run_is_the_one_this_pin_reads(self):
+        for name in ("run-2-regroup", "run-3-reinput", "run-4-from-retained"):
+            with self.subTest(run=name):
+                self.assertEqual(_load(self._committed(name), "saved-work.json")["prior_run"], "run-1")
+
+
 class Determinism(unittest.TestCase):
     """Regenerating each run twice is byte-identical except receipts.json/timings.json."""
 

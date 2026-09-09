@@ -27,6 +27,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+import unittest.mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, "..", "..", ".."))
@@ -36,8 +37,73 @@ if HERE not in sys.path:
 
 import replay  # noqa: E402
 import retain  # noqa: E402
-from calculations import REGISTRY, split as split_fn  # noqa: E402
+from pyto import Calculation  # noqa: E402
+from calculations import REGISTRY, fit as fit_fn, score as score_fn, split as split_fn  # noqa: E402
 from program import SPLIT  # noqa: E402
+
+REFUSALS_DIR = os.path.join(replay.REPLAY_DIR, "refusals")
+
+
+def _refusal_log(name: str) -> str:
+    """A committed, citable artifact per refusal (one per parent-side check)."""
+    os.makedirs(REFUSALS_DIR, exist_ok=True)
+    return os.path.join(REFUSALS_DIR, f"{name}.log")
+
+
+def _verdict_line(path: str) -> str:
+    with open(path, encoding="utf-8") as handle:
+        return handle.read().rstrip("\n").splitlines()[-1]
+
+
+def same_module_impostor(args: dict) -> dict:
+    """Not `calculations.score`, but claiming to live in its module.
+
+    Used by ProviderIdentityIsModuleGranular. A named module-level function, never a
+    lambda (docs/PYTHON-LAB-STEWARDSHIP.md:39).
+    """
+    honest = score_fn(args)
+    return {"rmse": honest["rmse"] * 1.5, "n": honest["n"]}
+
+
+# The whole forgery is this one line: `inspect.getmodule` resolves `__module__` through
+# sys.modules and `retain._module_source_sha256` (retain.py:401-407) digests that
+# MODULE's source file, so the impostor now presents calculations.py's digest as its
+# provider identity and is indistinguishable from the honest Calculation there.
+same_module_impostor.__module__ = "calculations"
+
+POPPED: list[str] = []
+
+
+def popping_fit(args: dict) -> dict:
+    """A Calculation that mutates the list it was handed, then delegates.
+
+    Named, module-level, and it records that it actually ran so the test cannot pass
+    by never reaching it.
+    """
+    POPPED.append(args.get("variant") or "?")
+    args["columns"].pop()
+    return fit_fn(args)
+
+
+def mutating_replay(record: dict, registry):
+    """A `replay_fn` that edits the record it is handed, for the tamper-flag test."""
+    record["program"]["name"] = record["program"]["name"] + "-mutated"
+    return retain.replay(record, registry)
+
+
+def _load_json(path: str):
+    with open(path, encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def _fit_all_columns(record: dict) -> list:
+    entry = next(
+        e
+        for tick in record["program"]["ticks"]
+        for e in tick["calculations"]
+        if e["id"] == "fit.all"
+    )
+    return entry["args"]["columns"]
 
 
 class SysPathDiscipline(unittest.TestCase):
@@ -119,6 +185,18 @@ class FreshProcessReplay(unittest.TestCase):
             "child failed checks: []",
         ):
             self.assertIn(marker, text)
+
+    def test_the_terminal_line_is_the_verdict_and_it_accepted_this_record(self):
+        """`child failed checks: []` is NOT the verdict (fixer round 2, finding 3).
+
+        Two forgeries reach the child cleanly and produce a log whose `child failed
+        checks:` line reads `[]` while the record is refused: a value-forged record
+        with recomputed digests (rows differ) and a registry-forged record whose
+        provider block is byte-identical to the honest one (digests differ). Both are
+        exercised in ParentSideRefusals and ProviderIdentityIsModuleGranular below.
+        The single line that separates accepted from refused is the last one.
+        """
+        self.assertEqual(_verdict_line(replay.FRESH_PROCESS_LOG), "VERDICT: accepted")
 
     def test_the_child_neither_read_nor_wrote_bytecode(self):
         """`python3 -B` plus the parent's __pycache__ purge: a stale .pyc whose
@@ -304,14 +382,270 @@ class HiddenStateAuditor(unittest.TestCase):
         text = raw.decode("utf-8")
         self.assertIn("record program ticks identical to the committed evidence/run-1/testimony.json ticks: False", text)
         self.assertIn("child failed checks: ['program_matches_committed_testimony', 'externals_match_declared_inputs']", text)
+        verdict = _verdict_line(replay.FORGED_REPLAY_LOG)
+        self.assertTrue(verdict.startswith("VERDICT: refused ("), verdict)
+        self.assertIn(
+            "child failed checks ['program_matches_committed_testimony', "
+            "'externals_match_declared_inputs']",
+            verdict,
+        )
+        self.assertIn("child returncode 3", verdict)
+        # The attack reproduces run-1's comparison byte for byte and its results map is
+        # self-consistent, so NEITHER parent-side row/digest refusal fires here: this
+        # forgery is caught by the child's own checks alone.
+        self.assertNotIn("comparison rows differ", verdict)
+        self.assertNotIn("result digests differ", verdict)
 
     def test_the_honest_record_is_restored_after_the_forgery_tests(self):
         """The forged record was written to a temp path and logged to its own file;
-        evidence/run-1/retained.json and evidence/replay/fresh-process.log are untouched."""
+        evidence/run-1/retained.json and evidence/replay/fresh-process.log are untouched.
+
+        Asserted on the VERDICT line, not on `child failed checks: []`, which a
+        refused record can also print (fixer round 2, finding 3).
+        """
         record = replay.ensure_retained_record()
         retain.check_record(record)
-        with open(replay.FRESH_PROCESS_LOG, encoding="utf-8") as handle:
-            self.assertIn("child failed checks: []", handle.read())
+        self.assertEqual(_verdict_line(replay.FRESH_PROCESS_LOG), "VERDICT: accepted")
+
+
+class ParentSideRefusals(unittest.TestCase):
+    """One test per refusal `run_fresh_process_replay` makes AFTER the child reports.
+
+    Before fixer round 2, finding 2, four of these five refusals were unguarded:
+    deleting `if not rows_equal: raise`, `if not digests_equal: raise`,
+    `if leaked: raise` or the parent/child source-sha comparison left the whole
+    test_replay.py suite green, and two of them are the only thing that defeats a
+    forgery the child accepts. Each test below engineers a record or an environment
+    that trips exactly one of them, asserts the AssertionError names it, and leaves a
+    citable log under evidence/replay/refusals/ whose terminal line is the VERDICT.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.record = replay.ensure_retained_record()
+
+    def _refuse(self, name, **kwargs):
+        log_path = _refusal_log(name)
+        with self.assertRaises(AssertionError) as caught:
+            replay.run_fresh_process_replay(log_path=log_path, **kwargs)
+        return str(caught.exception), _verdict_line(log_path)
+
+    # (a) rows_equal -------------------------------------------------------------
+
+    @staticmethod
+    def _value_forged_record(record: dict) -> dict:
+        """Nudge one input row and recompute `results` so every other check passes.
+
+        The program is untouched (so the child's testimony check passes), the external
+        address set is untouched (externals check passes), the registry and provider are
+        honest (provider check passes) -- and the digests are recomputed from the forged
+        input, so `digests_equal` passes too. Only the comparison rows move.
+        """
+        forged = copy.deepcopy(record)
+        forged["external"]["input.ablation.rows"][0][1] += 1.0
+        _pxc, run = retain.replay(forged, REGISTRY)
+        forged["results"] = {k: retain.digest_of(v) for k, v in run.results.items()}
+        return forged
+
+    def test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows(self):
+        """Kills: dropping `if not rows_equal`. The child accepts this record."""
+        forged = self._value_forged_record(self.record)
+        tmp = tempfile.mkdtemp(prefix="value-forged-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        path = retain.write_record(forged, os.path.join(tmp, "retained.json"))
+        message, verdict = self._refuse(
+            "value-forged-rows", record=forged, record_path=path
+        )
+        self.assertIn("comparison rows differ from the committed comparison.json", message)
+        self.assertIn("comparison rows differ from the committed comparison.json", verdict)
+        # ... and it got past every check the child makes, which is the point.
+        with open(_refusal_log("value-forged-rows"), encoding="utf-8") as handle:
+            text = handle.read()
+        self.assertIn("child failed checks: []", text)
+        self.assertIn("result digests identical to record['results']: True", text)
+        self.assertIn("comparison.json rows byte-identical: False", text)
+
+    # (b) digests_equal ----------------------------------------------------------
+
+    def test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests(self):
+        """Kills: dropping `if not digests_equal`. Rows still match, so nothing else fires."""
+        forged = copy.deepcopy(self.record)
+        forged["results"]["split"] = "0" * 64
+        tmp = tempfile.mkdtemp(prefix="digest-forged-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        path = retain.write_record(forged, os.path.join(tmp, "retained.json"))
+        message, verdict = self._refuse(
+            "digest-forged", record=forged, record_path=path
+        )
+        self.assertIn("result digests differ from record['results']", message)
+        self.assertEqual(
+            verdict, "VERDICT: refused (result digests differ from record['results'])"
+        )
+        with open(_refusal_log("digest-forged"), encoding="utf-8") as handle:
+            text = handle.read()
+        self.assertIn("child failed checks: []", text)
+        self.assertIn("comparison.json rows byte-identical: True", text)
+
+    # (c) leaked -----------------------------------------------------------------
+
+    def test_a_module_outside_the_allowed_set_is_refused(self):
+        """Kills: dropping `if leaked`.
+
+        The child is the honest one; the allow-list is narrowed instead of importing
+        something foreign in it, so the assertion is on the real report the real child
+        produced -- `retain`, which the child genuinely imports, becomes a leak.
+        """
+        narrowed = set(replay._ALLOWED_TOP_LEVEL_MODULES) - {"retain"}
+        with unittest.mock.patch.object(replay, "_ALLOWED_TOP_LEVEL_MODULES", narrowed):
+            message, verdict = self._refuse(
+                "module-leak", record=self.record, record_path=replay.RETAINED_PATH
+            )
+        self.assertIn("modules leaked beyond the allowed set: ['retain']", message)
+        self.assertIn("modules leaked beyond the allowed set: ['retain']", verdict)
+
+    # (d) parent/child source sha ------------------------------------------------
+
+    @staticmethod
+    def _wrong_source_sha256(names):
+        """A parent that reads different bytes for retain.py than the child does."""
+        return {name: "f" * 64 for name in names}
+
+    def test_a_parent_child_source_sha_mismatch_is_refused(self):
+        """Kills: dropping the `parent_source_sha256 != report['source_sha256']` raise."""
+        with unittest.mock.patch.object(replay, "_source_sha256", self._wrong_source_sha256):
+            message, verdict = self._refuse(
+                "source-sha-mismatch", record=self.record, record_path=replay.RETAINED_PATH
+            )
+        self.assertIn("child read different module sources than the parent", message)
+        self.assertIn("child read different module sources than the parent", verdict)
+
+    # (e) the child's own checks, for completeness -------------------------------
+
+    def test_the_honest_record_is_still_accepted_after_all_of_the_above(self):
+        report = replay.run_fresh_process_replay(self.record)
+        self.assertEqual(report["failed_checks"], [])
+        self.assertEqual(_verdict_line(replay.FRESH_PROCESS_LOG), "VERDICT: accepted")
+
+
+class ProviderIdentityIsModuleGranular(unittest.TestCase):
+    """`retain.provider_identity` identifies the module SOURCE FILE, not the function.
+
+    A registry whose address resolves to a different callable of the same module
+    produces a provider block byte-identical to the honest one, and
+    `verify_provider` agrees with it (fixer round 2, finding 3). The limitation is
+    stated in `retain.provider_identity`'s docstring the way
+    `pyto.pcr.FrozenCalculation.limitation` states its own; these tests pin both the
+    hole and the refusal that actually catches it -- the result digests.
+    """
+
+    def setUp(self):
+        self.record = replay.ensure_retained_record()
+        self.corrupt = dict(REGISTRY)
+        self.corrupt["fn.ablation.score"] = Calculation(
+            "fn.ablation.score", same_module_impostor
+        )
+
+    def test_the_corrupted_registry_produces_a_byte_identical_provider_block(self):
+        honest_provider = retain.provider_identity(REGISTRY)
+        forged_provider = retain.provider_identity(self.corrupt)
+        self.assertEqual(
+            json.dumps(forged_provider, sort_keys=True),
+            json.dumps(honest_provider, sort_keys=True),
+        )
+        self.assertEqual(
+            json.dumps(forged_provider, sort_keys=True),
+            json.dumps(self.record["provider"], sort_keys=True),
+        )
+
+    def test_verify_provider_agrees_with_the_corrupted_registry(self):
+        report = retain.verify_provider(self.record, self.corrupt)
+        self.assertTrue(report["agrees"])
+        self.assertEqual(report["disagreeing_addresses"], [])
+
+    def test_the_limitation_is_stated_in_the_docstring(self):
+        doc = retain.provider_identity.__doc__
+        self.assertIn("module source file, not function", doc)
+        self.assertIn("FrozenCalculation", doc)
+
+    def test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider(self):
+        _pxc, run = retain.replay(self.record, self.corrupt)
+        forged = copy.deepcopy(self.record)
+        forged["provider"] = retain.provider_identity(self.corrupt)
+        forged["results"] = {k: retain.digest_of(v) for k, v in run.results.items()}
+        tmp = tempfile.mkdtemp(prefix="registry-forged-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        path = retain.write_record(forged, os.path.join(tmp, "retained.json"))
+        log_path = _refusal_log("registry-forged")
+        with self.assertRaises(AssertionError) as caught:
+            replay.run_fresh_process_replay(forged, record_path=path, log_path=log_path)
+        message = str(caught.exception)
+        self.assertIn("result digests differ from record['results']", message)
+        with open(log_path, encoding="utf-8") as handle:
+            text = handle.read()
+        # The provider check accepted it; the digests did not.
+        self.assertIn("provider identity accepted (retain.verify_provider): True", text)
+        self.assertIn("child failed checks: []", text)
+        self.assertIn("result digests identical to record['results']: False", text)
+        self.assertTrue(_verdict_line(log_path).startswith("VERDICT: refused ("))
+
+
+class LaneCCrossVerification(unittest.TestCase):
+    """The plan's Day 2 cross-verification gate over lane C's runs, not only run-1.
+
+    "Lane (c)'s outputs must be reproduced by lane (b)'s fresh-process replay
+    carrying lane (a)'s digests." Run-1 had retained evidence and a test; run-2/3/4
+    had neither, so nothing in the repository replayed them (fixer round 2, finding
+    13). Each is replayed against its own committed comparison.json, testimony.json
+    and retained.json["results"].
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.reports = replay.cross_verify_lane_c_runs()
+
+    def test_every_lane_c_run_was_replayed(self):
+        self.assertEqual(
+            sorted(self.reports),
+            ["run-2-regroup", "run-3-reinput", "run-4-from-retained"],
+        )
+
+    def test_each_run_has_its_own_log_ending_in_an_accepted_verdict(self):
+        for label, _directory, _externals in replay.LANE_C_RUNS:
+            with self.subTest(run=label):
+                path = replay.lane_c_log_path(label)
+                self.assertTrue(os.path.isfile(path))
+                with open(path, "rb") as handle:
+                    self.assertNotIn(b"\r\n", handle.read())
+                self.assertEqual(_verdict_line(path), "VERDICT: accepted")
+
+    def test_each_child_reproduced_its_own_committed_comparison_and_digests(self):
+        for label, directory, _externals in replay.LANE_C_RUNS:
+            with self.subTest(run=label):
+                report = self.reports[label]
+                with open(os.path.join(directory, "comparison.json"), encoding="utf-8") as handle:
+                    committed_rows = json.load(handle)["rows"]
+                with open(os.path.join(directory, "retained.json"), encoding="utf-8") as handle:
+                    record = json.load(handle)
+                self.assertEqual(
+                    json.dumps(report["comparison_rows"], sort_keys=True),
+                    json.dumps(committed_rows, sort_keys=True),
+                )
+                self.assertEqual(report["result_digests"], record["results"])
+                self.assertEqual(report["failed_checks"], [])
+
+    def test_run_4_declares_a_different_external_boundary_than_runs_1_to_3(self):
+        """run-4 replays from a retained split, so its declared inputs are not
+        run.EXTERNAL_ADDRESSES; the gate carries each run's own boundary rather than
+        assuming one."""
+        by_label = {label: externals for label, _dir, externals in replay.LANE_C_RUNS}
+        self.assertEqual(
+            sorted(by_label["run-4-from-retained"]),
+            ["input.ablation.groups", "scratch.ablation.split"],
+        )
+        self.assertNotEqual(
+            sorted(by_label["run-4-from-retained"]),
+            sorted(by_label["run-2-regroup"]),
+        )
 
 
 class ReplayDoesNotMutateTheRecord(unittest.TestCase):
@@ -333,6 +667,30 @@ class ReplayDoesNotMutateTheRecord(unittest.TestCase):
         self.assertEqual(digests_a, digests_b)
         self.assertEqual(digests_a, record["results"])
         self.assertEqual(json.dumps(record, sort_keys=True), before)
+
+    def test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone(self):
+        """Fixer round 2, finding 5: `args` were shallow-copied all the way down.
+
+        `retain.from_program` did `dict(entry.get("args") or {})` and `PCR.calc` keeps
+        `dict(args or {})` (pcr.py:56), both shallow, so
+        `invocation.args["columns"]` WAS the caller's
+        `record["program"]["ticks"][i]["calculations"][j]["args"]["columns"]` list. A
+        Calculation that popped from it rewrote the retained record it was replaying,
+        in memory. Only `external` was deep-copied. With retain.py:297 deep-copying
+        args this fails closed; without it, this test fails.
+        """
+        record = replay.ensure_retained_record()
+        before = json.dumps(record, sort_keys=True)
+        columns_before = len(_fit_all_columns(record))
+
+        mutating = dict(REGISTRY)
+        mutating["fn.ablation.fit"] = Calculation("fn.ablation.fit", popping_fit)
+        _pxc, run = retain.replay(record, mutating)
+
+        self.assertTrue(POPPED, "the mutating calculation never ran, so this proves nothing")
+        self.assertEqual(json.dumps(record, sort_keys=True), before)
+        self.assertEqual(len(_fit_all_columns(record)), columns_before)
+        self.assertIn("compare", run.results)
 
     def test_the_seeded_value_is_not_the_records_own_object(self):
         record = replay.ensure_retained_record()
@@ -364,6 +722,35 @@ class Tamper(unittest.TestCase):
     def test_the_baseline_replay_left_the_record_byte_identical(self):
         """Fixer round 1, finding 2: the two sides of this report must be independent."""
         self.assertTrue(self.report["record_unchanged_by_baseline_replay"])
+
+    def test_the_flag_is_false_when_the_baseline_replay_does_mutate(self):
+        """Fixer round 2, finding 4: the flag used to be unfalsifiable.
+
+        `run_tamper_check` replayed `copy.deepcopy(record)` and then compared the
+        CALLER's `record` before and after -- an object the baseline replay was never
+        handed -- so the comparison was `json.dumps(record) == json.dumps(record)` and
+        could not be False. It now compares the copy that was actually handed in, and a
+        `replay_fn` that mutates that copy drives the flag to False and the check to a
+        raise. Nothing in the registry mutates today; this is what makes the report a
+        check rather than a constant.
+        """
+        record = replay.ensure_retained_record()
+        before = json.dumps(record, sort_keys=True)
+        # The refusal gets its own citable artifact; evidence/tamper/report.json stays
+        # the honest run's.
+        report_path = os.path.join(replay.TAMPER_DIR, "mutating-baseline-refused.json")
+        record_path = os.path.join(replay.TAMPER_DIR, "mutating-baseline-refused-record.json")
+        with unittest.mock.patch.object(replay, "TAMPER_REPORT", report_path), \
+                unittest.mock.patch.object(replay, "TAMPER_RECORD", record_path):
+            with self.assertRaises(AssertionError) as caught:
+                replay.run_tamper_check(record, replay_fn=mutating_replay)
+        self.assertIn("mutated the record it was handed", str(caught.exception))
+        report = _load_json(report_path)
+        self.assertFalse(report["record_unchanged_by_baseline_replay"])
+        # The caller's own record is still untouched: only the handed copy moved.
+        self.assertEqual(json.dumps(record, sort_keys=True), before)
+        # ...and the honest report is still the honest one.
+        self.assertTrue(_load_json(replay.TAMPER_REPORT)["record_unchanged_by_baseline_replay"])
 
     def test_untouched_variants_kept_their_digests(self):
         untouched = [

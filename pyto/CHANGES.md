@@ -55,8 +55,8 @@ and `::test_tick_bytes_equal_the_retained_day_1_testimony`. Checked once more fr
 outside the library, in scratch: `card_composition.execute_card` was run against a
 copy of `pyto` at d9dded6 and against this tree, and
 `json.dumps(evidence["composition"]["ticks"])` compared byte for byte -- equal. The
-in-repo executable form of that check is the two tests above plus the 18 consumer
-tests, which exercise the same call site.
+in-repo executable form of that check is the two tests above plus the consumer suite,
+which exercises the same call site.
 
 **One consumer-served byte does move, by design.** The hard rule is scoped to the
 tick payload, and the tick payload is unchanged; but the seam is `pcr.py`, and
@@ -92,8 +92,9 @@ raised `ImportError: cannot import name 'FrozenCalculation' from 'pyto.pcr'`
   `receipts`, and that `run.receipts == {}` when `observe` is not passed. No other
   Day 1 assertion changed.
 
-**After.** The library suite is 64 tests: the 43 above plus 21 in
-`tests/test_receipts.py`:
+**After.** The library suite is the 43 Day 1 tests plus `tests/test_receipts.py`,
+whose classes and test names are listed below (the count of the day is read off
+`scripts/check_all.sh`'s table, not from this file -- see the note after the table):
 
 | class | tests |
 | --- | --- |
@@ -106,23 +107,42 @@ raised `ImportError: cannot import name 'FrozenCalculation' from 'pyto.pcr'`
 | `Timing` | `test_duration_is_non_negative_and_started_is_monotonic` |
 | `ReceiptShape` | `test_receipt_is_frozen_and_json_serializable_after_asdict`, `test_registry_calculations_are_named_functions_not_lambdas` |
 
-No other suite's *assertions* were changed by the seam, and all pass. Their counts
-have since grown with the day's own experiment work (Lane C/D and fixer round 1),
-so the numbers below are the ones `scripts/check_all.sh` printed on the last run of
-this entry, not the pre-seam ones: `experiments/grouped-ablation` 151,
-`experiments/s3-synthetic` 5, consumer 37, disc-stats 4, both examples. The 37
-consumer tests are the 18 pre-tournament plus the 19 the art tournament added
-(`scripts/check_all.sh:17-19`), none of them a change to a Day 1 assertion.
+No other suite's *assertions* were changed by the seam, and all pass.
+
+**Per-suite counts are not carried here as prose.** They grow with the day's own
+experiment work and with concurrent lanes, and a literal in this file goes stale
+without anything failing -- which is exactly what happened (fixer round 2, finding
+9: this paragraph said "consumer 37" while the suite discovered 61). The authority is
+the `== per-suite counts` table `scripts/check_all.sh` prints at the end of the run
+whose exit code this entry quotes, retained verbatim as the day's run record at
+`experiments/runs/day2/tests.txt` (experiments/CAPTURE.md, "How a day closes":
+`tests.txt` must end with `ALL SUITES PASSED`). `scripts/check_all.sh` also pins the
+two suites whose size is a kill criterion -- `EXPECT_CONSUMER` and
+`EXPECT_DISC_STATS` at `scripts/check_all.sh:21-22` -- so a suite that silently
+shrinks fails the gate rather than this file.
+
+What is stable enough to state is *which* tests the seam added, and that is the table
+above: no Day 1 assertion changed except the one named under **Before**.
 
 **No digest through `default=`** (research/ULTRACODE-WEEK.md critic gap 10).
 `result_sha256` is `sha256(json.dumps(value, sort_keys=True, separators=(',', ':')))`
 with no fallback serializer; `TypeError`/`ValueError` yields `None`. A value that
 is not JSON therefore has no digest instead of a digest of its `repr`, which for
 objects whose repr carries an address would be process-dependent and would show up
-later as pyto-caused drift. Covered for a `set`, a `PxC`, and a dict with tuple
-keys — the disc-stats result shape,
+later as pyto-caused drift. Covered for a `set` and a `PxC` by
+`ResultDigest::test_non_json_value_yields_none`, which is the mutation-sensitive
+guard on the no-`default=` decision.
+
+The dict-with-tuple-keys case — the disc-stats result shape,
 `consumers/discstudio-card/experiments/disc-stats/stats.py:34`
-(`distinct_discs_by_mold -> dict[tuple[str, str], int]`).
+(`distinct_discs_by_mold -> dict[tuple[str, str], int]`) — is covered by
+`ResultDigest::test_tuple_keys_yield_none`, but that test is a **characterization of
+json's key rule**, not evidence about `default=`: the encoder rejects keys that are
+not `str|int|float|bool|None` before any `default=` hook is reached, so the test
+passes with and without the fallback serializer. It pins that this shape yields
+`None` here; the mutant that does kill it is a seam that stringifies keys before
+dumping (see "Mutation check" below). Naming it as gap-10 `default=` evidence was an
+overstatement (fixer round 2, finding 8).
 
 **What this seam is not** (research/ULTRACODE-WEEK.md critic gap 14, and
 `docs/PYTHON-LAB-STEWARDSHIP.md:62`, quoted in the gap as `stewardship:53`: "No
@@ -184,15 +204,75 @@ experiment-local and cited in `experiments/grouped-ablation/`).
   `experiments/grouped-ablation/evidence/run-2-regroup/interpretation.md`; the
   values quoted here are that file's, not literals the ledger maintains.
 
+**Fixer round 2 decisions that belong in this ledger** (the rest are
+experiment-local and cited in `experiments/grouped-ablation/`). **No library change
+was made in this round**: the day's one seam is the `pcr.py` change above, and
+`src/pyto/` is untouched by everything below.
+
+- *Regeneration order: run-1 first, then runs 2-4.* Lane C's `ms_saved` /
+  `ms_saved_by_invocation` are durations read out of `evidence/run-1/receipts.json`
+  (`second_experiment.py:230-248`), so regenerating run-1 alone leaves all three
+  dependent ledgers quoting a duration that appears in no retained file -- which had
+  happened, and nothing failed, because the suite only ever compared runs it
+  regenerated itself into temp dirs. Runs 2-4 have been regenerated after the
+  committed run-1, and
+  `test_second_experiment.py::CommittedEvidenceResolvesToCommittedRunOne` now reads
+  the **committed** evidence and fails if the two drift apart, naming the command to
+  re-run (fixer round 2, findings 7 and 12).
+- *`child failed checks: []` is not a verdict.*
+  `replay.run_fresh_process_replay` now ends its log with one terminal `VERDICT:`
+  line folding the child's own four checks together with the four the parent makes
+  (module sources, leaked modules, comparison rows, result digests), and the tests
+  assert on that line. Two forgeries reach the child cleanly and are refused only in
+  the parent: a value-forged record with recomputed digests, and a registry-forged
+  record whose provider block is byte-identical to the honest one. Each of the five
+  refusals now has a test that trips exactly it; the mutation matrix over them kills
+  1 of 58 per mutant with a clean baseline (fixer round 2, findings 2, 3 and 4).
+- *`retain.provider_identity` is module-granular, and now says so.* It digests the
+  *module source file* of a Calculation's callable, so an address pointing at a
+  different function of the same module carries an identical provider block. The
+  limitation is stated in its docstring the way
+  `pyto.pcr.FrozenCalculation.limitation` states its own; a per-function digest
+  (`implementation_sha256`, `pcr.py:152-160`) would close it and is recorded as open
+  in `experiments/grouped-ablation/evidence/OPEN-FINDINGS.md`, because it changes the
+  provider shape in every retained record.
+- *The aliasing hole is closed on both sides.* `retain.replay` already deep-copied
+  externals; `retain.from_program` now deep-copies `args` too (`retain.py:297`),
+  because `PCR.calc` keeps only a shallow `dict(args or {})` (`pcr.py:56`) and a
+  Calculation mutating a nested arg in place therefore rewrote the caller's retained
+  record in memory. Pinned by
+  `test_replay.py::ReplayDoesNotMutateTheRecord::test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone`
+  (fixer round 2, finding 5).
+- *The tamper report's independence flag can now be False.* It compared the caller's
+  `record` against itself; it now compares the copy actually handed to the baseline
+  replay, before and after (fixer round 2, finding 4).
+- *The cross-verification gate covers lane C.* `replay.cross_verify_lane_c_runs()`
+  replays run-2/3/4's retained records in fresh processes against their own committed
+  `comparison.json`, `testimony.json` and `retained.json["results"]`, leaving
+  `evidence/replay/fresh-process-run-*.log` (fixer round 2, finding 13).
+
 **Not exported from `pyto/__init__.py`.** `Receipt`, `FrozenCalculation` and
 `_TrackedPxC` are importable as `from pyto.pcr import ...` only — the same status
 `Invocation` already has. The day's one library change is the seam in `pcr.py`; the
 public surface moves when a consumer needs it, not before.
 
-**Mutation check** (scratch only, applied to the imported module object at run
-time, never to the repo): adding `default=str` to the result digest fails
-`ResultDigest::test_non_json_value_yields_none` and `::test_tuple_keys_yield_none`
-(2 of 2); collapsing `refinement` into `replacement` fails `WriteKinds::test_kinds`
-(1 of 1); dropping `shadowed_inputs` fails
-`ShadowedInputs::test_args_key_colliding_with_a_bound_input_is_recorded_not_raised`
-(1 of 1).
+**Mutation check** (scratch only: `src/pyto` is copied out, mutated there, and put
+on `PYTHONPATH`; the repo is never written). Re-run whenever this paragraph is
+edited -- the counts below are what the runs printed, not what the change was
+expected to do.
+
+- Adding `default=str` to the result digest fails
+  `ResultDigest::test_non_json_value_yields_none` and **not**
+  `::test_tuple_keys_yield_none` -- **1 of 2**. An earlier version of this paragraph
+  claimed 2 of 2 (fixer round 2, finding 8). The survivor is structural, not luck:
+  json's `default=` hook is consulted only for a non-serializable *value*, and a dict
+  with tuple *keys* raises `TypeError: keys must be str, int, float, bool or None`
+  inside the encoder before any hook runs.
+- The mutant that does kill `::test_tuple_keys_yield_none` is stringifying keys
+  first: `json.dumps({str(k): v for k, v in value.items()} if isinstance(value, dict)
+  else value, ...)` -- **1 of 1**, and it leaves `::test_non_json_value_yields_none`
+  passing. The two tests guard two different decisions; neither mutant reaches both.
+- Collapsing `refinement` into `replacement` fails `WriteKinds::test_kinds` (1 of 1).
+- Dropping `shadowed_inputs` fails
+  `ShadowedInputs::test_args_key_colliding_with_a_bound_input_is_recorded_not_raised`
+  (1 of 1).

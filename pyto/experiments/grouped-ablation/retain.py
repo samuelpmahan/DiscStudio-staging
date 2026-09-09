@@ -424,7 +424,7 @@ def provider_identity(registry: Mapping[str, Any]) -> dict[str, Any]:
     `pyto.pcr.FrozenCalculation.limitation` states its own (pcr.py:92). Each
     registry entry's row is {"module": <the callable's module name>,
     "source_sha256": sha256 of that module's source FILE} (`_module_source_sha256`,
-    retain.py:401-408), so every address served out of calculations.py carries one
+    retain.py:401-407), so every address served out of calculations.py carries one
     and the same digest. A registry whose address points at a DIFFERENT function of
     the same module -- or at any callable whose `__module__` names that module --
     therefore produces a provider block byte-identical to the honest one, and

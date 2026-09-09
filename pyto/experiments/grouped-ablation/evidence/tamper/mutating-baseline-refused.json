@@ -1,0 +1,82 @@
+{
+  "baseline_digests": {
+    "compare": "664991b13ce937d0308131fd0a58cad1d46da85b3d3ea8470aa0468588123f10",
+    "fit.all": "339d487ebda662830c0b8c27b407d46dbdec3fcf957a6ea82c4bf5f68932213f",
+    "fit.drop_g0": "c3dbf808b5a18abe90ca4e4c894594d39d6cc04d35ef319fa693ebb2880c23f6",
+    "fit.drop_g1": "4777fa0431006f22080d5441811ead16830e000076ae836a0e8f4033fdca374b",
+    "fit.drop_g2": "146cb9a2127384cebd3791395664dac37c7cabfff27ea43dff60eca3882cfa17",
+    "fit.drop_g3": "d88892fa98ef8972fb44f56e80d932872a00056b807f10a246b1200e6158f902",
+    "fit.drop_g4": "a0b4dc4d6cd0329b0deff96e06a6610d56e64b73da78ef2ee3e79b7cb69b34fc",
+    "score.all": "c1b8ad4982170d36c1888fe8085f55d43187d65f1c2dae420ae265f4f1cbfe6d",
+    "score.drop_g0": "3cfdced3745464f87adfa833bf7d6c1556b6094929a5de91492182b211eef6c4",
+    "score.drop_g1": "a565360d11ef51f99c79b03399b657522d51f560e32660fd08698ae6e3d197a8",
+    "score.drop_g2": "744d5142c6a065cfeeff3b5c01570b3f3678d682166903cfc02bc001811a2957",
+    "score.drop_g3": "6399d6b51b92b97c4be369a5cfb7d995f7d4da48f122866de6d323304296156f",
+    "score.drop_g4": "3cbfa3e2c5e15101badb26ca3cd7e3331ba77329ae1adcfe72048fe5b1c4c8d2",
+    "select": "543f82368703f91864818dd4f57614824feb4e4407f41feac7d43d6e8e07c1f7",
+    "split": "a356f9a95abbaa7e0a2677738ff7d80cb2aab9d8cd8f986d46e53eafcd371e38"
+  },
+  "changed": [
+    "compare",
+    "fit.drop_g0",
+    "score.drop_g0"
+  ],
+  "expected_to_change": [
+    "compare",
+    "fit.drop_g0",
+    "score.drop_g0"
+  ],
+  "missing_expected_changes": [],
+  "note": "'compare' is expected to change: it aggregates every variant's score (program.py build_program, id='compare', **scores), so tampering one variant's input necessarily changes the comparison table too. Only fit.drop_g0 and score.drop_g0 are the tampered locus; every other fit/score id must be untouched.",
+  "original_columns": [
+    "f03",
+    "f04",
+    "f05",
+    "f06",
+    "f07",
+    "f08",
+    "f09",
+    "f10",
+    "f11",
+    "f12",
+    "f13",
+    "f14"
+  ],
+  "record_unchanged_by_baseline_replay": false,
+  "tampered_columns": [
+    "f00",
+    "f01",
+    "f02",
+    "f03",
+    "f04",
+    "f05",
+    "f06",
+    "f07",
+    "f08",
+    "f09",
+    "f10",
+    "f11",
+    "f12",
+    "f13",
+    "f14"
+  ],
+  "tampered_digests": {
+    "compare": "c371d062ab21e678fb026c1694f2eaa8bd243668619a4913c72ec752f90d0a56",
+    "fit.all": "339d487ebda662830c0b8c27b407d46dbdec3fcf957a6ea82c4bf5f68932213f",
+    "fit.drop_g0": "508b22cc76d2a707daab62bca9bedbff6e2dbcd9c78f0811ee69f609502c420c",
+    "fit.drop_g1": "4777fa0431006f22080d5441811ead16830e000076ae836a0e8f4033fdca374b",
+    "fit.drop_g2": "146cb9a2127384cebd3791395664dac37c7cabfff27ea43dff60eca3882cfa17",
+    "fit.drop_g3": "d88892fa98ef8972fb44f56e80d932872a00056b807f10a246b1200e6158f902",
+    "fit.drop_g4": "a0b4dc4d6cd0329b0deff96e06a6610d56e64b73da78ef2ee3e79b7cb69b34fc",
+    "score.all": "c1b8ad4982170d36c1888fe8085f55d43187d65f1c2dae420ae265f4f1cbfe6d",
+    "score.drop_g0": "c1b8ad4982170d36c1888fe8085f55d43187d65f1c2dae420ae265f4f1cbfe6d",
+    "score.drop_g1": "a565360d11ef51f99c79b03399b657522d51f560e32660fd08698ae6e3d197a8",
+    "score.drop_g2": "744d5142c6a065cfeeff3b5c01570b3f3678d682166903cfc02bc001811a2957",
+    "score.drop_g3": "6399d6b51b92b97c4be369a5cfb7d995f7d4da48f122866de6d323304296156f",
+    "score.drop_g4": "3cbfa3e2c5e15101badb26ca3cd7e3331ba77329ae1adcfe72048fe5b1c4c8d2",
+    "select": "543f82368703f91864818dd4f57614824feb4e4407f41feac7d43d6e8e07c1f7",
+    "split": "a356f9a95abbaa7e0a2677738ff7d80cb2aab9d8cd8f986d46e53eafcd371e38"
+  },
+  "tampered_invocation": "fit.drop_g0",
+  "unexpected_changes": []
+}

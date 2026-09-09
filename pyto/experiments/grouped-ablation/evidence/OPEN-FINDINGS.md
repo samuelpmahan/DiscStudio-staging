@@ -1,4 +1,10 @@
-# Open findings: Day 2, fixer round 1
+# Open findings: Day 2
+
+One section per fixer round. Items a required fix named that the round could not
+close, with what remains and who can close it. Everything else is closed in the
+tree; see `pyto/CHANGES.md` (Day 2 entry) and each round's report.
+
+## Round 1
 
 Items a required fix named that this round could not close, with what remains and
 who can close it. Everything else from round 1 is closed in the tree; see
@@ -49,3 +55,145 @@ library seam remains the receipts seam in `pcr.py` (`pyto/CHANGES.md`, Day 2);
 `retain.py`, `replay.py` and the run scripts are experiment-local, and
 `json.dumps([asdict(t) for t in run.ticks])` is untouched by this round because
 `pcr.py` is untouched by this round.
+
+---
+
+## Round 2
+
+What the round-2 findings asked for that this round did **not** apply, and why.
+Nothing here is silently dropped: each item names the exact edit, the file:line it
+belongs at, and the rule that stopped it. Every line number below was checked
+against the file as it stands, and the pcr.py mapping was computed by diffing
+`git show d9dded6:pyto/src/pyto/pcr.py` against the current `src/pyto/pcr.py`
+(difflib line correspondence), not typed from memory.
+
+## 1. `provider_identity` is module-granular, and stays that way this day
+
+Finding 3 offered two fixes. **(b) was taken**: the limitation is now stated in
+`retain.provider_identity`'s docstring (`experiments/grouped-ablation/retain.py:423-437`)
+the way `pyto.pcr.FrozenCalculation.limitation` states its own (`src/pyto/pcr.py:92`),
+and the attack is an executable test —
+`test_replay.py::ProviderIdentityIsModuleGranular`, which proves the forged provider
+block is byte-identical to the honest one, that `verify_provider` agrees with it, and
+that the record is refused anyway, by the result digests.
+
+**(a) is open.** Recording a per-function identity — the
+`sha256(inspect.getsource(callable))` the Day 2 seam already computes for
+`FrozenCalculation.implementation_sha256` (`src/pyto/pcr.py:152-160`) — would make an
+address that points at a different function of the same module disagree, and would
+turn that forgery into a provider refusal rather than a digest one. It is not taken
+here because it changes the `provider.registry` shape in **every** retained record
+(`evidence/run-{1,2-regroup,3-reinput,4-from-retained}/retained.json`), and the
+child's own `calculations_source_matches_record` check
+(`replay.py` CHILD_REPLAY_SNIPPET) is written around all addresses sharing one
+source digest. That is a lane-B/lane-D re-cut, not a fix to a finding.
+
+## 2. Stale `pcr.py:<line>` citations outside this round's permitted file set
+
+The Day 2 seam moved everything below `pcr.py:78` by roughly +150 lines (and the
+`Tick`/testimony dataclasses by +4). Every citation inside
+`experiments/grouped-ablation/` and `tests/test_receipts.py` was corrected this round.
+The files below carry stale ones and are **outside the files this round may edit**;
+each row is `<file>:<line>  <current text> -> <correct text>`.
+
+### tests/test_semantics.py (Day 1 suite)
+
+    :310  pcr.py:109-110 -> pcr.py:258-259
+    :312  pcr.py:109 -> pcr.py:258        :312  pcr.py:43  -> pcr.py:47
+    :321  pcr.py:118-123 -> pcr.py:267-272
+    :323  pcr.py:121 -> pcr.py:270
+    :331  pcr.py:112-116 -> pcr.py:261-265
+    :332  pcr.py:157 -> pcr.py:329
+    :334  pcr.py:114 -> pcr.py:263
+    :347  pcr.py:112-116 -> pcr.py:261-265
+    :348  pcr.py:147-149 -> pcr.py:319-321
+    :351  pcr.py:149 -> pcr.py:321
+    :368  pcr.py:112-116 -> pcr.py:261-265   :368  pcr.py:46 -> pcr.py:50
+    :369  pcr.py:147-151 -> pcr.py:319-323
+    :372  pcr.py:113 -> pcr.py:262
+    :384  pcr.py:43-44 -> pcr.py:47-48       :386  pcr.py:43 -> pcr.py:47
+    :394  pcr.py:33-56 -> pcr.py:37-60       :395  pcr.py:162 -> pcr.py:334
+    :397  pcr.py:162 -> pcr.py:334
+    :409  pcr.py:33-56 -> pcr.py:37-60
+    :427  pcr.py:159-160 -> pcr.py:331-332   :430  pcr.py:160 -> pcr.py:332
+    :444  pcr.py:151-155 -> pcr.py:323-327   :447  pcr.py:151 -> pcr.py:323
+    :448  pcr.py:156 -> pcr.py:328
+    :460  pcr.py:91-96 -> pcr.py:240-245     :463  pcr.py:95 -> pcr.py:244
+    :530  pcr.py:162 -> pcr.py:334
+    :547  pcr.py:88 -> pcr.py:237            :550  pcr.py:88 -> pcr.py:237
+    :598  pcr.py:179-219 -> pcr.py:380-420   :601  pcr.py:197 -> pcr.py:398
+
+`tests/test_semantics.py:527` (round-2 finding 12's named example, "Mutation:
+pcr.py:162 `results[invocation.id] = value`") is the `:530` row above: the statement
+is now `src/pyto/pcr.py:334`.
+
+Six citations there point at statements the seam **rewrote**, not merely moved, so
+they need a reading rather than a renumber: `:410`, `:412`, `:505` cite
+`pxc.set(invocation.into, value)`, now `board.set(invocation.into, value)` at
+`pcr.py:336`; `:475`, `:478` cite `resolved_inputs[name] = pxc.get(source)`, now
+`board.get(source)` at `pcr.py:320`; `:487`, `:490` cite
+`pxc.register(invocation.calculation)`, now `board.register(...)` at `pcr.py:314`,
+and `pxc.call` at `pcr.py:161` is now `board.call` at `pcr.py:333`; `:502` cites the
+`161-164` publication block, now `pcr.py:333-336`. `board` is `pxc` itself unless
+`observe=True`, so every claim still holds; only the names moved.
+
+### tests/test_first_class.py (Day 1 suite)
+
+    :68   pcr.py:98-133 -> pcr.py:247-282
+    :149  pcr.py:112-116 -> pcr.py:261-265   (its `pcr.py:163-164` is now :335-336)
+    :167  pcr.py:118-123 -> pcr.py:267-272
+    :183  pcr.py:59-78 -> pcr.py:63-145      (PcrRun now ends at the trailing `receipts`)
+    :189  pcr.py:162 -> pcr.py:334           (its `pcr.py:177`, the `return PcrRun(...)`, is now :378 and returns `receipts` too)
+    :195  pcr.py:112-116 -> pcr.py:261-265   (its `pcr.py:156-157` is now :328-329)
+    :208  pcr.py:172 -> pcr.py:373
+    :222  pcr.py:161-164 -> pcr.py:333-336   :228  pcr.py:164 -> pcr.py:336
+    :238, :241, :242  pcr.py:156 -> pcr.py:328
+    :272  pcr.py:179-219 -> pcr.py:380-420
+
+### experiments/CAPTURE.md and experiments/s3-synthetic/
+
+    CAPTURE.md:33                     pcr.py:159-160 -> pcr.py:331-332
+    s3-synthetic/test_s3_synthetic.py:18   pcr.py:112-116 -> pcr.py:261-265
+    s3-synthetic/test_s3_synthetic.py:20   pcr.py:147-149 -> pcr.py:319-321
+    s3-synthetic/test_s3_synthetic.py:125  pcr.py:147-149 -> pcr.py:319-321
+    s3-synthetic/README.md:27              pcr.py:112-116 -> pcr.py:261-265
+    s3-synthetic/README.md:28              pcr.py:147-149 -> pcr.py:319-321
+
+`experiments/runs/day1/` also carries ~340 such citations. It is a **run record of
+Day 1** — a frozen account of a tree that no longer exists — and must not be
+renumbered against today's `pcr.py`.
+
+## 3. `experiments/grouped-ablation/program.py` cannot be corrected this day
+
+`program.py:4` (`pcr.py:99-133`) and `program.py:37` (`pcr.py:112-116`) are stale; the
+correct targets are `pcr.py:247-282` and `pcr.py:261-265`. The edit was applied and
+then **reverted**, because it breaks the day's own kill criterion: lane C measures
+`program_lines_changed` as `git diff --numstat d9dded6 -- program.py calculations.py`
+(`second_experiment.py:158-166`) and
+`test_second_experiment.py::NoReconstruction::test_program_lines_changed_is_zero_for_all_three_runs`
+requires 0. A comment-only edit still counts as two changed lines and turned all three
+committed ledgers to `program.py: 4`. Renumbering these two comments is a Day 3 or
+later job, once the "program.py is untouched since d9dded6" claim no longer has to
+hold, or the measure is taught to ignore comment-only hunks — which would weaken it.
+
+## 4. Still open from round 1, unchanged by round 2
+
+`commit.txt`'s `-dirty` suffix (round 1 item 1) is still open and for the same
+reason: round 2's own edits to `retain.py`, `replay.py`, `test_replay.py`,
+`test_second_experiment.py`, `timing.py` and this file are uncommitted, and
+`WATCHED_PATHS` (`run.py:55`) correctly reports them as dirt. `evidence/run-1/`,
+`run-2-regroup/`, `run-3-reinput/` and `run-4-from-retained/` were all regenerated
+in this round (runs 2-4 with `--force`, after run-1, so their `ms_saved` resolves to
+the committed `run-1/receipts.json`), so no evidence file is stale with respect to
+the sources beside it -- only the sha stamp is. The close-it commands in round 1
+item 1 are unchanged and still the way to clear it.
+
+## 5. Round 2 needed no library change either
+
+`pyto/src/` is byte-identical across this round: `git diff --stat <round-2 base> --
+pyto/src/` is empty. The day's one library seam remains the receipts seam in
+`pcr.py`, and `json.dumps([asdict(t) for t in run.ticks])` is untouched because
+`pcr.py` is untouched. No required fix in this round asked for a second one; item 1
+above is the only place where a library-shaped change was *considered* (a
+per-function provider digest), and it is a change to the experiment-local
+`retain.py` record shape, not to `pyto/src/`.
