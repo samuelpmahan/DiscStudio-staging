@@ -24,6 +24,11 @@ the --out basename, inheritance derives from an explicit prior ledger (None on D
 and the authoring files are bound by sha256. commit.txt is `git rev-parse HEAD` plus
 `-dirty` when this directory or pyto/src differs from HEAD, so the evidence never
 names a commit the producing code was not at (Day 1 fixer round 2, findings 1-2).
+The whole `evidence/` tree is excluded from that judgement (`evidence_excludes`,
+Day 2 fixer round 3, finding 7): outputs are not code, so regenerating one run --
+which necessarily leaves its siblings and the replay/tamper logs modified beside
+it -- does not make the next run stamp itself dirty. Uncommitted edits to any
+producing source still do.
 """
 
 from __future__ import annotations
@@ -53,6 +58,7 @@ from timing import timed  # noqa: E402
 AUTHORING_FILES = ("features.py", "calculations.py", "program.py")
 SRC_DIR = os.path.normpath(os.path.join(HERE, "..", "..", "src"))
 WATCHED_PATHS = (HERE, SRC_DIR)  # the code that produces the evidence: this experiment and the library
+EVIDENCE_ROOT = os.path.join(HERE, "evidence")  # outputs, never code (see evidence_excludes)
 UNINFORMATIVE_DELTA = 0.05
 EXTERNAL_ADDRESSES = (ROWS.address, GROUPS_PART.address)  # what retain_run seeds a replay from
 
@@ -226,6 +232,38 @@ def saved_work(result: dict, out_dir: str, prior: dict | None = None) -> dict:
     }
 
 
+def evidence_excludes(*out_dirs: str) -> tuple[str, ...]:
+    """The paths `commit_sha` must not count as dirt: the whole evidence tree, plus
+    any output directory outside it.
+
+    Outputs are not code (Day 2 fixer round 3, finding 7). The stamp answers "was the
+    code that produced this evidence committed?", and every file under
+    `evidence/` is a product of that code, not part of it -- including the sibling
+    runs and the replay/tamper logs a regeneration of ONE run leaves modified beside
+    it. Excluding only the directory being written (which is what this did before)
+    made every run after the first stamp itself `-dirty` purely because an earlier
+    step of the same regeneration had rewritten a neighbouring output, so the suffix
+    stopped distinguishing "uncommitted code" from "freshly regenerated evidence" --
+    the one thing it exists to say.
+
+    What is deliberately NOT excluded: `run.py`, `retain.py`, `replay.py`,
+    `second_experiment.py`, the three run_* scripts, `program.py`,
+    `calculations.py`, `features.py` and all of `pyto/src`. An uncommitted edit to
+    any of those still stamps `-dirty`, because the evidence then really did come
+    from code that is in no commit.
+
+    {?} EvidenceDirtiness (pyto/questions.md): the owner may prefer stamping outputs
+    too, on the grounds that a regenerated-but-uncommitted evidence tree is also a
+    state no commit describes. Recorded there rather than decided silently here.
+    """
+    out: list[str] = [os.path.abspath(EVIDENCE_ROOT)]
+    for out_dir in out_dirs:
+        path = os.path.abspath(out_dir)
+        if path not in out and not path.startswith(os.path.abspath(EVIDENCE_ROOT) + os.sep):
+            out.append(path)
+    return tuple(out)
+
+
 def dirty_paths(repo_dir: str = HERE, watch: tuple[str, ...] = WATCHED_PATHS, exclude: tuple[str, ...] = ()) -> list[str]:
     """Repo-relative paths under `watch` that differ from HEAD (modified, staged or untracked).
 
@@ -286,8 +324,8 @@ def write_evidence(
     """Write the evidence file set; repo_dir/watch feed commit_sha (defaults: this repo, this dir + pyto/src)."""
     os.makedirs(out_dir, exist_ok=True)
     # Resolve the producing commit before any output is written, and never count the
-    # evidence directory itself as dirt: outputs are not the code that produced them.
-    sha = commit_sha(repo_dir, watch, exclude=(os.path.abspath(out_dir),))
+    # evidence tree as dirt: outputs are not the code that produced them (evidence_excludes).
+    sha = commit_sha(repo_dir, watch, exclude=evidence_excludes(out_dir))
     _dump(os.path.join(out_dir, "testimony.json"), result["testimony"])
     _dump(os.path.join(out_dir, "comparison.json"), {"seed": result["seed"], "n": result["n"], "baseline": BASELINE_KEY, "ranking": ranking(result["comparison"]), "rows": result["comparison"]})
     _text(os.path.join(out_dir, "comparison.md"), comparison_markdown(result))

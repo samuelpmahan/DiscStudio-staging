@@ -554,6 +554,29 @@ def retain_run(
     `{"commit": run.commit_sha()}`, so a record never silently implies that its
     `provider` hashes are the library that produced the sibling evidence.
     Nothing here shells out to git; an absent `retained_at` leaves `commit` None.
+
+    `results` and `receipts.json`: one measurement, two moments, one object
+    ----------------------------------------------------------------------
+    `results[id]` below is `digest_of(run.results[id])` -- sha256 over
+    `json.dumps(value, sort_keys=True, separators=(",", ":"))` with no `default=`
+    (retain.py:113-124). When the run was executed with `observe=True`, the same
+    invocation already carries `Receipt.result_sha256`, computed by
+    `pyto.pcr._result_sha256` (src/pyto/pcr.py:162-176) over **exactly the same
+    canonical JSON, also with no `default=`**, at the instant the invocation
+    returned.
+
+    They are therefore the *same measurement of one object taken at two moments*,
+    not two independent digests that happen to agree: `pcr.py:334-336` publishes
+    the value the Calculation returned into `run.results[id]` and (when there is
+    an `into`) into the PxC as the very same object -- no copy -- and `retain_run`
+    digests that alias later, once the whole run has finished. Equality is the
+    expected reading, and an inequality is a real finding rather than a formatting
+    difference: it means the object was mutated between the invocation returning
+    and the record being retained (a later Calculation holding on to a shared
+    result and editing it in place is the way that happens here). That equality is
+    asserted per id, for every committed run, by
+    `test_second_experiment.py::RetainedDigestsEqualReceiptDigests` (Day 2 fixer
+    round 3, finding 6).
     """
     program = to_program(run)
 
@@ -608,8 +631,21 @@ def write_record(record: Mapping[str, Any], record_path: str) -> str:
     return record_path
 
 
-def replay(record: Mapping[str, Any], registry: Mapping[str, Any]) -> tuple[PxC, PcrRun]:
+def replay(
+    record: Mapping[str, Any],
+    registry: Mapping[str, Any],
+    *,
+    observe: bool = False,
+) -> tuple[PxC, PcrRun]:
     """Seed a fresh PxC from the record's JSON externals and re-run the rebuilt program.
+
+    `observe` is forwarded to `PCR.run` (the Day 2 receipts seam, src/pyto/pcr.py):
+    with it on, the returned `PcrRun.receipts` carries one `Receipt` per invocation,
+    so a replay can report `Receipt.result_sha256` beside `digest_of(results[id])`
+    instead of only the latter. It defaults to False because the seam is additive and
+    the callers that only need values should not pay for it; `run.ticks`'s testimony
+    bytes are identical either way (tests/test_receipts.py::TestimonyBytesUnchanged),
+    so turning it on cannot change what a replay is compared against.
 
     Order (fixer round 1, finding 1): `from_program` resolves every calculation
     address first, so a registry hole still raises KeyError before anything else
@@ -635,4 +671,4 @@ def replay(record: Mapping[str, Any], registry: Mapping[str, Any]) -> tuple[PxC,
         if isinstance(value, Mapping) and "digest" in value and "ref" in value:
             continue
         pxc.set(Part(address), copy.deepcopy(value))
-    return pxc, pcr.run(pxc)
+    return pxc, pcr.run(pxc, observe=observe)

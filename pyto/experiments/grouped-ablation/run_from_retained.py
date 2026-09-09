@@ -156,7 +156,6 @@ def main(argv: list[str] | None = None) -> int:
         prior_run_label="run-1",
         registry_addresses_used=sorted(retain.registry_from_pcr(pcr)),
         all_registry_addresses=sorted(REGISTRY),
-        input_parts_changed=[SPLIT.address],
         record_prior=record_1, record_this=record_4,
         prior_receipts=receipts_1,
         program_lines=program_lines,

@@ -38,6 +38,7 @@ from run import (  # noqa: E402
     _dump,
     _text,
     commit_sha,
+    evidence_excludes,
     jsonable,
     receipts_payload,
     ranking,
@@ -180,7 +181,7 @@ def write_retained(pxc, run, external_addresses: list[str], registry: Mapping[st
     so record["provider"] is never read as the library that produced the run when it is
     only the library that retained the record (fixer round 1, finding 5)."""
     path = os.path.join(out_dir, "retained.json")
-    sha = commit_sha(HERE, WATCHED_PATHS, exclude=(os.path.abspath(out_dir),))
+    sha = commit_sha(HERE, WATCHED_PATHS, exclude=evidence_excludes(out_dir))
     record = retain.retain_run(
         pxc, run, external_addresses, registry=registry, record_path=path,
         retained_at={"commit": sha},
@@ -195,6 +196,55 @@ def write_receipts(run, out_dir: str) -> dict:
     return payload
 
 
+# --------------------------------------------------------------- input Parts, by digest
+
+
+def external_digests(record: Mapping[str, Any]) -> dict[str, str | None]:
+    """{external address: sha256 of that entry} for one retained record.
+
+    An inline external is digested with `retain.digest_of` -- the same canonical JSON,
+    no `default=`, that produced `record["results"]`. A sidecar external
+    ({"digest", "ref"}, retain.py:579-582) is represented by the digest it already
+    carries, so a value too large or too non-JSON to inline is compared by the same
+    kind of measurement as an inline one rather than by the filename beside it.
+    """
+    out: dict[str, str | None] = {}
+    for address, entry in (record.get("external") or {}).items():
+        if isinstance(entry, Mapping) and "digest" in entry and "ref" in entry:
+            out[address] = entry["digest"]
+        else:
+            out[address] = retain.digest_of(entry)
+    return out
+
+
+def input_parts_changed(
+    record_prior: Mapping[str, Any], record_this: Mapping[str, Any]
+) -> list[str]:
+    """The external addresses whose value differs between two retained records.
+
+    Computed, never passed in (Day 2 fixer round 3, finding 4). Each of the three
+    Day 2 scripts used to hand `saved_work` a literal list naming what its author
+    believed it had changed -- `["input.ablation.groups"]`, `["input.ablation.rows"]`,
+    `[SPLIT.address]` -- so the field agreed with the script's intent by construction
+    and would have kept agreeing if the script had changed a different Part, or none.
+    It is now read out of the two records' `external` maps by digest, which is the
+    same evidence `compare_local._external_changed` reasons over.
+
+    Scope is the UNION of both records' external addresses, so an input Part that one
+    run reads and the other does not counts as changed: run-4 dropping
+    `input.ablation.rows` (it consumes run-1's retained split instead) is a change to
+    the run's input Parts exactly as much as the `scratch.ablation.split` it added,
+    and reporting only the addition would describe half of the boundary move.
+    An address present in both with an equal digest is not listed.
+    """
+    prior, this = external_digests(record_prior), external_digests(record_this)
+    return sorted(
+        address
+        for address in set(prior) | set(this)
+        if prior.get(address) != this.get(address)
+    )
+
+
 # --------------------------------------------------------------- saved-work.json (reuse ledger)
 
 
@@ -204,7 +254,6 @@ def saved_work(
     prior_run_label: str,
     registry_addresses_used: list[str],
     all_registry_addresses: list[str],
-    input_parts_changed: list[str],
     record_prior: Mapping[str, Any],
     record_this: Mapping[str, Any],
     prior_receipts: Mapping[str, Mapping[str, Any]],
@@ -224,6 +273,10 @@ def saved_work(
     invocation still exists in both programs and its retained digest matches) or
     'removed' (run_from_retained.py -- the invocation was not declared at all
     because its output was seeded as an external Part instead).
+
+    `input_parts_changed` is NOT a parameter: it is derived here from the two
+    records' external digests by `input_parts_changed(record_prior, record_this)`
+    (fixer round 3, finding 4), so no caller can assert what it changed.
     """
     explanation = compare_local.explain_changes(record_prior, record_this)
     skippable = explanation[skip_reason]
@@ -240,7 +293,7 @@ def saved_work(
         "calculations_added": calculations_added,
         "program_lines_changed": {**program_lines, "total": sum(program_lines.values())},
         "program_lines_changed_base": program_lines_base,
-        "input_parts_changed": sorted(input_parts_changed),
+        "input_parts_changed": input_parts_changed(record_prior, record_this),
         "explain_changes": explanation,
         "skip_reason": skip_reason,
         "invocations_skippable_by_digest": skippable,
@@ -269,7 +322,7 @@ def write_common_evidence(
     `timings` is the only field here that is not expected to reproduce byte-for-byte
     across two regenerations of the same run (wall-clock, not semantics)."""
     os.makedirs(out_dir, exist_ok=True)
-    sha = commit_sha(repo_dir, watch, exclude=(os.path.abspath(out_dir),))
+    sha = commit_sha(repo_dir, watch, exclude=evidence_excludes(out_dir))
     _dump(os.path.join(out_dir, "testimony.json"), testimony)
     _dump(os.path.join(out_dir, "comparison.json"), {
         "seed": seed, "n": n, "baseline": BASELINE_KEY,
