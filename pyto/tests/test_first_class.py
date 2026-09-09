@@ -218,18 +218,29 @@ class SharedResultFanoutTest(unittest.TestCase):
             },
         )
 
-    def test_render_disc_result_is_the_same_object_for_both_cards(self):
-        """The fn: binding passes results[id] itself, not a copy (pcr.py:156, 161)."""
-        art = self.run.results["render-disc"]
-        self.assertIs(self.run.results["single-card"]["art"], art)
-        self.assertIs(self.run.results["battle-card"]["leftArt"], art)
-        self.assertIs(self.pxc.get(DISC_ART), art)
-        self.assertEqual(art, "<svg data-disc='mako' />")
+    def test_published_part_is_the_direct_result_object(self):
+        """Publication (pcr.py:161-164) stores the very object held in results[id]:
+        the Calculation runs once and pxc.set(into, value) receives that value, not a
+        re-evaluation or a copy. The dict-valued card results are the witnesses; the
+        str-valued render result is only checked for equality, because
+        copy.deepcopy(str) returns the same object and a str identity test cannot be
+        killed (runs/day1/mutation-kill.md row 38: that test survived and was deleted).
+        Mutation: pcr.py:164 `pxc.set(invocation.into, value)` ->
+        `pxc.set(invocation.into, pxc.call(invocation.calculation, call_args))`."""
+        for key, part in (("single-card", SINGLE_CARD), ("battle-card", BATTLE_CARD)):
+            with self.subTest(id=key):
+                self.assertIsInstance(self.run.results[key], dict)
+                self.assertIs(self.pxc.get(part), self.run.results[key])
+        self.assertEqual(self.pxc.get(DISC_ART), "<svg data-disc='mako' />")
+        self.assertEqual(self.run.results["render-disc"], "<svg data-disc='mako' />")
 
     def test_shared_mutable_result_is_not_copied_between_consumers(self):
-        """Companion to the str-valued example: a dict fn: result is passed by identity
-        (pcr.py:156, 161). deepcopy of a str is the same object, so only a mutable
-        shared result can detect a copy inserted at pcr.py:156."""
+        """The fn: binding passes results[id] itself, not a copy (pcr.py:156, 161).
+        A dict payload is used on purpose: the fan-out example's render result is a
+        str (test_first_class.py:32) and copy.deepcopy(str) is the same object, so
+        only a mutable shared result can detect a copy inserted at pcr.py:156.
+        Mutation: pcr.py:156 `results[source.calculation_id]` ->
+        `__import__("copy").deepcopy(results[source.calculation_id])`."""
         pxc = PxC()
         request = Part("input.disc.request")
         shared = Part("px.disc.request.echo")

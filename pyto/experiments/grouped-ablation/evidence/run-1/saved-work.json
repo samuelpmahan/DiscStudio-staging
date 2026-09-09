@@ -6,6 +6,11 @@
     "program.py": 75
   },
   "authoring_lines_total": 239,
+  "authoring_sha256": {
+    "calculations.py": "92384feab36a6b31ef713374c48d0b74307e371281ad0ef9c3345d8a2f97a152",
+    "features.py": "7eb2fdf759bede4918bfd9ed4802fb4f8321706f4cec316fc1b88b612e48bbad",
+    "program.py": "240c576945bf5c270da46a9c38d9a9543767101ba3ac55d547c53fe2cb758d55"
+  },
   "calculation_addresses": [
     "fn.ablation.compare",
     "fn.ablation.fit",
@@ -15,11 +20,11 @@
   ],
   "calculations_authored": 5,
   "fixture": "synthetic-fixture",
+  "inherited_addresses": [],
   "inherited_calculations": 0,
   "invocations_executed": 15,
-  "invocations_skipped": 0,
-  "ms_saved": 0.0,
-  "run": "run-1 baseline (nothing reused yet; later runs report work saved against this)",
+  "prior_run": null,
+  "run": "run-1",
   "ticks": [
     "Prepare",
     "Fit",
@@ -28,9 +33,9 @@
   ],
   "variants": 6,
   "wall_ms": {
-    "build_program": 0.157,
-    "make_data": 4.454,
-    "pcr.run": 22.887
+    "build_program": 0.191,
+    "make_data": 4.008,
+    "pcr.run": 24.906
   },
-  "wall_ms_total": 27.498
+  "wall_ms_total": 29.105
 }

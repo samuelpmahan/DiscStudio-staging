@@ -1,0 +1,147 @@
+{
+  "lens": "prohibition",
+  "day": 1,
+  "round": 3,
+  "final_round": true,
+  "verified_at_sha": "9435f15",
+  "base_sha": "3b91d83",
+  "pass": true,
+  "src_diff_stat_empty": {
+    "vs_3b91d83": true,
+    "vs_a4dc559": true,
+    "vs_HEAD": true,
+    "git_status_pyto_src": "clean",
+    "rechecked_at_record_stage": true
+  },
+  "check_all": {
+    "command": "CHECK_ALL_LOG_DIR=<scratch> bash scripts/check_all.sh (in-round from cwd=/; record stage from cwd=pyto, output retained as runs/day1/tests.txt:92-311)",
+    "exit": 0,
+    "counts": {
+      "library": 43,
+      "experiments/grouped-ablation": 31,
+      "experiments/s3-synthetic": 5,
+      "consumer": 18,
+      "disc-stats": 4,
+      "examples": 2
+    },
+    "pyto_module": "/home/user/DiscStudio-staging/pyto/src/pyto/__init__.py (editable install; no PYTHONPATH=src anywhere, check_all.sh:94,100; tests.txt:97)",
+    "failure_path_exercised": "EXPECT_CONSUMER=17 bash scripts/check_all.sh -> exit 1 with '-- consumer: FAILED (expected exactly 17 tests, got 18)' (check_all.sh:64-69) and 'SOME SUITES FAILED' (check_all.sh:116-118); git status --porcelain identical before and after; consumer data dir gitignored (consumers/discstudio-card/.gitignore:7)"
+  },
+  "findings": [
+    {
+      "target": "pyto/src",
+      "verdict": "accept",
+      "reason": "no library change on Day 1",
+      "evidence": "`git diff --stat 3b91d83 -- pyto/src` empty; `git diff --stat a4dc559 -- pyto/src` empty (the SHA ULTRACODE-WEEK.md:51 names; both ancestors of HEAD 9435f15); `git status --porcelain -- pyto/src` empty; `--ignored` shows only pyto/src/pyto/__pycache__/ and pyto/src/pyto_lab.egg-info/; `git diff --name-only 3b91d83 -- pyto/src` empty (CAPTURE.md:44-46)"
+    },
+    {
+      "target": "pyto/experiments/grouped-ablation/evidence/run-1/* (9 files), pyto/experiments/s3-synthetic/{testimony,snapshot}.json",
+      "verdict": "accept",
+      "reason": "no lambda or <function repr in any evidence JSON",
+      "evidence": "`grep -rn 'lambda\\|<function' pyto/experiments/grouped-ablation/evidence` -> no match (exit 1); self-enforced by test_grouped_ablation.py:43 FORBIDDEN_TOKENS and :179-184 test_evidence_contains_no_lambda_or_function_repr"
+    },
+    {
+      "target": "11 retained .py files (tests/test_first_class.py, tests/test_graph.py, tests/test_semantics.py, grouped-ablation/{calculations,features,program,run,test_grouped_ablation,timing}.py, s3-synthetic/test_s3_synthetic.py, scripts/verify_disc_consumer.py)",
+      "verdict": "accept",
+      "reason": "no lambdas, no pickle/dill/marshal/itertools imports in retained code",
+      "evidence": "ast.walk -> 0 ast.Lambda nodes, 0 prohibited imports; text grep for pickle|dill|marshal under pyto/experiments, pyto/tests, pyto/scripts -> no match; remaining 'lambda' text hits are prose (CAPTURE.md:36,39; runs/day1/prompt.md:13,19,75) and the guard test (test_grouped_ablation.py:43,149,156,179); diff.patch added lines containing lambda/<function are exactly CAPTURE.md prose (diff.patch:55,58) and the guard test (diff.patch:1552,1658,1665,1688)"
+    },
+    {
+      "target": "pyto/experiments/grouped-ablation/calculations.py:24-31",
+      "verdict": "accept",
+      "reason": "leave-one-group-out only; no subset enumeration",
+      "evidence": "`grep -n '32768\\|combinations(\\|powerset' pyto/experiments/grouped-ablation/*.py` hits only test_grouped_ablation.py:137 (method name) and :143 (`self.assertLess(len(variants), 32768)`), with :140-147 asserting 5 ablations + baseline, each drop of length 1, keys ['all','drop_g0'..'drop_g4']; select_variants builds baseline plus one variant per group ('Never enumerates feature subsets', calculations.py:25); no itertools import; evidence/run-1/variants.json holds 6 variants"
+    },
+    {
+      "target": "src/*.js, index.html",
+      "verdict": "accept",
+      "reason": "not edited",
+      "evidence": "`git diff --numstat 3b91d83 -- src index.html` empty; `git status --porcelain -- src index.html` empty; every added/untracked path is under pyto/ (`git diff --name-only 3b91d83 | grep -v '^pyto/'` -> none, rechecked at the record stage); the new .ts/.js files are reference copies under pyto/reference/lab/{chainspot-matrix,chesslab-lab,wumpus-core}"
+    },
+    {
+      "target": "pyto/scripts/check_all.sh",
+      "verdict": "accept",
+      "reason": "critic gap 8 / gap 18a / exit behavior satisfied",
+      "evidence": "root from own path :14; examples with plain python3 :94,:100; the only PYTHONPATH is `env PYTHONPATH=.` for disc-stats :88 (comments :7-10, :86); zero-count assertions via `! grep -q` :52,:66,:104 and a positive `grep -q '^Ran 0 tests'` guard :54; FAILED -> `exit 1` :116-118; `bash -n` exit 0; ASCII, 0 CR bytes, mode -rwxr-xr-x; real run exit 0 with counts library 43 / grouped-ablation 31 / s3-synthetic 5 / consumer 18 / disc-stats 4 / examples 2 and final line 'ALL SUITES PASSED' (tests.txt:311)"
+    },
+    {
+      "target": "runs/day1/tests.txt: PYTHONPATH / sys.path.insert lines",
+      "verdict": "accept",
+      "reason": "only whitelisted intra-repo lines (CAPTURE.md:52-65)",
+      "evidence": "tests.txt:285 'env PYTHONPATH=.' (disc-stats, check_all.sh:88); tests.txt:239 '[s3-synthetic] sys.path.insert(0, /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno) intra-repo reference dir' (self-checked by test_sys_path_insert_is_intra_repo, tests.txt:248-249); nothing contains 'src'"
+    },
+    {
+      "target": "new/modified text files since 3b91d83 (incl. untracked)",
+      "verdict": "accept",
+      "reason": "LF line endings",
+      "evidence": "`file pyto/experiments/grouped-ablation/*.py | grep -c CRLF` = 0; CR scan over all 493 files added since 3b91d83 or untracked restricted to text extensions -> 0 hits (raw-CR hits are all .png signature bytes); modified-since-3b91d83 text files -> 0 hits (CAPTURE.md:42-43). runs/day1/diff.patch carries 51 CR bytes, all on removed (-) lines of the CRLF test_first_class.py at 3b91d83 (`git show 3b91d83:pyto/tests/test_first_class.py | grep -c $'\\r'` = 51; working tree = 0)"
+    },
+    {
+      "target": "pyto/README.md:19",
+      "verdict": "accept",
+      "reason": "critic gap 18c: exactly one test line changed",
+      "evidence": "`git diff --numstat 3b91d83 -- pyto/README.md` = 1 added / 1 removed; hunk @@ -16,7 +16,7 @@ replaces the `PYTHONPATH=src python -c \"import sys; sys.path.insert(0, 'tests'); import test_first_class as t; ...\"` invocation with `PYTHONPATH=src python3 -m unittest discover -s tests -v`; the `python examples/basic.py` sentence is unchanged; working tree == HEAD"
+    },
+    {
+      "target": "pyto/experiments/CAPTURE.md, pyto/experiments/runs/day1/",
+      "verdict": "accept",
+      "reason": "CAPTURE.md and every required runs/day1 entry exist after the record stage",
+      "evidence": "CAPTURE.md 84 lines; runs/day1 holds prompt.md, candidates/{README.md, reader-*.py x4}, verdicts/{mutation,semantics,prohibition,completeness}.json, diff.patch, tests.txt, mutation-kill.md, meta.json, untested.md"
+    },
+    {
+      "target": "runs/day1/verdicts/mutation.json, runs/day1/mutation-kill.md",
+      "verdict": "accept",
+      "reason": "mutations were applied only to scratch copies, never repo src",
+      "evidence": "every mutation path cited is under scratchpad/mut/r3-NN/src or scratchpad/mut/r3-clean/src (e.g. mutation.json 'per_test_alone': '40/40 pass against repo src; 40/40 pass against scratchpad/mut/r3-clean/src'); consistent with the empty pyto/src diff"
+    },
+    {
+      "target": "pyto/experiments/grouped-ablation/run.py:193-198, evidence/run-1/saved-work.json",
+      "verdict": "accept",
+      "reason": "critic gap 18b: counts computed at run time",
+      "evidence": "run.py:193 `\"calculations_authored\": len(REGISTRY)`, :197-198 authoring_lines from splitlines counts (:158); saved-work.json calculations_authored 5, authoring_lines_total 239, invocations_executed 15, variants 6"
+    },
+    {
+      "target": "pyto/experiments/runs/day1/{tests.txt,diff.patch}",
+      "verdict": "accept",
+      "reason": "in-round finding (minor) resolved at the record stage: both files now exist",
+      "evidence": "tests.txt written from `bash scripts/check_all.sh` (311 lines, last line 'ALL SUITES PASSED', tests.txt:311; the separately requested `python3 -m unittest discover -s tests -v` run precedes it at tests.txt:1-90 so the file still ends with check_all's verdict per CAPTURE.md:80-82); diff.patch = `git diff 3b91d83 -- pyto ':(exclude)pyto/experiments/runs'` (6546 lines, 56 files, CAPTURE.md:22); meta.json commit_sha stays 'pending' for the orchestrator"
+    },
+    {
+      "target": "pyto/experiments/runs/day1/verdicts/prohibition.json",
+      "verdict": "accept",
+      "reason": "in-round finding (minor) resolved: the stale round-2 file (counts said grouped-ablation 22) is replaced by this round-3 verdict",
+      "evidence": "counts library 43, experiments/grouped-ablation 31 (test_grouped_ablation.py has 31 `def test_`), experiments/s3-synthetic 5, consumer 18, disc-stats 4, examples 2; tests.txt:189,235,255,282,295,300"
+    },
+    {
+      "target": "pyto/experiments/art-tournament/ (untracked)",
+      "verdict": "missing",
+      "severity": "minor",
+      "reason": "untracked art-tournament files sit in the working tree outside every Day 1 lane target; a blanket `git add -A` at the Day 1 commit would sweep them in",
+      "evidence": "`git ls-files --others --exclude-standard` at the record stage: 25 under art-tournament/baseline/, 3 under harness/ (contact_sheet.py, fixtures.py, lint_svg.py), 513 under studios/ (mostly PNG/SVG); Day 1 lane targets are meta.json agents[].targets and none names art-tournament",
+      "required_fix": "Orchestrator stages Day 1 targets explicitly (pyto/tests, pyto/README.md, pyto/experiments/CAPTURE.md, pyto/experiments/grouped-ablation, pyto/experiments/s3-synthetic, pyto/experiments/runs/day1, pyto/scripts/check_all.sh, plus pyto/research/ULTRACODE-WEEK.md if its line-51 edit is accepted) rather than `git add -A`, or commits art-tournament separately."
+    },
+    {
+      "target": "pyto/research/ULTRACODE-WEEK.md:51",
+      "verdict": "missing",
+      "severity": "minor",
+      "reason": "the plan file carries an uncommitted one-line edit that no Day 1 lane owns",
+      "evidence": "`git diff --numstat HEAD -- pyto/research/ULTRACODE-WEEK.md` = 1/1 at line 51 (verification command now says run.py 'writes to a fresh temp dir (git status stays clean; the tracked evidence/run-1 is regenerated only by `--out evidence/run-1 --force`)'); the annotation is accurate: run.py:271 tempfile.mkdtemp(prefix='grouped-ablation-run-'), run.py:273-274 FileExistsError without --force; verified `python3 experiments/grouped-ablation/run.py` left `git status --porcelain` byte-identical",
+      "required_fix": "Orchestrator includes the line in the Day 1 commit (recommended) or reverts it with `git checkout -- pyto/research/ULTRACODE-WEEK.md`; the choice is recorded in meta.json notes."
+    },
+    {
+      "target": "pyto/scripts/check_all.sh:66",
+      "verdict": "missing",
+      "severity": "minor",
+      "reason": "expect_count would always fail for a pinned count of 1 because unittest prints 'Ran 1 test in' (singular); latent only, the pins are 18 and 4",
+      "evidence": "check_all.sh:66 `if ! grep -q \"^Ran $expected tests in\" \"$log\"`; :17-18 EXPECT_CONSUMER=18, EXPECT_DISC_STATS=4; count_from_log :36 already tolerates the singular (`tests? in`)",
+      "required_fix": "Change check_all.sh:66 to `\"^Ran $expected tests? in\"`; may be deferred to check_all.sh v1."
+    },
+    {
+      "target": "pyto/experiments/grouped-ablation/evidence/run-1/commit.txt",
+      "verdict": "accept",
+      "severity": "minor",
+      "reason": "the tracked evidence commit.txt reads a dirty SHA and will keep doing so after the orchestrator commits; by design and truthful, no action mandatory (see semantics.json for the ordering defect that makes a bare SHA unreachable via --force regeneration)",
+      "evidence": "cat commit.txt -> '9435f150fdd03db977179f4ac2aad7e21fcbfd37-dirty'; run.py:16-18 documents the rule and run.py:218-227 implements it; test_grouped_ablation.py:241-249 pins the behavior; saved-work.json authoring_sha256 binds the producing sources regardless of commit state; pyto/src identical at 3b91d83, a4dc559 and the working tree"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "lens": "semantics",
+  "day": 1,
+  "round": 3,
+  "final_round": true,
+  "verified_at_sha": "9435f15",
+  "working_tree": "dirty vs 9435f15 (run.py, test_grouped_ablation.py, evidence/run-1/{commit.txt,saved-work.json,timings.json} modified; see meta.json)",
+  "pass": true,
+  "scratch": "scratchpad/sem3/{assert_semantics.py,run-seed7,run-seed11,run-seed13,run-n800,mut_a_px_raw,mut_b_reorder,mut_c_shadow,circular_dirty2}",
+  "suite": "python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py' -v -> Ran 31 tests OK (tests.txt:232-235)",
+  "findings": [
+    {
+      "target": "experiments/grouped-ablation/evidence/run-1/testimony.json (12 fit/score ticks)",
+      "verdict": "accept",
+      "reason": "fn:split rule holds: all 12 fit/score invocations (6 variants x 2) record inputs['split']=='fn:split' for seeds 7, 11, 13",
+      "evidence": "scratchpad/sem3/run-seed{7,11,13}/testimony.json checked by scratchpad/sem3/assert_semantics.py; mechanism is the declaration-time Part->ResultRef rewrite pcr.py:112-116 with 'split' declared as SPLIT's writer at program.py:65 before family() binds split=SPLIT at program.py:46,54; the only px: inputs are select<-px:input.ablation.groups and split<-px:input.ablation.rows (pcr.py:147-149); asserted by test_grouped_ablation.py:98-103"
+    },
+    {
+      "target": "experiments/grouped-ablation/program.py:64-74 (15 invocations)",
+      "verdict": "accept",
+      "reason": "no args/inputs key collision on any invocation for seeds 7, 11, 13",
+      "evidence": "assert_semantics.py; the silent override that would apply is pcr.py:159-160 call_args.update(invocation.args); asserted by test_grouped_ablation.py:113-118"
+    },
+    {
+      "target": "experiments/grouped-ablation/evidence/run-1/comparison.json",
+      "verdict": "accept",
+      "reason": "ranking drop_g3 > drop_g0 > drop_g1 recovered at seeds 7, 11, 13 with |delta|<0.05 for g2/g4",
+      "evidence": "seed 7: +1.5896/+1.2267/+0.6402, g4 -0.0007, g2 -0.0031; seed 11: +1.9288/+1.1794/+0.5856, g2 -0.0011, g4 -0.0017; seed 13: +1.6879/+1.2204/+0.7266, g4 -0.0017, g2 -0.0023; matches scratchpad/ablation_spike.py:44-45 TRUE_W/GROUPS (retained as runs/day1/candidates/reader-ablation_spike.py); seed threaded explicitly via features.py:30-32 make_data(seed, n) instead of the spike's module-level random.seed(7) at ablation_spike.py:6; asserted by test_grouped_ablation.py:64-67 (SEEDS=(7,11,13) :40, EXPECTED_TOP :41) and :69-74"
+    },
+    {
+      "target": "experiments/grouped-ablation/test_grouped_ablation.py:98-103",
+      "verdict": "accept",
+      "reason": "test_all_twelve_fit_and_score_invocations_consume_fn_split is a live kill",
+      "evidence": "scratch mutation moving the split declaration after family() in build_program (scratchpad/sem3/mut_b_reorder/program.py:65-66) keeps the run alive (Prepare tick still first, pcr.py:139-141) and makes testimony record 'px:scratch.ablation.split'; the test fails on all 12 ids while the other 8 Testimony/Ranking tests still pass; test_mermaid_names_every_invocation_and_split_edges (:259-264) also fails. The literally requested mutation split=Part('px.raw') (scratchpad/sem3/mut_a_px_raw/program.py:46,54) fails earlier: setUpClass errors via KeyError \"PxC: Part 'px.raw' has not been produced\" at core.py:59 from pcr.py:148 (errors=2, 0 tests run)"
+    },
+    {
+      "target": "experiments/grouped-ablation/test_grouped_ablation.py:113-118",
+      "verdict": "accept",
+      "reason": "test_no_args_key_collides_with_a_bound_input_name is a live kill",
+      "evidence": "scratch mutation args={'baseline': BASELINE_KEY, 'all': {'rmse': 0.0, 'n': 0}} on the compare invocation (scratchpad/sem3/mut_c_shadow/program.py:71) runs to completion because pcr.py:159-160 silently substitutes the literal for the bound 'all' input; the collision test fails on id='compare'; test_groups_without_planted_weight_are_uninformative and test_failed_variants_are_retained_not_hidden fail too (deltas 0.25-0.35 instead of <0.05); the fn:split test still passes"
+    },
+    {
+      "target": "experiments/grouped-ablation/run.py:59-61",
+      "verdict": "accept",
+      "reason": "testimony.json is exactly {pcr, ticks}; no results/observations key (critic gap 18d)",
+      "evidence": "run.py:59-61 testimony_of; asserted test_grouped_ablation.py:186-189; run-1 top keys verified"
+    },
+    {
+      "target": "experiments/grouped-ablation/run.py:184-206",
+      "verdict": "accept",
+      "reason": "every value in saved-work.json is computed at run time (critic gap 18b)",
+      "evidence": "len(REGISTRY), sorted(REGISTRY), set intersection with an explicit prior ledger, wc -l via subprocess, sha256 of authoring files, sum over testimony ticks, timings dict; the literal 'invocations_skipped': 0 / 'ms_saved': 0.0 / 'run': 'run-1 baseline (...)' of HEAD's run-1 are gone (git diff HEAD -- evidence/run-1/saved-work.json) and their absence is asserted at test_grouped_ablation.py:209-214"
+    },
+    {
+      "target": "experiments/grouped-ablation/evidence/run-1/{comparison.md,failed-variants.md}",
+      "verdict": "accept",
+      "reason": "both exist; failed-variants.md carries a per-variant interpretation naming planted |w| = 0.0 for g2/g4 as controls (run.py:144-150); comparison.md carries the ranked table with the planted |w| column (run.py:112-130)",
+      "evidence": "cat evidence/run-1/comparison.md, failed-variants.md"
+    },
+    {
+      "target": "experiments/grouped-ablation/**",
+      "verdict": "accept",
+      "reason": "full suite OK; pyto/src empty diff before and after the round; no CR bytes in any experiment .py/.json/.md/.mmd/.txt; run.py default --out writes to a temp dir and left evidence/run-1 untouched across seeds 7/11/13",
+      "evidence": "Ran 31 tests OK (0.864s in-round; tests.txt:232 at the record stage); git status identical before/after"
+    },
+    {
+      "target": "experiments/grouped-ablation/evidence/run-1/*",
+      "verdict": "accept",
+      "reason": "run-1 evidence is consistent with the current code",
+      "evidence": "testimony.json, comparison.json, comparison.md, failed-variants.md, mermaid.mmd, variants.json byte-identical to a fresh seed-7 run (scratchpad/sem3/run-seed7); saved-work.json differs only in run/wall_ms/wall_ms_total; authoring_sha256 for features.py/calculations.py/program.py equals the current files; commit.txt = 9435f150fdd03db977179f4ac2aad7e21fcbfd37-dirty is correct for this tree (run.py and test_grouped_ablation.py modified vs HEAD)"
+    },
+    {
+      "target": "experiments/grouped-ablation/run.py:250-258",
+      "verdict": "missing",
+      "severity": "major",
+      "reason": "Regenerating the tracked evidence/run-1 (`--out evidence/run-1 --force`, ULTRACODE-WEEK.md:50) always stamps commit.txt as `<sha>-dirty` even on a clean tree, because write_evidence writes timings.json/saved-work.json/commit.txt under WATCHED_PATHS[0]=HERE (run.py:46, 250-257) before commit_sha() runs at run.py:258, and dirty_paths (run.py:209-214) then sees the freshly written evidence files; the marker cannot distinguish 'producing code was uncommitted' (run.py:16-18, 220-221) from 'evidence was just regenerated'. No test covers this (CommitShaDirtyMarker tests at test_grouped_ablation.py:277-350 never write into the watched path).",
+      "evidence": "Throwaway git repo scratchpad/sem3/circular_dirty2 (copy of the experiment dir committed with __pycache__/ ignored, `git status --porcelain` empty): commit_sha(repo,(exp,)) before write = ac64a242...(bare); after write_evidence(result, exp/evidence/run-1, None, repo, (exp,)) commit.txt = 'ac64a242...-dirty' and dirty_paths() = ['exp/evidence/run-1/commit.txt','exp/evidence/run-1/saved-work.json','exp/evidence/run-1/timings.json'] only. Masked in the current tree because run-1/commit.txt '9435f150...-dirty' is legitimately dirty.",
+      "required_fix": "In write_evidence (run.py:241-259) compute `sha = commit_sha(repo_dir, watch)` before the first _dump/_text call (or have dirty_paths exclude paths under out_dir), then write commit.txt from that value; add a CommitShaDirtyMarker test that commits an evidence dir inside the watched path in a throwaway repo and asserts write_evidence into that same dir on a clean tree yields a bare sha."
+    },
+    {
+      "target": "experiments/grouped-ablation/run.py:148,117",
+      "verdict": "missing",
+      "severity": "minor",
+      "reason": "failed-variants.md prose hard-codes the test-set size as '100 test rows' (run.py:148) although n is a CLI parameter (run.py:281) and comparison rows carry the real n; '5 groups x 3 features' at run.py:117 is a literal rather than derived from GROUPS.",
+      "evidence": "`python3 experiments/grouped-ablation/run.py --seed 7 --n 800 --out <scratch>/run-n800 --force` writes failed-variants.md lines containing 'fit noise on 100 test rows' while comparison.json rows have n=200 for every variant (scratchpad/sem3/run-n800/). saved-work.json itself contains no literal counts (run.py:184-206).",
+      "required_fix": "Carry row['n'] into failed_variants() rows (run.py:99-109) and interpolate it in failed_variants_markdown (run.py:144-150); derive the group phrase in comparison_markdown (run.py:117) from len(GROUPS) and the group sizes; regenerate run-1 with --force (only prose bytes change)."
+    },
+    {
+      "target": "research/ULTRACODE-WEEK.md:54",
+      "verdict": "missing",
+      "severity": "minor",
+      "reason": "The plan's Day 1 'Evidence retained' line says '16 invocations executed'; the landed program executes 15 (2 Prepare + 6 Fit + 6 Score + 1 Compare) and every retained file says 15.",
+      "evidence": "ULTRACODE-WEEK.md:54 '16 invocations executed' (rechecked at the record stage); evidence/run-1/saved-work.json invocations_executed = 15 (run.py:186 from testimony ticks); testimony.json ticks hold ids select, split, fit.{all,drop_g0..g4}, score.{all,drop_g0..g4}, compare = 15; program.py:64-74.",
+      "required_fix": "Orchestrator (plan owner): correct ULTRACODE-WEEK.md:54 to '15 invocations executed', or leave the plan text frozen and rely on this record; recorded in runs/day1/meta.json notes."
+    },
+    {
+      "target": "experiments/grouped-ablation/run.py:112-130",
+      "verdict": "missing",
+      "severity": "minor",
+      "reason": "comparison.md carries the table and the ranking line but no computed statement of whether the recovered ranking agrees with the planted-weight order (g3 2.0 > g0 1.5 > g1 0.8); failed-variants.md does carry an interpretation (run.py:147-149).",
+      "evidence": "comparison_markdown (run.py:112-130) emits header, two sentences (:117-118), the table and 'Ranking (ablations only): ...' (:128); evidence/run-1/comparison.md confirms; planted_weight_by_group() (features.py:22-27) already provides the data.",
+      "required_fix": "Append one run-time-computed line, e.g. 'Recovered order of informative groups matches planted |w| order: True' from sorted(planted_weight_by_group(), key=weight, reverse=True) vs ranking(result['comparison']) restricted to nonzero-weight groups; never a literal; regenerate run-1 with --force."
+    },
+    {
+      "target": "experiments/grouped-ablation/test_grouped_ablation.py:266-274",
+      "verdict": "missing",
+      "severity": "minor",
+      "reason": "test_checked_in_run_1_matches_seed_7 pins only comparison.json rows of run-1; nothing pins run-1/testimony.json (or mermaid.mmd) bytes, although those bytes are the Day 2 byte-equality oracle (ULTRACODE-WEEK.md:64; critic gap 18d).",
+      "evidence": "Verified in-round that run-1 testimony.json, comparison.json, comparison.md, failed-variants.md, mermaid.mmd and variants.json are byte-identical to a fresh seed-7 run (scratchpad/sem3/assert_semantics.py) and saved-work.json authoring_sha256 matches the current features.py/calculations.py/program.py; not asserted by any test, so drift in run.py:59-61, 230-233 or pcr.py testimony fields would go unnoticed before Day 2.",
+      "required_fix": "Extend test_checked_in_run_1_matches_seed_7 to assert the raw bytes of evidence/run-1/testimony.json equal json.dumps(self.result['testimony'], indent=2, sort_keys=True)+'\\n' (the _dump encoding) and evidence/run-1/mermaid.mmd equals self.result['pcr'].mermaid(); keep the seed/n skip guards."
+    }
+  ]
+}

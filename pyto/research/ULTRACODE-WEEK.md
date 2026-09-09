@@ -48,10 +48,10 @@ to Days 2 to 5 are in `pyto/research/lab-transfer-ledger.md`; the reference sour
 **Verification.**
 
 ```sh
-cd /home/user/DiscStudio-staging/pyto && python3 -m unittest discover -s tests -v   # expect 6 + ~14 tests OK (was 3); python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py' -v   # OK; python3 experiments/grouped-ablation/run.py   # prints ranked table with drop_g3 first, failed variant flagged; bash scripts/check_all.sh   # exit 0 with per-suite counts (library, grouped-ablation, consumer 18, disc-stats 4); git diff --stat a4dc559 -- pyto/src   # empty
+cd /home/user/DiscStudio-staging/pyto && python3 -m unittest discover -s tests -v   # expect 6 + ~14 tests OK (was 3); python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py' -v   # OK; python3 experiments/grouped-ablation/run.py   # prints ranked table with drop_g3 first, failed variant flagged; writes to a fresh temp dir (git status stays clean; the tracked evidence/run-1 is regenerated only by `--out evidence/run-1 --force`); bash scripts/check_all.sh   # exit 0 with per-suite counts (library, grouped-ablation, consumer 18, disc-stats 4); git diff --stat a4dc559 -- pyto/src   # empty
 ```
 
-**Evidence retained.** experiments/grouped-ablation/evidence/run-1/* (testimony after JSON round trip, comparison table, timings, mermaid, saved-work baseline: 5 Calculations authored, N authoring lines, 16 invocations executed, wall ms); experiments/runs/day1/* including mutation-kill.md (rule, mutated line, test that caught it) and tests.txt (full discover -v output); commit SHA in both meta.json and commit.txt.
+**Evidence retained.** experiments/grouped-ablation/evidence/run-1/* (testimony after JSON round trip, comparison table, timings, mermaid, saved-work baseline: 5 Calculations authored, N authoring lines, 15 invocations executed, wall ms); experiments/runs/day1/* including mutation-kill.md (rule, mutated line, test that caught it) and tests.txt (full discover -v output); commit SHA in both meta.json and commit.txt.
 
 **Depends on.** Nothing beyond a4dc559 and the scratch material: scratchpad/ablation_spike.py, probe_rules.py, ablation/ (verified present this session).
 

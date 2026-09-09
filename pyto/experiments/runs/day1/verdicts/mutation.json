@@ -1,318 +1,430 @@
 {
  "lens": "mutation",
  "day": 1,
- "verified_at_sha": "362bf9e",
+ "round": 3,
+ "verified_at_sha": "9435f15",
  "src_diff_stat_empty": true,
- "unmutated": {
-  "discover": "Ran 43 tests OK (repo src, no PYTHONPATH)",
-  "scratch_clean": "test_semantics 31 OK, test_first_class 9 OK"
+ "harness": "scratchpad/mut/run_lens_r3.py",
+ "results": "scratchpad/mut/r3-results.json",
+ "shadowing": {
+  "no_pythonpath": "/home/user/DiscStudio-staging/pyto/src/pyto/__init__.py",
+  "clean_scratch": "scratchpad/mut/r3-clean/src/pyto/__init__.py"
  },
+ "unmutated": {
+  "discover": "Ran 43 tests in 0.004s OK (repo src, no PYTHONPATH)",
+  "per_test_alone": "40/40 pass against repo src; 40/40 pass against scratchpad/mut/r3-clean/src",
+  "modules": {
+   "tests.test_semantics": "Ran 31 tests in 0.003s OK",
+   "tests.test_first_class": "Ran 9 tests in 0.002s OK"
+  }
+ },
+ "enumerated_tests": 40,
  "distinct_tests": 40,
  "killed_tests": 40,
- "docstring_survivors": [
-  "tests.test_first_class.SharedResultFanoutTest.test_render_disc_result_is_the_same_object_for_both_cards"
+ "threshold": 12,
+ "docstring_survivors": [],
+ "deleted_this_round": [],
+ "specificity": {
+  "mutants_breaking_no_other_test": 18,
+  "widest": [
+   {
+    "row": 28,
+    "other_tests_broken": 25
+   },
+   {
+    "row": 23,
+    "other_tests_broken": 14
+   },
+   {
+    "row": 27,
+    "other_tests_broken": 14
+   },
+   {
+    "row": 35,
+    "other_tests_broken": 14
+   },
+   {
+    "row": 29,
+    "other_tests_broken": 13
+   }
+  ]
+ },
+ "informational": [
+  {
+   "test": "tests.test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object",
+   "mutation": "pcr.py:156 `resolved_inputs[name] = results[source.calculation_id]` -> `resolved_inputs[name] = __import__(\"copy\").deepcopy(results[source.calculation_id])`",
+   "result": "OK",
+   "other_tests_broken": [
+    "tests.test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers"
+   ],
+   "note": "expected to PASS: publication identity is independent of input copying (docstring says so)"
+  }
  ],
+ "round_2": {
+  "verified_at_sha": "9435f15",
+  "killed": "40/40, no survivor",
+  "harness": "scratchpad/mut/run_lens_r2.py"
+ },
+ "round_1": {
+  "verified_at_sha": "362bf9e",
+  "survived_then_deleted": "tests.test_first_class.SharedResultFanoutTest.test_render_disc_result_is_the_same_object_for_both_cards (tests/test_first_class.py:221 at 362bf9e)",
+  "replacement": "tests.test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object (tests/test_first_class.py:221; killed in rounds 2 and 3, row 38)"
+ },
  "findings": [
   {
    "target": "tests/test_semantics.py:146",
    "test": "tests.test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty",
    "verdict": "accept",
    "reason": "core.py:18 `if not self.address:` -> `if False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/00/src python3 -m unittest tests.test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-00/src python3 -m unittest tests.test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:156",
    "test": "tests.test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix",
    "verdict": "accept",
    "reason": "core.py:33 `if not self.address.startswith(\"fn.\"):` -> `if not self.address.startswith(\"\"):`",
-   "evidence": "PYTHONPATH=scratchpad/mut/01/src python3 -m unittest tests.test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-01/src python3 -m unittest tests.test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:167",
    "test": "tests.test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror",
    "verdict": "accept",
    "reason": "core.py:59 `raise KeyError(f\"PxC: Part '{address}' has not been produced\")` -> `return None`",
-   "evidence": "PYTHONPATH=scratchpad/mut/02/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror -> FAILED (failures=1); AssertionError: KeyError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-02/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror -> FAILED (failures=1); AssertionError: KeyError not raised",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_semantics.py:179",
    "test": "tests.test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning",
    "verdict": "accept",
    "reason": "core.py:64 `kind = \"replacement\" if address in self._values else \"new-address\"` -> `kind = \"new-address\" if address in self._values else \"replacement\"`",
-   "evidence": "PYTHONPATH=scratchpad/mut/03/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning -> FAILED (failures=1); AssertionError: PxWrite(address='px.a', kind='replacement') != PxWrite(address='px.a', kind='new-address')"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-03/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning -> FAILED (failures=1); AssertionError: PxWrite(address='px.a', kind='replacement') != PxWrite(address='px.a', kind='new-address')",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:191",
    "test": "tests.test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent",
    "verdict": "accept",
    "reason": "core.py:70 `if current is not None and current.calculate is not calculation.calculate:` -> `if current is not None:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/04/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent -> FAILED (errors=1); ValueError: PxC: Calculation 'fn.x' is already registered"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-04/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent -> FAILED (errors=1); ValueError: PxC: Calculation 'fn.x' is already registered",
+   "other_tests_broken": 4
   },
   {
    "target": "tests/test_semantics.py:205",
    "test": "tests.test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable",
    "verdict": "accept",
    "reason": "core.py:70 `if current is not None and current.calculate is not calculation.calculate:` -> `if False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/05/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-05/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_semantics.py:217",
    "test": "tests.test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises",
    "verdict": "accept",
    "reason": "core.py:82 `raise KeyError(f\"PxC: Calculation '{address}' is not registered\")` -> `return None`",
-   "evidence": "PYTHONPATH=scratchpad/mut/06/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises -> FAILED (failures=1); AssertionError: KeyError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-06/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises -> FAILED (failures=1); AssertionError: KeyError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:226",
    "test": "tests.test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string",
    "verdict": "accept",
    "reason": "core.py:79 `self.register(calculation)` -> `pass`",
-   "evidence": "PYTHONPATH=scratchpad/mut/07/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string -> FAILED (errors=1); KeyError: \"PxC: Calculation 'fn.auto' is not registered\""
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-07/src python3 -m unittest tests.test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string -> FAILED (errors=1); KeyError: \"PxC: Calculation 'fn.auto' is not registered\"",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:238",
    "test": "tests.test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one",
    "verdict": "accept",
    "reason": "pql.py:65 `if len(matches) != 1:` -> `if len(matches) > 1:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/08/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one -> FAILED (errors=1); IndexError: tuple index out of range"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-08/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one -> FAILED (errors=1); IndexError: tuple index out of range",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:252",
    "test": "tests.test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches",
    "verdict": "accept",
    "reason": "pql.py:71 `if len(matches) > 1:` -> `if len(matches) > 2:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/09/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-09/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:269",
    "test": "tests.test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty",
    "verdict": "accept",
    "reason": "pql.py:39 `if not prefix:` -> `if False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/10/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-10/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:277",
    "test": "tests.test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address",
    "verdict": "accept",
    "reason": "core.py:89 `return tuple((address, self._values[address]) for address in sorted(self._values))` -> `return tuple((address, self._values[address]) for address in self._values)`",
-   "evidence": "PYTHONPATH=scratchpad/mut/11/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address -> FAILED (failures=1); AssertionError: Lists differ: ['px.b', 'px.a'] != ['px.a', 'px.b']"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-11/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address -> FAILED (failures=1); AssertionError: Lists differ: ['px.b', 'px.a'] != ['px.a', 'px.b']",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_semantics.py:293",
    "test": "tests.test_semantics.PQLRulesTest.test_pql_cannot_see_calculations",
    "verdict": "accept",
    "reason": "core.py:72 `self._calculations[calculation.address] = calculation` -> `self._values[calculation.address] = calculation`",
-   "evidence": "PYTHONPATH=scratchpad/mut/12/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_cannot_see_calculations -> FAILED (failures=1); AssertionError: Tuples differ: (Match(address='fn.auto', value=Calculatio[180 chars]0>))) != ()"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-12/src python3 -m unittest tests.test_semantics.PQLRulesTest.test_pql_cannot_see_calculations -> FAILED (failures=1); AssertionError: Tuples differ: (Match(address='fn.auto', value=Calculatio[180 chars]0>))) != ()",
+   "other_tests_broken": 4
   },
   {
    "target": "tests/test_semantics.py:309",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks",
    "verdict": "accept",
    "reason": "pcr.py:109 `if id in self._ids:` -> `if False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/13/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-13/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:320",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected",
    "verdict": "accept",
    "reason": "pcr.py:121 `if prior is not None:` -> `if False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/14/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-14/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_semantics.py:330",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first",
    "verdict": "accept",
    "reason": "pcr.py:114 `if isinstance(source, Part) and source.address in self._writers:` -> `if isinstance(source, Part) and False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/15/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first -> FAILED (failures=1); AssertionError: Part(address='px.mid') != ResultRef(calculation_id='writer')"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-15/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first -> FAILED (failures=1); AssertionError: Part(address='px.mid') != ResultRef(calculation_id='writer')",
+   "other_tests_broken": 4
   },
   {
    "target": "tests/test_semantics.py:346",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer",
    "verdict": "accept",
    "reason": "pcr.py:149 `input_refs[name] = f\"px:{source.address}\"` -> `input_refs[name] = f\"fn:{self._writers[source.address]}\" if source.address in self._writers else f\"px:{source.address}\"`",
-   "evidence": "PYTHONPATH=scratchpad/mut/16/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer -> FAILED (failures=1); AssertionError: {'value': 'fn:writer'} != {'value': 'px:px.mid'}"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-16/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer -> FAILED (failures=1); AssertionError: {'value': 'fn:writer'} != {'value': 'px:px.mid'}",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:367",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run",
    "verdict": "accept",
    "reason": "pcr.py:113 insert after `for name, source in inputs.items():`: `if not isinstance(source, (Part, ResultRef)): raise TypeError(name)`",
-   "evidence": "PYTHONPATH=scratchpad/mut/17/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run -> FAILED (errors=1); TypeError: value"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-17/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run -> FAILED (errors=1); TypeError: value",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:383",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick",
    "verdict": "accept",
    "reason": "pcr.py:43 `if any(existing.id == id for existing in self.calculations):` -> `if False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/18/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-18/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:393",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule",
    "verdict": "accept",
    "reason": "pcr.py:162 `results[invocation.id] = value` -> `results.setdefault(invocation.id, value)`",
-   "evidence": "PYTHONPATH=scratchpad/mut/19/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule -> FAILED (failures=1); AssertionError: 'orig' != 'dup-id'"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-19/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule -> FAILED (failures=1); AssertionError: 'orig' != 'dup-id'",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:408",
    "test": "tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule",
    "verdict": "accept",
    "reason": "pcr.py:164 `pxc.set(invocation.into, value)` -> `pxc.has(invocation.into) or pxc.set(invocation.into, value)`",
-   "evidence": "PYTHONPATH=scratchpad/mut/20/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule -> FAILED (failures=1); AssertionError: 'orig' != 'B-wins'"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-20/src python3 -m unittest tests.test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule -> FAILED (failures=1); AssertionError: 'orig' != 'B-wins'",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_semantics.py:426",
    "test": "tests.test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs",
    "verdict": "accept",
    "reason": "pcr.py:160 `call_args.update(invocation.args)` -> `call_args = {**invocation.args, **call_args}`",
-   "evidence": "PYTHONPATH=scratchpad/mut/21/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs -> FAILED (failures=1); AssertionError: 'from-part' != 'from-args'"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-21/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs -> FAILED (failures=1); AssertionError: 'from-part' != 'from-args'",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:443",
    "test": "tests.test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run",
    "verdict": "accept",
    "reason": "pcr.py:151 `if source.calculation_id not in results:` -> `if False:`",
-   "evidence": "PYTHONPATH=scratchpad/mut/22/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run -> FAILED (errors=1); KeyError: 'declared-later'"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-22/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run -> FAILED (errors=1); KeyError: 'declared-later'",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_semantics.py:459",
    "test": "tests.test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration",
    "verdict": "accept",
    "reason": "pcr.py:95 `self.ticks.append(tick)` -> `self.ticks.insert(0, tick)`",
-   "evidence": "PYTHONPATH=scratchpad/mut/23/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration -> FAILED (failures=1); AssertionError: Lists differ: ['A', 'B'] != ['B', 'A']"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-23/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration -> FAILED (failures=1); AssertionError: Lists differ: ['A', 'B'] != ['B', 'A']",
+   "other_tests_broken": 14
   },
   {
    "target": "tests/test_semantics.py:474",
    "test": "tests.test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run",
    "verdict": "accept",
    "reason": "pcr.py:148 `resolved_inputs[name] = pxc.get(source)` -> `resolved_inputs[name] = pxc._values.get(source.address)`",
-   "evidence": "PYTHONPATH=scratchpad/mut/24/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run -> FAILED (failures=1); AssertionError: KeyError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-24/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run -> FAILED (failures=1); AssertionError: KeyError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:486",
    "test": "tests.test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address",
    "verdict": "accept",
    "reason": "pcr.py:142 `pxc.register(invocation.calculation)` -> `pass`",
-   "evidence": "PYTHONPATH=scratchpad/mut/25/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address -> FAILED (failures=1); AssertionError: ValueError not raised"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-25/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address -> FAILED (failures=1); AssertionError: ValueError not raised",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:501",
    "test": "tests.test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes",
    "verdict": "accept",
    "reason": "pcr.py:164 `pxc.set(invocation.into, value)` -> `results.setdefault(\"__pending__\", {}).update({invocation.into.address: value})`",
-   "evidence": "PYTHONPATH=scratchpad/mut/26/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes -> FAILED (errors=1); KeyError: \"PxC: Part 'px.first' has not been produced\""
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-26/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes -> FAILED (errors=1); KeyError: \"PxC: Part 'px.first' has not been produced\"",
+   "other_tests_broken": 10
   },
   {
    "target": "tests/test_semantics.py:521",
    "test": "tests.test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces",
    "verdict": "accept",
    "reason": "pcr.py:162 `results[invocation.id] = value` -> `results[f\"{tick.name}/{invocation.id}\"] = value`",
-   "evidence": "PYTHONPATH=scratchpad/mut/27/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces -> FAILED (failures=1); AssertionError: Lists differ: ['T1/a', 'T2/b'] != ['a', 'b']"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-27/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces -> FAILED (failures=1); AssertionError: Lists differ: ['T1/a', 'T2/b'] != ['a', 'b']",
+   "other_tests_broken": 14
   },
   {
    "target": "tests/test_semantics.py:538",
    "test": "tests.test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn",
    "verdict": "accept",
-   "reason": "pcr.py:88 `self._writers: dict[str, str] = {}` -> `self._writers: dict[str, str] = PCR.__dict__.setdefault(\"_shared\", {})` [docstring mutation as written (crashes: mappingproxy has no setdefault)]",
-   "evidence": "PYTHONPATH=scratchpad/mut/28/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn -> FAILED (errors=1); AttributeError: 'mappingproxy' object has no attribute 'setdefault'"
+   "reason": "pcr.py:88 `self._writers: dict[str, str] = {}` -> `self._writers: dict[str, str] = PCR.__dict__.setdefault(\"_shared\", {})`",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-28/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn -> FAILED (errors=1); AttributeError: 'mappingproxy' object has no attribute 'setdefault'",
+   "other_tests_broken": 25
   },
   {
    "target": "tests/test_semantics.py:538",
    "test": "tests.test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn",
    "verdict": "accept",
-   "reason": "pcr.py:88 `self._writers: dict[str, str] = {}` -> `self._writers: dict[str, str] = globals().setdefault(\"_SHARED_WRITERS\", {})` [devised: writers genuinely shared across PCRs via a real dict]",
-   "evidence": "PYTHONPATH=scratchpad/mut/29/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn -> FAILED (errors=1); ValueError: PCR 'second' calculation 'r' depends on unavailable result 'w'"
+   "reason": "pcr.py:88 `self._writers: dict[str, str] = {}` -> `self._writers: dict[str, str] = globals().setdefault(\"_SHARED_WRITERS\", {})` [devised: writers genuinely shared across PCRs through a real module-level dict]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-29/src python3 -m unittest tests.test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn -> FAILED (errors=1); ValueError: PCR 'second' calculation 'r' depends on unavailable result 'w'",
+   "other_tests_broken": 13
   },
   {
    "target": "tests/test_semantics.py:559",
    "test": "tests.test_semantics.ProjectionTest.test_table_projection_drops_provenance",
    "verdict": "accept",
    "reason": "core.py:89 `return tuple((address, self._values[address]) for address in sorted(self._values))` -> `return tuple((address, __import__(\"copy\").deepcopy(self._values[address])) for address in sorted(self._values))`",
-   "evidence": "PYTHONPATH=scratchpad/mut/30/src python3 -m unittest tests.test_semantics.ProjectionTest.test_table_projection_drops_provenance -> FAILED (failures=1); AssertionError: {'layout': 'art-above-numbers', 'art': \"<svg data-disc='mako' />\"} is not {'layout': 'art-above-numbers', 'art': \"<svg data-disc='mako' />\"}"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-30/src python3 -m unittest tests.test_semantics.ProjectionTest.test_table_projection_drops_provenance -> FAILED (failures=1); AssertionError: {'layout': 'art-above-numbers', 'art': \"<svg data-disc='mako' />\"} is not {'layout': 'art-above-numbers', 'art': \"<svg data-disc='mako' />\"}",
+   "other_tests_broken": 0
   },
   {
    "target": "tests/test_semantics.py:589",
    "test": "tests.test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid",
    "verdict": "accept",
    "reason": "pcr.py:197 `lines.append(f'    {node_id}[\"{address}\"]')` -> `lines.append(f'    {node_id}(\"{address}\")')`",
-   "evidence": "PYTHONPATH=scratchpad/mut/31/src python3 -m unittest tests.test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid -> FAILED (failures=1); AssertionError: 'flowchart TD\\n    p0(\"input.disc.request\")\\n    p1(\"px.disc.a[544 chars]p3\\n' != 'flowchart TD\\n    p0[\"input.disc.request\"]\\n    p1[\"px.disc.a[544 chars]p3\\n'"
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-31/src python3 -m unittest tests.test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid -> FAILED (failures=1); AssertionError: 'flowchart TD\\n    p0(\"input.disc.request\")\\n    p1(\"px.disc.a[544 chars]p3\\n' != 'flowchart TD\\n    p0[\"input.disc.request\"]\\n    p1[\"px.disc.a[544 chars]p3\\n'",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_first_class.py:135",
    "test": "tests.test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable",
    "verdict": "accept",
-   "reason": "pql.py:53 `return (match for match in parent.matches(pxc) if predicate(match))` -> `return (match for match in parent.matches(pxc))` [devised (no docstring mutation): where() ignores its predicate]",
-   "evidence": "PYTHONPATH=scratchpad/mut/32/src python3 -m unittest tests.test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable -> FAILED (failures=1); AssertionError"
+   "reason": "pql.py:53 `return (match for match in parent.matches(pxc) if predicate(match))` -> `return (match for match in parent.matches(pxc))` [devised: no Mutation: line in the docstring; where() ignores its predicate]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-32/src python3 -m unittest tests.test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable -> FAILED (failures=1); AssertionError",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_first_class.py:148",
    "test": "tests.test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics",
    "verdict": "accept",
-   "reason": "pcr.py:114 `if isinstance(source, Part) and source.address in self._writers:` -> `if isinstance(source, Part) and False:` [devised (no docstring mutation): Part->ResultRef rewrite disabled]",
-   "evidence": "PYTHONPATH=scratchpad/mut/33/src python3 -m unittest tests.test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics -> FAILED (failures=1); AssertionError"
+   "reason": "pcr.py:114 `if isinstance(source, Part) and source.address in self._writers:` -> `if isinstance(source, Part) and False:` [devised: no Mutation: line in the docstring; Part->ResultRef rewrite disabled]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-33/src python3 -m unittest tests.test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics -> FAILED (failures=1); AssertionError",
+   "other_tests_broken": 4
   },
   {
    "target": "tests/test_first_class.py:166",
    "test": "tests.test_first_class.FirstClassTest.test_duplicate_writer_rejected",
    "verdict": "accept",
-   "reason": "pcr.py:121 `if prior is not None:` -> `if False:` [devised (no docstring mutation)]",
-   "evidence": "PYTHONPATH=scratchpad/mut/34/src python3 -m unittest tests.test_first_class.FirstClassTest.test_duplicate_writer_rejected -> FAILED (failures=1); AssertionError: expected multiple-writer failure"
+   "reason": "pcr.py:121 `if prior is not None:` -> `if False:` [devised: no Mutation: line in the docstring]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-34/src python3 -m unittest tests.test_first_class.FirstClassTest.test_duplicate_writer_rejected -> FAILED (failures=1); AssertionError: expected multiple-writer failure",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_first_class.py:188",
    "test": "tests.test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id",
    "verdict": "accept",
-   "reason": "pcr.py:162 `results[invocation.id] = value` -> `results[invocation.calculation.address] = value` [lane A report]",
-   "evidence": "PYTHONPATH=scratchpad/mut/35/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id -> FAILED (errors=1); ValueError: PCR 'disc-cards' calculation 'single-card' depends on unavailable result 'render-disc'"
+   "reason": "pcr.py:162 `results[invocation.id] = value` -> `results[invocation.calculation.address] = value` [devised: no Mutation: line in the docstring; lane A report's mutation]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-35/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id -> FAILED (errors=1); ValueError: PCR 'disc-cards' calculation 'single-card' depends on unavailable result 'render-disc'",
+   "other_tests_broken": 14
   },
   {
    "target": "tests/test_first_class.py:194",
    "test": "tests.test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref",
    "verdict": "accept",
-   "reason": "pcr.py:157 `input_refs[name] = f\"fn:{source.calculation_id}\"` -> `input_refs[name] = f\"px:{source.calculation_id}\"` [lane A report]",
-   "evidence": "PYTHONPATH=scratchpad/mut/36/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref -> FAILED (failures=1); AssertionError: Lists differ: [{'art': 'px:render-disc'}, {'art': 'px:render-disc'}] != [{'art': 'fn:render-disc'}, {'art': 'fn:render-disc'}]"
+   "reason": "pcr.py:157 `input_refs[name] = f\"fn:{source.calculation_id}\"` -> `input_refs[name] = f\"px:{source.calculation_id}\"` [devised: no Mutation: line in the docstring; lane A report's mutation]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-36/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref -> FAILED (failures=1); AssertionError: Lists differ: [{'art': 'px:render-disc'}, {'art': 'px:render-disc'}] != [{'art': 'fn:render-disc'}, {'art': 'fn:render-disc'}]",
+   "other_tests_broken": 2
   },
   {
    "target": "tests/test_first_class.py:207",
    "test": "tests.test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses",
    "verdict": "accept",
-   "reason": "pcr.py:172 `into=invocation.into.address if invocation.into else None,` -> `into=None,` [lane A report]",
-   "evidence": "PYTHONPATH=scratchpad/mut/37/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses -> FAILED (failures=1); AssertionError: {'render-disc': None, 'single-card': None, 'battle-card': None} != {'render-disc': 'px.disc.art.svg', 'single-card': 'px.car[38 chars]tle'}"
+   "reason": "pcr.py:172 `into=invocation.into.address if invocation.into else None,` -> `into=None,` [devised: no Mutation: line in the docstring; lane A report's mutation]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-37/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses -> FAILED (failures=1); AssertionError: {'render-disc': None, 'single-card': None, 'battle-card': None} != {'render-disc': 'px.disc.art.svg', 'single-card': 'px.car[38 chars]tle'}",
+   "other_tests_broken": 1
   },
   {
    "target": "tests/test_first_class.py:221",
-   "test": "tests.test_first_class.SharedResultFanoutTest.test_render_disc_result_is_the_same_object_for_both_cards",
-   "verdict": "reject",
-   "reason": "pcr.py:156 `resolved_inputs[name] = results[source.calculation_id]` -> `resolved_inputs[name] = __import__(\"copy\").deepcopy(results[source.calculation_id])` [docstring mutation (copy at 156); lane A predicts survival with a str payload]",
-   "evidence": "PYTHONPATH=scratchpad/mut/38/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_render_disc_result_is_the_same_object_for_both_cards -> OK"
-  },
-  {
-   "target": "tests/test_first_class.py:221",
-   "test": "tests.test_first_class.SharedResultFanoutTest.test_render_disc_result_is_the_same_object_for_both_cards",
+   "test": "tests.test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object",
    "verdict": "accept",
-   "reason": "pcr.py:164 `pxc.set(invocation.into, value)` -> `pxc.set(invocation.into, pxc.call(invocation.calculation, call_args))` [devised alternative: publication re-evaluates the Calculation (published object != direct result)]",
-   "evidence": "PYTHONPATH=scratchpad/mut/39/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_render_disc_result_is_the_same_object_for_both_cards -> FAILED (failures=1); AssertionError: \"<svg data-disc='mako' />\" is not \"<svg data-disc='mako' />\""
+   "reason": "pcr.py:164 `pxc.set(invocation.into, value)` -> `pxc.set(invocation.into, pxc.call(invocation.calculation, call_args))`",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-38/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object -> FAILED (failures=2); AssertionError: {'layout': 'art-above-numbers', 'art': \"<svg data-disc='mako' />\"} is not {'layout': 'art-above-numbers', 'art': \"<svg data-disc='mako' />\"}",
+   "other_tests_broken": 2
   },
   {
-   "target": "tests/test_first_class.py:229",
+   "target": "tests/test_first_class.py:237",
    "test": "tests.test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers",
    "verdict": "accept",
-   "reason": "pcr.py:156 `resolved_inputs[name] = results[source.calculation_id]` -> `resolved_inputs[name] = __import__(\"copy\").deepcopy(results[source.calculation_id])` [lane A report]",
-   "evidence": "PYTHONPATH=scratchpad/mut/40/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers -> FAILED (failures=1); AssertionError: {'disc': 'mako', 'color': 'blue'} is not {'disc': 'mako', 'color': 'blue'}"
+   "reason": "pcr.py:156 `resolved_inputs[name] = results[source.calculation_id]` -> `resolved_inputs[name] = __import__(\"copy\").deepcopy(results[source.calculation_id])`",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-39/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers -> FAILED (failures=1); AssertionError: {'disc': 'mako', 'color': 'blue'} is not {'disc': 'mako', 'color': 'blue'}",
+   "other_tests_broken": 0
   },
   {
-   "target": "tests/test_first_class.py:260",
+   "target": "tests/test_first_class.py:271",
    "test": "tests.test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid",
    "verdict": "accept",
-   "reason": "graph.py:147 `lines.append(f\"    {source} -->|{key}| {calc.id}\")` -> `lines.append(f\"    {source} --->|{key}| {calc.id}\")` [lane A report]",
-   "evidence": "PYTHONPATH=scratchpad/mut/41/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid -> FAILED (failures=1); AssertionError: 'flow[428 chars]p0 -->|request| render-disc\\n    render-disc -[127 chars]p3\\n' != 'flow[428 chars]p0 --->|request| render-disc\\n    render-disc [130 chars]p3\\n'"
+   "reason": "graph.py:147 `lines.append(f\"    {source} -->|{key}| {calc.id}\")` -> `lines.append(f\"    {source} --->|{key}| {calc.id}\")` [devised: no Mutation: line in the docstring; lane A report's mutation]",
+   "evidence": "PYTHONPATH=scratchpad/mut/r3-40/src python3 -m unittest tests.test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid -> FAILED (failures=1); AssertionError: 'flow[428 chars]p0 -->|request| render-disc\\n    render-disc -[127 chars]p3\\n' != 'flow[428 chars]p0 --->|request| render-disc\\n    render-disc [130 chars]p3\\n'",
+   "other_tests_broken": 1
+  }
+ ],
+ "pass": true,
+ "final_round": true,
+ "open_findings": [
+  {
+   "severity": "minor",
+   "target": "tests/test_semantics.py:542-544",
+   "verdict": "accept",
+   "claim": "test_cross_pcr_consumer_records_px_not_fn (tests/test_semantics.py:538) names a degenerate mutation and predicts the wrong outcome: `PCR.__dict__.setdefault(\"_shared\", {})` cannot share writers because a class __dict__ is a mappingproxy, so the mutant kills only by crashing PCR.__init__ (pcr.py:88); the docstring's 'the consumer then testifies fn:w' never happens because the run raises at pcr.py:151-155 before testimony is built.",
+   "evidence": "Round 3 row 28 (scratchpad/mut/r3-28/src/pyto/pcr.py:88): FAILED (errors=1); AttributeError: 'mappingproxy' object has no attribute 'setdefault'; the same mutant breaks 25 other tests. Row 29 (devised `globals().setdefault(\"_SHARED_WRITERS\", {})`, scratchpad/mut/r3-29/src/pyto/pcr.py:88) kills it semantically: FAILED (errors=1); ValueError: PCR 'second' calculation 'r' depends on unavailable result 'w' (pcr.py:114-115 rewrite then pcr.py:151-155). Test is killed either way and is kept; mutation-kill.md rows 28-29.",
+   "required_fix": "Lane B: replace the Mutation line at tests/test_semantics.py:542-544 with `pcr.py:88 self._writers: dict[str, str] = {} -> self._writers: dict[str, str] = globals().setdefault(\"_SHARED_WRITERS\", {})` and state the outcome as ValueError 'depends on unavailable result w' at pcr.py:151-155. No src change; not blocking."
   },
   {
-   "target": "tests/test_first_class.py:221",
-   "test": "tests.test_first_class.SharedResultFanoutTest.test_render_disc_result_is_the_same_object_for_both_cards",
-   "verdict": "reject",
-   "reason": "survives its docstring mutation (deepcopy at pcr.py:156) because the payload is a str (copy.deepcopy(str) is identity); plan Day 1 kill criterion: survived -> deleted. Companion test_first_class.py:229 covers the rule with a dict payload and is killed.",
-   "evidence": "row 38 in mutation-kill.md: OK (0 failures); row 39 devised pcr.py:164 mutation fails it but pins publication, not the 'not a copy' rule"
+   "severity": "minor",
+   "target": "tests/test_first_class.py:135,148,166,188,194,207,271",
+   "verdict": "accept",
+   "claim": "Seven of the nine test_first_class tests carry no `Mutation:` line in their docstring, so the lens devised the mutation each round instead of applying the docstring's verbatim (Day 1 spec: 'each verified by a mutation', research/ULTRACODE-WEEK.md:44).",
+   "evidence": "scratchpad/mut/r3-results.json docstring_has_mutation_line=false for rows 32-37 and 40; all seven killed by the devised mutation: row 32 pql.py:53 where() ignores predicate -> FAILED; row 33 pcr.py:114 rewrite disabled -> FAILED; row 34 pcr.py:121 `if False:` -> FAILED; row 35 pcr.py:162 keyed by calculation.address -> FAILED (errors=1); row 36 pcr.py:157 fn:->px: -> FAILED; row 37 pcr.py:172 into=None -> FAILED; row 40 graph.py:147 -->| to --->| -> FAILED. Rows 38 (:221) and 39 (:237) carry Mutation lines and are killed verbatim.",
+   "required_fix": "Lane A: add a `Mutation: <file>:<line> <old> -> <new>` line to the seven docstrings using the row 32-37/40 mutations recorded in mutation-kill.md. Not blocking."
   }
+ ],
+ "retained": [
+  "40 of 40 tests killed by their docstring-named mutation (33 verbatim) or the devised one (rows 29, 32-37, 40); 0 survivors; 0 deleted this round; threshold 12 met (research/ULTRACODE-WEEK.md:168).",
+  "Unmutated: all 40 pass alone against repo src and the clean scratch copy; `python3 -m unittest discover -s tests` -> Ran 43 tests OK (31 + 9 + test_graph 3) with pyto.__file__ = /home/user/DiscStudio-staging/pyto/src/pyto/__init__.py (record-stage rerun: tests.txt:87, :186).",
+  "pyto/src untouched: `git diff --stat -- pyto/src`, `git status --short -- pyto/src`, `git diff --stat 3b91d83 -- pyto/src` and `git diff --stat a4dc559 -- pyto/src` all empty at 9435f15 (rechecked at the record stage); src/pyto/*.py CRLF preserved in every scratch copy.",
+  "Harness scratchpad/mut/run_lens_r3.py: per mutant asserts exactly one replaced/inserted line by difflib and all other src/pyto/*.py byte-identical, py_compile ok, pyto.__file__ under PYTHONPATH=<scratch>/src is the scratch copy; single-test run plus whole-40-test specificity run.",
+  "Not in scope and not mutation-verified: tests/test_graph.py's 3 tests."
  ]
 }

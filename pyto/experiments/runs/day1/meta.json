@@ -4,16 +4,216 @@
   "commit_sha": "pending",
   "date": "2026-09-09",
   "agents": [
-    {"lane": "A", "role": "test_first_class.py rewritten as unittest.TestCase plus PcrRun.results / CalculationTestimony.into assertions; README.md:19 test line", "targets": ["pyto/tests/test_first_class.py", "pyto/README.md"]},
-    {"lane": "B", "role": "tests/test_semantics.py characterization tests from scratchpad probe_rules.py, each mutation-verified", "targets": ["pyto/tests/test_semantics.py"]},
-    {"lane": "C", "role": "grouped-ablation experiment package landed from scratchpad ablation_spike.py with evidence/run-1", "targets": ["pyto/experiments/grouped-ablation/**"]},
-    {"lane": "D", "role": "CAPTURE.md run-record contract, scripts/check_all.sh v0, runs/day1 skeleton, s3-synthetic retained snapshot (gap 12)", "targets": ["pyto/experiments/CAPTURE.md", "pyto/scripts/check_all.sh", "pyto/experiments/runs/day1/", "pyto/experiments/s3-synthetic/**"]},
-    {"lane": "mutation-lens", "role": "applies one-line src mutations in a scratch copy; rejects any new test that survives", "targets": ["pyto/experiments/runs/day1/verdicts/mutation.json", "pyto/experiments/runs/day1/mutation-kill.md"]},
-    {"lane": "semantics-lens", "role": "checks inputs['split']=='fn:split' on all fit/score invocations; rejects args/input name collisions (pcr.py:159-160)", "targets": ["pyto/experiments/runs/day1/verdicts/semantics.json"]},
-    {"lane": "prohibition-lens", "role": "greps evidence for lambda and <function; confirms git diff --stat -- pyto/src empty; confirms no subset enumeration", "targets": ["pyto/experiments/runs/day1/verdicts/prohibition.json"]},
-    {"lane": "synthesizer", "role": "merges survivors, runs scripts/check_all.sh, writes runs/day1 per CAPTURE.md", "targets": ["pyto/experiments/runs/day1/tests.txt", "pyto/experiments/runs/day1/diff.patch"]},
-    {"lane": "completeness-critic", "role": "diffs the 'NOT verified by any test' list against test names; lists untested rules as missing", "targets": ["pyto/experiments/runs/day1/verdicts/completeness.json"]}
+    {
+      "lane": "A",
+      "role": "test_first_class.py rewritten as unittest.TestCase (same three assertions) plus PcrRun.results / CalculationTestimony.into / shared-object / mermaid-equality assertions; README.md:19 test line",
+      "targets": [
+        "pyto/tests/test_first_class.py",
+        "pyto/README.md"
+      ]
+    },
+    {
+      "lane": "B",
+      "role": "tests/test_semantics.py: 31 characterization tests from scratchpad probe_rules.py (+ gaps 12, 13, 16), each docstring naming its file:line and mutation",
+      "targets": [
+        "pyto/tests/test_semantics.py"
+      ]
+    },
+    {
+      "lane": "C",
+      "role": "grouped-ablation experiment package landed from scratchpad ablation_spike.py with evidence/run-1 and 31 tests",
+      "targets": [
+        "pyto/experiments/grouped-ablation/**"
+      ]
+    },
+    {
+      "lane": "D",
+      "role": "CAPTURE.md run-record contract, scripts/check_all.sh v0, runs/day1 skeleton (prompt.md, meta.json), s3-synthetic retained snapshot (gap 12)",
+      "targets": [
+        "pyto/experiments/CAPTURE.md",
+        "pyto/scripts/check_all.sh",
+        "pyto/experiments/runs/day1/",
+        "pyto/experiments/s3-synthetic/**"
+      ]
+    },
+    {
+      "lane": "mutation-lens",
+      "round": 1,
+      "role": "one-line src mutations in scratch copies (scratchpad/mut); verified at 362bf9e; one survivor (test_render_disc_result_is_the_same_object_for_both_cards) rejected",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/mutation.json",
+        "pyto/experiments/runs/day1/mutation-kill.md"
+      ]
+    },
+    {
+      "lane": "mutation-lens",
+      "round": 2,
+      "role": "re-verified at 9435f15 with the Lane A replacement test: 40/40 killed (scratchpad/mut/run_lens_r2.py)",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/mutation.json",
+        "pyto/experiments/runs/day1/mutation-kill.md"
+      ]
+    },
+    {
+      "lane": "mutation-lens",
+      "round": 3,
+      "role": "final: 40/40 killed, 0 survivors, threshold 12 met; two minor docstring findings left open (scratchpad/mut/run_lens_r3.py, r3-results.json)",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/mutation.json",
+        "pyto/experiments/runs/day1/mutation-kill.md"
+      ]
+    },
+    {
+      "lane": "semantics-lens",
+      "round": 1,
+      "role": "checked inputs['split']=='fn:split' on all 12 fit/score invocations and args/input collisions (pcr.py:159-160) on the Lane C first draft",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/semantics.json"
+      ]
+    },
+    {
+      "lane": "semantics-lens",
+      "round": 2,
+      "role": "re-checked after the Lane C fixes (saved-work.json computed at run time, temp-dir default --out, commit -dirty marker)",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/semantics.json"
+      ]
+    },
+    {
+      "lane": "semantics-lens",
+      "round": 3,
+      "role": "final: pass; seeds 7/11/13 ranking, live-kill mutations of the two guard tests, run-1 byte consistency; one major (run.py:250-258 commit.txt ordering) and four minor findings left open (scratchpad/sem3)",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/semantics.json"
+      ]
+    },
+    {
+      "lane": "prohibition-lens",
+      "round": 1,
+      "role": "grep for lambda/<function, empty pyto/src diff, no subset enumeration, LF endings on the first drafts",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/prohibition.json"
+      ]
+    },
+    {
+      "lane": "prohibition-lens",
+      "round": 2,
+      "role": "re-verified at 9435f15 (counts library 43 / grouped-ablation 22); flagged untracked art-tournament files (scratchpad/prohib_r2)",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/prohibition.json"
+      ]
+    },
+    {
+      "lane": "prohibition-lens",
+      "round": 3,
+      "role": "final: pass; check_all real run exit 0 (counts 43/31/5/18/4/2) and failure path exit 1; six minor findings, two of them (tests.txt/diff.patch absent, stale prohibition.json) resolved by the record stage",
+      "targets": [
+        "pyto/experiments/runs/day1/verdicts/prohibition.json"
+      ]
+    },
+    {
+      "lane": "fixer-A",
+      "role": "after mutation round 1: deleted the surviving str-identity test and added test_published_part_is_the_direct_result_object (tests/test_first_class.py:221) with a dict-valued companion carrying an explicit Mutation line (:237)",
+      "targets": [
+        "pyto/tests/test_first_class.py"
+      ]
+    },
+    {
+      "lane": "fixer-C",
+      "role": "after semantics/prohibition round 2: run.py saved-work fields computed at run time (run.py:184-206), default --out to a temp dir (run.py:271-274), commit.txt -dirty marker (run.py:209-227), test_grouped_ablation.py 22 -> 31 tests; regenerated evidence/run-1 with --force",
+      "targets": [
+        "pyto/experiments/grouped-ablation/run.py",
+        "pyto/experiments/grouped-ablation/test_grouped_ablation.py",
+        "pyto/experiments/grouped-ablation/evidence/run-1/"
+      ]
+    },
+    {
+      "lane": "record",
+      "role": "record stage (synthesizer + completeness critic in one agent): tests.txt from scripts/check_all.sh, final verdict files, candidates/ from the reader probes, diff.patch, meta.json, untested.md; completeness diff of the plan's 'NOT verified by any test' list against the test docstrings (4 rules MISSING, kept)",
+      "targets": [
+        "pyto/experiments/runs/day1/tests.txt",
+        "pyto/experiments/runs/day1/diff.patch",
+        "pyto/experiments/runs/day1/verdicts/",
+        "pyto/experiments/runs/day1/candidates/",
+        "pyto/experiments/runs/day1/meta.json",
+        "pyto/experiments/runs/day1/untested.md"
+      ]
+    }
   ],
   "tokens": null,
-  "notes": "Skeleton written by Lane D before the lenses ran. commit_sha stays 'pending' until the orchestrator commits and regenerates diff.patch. HEAD was 6d95be7 while Lane D wrote (a commit landed after the 3b91d83 base named in the brief); base_sha follows the brief."
+  "notes": "Skeleton written by Lane D before the lenses ran; completed at the record stage. commit_sha stays 'pending' until the orchestrator commits and regenerates diff.patch (CAPTURE.md:22,25). tests.txt holds the separately requested `python3 -m unittest discover -s tests -v` run first (lines 1-90) and the full check_all.sh output after it (lines 92-311) so the file ends with 'ALL SUITES PASSED' as CAPTURE.md:80-82 requires. Known plan-text discrepancy: ULTRACODE-WEEK.md:54 says '16 invocations executed'; the landed program executes 15 (program.py:64-74; saved-work.json invocations_executed 15). evidence/run-1/commit.txt reads 9435f150...-dirty and will keep a dirty marker after the Day 1 commit (run.py:218-227; semantics.json major finding explains why a --force regeneration cannot produce a bare SHA until run.py:250-258 is reordered). Staging advice: stage the Day 1 targets explicitly (pyto/tests, pyto/README.md, pyto/experiments/CAPTURE.md, pyto/experiments/grouped-ablation, pyto/experiments/s3-synthetic, pyto/experiments/runs/day1, pyto/scripts/check_all.sh, and pyto/research/ULTRACODE-WEEK.md if its line-51 edit is kept); do not `git add -A` (541 untracked art-tournament files). tokens: null (harness did not report usage).",
+  "agent_count": {
+    "lanes": 4,
+    "lens_rounds": 9,
+    "fixers": 2,
+    "record": 1,
+    "total": 16,
+    "note": "fixer count derived from the round histories the lenses cite (mutation.json round_1/round_2; prohibition round 2 vs 3 counts), not from a harness report"
+  },
+  "lens_rounds": 3,
+  "check_all": {
+    "exit": 0,
+    "counts": {
+      "library": 43,
+      "experiments/grouped-ablation": 31,
+      "experiments/s3-synthetic": 5,
+      "consumer": 18,
+      "disc-stats": 4,
+      "examples": 2
+    },
+    "unittest_total": 101,
+    "tests_txt_last_line": "ALL SUITES PASSED"
+  },
+  "head_sha_at_record": "9435f150fdd03db977179f4ac2aad7e21fcbfd37",
+  "commits_since_base": [
+    "70e65eb",
+    "6d95be7",
+    "362bf9e",
+    "117ce18",
+    "9435f15"
+  ],
+  "diff_patch": {
+    "command": "git diff 3b91d83 -- pyto ':(exclude)pyto/experiments/runs' (CAPTURE.md:22; the whole-tree `git diff 3b91d83` touches the same 56 files because no path outside pyto/ changed: `git diff --name-only 3b91d83 | grep -v '^pyto/'` is empty)",
+    "lines": 6546,
+    "files": 56,
+    "cr_bytes": "51, all on removed (-) lines of the CRLF tests/test_first_class.py at 3b91d83; working-tree file has 0"
+  },
+  "untracked_at_record": {
+    "in_lane_targets_not_in_diff_patch": [
+      "pyto/experiments/runs/day1/tests.txt",
+      "pyto/experiments/runs/day1/diff.patch",
+      "pyto/experiments/runs/day1/untested.md",
+      "pyto/experiments/runs/day1/verdicts/semantics.json",
+      "pyto/experiments/runs/day1/verdicts/prohibition.json",
+      "pyto/experiments/runs/day1/verdicts/completeness.json",
+      "pyto/experiments/runs/day1/candidates/README.md",
+      "pyto/experiments/runs/day1/candidates/reader-ablation_spike.py",
+      "pyto/experiments/runs/day1/candidates/reader-probe_rules.py",
+      "pyto/experiments/runs/day1/candidates/reader-probe_projection.py",
+      "pyto/experiments/runs/day1/candidates/reader-probe_roundtrip.py"
+    ],
+    "modified_tracked_in_runs_day1": [
+      "pyto/experiments/runs/day1/mutation-kill.md",
+      "pyto/experiments/runs/day1/verdicts/mutation.json",
+      "pyto/experiments/runs/day1/meta.json"
+    ],
+    "out_of_lane_untracked_do_not_stage_with_day1": {
+      "pyto/experiments/art-tournament/baseline/": 25,
+      "pyto/experiments/art-tournament/harness/{contact_sheet,fixtures,lint_svg}.py": 3,
+      "pyto/experiments/art-tournament/studios/": 513,
+      "command": "git ls-files --others --exclude-standard | sed -E 's#^(pyto/experiments/art-tournament/[^/]+)/.*#\\1/…#' | sort | uniq -c"
+    },
+    "modified_tracked_out_of_lane": [
+      "pyto/research/ULTRACODE-WEEK.md (1 insertion/1 deletion at line 51; accurate annotation of run.py's temp-dir default; orchestrator decides commit or revert)"
+    ],
+    "deleted_tracked": [
+      "pyto/experiments/runs/day1/candidates/.gitkeep (removed on purpose: candidates/ now holds the four reader probes and a README; verdicts/.gitkeep kept)"
+    ]
+  },
+  "open_findings": {
+    "major": 1,
+    "minor": 10,
+    "blocking": 0,
+    "detail": "semantics: 1 major (run.py:250-258 commit.txt stamped -dirty by its own evidence writes) + 4 minor; mutation: 2 minor (docstring Mutation lines); prohibition: 4 minor remaining after the record stage (art-tournament staging, plan line-51 edit, check_all.sh:66 singular, commit.txt dirty by design)"
+  }
 }

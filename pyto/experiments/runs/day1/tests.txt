@@ -1,0 +1,311 @@
+== python3 -m unittest discover -s tests -v  (cwd /home/user/DiscStudio-staging/pyto; run separately before check_all.sh per the Day 1 record brief)
+test_duplicate_writer_rejected (test_first_class.FirstClassTest.test_duplicate_writer_rejected)
+Multiple-writer rejection at declaration (pcr.py:118-123). ... ok
+test_pcr_preserves_direct_result_and_publication_semantics (test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics)
+Part-to-ResultRef rewrite (pcr.py:112-116); into publication (pcr.py:163-164). ... ok
+test_pxc_is_fail_loud_and_pql_is_composable (test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable)
+PxC.set/get (core.py:56-66); PQL.part/prefix/where (pql.py:27-58). ... ok
+test_card_testimonies_consume_render_disc_as_fn_ref (test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref)
+Both cards record inputs {'art': 'fn:render-disc'} (pcr.py:112-116, 156-157). ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Gap 16: PCR.mermaid() (pcr.py:179-219) == Pcr.to_mermaid() (graph.py:116-151). ... ok
+test_published_part_is_the_direct_result_object (test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object)
+Publication (pcr.py:161-164) stores the very object held in results[id]: ... ok
+test_results_keyed_by_invocation_id (test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id)
+PcrRun.results holds one entry per invocation id (pcr.py:162, pcr.py:177). ... ok
+test_shared_mutable_result_is_not_copied_between_consumers (test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers)
+The fn: binding passes results[id] itself, not a copy (pcr.py:156, 161). ... ok
+test_testimony_into_values_are_published_addresses (test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses)
+CalculationTestimony.into is the into Part's address (pcr.py:172). ... ok
+test_direct_result_and_publication_shape (test_graph.PcrGraphTest.test_direct_result_and_publication_shape) ... ok
+test_mermaid_is_a_view_of_same_graph (test_graph.PcrGraphTest.test_mermaid_is_a_view_of_same_graph) ... ok
+test_rejects_duplicate_writer (test_graph.PcrGraphTest.test_rejects_duplicate_writer) ... ok
+test_constructor_rules_calculation_fn_prefix (test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix)
+core.py:33-34: Calculation address must start with 'fn.'; the callable is not inspected. ... ok
+test_constructor_rules_part_address_non_empty (test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty)
+core.py:18-19: Part('') raises ValueError; any non-empty prefix is accepted (no 'px.' rule). ... ok
+test_non_part_binding_source_fails_at_run (test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run)
+Silent rule (critic gap 13): PCR.calc (pcr.py:112-116) and Tick.calc (pcr.py:46) accept any ... ok
+test_part_binding_not_rewritten_when_writer_declared_after_consumer (test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer)
+Silent rule, pcr.py:112-116: the rewrite happens only at the consumer's declaration, so a ... ok
+test_part_binding_rewritten_to_result_ref_when_writer_declared_first (test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first)
+pcr.py:112-116: consuming a Part that already has a writer in this PCR rewrites the binding to ... ok
+test_pcr_duplicate_id_rejected_across_ticks (test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks)
+pcr.py:109-110: PCR.calc rejects an id already used in any tick of the same PCR. ... ok
+test_pcr_multiple_writers_rejected (test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected)
+pcr.py:118-123: a second invocation declaring the same `into` address raises ValueError. ... ok
+test_tick_calc_bypasses_pcr_duplicate_id_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule)
+Silent rule, pcr.py:33-56 vs 109-110,132: pcr.tick(name).calc skips PCR._ids, so an id used in ... ok
+test_tick_calc_bypasses_pcr_multiple_writer_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule)
+Silent rule, pcr.py:33-56 vs 118-123: pcr.tick(name).calc skips PCR._writers, so a second ... ok
+test_tick_calc_rejects_duplicate_id_within_tick (test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick)
+pcr.py:43-44: Tick.calc rejects an id already present in that same tick. ... ok
+test_args_silently_override_same_named_bound_inputs (test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs)
+Silent rule, pcr.py:159-160: call_args.update(invocation.args) lets an args key shadow a bound ... ok
+test_cross_pcr_consumer_records_px_not_fn (test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn)
+Critic gap 12, pcr.py:88,118-123: the writers map is per PCR, so a second PCR reading a Part ... ok
+test_failure_mid_run_leaves_prior_writes (test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes)
+Critic gap 13, pcr.py:161-164: a Calculation raising mid-run propagates its own exception, no ... ok
+test_missing_part_fails_only_at_run (test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run)
+pcr.py:147-148 -> core.py:58-59: a Part binding with no PxC value is accepted at declaration and ... ok
+test_result_ref_to_unavailable_id_fails_only_at_run (test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run)
+pcr.py:151-155: a ResultRef to an id not yet in results is accepted at declaration and raises ... ok
+test_results_keyed_by_id_not_tick_and_rerun_replaces (test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces)
+pcr.py:162,177: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun ... ok
+test_run_registers_calculations_and_rejects_conflicting_address (test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address)
+pcr.py:142 registers every invocation's Calculation on the PxC (core.py:68-72), so two ... ok
+test_tick_order_is_first_mention_not_producer_declaration (test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration)
+pcr.py:91-96,139: ticks execute in the order they were first named, so a consumer in tick B ... ok
+test_pql_cannot_see_calculations (test_semantics.PQLRulesTest.test_pql_cannot_see_calculations)
+pql.py:42-45 read only PxC.items() (core.py:88-89, the _values dict); registration goes to ... ok
+test_pql_one_and_optional_reject_multiple_matches (test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches)
+pql.py:63-67,69-73: with two matches both one() and optional() raise ValueError; values() ... ok
+test_pql_part_missing_is_silent_until_one (test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one)
+pql.py:31-33,63-67,69-73: PQL.part of an unproduced address matches nothing (silent); ... ok
+test_pql_prefix_must_be_non_empty (test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty)
+pql.py:39-40: PQL.prefix('') raises ValueError at construction. ... ok
+test_pql_where_refines_and_matches_are_sorted_by_address (test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address)
+pql.py:42-45,49-55 and core.py:88-89: prefix selection iterates PxC.items(), which is sorted by ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Critic gap 16, pcr.py:179-219 vs graph.py:116-151: the fan-out example authored as executable ... ok
+test_table_projection_drops_provenance (test_semantics.ProjectionTest.test_table_projection_drops_provenance)
+Critic gap 13, core.py:85-89: PxC.items() projects to (address, value) rows only; re-inserting ... ok
+test_pxc_call_autoregisters_object_but_not_string (test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string)
+core.py:77-80: PxC.call with an unregistered Calculation object registers it as a side effect, ... ok
+test_pxc_call_unregistered_string_raises (test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises)
+core.py:81-82: PxC.call by address string with nothing registered raises KeyError. ... ok
+test_pxc_get_missing_raises_keyerror (test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror)
+core.py:58-59: PxC.get of an unproduced address raises KeyError (fail-loud); has() stays False. ... ok
+test_pxc_register_conflict_on_different_callable (test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable)
+core.py:70-71: registering a different callable under an already-registered address raises ... ok
+test_pxc_register_same_callable_is_idempotent (test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent)
+core.py:68-72: re-registering the same object, or a new Calculation wrapping the same callable, ... ok
+test_pxc_set_kinds_new_address_then_replacement_without_versioning (test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning)
+core.py:62-66: set returns PxWrite kind 'new-address' first, 'replacement' after; the old value ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.004s
+
+OK
+discover exit=0
+
+== bash scripts/check_all.sh  (cwd /home/user/DiscStudio-staging/pyto; CHECK_ALL_LOG_DIR set to the session scratchpad)
+== check_all.sh v0
+pyto root:    /home/user/DiscStudio-staging/pyto
+logs:         /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/record_check_all_logs
+python3:      /usr/local/bin/python3 (Python 3.11.15)
+pyto module:  /home/user/DiscStudio-staging/pyto/src/pyto/__init__.py
+
+== suite: library  (cwd /home/user/DiscStudio-staging/pyto)
+   $ python3 -m unittest discover -s tests -v
+test_duplicate_writer_rejected (test_first_class.FirstClassTest.test_duplicate_writer_rejected)
+Multiple-writer rejection at declaration (pcr.py:118-123). ... ok
+test_pcr_preserves_direct_result_and_publication_semantics (test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics)
+Part-to-ResultRef rewrite (pcr.py:112-116); into publication (pcr.py:163-164). ... ok
+test_pxc_is_fail_loud_and_pql_is_composable (test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable)
+PxC.set/get (core.py:56-66); PQL.part/prefix/where (pql.py:27-58). ... ok
+test_card_testimonies_consume_render_disc_as_fn_ref (test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref)
+Both cards record inputs {'art': 'fn:render-disc'} (pcr.py:112-116, 156-157). ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Gap 16: PCR.mermaid() (pcr.py:179-219) == Pcr.to_mermaid() (graph.py:116-151). ... ok
+test_published_part_is_the_direct_result_object (test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object)
+Publication (pcr.py:161-164) stores the very object held in results[id]: ... ok
+test_results_keyed_by_invocation_id (test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id)
+PcrRun.results holds one entry per invocation id (pcr.py:162, pcr.py:177). ... ok
+test_shared_mutable_result_is_not_copied_between_consumers (test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers)
+The fn: binding passes results[id] itself, not a copy (pcr.py:156, 161). ... ok
+test_testimony_into_values_are_published_addresses (test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses)
+CalculationTestimony.into is the into Part's address (pcr.py:172). ... ok
+test_direct_result_and_publication_shape (test_graph.PcrGraphTest.test_direct_result_and_publication_shape) ... ok
+test_mermaid_is_a_view_of_same_graph (test_graph.PcrGraphTest.test_mermaid_is_a_view_of_same_graph) ... ok
+test_rejects_duplicate_writer (test_graph.PcrGraphTest.test_rejects_duplicate_writer) ... ok
+test_constructor_rules_calculation_fn_prefix (test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix)
+core.py:33-34: Calculation address must start with 'fn.'; the callable is not inspected. ... ok
+test_constructor_rules_part_address_non_empty (test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty)
+core.py:18-19: Part('') raises ValueError; any non-empty prefix is accepted (no 'px.' rule). ... ok
+test_non_part_binding_source_fails_at_run (test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run)
+Silent rule (critic gap 13): PCR.calc (pcr.py:112-116) and Tick.calc (pcr.py:46) accept any ... ok
+test_part_binding_not_rewritten_when_writer_declared_after_consumer (test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer)
+Silent rule, pcr.py:112-116: the rewrite happens only at the consumer's declaration, so a ... ok
+test_part_binding_rewritten_to_result_ref_when_writer_declared_first (test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first)
+pcr.py:112-116: consuming a Part that already has a writer in this PCR rewrites the binding to ... ok
+test_pcr_duplicate_id_rejected_across_ticks (test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks)
+pcr.py:109-110: PCR.calc rejects an id already used in any tick of the same PCR. ... ok
+test_pcr_multiple_writers_rejected (test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected)
+pcr.py:118-123: a second invocation declaring the same `into` address raises ValueError. ... ok
+test_tick_calc_bypasses_pcr_duplicate_id_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule)
+Silent rule, pcr.py:33-56 vs 109-110,132: pcr.tick(name).calc skips PCR._ids, so an id used in ... ok
+test_tick_calc_bypasses_pcr_multiple_writer_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule)
+Silent rule, pcr.py:33-56 vs 118-123: pcr.tick(name).calc skips PCR._writers, so a second ... ok
+test_tick_calc_rejects_duplicate_id_within_tick (test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick)
+pcr.py:43-44: Tick.calc rejects an id already present in that same tick. ... ok
+test_args_silently_override_same_named_bound_inputs (test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs)
+Silent rule, pcr.py:159-160: call_args.update(invocation.args) lets an args key shadow a bound ... ok
+test_cross_pcr_consumer_records_px_not_fn (test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn)
+Critic gap 12, pcr.py:88,118-123: the writers map is per PCR, so a second PCR reading a Part ... ok
+test_failure_mid_run_leaves_prior_writes (test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes)
+Critic gap 13, pcr.py:161-164: a Calculation raising mid-run propagates its own exception, no ... ok
+test_missing_part_fails_only_at_run (test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run)
+pcr.py:147-148 -> core.py:58-59: a Part binding with no PxC value is accepted at declaration and ... ok
+test_result_ref_to_unavailable_id_fails_only_at_run (test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run)
+pcr.py:151-155: a ResultRef to an id not yet in results is accepted at declaration and raises ... ok
+test_results_keyed_by_id_not_tick_and_rerun_replaces (test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces)
+pcr.py:162,177: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun ... ok
+test_run_registers_calculations_and_rejects_conflicting_address (test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address)
+pcr.py:142 registers every invocation's Calculation on the PxC (core.py:68-72), so two ... ok
+test_tick_order_is_first_mention_not_producer_declaration (test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration)
+pcr.py:91-96,139: ticks execute in the order they were first named, so a consumer in tick B ... ok
+test_pql_cannot_see_calculations (test_semantics.PQLRulesTest.test_pql_cannot_see_calculations)
+pql.py:42-45 read only PxC.items() (core.py:88-89, the _values dict); registration goes to ... ok
+test_pql_one_and_optional_reject_multiple_matches (test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches)
+pql.py:63-67,69-73: with two matches both one() and optional() raise ValueError; values() ... ok
+test_pql_part_missing_is_silent_until_one (test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one)
+pql.py:31-33,63-67,69-73: PQL.part of an unproduced address matches nothing (silent); ... ok
+test_pql_prefix_must_be_non_empty (test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty)
+pql.py:39-40: PQL.prefix('') raises ValueError at construction. ... ok
+test_pql_where_refines_and_matches_are_sorted_by_address (test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address)
+pql.py:42-45,49-55 and core.py:88-89: prefix selection iterates PxC.items(), which is sorted by ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Critic gap 16, pcr.py:179-219 vs graph.py:116-151: the fan-out example authored as executable ... ok
+test_table_projection_drops_provenance (test_semantics.ProjectionTest.test_table_projection_drops_provenance)
+Critic gap 13, core.py:85-89: PxC.items() projects to (address, value) rows only; re-inserting ... ok
+test_pxc_call_autoregisters_object_but_not_string (test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string)
+core.py:77-80: PxC.call with an unregistered Calculation object registers it as a side effect, ... ok
+test_pxc_call_unregistered_string_raises (test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises)
+core.py:81-82: PxC.call by address string with nothing registered raises KeyError. ... ok
+test_pxc_get_missing_raises_keyerror (test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror)
+core.py:58-59: PxC.get of an unproduced address raises KeyError (fail-loud); has() stays False. ... ok
+test_pxc_register_conflict_on_different_callable (test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable)
+core.py:70-71: registering a different callable under an already-registered address raises ... ok
+test_pxc_register_same_callable_is_idempotent (test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent)
+core.py:68-72: re-registering the same object, or a new Calculation wrapping the same callable, ... ok
+test_pxc_set_kinds_new_address_then_replacement_without_versioning (test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning)
+core.py:62-66: set returns PxWrite kind 'new-address' first, 'replacement' after; the old value ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.004s
+
+OK
+-- library: OK (ran 43)
+
+== suite: experiments/grouped-ablation  (cwd /home/user/DiscStudio-staging/pyto)
+   $ python3 -m unittest discover -s experiments/grouped-ablation -p test_*.py -v
+test_change_outside_the_watch_list_leaves_the_sha_bare (test_grouped_ablation.CommitShaDirtyMarker.test_change_outside_the_watch_list_leaves_the_sha_bare) ... ok
+test_dirty_marker_follows_modified_and_untracked_files (test_grouped_ablation.CommitShaDirtyMarker.test_dirty_marker_follows_modified_and_untracked_files) ... ok
+test_outside_a_repository_reports_unavailable_instead_of_a_sha (test_grouped_ablation.CommitShaDirtyMarker.test_outside_a_repository_reports_unavailable_instead_of_a_sha) ... ok
+test_write_evidence_records_the_dirty_marker_in_commit_txt (test_grouped_ablation.CommitShaDirtyMarker.test_write_evidence_records_the_dirty_marker_in_commit_txt)
+The wiring: write_evidence's commit.txt is commit_sha(repo_dir, watch), so a dirty watched tree reaches the file. ... ok
+test_checked_in_run_1_matches_seed_7 (test_grouped_ablation.GroupedAblationEvidence.test_checked_in_run_1_matches_seed_7) ... ok
+test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_paths_changed (test_grouped_ablation.GroupedAblationEvidence.test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_paths_changed)
+commit.txt = `git rev-parse HEAD` plus `-dirty` exactly when this experiment dir or pyto/src differs ... ok
+test_comparison_md_lists_drop_g3_first (test_grouped_ablation.GroupedAblationEvidence.test_comparison_md_lists_drop_g3_first) ... ok
+test_evidence_contains_no_lambda_or_function_repr (test_grouped_ablation.GroupedAblationEvidence.test_evidence_contains_no_lambda_or_function_repr) ... ok
+test_evidence_file_set (test_grouped_ablation.GroupedAblationEvidence.test_evidence_file_set) ... ok
+test_mermaid_names_every_invocation_and_split_edges (test_grouped_ablation.GroupedAblationEvidence.test_mermaid_names_every_invocation_and_split_edges) ... ok
+test_saved_work_binds_authoring_files_by_sha256 (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_binds_authoring_files_by_sha256)
+saved-work.json carries sha256 of features.py, calculations.py, program.py so the evidence binds ... ok
+test_saved_work_carries_no_literal_reuse_counts (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_carries_no_literal_reuse_counts)
+invocations_skipped and ms_saved need Day 2's result digests; run-1 must not write them as literal zeros. ... ok
+test_saved_work_counts_match_run (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_counts_match_run) ... ok
+test_saved_work_derives_inheritance_from_a_prior_ledger (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_derives_inheritance_from_a_prior_ledger)
+inherited_calculations = len(REGISTRY & prior addresses), not a literal; the prior's own name is recorded. ... ok
+test_saved_work_run_label_is_the_out_dir_basename_with_no_prior (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_run_label_is_the_out_dir_basename_with_no_prior)
+run.py saved_work: `run` is basename(out_dir) and Day 1 has no prior ledger (round 2, finding 2). ... ok
+test_testimony_file_is_pcr_and_ticks_only (test_grouped_ablation.GroupedAblationEvidence.test_testimony_file_is_pcr_and_ticks_only) ... ok
+test_default_out_is_a_fresh_empty_directory_outside_evidence (test_grouped_ablation.GroupedAblationOutDir.test_default_out_is_a_fresh_empty_directory_outside_evidence) ... ok
+test_existing_non_empty_out_is_refused_without_force (test_grouped_ablation.GroupedAblationOutDir.test_existing_non_empty_out_is_refused_without_force) ... ok
+test_force_overwrites_and_an_empty_existing_dir_is_accepted (test_grouped_ablation.GroupedAblationOutDir.test_force_overwrites_and_an_empty_existing_dir_is_accepted) ... ok
+test_main_without_out_leaves_tracked_run_1_untouched (test_grouped_ablation.GroupedAblationOutDir.test_main_without_out_leaves_tracked_run_1_untouched) ... ok
+test_failed_variants_are_retained_not_hidden (test_grouped_ablation.GroupedAblationRanking.test_failed_variants_are_retained_not_hidden) ... ok
+test_groups_without_planted_weight_are_uninformative (test_grouped_ablation.GroupedAblationRanking.test_groups_without_planted_weight_are_uninformative) ... ok
+test_ranking_drop_g3_then_g0_then_g1_across_seeds (test_grouped_ablation.GroupedAblationRanking.test_ranking_drop_g3_then_g0_then_g1_across_seeds) ... ok
+test_ranking_is_deterministic_for_same_seed (test_grouped_ablation.GroupedAblationRanking.test_ranking_is_deterministic_for_same_seed) ... ok
+test_all_twelve_fit_and_score_invocations_consume_fn_split (test_grouped_ablation.GroupedAblationTestimony.test_all_twelve_fit_and_score_invocations_consume_fn_split) ... ok
+test_no_args_key_collides_with_a_bound_input_name (test_grouped_ablation.GroupedAblationTestimony.test_no_args_key_collides_with_a_bound_input_name) ... ok
+test_score_consumes_fn_fit_and_compare_consumes_fn_scores (test_grouped_ablation.GroupedAblationTestimony.test_score_consumes_fn_fit_and_compare_consumes_fn_scores) ... ok
+test_testimony_json_round_trip_equals_asdict (test_grouped_ablation.GroupedAblationTestimony.test_testimony_json_round_trip_equals_asdict) ... ok
+test_ticks_are_prepare_fit_score_compare (test_grouped_ablation.GroupedAblationTestimony.test_ticks_are_prepare_fit_score_compare) ... ok
+test_exactly_five_ablation_variants_never_32768 (test_grouped_ablation.GroupedAblationVariants.test_exactly_five_ablation_variants_never_32768) ... ok
+test_registry_is_module_functions_without_lambdas (test_grouped_ablation.GroupedAblationVariants.test_registry_is_module_functions_without_lambdas) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.940s
+
+OK
+-- experiments/grouped-ablation: OK (ran 31)
+
+== suite: experiments/s3-synthetic  (cwd /home/user/DiscStudio-staging/pyto)
+   $ python3 -m unittest discover -s experiments/s3-synthetic -p test_*.py -v
+[s3-synthetic] sys.path.insert(0, /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno) intra-repo reference dir
+test_account_rings_records_only_px_edges (test_s3_synthetic.S3SyntheticSnapshot.test_account_rings_records_only_px_edges)
+accountRings binds two unwritten Parts, so both inputs are px: (pcr.py:147-149). ... ok
+test_build_investigation_runs_without_corpus (test_s3_synthetic.S3SyntheticSnapshot.test_build_investigation_runs_without_corpus)
+s3.build_investigation (s3.py:23-91) needs only the snapshot dict; no corpus, no Node bridge. ... ok
+test_check_balance_records_ledger_as_fn_edge (test_s3_synthetic.S3SyntheticSnapshot.test_check_balance_records_ledger_as_fn_edge)
+checkBalance testimony inputs == observed mapping; gap 12's {'ledger': 'fn:accountRings'} is its subset. ... ok
+test_rerun_matches_retained_testimony (test_s3_synthetic.S3SyntheticSnapshot.test_rerun_matches_retained_testimony)
+A fresh run's {pcr, ticks} equals testimony.json byte-for-byte after canonical dumps. ... ok
+test_sys_path_insert_is_intra_repo (test_s3_synthetic.S3SyntheticSnapshot.test_sys_path_insert_is_intra_repo)
+The only sys.path insert points inside this repository (CAPTURE.md sys.path rule). ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.002s
+
+OK
+-- experiments/s3-synthetic: OK (ran 5)
+
+== suite: consumer  (cwd /home/user/DiscStudio-staging/pyto/consumers/discstudio-card)
+   $ python3 -m unittest discover -s . -p test_*.py -v
+test_art_replay_receipt_and_no_mutation_on_invalid (test_art_backend.ArtBackendTest.test_art_replay_receipt_and_no_mutation_on_invalid) ... ok
+test_concurrent_events_are_complete_json_lines (test_art_backend.ArtBackendTest.test_concurrent_events_are_complete_json_lines) ... ok
+test_health_recipe_event_and_reload (test_art_backend.ArtBackendTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_art_backend.ArtBackendTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_art_backend.ArtBackendTest.test_root_only_serves_index) ... ok
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
+test_card_owns_layout_and_manual_display_fields (test_card_composition.CardCompositionTest.test_card_owns_layout_and_manual_display_fields) ... ok
+test_layout_does_not_mutate_disc_input (test_card_composition.CardCompositionTest.test_layout_does_not_mutate_disc_input) ... ok
+test_legacy_adapter_has_no_physical_identity (test_card_composition.CardCompositionTest.test_legacy_adapter_has_no_physical_identity) ... ok
+test_malformed_reference_rejected (test_card_composition.CardCompositionTest.test_malformed_reference_rejected) ... ok
+test_non_string_reference_rejected_without_type_error (test_card_composition.CardCompositionTest.test_non_string_reference_rejected_without_type_error) ... ok
+test_result_hash_is_stable (test_card_composition.CardCompositionTest.test_result_hash_is_stable) ... ok
+test_shared_active_disc_and_independent_snapshot (test_card_composition.CardCompositionTest.test_shared_active_disc_and_independent_snapshot) ... ok
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.460s
+
+OK
+-- consumer: OK (ran 18)
+
+== suite: disc-stats  (cwd /home/user/DiscStudio-staging/pyto/consumers/discstudio-card/experiments/disc-stats)
+   $ env PYTHONPATH=. python3 -m unittest discover -s . -p test_*.py -v
+test_description_denominators_and_raw_phrases (test_stats.StatsTests.test_description_denominators_and_raw_phrases) ... ok
+test_later_shot_windows_and_empty_denominator (test_stats.StatsTests.test_later_shot_windows_and_empty_denominator) ... ok
+test_membership_gap_and_censoring (test_stats.StatsTests.test_membership_gap_and_censoring) ... ok
+test_mold_identity_dedupe_and_conflict (test_stats.StatsTests.test_mold_identity_dedupe_and_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
+-- disc-stats: OK (ran 4)
+
+== suite: examples  (cwd /home/user/DiscStudio-staging/pyto)
+   $ python3 examples/basic.py -> 42
+   $ python3 examples/shared_result_fanout.py -> {"consumers": ["single-card", "battle-card"], "producedParts": ["px.card.battle", "px.card.single"], "sharedResult": "fn:render-disc"}
+-- examples: OK (2 scripts)
+
+== per-suite counts
+suite                         tests  status
+library                          43  OK
+experiments/grouped-ablation     31  OK
+experiments/s3-synthetic          5  OK
+consumer                         18  OK
+disc-stats                        4  OK
+examples                          2  OK
+
+ALL SUITES PASSED

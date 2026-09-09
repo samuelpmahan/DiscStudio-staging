@@ -2,12 +2,19 @@
 
 from __future__ import annotations
 
+import contextlib
 import dataclasses
+import hashlib
+import io
 import json
 import os
+import re
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
@@ -15,12 +22,27 @@ if HERE not in sys.path:
 
 from calculations import REGISTRY  # noqa: E402
 from features import FEATURES, GROUPS  # noqa: E402
-from run import failed_variants, jsonable, ranking, run_experiment, write_evidence  # noqa: E402
+from run import (  # noqa: E402
+    AUTHORING_FILES,
+    WATCHED_PATHS,
+    commit_sha,
+    dirty_paths,
+    failed_variants,
+    jsonable,
+    main,
+    ranking,
+    resolve_out_dir,
+    run_experiment,
+    saved_work,
+    write_evidence,
+)
 
 SEEDS = (7, 11, 13)
 EXPECTED_TOP = ["drop_g3", "drop_g0", "drop_g1"]
 UNINFORMATIVE = ("drop_g2", "drop_g4")
 FORBIDDEN_TOKENS = ("lambda", "<function")
+COMMIT_LINE = re.compile(r"^[0-9a-f]{40}(-dirty)?\n$")
+GIT_IDENTITY = ("-c", "user.name=grouped-ablation-test", "-c", "user.email=grouped-ablation-test@example.invalid")
 
 
 def _fit_score_testimonies(testimony: dict) -> list[dict]:
@@ -174,6 +196,61 @@ class GroupedAblationEvidence(unittest.TestCase):
         self.assertGreater(payload["authoring_lines_total"], 0)
         self.assertGreater(payload["wall_ms"]["pcr.run"], 0)
 
+    def test_saved_work_run_label_is_the_out_dir_basename_with_no_prior(self):
+        """run.py saved_work: `run` is basename(out_dir) and Day 1 has no prior ledger (round 2, finding 2).
+        Mutation (scratch copy of run.py): `"run": os.path.basename(os.path.normpath(out_dir))` ->
+        `"run": "run-1 baseline"` fails the first assertion."""
+        payload = json.loads(self._read("saved-work.json"))
+        self.assertEqual(payload["run"], os.path.basename(self.tmp))
+        self.assertIsNone(payload["prior_run"])
+        self.assertEqual(payload["inherited_calculations"], 0)
+        self.assertEqual(payload["inherited_addresses"], [])
+
+    def test_saved_work_carries_no_literal_reuse_counts(self):
+        """invocations_skipped and ms_saved need Day 2's result digests; run-1 must not write them as literal zeros.
+        Mutation: re-adding `"invocations_skipped": 0,` to the saved_work dict fails this test."""
+        payload = json.loads(self._read("saved-work.json"))
+        self.assertNotIn("invocations_skipped", payload)
+        self.assertNotIn("ms_saved", payload)
+
+    def test_saved_work_binds_authoring_files_by_sha256(self):
+        """saved-work.json carries sha256 of features.py, calculations.py, program.py so the evidence binds
+        to file content regardless of commit state (round 2, finding 1).
+        Mutation: `hashlib.sha256(fh.read())` -> `hashlib.sha256(path.encode())` in run._sha256 fails this test."""
+        payload = json.loads(self._read("saved-work.json"))
+        expected = {}
+        for name in AUTHORING_FILES:
+            with open(os.path.join(HERE, name), "rb") as fh:
+                expected[name] = hashlib.sha256(fh.read()).hexdigest()
+        self.assertEqual(sorted(expected), ["calculations.py", "features.py", "program.py"])
+        self.assertEqual(payload["authoring_sha256"], expected)
+
+    def test_saved_work_derives_inheritance_from_a_prior_ledger(self):
+        """inherited_calculations = len(REGISTRY & prior addresses), not a literal; the prior's own name is recorded.
+        Mutation: `len(inherited)` -> `len(prior_addresses)` gives 3 here and fails; `"prior_run": None if prior is None
+        else prior["run"]` -> `"prior_run": None` fails the second assertion."""
+        prior = {"run": "run-0-fake", "calculation_addresses": ["fn.ablation.fit", "fn.ablation.split", "fn.other.notHere"]}
+        payload = saved_work(self.result, "/nowhere/run-9", prior)
+        self.assertEqual(payload["run"], "run-9")
+        self.assertEqual(payload["prior_run"], "run-0-fake")
+        self.assertEqual(payload["inherited_calculations"], 2)
+        self.assertEqual(payload["inherited_addresses"], ["fn.ablation.fit", "fn.ablation.split"])
+        self.assertEqual(payload["calculations_authored"], len(REGISTRY))
+        self.assertEqual(saved_work(self.result, "/nowhere/run-9/", None)["run"], "run-9")
+
+    def test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_paths_changed(self):
+        """commit.txt = `git rev-parse HEAD` plus `-dirty` exactly when this experiment dir or pyto/src differs
+        from HEAD (round 2, finding 1), so a bare sha means the producing code is in that commit.
+        Mutation: `WATCHED_PATHS = (HERE, SRC_DIR)` -> `WATCHED_PATHS = (HERE,)` (stop watching the library) fails the
+        WATCHED_PATHS assertion unconditionally; `return f"{sha}-dirty" if ... else sha` -> `return sha` fails the
+        iff assertion whenever the tree is dirty (state-dependent; CommitShaDirtyMarker kills it unconditionally)."""
+        text = self._read("commit.txt")
+        self.assertRegex(text, COMMIT_LINE)
+        self.assertEqual(text, commit_sha() + "\n")
+        self.assertEqual(text.endswith("-dirty\n"), bool(dirty_paths()))
+        self.assertEqual(WATCHED_PATHS, (HERE, os.path.normpath(os.path.join(HERE, "..", "..", "src"))))
+        self.assertTrue(all(os.path.isdir(p) for p in WATCHED_PATHS))
+
     def test_comparison_md_lists_drop_g3_first(self):
         text = self._read("comparison.md")
         first_row = [line for line in text.splitlines() if line.startswith("| 1 |")][0]
@@ -195,6 +272,155 @@ class GroupedAblationEvidence(unittest.TestCase):
         if payload["seed"] != 7 or payload["n"] != 400:
             self.skipTest(f"evidence/run-1 was generated with seed={payload['seed']} n={payload['n']}")
         self.assertEqual(payload["rows"], self.result["comparison"])
+
+
+class CommitShaDirtyMarker(unittest.TestCase):
+    """commit_sha(repo_dir, watch) in a throwaway git repository: the -dirty marker follows the watched paths
+    (modified, staged, untracked), and a change outside the watch list leaves the sha bare.
+    Mutation (scratch copy of run.py): `return f"{sha}-dirty" if dirty_paths(repo_dir, watch) else sha` -> `return sha`
+    fails test_dirty_marker_follows_modified_and_untracked_files; `[line[3:] for line in ...]` -> `[]` fails it too."""
+
+    def setUp(self):
+        self.repo = tempfile.mkdtemp(prefix="grouped-ablation-git-")
+        self.addCleanup(shutil.rmtree, self.repo, ignore_errors=True)
+        self.watched = os.path.join(self.repo, "watched")
+        os.makedirs(self.watched)
+        self._git("init", "-q")
+        self._write("watched/a.txt", "one\n")
+        self._write("outside.txt", "one\n")
+        self._git("add", "-A")
+        self._git("commit", "-q", "-m", "init")
+
+    def _git(self, *args: str) -> str:
+        proc = subprocess.run(["git", *GIT_IDENTITY, *args], capture_output=True, text=True, cwd=self.repo, check=True)
+        return proc.stdout
+
+    def _write(self, rel: str, text: str) -> None:
+        with open(os.path.join(self.repo, rel), "w", encoding="utf-8") as fh:
+            fh.write(text)
+
+    def test_dirty_marker_follows_modified_and_untracked_files(self):
+        head = self._git("rev-parse", "HEAD").strip()
+        self.assertEqual(commit_sha(self.repo, (self.watched,)), head)
+        self.assertEqual(dirty_paths(self.repo, (self.watched,)), [])
+
+        self._write("watched/a.txt", "two\n")
+        self.assertEqual(commit_sha(self.repo, (self.watched,)), head + "-dirty")
+        self.assertEqual(dirty_paths(self.repo, (self.watched,)), ["watched/a.txt"])
+
+        self._git("commit", "-q", "-am", "edit")
+        head2 = self._git("rev-parse", "HEAD").strip()
+        self.assertNotEqual(head2, head)
+        self.assertEqual(commit_sha(self.repo, (self.watched,)), head2)
+
+        self._write("watched/b.txt", "new\n")  # untracked counts: code not in any commit
+        self.assertEqual(commit_sha(self.repo, (self.watched,)), head2 + "-dirty")
+        self.assertEqual(dirty_paths(self.repo, (self.watched,)), ["watched/b.txt"])
+
+    def test_change_outside_the_watch_list_leaves_the_sha_bare(self):
+        head = self._git("rev-parse", "HEAD").strip()
+        self._write("outside.txt", "two\n")
+        self.assertEqual(commit_sha(self.repo, (self.watched,)), head)
+        self.assertEqual(commit_sha(self.repo, (self.watched, self.repo)), head + "-dirty")
+        self.assertEqual(dirty_paths(self.repo, (self.repo,)), ["outside.txt"])
+
+    def test_write_evidence_records_the_dirty_marker_in_commit_txt(self):
+        """The wiring: write_evidence's commit.txt is commit_sha(repo_dir, watch), so a dirty watched tree reaches the file.
+        Mutation: `commit_sha(repo_dir, watch) + "\\n"` in write_evidence -> `commit_sha(repo_dir, watch).removesuffix("-dirty") + "\\n"`
+        fails the second assertion."""
+        head = self._git("rev-parse", "HEAD").strip()
+        result = run_experiment(7, 400)
+        out = tempfile.mkdtemp(prefix="grouped-ablation-evidence-")
+        self.addCleanup(shutil.rmtree, out, ignore_errors=True)
+        write_evidence(result, out, None, self.repo, (self.watched,))
+        with open(os.path.join(out, "commit.txt"), encoding="utf-8") as fh:
+            self.assertEqual(fh.read(), head + "\n")
+        self._write("watched/a.txt", "two\n")
+        write_evidence(result, out, None, self.repo, (self.watched,))
+        with open(os.path.join(out, "commit.txt"), encoding="utf-8") as fh:
+            self.assertEqual(fh.read(), head + "-dirty\n")
+        with open(os.path.join(out, "saved-work.json"), encoding="utf-8") as fh:
+            self.assertEqual(json.load(fh)["run"], os.path.basename(out))
+
+    def test_outside_a_repository_reports_unavailable_instead_of_a_sha(self):
+        bare = tempfile.mkdtemp(prefix="grouped-ablation-nogit-")
+        self.addCleanup(shutil.rmtree, bare, ignore_errors=True)
+        env_free = dict(os.environ, GIT_CEILING_DIRECTORIES=os.path.dirname(bare))
+        with unittest.mock.patch.dict(os.environ, env_free):
+            self.assertTrue(commit_sha(bare, (bare,)).startswith("unavailable: "))
+
+
+def _snapshot(directory: str) -> dict[str, bytes]:
+    """name -> bytes for every file in directory ({} when it does not exist)."""
+    if not os.path.isdir(directory):
+        return {}
+    out = {}
+    for name in sorted(os.listdir(directory)):
+        with open(os.path.join(directory, name), "rb") as fh:
+            out[name] = fh.read()
+    return out
+
+
+class GroupedAblationOutDir(unittest.TestCase):
+    """run.py never rewrites the tracked evidence/run-1 by accident (Day 1 fixer round 1, finding 2):
+    the default --out is a fresh temp dir and an existing non-empty --out is refused without --force.
+    Mutations (scratch copy of run.py): resolve_out_dir's `if ... and not force:` -> `if False:` kills
+    test_existing_non_empty_out_is_refused_without_force; `tempfile.mkdtemp(...)` ->
+    `os.path.join(HERE, "evidence", "run-1")` kills test_main_without_out_leaves_tracked_run_1_untouched."""
+
+    RUN_1 = os.path.join(HERE, "evidence", "run-1")
+
+    def test_default_out_is_a_fresh_empty_directory_outside_evidence(self):
+        out_dir = resolve_out_dir(None, False)
+        self.addCleanup(shutil.rmtree, out_dir, ignore_errors=True)
+        self.assertTrue(os.path.isdir(out_dir))
+        self.assertEqual(os.listdir(out_dir), [])
+        self.assertFalse(out_dir.startswith(os.path.join(HERE, "evidence")))
+
+    def test_main_without_out_leaves_tracked_run_1_untouched(self):
+        before = _snapshot(self.RUN_1)
+        stdout = io.StringIO()
+        with contextlib.redirect_stdout(stdout):
+            rc = main([])
+        self.assertEqual(rc, 0)
+        wrote = [line for line in stdout.getvalue().splitlines() if line.startswith("wrote ")]
+        self.assertEqual(len(wrote), 1)
+        out_dir = wrote[0].split()[1]
+        self.addCleanup(shutil.rmtree, out_dir, ignore_errors=True)
+        self.assertFalse(out_dir.startswith(os.path.join(HERE, "evidence")))
+        self.assertEqual(sorted(os.listdir(out_dir)), GroupedAblationEvidence.EXPECTED_FILES)
+        self.assertEqual(_snapshot(self.RUN_1), before)
+        self.assertIn("| 1 | drop_g3 |", stdout.getvalue())
+
+    def test_existing_non_empty_out_is_refused_without_force(self):
+        tmp = tempfile.mkdtemp(prefix="grouped-ablation-existing-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        sentinel = os.path.join(tmp, "commit.txt")
+        with open(sentinel, "w", encoding="utf-8") as fh:
+            fh.write("keep me\n")
+        with self.assertRaises(FileExistsError):
+            resolve_out_dir(tmp, False)
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            rc = main(["--out", tmp])
+        self.assertEqual(rc, 2)
+        self.assertIn("--force", stderr.getvalue())
+        self.assertEqual(os.listdir(tmp), ["commit.txt"])
+        with open(sentinel, encoding="utf-8") as fh:
+            self.assertEqual(fh.read(), "keep me\n")
+
+    def test_force_overwrites_and_an_empty_existing_dir_is_accepted(self):
+        tmp = tempfile.mkdtemp(prefix="grouped-ablation-force-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        self.assertEqual(resolve_out_dir(tmp, False), tmp)  # empty: nothing to protect
+        with open(os.path.join(tmp, "commit.txt"), "w", encoding="utf-8") as fh:
+            fh.write("stale\n")
+        with contextlib.redirect_stdout(io.StringIO()):
+            rc = main(["--out", tmp, "--force"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(sorted(os.listdir(tmp)), GroupedAblationEvidence.EXPECTED_FILES)
+        with open(os.path.join(tmp, "commit.txt"), encoding="utf-8") as fh:
+            self.assertNotEqual(fh.read(), "stale\n")
 
 
 if __name__ == "__main__":
