@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 09:56 **landed** `task-15`: proof.sh gives each run its own output dir: the board's pyto-hit path is substituted like the clone path, so a second proof on one machine cannot trip over the first (6 files since 3b6c3ae, suites green, receipt 20260909T095540Z-task-15)
 - 2026-09-09 09:48 **landed** `neat-reserve-id`: neat new pushes exp/<id> at once, so two clones can never pick the same task id (1 files since cf7ac33, suites green, receipt 20260909T094802Z-neat-reserve-id)
 - 2026-09-09 09:56 The red proof was a leftover: step 5 refused to overwrite /d/pyto-hit from the previous proof. The suite and the viewer were green on D:/ in a fresh clone. The command now overwrites its own scratch; the next proof decides.
 - 2026-09-09 09:51 **proof** red: fresh clone of 4875210, 6 steps, step 5 failed, receipt 20260909T094944Z-proof
