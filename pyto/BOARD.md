@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 08:52 **landed** `task-5`: Add a standalone, sub-second selftest that every committed landing receipt JSON (verified and failed) has the fields land.sh actually writes, so a schema regression in land.sh is caught without running check_all.sh or a scratch clone. (113 files since 1b38f28, suites green, receipt 20260909T085131Z-task-5)
 - 2026-09-09 08:51 **landed** `task-4`: Stop `neat kill` from deleting the abandoned task's branch (local and on origin); only remove the disposable worktree directory. (105 files since 1b38f28, suites green, receipt 20260909T085038Z-task-4)
 - 2026-09-09 08:50 **landed** `portable-sums`: floats add left to right (Python 3.11 and 3.13 agree bit for bit), every record regenerated, and the no-program-edits diff is taken against the program as last landed (45 files since 1c5447f, suites green, receipt 20260909T084944Z-portable-sums)
 - 2026-09-09 08:48 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084745Z-portable-sums/check_all.txt)
