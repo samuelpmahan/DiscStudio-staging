@@ -705,3 +705,4 @@ parts and calculations let the agent learn how the student learns": a student's 
 their Parts and the Calculations they wrote, so a tutoring agent reads how they learn from their
 own records (what they retry, where they write `{?}`, what they undo, how long a Tick takes them),
 never from a profile.
+Owner, 2026-09-09 evening, on why any of this exists when ChainSpot and DiscStudio do not need it: "Workspace. Educational." and, of Homeroom Heroes, "this would be a good reason why". So the workspace is not a side effect; it is the product for that audience, and the studio is its first tenant.
