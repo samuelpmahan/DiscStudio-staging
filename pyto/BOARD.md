@@ -16,14 +16,17 @@ deadline means the default. The owner never has to keep track of more than this 
 ## The test
 
 "We get AHI running on my local D:/ drive." AHI is Augmented Human Intelligence: human centric,
-AI extends. The whole loop, on the owner's Windows machine from a clone on D:/: the owner reads
-this board and answers `{?}` questions (the human is the root of the tree); agents work in copies
-and land only verified work with a receipt; every landing writes one line here; the record viewer
-opens from disk; Astra is reached through the mailbox in the repository. Everything on this board
-is judged by whether it moves that.
+AI extends. The whole loop, on the owner's Windows machine from a clone on D:/: the owner talks
+and reads this page; agents work in copies and land only verified work with a receipt; every
+landing writes one line here; the record viewer opens from disk; Astra and Codex are reached
+through the mailbox in the repository. Everything on this board is judged by whether it moves
+that.
 
-Run it, in Git Bash, with Python 3.11+ and Node 22 installed (Playwright is optional; its tests
-skip when the browser is absent):
+The owner's side is two things and nothing else: say it, read this page. The commands below are
+for agents. The owner never types them; a session runs them when asked in words ("run the test",
+"undo 7", "land 12", "what happened tonight").
+
+For agents, on the D:/ clone (Git Bash, Python 3.11+, Node 22; Playwright optional):
 
 ```
 git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging.git /d/DiscStudio-staging
@@ -34,8 +37,8 @@ bash pyto/scripts/check_all.sh                                   # every suite, 
 node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
 ```
 
-The last two lines are the hit and the room to look at it. Landing from there is
-`bash pyto/scripts/land.sh <package>`; the receipt and this log follow.
+For Astra or Codex, the owner reuses one sentence forever: "Pull the branch, read the newest file
+in mailbox/to-gpt, do what it says."
 
 ## Today
 
@@ -78,6 +81,7 @@ the day so far, in plain words.
 - 2026-09-09 08:21 **landed** `task-1`: AHI runs on the owner's Windows D:/: neat new works (host path for pip, python checks the install), the ablation fixture is bit-portable (no libm), the card server drains a 413 body, stripped child environments keep SystemDrive (65 files since 8604a0c, suites green, receipt 20260909T081928Z-task-1)
 - 2026-09-09 08:16 **refused** `task-1`: MAIN is behind origin/HEAD by  commit(s) (someone landed elsewhere); run: git pull --rebase origin HEAD  then land again
 - 2026-09-09 08:13 **landed** `windows-venv`: the scripts find the repository's .venv on their own, so isolated child processes import pyto on Windows too; the D:/ commands make that venv (4 files since 291b7f7, suites green, receipt 20260909T081311Z-windows-venv)
+- 2026-09-09 11:05 Owner: is it making my life easier? Not yet: tonight added commands, prompts to paste and a relay. Rule from here: the commands are for agents; the owner says things and reads this page. "The test" is now one sentence to a session; Astra and Codex get one fixed sentence forever; the `{?}` root is read to the owner, never by the owner.
 - 2026-09-09 10:20 Owner: go big, one more: a Fable uses Sonnets to self-improve in branching manners that must remain human explicable. Running now: Sonnets mine the record for small useful changes to the loop itself, each becomes a neat task in its own copy, and a cold reader who sees only the hand-off must explain it correctly before it may land (the explicability gate, now in LANDING.md). Losers stay packed.
 - 2026-09-09 08:15 **refused** `task-1`: MAIN is behind origin/claude/python-ultracode-supercharge-st8hnu by 2 commit(s) (someone landed elsewhere); run: git pull --rebase origin claude/python-ultracode-supercharge-st8hnu  then land again
 - 2026-09-09 10:05 Owner: a task Codex can run as a good neighbour, and a personal neat for the work laptop where only Rovo and Windsurf exist. Both are one task: 3, "neat anywhere", on `exp/3` with a brief sized for one agent (read five files, run one command, stop when the selftest passes). The prompt to paste is in `mailbox/to-gpt/0002`. When it lands, the two scripts copied into any repository give the work laptop the same seven commands, and an editor agent only has to run them.
