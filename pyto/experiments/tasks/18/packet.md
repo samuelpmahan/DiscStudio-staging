@@ -4,8 +4,44 @@ Intent: four worlds, one terminal: one page opens the ChainSpot, ChessLab, Wumpu
 Starting point: e1e888ae343112999e43016ddd3287f64f618506 (land(task-16): watch it think: the tick page plays a record Tick by Tick with play, pause and step, each Calculation's reads, writes and value appearing when it finished, at recorded speed or slower)
 Verify: node --test pyto/viewer/test/*.test.mjs
 Allow: pyto/viewer pyto/viewer/test
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 6 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/viewer/README.md
+- M  pyto/viewer/embed.mjs
+- M  pyto/viewer/test/embed.test.mjs
+- M  pyto/viewer/test/render.test.mjs
+- M  pyto/viewer/tick-viewer.html
+- M  pyto/viewer/tick-viewer.js
+
+```
+pyto/viewer/README.md            | 14 +++++-
+ pyto/viewer/embed.mjs            | 78 ++++++++++++++++++++++++++++++---
+ pyto/viewer/test/embed.test.mjs  | 94 ++++++++++++++++++++++++++++++++++++++--
+ pyto/viewer/test/render.test.mjs | 28 +++++++++++-
+ pyto/viewer/tick-viewer.html     | 14 ++++++
+ pyto/viewer/tick-viewer.js       | 72 +++++++++++++++++++++++++++++-
+ 6 files changed, 287 insertions(+), 13 deletions(-)
+```
+
+## Evidence
+
+- verify: `node --test pyto/viewer/test/*.test.mjs` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         144  OK
+    experiments/grouped-ablation    240  OK
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+    viewer                          103  OK
+    viewer-record-schema             19  OK
+    
+    ALL SUITES PASSED
 
 ## Uncertain
 
