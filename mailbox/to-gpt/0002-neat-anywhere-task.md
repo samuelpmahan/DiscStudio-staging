@@ -2,18 +2,25 @@
 
 Branch `exp/3` on `samuelpmahan/DiscStudio-staging`. The brief is on the branch at
 `pyto/experiments/tasks/3/BRIEF.md`; the packet (intent, starting point, verify, allow) is
-`packet.md` beside it. One agent, alone, reading only the files the brief names, running only the
-commands it names, stopping when `bash pyto/scripts/neat.sh selftest` exits 0. Hand back by
+`packet.md` beside it. Shape: two Lunas on disjoint files (A: `land.sh`, B: `neat.sh` plus the `selftest`
+subcommand), one Terra that runs the selftest and does at most two repair rounds, Astra assigns
+and reads the hand-back and implements nothing. The brief fixes the layout rule and the
+command-line contract so the Lunas never need to talk. Each reads only the files its lane names,
+runs only the commands named there, and stops when its check passes. Hand back by
 committing on `exp/3` with messages starting `exp/3:` and pushing. The cloud session packs and
 lands it and writes the line on the board.
 
-Paste this to start the agent:
+Paste this to Astra:
 
 ```
-Clone https://github.com/samuelpmahan/DiscStudio-staging.git, check out branch exp/3, and read
-pyto/experiments/tasks/3/BRIEF.md in full before anything else. Do exactly what it says, nothing
-more: edit only the files its packet allows, run only the commands it names, and stop when
-`bash pyto/scripts/neat.sh selftest` exits 0. Commit on exp/3 with messages starting "exp/3:" and
-push. If you are unsure about something, append one line "- {?} Label: description" under
-"## Uncertain" in pyto/experiments/tasks/3/packet.md and take the default the brief gives.
+Task 3, "neat anywhere": clone https://github.com/samuelpmahan/DiscStudio-staging.git, branch
+exp/3, brief at pyto/experiments/tasks/3/BRIEF.md. Assign one Terra. The Terra gives Luna A the
+land.sh lane and Luna B the neat.sh lane exactly as the brief's "The split" section states, in
+parallel, each editing only its own file and running only its own check. When both have pushed to
+exp/3, the Terra runs `bash pyto/scripts/neat.sh selftest`, repairs at most twice, commits
+"exp/3: selftest green", pushes, and reports. You implement nothing; you read the report and
+forward any "{?}" lines from pyto/experiments/tasks/3/packet.md. Nobody runs check_all.sh.
 ```
+
+If you run it with a single agent instead, the same brief works: do lane A, then lane B, then the
+Terra's step.
