@@ -1,0 +1,24 @@
+Obtaining file:///D:/pyto-proof-20260909T094944Z/pyto
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting Pillow>=10 (from pyto-lab==0.1.0)
+  Using cached pillow-12.3.0-cp313-cp313-win_amd64.whl.metadata (9.3 kB)
+Using cached pillow-12.3.0-cp313-cp313-win_amd64.whl (7.2 MB)
+Building wheels for collected packages: pyto-lab
+  Building editable for pyto-lab (pyproject.toml): started
+  Building editable for pyto-lab (pyproject.toml): finished with status 'done'
+  Created wheel for pyto-lab: filename=pyto_lab-0.1.0-0.editable-py3-none-any.whl size=2439 sha256=619705338f9d3c6707568cde3a4add449157cf50996d309f7a4bf729df2a4ee2
+  Stored in directory: C:\Users\tenni\AppData\Local\Temp\pip-ephem-wheel-cache-zgnd54m6\wheels\41\f8\ad\3bc690e70e6b9634e0ade4f7ec8d68631c1e031bc9a058f9be
+Successfully built pyto-lab
+Installing collected packages: pyto-lab, Pillow
+
+Successfully installed Pillow-12.3.0 pyto-lab-0.1.0
+
+[notice] A new release of pip is available: 26.1.2 -> 26.2.1
+[notice] To update, run: D:\pyto-proof-20260909T094944Z\.venv\Scripts\python.exe -m pip install --upgrade pip

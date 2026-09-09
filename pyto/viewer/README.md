@@ -22,7 +22,7 @@ No npm packages, no CDN, no build step. Tests run under Node 22 with `node --tes
 | `adapters.js` | `validate` plus the four `from*` adapters; no DOM |
 | `embed.mjs` | `node embed.mjs record.json > page.html` — one self-contained file |
 | `fixtures/*.json` | one document per runtime (see below) |
-| `test/*.test.mjs` | 77 tests: schema, hit derivation, render safety, filter, embed |
+| `test/*.test.mjs` | 103 tests: schema, hit derivation, render safety, filter, embed, playback schedule, world picker |
 | `test/record_schema.py` | a Python validator of RECORD.md, written independently of `adapters.js` |
 | `test/test_record_schema.py` | 19 tests: every JavaScript adapter's output read back by that validator |
 | `test/emit_adapter_records.mjs` | writes each adapter's output to a directory, for the Python suite |
@@ -56,6 +56,16 @@ node embed.mjs fixtures/pyto-grouped-ablation.json > /tmp/tick.html   # or --out
 in `<script type="application/json" id="record">`. It converts and **validates** the input first, so
 a malformed record fails at build time, not in someone's browser. It accepts a
 `pyto-run-record@1` document or any raw runtime document the adapters understand.
+
+**Four worlds, one terminal.** The PCR render is the terminal (`../research/from-registry-to-os.md`'s
+mapping table); one page should open any world's record. `node embed.mjs a.json b.json ... --out
+worlds.html` (two or more inputs) bakes all of them into one standalone page behind a
+`<select id="world">` picker, labelled by each record's `pcr` and `source.runtime` (a filename when an
+input never became one). `node embed.mjs --worlds --out worlds.html` does the same for every fixture,
+sorted, with ChainSpot as a labelled empty slot ("ChainSpot: no record on file yet") rather than a
+faked record. A picker switch swaps the shown record and resets playback client-side -- never a
+reload. A world whose input fails validation still gets a slot -- a loud `UNKNOWN — <label>` panel
+naming the reason -- rather than aborting the build or the rest of the page.
 
 ## What you see
 
@@ -111,6 +121,19 @@ The filter box narrows invocation rows. It follows PQL's own two selectors
 An invocation matches on its id, its Tick name, its calculation address, its `into`, its declared
 and actual reads, and its write addresses. Ticks left with no rows disappear; the header reports
 "filter …: N of M invocations, K of L ticks". The Part index is not filtered.
+
+### Watch it think
+
+"It could be the world's slowest neural net": Ticks as layers, Parts as named activations, receipts
+as the trace. The **Watch it think** toggle (or `?play=1`, which `embed.mjs --play` bakes in as
+`<body data-play="1">` for a standalone page with no query string) replaces the all-at-once view —
+still the default — with playback: the page starts empty, then each Calculation appears at the
+moment it "finished," in Tick order, reads/writes/pill/value attached. Play, Pause, Step, and a
+speed of 1x real / 10x slower / 100x slower scale the recorded `duration_ms` values — a 26 ms run
+at 100x slower takes about 2.6 s; a run with no durations plays at a fixed 400 ms per Calculation
+instead. The bar's `now` marker names the Tick and Calculation completing, beside a running clock.
+`computeSchedule` (`tick-viewer.js`) is the pure part — a record and a speed in, an ordered list of
+`{tick, invocation, at_ms}` events out — exercised with no DOM and no timers by `test/playback.test.mjs`.
 
 ### Safety rules the tests hold
 
@@ -187,7 +210,7 @@ which is also what `embed.mjs` uses.
 ## Tests
 
 ```sh
-cd pyto/viewer && node --test test/*.test.mjs              # 77 tests, the "viewer" suite
+cd pyto/viewer && node --test test/*.test.mjs              # 103 tests, the "viewer" suite
 cd pyto/viewer && python3 -m unittest discover -s test     # 19 tests, "viewer-record-schema"
 bash ../scripts/check_all.sh                               # runs both as named suites
 ```

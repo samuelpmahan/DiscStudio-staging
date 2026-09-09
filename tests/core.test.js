@@ -9,8 +9,26 @@ import { resolve } from 'node:path';
 import { validate } from '../pyto/viewer/adapters.js';
 import { renderRecord } from '../pyto/viewer/tick-viewer.js';
 import { buildPage, composePage } from '../pyto/viewer/embed.mjs';
+import { render as painterRender } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 const make = () => createStudioRuntime(createSeed());
 const context = { bagId: 'everyday', competitionId: 'putterwarz', roundId: 'hole-1' };
+
+test('studio art and single card Parts are byte-identical to the ported painter', () => {
+  const r = make(), rendered = r.card('buzzz-mint', 'broadcast', context);
+  const artTrace = rendered.run.trace.find(step => step.call === 'fn.disc.art');
+  const art = r.pxc.get(artTrace.output);
+  assert.equal(art.svg, painterRender(...art.inputs));
+});
+
+test('ported painter inputs use sanitized authored colors', () => {
+  const r = make();
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'artBase', value: 'url(#bad)' });
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'artAccent', value: '#abc' });
+  const rendered = r.card('buzzz-mint', 'broadcast', context);
+  const art = r.pxc.get(rendered.run.trace.find(step => step.call === 'fn.disc.art').output);
+  assert.deepEqual(art.inputs.slice(2, 4), ['#e6ebde', '#456157']);
+  assert.equal(art.svg, painterRender(...art.inputs));
+});
 
 test('manufacturer, mold, optional values and every registered field are discoverable', () => {
   const r = make(), c = r.card('buzzz-mint', 'broadcast', context), paths = c.fields.map(f => f.path);
@@ -191,4 +209,14 @@ test('composePage builds the same standalone page as buildPage, one section per 
   const root = renderRecord(embeddedRecordOf(page), { doc: stubDoc() });
   assert.equal(withClass(root, 'tick').length, record.ticks.length);
   assert.deepEqual(withClass(root, 'tick').map(s => withClass(s, 'tick-name')[0].textContent), record.ticks.map(t => t.name));
+});
+
+test('a disc without a photo shows painted art inside the generic card, never the Add image placeholder', () => {
+  const r = make(), rendered = r.card('buzzz-mint', 'broadcast', context);
+  const svg = typeof rendered.svg === 'string' ? rendered.svg : rendered.markup;
+  const art = r.pxc.get(rendered.run.trace.find(step => step.call === 'fn.disc.art').output);
+  assert.equal(art.kind, 'painted');
+  assert.doesNotMatch(svg, /Add image/);
+  assert.match(svg, /viewBox="0 0 512 512"/);
+  assert.ok(svg.includes(painterRender(...art.inputs).split('\n')[1].slice(0, 40)), 'the card embeds the painter markup');
 });

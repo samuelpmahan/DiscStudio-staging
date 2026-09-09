@@ -630,3 +630,78 @@ the owner's words with the default; `neat undo <id>` reverts a landed task with 
 so control is a way back, not a gate. Nothing is deleted; a losing attempt stays as a packed task.
 Bites: tonight's queue on the board, `neat.sh`.
 
+
+### {?} NearHit
+The owner pointed at Annoy (approximate nearest neighbours, read-only mmapped index shared by
+processes). Status: provisional: the cache today hits only on identical bytes; a near hit would
+reduce a course screenshot to a small vector and reuse the nearest already-parsed course's Parts
+as proposals, confirmed by the parser inside the budget. Annoy is a workshop tool (C++, no
+browser build, out of the runtime by the cold-start rule); the runtime needs only a brute-force
+loop over one user's few hundred vectors. Default: an experiment `near-hit` when CV returns, one
+number (how often the nearest prior course is a good proposal), nothing before DiscStudio ships.
+Bites: the materials store, the record's `hit` field, Day 5.
+
+### {?} ResidueMining
+The owner: could SUBDUE-style mining find shared substructure in ANN logs, or be the CV substrate
+itself, detecting residue pixels? Status: provisional. ANN logs: real but plain clustering finds
+the same cliques. The residue: yes, and it fits the LAB: every stage already writes
+`px.remaining.after<Stage>`; turn the last residue into a labelled component graph (colour, size,
+shape labels; touching, above, left, same-screen-region edges) and SUBDUE finds the arrangements
+that repeat across courses, which are the objects no stage exists for yet (the S3 iOS map-chrome
+false positives are residue structure fixed to screen position). Its output is a candidate with
+evidence (instances, compression, where), the owner names it, it becomes
+`fn.disc.detect.<name>`, receipts show hits, the residue shrinks: promotion with evidence, the
+Lane 5 claim. The same algorithm over run records (Ticks to Calculations to Parts) finds recurring
+sub-programs, the Day 5 plan. Default: workshop only, Python, after DiscStudio ships, needing the
+dev course images; the one piece that can land any time is a scalar Part with the count of
+unclaimed pixels per Tick, which makes competition Ticks scoreable. Bites: Day 5, Lane 5, the
+competition Ticks, `research/primary-sources.md` (Cook and Holder 1994).
+
+### {?} HidingPrimitives
+The owner: the ANN logs would be neat's, the LAB's, the paint studio's, to see if they hide
+command primitives. Status: provisional, running as task 20. A primitive hiding in a log is a
+subsequence that recurs with different arguments and has no name; ANN groups near-identical
+instances, SUBDUE names the shared skeleton and scores it by compression; the output is a
+proposal with evidence, the owner names it, it becomes a Calculation or a neat command. The logs
+become Parts when receipts (task 13) and the `oc` table land. First substrate, needing no new
+recording: the paint studio's call graphs, mined and reported beside the helpers the JavaScript
+port extracted by hand. Bites: Lane 5, Day 5, the `oc` table, `neat`.
+
+### {?} UndoStack
+The owner: a generic Part that would do the site good the way undo did neat. Status: provisional,
+queued behind receipts as Parts (task 13). Not a structure: one more field on the write receipt,
+the previous value (inline when small, by digest in the materials store when large), makes the
+undo stack a query over `px.receipt.*` (writes to an address, newest first, with what they
+replaced). Undo is one Calculation that writes the previous value back, itself recorded, so
+history stays append-only like a revert; redo is the same move forward. For the studio: undo for
+customizer and card edits, "what changed since" in the review panel from the same query, and an
+accidental inspector write is one undo away. JavaScript first (the runtime's set records the
+previous value), Python mirrors the receipt field. No new state store, per AGENTS.md. Bites:
+task 13, `RECORD.md` (one field), `src/runtime.js`, the review panel.
+
+### {?} CardRenderer
+Astra, handing back `astra/discstudio-1`: "The fixed port cannot preserve arbitrary authored
+nodes and styles. Approve extending its interface, or retain the existing generic card renderer?"
+Status: provisional, default taken 2026-09-09: retain the generic renderer. The studio's card is
+authored (nodes, bindings, styles the customizer edits), so the ported `cards.mjs` stays what it
+is, the byte-identical reference for the two promoted layouts used by fixtures and tests, and the
+ported painter draws the art inside the generic renderer (`kind: painted`). No renderer fork, per
+AGENTS.md. Their delivery already did this; the one gap, the generic renderer showing "Add image"
+for painted art, is fixed on their branch before landing. Bites: `src/presentation.js`,
+`port/painter/cards.mjs`.
+
+### {?} Students
+The owner: "due to hashing guarantees this could be an unusually good tool for students." Status:
+provisional, an audience, nothing built. What hashing gives a classroom: the per-Tick record is
+"show your work" made literal; a record that replays byte for byte on the grader's machine proves
+the student's claim about their own program; identical digests on every Tick are the same work,
+whoever typed it; a port across languages is judged by a verifier (the painter port is the
+demonstration). From tonight: the explicability gate is a rubric with no teacher in it, and the
+`{?}` habit is most of learning to program. The caveat to teach first: identical digests prove
+the same computation, not the right answer; a verifier still needs a reference. Default: after
+DiscStudio ships, one experiment: a homework-sized PCR with a hand-off page graded by a cold
+reader. Bites: `LANDING.md` (the gate), `HANDOFF.md` template, the viewer. Owner, later: "personal
+parts and calculations let the agent learn how the student learns": a student's own mount holds
+their Parts and the Calculations they wrote, so a tutoring agent reads how they learn from their
+own records (what they retry, where they write `{?}`, what they undo, how long a Tick takes them),
+never from a profile.

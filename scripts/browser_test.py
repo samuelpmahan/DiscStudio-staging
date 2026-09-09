@@ -22,8 +22,11 @@ def change(page,selector,value):
 def assert_world(page,js): assert page.evaluate('()=>'+js),js
 with sync_playwright() as p:
     launch={'headless':True,'args':['--no-sandbox']}
-    # The bundled Playwright chromium, wherever this checkout's browsers live.
-    if a.embedded: launch['executable_path']=next((c for c in ('/opt/pw-browsers/chromium','/usr/bin/chromium') if os.path.exists(c)),'/usr/bin/chromium')
+    if a.embedded:
+        # the first Chromium that exists: this checkout's bundled Playwright browser,
+        # $CHROMIUM, the Debian path; else Playwright's own default
+        found=next((c for c in ('/opt/pw-browsers/chromium',os.environ.get('CHROMIUM'),'/usr/bin/chromium') if c and os.path.exists(c)),None)
+        if found: launch['executable_path']=found
     browser=p.chromium.launch(**launch)
     context=browser.new_context(viewport={'width':1536,'height':960},accept_downloads=True)
     page=context.new_page();page.set_default_timeout(10000)

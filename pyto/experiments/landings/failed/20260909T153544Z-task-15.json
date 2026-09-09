@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T153544Z-task-15",
+  "package": "task-15",
+  "base_sha": "af0bf062f5bbcd891e5880808641efca8ba172dc",
+  "result": "failed",
+  "reason": "merge conflict with exp/15 in: pyto/experiments/tasks/15/HANDOFF.md pyto/experiments/tasks/15/evidence/check_all.txt pyto/experiments/tasks/15/evidence/verify.txt pyto/experiments/tasks/15/packet.md ",
+  "at": "2026-09-09T15:35:45.141592Z"
+}

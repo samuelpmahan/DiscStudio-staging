@@ -16,32 +16,70 @@ deadline means the default. The owner never has to keep track of more than this 
 ## The test
 
 "We get AHI running on my local D:/ drive." AHI is Augmented Human Intelligence: human centric,
-AI extends. The whole loop, on the owner's Windows machine from a clone on D:/: the owner reads
-this board and answers `{?}` questions (the human is the root of the tree); agents work in copies
-and land only verified work with a receipt; every landing writes one line here; the record viewer
-opens from disk; Astra is reached through the mailbox in the repository. Everything on this board
-is judged by whether it moves that.
+AI extends. The whole loop, on the owner's Windows machine from a clone on D:/: the owner talks
+and reads this page; agents work in copies and land only verified work with a receipt; every
+landing writes one line here; the record viewer opens from disk; Astra and Codex are reached
+through the mailbox in the repository. Everything on this board is judged by whether it moves
+that.
 
-Run it, in Git Bash, with Python 3.11+ and Node 22 installed (Playwright is optional; its tests
-skip when the browser is absent):
+The owner's side is two things and nothing else: say it, read this page. The commands below are
+for agents. The owner never types them; a session runs them when asked in words ("run the test",
+"undo 7", "land 12", "what happened tonight").
+
+For agents, on the D:/ clone (Git Bash, Python 3.11+, Node 22; Playwright optional):
 
 ```
 git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging.git /d/DiscStudio-staging
 cd /d/DiscStudio-staging
 python -m venv .venv && .venv/Scripts/python -m pip install -e "./pyto[drawing]"   # the scripts find .venv on their own
 bash pyto/scripts/check_all.sh                                   # every suite, the same table as here
-.venv/Scripts/python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit   # one miss, then two hits, the second from a fresh process
+.venv/Scripts/python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit --force   # one miss, then two hits, the second from a fresh process; overwrites its own scratch
 node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
 ```
 
-The last two lines are the hit and the room to look at it. Landing from there is
-`bash pyto/scripts/land.sh <package>`; the receipt and this log follow.
+For Astra or Codex, the owner reuses one sentence forever: "Pull the branch, read the newest file
+in mailbox/to-gpt, do what it says."
+
+## Interrupts
+
+The owner is interrupted for three things only: something they would want to know broke and
+cannot be fixed without them; a decision that changes what gets built and has no safe default; a
+milestone they asked for (the proof passed on their machine, a surface shipped). Everything else
+is a line below, never a message. Defaults are taken and written in the owner's words; undo is a
+sentence. An interrupt has one shape: what happened, in a plain sentence; what it means for the
+owner, in one; what they can say, with the default named. No labels, receipts or paths. Knowing
+it works is three lines, read in the morning: the proof line (green or red on D:/ in a fresh
+clone), the product page, and the tally of landings and refusals with each reason. The owner did
+not write this rule and can veto it in a sentence.
 
 ## Today
 
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 21:40 **landed** `task-9`: Add a fast, isolated check that land.sh's early refusal paths (bad package name, unknown branch, dirty file outside allowed paths) exit 1 and write a failed/*.json receipt without ever reaching check_all.sh, so the refusal contract is verified in under a second instead of only by hand-run scratch clones. (314 files since 1b38f28, suites green, receipt 20260909T213956Z-task-9)
+- 2026-09-09 21:45 **note**: your D:/ session took ids 12 (proof.sh) and 13 (questions), so my two copies were renumbered: studio run-record export is now `task-21` (EXP/21, exp/21) and receipts as Parts is `task-22` (EXP/22, exp/22). Both builders had stalled; fresh ones are running. Codex delivered `task-3` (neat anywhere, selftest green); merging MAIN's `update` into it before landing.
+- 2026-09-09 18:53 **landed** `task-20`: Hiding primitives: a SUBDUE-style miner over the paint studio's call graphs finds the helper sequences that recur across the sixteen families, scores them by compression, and reports them beside what the JavaScript port extracted by hand; workshop only, no images, no kernel change (26 files since a10b969, suites green, receipt 20260909T185240Z-task-20)
+- 2026-09-09 18:19 **landed** `astra-discstudio-1`: Astra package one: the studio draws disc art through the ported painter and ships a printable shelf sheet; painted art inside the generic card (12 files since a10b969, suites green, receipt 20260909T181752Z-astra-discstudio-1)
+- 2026-09-09 15:38 **landed** `task-19`: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases (67 files since af0bf06, suites green, receipt 20260909T153806Z-task-19)
+- 2026-09-09 15:37 **landed** `neat-ids-2`: task ids also count tasks landed on origin since the last pull (1 files since 9fba660, suites green, receipt 20260909T153644Z-neat-ids-2)
+- 2026-09-09 15:35 **refused** `task-15`: merge conflict with exp/15 in: pyto/experiments/tasks/15/HANDOFF.md pyto/experiments/tasks/15/evidence/check_all.txt pyto/experiments/tasks/15/evidence/verify.txt pyto/experiments/tasks/15/packet.md 
+- 2026-09-09 13:59 **landed** `task-18`: four worlds, one terminal: one page opens the ChainSpot, ChessLab, Wumpus, DiscStudio and pyto records side by side with a picker, the same tick page for every runtime, playback included (25 files since e1e888a, suites green, receipt 20260909T135832Z-task-18)
+- 2026-09-09 13:51 **landed** `task-17`: cross-project hit: a second tiny domain reads the same per-user materials store and gets a verified hit on material the ablation experiment produced, with counters and a receipt (25 files since 12c6528, suites green, receipt 20260909T135010Z-task-17)
+- 2026-09-09 13:41 **landed** `task-16`: watch it think: the tick page plays a record Tick by Tick with play, pause and step, each Calculation's reads, writes and value appearing when it finished, at recorded speed or slower (10 files since 12c6528, suites green, receipt 20260909T134004Z-task-16)
+- 2026-09-09 09:58 **proof** green: fresh clone of c58032c, 6 steps, all green, receipt 20260909T095714Z-proof
+- 2026-09-09 09:56 **landed** `task-15`: proof.sh gives each run its own output dir: the board's pyto-hit path is substituted like the clone path, so a second proof on one machine cannot trip over the first (6 files since 3b6c3ae, suites green, receipt 20260909T095540Z-task-15)
+- 2026-09-09 09:48 **landed** `neat-reserve-id`: neat new pushes exp/<id> at once, so two clones can never pick the same task id (1 files since cf7ac33, suites green, receipt 20260909T094802Z-neat-reserve-id)
+- 2026-09-09 09:56 The red proof was a leftover: step 5 refused to overwrite /d/pyto-hit from the previous proof. The suite and the viewer were green on D:/ in a fresh clone. The command now overwrites its own scratch; the next proof decides.
+- 2026-09-09 09:51 **proof** red: fresh clone of 4875210, 6 steps, step 5 failed, receipt 20260909T094944Z-proof
+- 2026-09-09 09:46 **landed** `task-12`: proof: the test as one script. proof.sh clones the branch fresh into a temp dir on this drive, runs the board's commands verbatim, writes one Today line with the result and a receipt under pyto/experiments/landings/proofs/ (16 files since 76bc3d2, suites green, receipt 20260909T094458Z-task-12)
+- 2026-09-09 09:44 **landed** `task-14`: determinism log oracle survives a different interpreter: the log keeps naming its Python, the comparison normalizes the version and skips by name when the hash algorithm differs (5 files since 76bc3d2, suites green, receipt 20260909T094315Z-task-14)
+- 2026-09-09 09:42 **refused** `task-14`: verifier exited 1 (see /d/pyto-socratic-20260909/pyto/experiments/landings/20260909T094234Z-task-14/verifier.txt)
+- 2026-09-09 09:23 **landed** `task-11`: Mounts: a world (a course, a game, a bag) is mounted above an ordinary PxC by an id outside the address space, so one address means the same thing in every world; ported from ChainSpot's PxCRootMounts with its negative test (49 files since f2e0b8e, suites green, receipt 20260909T092312Z-task-11)
+- 2026-09-09 09:23 **landed** `union-logs`: CHANGES.md, BOARD.md and questions.md merge by union: two writers appending never conflict (1 files since c2bd634, suites green, receipt 20260909T092226Z-union-logs)
+- 2026-09-09 09:22 **refused** `task-11`: merge conflict with exp/11 in: pyto/CHANGES.md 
+- 2026-09-09 09:10 **landed** `day3`: the render page, the materializer and the materials store, closed out by task 0; verified on the tree as it stands (257 files since 83422cf, suites green, receipt 20260909T091011Z-day3)
+- 2026-09-09 09:10 **landed** `neat-update`: neat update brings MAIN into a copy; a packet's candidate is measured from the merge base, so MAIN's own commits never count as the task's change (2 files since 7d2448d, suites green, receipt 20260909T090927Z-neat-update)
 - 2026-09-09 09:08 **landed** `task-0`: Day 3 close-out: the record contract says what both runtimes do (declared_consumes, nested array cap), run_cached derives hit or miss from counters, viewer and materializer agree on every fixture (24 files since f2e0b8e, suites green, receipt 20260909T090752Z-task-0)
 - 2026-09-09 09:05 **refused** `task-0`: merge conflict with exp/0 in: pyto/experiments/grouped-ablation/evidence/run-6-cached/interpretation.md pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json 
 - 2026-09-09 09:02 **landed** `task-2`: Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing (145 files since 50ec3f7, suites green, receipt 20260909T090128Z-task-2)
@@ -70,6 +108,9 @@ the day so far, in plain words.
 - 2026-09-09 08:21 **landed** `task-1`: AHI runs on the owner's Windows D:/: neat new works (host path for pip, python checks the install), the ablation fixture is bit-portable (no libm), the card server drains a 413 body, stripped child environments keep SystemDrive (65 files since 8604a0c, suites green, receipt 20260909T081928Z-task-1)
 - 2026-09-09 08:16 **refused** `task-1`: MAIN is behind origin/HEAD by  commit(s) (someone landed elsewhere); run: git pull --rebase origin HEAD  then land again
 - 2026-09-09 08:13 **landed** `windows-venv`: the scripts find the repository's .venv on their own, so isolated child processes import pyto on Windows too; the D:/ commands make that venv (4 files since 291b7f7, suites green, receipt 20260909T081311Z-windows-venv)
+- 2026-09-09 11:40 Owner: what carries water immediately? The painter port (task 15, running): sixteen art families and two card renderers in the browser, byte-identical to the workshop across 440 cases, the verifier decides. It is Astra's package one too; whichever arrives, the same verifier scores it. Behind it, every DiscShelf and OnTheCourse format becomes shippable.
+- 2026-09-09 11:20 Owner: "I want to know the things work but I shouldn't have to define an interrupt schema." The schema is now the system's own rule (section "Interrupts" above): three reasons to interrupt, one shape, three morning lines that say it works.
+- 2026-09-09 11:05 Owner: is it making my life easier? Not yet: tonight added commands, prompts to paste and a relay. Rule from here: the commands are for agents; the owner says things and reads this page. "The test" is now one sentence to a session; Astra and Codex get one fixed sentence forever; the `{?}` root is read to the owner, never by the owner.
 - 2026-09-09 10:20 Owner: go big, one more: a Fable uses Sonnets to self-improve in branching manners that must remain human explicable. Running now: Sonnets mine the record for small useful changes to the loop itself, each becomes a neat task in its own copy, and a cold reader who sees only the hand-off must explain it correctly before it may land (the explicability gate, now in LANDING.md). Losers stay packed.
 - 2026-09-09 08:15 **refused** `task-1`: MAIN is behind origin/claude/python-ultracode-supercharge-st8hnu by 2 commit(s) (someone landed elsewhere); run: git pull --rebase origin claude/python-ultracode-supercharge-st8hnu  then land again
 - 2026-09-09 10:05 Owner: a task Codex can run as a good neighbour, and a personal neat for the work laptop where only Rovo and Windsurf exist. Both are one task: 3, "neat anywhere", on `exp/3` with a brief sized for one agent (read five files, run one command, stop when the selftest passes). The prompt to paste is in `mailbox/to-gpt/0002`. When it lands, the two scripts copied into any repository give the work laptop the same seven commands, and an editor agent only has to run them.
@@ -142,10 +183,11 @@ any of this". Taken as the default: this proposal is the target, a named wider f
 first, agents stress-test it (findings and seven agent defaults under `{?} AddressRootIsAMount`
 in `questions.md`), and the owner is not asked about addressing again.
 
-**Stands.** Days 1 and 2 landed (receipts, retain, fresh-process replay, second experiment with
-zero program edits). Landing protocol in place (`LANDING.md`). Day 3 running (render,
-materializer, materials store), second fix round. Day 4 queued (the table and `px`), to run in a
-copy of the tree. Day 5 planned (node reads the table, a JS skill verified, cross-project hit,
+**Stands.** Days 1, 2 and 3 landed with receipts (receipts, retain, fresh-process replay, the
+second experiment with zero program edits; the render page, the materializer, the materials
+store, closed out by task 0). Landed tonight as well: digests and records that are the same bits
+on Linux and Windows, the address validator and census (task 2). Running: the Mounts type (task
+11). Day 4 (the table and `px`) waits behind the DiscStudio surfaces, per the owner's focus. Day 5 planned (node reads the table, a JS skill verified, cross-project hit,
 SUBDUE and WebShaper on recorded graphs).
 
 ## Lane 2: DiscStudio surfaces (Codex, briefed from lane 1)
@@ -165,9 +207,11 @@ you're saying. Idk any of this it just happened." Default taken: port to JS with
 the site stays static, Python is the workshop. The owner's contract, same night: "it needs to be
 stable and explainable. I know nothing. U explain it. That's why this works."
 
-**Stands.** Briefs written: Day 2 (as a bake-off reference), neat and tidy. Next brief: DiscShelf
-and OnTheCourse formats, written once Day 3 returns the viewer's real API so the studio can show
-a format's record.
+**Stands.** The painter port landed (task 19): sixteen families and both card renderers run in
+the browser, byte-identical to the workshop across 440 cases. Next in this lane: wire the port
+into the studio's own art path under `AGENTS.md`, then the three formats (Astra's package three).
+The studio's run-record export is being built in its own copy, landing only if `npm test`, the
+viewer suite and the browser check pass.
 
 ## Lane 3: neat and tidy (the owner's neat expert)
 
@@ -190,9 +234,10 @@ no git command.
 **Open prompt.** none. The brief is at `research/briefs/neat-on-pxc-brief.md` with five `{?}`
 entries for the expert to bring back.
 
-**Stands.** `pyto/scripts/neat.sh` written (new, pack, show, drop, land, kill, list), being
-tested end to end in a scratch clone with its own origin. Brief for the PxC-backed version handed
-off; it should keep these seven commands. Ticket storage is a different mount from the board
+**Stands.** neat has nine commands (new, pack, show, drop, land, undo, update, kill, list), tested
+end to end in a scratch clone and used for every landing tonight; task 3 ("neat anywhere") is
+briefed for Codex so the work laptop gets the same commands. Brief for the PxC-backed version
+handed off; it should keep these commands. Ticket storage is a different mount from the board
 render and is not budget-bound.
 
 ## Lane 4: the record and the room (observability)
@@ -209,7 +254,9 @@ telemetry since ur gonna try to selfbootstrap and go ham overnight lol". The fie
 must name a landed commit, never a working-tree sha (the fresh-clone proof went red on exactly
 that); the proof run after each landing is the check.
 
-**Stands.** Observability ledger written; Day 3 builds the render and the materializer.
+**Stands.** Observability ledger written; Day 3 landed the render and the materializer, and task 0
+made the contract say what both runtimes do. Max telemetry per the owner: the record keeps its
+commit, and a stamp names a landed commit.
 
 ## Lane 5: research comparisons
 

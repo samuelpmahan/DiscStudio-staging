@@ -1,0 +1,4 @@
+ok  no-args: exit 2
+ok  unknown-branch: exit 1
+ok  dirty-outside-allow: exit 1
+check_land_refusals: 3 refusal paths verified (usage, unknown branch, scope), no receipt for usage, check_all.sh never reached, starting tree untouched

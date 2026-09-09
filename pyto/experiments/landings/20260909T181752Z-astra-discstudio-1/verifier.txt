@@ -1,0 +1,214 @@
+
+> discstudio-pxc-staging@0.2.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: studio art and single card Parts are byte-identical to the ported painter
+ok 1 - studio art and single card Parts are byte-identical to the ported painter
+  ---
+  duration_ms: 29.931591
+  type: 'test'
+  ...
+# Subtest: ported painter inputs use sanitized authored colors
+ok 2 - ported painter inputs use sanitized authored colors
+  ---
+  duration_ms: 30.631214
+  type: 'test'
+  ...
+# Subtest: manufacturer, mold, optional values and every registered field are discoverable
+ok 3 - manufacturer, mold, optional values and every registered field are discoverable
+  ---
+  duration_ms: 14.070132
+  type: 'test'
+  ...
+# Subtest: new schema fields automatically resolve, compose, serialize and rehydrate
+ok 4 - new schema fields automatically resolve, compose, serialize and rehydrate
+  ---
+  duration_ms: 19.17961
+  type: 'test'
+  ...
+# Subtest: unregistered fields and new related domain objects are surfaced, not silently discarded
+ok 5 - unregistered fields and new related domain objects are surfaced, not silently discarded
+  ---
+  duration_ms: 0.743716
+  type: 'test'
+  ...
+# Subtest: shelf and comparison share physical references; bags do not duplicate discs
+ok 6 - shelf and comparison share physical references; bags do not duplicate discs
+  ---
+  duration_ms: 32.0679
+  type: 'test'
+  ...
+# Subtest: actual PQL consumes rendered Parts, and repeat rendering reuses actual memoized values
+ok 7 - actual PQL consumes rendered Parts, and repeat rendering reuses actual memoized values
+  ---
+  duration_ms: 26.40626
+  type: 'test'
+  ...
+# Subtest: layout and score changes reuse upstream disc art; selected-state changes remain separate from domain
+ok 8 - layout and score changes reuse upstream disc art; selected-state changes remain separate from domain
+  ---
+  duration_ms: 41.196881
+  type: 'test'
+  ...
+# Subtest: presentation edits change real scene and apply to other discs without a second renderer
+ok 9 - presentation edits change real scene and apply to other discs without a second renderer
+  ---
+  duration_ms: 24.853981
+  type: 'test'
+  ...
+# Subtest: three reusable PutterWarz constraints evaluate pass, pending and fail honestly
+ok 10 - three reusable PutterWarz constraints evaluate pass, pending and fail honestly
+  ---
+  duration_ms: 32.541715
+  type: 'test'
+  ...
+# Subtest: constraint group any composition is not the same as all; empty rules do not pretend validation
+ok 11 - constraint group any composition is not the same as all; empty rules do not pretend validation
+  ---
+  duration_ms: 13.727293
+  type: 'test'
+  ...
+# Subtest: closing a short round fails exact-count rule; missing references fail visibly
+ok 12 - closing a short round fails exact-count rule; missing references fail visibly
+  ---
+  duration_ms: 5.685103
+  type: 'test'
+  ...
+# Subtest: states retain independent scores, highlights and winner tags; lineup removal cleans references
+ok 13 - states retain independent scores, highlights and winner tags; lineup removal cleans references
+  ---
+  duration_ms: 15.784804
+  type: 'test'
+  ...
+# Subtest: all placement/layout combinations stay inside the 1920×1080 export frame
+ok 14 - all placement/layout combinations stay inside the 1920×1080 export frame
+  ---
+  duration_ms: 174.940576
+  type: 'test'
+  ...
+# Subtest: untrusted SVG/text never becomes executable and malformed data cannot replace a valid world
+ok 15 - untrusted SVG/text never becomes executable and malformed data cannot replace a valid world
+  ---
+  duration_ms: 26.261451
+  type: 'test'
+  ...
+# Subtest: no synthetic usage is represented as recorded events or exports
+ok 16 - no synthetic usage is represented as recorded events or exports
+  ---
+  duration_ms: 19.538434
+  type: 'test'
+  ...
+# Subtest: identity fields appear first by domain metadata, not a second customizer whitelist
+ok 17 - identity fields appear first by domain metadata, not a second customizer whitelist
+  ---
+  duration_ms: 3.760634
+  type: 'test'
+  ...
+# Subtest: malformed layouts and negative constraint quantities fail before changing the world
+ok 18 - malformed layouts and negative constraint quantities fail before changing the world
+  ---
+  duration_ms: 3.632552
+  type: 'test'
+  ...
+# Subtest: large authored cards and a twelve-disc row still fit the export frame
+ok 19 - large authored cards and a twelve-disc row still fit the export frame
+  ---
+  duration_ms: 88.835979
+  type: 'test'
+  ...
+# Subtest: a disc without a photo shows painted art inside the generic card, never the Add image placeholder
+ok 20 - a disc without a photo shows painted art inside the generic card, never the Add image placeholder
+  ---
+  duration_ms: 5.175139
+  type: 'test'
+  ...
+# Subtest: shelf sheet is deterministic and matches the committed byte fixture
+ok 21 - shelf sheet is deterministic and matches the committed byte fixture
+  ---
+  duration_ms: 29.839131
+  type: 'test'
+  ...
+# Subtest: shelf sheet is registered by the production runtime and leaves a PQL record
+ok 22 - shelf sheet is registered by the production runtime and leaves a PQL record
+  ---
+  duration_ms: 12.340211
+  type: 'test'
+  ...
+# Subtest: seed bag fields can be passed directly from shared domain Parts
+ok 23 - seed bag fields can be passed directly from shared domain Parts
+  ---
+  duration_ms: 8.27305
+  type: 'test'
+  ...
+# Subtest: shelf sheet preserves a safe original disc photo in the tile
+ok 24 - shelf sheet preserves a safe original disc photo in the tile
+  ---
+  duration_ms: 5.01737
+  type: 'test'
+  ...
+# Subtest: browser-safe SHA-256 agrees with Node for empty, Unicode and multiblock input
+ok 25 - browser-safe SHA-256 agrees with Node for empty, Unicode and multiblock input
+  ---
+  duration_ms: 9.263415
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 741.126983
+
+> discstudio-pxc-staging@0.2.0 build
+> node scripts/build.mjs
+
+Built /home/user/DiscStudio-staging/dist
+Commit: ff7f792241827c2bdbec7d0530759aa2ef08403f
+Source/test fingerprint: 586335629f99d8afaf9d66a9c39e177f848a47d74230ad842deb65b4822a66e2
+PASS: Manufacturer/mold first-class bindings; styling and pointer dragging edit the real preset
+PASS: Schema-added field automatically appears in both fact editing and the customizer
+PASS: Independent comparison states and scores reuse actual upstream PxC art
+PASS: Exact uploaded photo reaches SVG/PNG; transparent 1920×1080 export hash matches actual bytes; footage excluded
+PASS: Specific neat comments export with inspected flags, context and checkpoint; no acceptance is fabricated
+PASS: Workspace, uploaded photo, presets and item comments rehydrate (memory storage double)
+PASS: Competition UI records real team throws and changes composed status from pending to pass to fail
+PASS: Four routes render at desktop and mobile widths without horizontal page overflow
+PASS: No browser JavaScript errors
+{
+  "mode": "embedded DOM; memory storage double",
+  "checks": [
+    "Manufacturer/mold first-class bindings; styling and pointer dragging edit the real preset",
+    "Schema-added field automatically appears in both fact editing and the customizer",
+    "Independent comparison states and scores reuse actual upstream PxC art",
+    "Exact uploaded photo reaches SVG/PNG; transparent 1920\u00d71080 export hash matches actual bytes; footage excluded",
+    "Specific neat comments export with inspected flags, context and checkpoint; no acceptance is fabricated",
+    "Workspace, uploaded photo, presets and item comments rehydrate (memory storage double)",
+    "Competition UI records real team throws and changes composed status from pending to pass to fail",
+    "Four routes render at desktop and mobile widths without horizontal page overflow",
+    "No browser JavaScript errors"
+  ],
+  "count": 9,
+  "errors": []
+}
+families: 432/432 byte-identical in 1174 ms
+  block-print           27/27
+  chevron-run           27/27
+  contour-basin         27/27
+  fairway-plat          27/27
+  halftone-screen       27/27
+  hot-foil              27/27
+  nodding-seedhead      27/27
+  orbit-foundry         27/27
+  petal-press           27/27
+  pressed-fern          27/27
+  register-mark         27/27
+  score-bug             27/27
+  signal-stamp          27/27
+  sweep-clock           27/27
+  tessellated-flight    27/27
+  wind-rose             27/27
+cards: 8/8 byte-identical

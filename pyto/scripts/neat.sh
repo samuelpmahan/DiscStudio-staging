@@ -8,6 +8,7 @@
 #   neat land <id>            merge into MAIN, verify, receipt, commit, push; EXP/<id> goes away
 #   neat kill <id>            abandon: EXP/<id> goes away, nothing lands; exp/<id> is kept (nothing is deleted)
 #   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
+#   neat update <id>          bring MAIN's newer commits into EXP/<id> (a conflict names the files and stops)
 #   neat list                 every experiment and its state
 #
 # MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN),
@@ -35,7 +36,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,12p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,13p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: "
   grep -m1 "^$1: " "$2" | sed "s/^$1: //"
 }
@@ -47,7 +48,8 @@ next_id() { # the highest id seen anywhere: local copies, landed packets, and ex
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
-  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##'); do
+  # landed tasks on origin's copy of this branch count too: another clone may have landed since we pulled
+  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##') $(git -C "$ROOT" ls-tree --name-only "origin/$BRANCH:$TASKS" 2>/dev/null); do
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
@@ -74,6 +76,8 @@ cmd_new() {
   id="$(next_id)"; base="$(git -C "$ROOT" rev-parse HEAD)"; subject="$(git -C "$ROOT" log -1 --format=%s)"
   mkdir -p "$EXP"
   git -C "$ROOT" worktree add -q "$EXP/$id" -b "exp/$id" HEAD
+  # Reserve the id everywhere at once: another clone computing its next id sees this branch on origin.
+  git -C "$ROOT" push -q -u origin "exp/$id" 2>/dev/null && echo "  reserved exp/$id on origin" || echo "  (origin not reachable; the id is reserved only here until the first push)"
   mkdir -p "$EXP/$id/$TASKS/$id"
   cat > "$(packet_of "$id")" <<EOF
 # Task $id
@@ -113,6 +117,10 @@ intent, start, verify, allow = f('Intent'), f('Starting point'), f('Verify'), f(
 base = start.split()[0]
 unc = text.split('## Uncertain', 1)[1].strip() if '## Uncertain' in text else ''
 git = lambda *a: subprocess.run(['git', '-C', wt, *a], capture_output=True, text=True).stdout
+# After `neat update` merged MAIN into the copy, the candidate is what the copy adds beyond MAIN
+# as it stands, never MAIN's own commits: diff from the merge base with the working branch.
+merge_base = git('merge-base', 'HEAD', branch).strip() or base
+base = merge_base
 stat = git('diff', '--stat', base, 'HEAD', '--', '.', ':!' + tasks).strip()
 names = [l for l in git('diff', '--name-status', base, 'HEAD', '--', '.', ':!' + tasks).splitlines() if l.strip()]
 cand = '\n'.join('- ' + l.replace('\t', '  ') for l in names) or '- (nothing changed)'
@@ -306,6 +314,21 @@ cmd_undo() {
   fi
 }
 
+cmd_update() {
+  local id="${1:-}"; [ -n "$id" ] || usage; need_exp "$id"
+  local wt="$EXP/$id" behind
+  behind="$(git -C "$wt" rev-list --count "HEAD..$BRANCH")"
+  [ "$behind" -gt 0 ] || { echo "EXP/$id already has everything on MAIN"; return 0; }
+  echo "== update EXP/$id: MAIN has $behind newer commit(s)"
+  if git -C "$wt" merge -q --no-edit "$BRANCH" >/dev/null 2>&1; then
+    echo "merged; the suite in EXP/$id is worth a run before packing"
+  else
+    local files; files="$(git -C "$wt" diff --name-only --diff-filter=U | tr '\n' ' ')"
+    git -C "$wt" merge --abort
+    die "MAIN conflicts with EXP/$id in: $files  (regenerated evidence conflicts are re-made on the merged code, not merged by hand: merge in EXP/$id, regenerate, commit, then pack)"
+  fi
+}
+
 cmd_list() {
   local d id packet base n state
   printf '%-4s %-8s %-6s %s\n' id state files intent
@@ -324,5 +347,5 @@ cmd_list() {
 
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
-  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; list) cmd_list "$@";; *) usage;;
+  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";; list) cmd_list "$@";; *) usage;;
 esac

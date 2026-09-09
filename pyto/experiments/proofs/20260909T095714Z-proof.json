@@ -1,0 +1,73 @@
+{
+  "schema": "pyto-proof-receipt@1",
+  "stamp": "20260909T095714Z-proof",
+  "clone_dir": "D:/pyto-proof-20260909T095714Z",
+  "commit_sha": "c58032c8a58b3da276e17f82ca1474dee844aff0",
+  "steps": [
+    {
+      "n": 1,
+      "command": "git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging.git /d/pyto-proof-20260909T095714Z",
+      "exit": 0,
+      "seconds": 5,
+      "log": "01.log",
+      "check_all_table": null
+    },
+    {
+      "n": 2,
+      "command": "cd /d/pyto-proof-20260909T095714Z",
+      "exit": 0,
+      "seconds": 0,
+      "log": "02.log",
+      "check_all_table": null
+    },
+    {
+      "n": 3,
+      "command": "python -m venv .venv && .venv/Scripts/python -m pip install -e \"./pyto[drawing]\"   # the scripts find .venv on their own",
+      "exit": 0,
+      "seconds": 15,
+      "log": "03.log",
+      "check_all_table": null
+    },
+    {
+      "n": 4,
+      "command": "bash pyto/scripts/check_all.sh                                   # every suite, the same table as here",
+      "exit": 0,
+      "seconds": 74,
+      "log": "04.log",
+      "check_all_table": [
+        "== per-suite counts",
+        "suite                         tests  status",
+        "library                         144  OK",
+        "experiments/grouped-ablation    240  OK",
+        "experiments/s3-synthetic          5  OK",
+        "consumer                         61  OK",
+        "disc-stats                        4  OK",
+        "examples                          3  OK",
+        "art-registry-md                   -  OK",
+        "viewer                           87  OK",
+        "viewer-record-schema             19  OK",
+        "",
+        "ALL SUITES PASSED"
+      ]
+    },
+    {
+      "n": 5,
+      "command": ".venv/Scripts/python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-proof-20260909T095714Z-hit --force   # one miss, then two hits, the second from a fresh process; overwrites its own scratch",
+      "exit": 0,
+      "seconds": 1,
+      "log": "05.log",
+      "check_all_table": null
+    },
+    {
+      "n": 6,
+      "command": "node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-proof-20260909T095714Z-hit/ticks.html   # open in a browser",
+      "exit": 0,
+      "seconds": 0,
+      "log": "06.log",
+      "check_all_table": null
+    }
+  ],
+  "result": "green",
+  "first_failing_step": null,
+  "at": "2026-09-09T09:58:50.478473Z"
+}

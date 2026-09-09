@@ -40,6 +40,11 @@ const PAGE_SCRIPT = `<script type="module">
 </script>`;
 
 const EMPTY_RECORD_BLOCK = '<script type="application/json" id="record"></script>';
+const EMPTY_RECORDS_BLOCK = '<script type="application/json" id="records"></script>';
+
+// ChainSpot is the founding world (pyto/research/origin.md); no adapter or
+// fixture exists yet, so `--worlds` names it as a labelled empty slot.
+export const CHAINSPOT_ENTRY = { label: 'ChainSpot', record: null, error: null, empty: true, note: 'no record on file yet' };
 
 /** Strip ES module syntax so two modules can be concatenated into one script. */
 function inlineModule(source, name) {
@@ -65,14 +70,21 @@ export function embeddableJson(record) {
  * Build the standalone page from source text alone: no file system, no network,
  * no Node builtins. `html` is tick-viewer.html, `adapters` is adapters.js and
  * `viewer` is tick-viewer.js, each as read from disk or fetched over an origin.
+ * `play` bakes in `<body data-play="1">`, the offline equivalent of `?play=1`.
  */
-export function composePage({ html, adapters: adaptersSource, viewer: viewerSource, record }) {
+export function composePage({ html: htmlSource, adapters: adaptersSource, viewer: viewerSource, record, play = false }) {
+  let html = htmlSource;
   const adapters = inlineModule(adaptersSource, 'adapters.js');
   const viewer = inlineModule(viewerSource, 'tick-viewer.js');
 
   if (!html.includes(PAGE_SCRIPT)) throw new Error('tick-viewer.html: module bootstrap block not found; embed.mjs and the page have drifted apart');
   if (!html.includes(EMPTY_RECORD_BLOCK)) throw new Error('tick-viewer.html: empty record block not found; embed.mjs and the page have drifted apart');
+  if (!html.includes(EMPTY_RECORDS_BLOCK)) throw new Error('tick-viewer.html: empty records block not found; embed.mjs and the page have drifted apart');
+  if (play) html = html.replace('<body>', '<body data-play="1">');
 
+  // The single-record page has no use for the multi-world #records block (see
+  // buildWorldsPage below), so it is dropped rather than shipped empty.
+  html = html.replace(`${EMPTY_RECORDS_BLOCK}\n`, '');
   const bundle = `<script type="module">\n/* adapters.js + tick-viewer.js, inlined by embed.mjs. No imports, no network. */\n${adapters}\n${viewer}\nmount(document);\n</script>`;
   const recordBlock = `<script type="application/json" id="record">\n${embeddableJson(record)}\n</script>`;
   // Both replacements pass a FUNCTION, never a string. String.prototype.replace
@@ -87,9 +99,9 @@ export function composePage({ html, adapters: adaptersSource, viewer: viewerSour
 }
 
 /** Build the standalone page from a viewer directory on disk (Node). */
-export function buildPage(record, { viewerDir = HERE } = {}) {
+export function buildPage(record, { viewerDir = HERE, play = false } = {}) {
   const [html, adapters, viewer] = PAGE_SOURCES.map((name) => nodeFs.readFileSync(nodePath.resolve(viewerDir, name), 'utf8'));
-  return composePage({ html, adapters, viewer, record });
+  return composePage({ html, adapters, viewer, record, play });
 }
 
 /**
@@ -107,9 +119,52 @@ export async function fetchPageSources(baseUrl, fetchImpl = globalThis.fetch) {
   return { html, adapters, viewer };
 }
 
-export function embedFile(inputPath, { viewerDir = HERE } = {}) {
+export function embedFile(inputPath, { viewerDir = HERE, play = false } = {}) {
   const parsed = JSON.parse(nodeFs.readFileSync(inputPath, 'utf8'));
-  return buildPage(coerceToRecord(parsed), { viewerDir });
+  return buildPage(coerceToRecord(parsed), { viewerDir, play });
+}
+
+// One world's input, converted through the same adapters (coerceToRecord,
+// which validates) the single-record path uses. A world whose input cannot
+// become a record still gets a slot -- {error} names why -- rather than
+// failing the whole multi-world build.
+export function loadWorldEntry(inputPath) {
+  const label = nodePath.basename(inputPath).replace(/\.json$/i, '');
+  try {
+    const record = coerceToRecord(JSON.parse(nodeFs.readFileSync(inputPath, 'utf8')));
+    return { label: `${record.pcr} · ${record.source.runtime}`, record, error: null, empty: false, note: null };
+  } catch (error) {
+    return { label, record: null, error: error.message, empty: false, note: null };
+  }
+}
+
+/** Standalone page carrying every world's record, with the picker `tick-viewer.js` renders. */
+export function buildWorldsPage(entries, { viewerDir = HERE, play = false } = {}) {
+  let html = nodeFs.readFileSync(nodePath.resolve(viewerDir, 'tick-viewer.html'), 'utf8');
+  const adapters = inlineModule(nodeFs.readFileSync(nodePath.resolve(viewerDir, 'adapters.js'), 'utf8'), 'adapters.js');
+  const viewer = inlineModule(nodeFs.readFileSync(nodePath.resolve(viewerDir, 'tick-viewer.js'), 'utf8'), 'tick-viewer.js');
+
+  if (!html.includes(PAGE_SCRIPT)) throw new Error('tick-viewer.html: module bootstrap block not found; embed.mjs and the page have drifted apart');
+  if (!html.includes(EMPTY_RECORD_BLOCK)) throw new Error('tick-viewer.html: empty record block not found; embed.mjs and the page have drifted apart');
+  if (!html.includes(EMPTY_RECORDS_BLOCK)) throw new Error('tick-viewer.html: empty records block not found; embed.mjs and the page have drifted apart');
+  if (play) html = html.replace('<body>', '<body data-play="1">');
+
+  // The multi-world page reads only #records; the single-record #record block
+  // is unused here and dropped rather than shipped empty.
+  html = html.replace(`${EMPTY_RECORD_BLOCK}\n`, '');
+  const bundle = `<script type="module">\n/* adapters.js + tick-viewer.js, inlined by embed.mjs. No imports, no network. */\n${adapters}\n${viewer}\nmount(document);\n</script>`;
+  const recordsBlock = `<script type="application/json" id="records">\n${embeddableJson(entries)}\n</script>`;
+  // Function replacements, as in buildPage: a label or value holding $&/$'/$` must not splice.
+  return html.replace(EMPTY_RECORDS_BLOCK, () => recordsBlock).replace(PAGE_SCRIPT, () => bundle);
+}
+
+/** Every fixture, sorted, plus the labelled ChainSpot slot -- `--worlds`. */
+export function buildWorldsFromFixtures({ viewerDir = HERE, play = false } = {}) {
+  const fixturesDir = nodePath.resolve(viewerDir, 'fixtures');
+  const files = nodeFs.readdirSync(fixturesDir).filter((name) => name.endsWith('.json')).sort();
+  const entries = files.map((name) => loadWorldEntry(nodePath.resolve(fixturesDir, name)));
+  entries.push(CHAINSPOT_ENTRY);
+  return buildWorldsPage(entries, { viewerDir, play });
 }
 
 function main(argv) {
@@ -121,12 +176,29 @@ function main(argv) {
     if (!out) throw new Error('--out needs a path');
     args.splice(outIndex, 2);
   }
-  const input = args[0];
-  if (!input) {
-    process.stderr.write('usage: node embed.mjs <record.json> [--out page.html]\n');
+  const playIndex = args.indexOf('--play');
+  const play = playIndex !== -1;
+  if (play) args.splice(playIndex, 1);
+  const worldsIndex = args.indexOf('--worlds');
+  const worlds = worldsIndex !== -1;
+  if (worlds) args.splice(worldsIndex, 1);
+
+  let page;
+  if (worlds) {
+    page = buildWorldsFromFixtures({ play });
+  } else if (args.length >= 2) {
+    // Four worlds, one terminal: two or more inputs bake all of them into one
+    // page with a picker, each converted through the same adapters as the
+    // single-record path below.
+    page = buildWorldsPage(args.map((input) => loadWorldEntry(nodePath.resolve(process.cwd(), input))), { play });
+  } else if (args.length === 1) {
+    page = embedFile(nodePath.resolve(process.cwd(), args[0]), { play });
+  } else {
+    process.stderr.write('usage: node embed.mjs <record.json> [--out page.html] [--play]\n'
+      + '       node embed.mjs a.json b.json ... --out worlds.html   # multiple worlds, one picker\n'
+      + '       node embed.mjs --worlds --out worlds.html            # every fixture, plus ChainSpot\n');
     process.exit(2);
   }
-  const page = embedFile(nodePath.resolve(process.cwd(), input));
   if (out) nodeFs.writeFileSync(nodePath.resolve(process.cwd(), out), page);
   else process.stdout.write(page);
 }

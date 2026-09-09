@@ -15,7 +15,8 @@ import { dirname, resolve } from 'node:path';
 import { fromPytoRecord, fromChessLabReceipts, fromWumpusRecords } from '../adapters.js';
 import {
   renderRecord, renderInvocation, renderValue, renderPartIndex,
-  matchesFilter, filterTicks, searchTerms, svgDataUrl, toBase64
+  matchesFilter, filterTicks, searchTerms, svgDataUrl, toBase64,
+  renderUnknown, renderEmptySlot
 } from '../tick-viewer.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -377,4 +378,45 @@ test('renderRecord validates before it renders', () => {
   const broken = structuredClone(record);
   broken.ticks[0].invocations[0].hit = 'yes';
   assert.throws(() => renderRecord(broken, { doc }), /ticks\[0\]\.invocations\[0\]\.hit/);
+});
+
+/* ---------------------------------------------------------------- */
+/* watch it think: the playback toggle is in the page itself         */
+/* ---------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------- */
+/* four worlds, one terminal: a bad or missing world's panel          */
+/* ---------------------------------------------------------------- */
+
+test('a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank', () => {
+  const panel = renderUnknown(doc, 'bad · chesslab', 'pyto-run-record@1 ticks[0].name: expected a string, got null');
+  assert.ok(withClass(panel, 'unknown-panel').length, 'carries the panel class');
+  assert.ok(withClass(panel, 'error').length, 'mirrors the page\'s existing error styling');
+  assert.ok(textOf(panel).includes('UNKNOWN — bad · chesslab'));
+  assert.ok(textOf(panel).includes('ticks[0].name: expected a string, got null'), 'names the reason');
+});
+
+test('a world with no input at all is a labelled empty slot, never a faked record', () => {
+  const panel = renderEmptySlot(doc, 'ChainSpot', 'no record on file yet');
+  assert.equal(textOf(panel), 'ChainSpot: no record on file yet');
+  assert.ok(withClass(panel, 'none').length, 'reuses the page\'s existing empty-state style');
+});
+
+test('the page carries a playback toggle and its control bar, wired to mount()', () => {
+  const html = readFileSync(resolve(HERE, '..', 'tick-viewer.html'), 'utf8');
+  assert.match(html, /id="playback-toggle"/, 'a button to switch into playback mode');
+  assert.match(html, /id="playback-bar"[^>]*hidden/, 'the control bar starts hidden -- all-at-once stays the default view');
+  for (const id of ['play-btn', 'pause-btn', 'step-btn', 'speed', 'playback-now', 'playback-clock']) {
+    assert.match(html, new RegExp(`id="${id}"`), `missing #${id}`);
+  }
+  assert.match(html, /<option value="1">1x real<\/option>/);
+  assert.match(html, /<option value="10"[^>]*>10x slower<\/option>/);
+  assert.match(html, /<option value="100"[^>]*>100x slower<\/option>/);
+});
+
+test('the page carries a hidden world picker and an empty records block for embed.mjs --worlds', () => {
+  const html = readFileSync(resolve(HERE, '..', 'tick-viewer.html'), 'utf8');
+  assert.match(html, /id="world-wrap"[^>]*hidden/, 'the picker starts hidden -- a single-record page shows none');
+  assert.match(html, /id="world"/);
+  assert.match(html, /<script type="application\/json" id="records"><\/script>/);
 });

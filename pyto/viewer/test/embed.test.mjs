@@ -6,14 +6,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, writeFileSync, mkdirSync, cpSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join } from 'node:path';
 
 import { validate, fromPytoRecord } from '../adapters.js';
-import { coerceToRecord, readEmbeddedRecord } from '../tick-viewer.js';
-import { buildPage, embedFile, embeddableJson } from '../embed.mjs';
+import { coerceToRecord, readEmbeddedRecord, readEmbeddedWorlds } from '../tick-viewer.js';
+import { buildPage, embedFile, embeddableJson, buildWorldsPage, buildWorldsFromFixtures, loadWorldEntry, CHAINSPOT_ENTRY } from '../embed.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const VIEWER = resolve(HERE, '..');
@@ -26,6 +26,15 @@ function embeddedRecordOf(page) {
   const start = page.indexOf(RECORD_OPEN) + RECORD_OPEN.length;
   const end = page.indexOf('</script>', start);
   assert.ok(start > RECORD_OPEN.length - 1 && end > start, 'the page carries a record block');
+  return JSON.parse(page.slice(start, end));
+}
+
+const RECORDS_OPEN = '<script type="application/json" id="records">';
+
+function embeddedWorldsOf(page) {
+  const start = page.indexOf(RECORDS_OPEN) + RECORDS_OPEN.length;
+  const end = page.indexOf('</script>', start);
+  assert.ok(start > RECORDS_OPEN.length - 1 && end > start, 'the page carries a records block');
   return JSON.parse(page.slice(start, end));
 }
 
@@ -189,4 +198,83 @@ test("a record carrying $&, $` and $' is embedded literally, not expanded", () =
   assert.deepEqual(readBack, record);
   assert.equal(readBack.pcr, `grouped-ablation ${hostile}`);
   assert.equal(readBack.ticks[0].invocations[0].value.data, hostile);
+});
+
+/* ---------------------------------------------------------------- */
+/* four worlds, one terminal                                         */
+/* ---------------------------------------------------------------- */
+
+test('loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason', () => {
+  const ok = loadWorldEntry(fixturePath('wumpus-belief-tick.json'));
+  assert.equal(ok.label, 'wumpus · wumpus');
+  assert.equal(ok.error, null);
+  validate(ok.record);
+
+  const dir = mkdtempSync(join(tmpdir(), 'tick-world-'));
+  const bad = join(dir, 'not-a-record.json');
+  writeFileSync(bad, JSON.stringify({ hello: 'world' }));
+  const failed = loadWorldEntry(bad);
+  assert.equal(failed.record, null);
+  assert.equal(failed.label, 'not-a-record');
+  assert.match(failed.error, /Unrecognized document/);
+});
+
+test('buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side', () => {
+  const entries = ['pyto-grouped-ablation.json', 'discstudio-display-card.json', 'chesslab-s0-s1.json']
+    .map((name) => loadWorldEntry(fixturePath(name)));
+  const page = buildWorldsPage(entries);
+
+  assert.equal((page.match(/^<script/gm) || []).length, 2, 'exactly the records block and the inlined module');
+  assert.ok(!page.includes(`${RECORD_OPEN}</script>`), 'the unused single-record block is dropped, not shipped empty');
+  assert.match(page, /id="world-wrap"/, 'the picker markup is present for tick-viewer.js to reveal');
+
+  const worlds = embeddedWorldsOf(page);
+  assert.equal(worlds.length, 3);
+  assert.deepEqual(worlds.map((w) => w.label), ['ablation.grouped · pyto', 'display-card · discstudio', 'chesslab · chesslab']);
+  for (const world of worlds) { validate(world.record); assert.equal(world.error, null); }
+  assert.equal(readEmbeddedWorlds({ getElementById: (id) => (id === 'records' ? { textContent: JSON.stringify(worlds) } : null) }).length, 3);
+});
+
+test('a bad input becomes a world entry naming the failure, never a blank page or an aborted build', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tick-world-bad-'));
+  const bad = join(dir, 'garbled.json');
+  writeFileSync(bad, JSON.stringify({ nope: true }));
+  const entries = [loadWorldEntry(fixturePath('wumpus-belief-tick.json')), loadWorldEntry(bad)];
+  const page = buildWorldsPage(entries);
+  const worlds = embeddedWorldsOf(page);
+  assert.equal(worlds.length, 2);
+  assert.equal(worlds[0].error, null);
+  assert.equal(worlds[1].record, null);
+  assert.match(worlds[1].error, /Unrecognized document/, 'the reason a world is UNKNOWN travels with it');
+  assert.match(page, /UNKNOWN/, 'the bundled tick-viewer.js is the module that spells the panel');
+});
+
+test('node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tick-cli-worlds-'));
+  const out = join(dir, 'worlds.html');
+  execFileSync(process.execPath, [
+    'embed.mjs', 'fixtures/pyto-grouped-ablation.json', 'fixtures/wumpus-belief-tick.json', '--out', out
+  ], { cwd: VIEWER });
+  const page = readFileSync(out, 'utf8');
+  const worlds = embeddedWorldsOf(page);
+  assert.deepEqual(worlds.map((w) => w.label), ['ablation.grouped · pyto', 'wumpus · wumpus']);
+  for (const world of worlds) validate(world.record);
+});
+
+test('--worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record', () => {
+  const page = buildWorldsFromFixtures();
+  const worlds = embeddedWorldsOf(page);
+
+  const fixtureNames = readdirSync(resolve(VIEWER, 'fixtures')).filter((f) => f.endsWith('.json')).sort();
+  assert.equal(worlds.length, fixtureNames.length + 1, 'one entry per fixture, plus ChainSpot');
+  for (const world of worlds.slice(0, fixtureNames.length)) { validate(world.record); assert.equal(world.error, null); }
+
+  const chainspot = worlds[worlds.length - 1];
+  assert.equal(chainspot.label, 'ChainSpot');
+  assert.equal(chainspot.record, null);
+  assert.equal(chainspot.empty, true);
+  assert.equal(chainspot.note, CHAINSPOT_ENTRY.note);
+
+  const stdout = execFileSync(process.execPath, ['embed.mjs', '--worlds'], { cwd: VIEWER, encoding: 'utf8', maxBuffer: 1 << 24 });
+  assert.equal(stdout, page, 'the CLI --worlds flag builds the same page as the function');
 });
