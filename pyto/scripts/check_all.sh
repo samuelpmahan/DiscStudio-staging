@@ -74,7 +74,11 @@ run_suite() {
 # 1. library tests
 run_suite library "$PYTO" "$PYTHON" -m unittest discover -s tests -v
 
-# 2. every experiments/<name>/ holding test_*.py (runs/ is a record, not a suite)
+# 2. every experiments/<name>/ holding test_*.py (runs/ is a record, not a suite).
+# This loop is how an experiment suite is registered: dropping test_*.py into
+# experiments/<name>/ is the whole registration, and no count is pinned anywhere.
+# So experiments/students (the homework, its committed evidence/run-1 and grade.py's
+# four mechanical checks) runs here for the same reason grouped-ablation does.
 for dir in "$PYTO"/experiments/*/; do
     name="$(basename "$dir")"
     [ "$name" = "runs" ] && continue

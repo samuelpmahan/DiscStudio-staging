@@ -1,0 +1,159 @@
+{
+  "histogram": {
+    "actual_consumes": [],
+    "actual_produces": [
+      "px.students.histogram"
+    ],
+    "calculation": {
+      "address": "fn.students.histogram",
+      "identity_scope": "runtime-function-body",
+      "implementation_sha256": "6618353f306c11b17d0e037e91d044df4f6ee22712bcca7578d731be9f0ed7ce",
+      "limitation": "called helpers, constants, templates, and assets are not covered"
+    },
+    "declared_consumes": [],
+    "declared_produces": [
+      "px.students.histogram"
+    ],
+    "duration_ms": 0.021507999917957932,
+    "effective_arg_keys": [
+      "letters",
+      "cutoffs",
+      "bar"
+    ],
+    "invocation_id": "histogram",
+    "result_sha256": "0b10c417a9a0c1259099faf06d3771c4a766494a4a34c3394837e06b758ee78d",
+    "shadowed_inputs": [],
+    "started_ms": 2410505.965417,
+    "writes": [
+      {
+        "address": "px.students.histogram",
+        "kind": "new-address"
+      }
+    ]
+  },
+  "letters": {
+    "actual_consumes": [],
+    "actual_produces": [
+      "px.students.letters"
+    ],
+    "calculation": {
+      "address": "fn.students.letters",
+      "identity_scope": "runtime-function-body",
+      "implementation_sha256": "bdb6828b307fcb2522327e41429c5db7c433ec73388dba8c29e04a072dec51eb",
+      "limitation": "called helpers, constants, templates, and assets are not covered"
+    },
+    "declared_consumes": [],
+    "declared_produces": [
+      "px.students.letters"
+    ],
+    "duration_ms": 0.028363000183162512,
+    "effective_arg_keys": [
+      "roster",
+      "cutoffs"
+    ],
+    "invocation_id": "letters",
+    "result_sha256": "6bcd64ec55370df02f57986b8cf278abd53405686aab0a416d38706d1d9edee0",
+    "shadowed_inputs": [],
+    "started_ms": 2410505.643131,
+    "writes": [
+      {
+        "address": "px.students.letters",
+        "kind": "new-address"
+      }
+    ]
+  },
+  "mean": {
+    "actual_consumes": [],
+    "actual_produces": [
+      "px.students.mean"
+    ],
+    "calculation": {
+      "address": "fn.students.mean",
+      "identity_scope": "runtime-function-body",
+      "implementation_sha256": "52c2348bf909078bdf32e7b55a95140e366884feb69c89a94cd07c4da464bc6d",
+      "limitation": "called helpers, constants, templates, and assets are not covered"
+    },
+    "declared_consumes": [],
+    "declared_produces": [
+      "px.students.mean"
+    ],
+    "duration_ms": 0.03024099987669615,
+    "effective_arg_keys": [
+      "roster"
+    ],
+    "invocation_id": "mean",
+    "result_sha256": "a1a9f34b0711500b5d41ed1f553bf9d04af30672d5850e7496b44b51482fff3a",
+    "shadowed_inputs": [],
+    "started_ms": 2410505.023226,
+    "writes": [
+      {
+        "address": "px.students.mean",
+        "kind": "new-address"
+      }
+    ]
+  },
+  "median": {
+    "actual_consumes": [],
+    "actual_produces": [
+      "px.students.median"
+    ],
+    "calculation": {
+      "address": "fn.students.median",
+      "identity_scope": "runtime-function-body",
+      "implementation_sha256": "e40b65bbc48b2a45c76bb9800ed9c5b8240a7192c2d07d0ff89b02c5c19dc312",
+      "limitation": "called helpers, constants, templates, and assets are not covered"
+    },
+    "declared_consumes": [],
+    "declared_produces": [
+      "px.students.median"
+    ],
+    "duration_ms": 0.0192300003618584,
+    "effective_arg_keys": [
+      "roster"
+    ],
+    "invocation_id": "median",
+    "result_sha256": "848edcd4f2130990a2371124dff160e019f75ee61626eab42611d25c5b656e89",
+    "shadowed_inputs": [],
+    "started_ms": 2410505.3792089997,
+    "writes": [
+      {
+        "address": "px.students.median",
+        "kind": "new-address"
+      }
+    ]
+  },
+  "parse": {
+    "actual_consumes": [
+      "px.students.scores_csv"
+    ],
+    "actual_produces": [
+      "px.students.roster"
+    ],
+    "calculation": {
+      "address": "fn.students.parse",
+      "identity_scope": "runtime-function-body",
+      "implementation_sha256": "734297dcbbb4c557d7fadef148e57de8cb1a745ca876c7c38b1e076c0dbf6cc3",
+      "limitation": "called helpers, constants, templates, and assets are not covered"
+    },
+    "declared_consumes": [
+      "px.students.scores_csv"
+    ],
+    "declared_produces": [
+      "px.students.roster"
+    ],
+    "duration_ms": 0.03286900027887896,
+    "effective_arg_keys": [
+      "text"
+    ],
+    "invocation_id": "parse",
+    "result_sha256": "0be97ba80b4e28b0b2afee87ad31d65e32e8fd2d5da01b0f2a97e0edb2c41378",
+    "shadowed_inputs": [],
+    "started_ms": 2410502.493612,
+    "writes": [
+      {
+        "address": "px.students.roster",
+        "kind": "new-address"
+      }
+    ]
+  }
+}
