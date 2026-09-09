@@ -1,0 +1,38 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T092226Z-union-logs",
+  "package": "union-logs",
+  "base_sha": "c2bd63408643273210c4140ed1075d47b759d03d",
+  "result": "verified",
+  "verifier": {
+    "command": "git check-attr merge pyto/CHANGES.md | grep -q union",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "f9cac799eb7f9cb7f23ad0bd1492ef1b8455aeeecf0641d3f6719a9c84f43c03",
+    "counts": {
+      "library": 123,
+      "experiments/grouped-ablation": 240,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 87,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/.gitattributes",
+      "bytes": 591,
+      "sha256": "5703f61387a28c8299e04a05207b1d7d53cebf947f89330a051ff0b006d8ea04"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-09T09:23:09.737520Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
