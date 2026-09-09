@@ -49,14 +49,15 @@ export function embeddableJson(record) {
     .replace(/\u2029/g, '\\u2029');
 }
 
-/** Build the standalone page as a string. */
-export function buildPage(record, { viewerDir = HERE } = {}) {
-  const html = readFileSync(resolve(viewerDir, 'tick-viewer.html'), 'utf8');
+/** Build the standalone page as a string. `play` bakes in `<body data-play="1">`, the offline equivalent of `?play=1`. */
+export function buildPage(record, { viewerDir = HERE, play = false } = {}) {
+  let html = readFileSync(resolve(viewerDir, 'tick-viewer.html'), 'utf8');
   const adapters = inlineModule(readFileSync(resolve(viewerDir, 'adapters.js'), 'utf8'), 'adapters.js');
   const viewer = inlineModule(readFileSync(resolve(viewerDir, 'tick-viewer.js'), 'utf8'), 'tick-viewer.js');
 
   if (!html.includes(PAGE_SCRIPT)) throw new Error('tick-viewer.html: module bootstrap block not found; embed.mjs and the page have drifted apart');
   if (!html.includes(EMPTY_RECORD_BLOCK)) throw new Error('tick-viewer.html: empty record block not found; embed.mjs and the page have drifted apart');
+  if (play) html = html.replace('<body>', '<body data-play="1">');
 
   const bundle = `<script type="module">\n/* adapters.js + tick-viewer.js, inlined by embed.mjs. No imports, no network. */\n${adapters}\n${viewer}\nmount(document);\n</script>`;
   const recordBlock = `<script type="application/json" id="record">\n${embeddableJson(record)}\n</script>`;
@@ -71,9 +72,9 @@ export function buildPage(record, { viewerDir = HERE } = {}) {
   return html.replace(EMPTY_RECORD_BLOCK, () => recordBlock).replace(PAGE_SCRIPT, () => bundle);
 }
 
-export function embedFile(inputPath, { viewerDir = HERE } = {}) {
+export function embedFile(inputPath, { viewerDir = HERE, play = false } = {}) {
   const parsed = JSON.parse(readFileSync(inputPath, 'utf8'));
-  return buildPage(coerceToRecord(parsed), { viewerDir });
+  return buildPage(coerceToRecord(parsed), { viewerDir, play });
 }
 
 function main(argv) {
@@ -85,12 +86,15 @@ function main(argv) {
     if (!out) throw new Error('--out needs a path');
     args.splice(outIndex, 2);
   }
+  const playIndex = args.indexOf('--play');
+  const play = playIndex !== -1;
+  if (play) args.splice(playIndex, 1);
   const input = args[0];
   if (!input) {
-    process.stderr.write('usage: node embed.mjs <record.json> [--out page.html]\n');
+    process.stderr.write('usage: node embed.mjs <record.json> [--out page.html] [--play]\n');
     process.exit(2);
   }
-  const page = embedFile(resolve(process.cwd(), input));
+  const page = embedFile(resolve(process.cwd(), input), { play });
   if (out) writeFileSync(resolve(process.cwd(), out), page);
   else process.stdout.write(page);
 }

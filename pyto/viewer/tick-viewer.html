@@ -134,6 +134,12 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
 .parts h2 { font-size: 16px; border-bottom: 2px solid var(--line); padding-bottom: 6px; }
 .scroll { overflow-x: auto; }
 .part-table tr.preexisting .addr { color: var(--accent); }
+
+#playback-toggle[aria-pressed="true"] { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+.playback-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 8px 16px; background: var(--panel); border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+.playback-bar button, .playback-bar select, #playback-toggle { font: inherit; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); cursor: pointer; }
+#playback-now { font-weight: 600; color: var(--ink); }
+#playback-clock { font-family: ui-monospace, monospace; }
 </style>
 </head>
 <body>
@@ -143,6 +149,20 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
   <input id="file" type="file" accept=".json,application/json">
   <label for="filter">filter</label>
   <input id="filter" type="search" placeholder="address substring, or scratch.ablation.* for a prefix">
+  <button id="playback-toggle" type="button" aria-pressed="false" title="Watch the Ticks and Calculations appear as they finished">Watch it think</button>
+</div>
+<div id="playback-bar" class="playback-bar" hidden>
+  <button id="play-btn" type="button">Play</button>
+  <button id="pause-btn" type="button">Pause</button>
+  <button id="step-btn" type="button">Step</button>
+  <label for="speed">speed</label>
+  <select id="speed">
+    <option value="1">1x real</option>
+    <option value="10" selected>10x slower</option>
+    <option value="100">100x slower</option>
+  </select>
+  <span>now: <span id="playback-now">not started</span></span>
+  <span id="playback-clock">0 ms</span>
 </div>
 <p id="status" class="status">Loading…</p>
 <div class="shell">

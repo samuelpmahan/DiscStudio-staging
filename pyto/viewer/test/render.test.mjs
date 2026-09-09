@@ -378,3 +378,19 @@ test('renderRecord validates before it renders', () => {
   broken.ticks[0].invocations[0].hit = 'yes';
   assert.throws(() => renderRecord(broken, { doc }), /ticks\[0\]\.invocations\[0\]\.hit/);
 });
+
+/* ---------------------------------------------------------------- */
+/* watch it think: the playback toggle is in the page itself         */
+/* ---------------------------------------------------------------- */
+
+test('the page carries a playback toggle and its control bar, wired to mount()', () => {
+  const html = readFileSync(resolve(HERE, '..', 'tick-viewer.html'), 'utf8');
+  assert.match(html, /id="playback-toggle"/, 'a button to switch into playback mode');
+  assert.match(html, /id="playback-bar"[^>]*hidden/, 'the control bar starts hidden -- all-at-once stays the default view');
+  for (const id of ['play-btn', 'pause-btn', 'step-btn', 'speed', 'playback-now', 'playback-clock']) {
+    assert.match(html, new RegExp(`id="${id}"`), `missing #${id}`);
+  }
+  assert.match(html, /<option value="1">1x real<\/option>/);
+  assert.match(html, /<option value="10"[^>]*>10x slower<\/option>/);
+  assert.match(html, /<option value="100"[^>]*>100x slower<\/option>/);
+});
