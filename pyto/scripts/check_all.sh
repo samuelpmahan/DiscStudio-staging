@@ -14,7 +14,9 @@ set -euo pipefail
 PYTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="${CHECK_ALL_LOG_DIR:-$(mktemp -d)}"
 mkdir -p "$LOG_DIR"
-EXPECT_CONSUMER="${EXPECT_CONSUMER:-18}"
+# 18 pre-tournament + 8 (test_paint_families) + 11 (test_card_render), added when
+# the art tournament promoted three families and two card renderers.
+EXPECT_CONSUMER="${EXPECT_CONSUMER:-37}"
 EXPECT_DISC_STATS="${EXPECT_DISC_STATS:-4}"
 
 echo "== check_all.sh v0"

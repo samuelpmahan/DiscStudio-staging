@@ -1,0 +1,66 @@
+flowchart TD
+    p0["input.ablation.groups"]
+    p1["scratch.ablation.variants"]
+    p2["input.ablation.rows"]
+    p3["scratch.ablation.split"]
+    p4["scratch.ablation.model.all"]
+    p5["scratch.ablation.model.drop_h0"]
+    p6["scratch.ablation.model.drop_h1"]
+    p7["scratch.ablation.model.drop_h2"]
+    p8["scratch.ablation.score.all"]
+    p9["scratch.ablation.score.drop_h0"]
+    p10["scratch.ablation.score.drop_h1"]
+    p11["scratch.ablation.score.drop_h2"]
+    p12["scratch.ablation.comparison"]
+
+    subgraph PCR["PCR: ablation.grouped"]
+        subgraph Tick_Prepare["Tick: Prepare"]
+            select["fn.ablation.selectVariants"]
+            split["fn.ablation.split"]
+        end
+        subgraph Tick_Fit["Tick: Fit"]
+            fit.all["fn.ablation.fit"]
+            fit.drop_h0["fn.ablation.fit"]
+            fit.drop_h1["fn.ablation.fit"]
+            fit.drop_h2["fn.ablation.fit"]
+        end
+        subgraph Tick_Score["Tick: Score"]
+            score.all["fn.ablation.score"]
+            score.drop_h0["fn.ablation.score"]
+            score.drop_h1["fn.ablation.score"]
+            score.drop_h2["fn.ablation.score"]
+        end
+        subgraph Tick_Compare["Tick: Compare"]
+            compare["fn.ablation.compare"]
+        end
+    end
+
+    p0 -->|groups| select
+    select --> p1
+    p2 -->|rows| split
+    split --> p3
+    split -->|split| fit.all
+    fit.all --> p4
+    split -->|split| fit.drop_h0
+    fit.drop_h0 --> p5
+    split -->|split| fit.drop_h1
+    fit.drop_h1 --> p6
+    split -->|split| fit.drop_h2
+    fit.drop_h2 --> p7
+    split -->|split| score.all
+    fit.all -->|model| score.all
+    score.all --> p8
+    split -->|split| score.drop_h0
+    fit.drop_h0 -->|model| score.drop_h0
+    score.drop_h0 --> p9
+    split -->|split| score.drop_h1
+    fit.drop_h1 -->|model| score.drop_h1
+    score.drop_h1 --> p10
+    split -->|split| score.drop_h2
+    fit.drop_h2 -->|model| score.drop_h2
+    score.drop_h2 --> p11
+    score.all -->|all| compare
+    score.drop_h0 -->|drop_h0| compare
+    score.drop_h1 -->|drop_h1| compare
+    score.drop_h2 -->|drop_h2| compare
+    compare --> p12

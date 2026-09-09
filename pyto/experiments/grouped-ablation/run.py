@@ -8,9 +8,17 @@ non-empty --out is refused unless --force is given: commit.txt, timings.json and
 saved-work.json differ on every run, so a bare verification run must never
 rewrite the committed evidence/run-1 (Day 1 fixer round 1, finding 2).
 
-Files written (gap 18d: testimony.json is {pcr, ticks} only; observations are a
-later seam): testimony.json, comparison.json, comparison.md, timings.json,
-variants.json, failed-variants.md, mermaid.mmd, saved-work.json, commit.txt.
+Files written (gap 18d: testimony.json is {pcr, ticks} only; receipts are a
+separate file): testimony.json, comparison.json, comparison.md, timings.json,
+variants.json, failed-variants.md, mermaid.mmd, saved-work.json, commit.txt,
+retained.json, receipts.json. The last two are Day 2's addition (research/
+ULTRACODE-WEEK.md Day 2): retained.json is retain.retain_run's replayable record
+(experiment-local, pyto/experiments/grouped-ablation/retain.py) and receipts.json
+is one pyto.pcr.Receipt per invocation from PCR.run(pxc, observe=True) (the Day 2
+library seam, pyto/src/pyto/pcr.py) -- digests and durations that
+run_regrouped.py/run_reinput.py/run_from_retained.py read to compute saved work
+against this run. Turning observe on does not change testimony.json's bytes
+(tests/test_receipts.py::TestimonyBytesUnchanged).
 Every count in saved-work.json is computed at run time (gap 18b): the run label is
 the --out basename, inheritance derives from an explicit prior ledger (None on Day 1),
 and the authoring files are bound by sha256. commit.txt is `git rev-parse HEAD` plus
@@ -36,6 +44,7 @@ if HERE not in sys.path:
 
 from pyto import PQL, PxC  # noqa: E402
 
+import retain  # noqa: E402 - experiment-local; retained.json (Day 2, ULTRACODE-WEEK.md)
 from calculations import REGISTRY, select_variants  # noqa: E402
 from features import FIXTURE_LABEL, GROUPS, TRUE_W, make_data, planted_weight_by_group  # noqa: E402
 from program import BASELINE_KEY, COMPARISON, GROUPS as GROUPS_PART, ROWS, VARIANTS, build_program  # noqa: E402
@@ -45,6 +54,7 @@ AUTHORING_FILES = ("features.py", "calculations.py", "program.py")
 SRC_DIR = os.path.normpath(os.path.join(HERE, "..", "..", "src"))
 WATCHED_PATHS = (HERE, SRC_DIR)  # the code that produces the evidence: this experiment and the library
 UNINFORMATIVE_DELTA = 0.05
+EXTERNAL_ADDRESSES = (ROWS.address, GROUPS_PART.address)  # what retain_run seeds a replay from
 
 
 def jsonable(value):
@@ -61,16 +71,25 @@ def testimony_of(run) -> dict:
     return {"pcr": run.pcr, "ticks": jsonable([dataclasses.asdict(tick) for tick in run.ticks])}
 
 
-def run_experiment(seed: int, n: int) -> dict:
-    """Execute the program once; return everything the evidence writer needs."""
+def run_experiment(seed: int, n: int, groups: dict[str, list[str]] | None = None) -> dict:
+    """Execute the program once; return everything the evidence writer needs.
+
+    `groups` defaults to features.GROUPS (Day 1's 5x3 grouping); passing a
+    different {name: [columns]} mapping is the only change Day 2's
+    run_regrouped.py makes to reach a cross-cutting grouping -- build_program,
+    family and REGISTRY are imported unchanged either way.
+    """
+    groups = GROUPS if groups is None else groups
     rows, t_data = timed("make_data", functools.partial(make_data, seed, n))
     pxc = PxC()
     pxc.set(ROWS, rows)
-    pxc.set(GROUPS_PART, GROUPS)
+    pxc.set(GROUPS_PART, groups)
 
-    variants = select_variants({"groups": GROUPS})  # authoring-time copy of the selector's result
+    variants = select_variants({"groups": groups})  # authoring-time copy of the selector's result
     pcr, t_build = timed("build_program", functools.partial(build_program, variants))
-    run, t_run = timed("pcr.run", functools.partial(pcr.run, pxc))
+    # observe=True adds PcrRun.receipts (digests, durations); testimony.json's bytes
+    # are unchanged either way (tests/test_receipts.py::TestimonyBytesUnchanged).
+    run, t_run = timed("pcr.run", functools.partial(pcr.run, pxc, observe=True))
 
     selected_inside = PQL.part(VARIANTS).one(pxc)
     if selected_inside != variants:
@@ -82,6 +101,7 @@ def run_experiment(seed: int, n: int) -> dict:
         "seed": seed,
         "n": n,
         "fixture": FIXTURE_LABEL,
+        "groups": groups,
         "variants": variants,
         "pcr": pcr,
         "run": run,
@@ -251,6 +271,11 @@ def _text(path: str, text: str) -> None:
         fh.write(text)
 
 
+def receipts_payload(run) -> dict:
+    """{invocation id: asdict(Receipt)}, JSON-safe. Empty when run.receipts is empty."""
+    return jsonable({invocation_id: dataclasses.asdict(receipt) for invocation_id, receipt in run.receipts.items()})
+
+
 def write_evidence(
     result: dict,
     out_dir: str,
@@ -267,11 +292,18 @@ def write_evidence(
     _dump(os.path.join(out_dir, "comparison.json"), {"seed": result["seed"], "n": result["n"], "baseline": BASELINE_KEY, "ranking": ranking(result["comparison"]), "rows": result["comparison"]})
     _text(os.path.join(out_dir, "comparison.md"), comparison_markdown(result))
     _dump(os.path.join(out_dir, "timings.json"), {"seed": result["seed"], "n": result["n"], "fixture": result["fixture"], "timings": result["timings"]})
-    _dump(os.path.join(out_dir, "variants.json"), {"seed": result["seed"], "groups": GROUPS, "variants": result["variants"], "failed_or_uninformative": failed_variants(result["comparison"])})
+    _dump(os.path.join(out_dir, "variants.json"), {"seed": result["seed"], "groups": result.get("groups", GROUPS), "variants": result["variants"], "failed_or_uninformative": failed_variants(result["comparison"])})
     _text(os.path.join(out_dir, "failed-variants.md"), failed_variants_markdown(result))
     _text(os.path.join(out_dir, "mermaid.mmd"), result["pcr"].mermaid())
     _dump(os.path.join(out_dir, "saved-work.json"), saved_work(result, out_dir, prior))
     _text(os.path.join(out_dir, "commit.txt"), sha + "\n")
+    # Day 2 (ULTRACODE-WEEK.md Day 2): retained.json is retain.retain_run's replayable
+    # record; receipts.json is one pyto.pcr.Receipt per invocation from the observe=True
+    # seam. Neither changes testimony.json's bytes.
+    retained_path = os.path.join(out_dir, "retained.json")
+    record = retain.retain_run(result["pxc"], result["run"], EXTERNAL_ADDRESSES, registry=REGISTRY, record_path=retained_path)
+    retain.write_record(record, retained_path)
+    _dump(os.path.join(out_dir, "receipts.json"), receipts_payload(result["run"]))
     return sorted(os.listdir(out_dir))
 
 

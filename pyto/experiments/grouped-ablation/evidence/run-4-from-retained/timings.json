@@ -1,0 +1,12 @@
+{
+  "n": 400,
+  "seed": 7,
+  "timings": [
+    {
+      "clock": "time.perf_counter",
+      "fixture": "synthetic-fixture",
+      "label": "pcr.run",
+      "wall_ms": 34.18
+    }
+  ]
+}

@@ -5,9 +5,17 @@ import argparse, hashlib, html, math, random
 from pathlib import Path
 import re
 
+import paint_families
+
 HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 SIZE, C, R = 512, 256, 220
-FAMILIES = ("Orbit Foundry", "Petal Press", "Signal Stamp", "Tessellated Flight")
+# The four originals. Their bytes are frozen: test_paint_families.py pins a
+# sha256 per family x target and fails on any drift.
+CLASSIC_FAMILIES = ("Orbit Foundry", "Petal Press", "Signal Stamp", "Tessellated Flight")
+# Promoted out of the art tournament (experiments/art-tournament/RESULTS.md).
+# Rendered by paint_families, which owns their code verbatim from the studios.
+PROMOTED_FAMILIES = paint_families.FAMILIES
+FAMILIES = CLASSIC_FAMILIES + PROMOTED_FAMILIES
 TARGETS = (42, 96, 220)
 
 def hex_color(value: str) -> str:
@@ -21,6 +29,10 @@ def xy(radius: float, angle: float) -> tuple[float, float]:
 def render(family: str, seed: int, base: str, accent: str, target: int, label: str) -> str:
     if family not in FAMILIES or target not in TARGETS:
         raise ValueError("family or target is unsupported")
+    if family in PROMOTED_FAMILIES:
+        # Promoted families own their whole document; dispatch before any RNG is
+        # touched so the four originals keep rendering byte-for-byte as before.
+        return paint_families.render(family, seed, base, accent, target, label)
     # Derive every identity parameter once. Rendering another target consumes no RNG.
     rng = random.Random(seed)
     rotation = rng.uniform(-12, 12)

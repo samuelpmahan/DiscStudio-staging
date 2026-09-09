@@ -160,7 +160,8 @@ class GroupedAblationVariants(unittest.TestCase):
 class GroupedAblationEvidence(unittest.TestCase):
     EXPECTED_FILES = [
         "commit.txt", "comparison.json", "comparison.md", "failed-variants.md", "mermaid.mmd",
-        "saved-work.json", "testimony.json", "timings.json", "variants.json",
+        "receipts.json", "retained.json", "saved-work.json", "testimony.json", "timings.json",
+        "variants.json",
     ]
 
     @classmethod

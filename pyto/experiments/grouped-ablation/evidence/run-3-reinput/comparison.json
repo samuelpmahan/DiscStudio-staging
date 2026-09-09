@@ -1,0 +1,56 @@
+{
+  "baseline": "all",
+  "n": 800,
+  "ranking": [
+    "drop_g3",
+    "drop_g0",
+    "drop_g1",
+    "drop_g4",
+    "drop_g2"
+  ],
+  "rows": [
+    {
+      "delta_vs_baseline": 1.7219,
+      "n": 200,
+      "rank": 1,
+      "rmse": 2.0205,
+      "variant": "drop_g3"
+    },
+    {
+      "delta_vs_baseline": 1.3234,
+      "n": 200,
+      "rank": 2,
+      "rmse": 1.622,
+      "variant": "drop_g0"
+    },
+    {
+      "delta_vs_baseline": 0.5184,
+      "n": 200,
+      "rank": 3,
+      "rmse": 0.817,
+      "variant": "drop_g1"
+    },
+    {
+      "delta_vs_baseline": 0.001,
+      "n": 200,
+      "rank": 4,
+      "rmse": 0.2996,
+      "variant": "drop_g4"
+    },
+    {
+      "delta_vs_baseline": 0.0002,
+      "n": 200,
+      "rank": 5,
+      "rmse": 0.2989,
+      "variant": "drop_g2"
+    },
+    {
+      "delta_vs_baseline": 0.0,
+      "n": 200,
+      "rank": 6,
+      "rmse": 0.2986,
+      "variant": "all"
+    }
+  ],
+  "seed": 11
+}

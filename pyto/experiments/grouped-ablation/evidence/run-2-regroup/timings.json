@@ -1,5 +1,4 @@
 {
-  "fixture": "synthetic-fixture",
   "n": 400,
   "seed": 7,
   "timings": [
@@ -7,19 +6,19 @@
       "clock": "time.perf_counter",
       "fixture": "synthetic-fixture",
       "label": "make_data",
-      "wall_ms": 3.995
+      "wall_ms": 3.925
     },
     {
       "clock": "time.perf_counter",
       "fixture": "synthetic-fixture",
       "label": "build_program",
-      "wall_ms": 0.141
+      "wall_ms": 0.137
     },
     {
       "clock": "time.perf_counter",
       "fixture": "synthetic-fixture",
       "label": "pcr.run",
-      "wall_ms": 38.888
+      "wall_ms": 27.051
     }
   ]
 }

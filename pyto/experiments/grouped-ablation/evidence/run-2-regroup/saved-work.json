@@ -1,0 +1,66 @@
+{
+  "calculations_added": [],
+  "calculations_inherited": [
+    "fn.ablation.compare",
+    "fn.ablation.fit",
+    "fn.ablation.score",
+    "fn.ablation.selectVariants",
+    "fn.ablation.split"
+  ],
+  "explain_changes": {
+    "added": [
+      "fit.drop_h0",
+      "fit.drop_h1",
+      "fit.drop_h2",
+      "score.drop_h0",
+      "score.drop_h1",
+      "score.drop_h2"
+    ],
+    "changed": [
+      "select",
+      "fit.all",
+      "score.all",
+      "compare"
+    ],
+    "downstream_affected": [],
+    "reason": {
+      "compare": "input",
+      "fit.all": "args",
+      "score.all": "digest",
+      "select": "external"
+    },
+    "removed": [
+      "fit.drop_g0",
+      "fit.drop_g1",
+      "fit.drop_g2",
+      "fit.drop_g3",
+      "fit.drop_g4",
+      "score.drop_g0",
+      "score.drop_g1",
+      "score.drop_g2",
+      "score.drop_g3",
+      "score.drop_g4"
+    ],
+    "unchanged_upstream": [
+      "split"
+    ]
+  },
+  "input_parts_changed": [
+    "input.ablation.groups"
+  ],
+  "invocations_skippable_by_digest": [
+    "split"
+  ],
+  "ms_saved": 0.044,
+  "ms_saved_by_invocation": {
+    "split": 0.04383799932838883
+  },
+  "prior_run": "run-1",
+  "program_lines_changed": {
+    "calculations.py": 0,
+    "program.py": 0,
+    "total": 0
+  },
+  "run": "run-2-regroup",
+  "skip_reason": "unchanged_upstream"
+}

@@ -1,0 +1,194 @@
+{
+  "pcr": "ablation.grouped",
+  "ticks": [
+    {
+      "calculations": [
+        {
+          "args": {},
+          "calculation": "fn.ablation.selectVariants",
+          "id": "select",
+          "inputs": {
+            "groups": "px:input.ablation.groups"
+          },
+          "into": "scratch.ablation.variants"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.split",
+          "id": "split",
+          "inputs": {
+            "rows": "px:input.ablation.rows"
+          },
+          "into": "scratch.ablation.split"
+        }
+      ],
+      "name": "Prepare"
+    },
+    {
+      "calculations": [
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f04",
+              "f07",
+              "f10",
+              "f13",
+              "f01",
+              "f03",
+              "f08",
+              "f11",
+              "f14",
+              "f02",
+              "f05",
+              "f06",
+              "f09",
+              "f12"
+            ],
+            "variant": "all"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.all",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.all"
+        },
+        {
+          "args": {
+            "columns": [
+              "f01",
+              "f03",
+              "f08",
+              "f11",
+              "f14",
+              "f02",
+              "f05",
+              "f06",
+              "f09",
+              "f12"
+            ],
+            "variant": "drop_h0"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_h0",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_h0"
+        },
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f04",
+              "f07",
+              "f10",
+              "f13",
+              "f02",
+              "f05",
+              "f06",
+              "f09",
+              "f12"
+            ],
+            "variant": "drop_h1"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_h1",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_h1"
+        },
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f04",
+              "f07",
+              "f10",
+              "f13",
+              "f01",
+              "f03",
+              "f08",
+              "f11",
+              "f14"
+            ],
+            "variant": "drop_h2"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_h2",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_h2"
+        }
+      ],
+      "name": "Fit"
+    },
+    {
+      "calculations": [
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.all",
+          "inputs": {
+            "model": "fn:fit.all",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.all"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_h0",
+          "inputs": {
+            "model": "fn:fit.drop_h0",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_h0"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_h1",
+          "inputs": {
+            "model": "fn:fit.drop_h1",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_h1"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_h2",
+          "inputs": {
+            "model": "fn:fit.drop_h2",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_h2"
+        }
+      ],
+      "name": "Score"
+    },
+    {
+      "calculations": [
+        {
+          "args": {
+            "baseline": "all"
+          },
+          "calculation": "fn.ablation.compare",
+          "id": "compare",
+          "inputs": {
+            "all": "fn:score.all",
+            "drop_h0": "fn:score.drop_h0",
+            "drop_h1": "fn:score.drop_h1",
+            "drop_h2": "fn:score.drop_h2"
+          },
+          "into": "scratch.ablation.comparison"
+        }
+      ],
+      "name": "Compare"
+    }
+  ]
+}

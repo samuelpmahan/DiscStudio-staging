@@ -1,0 +1,171 @@
+{
+  "failed_or_uninformative": [
+    {
+      "delta_vs_baseline": 0.001,
+      "planted_weight": 0,
+      "variant": "drop_g4"
+    },
+    {
+      "delta_vs_baseline": 0.0002,
+      "planted_weight": 0,
+      "variant": "drop_g2"
+    }
+  ],
+  "groups": {
+    "g0": [
+      "f00",
+      "f01",
+      "f02"
+    ],
+    "g1": [
+      "f03",
+      "f04",
+      "f05"
+    ],
+    "g2": [
+      "f06",
+      "f07",
+      "f08"
+    ],
+    "g3": [
+      "f09",
+      "f10",
+      "f11"
+    ],
+    "g4": [
+      "f12",
+      "f13",
+      "f14"
+    ]
+  },
+  "seed": 11,
+  "variants": [
+    {
+      "columns": [
+        "f00",
+        "f01",
+        "f02",
+        "f03",
+        "f04",
+        "f05",
+        "f06",
+        "f07",
+        "f08",
+        "f09",
+        "f10",
+        "f11",
+        "f12",
+        "f13",
+        "f14"
+      ],
+      "drop": [],
+      "key": "all",
+      "kind": "baseline"
+    },
+    {
+      "columns": [
+        "f03",
+        "f04",
+        "f05",
+        "f06",
+        "f07",
+        "f08",
+        "f09",
+        "f10",
+        "f11",
+        "f12",
+        "f13",
+        "f14"
+      ],
+      "drop": [
+        "g0"
+      ],
+      "key": "drop_g0",
+      "kind": "ablation"
+    },
+    {
+      "columns": [
+        "f00",
+        "f01",
+        "f02",
+        "f06",
+        "f07",
+        "f08",
+        "f09",
+        "f10",
+        "f11",
+        "f12",
+        "f13",
+        "f14"
+      ],
+      "drop": [
+        "g1"
+      ],
+      "key": "drop_g1",
+      "kind": "ablation"
+    },
+    {
+      "columns": [
+        "f00",
+        "f01",
+        "f02",
+        "f03",
+        "f04",
+        "f05",
+        "f09",
+        "f10",
+        "f11",
+        "f12",
+        "f13",
+        "f14"
+      ],
+      "drop": [
+        "g2"
+      ],
+      "key": "drop_g2",
+      "kind": "ablation"
+    },
+    {
+      "columns": [
+        "f00",
+        "f01",
+        "f02",
+        "f03",
+        "f04",
+        "f05",
+        "f06",
+        "f07",
+        "f08",
+        "f12",
+        "f13",
+        "f14"
+      ],
+      "drop": [
+        "g3"
+      ],
+      "key": "drop_g3",
+      "kind": "ablation"
+    },
+    {
+      "columns": [
+        "f00",
+        "f01",
+        "f02",
+        "f03",
+        "f04",
+        "f05",
+        "f06",
+        "f07",
+        "f08",
+        "f09",
+        "f10",
+        "f11"
+      ],
+      "drop": [
+        "g4"
+      ],
+      "key": "drop_g4",
+      "kind": "ablation"
+    }
+  ]
+}

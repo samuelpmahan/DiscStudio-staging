@@ -1,0 +1,7 @@
+# Day 2 Lane D: registry-hole check
+requested address (Day 2 brief text, not present in REGISTRY): 'fn.ablation.rmse'
+REGISTRY addresses: ['fn.ablation.compare', 'fn.ablation.fit', 'fn.ablation.score', 'fn.ablation.selectVariants', 'fn.ablation.split']
+substituted address (lane B precedent, test_retain.py FromProgram.test_missing_registry_address_raises_keyerror_before_any_execution): 'fn.ablation.score'
+KeyError raised: "retain.from_program: registry has no Calculation for ['fn.ablation.score']; registry holds ['fn.ablation.compare', 'fn.ablation.fit', 'fn.ablation.selectVariants', 'fn.ablation.split']"
+names the missing address: True
+probe calculation (a still-present address) was never called: True
