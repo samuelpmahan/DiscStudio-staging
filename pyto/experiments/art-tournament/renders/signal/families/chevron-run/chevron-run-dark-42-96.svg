@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="DiscBattle">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#1e1e24"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#f2c14e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="5.3" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g transform="rotate(4.7 256 256)">
+<rect x="-60" y="116.2" width="632" height="279.6" fill="#f2c14e" opacity=".16"/>
+<path d="M36.5 134.2 H414.2" stroke="#f2c14e" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M36.5 377.8 H414.2" stroke="#f2c14e" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M124.5 150.2 L208.5 256 L124.5 361.8" fill="none" stroke="#f2c14e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.42"/>
+<path d="M179.1 150.2 L263.1 256 L179.1 361.8" fill="none" stroke="#f2c14e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.61"/>
+<path d="M233.6 150.2 L317.6 256 L233.6 361.8" fill="none" stroke="#f2c14e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.81"/>
+<path d="M288.2 150.2 L372.2 256 L288.2 361.8" fill="none" stroke="#f2c14e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="1.00"/>
+<path d="M288.2 150.2 L372.2 256 L288.2 361.8" fill="none" stroke="#111318" stroke-width="11.6" stroke-linecap="butt" stroke-linejoin="miter" opacity=".95"/>
+</g>
+</g>
+<g id="stamp">
+<rect x="282.2" y="113.2" width="26" height="26" rx="4" fill="#ffffff" transform="rotate(4.7 295.2 126.2)"/>
+<rect x="282.2" y="113.2" width="26" height="26" rx="4" fill="none" stroke="#f2c14e" stroke-width="7" transform="rotate(4.7 295.2 126.2)"/>
+</g>
+<title>DiscBattle</title>
+</svg>

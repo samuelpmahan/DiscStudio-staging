@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="MAKO — wind rose course chart disc">
+<defs><clipPath id="wr-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="wr-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#wr-disc)">
+<circle cx="256" cy="256" r="220" fill="#1e1e24"/>
+</g>
+<g id="art" clip-path="url(#wr-disc)">
+<circle cx="256" cy="256" r="220" fill="#3c352a"/>
+<circle cx="256" cy="256" r="176.1" fill="none" stroke="#f2c14e" stroke-width="5.3" opacity=".45"/>
+<circle cx="256" cy="256" r="112" fill="none" stroke="#f2c14e" stroke-width="5.3" opacity=".45"/>
+<path d="M432.1 259.1 L447.1 259.4" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M417.5 326.3 L431.2 332.2" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M378.3 382.7 L388.7 393.5" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M320.5 419.9 L326 433.8" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M252.9 432.1 L252.6 447.1" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M185.7 417.5 L179.8 431.2" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M129.3 378.3 L118.5 388.7" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M92.1 320.5 L78.2 326" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M79.9 252.9 L64.9 252.6" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M94.5 185.7 L80.8 179.8" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M133.7 129.3 L123.3 118.5" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M191.5 92.1 L186 78.2" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M259.1 79.9 L259.4 64.9" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M326.3 94.5 L332.2 80.8" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M382.7 133.7 L393.5 123.3" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M419.9 191.5 L433.8 186" stroke="#f2c14e" stroke-width="5.3" opacity=".6"/>
+<path d="M346.3 257.6L288.1 276.6L256 256L288.8 236.6Z" fill="#f2c14e" opacity=".95"/>
+<path d="M342.3 293.6L277.8 287.3L256 256L293.7 250.6Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M360.5 364.2L264.1 293.3L256 256L292.9 265.4Z" fill="#f2c14e" opacity=".95"/>
+<path d="M300.3 368.7L249.3 293.5L256 256L286.5 278.9Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M253.9 376.7L235.4 288.1L256 256L275.4 288.8Z" fill="#f2c14e" opacity=".95"/>
+<path d="M189.5 408.8L224.7 277.8L256 256L261.4 293.7Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M167.3 341.6L218.7 264.1L256 256L246.6 292.9Z" fill="#f2c14e" opacity=".95"/>
+<path d="M135.5 303.4L218.5 249.3L256 256L233.1 286.5Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M152.7 254.2L223.9 235.4L256 256L223.2 275.4Z" fill="#f2c14e" opacity=".95"/>
+<path d="M162.1 215.1L234.2 224.7L256 256L218.3 261.4Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M197.1 195L247.9 218.7L256 256L219.1 246.6Z" fill="#f2c14e" opacity=".95"/>
+<path d="M219.9 164.4L262.7 218.5L256 256L225.5 233.1Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M257.9 150.8L276.6 223.9L256 256L236.6 223.2Z" fill="#f2c14e" opacity=".95"/>
+<path d="M294 168.6L287.3 234.2L256 256L250.6 218.3Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M330.5 184.1L293.3 247.9L256 256L265.4 219.1Z" fill="#f2c14e" opacity=".95"/>
+<path d="M355 217L293.5 262.7L256 256L278.9 225.5Z" fill="#e0e0e0" opacity=".92" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M268.7 423.6L237.9 294.8L253.8 226.9L279.8 291.6Z" fill="#e0e0e0" stroke="#f2c14e" stroke-width="5.3"/>
+<path d="M268.7 423.6L237.9 294.8L253.8 226.9Z" fill="#f2c14e"/>
+<circle cx="256" cy="256" r="220" fill="url(#wr-depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#f2c14e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="5.3" opacity=".28"/>
+</g>
+<g id="stamp">
+<circle cx="256" cy="256" r="19" fill="#e0e0e0" stroke="#f2c14e" stroke-width="7"/>
+<circle cx="256" cy="256" r="6.8" fill="#f2c14e"/>
+</g>
+<title>MAKO</title>
+</svg>

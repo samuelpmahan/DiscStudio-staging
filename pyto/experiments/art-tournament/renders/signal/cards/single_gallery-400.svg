@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="502" viewBox="0 0 320 402" role="img" aria-label="Warm Mako — disc card">
+<rect x="0" y="0" width="320" height="402" rx="10" fill="#0a0e13"/><rect x="0.75" y="0.75" width="318.5" height="400.5" rx="9.5" fill="none" stroke="#2d3c4d" stroke-width="1.5"/><rect x="0" y="0" width="320" height="5" fill="#4c9bc6"/><rect x="20" y="20" width="280" height="212" rx="8" fill="#151d27"/><g transform="translate(54 20) scale(0.41)"><defs><clipPath id="a0-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="a0-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="a0-base" clip-path="url(#a0-disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+<circle cx="256" cy="256" r="220" fill="url(#a0-depth)"/>
+</g>
+<g id="a0-rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="3" opacity=".28"/>
+</g>
+<g id="a0-art" clip-path="url(#a0-disc)">
+<g transform="rotate(-6 256 256)">
+<rect x="-60" y="122.8" width="632" height="266.4" fill="#7a3b1e" opacity=".16"/>
+<path d="M16.5 140.8 H459.8" stroke="#7a3b1e" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M16.5 371.2 H459.8" stroke="#7a3b1e" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M104.5 156.8 L188.5 256 L104.5 355.2" fill="none" stroke="#7a3b1e" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.42"/>
+<path d="M161.8 156.8 L245.8 256 L161.8 355.2" fill="none" stroke="#7a3b1e" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.56"/>
+<path d="M219.1 156.8 L303.1 256 L219.1 355.2" fill="none" stroke="#7a3b1e" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.71"/>
+<path d="M276.5 156.8 L360.5 256 L276.5 355.2" fill="none" stroke="#7a3b1e" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.85"/>
+<path d="M333.8 156.8 L417.8 256 L333.8 355.2" fill="none" stroke="#7a3b1e" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="1.00"/>
+<path d="M333.8 156.8 L417.8 256 L333.8 355.2" fill="none" stroke="#ffffff" stroke-width="10.2" stroke-linecap="butt" stroke-linejoin="miter" opacity=".95"/>
+</g>
+</g>
+<g id="a0-stamp">
+<rect x="248.9" y="119.8" width="26" height="26" rx="4" fill="#111318" transform="rotate(-6 261.9 132.8)"/>
+<rect x="248.9" y="119.8" width="26" height="26" rx="4" fill="none" stroke="#7a3b1e" stroke-width="7" transform="rotate(-6 261.9 132.8)"/>
+</g>
+<g id="a0-text">
+<rect x="161.6" y="402" width="188.7" height="38" rx="7" fill="#7a3b1e"/>
+<rect x="172.6" y="410" width="7" height="22" rx="3.5" fill="#ffffff" opacity=".95"/>
+<text x="262" y="428" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" letter-spacing="2" fill="#ffffff">Warm Mako</text>
+</g></g><path d="M26 111 L41 126 L26 141" fill="none" stroke="#4c9bc6" stroke-width="4.5" opacity="0.35"/><path d="M37 111 L52 126 L37 141" fill="none" stroke="#4c9bc6" stroke-width="4.5" opacity="0.67"/><path d="M283 111 L268 126 L283 141" fill="none" stroke="#4c9bc6" stroke-width="4.5" opacity="0.35"/><path d="M294 111 L279 126 L294 141" fill="none" stroke="#4c9bc6" stroke-width="4.5" opacity="0.67"/><rect x="20" y="236" width="280" height="3" fill="#4c9bc6"/><text x="24" y="260" text-anchor="start" font-family="sans-serif" font-size="11" font-weight="600" letter-spacing="2" fill="#93a5b8">DISC-1</text><text x="24" y="298" text-anchor="start" font-family="sans-serif" font-size="36" font-weight="800" fill="#f4f7fa">Warm Mako</text><text x="24" y="320" text-anchor="start" font-family="sans-serif" font-size="10.5" font-weight="500" letter-spacing="1.2" fill="#8596a8">FIRST RUN</text><g><rect x="20" y="332" width="67" height="62" rx="3" fill="#151d27" stroke="#2d3c4d" stroke-width="1"/><rect x="20" y="332" width="67" height="3.41" fill="#4c9bc6" opacity=".85"/><text x="53.5" y="372.92" text-anchor="middle" font-family="sans-serif" font-size="32.24" font-weight="800" fill="#f4f7fa">5</text><text x="53.5" y="389.04" text-anchor="middle" font-family="sans-serif" font-size="12.4" font-weight="600" letter-spacing="1.12" fill="#93a5b8">SPEED</text><rect x="91" y="332" width="67" height="62" rx="3" fill="#151d27" stroke="#2d3c4d" stroke-width="1"/><rect x="91" y="332" width="67" height="3.41" fill="#4c9bc6" opacity=".85"/><text x="124.5" y="372.92" text-anchor="middle" font-family="sans-serif" font-size="32.24" font-weight="800" fill="#f4f7fa">4</text><text x="124.5" y="389.04" text-anchor="middle" font-family="sans-serif" font-size="12.4" font-weight="600" letter-spacing="1.12" fill="#93a5b8">GLIDE</text><rect x="162" y="332" width="67" height="62" rx="3" fill="#151d27" stroke="#2d3c4d" stroke-width="1"/><rect x="162" y="332" width="67" height="3.41" fill="#4c9bc6" opacity=".85"/><text x="195.5" y="372.92" text-anchor="middle" font-family="sans-serif" font-size="32.24" font-weight="800" fill="#f4f7fa">-1</text><text x="195.5" y="389.04" text-anchor="middle" font-family="sans-serif" font-size="12.4" font-weight="600" letter-spacing="1.12" fill="#93a5b8">TURN</text><rect x="233" y="332" width="67" height="62" rx="3" fill="#151d27" stroke="#2d3c4d" stroke-width="1"/><rect x="233" y="332" width="67" height="3.41" fill="#4c9bc6" opacity=".85"/><text x="266.5" y="372.92" text-anchor="middle" font-family="sans-serif" font-size="32.24" font-weight="800" fill="#f4f7fa">1</text><text x="266.5" y="389.04" text-anchor="middle" font-family="sans-serif" font-size="12.4" font-weight="600" letter-spacing="1.12" fill="#93a5b8">FADE</text></g>
+<title>Warm Mako — disc card</title>
+</svg>

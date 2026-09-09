@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="171" viewBox="0 0 700 300" role="img" aria-label="Warm Mako vs Rival battle card">
+<rect width="700" height="300" fill="#f4f1e6"/>
+<rect x="0.5" y="0.5" width="699" height="299" fill="none" stroke="#e2dcc8" stroke-width="1"/>
+<g id="crop" stroke="#191821" stroke-width="1" opacity=".5" fill="none"><path d="M22.0 9.0 L9.0 9.0 L9.0 22.0"/><path d="M22.0 291.0 L9.0 291.0 L9.0 278.0"/><path d="M678.0 9.0 L691.0 9.0 L691.0 22.0"/><path d="M678.0 291.0 L691.0 291.0 L691.0 278.0"/></g>
+<g id="panel0"><rect x="18.0" y="26.0" width="300.0" height="234.0" fill="#ffffff" opacity=".45"/><rect x="18.0" y="26.0" width="300.0" height="234.0" fill="none" stroke="#c6bfa8" stroke-width="1"/><text x="32.0" y="44.0" font-family="sans-serif" font-size="9" fill="#191821" font-weight="700" letter-spacing="1.4" opacity="0.6">JOB ACTIVE</text><rect x="32.0" y="50.0" width="272.0" height="3" fill="#4c9bc6"/><text x="32.0" y="84.0" font-family="serif" font-size="27" fill="#191821" font-weight="700">Warm Mako</text><text x="32.0" y="100.0" font-family="sans-serif" font-size="9.5" fill="#191821" font-weight="700" letter-spacing="1.4" opacity="0.66">FIRST RUN</text><g id="well-p0"><rect x="28.0" y="108.0" width="126.0" height="126.0" fill="#ffffff" opacity=".55"/><rect x="28.0" y="108.0" width="126.0" height="126.0" fill="none" stroke="#c6bfa8" stroke-width="1"/><g transform="translate(32.000 112.000) scale(0.23047)"><defs><clipPath id="p0-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="p0-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+<clipPath id="p0-die"><polygon points="391.6,304.6 281.7,397.7 146.2,349.1 120.4,207.4 230.3,114.3 365.8,162.9"/></clipPath>
+</defs>
+<g id="p0-base" clip-path="url(#p0-disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+<circle cx="256" cy="256" r="220" fill="url(#p0-depth)"/>
+</g>
+<g id="p0-art" clip-path="url(#p0-disc)">
+<g id="p0-knurl" stroke="#7a3b1e" stroke-width="14.0" stroke-linecap="butt" opacity=".92">
+<line x1="432.0" y1="259.3" x2="466.0" y2="259.9"/>
+<line x1="428.0" y1="293.5" x2="461.2" y2="300.8"/>
+<line x1="417.3" y1="326.4" x2="448.5" y2="339.9"/>
+<line x1="400.5" y1="356.5" x2="428.4" y2="375.9"/>
+<line x1="378.1" y1="382.7" x2="401.7" y2="407.2"/>
+<line x1="351.1" y1="404.1" x2="369.4" y2="432.7"/>
+<line x1="320.3" y1="419.8" x2="332.8" y2="451.5"/>
+<line x1="287.1" y1="429.2" x2="293.1" y2="462.7"/>
+<line x1="252.7" y1="432.0" x2="252.1" y2="466.0"/>
+<line x1="218.5" y1="428.0" x2="211.2" y2="461.2"/>
+<line x1="185.6" y1="417.3" x2="172.1" y2="448.5"/>
+<line x1="155.5" y1="400.5" x2="136.1" y2="428.4"/>
+<line x1="129.3" y1="378.1" x2="104.8" y2="401.7"/>
+<line x1="107.9" y1="351.1" x2="79.3" y2="369.4"/>
+<line x1="92.2" y1="320.3" x2="60.5" y2="332.8"/>
+<line x1="82.8" y1="287.1" x2="49.3" y2="293.1"/>
+<line x1="80.0" y1="252.7" x2="46.0" y2="252.1"/>
+<line x1="84.0" y1="218.5" x2="50.8" y2="211.2"/>
+<line x1="94.7" y1="185.6" x2="63.5" y2="172.1"/>
+<line x1="111.5" y1="155.5" x2="83.6" y2="136.1"/>
+<line x1="133.9" y1="129.3" x2="110.3" y2="104.8"/>
+<line x1="160.9" y1="107.9" x2="142.6" y2="79.3"/>
+<line x1="191.7" y1="92.2" x2="179.2" y2="60.5"/>
+<line x1="224.9" y1="82.8" x2="218.9" y2="49.3"/>
+<line x1="259.3" y1="80.0" x2="259.9" y2="46.0"/>
+<line x1="293.5" y1="84.0" x2="300.8" y2="50.8"/>
+<line x1="326.4" y1="94.7" x2="339.9" y2="63.5"/>
+<line x1="356.5" y1="111.5" x2="375.9" y2="83.6"/>
+<line x1="382.7" y1="133.9" x2="407.2" y2="110.3"/>
+<line x1="404.1" y1="160.9" x2="432.7" y2="142.6"/>
+<line x1="419.8" y1="191.7" x2="451.5" y2="179.2"/>
+<line x1="429.2" y1="224.9" x2="462.7" y2="218.9"/>
+</g>
+</g>
+<g id="p0-stamp">
+<polygon points="391.6,304.6 281.7,397.7 146.2,349.1 120.4,207.4 230.3,114.3 365.8,162.9" fill="#7a3b1e"/>
+<g clip-path="url(#p0-die)">
+<g transform="rotate(-8.0 256 256)">
+<rect x="-16" y="-16" width="544" height="256" fill="#ffffff" opacity=".22"/>
+<rect x="-16" y="256" width="544" height="272" fill="#000000" opacity=".20"/>
+<rect x="-16" y="232" width="544" height="26" fill="#ffffff" opacity=".55"/>
+<rect x="-16" y="300" width="544" height="14" fill="#ffffff" opacity=".22"/>
+</g>
+</g>
+<polygon points="359.6,293.1 275.7,364.2 172.1,327.1 152.4,218.9 236.3,147.8 339.9,184.9" fill="none" stroke="#e8d8b0" stroke-width="9.0" opacity=".75"/>
+</g>
+<g id="p0-rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="7.0" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="3.0" opacity=".30"/>
+</g>
+<g id="p0-text">
+<rect x="204.0" y="396" width="104.0" height="36" rx="4" fill="#e8d8b0" stroke="#7a3b1e" stroke-width="3" opacity=".96"/>
+<text x="257.5" y="421" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="700" letter-spacing="3" fill="#7a3b1e">MAKO</text>
+</g></g></g><g id="flight0"><rect x="164.0" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="164.0" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="179.8" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">5</text><text x="179.8" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">SPEED</text><rect x="199.5" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="199.5" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="215.2" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">4</text><text x="215.2" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">GLIDE</text><rect x="235.0" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="235.0" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="250.8" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">-1</text><text x="250.8" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">TURN</text><rect x="270.5" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="270.5" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="286.2" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">1</text><text x="286.2" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">FADE</text></g><g id="score-active"><rect x="170.0" y="112.0" width="132.0" height="62.0" fill="#191821"/><rect x="170.0" y="112.0" width="132.0" height="4.3" fill="#4c9bc6"/><text x="236.0" y="154.2" font-family="sans-serif" font-size="32.24" fill="#f4f1e6" font-weight="700" text-anchor="middle">-</text><text x="236.0" y="167.8" font-family="sans-serif" font-size="7.13" fill="#f4f1e6" font-weight="700" text-anchor="middle" letter-spacing="1.4" opacity="0.7">SCORE</text></g><g id="wedge0"><rect x="164.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="1.00"/><rect x="181.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.87"/><rect x="199.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.74"/><rect x="216.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.61"/><rect x="234.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.47"/><rect x="251.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.34"/><rect x="269.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.21"/><rect x="286.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.08"/></g></g>
+<g id="panel1"><rect x="382.0" y="26.0" width="300.0" height="234.0" fill="#ffffff" opacity=".45"/><rect x="382.0" y="26.0" width="300.0" height="234.0" fill="none" stroke="#c6bfa8" stroke-width="1"/><text x="396.0" y="44.0" font-family="sans-serif" font-size="9" fill="#191821" font-weight="700" letter-spacing="1.4" opacity="0.6">JOB RIVAL</text><rect x="396.0" y="50.0" width="272.0" height="3" fill="#4c9bc6"/><text x="396.0" y="84.0" font-family="serif" font-size="27" fill="#191821" font-weight="700">Rival</text><text x="396.0" y="100.0" font-family="sans-serif" font-size="9.5" fill="#191821" font-weight="700" letter-spacing="1.4" opacity="0.66">FIRST RUN</text><g id="well-p1"><rect x="392.0" y="108.0" width="126.0" height="126.0" fill="#ffffff" opacity=".55"/><rect x="392.0" y="108.0" width="126.0" height="126.0" fill="none" stroke="#c6bfa8" stroke-width="1"/><g transform="translate(396.000 112.000) scale(0.23047)"><defs><clipPath id="p1-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="p1-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+</defs>
+<g id="p1-base" clip-path="url(#p1-disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#p1-depth)"/>
+</g>
+<g id="p1-art" clip-path="url(#p1-disc)">
+<g transform="rotate(4.5 256 256)">
+<path d="M256 256 L556.0 256.0 A300 300 0 0 1 256.0 556.0 Z" fill="#0d3558" opacity="1.00"/>
+<path d="M256 256 L256.0 556.0 A300 300 0 0 1 -44.0 256.0 Z" fill="#0d3558" opacity="0.66"/>
+<path d="M256 256 L-44.0 256.0 A300 300 0 0 1 256.0 -44.0 Z" fill="#0d3558" opacity="0.40"/>
+<path d="M256 256 L256.0 -44.0 A300 300 0 0 1 556.0 256.0 Z" fill="#0d3558" opacity="0.18"/>
+<path d="M159.1 113.1 L113.1 113.1 L113.1 159.1" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<path d="M352.9 113.1 L398.9 113.1 L398.9 159.1" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<path d="M159.1 398.9 L113.1 398.9 L113.1 352.9" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<path d="M352.9 398.9 L398.9 398.9 L398.9 352.9" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<g stroke="#4c9bc6" stroke-width="22.0" stroke-linecap="butt">
+<line x1="256.0" y1="180.2" x2="256.0" y2="24.0"/>
+<line x1="256.0" y1="331.8" x2="256.0" y2="488.0"/>
+<line x1="180.2" y1="256.0" x2="24.0" y2="256.0"/>
+<line x1="331.8" y1="256.0" x2="488.0" y2="256.0"/>
+</g>
+<g stroke="#0d3558" stroke-width="4.0" stroke-linecap="butt" opacity=".9">
+<line x1="256.0" y1="180.2" x2="256.0" y2="24.0"/>
+<line x1="256.0" y1="331.8" x2="256.0" y2="488.0"/>
+<line x1="180.2" y1="256.0" x2="24.0" y2="256.0"/>
+<line x1="331.8" y1="256.0" x2="488.0" y2="256.0"/>
+</g>
+</g>
+</g>
+<g id="p1-stamp">
+<circle cx="256" cy="256" r="67.8" fill="#4c9bc6" stroke="#0d3558" stroke-width="12.0"/>
+<circle cx="256" cy="256" r="49.8" fill="none" stroke="#0d3558" stroke-width="4" opacity=".7"/>
+<circle cx="256" cy="256" r="18.2" fill="#0d3558"/>
+</g>
+<g id="p1-rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7.0" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="3.0" opacity=".30"/>
+</g>
+<g id="p1-text">
+<rect x="196.0" y="396" width="120.0" height="36" rx="4" fill="#4c9bc6" stroke="#0d3558" stroke-width="3" opacity=".96"/>
+<text x="257.5" y="421" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="700" letter-spacing="3" fill="#0d3558">RIVAL</text>
+</g></g></g><g id="flight1"><rect x="528.0" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="528.0" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="543.8" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">5</text><text x="543.8" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">SPEED</text><rect x="563.5" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="563.5" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="579.2" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">4</text><text x="579.2" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">GLIDE</text><rect x="599.0" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="599.0" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="614.8" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">-1</text><text x="614.8" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">TURN</text><rect x="634.5" y="182.0" width="31.5" height="44.0" fill="#191821" opacity=".055"/><rect x="634.5" y="182.0" width="31.5" height="2.4" fill="#4c9bc6"/><text x="650.2" y="209.3" font-family="sans-serif" font-size="19.53" fill="#191821" font-weight="700" text-anchor="middle">1</text><text x="650.2" y="219.8" font-family="sans-serif" font-size="6.3" fill="#191821" font-weight="700" text-anchor="middle" letter-spacing="0.82" opacity="0.6">FADE</text></g><g id="score-rival"><rect x="534.0" y="112.0" width="132.0" height="62.0" fill="#191821"/><rect x="534.0" y="112.0" width="132.0" height="4.3" fill="#4c9bc6"/><text x="600.0" y="154.2" font-family="sans-serif" font-size="32.24" fill="#f4f1e6" font-weight="700" text-anchor="middle">-</text><text x="600.0" y="167.8" font-family="sans-serif" font-size="7.13" fill="#f4f1e6" font-weight="700" text-anchor="middle" letter-spacing="1.4" opacity="0.7">SCORE</text></g><g id="wedge1"><rect x="528.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="1.00"/><rect x="545.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.87"/><rect x="563.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.74"/><rect x="580.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.61"/><rect x="598.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.47"/><rect x="615.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.34"/><rect x="633.0" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.21"/><rect x="650.5" y="244.0" width="16.5" height="7.0" fill="#4c9bc6" opacity="0.08"/></g></g>
+<g id="versus"><path d="M350.0 31.0 V255.0" stroke="#191821" stroke-width="1" stroke-dasharray="5 6" opacity=".45" fill="none"/><circle cx="350.0" cy="143.0" r="19" fill="#f4f1e6" stroke="#191821" stroke-width="1.4"/><circle cx="350.0" cy="143.0" r="13" fill="none" stroke="#4c9bc6" stroke-width="2.4"/><text x="350.0" y="148.0" font-family="sans-serif" font-size="14" fill="#191821" font-weight="700" text-anchor="middle">VS</text></g>
+<text x="18.0" y="288.0" font-family="sans-serif" font-size="9" fill="#191821" font-weight="700" letter-spacing="1.4" opacity="0.5">BATTLE PROOF</text>
+<g id="reg-672-283"><circle cx="672.0" cy="283.0" r="8.0" fill="#f4f1e6" stroke="#191821" stroke-width="1.3" opacity=".85"/><circle cx="672.0" cy="283.0" r="3.4" fill="#4c9bc6"/><path d="M660.0 283.0 H684.0 M672.0 271.0 V295.0" stroke="#191821" stroke-width="1.1" opacity=".7"/></g>
+<title>Warm Mako vs Rival battle card</title>
+</svg>

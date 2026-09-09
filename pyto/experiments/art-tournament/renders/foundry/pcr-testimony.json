@@ -1,0 +1,57 @@
+{
+  "pcr": "foundry-card-render-check",
+  "registered_calculations": [
+    "fn.card.battle.render",
+    "fn.card.single.render",
+    "fn.discArt.halftone-screen",
+    "fn.discArt.hot-foil",
+    "fn.discArt.register-mark"
+  ],
+  "ticks": [
+    {
+      "name": "render",
+      "calculations": [
+        {
+          "id": "render-art",
+          "calculation": "fn.discArt.pair",
+          "inputs": {
+            "pair": "px:px.discArt.params.pair"
+          },
+          "args": {},
+          "into": null
+        },
+        {
+          "id": "single-card",
+          "calculation": "fn.card.single.render",
+          "inputs": {
+            "card": "px:px.card.single.config",
+            "art": "fn:render-art"
+          },
+          "args": {
+            "width": 400
+          },
+          "into": null
+        },
+        {
+          "id": "battle-card",
+          "calculation": "fn.card.battle.render",
+          "inputs": {
+            "card": "px:px.card.battle.config",
+            "art": "fn:render-art"
+          },
+          "args": {
+            "width": 700
+          },
+          "into": null
+        }
+      ]
+    }
+  ],
+  "both_cards_consume_fn_render_art": true,
+  "sanity": {
+    "single_is_str_svg": true,
+    "battle_is_str_svg": true,
+    "single_contains_warm_mako": true,
+    "battle_contains_rival": true
+  }
+}

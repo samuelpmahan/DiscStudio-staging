@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+<circle cx="256" cy="256" r="220" fill="#f1e5c8" opacity=".93"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<path d="M208.5 184.2L205.4 204.1L203 224L201.4 243.8L200.6 263.5L200.5 283.1L201.3 302.7L202.9 322.1L205.3 341.4L208.5 360.7L212.5 379.8L217.3 398.8L223 417.8L229.4 436.6L236.6 455.3L244.7 473.9L253.5 492.1L277.6 479.9L268.3 462.5L259.9 445.2L252.3 427.7L245.4 410.1L239.3 392.3L234 374.4L229.4 356.3L225.5 338.1L222.5 319.7L220.1 301.1L218.6 282.4L217.8 263.5L217.8 244.5L218.5 225.2L220.1 205.8L222.4 186.2Z" fill="#7a3b1e"/>
+<path d="M212.8 321.4Q259 332.9 319.4 330.5Q263.8 277.4 212.8 321.4Z" fill="#7a3b1e" stroke="#f1e5c8" stroke-width="2.4" stroke-opacity=".5"/>
+<path d="M263.9 250.8L274.8 300.3L240.8 262.7Z" fill="#7a3b1e"/>
+<path d="M203.3 265.8L179.3 298.3L178.6 257.9Z" fill="#7a3b1e"/>
+<path d="M149.8 233.6L104.3 242.5L137.9 210.5Z" fill="#7a3b1e"/>
+<path d="M134.8 173L90.4 145.2L142.7 148.3Z" fill="#7a3b1e"/>
+<path d="M167 119.6L160 77.6L190.1 107.7Z" fill="#7a3b1e"/>
+<path d="M227.6 104.5L254.7 62.5L252.4 112.4Z" fill="#7a3b1e"/>
+<path d="M281.1 136.7L323.7 129.4L293 159.8Z" fill="#7a3b1e"/>
+<path d="M296.1 197.3L337 224.1L288.2 222.1Z" fill="#7a3b1e"/>
+<circle cx="215.5" cy="185.2" r="88.7" fill="#7a3b1e"/>
+<g id="achenes" fill="#f1e5c8" opacity=".82">
+<circle cx="197.9" cy="175.4" r="4.4"/>
+<circle cx="247.5" cy="177.6" r="4.9"/>
+<circle cx="191.9" cy="219.9" r="5.3"/>
+<circle cx="208.3" cy="136.4" r="5.7"/>
+<circle cx="258.7" cy="220.4" r="6"/>
+<circle cx="154" cy="188.8" r="6.2"/>
+<circle cx="262" cy="137.3" r="6.4"/>
+<circle cx="213.4" cy="256.9" r="6.7"/>
+<circle cx="165.6" cy="127.5" r="6.9"/>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#d6bf99" stroke-width="12.2" opacity=".55"/>
+</g>
+<title>MAKO</title>
+</svg>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+<clipPath id="die"><polygon points="391.6,304.6 281.7,397.7 146.2,349.1 120.4,207.4 230.3,114.3 365.8,162.9"/></clipPath>
+</defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="knurl" stroke="#0d3558" stroke-width="14.0" stroke-linecap="butt" opacity=".92">
+<line x1="432.0" y1="259.3" x2="466.0" y2="259.9"/>
+<line x1="428.0" y1="293.5" x2="461.2" y2="300.8"/>
+<line x1="417.3" y1="326.4" x2="448.5" y2="339.9"/>
+<line x1="400.5" y1="356.5" x2="428.4" y2="375.9"/>
+<line x1="378.1" y1="382.7" x2="401.7" y2="407.2"/>
+<line x1="351.1" y1="404.1" x2="369.4" y2="432.7"/>
+<line x1="320.3" y1="419.8" x2="332.8" y2="451.5"/>
+<line x1="287.1" y1="429.2" x2="293.1" y2="462.7"/>
+<line x1="252.7" y1="432.0" x2="252.1" y2="466.0"/>
+<line x1="218.5" y1="428.0" x2="211.2" y2="461.2"/>
+<line x1="185.6" y1="417.3" x2="172.1" y2="448.5"/>
+<line x1="155.5" y1="400.5" x2="136.1" y2="428.4"/>
+<line x1="129.3" y1="378.1" x2="104.8" y2="401.7"/>
+<line x1="107.9" y1="351.1" x2="79.3" y2="369.4"/>
+<line x1="92.2" y1="320.3" x2="60.5" y2="332.8"/>
+<line x1="82.8" y1="287.1" x2="49.3" y2="293.1"/>
+<line x1="80.0" y1="252.7" x2="46.0" y2="252.1"/>
+<line x1="84.0" y1="218.5" x2="50.8" y2="211.2"/>
+<line x1="94.7" y1="185.6" x2="63.5" y2="172.1"/>
+<line x1="111.5" y1="155.5" x2="83.6" y2="136.1"/>
+<line x1="133.9" y1="129.3" x2="110.3" y2="104.8"/>
+<line x1="160.9" y1="107.9" x2="142.6" y2="79.3"/>
+<line x1="191.7" y1="92.2" x2="179.2" y2="60.5"/>
+<line x1="224.9" y1="82.8" x2="218.9" y2="49.3"/>
+<line x1="259.3" y1="80.0" x2="259.9" y2="46.0"/>
+<line x1="293.5" y1="84.0" x2="300.8" y2="50.8"/>
+<line x1="326.4" y1="94.7" x2="339.9" y2="63.5"/>
+<line x1="356.5" y1="111.5" x2="375.9" y2="83.6"/>
+<line x1="382.7" y1="133.9" x2="407.2" y2="110.3"/>
+<line x1="404.1" y1="160.9" x2="432.7" y2="142.6"/>
+<line x1="419.8" y1="191.7" x2="451.5" y2="179.2"/>
+<line x1="429.2" y1="224.9" x2="462.7" y2="218.9"/>
+</g>
+</g>
+<g id="stamp">
+<polygon points="391.6,304.6 281.7,397.7 146.2,349.1 120.4,207.4 230.3,114.3 365.8,162.9" fill="#0d3558"/>
+<g clip-path="url(#die)">
+<g transform="rotate(-8.0 256 256)">
+<rect x="-16" y="-16" width="544" height="256" fill="#ffffff" opacity=".22"/>
+<rect x="-16" y="256" width="544" height="272" fill="#000000" opacity=".20"/>
+<rect x="-16" y="232" width="544" height="26" fill="#ffffff" opacity=".55"/>
+<rect x="-16" y="300" width="544" height="14" fill="#ffffff" opacity=".22"/>
+</g>
+</g>
+<polygon points="359.6,293.1 275.7,364.2 172.1,327.1 152.4,218.9 236.3,147.8 339.9,184.9" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".75"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7.0" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="3.0" opacity=".30"/>
+</g>
+<g id="text">
+<rect x="164.0" y="396" width="184.0" height="36" rx="4" fill="#4c9bc6" stroke="#0d3558" stroke-width="3" opacity=".96"/>
+<text x="257.5" y="421" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="700" letter-spacing="3" fill="#0d3558">WARM MAKO</text>
+</g>
+<title>Warm Mako</title>
+</svg>

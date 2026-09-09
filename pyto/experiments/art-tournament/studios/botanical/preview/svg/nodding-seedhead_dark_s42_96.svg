@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="DiscBattle">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#1e1e24"/>
+<circle cx="256" cy="256" r="220" fill="#3a3329" opacity=".93"/>
+<g id="grain" fill="#a1833e">
+<circle cx="293.2" cy="263.6" r="2.8" opacity="0.10"/>
+<circle cx="109.4" cy="343.9" r="1.4" opacity="0.15"/>
+<circle cx="287.3" cy="150.8" r="2.3" opacity="0.13"/>
+<circle cx="343.2" cy="435.5" r="3.3" opacity="0.12"/>
+<circle cx="116" cy="200.6" r="1.9" opacity="0.10"/>
+<circle cx="325.2" cy="229.6" r="2.8" opacity="0.15"/>
+<circle cx="174.3" cy="419.1" r="1.4" opacity="0.13"/>
+<circle cx="221.3" cy="133.9" r="2.3" opacity="0.12"/>
+<circle cx="434.4" cy="365.8" r="3.3" opacity="0.10"/>
+<circle cx="95.5" cy="286.8" r="1.9" opacity="0.15"/>
+<circle cx="314.3" cy="177.6" r="2.8" opacity="0.13"/>
+<circle cx="275.7" cy="448.2" r="1.4" opacity="0.12"/>
+<circle cx="149.9" cy="161.6" r="2.3" opacity="0.10"/>
+<circle cx="310.7" cy="255.2" r="3.3" opacity="0.15"/>
+<circle cx="128.4" cy="376.4" r="1.9" opacity="0.13"/>
+<circle cx="264.5" cy="139.7" r="2.8" opacity="0.12"/>
+<circle cx="382.1" cy="415.6" r="1.4" opacity="0.10"/>
+<circle cx="102.4" cy="231.2" r="2.3" opacity="0.15"/>
+<circle cx="326.1" cy="209.9" r="3.3" opacity="0.13"/>
+<circle cx="210.2" cy="436.9" r="1.9" opacity="0.12"/>
+<circle cx="193" cy="139" r="2.8" opacity="0.10"/>
+<circle cx="276.8" cy="263.2" r="1.4" opacity="0.15"/>
+<circle cx="101.6" cy="322.4" r="2.3" opacity="0.13"/>
+<circle cx="299.2" cy="160" r="3.3" opacity="0.12"/>
+<circle cx="317.8" cy="443.2" r="1.9" opacity="0.10"/>
+<circle cx="127.5" cy="184" r="2.8" opacity="0.15"/>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<path d="M265.3 192.8L258.3 211.1L252.3 229.6L247.2 248.2L242.9 266.8L239.6 285.4L237.3 304L235.8 322.7L235.3 341.4L235.8 360.1L237.1 378.8L239.5 397.5L242.7 416.3L246.9 435L252.1 453.8L258.2 472.5L265.1 491L290.2 481L282.7 463.4L276.2 446L270.6 428.6L265.9 411.2L262.1 393.7L259.1 376.1L257 358.6L255.8 340.9L255.5 323.3L256.1 305.5L257.6 287.7L259.9 269.8L263.2 251.9L267.3 233.8L272.4 215.8L278.5 197.5Z" fill="#f2c14e"/>
+<path d="M247.5 296.2Q291.5 318.6 353 330.3Q309.2 263.7 247.5 296.2Z" fill="#f2c14e" stroke="#3a3329" stroke-width="2.4" stroke-opacity=".5"/>
+<path d="M246.5 360.3Q194.1 327 157 386.2Q210.2 382.4 246.5 360.3Z" fill="#f2c14e" stroke="#3a3329" stroke-width="2.4" stroke-opacity=".5"/>
+<path d="M351.8 197.8L378.9 216.1L346.9 222.8Z" fill="#f2c14e"/>
+<path d="M339.8 237.4L357.5 269.7L323 256.6Z" fill="#f2c14e"/>
+<path d="M309.5 265.7L308.6 302.2L285.4 274Z" fill="#f2c14e"/>
+<path d="M269.2 275.1L250.2 306L244.2 270.2Z" fill="#f2c14e"/>
+<path d="M229.6 263L198.5 279.3L210.4 246.3Z" fill="#f2c14e"/>
+<path d="M201.3 232.8L169.5 230.2L193 208.7Z" fill="#f2c14e"/>
+<path d="M191.9 192.5L159.2 173.1L196.8 167.5Z" fill="#f2c14e"/>
+<path d="M203.9 152.9L189.3 123.2L220.7 133.6Z" fill="#f2c14e"/>
+<path d="M234.2 124.6L232.2 79.5L258.3 116.3Z" fill="#f2c14e"/>
+<path d="M274.5 115.2L292.7 88.4L299.5 120.1Z" fill="#f2c14e"/>
+<path d="M314.1 127.2L345.5 110.6L333.4 144Z" fill="#f2c14e"/>
+<path d="M342.4 157.5L383 157L350.7 181.6Z" fill="#f2c14e"/>
+<circle cx="271.9" cy="195.1" r="87" fill="#f2c14e"/>
+<g id="achenes" fill="#3a3329" opacity=".82">
+<circle cx="278.7" cy="200.3" r="2.4"/>
+<circle cx="258" cy="196.5" r="2.6"/>
+<circle cx="283.8" cy="181.9" r="2.7"/>
+<circle cx="272.1" cy="216.1" r="2.8"/>
+<circle cx="255.7" cy="177.8" r="2.8"/>
+<circle cx="297.9" cy="197.2" r="2.9"/>
+<circle cx="249.5" cy="212.6" r="3"/>
+<circle cx="276.9" cy="165.1" r="3"/>
+<circle cx="289.5" cy="222.3" r="3.1"/>
+<circle cx="238.7" cy="186.6" r="3.1"/>
+<circle cx="303.6" cy="178.2" r="3.2"/>
+<circle cx="259.3" cy="230.6" r="3.2"/>
+<circle cx="256.5" cy="159" r="3.3"/>
+<circle cx="308.9" cy="212" r="3.3"/>
+<circle cx="231.7" cy="208.2" r="3.4"/>
+<circle cx="293.3" cy="157.2" r="3.4"/>
+<circle cx="282" cy="239" r="3.4"/>
+<circle cx="233.7" cy="168.9" r="3.5"/>
+<circle cx="319" cy="188.5" r="3.5"/>
+<circle cx="240.7" cy="232.8" r="3.6"/>
+<circle cx="269.3" cy="145.1" r="3.6"/>
+<circle cx="308.4" cy="231.1" r="3.6"/>
+<circle cx="219.4" cy="193.2" r="3.7"/>
+<circle cx="312.7" cy="160.3" r="3.7"/>
+<circle cx="265.1" cy="249.5" r="3.7"/>
+<circle cx="239.5" cy="149.6" r="3.8"/>
+<circle cx="327.6" cy="207.1" r="3.8"/>
+<circle cx="221.8" cy="224.5" r="3.8"/>
+<circle cx="289.2" cy="138.7" r="3.8"/>
+<circle cx="297.6" cy="249.4" r="3.9"/>
+<circle cx="215.3" cy="172.1" r="3.9"/>
+<circle cx="330.1" cy="173.5" r="3.9"/>
+<circle cx="243.1" cy="251.2" r="4"/>
+<circle cx="254.9" cy="133.4" r="4"/>
+<circle cx="326.9" cy="229.7" r="4"/>
+<circle cx="207" cy="206.9" r="4"/>
+<circle cx="312.2" cy="141.9" r="4.1"/>
+<circle cx="278.1" cy="262.6" r="4.1"/>
+<circle cx="221" cy="149" r="4.1"/>
+<circle cx="341.4" cy="194.8" r="4.1"/>
+<circle cx="220.2" cy="242.9" r="4.2"/>
+<circle cx="277.7" cy="124.1" r="4.2"/>
+<circle cx="316" cy="252.1" r="4.2"/>
+<circle cx="200" cy="182.8" r="4.2"/>
+<circle cx="333.9" cy="155.2" r="4.3"/>
+<circle cx="252.9" cy="267.3" r="4.3"/>
+<circle cx="236.8" cy="128.4" r="4.3"/>
+<circle cx="343.6" cy="220.9" r="4.3"/>
+</g>
+<g transform="rotate(101 351.8 239.9)"><ellipse cx="351.8" cy="239.9" rx="6.6" ry="15.6" fill="#f2c14e"/><path d="M351.8 224.3L323.9 207.2M351.8 224.3L331.2 198.8M351.8 224.3L340.9 193.4M351.8 224.3L351.8 191.5M351.8 224.3L362.8 193.4M351.8 224.3L372.5 198.8M351.8 224.3L379.8 207.2" stroke="#f2c14e" stroke-width="1.8" opacity=".72" fill="none"/></g>
+<g transform="rotate(80.9 247.5 100.8)"><ellipse cx="247.5" cy="100.8" rx="6.1" ry="14.5" fill="#f2c14e"/><path d="M247.5 86.3L221.5 70.3M247.5 86.3L228.3 62.6M247.5 86.3L237.3 57.6M247.5 86.3L247.5 55.8M247.5 86.3L257.6 57.6M247.5 86.3L266.6 62.6M247.5 86.3L273.5 70.3" stroke="#f2c14e" stroke-width="1.8" opacity=".72" fill="none"/></g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#f2c14e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#51452e" stroke-width="5.3" opacity=".55"/>
+</g>
+<title>DiscBattle</title>
+</svg>

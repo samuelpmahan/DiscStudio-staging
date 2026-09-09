@@ -1,0 +1,60 @@
+{
+  "pcr": "botanical-card-art",
+  "registered_calculations": [
+    "fn.card.battle.render",
+    "fn.card.single.render",
+    "fn.discArt.block-print",
+    "fn.discArt.nodding-seedhead",
+    "fn.discArt.pressed-fern",
+    "fn.tournament.render-art-map"
+  ],
+  "ticks": [
+    {
+      "name": "compose",
+      "calculations": [
+        {
+          "id": "render-art",
+          "calculation": "fn.tournament.render-art-map",
+          "inputs": {
+            "specs": "px:px.tournament.art.specs"
+          },
+          "args": {},
+          "into": "px.tournament.art.map"
+        },
+        {
+          "id": "single-card",
+          "calculation": "fn.card.single.render",
+          "inputs": {
+            "card": "px:px.tournament.card.single",
+            "art": "fn:render-art"
+          },
+          "args": {
+            "width": 400
+          },
+          "into": "px.tournament.card.single.out"
+        },
+        {
+          "id": "battle-card",
+          "calculation": "fn.card.battle.render",
+          "inputs": {
+            "card": "px:px.tournament.card.battle",
+            "art": "fn:render-art"
+          },
+          "args": {
+            "width": 700
+          },
+          "into": "px.tournament.card.battle.out"
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "single_card_consumes_fn_render_art": true,
+    "battle_card_consumes_fn_render_art": true,
+    "both_cards_consume_fn_render_art": true,
+    "single_is_str_svg": true,
+    "battle_is_str_svg": true,
+    "single_contains_warm_mako": true,
+    "battle_contains_rival": true
+  }
+}

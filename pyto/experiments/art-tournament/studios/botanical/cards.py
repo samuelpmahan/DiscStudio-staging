@@ -229,10 +229,10 @@ def strip(x: float, y: float, w: float, participant: dict, tint: str, captions: 
         body = flight(values.get(key))
         out.append(text(cx, y + figure * 0.92, body, figure, INK, "middle", SERIF))
         if captions:
-            out.append(text(cx, y + figure * 1.46, caption, min(9.5, cell * 0.19), MUTED,
+            out.append(text(cx, y + figure * 1.52, caption, min(9.5, cell * 0.19), MUTED,
                             "middle", SANS, 1.5))
-    out.append(rule(x, y + figure * (1.62 if captions else 1.12), x + w,
-                    y + figure * (1.62 if captions else 1.12), tint, 1.4, 0.55))
+    close = y + figure * (2.02 if captions else 1.18)
+    out.append(rule(x, close, x + w, close, tint, 1.4, 0.55))
     return "".join(out)
 
 
@@ -279,24 +279,30 @@ def _winner(card: dict) -> str:
     return ""
 
 
-def seal(cx: float, cy: float, r: float, value: str, tint: str, captioned: bool) -> str:
-    """A wax-seal score cartouche."""
-    out = [f'<circle cx="{_num(cx)}" cy="{_num(cy)}" r="{_num(r)}" fill="{EDGE}" stroke="{tint}"'
-           f' stroke-width="1.8" opacity=".95"/>',
-           f'<circle cx="{_num(cx)}" cy="{_num(cy)}" r="{_num(r * .84)}" fill="none" stroke="{HAIR}"'
+def seal(cx: float, cy: float, r: float, value: str, tint: str, captioned: bool,
+         inside: bool = False) -> str:
+    """A wax-seal score cartouche. `inside` sets its caption within the seal, so
+    the seal can sit on the specimen the way a wax seal sits on a mounted plate."""
+    out = [f'<circle cx="{_num(cx)}" cy="{_num(cy + r * .07)}" r="{_num(r)}" fill="{RULE}" opacity=".18"/>',
+           f'<circle cx="{_num(cx)}" cy="{_num(cy)}" r="{_num(r)}" fill="{STOCK}" stroke="{tint}"'
+           f' stroke-width="2"/>',
+           f'<circle cx="{_num(cx)}" cy="{_num(cy)}" r="{_num(r * .82)}" fill="none" stroke="{HAIR}"'
            f' stroke-width=".9"/>']
     body = value if value else "–"
-    out.append(text(cx, cy + r * 0.30, body, fit(body, r * 1.05, r * 1.5, 0.62), INK, "middle", SERIF))
-    if captioned:
-        out.append(text(cx, cy + r * 1.44, "SCORE", min(9.0, r * 0.34), MUTED, "middle", SANS, 1.8))
+    if inside:
+        out.append(text(cx, cy - r * 0.28, "SCORE", min(8.0, r * 0.30), MUTED, "middle", SANS, 1.2))
+        out.append(text(cx, cy + r * 0.52, body, fit(body, r * 1.0, r * 1.4, 0.62), INK, "middle", SERIF))
     else:
-        out.append(text(cx, cy + r * 1.44, "SCORE", min(8.0, r * 0.30), MUTED, "middle", SANS, 1.4))
+        out.append(text(cx, cy + r * 0.30, body, fit(body, r * 1.05, r * 1.5, 0.62), INK, "middle", SERIF))
+        out.append(text(cx, cy + r * 1.46, "SCORE", min(9.0, r * 0.34) if captioned else min(8.0, r * 0.30),
+                        MUTED, "middle", SANS, 1.8 if captioned else 1.4))
     return "".join(out)
 
 
 def edition(x: float, y: float, kind: str, layout: str, anchor: str = "start") -> str:
     body = esc(f"PLATE · {kind} · {layout}".upper())
-    return text(x, y, body, 8.0, MUTED, anchor, SANS, 1.6, 400, "", 0.85)
+    return text(x - (1.6 if anchor == "end" else 0.0), y, body, 8.0, MUTED, anchor, SANS, 1.6,
+                400, "", 0.85)
 
 
 def frame(w: float, h: float, width: int, label: str, body: str) -> str:
@@ -334,21 +340,25 @@ def render_single(card: dict, art: dict[str, str], width: int) -> str:
     name = str(person.get("name") or "Untitled")
 
     if layout == "gallery":
-        w, h = 340.0, (466.0 if details else 402.0)
+        w = 340.0
+        strip_y = 404.0 if details else 382.0
+        h = strip_y + (26.0 * 2.02 + 26.0 if details else 26.0 * 1.18 + 26.0)
         body = [plate(w, h, tint, details),
-                specimen(plate_art, "a-", w / 2.0, 172.0, 236.0, tint, details),
-                rule(34, 306, w - 34, 306, HAIR, 1.0),
-                nameplate(34, 336, w - 68, person, tint, details, 32.0, 12.5),
-                strip(34, 396 if details else 350, w - 68, person, tint, details, 26.0),
-                edition(w / 2.0, h - 14, "single", layout, "middle")]
+                specimen(plate_art, "a-", w / 2.0, 174.0, 238.0, tint, details),
+                rule(34, 310, w - 34, 310, HAIR, 1.0),
+                nameplate(34, 340, w - 68, person, tint, details, 32.0, 12.5),
+                strip(34, strip_y, w - 68, person, tint, details, 26.0),
+                edition(w / 2.0, h - 13, "single", layout, "middle")]
     else:
-        w, h = 424.0, (190.0 if details else 152.0)
-        disc = 132.0 if details else 118.0
+        w = 424.0
+        strip_y = 112.0 if details else 96.0
+        h = strip_y + (25.0 * 2.02 + 24.0 if details else 25.0 * 1.18 + 24.0)
+        disc = 134.0 if details else 118.0
         body = [plate(w, h, tint, details),
-                specimen(plate_art, "a-", 22.0 + disc / 2.0, h / 2.0 + 2.0, disc, tint, details),
-                nameplate(disc + 46.0, 44.0, w - disc - 74.0, person, tint, details, 30.0, 12.0),
-                strip(disc + 46.0, 108.0 if details else 92.0, w - disc - 74.0, person, tint, details, 25.0),
-                edition(w - 16, h - 12, "single", layout, "end")]
+                specimen(plate_art, "a-", 22.0 + disc / 2.0, h / 2.0 + 1.0, disc, tint, details),
+                nameplate(disc + 46.0, 46.0, w - disc - 74.0, person, tint, details, 30.0, 12.0),
+                strip(disc + 46.0, strip_y, w - disc - 74.0, person, tint, details, 25.0),
+                edition(w - 20, h - 11, "single", layout, "end")]
     return frame(w, h, width, f"{name} — botanical single plate ({layout})", "".join(body))
 
 
@@ -372,64 +382,70 @@ def render_battle(card: dict, art: dict[str, str], width: int) -> str:
     names = [str(p.get("name") or "Untitled") for p in people]
 
     if layout == "stacked":
-        w, h = 470.0, (378.0 if details else 306.0)
-        row_h = (h - 74.0) / 2.0
+        w = 470.0
+        row_h = 168.0 if details else 138.0
+        h = 74.0 + row_h * 2.0
         body = [plate(w, h, tints[0], details),
                 text(w / 2.0, 32.0, "MATCH PLATE", 10.5, MUTED, "middle", SANS, 3.4)]
         for index, person in enumerate(people):
             pid = str(person.get("presentationId", f"p{index}"))
             top = 44.0 + index * row_h
             disc = min(row_h - 28.0, 118.0)
-            won = champion and pid == champion
+            won = bool(champion) and pid == champion
+            left = 40.0 + (min(row_h - 28.0, 118.0))
             if won:
                 body.append(f'<rect x="14" y="{_num(top - 4)}" width="{_num(w - 28)}"'
                             f' height="{_num(row_h - 6)}" fill="{tints[index]}" opacity=".07"/>')
                 body.append(rule(14, top - 4, 14, top + row_h - 10, tints[index], 3.0, 0.85))
-                body.append(leaf(26, top + 10, 6.5, 90, tints[index], 0.9))
+                body.append(leaf(left - 16.0, top + 22.5, 6.5, 135, tints[index], 0.95))
             body.append(specimen(art.get(pid), f"{'ab'[index]}-", 30.0 + disc / 2.0,
                                  top + row_h / 2.0 - 6.0, disc, tints[index], details))
-            left = 40.0 + disc
             body.append(nameplate(left, top + 26.0, w - disc - 156.0, person, tints[index],
                                   details, 25.0, 11.0))
-            body.append(strip(left, top + (74.0 if details else 62.0), w - disc - 156.0, person,
-                              tints[index], details, 20.0))
+            body.append(strip(left, top + (78.0 if details else 62.0), w - disc - 156.0, person,
+                              tints[index], details, 21.0))
             body.append(seal(w - 58.0, top + row_h / 2.0 - 8.0, 32.0, scores.get(pid, ""),
                              tints[index], details))
             if index == 0:
                 body.append(rule(24, 44.0 + row_h - 6.0, w - 24, 44.0 + row_h - 6.0, HAIR, 1.0))
         body.append(edition(w / 2.0, h - 13, "battle", layout, "middle"))
     else:
-        w, h = 720.0, (238.0 if details else 190.0)
-        disc = 142.0 if details else 126.0
-        half = (w - 116.0) / 2.0
+        w = 636.0
+        disc = 130.0 if details else 116.0
+        # the strip clears the wax seal set on the specimen's lower right
+        strip_y = 38.0 + disc + 34.0 if details else 38.0 + disc + 22.0
+        h = strip_y + (24.0 * 2.02 + 30.0 if details else 24.0 * 1.18 + 28.0)
+        gap = 40.0
+        half = (w - 32.0 - gap) / 2.0
         body = [plate(w, h, tints[0], details)]
-        for index, person in enumerate(people):
-            pid = str(person.get("presentationId", f"p{index}"))
-            x0 = 16.0 + index * (half + 84.0)
-            won = champion and pid == champion
-            if won:
-                body.append(f'<rect x="{_num(x0 - 4)}" y="26" width="{_num(half + 8)}"'
-                            f' height="{_num(h - 56)}" fill="{tints[index]}" opacity=".07"/>')
-                body.append(rule(x0 - 4, 26, x0 + half + 4, 26, tints[index], 2.6, 0.9))
-                body.append(leaf(x0 + half - 8, 38, 6.5, 180, tints[index], 0.9))
-            body.append(specimen(art.get(pid), f"{'ab'[index]}-", x0 + disc / 2.0,
-                                 h / 2.0 + 4.0, disc, tints[index], details))
-            left = x0 + disc + 16.0
-            wide = half - disc - 20.0
-            body.append(nameplate(left, 62.0, wide, person, tints[index], details, 27.0, 11.5))
-            body.append(strip(left, 128.0 if details else 112.0, wide, person, tints[index],
-                              details, 23.0))
         centre = w / 2.0
-        body.append(rule(centre, 34, centre, h - 34, HAIR, 1.0))
-        body.append(f'<circle cx="{_num(centre)}" cy="{_num(h / 2.0)}" r="27" fill="{STOCK}"/>')
-        body.append(leaf(centre, h / 2.0 - 30, 7.0, 180, RULE, 0.55))
-        body.append(leaf(centre, h / 2.0 + 30, 7.0, 0, RULE, 0.55))
-        body.append(text(centre, h / 2.0 + 6.0, "vs", 21.0, RULE, "middle", SERIF, 0, 400, "italic"))
         for index, person in enumerate(people):
             pid = str(person.get("presentationId", f"p{index}"))
-            body.append(seal(centre + (-1 if index == 0 else 1) * 62.0, 62.0, 30.0,
-                             scores.get(pid, ""), tints[index], details))
-        body.append(edition(w - 16, h - 12, "battle", layout, "end"))
+            x0 = 16.0 + index * (half + gap)
+            won = bool(champion) and pid == champion
+            if won:
+                body.append(f'<rect x="{_num(x0 - 3)}" y="24" width="{_num(half + 6)}"'
+                            f' height="{_num(h - 52)}" fill="{tints[index]}" opacity=".07"/>')
+                body.append(rule(x0 - 3, 24, x0 + half + 3, 24, tints[index], 2.6, 0.9))
+            dx = x0 + disc / 2.0 + 4.0
+            dy = 38.0 + disc / 2.0
+            body.append(specimen(art.get(pid), f"{'ab'[index]}-", dx, dy, disc, tints[index], details))
+            left = x0 + disc + 26.0
+            wide = half - disc - 30.0
+            if won:
+                body.append(leaf(left - 16.0, 58.5, 6.5, 135, tints[index], 0.95))
+            body.append(nameplate(left, 62.0, wide, person, tints[index], details, 27.0, 11.5))
+            body.append(strip(x0 + 6.0, strip_y, half - 12.0, person, tints[index], details, 24.0))
+            # the score is a wax seal set on the specimen, the way a seal sits on a mount
+            body.append(seal(dx + disc * 0.38, dy + disc * 0.36, 23.0, scores.get(pid, ""),
+                             tints[index], details, inside=True))
+        mid = 38.0 + disc / 2.0
+        body.append(rule(centre, 30, centre, h - 30, HAIR, 1.0))
+        body.append(f'<circle cx="{_num(centre)}" cy="{_num(mid)}" r="23" fill="{STOCK}"/>')
+        body.append(leaf(centre, mid - 27, 7.0, 180, RULE, 0.55))
+        body.append(leaf(centre, mid + 27, 7.0, 0, RULE, 0.55))
+        body.append(text(centre, mid + 6.0, "vs", 21.0, RULE, "middle", SERIF, 0, 400, "italic"))
+        body.append(edition(w - 20, h - 11, "battle", layout, "end"))
     return frame(w, h, width, f"{names[0]} vs {names[1]} — botanical match plate ({layout})",
                  "".join(body))
 

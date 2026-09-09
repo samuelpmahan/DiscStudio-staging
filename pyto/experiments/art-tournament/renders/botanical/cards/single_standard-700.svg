@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="308" viewBox="0 0 424 186.5" role="img" aria-label="Warm Mako — botanical single plate (standard)"><rect width="424" height="186.5" fill="#f6efdd"/><rect x="3" y="3" width="418" height="180.5" fill="none" stroke="#8d7f5e" stroke-width="1.6" opacity=".85"/><rect x="8" y="8" width="408" height="170.5" fill="none" stroke="#cdbf9c" stroke-width=".9"/><rect x="3" y="3" width="418" height="7" fill="#417895" opacity=".55"/><path d="M0 -7.5Q3.9 0 0 7.5Q-3.9 0 0 -7.5Z" fill="#8d7f5e" opacity="0.5" transform="translate(16 16) rotate(135)"/><path d="M0 -7.5Q3.9 0 0 7.5Q-3.9 0 0 -7.5Z" fill="#8d7f5e" opacity="0.5" transform="translate(408 16) rotate(-135)"/><path d="M0 -7.5Q3.9 0 0 7.5Q-3.9 0 0 -7.5Z" fill="#8d7f5e" opacity="0.5" transform="translate(16 170.5) rotate(45)"/><path d="M0 -7.5Q3.9 0 0 7.5Q-3.9 0 0 -7.5Z" fill="#8d7f5e" opacity="0.5" transform="translate(408 170.5) rotate(-45)"/><g><circle cx="89" cy="97.27" r="67" fill="#8d7f5e" opacity=".16"/><circle cx="89" cy="94.25" r="70.02" fill="#efe5cd"/><g transform="translate(22 27.25) scale(0.26) translate(0 0)">
+<defs><clipPath id="a-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="a-depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="a-base" clip-path="url(#a-disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+<circle cx="256" cy="256" r="220" fill="#f1e5c8" opacity=".93"/>
+<g id="a-grain" fill="#ae8669">
+<rect x="111" y="188.7" width="9.6" height="2" transform="rotate(96.5 111 188.7)" opacity="0.10"/>
+<circle cx="343.3" cy="228.3" r="1.4" opacity="0.15"/>
+<circle cx="161.2" cy="420.9" r="2.3" opacity="0.13"/>
+<rect x="225.9" y="121.5" width="11.2" height="2.3" transform="rotate(110.9 225.9 121.5)" opacity="0.12"/>
+<circle cx="291.1" cy="280.5" r="1.9" opacity="0.10"/>
+<circle cx="85.4" cy="278.7" r="2.8" opacity="0.15"/>
+<rect x="327.6" y="170.5" width="4.8" height="1" transform="rotate(125.3 327.6 170.5)" opacity="0.13"/>
+<circle cx="265" cy="456.3" r="2.3" opacity="0.12"/>
+<circle cx="148.5" cy="148.8" r="3.3" opacity="0.10"/>
+<rect x="332.6" y="259.3" width="6.4" height="1.3" transform="rotate(139.7 332.6 259.3)" opacity="0.15"/>
+<circle cx="115.5" cy="374" r="2.8" opacity="0.13"/>
+<circle cx="272.7" cy="128.7" r="1.4" opacity="0.12"/>
+<rect x="376.8" y="428.3" width="8" height="1.6" transform="rotate(154.1 376.8 428.3)" opacity="0.10"/>
+<circle cx="95.3" cy="220.4" r="3.3" opacity="0.15"/>
+<circle cx="342.3" cy="206.1" r="1.9" opacity="0.13"/>
+<rect x="197.6" y="441.2" width="9.6" height="2" transform="rotate(168.5 197.6 441.2)" opacity="0.12"/>
+<circle cx="195.4" cy="126.1" r="1.4" opacity="0.10"/>
+<circle cx="309.7" cy="278.2" r="2.3" opacity="0.15"/>
+<rect x="90.1" y="316.3" width="11.2" height="2.3" transform="rotate(2.9 90.1 316.3)" opacity="0.13"/>
+<circle cx="310.7" cy="151.1" r="1.9" opacity="0.12"/>
+<circle cx="308.8" cy="453.4" r="2.8" opacity="0.10"/>
+<rect x="123.8" y="171.6" width="4.8" height="1" transform="rotate(17.3 123.8 171.6)" opacity="0.15"/>
+<circle cx="340.9" cy="241.1" r="2.3" opacity="0.13"/>
+<circle cx="141.6" cy="404.7" r="3.3" opacity="0.12"/>
+<rect x="244.4" y="122.2" width="6.4" height="1.3" transform="rotate(31.7 244.4 122.2)" opacity="0.10"/>
+<circle cx="277.7" cy="276" r="2.8" opacity="0.15"/>
+<circle cx="86.7" cy="255.8" r="1.4" opacity="0.13"/>
+<rect x="335.1" y="183.7" width="8" height="1.6" transform="rotate(46.1 335.1 183.7)" opacity="0.12"/>
+<circle cx="238.4" cy="453.4" r="3.3" opacity="0.10"/>
+<circle cx="165.7" cy="137.9" r="1.9" opacity="0.15"/>
+<rect x="325.1" y="268.3" width="9.6" height="2" transform="rotate(60.5 325.1 268.3)" opacity="0.13"/>
+<circle cx="103.3" cy="352.8" r="1.4" opacity="0.12"/>
+<circle cx="288.5" cy="135.7" r="2.3" opacity="0.10"/>
+<rect x="351.7" y="440.8" width="11.2" height="2.3" transform="rotate(74.9 351.7 440.8)" opacity="0.15"/>
+<circle cx="104.2" cy="200.3" r="1.9" opacity="0.13"/>
+<circle cx="343.6" cy="220" r="2.8" opacity="0.12"/>
+<rect x="174.5" y="429.5" width="4.8" height="1" transform="rotate(89.3 174.5 429.5)" opacity="0.10"/>
+<circle cx="214.3" cy="122.4" r="2.3" opacity="0.15"/>
+<circle cx="298.5" cy="280.7" r="3.3" opacity="0.13"/>
+<rect x="86.2" y="293.1" width="6.4" height="1.3" transform="rotate(103.7 86.2 293.1)" opacity="0.12"/>
+<circle cx="321.8" cy="162.7" r="2.8" opacity="0.10"/>
+<circle cx="281.7" cy="456.4" r="1.4" opacity="0.15"/>
+<rect x="138.6" y="156.7" width="8" height="1.6" transform="rotate(118.1 138.6 156.7)" opacity="0.13"/>
+<circle cx="336.4" cy="252.8" r="3.3" opacity="0.12"/>
+<circle cx="124.6" cy="386.4" r="1.9" opacity="0.10"/>
+<rect x="262.2" y="125.4" width="9.6" height="2" transform="rotate(132.5 262.2 125.4)" opacity="0.15"/>
+<circle cx="391.5" cy="418.8" r="1.4" opacity="0.13"/>
+<circle cx="91.1" cy="233.6" r="2.3" opacity="0.12"/>
+<rect x="340.3" y="197.5" width="11.2" height="2.3" transform="rotate(146.9 340.3 197.5)" opacity="0.10"/>
+<circle cx="212.8" cy="446.9" r="1.9" opacity="0.15"/>
+<circle cx="183.9" cy="129.8" r="2.8" opacity="0.13"/>
+<rect x="316" y="275.2" width="4.8" height="1" transform="rotate(161.3 316 275.2)" opacity="0.12"/>
+<circle cx="94.2" cy="330.5" r="2.3" opacity="0.10"/>
+<circle cx="302.8" cy="144.7" r="3.3" opacity="0.15"/>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#a-depth)"/>
+</g>
+<g id="a-art" clip-path="url(#a-disc)">
+<g id="a-ghost" transform="rotate(-24.9 256 256) translate(42.7 21.4)" opacity=".42">
+<g fill="#c6a88b">
+<path d="M108.4 428.6L131.4 420.1L153.9 410.7L175.5 400.5L196.4 389.6L216.5 377.8L235.8 365.3L254.3 352L271.9 337.9L288.8 323L304.8 307.4L320.1 291L334.5 273.9L348.1 256L360.9 237.3L372.9 217.9L384.1 197.7L394.5 176.8L404.1 155.2L412.9 132.8L420.9 109.8L411.1 106.2L402.4 128.7L393 150.3L382.9 171.2L372.1 191.1L360.5 210.3L348.2 228.7L335.2 246.3L321.5 263.1L307 279L291.8 294.2L275.9 308.6L259.3 322.2L241.9 335.1L223.8 347.1L205 358.4L185.4 368.9L165.2 378.7L144.1 387.7L122.4 395.9L99.6 403.4Z"/>
+<path d="M155.5 396.4Q187.3 426.8 239.5 416.5Q194.9 395.1 155.5 396.4Z"/>
+<path d="M155.5 396.4Q178.1 359.4 186 305.3Q147.3 349.1 155.5 396.4Z"/>
+<path d="M192.9 378.2Q235.7 416.4 303.6 402.1Q244.4 376.1 192.9 378.2Z"/>
+<path d="M192.9 378.2Q219.5 331.3 226.1 263.8Q179.9 319.9 192.9 378.2Z"/>
+<path d="M227.9 357.4Q276.2 393.9 346.5 372.9Q281.9 350.7 227.9 357.4Z"/>
+<path d="M227.9 357.4Q254.1 308.5 257.7 238.8Q211.8 297.9 227.9 357.4Z"/>
+<path d="M260.4 334.2Q307.3 359.5 364.7 330.3Q305.8 319.7 260.4 334.2Z"/>
+<path d="M260.4 334.2Q280.4 287.6 278.2 223.8Q241.1 281.2 260.4 334.2Z"/>
+<path d="M290.4 308.4Q335.2 335.8 394.9 313.6Q337 299.8 290.4 308.4Z"/>
+<path d="M290.4 308.4Q305.9 265.8 300.2 209.1Q270 262.3 290.4 308.4Z"/>
+<path d="M318 280.1Q360.1 299.7 410 273.6Q357.7 267.4 318 280.1Z"/>
+<path d="M318 280.1Q326.8 239.7 315.4 188.8Q294.4 240.6 318 280.1Z"/>
+<path d="M343 249.3Q380.1 257.3 413.3 225.6Q371 230.1 343 249.3Z"/>
+<path d="M343 249.3Q346.7 212.5 331.8 168.3Q318.4 216.4 343 249.3Z"/>
+<path d="M365.6 216Q399.8 224 432.4 196.6Q392.8 200.1 365.6 216Z"/>
+<path d="M365.6 216Q370.1 185.9 358.1 149.6Q345.4 188.7 365.6 216Z"/>
+<path d="M385.6 180.2Q413.6 181.2 433.6 153.9Q403.4 162.6 385.6 180.2Z"/>
+<path d="M385.6 180.2Q382.9 152.5 365.6 122.1Q362.8 159.5 385.6 180.2Z"/>
+<path d="M403.2 141.9Q427.5 142.9 446 120Q419.6 127.4 403.2 141.9Z"/>
+<path d="M403.2 141.9Q400.2 119.5 385 95.6Q383.9 126 403.2 141.9Z"/>
+</g>
+</g>
+<g id="a-frond" transform="rotate(-15.7 256 256)">
+<g fill="#7a3b1e" stroke="#f1e5c8" stroke-width="2.6" stroke-opacity=".6" stroke-linejoin="round">
+<path d="M108.4 428.6L131.4 420.1L153.9 410.7L175.5 400.5L196.4 389.6L216.5 377.8L235.8 365.3L254.3 352L271.9 337.9L288.8 323L304.8 307.4L320.1 291L334.5 273.9L348.1 256L360.9 237.3L372.9 217.9L384.1 197.7L394.5 176.8L404.1 155.2L412.9 132.8L420.9 109.8L411.1 106.2L402.4 128.7L393 150.3L382.9 171.2L372.1 191.1L360.5 210.3L348.2 228.7L335.2 246.3L321.5 263.1L307 279L291.8 294.2L275.9 308.6L259.3 322.2L241.9 335.1L223.8 347.1L205 358.4L185.4 368.9L165.2 378.7L144.1 387.7L122.4 395.9L99.6 403.4Z"/>
+<path d="M149.9 398.8Q180.1 428.2 230.2 419Q187.7 398 149.9 398.8Z"/>
+<path d="M149.9 398.8Q172 363.6 180.1 311.9Q142.6 353.4 149.9 398.8Z"/>
+<path d="M177.2 386.3Q215 422.6 277.6 411.7Q224.3 386 177.2 386.3Z"/>
+<path d="M177.2 386.3Q203 344.3 211.1 282.8Q167.2 332.5 177.2 386.3Z"/>
+<path d="M203.2 372.5Q249.1 411.7 320.3 395.1Q257.3 369.1 203.2 372.5Z"/>
+<path d="M203.2 372.5Q232.2 325.4 240 256.2Q190.8 312.3 203.2 372.5Z"/>
+<path d="M227.9 357.4Q276.6 389.4 341.9 363.2Q278.8 346 227.9 357.4Z"/>
+<path d="M227.9 357.4Q254.1 308.5 257.8 238.9Q211.9 297.9 227.9 357.4Z"/>
+<path d="M251.4 341.1Q298.2 377.7 368.3 360.4Q304.8 337.4 251.4 341.1Z"/>
+<path d="M251.4 341.1Q274.3 295.1 275.2 230.6Q234.4 286.5 251.4 341.1Z"/>
+<path d="M273.6 323.5Q319.6 353.2 382.3 331Q322.2 315.1 273.6 323.5Z"/>
+<path d="M273.6 323.5Q290.6 277.6 285.7 216.2Q252.6 273.3 273.6 323.5Z"/>
+<path d="M294.5 304.5Q338.3 321.8 385.4 289.9Q332.7 286.7 294.5 304.5Z"/>
+<path d="M294.5 304.5Q306.6 260.2 297.3 203Q271.1 259.2 294.5 304.5Z"/>
+<path d="M314.2 284.3Q356.6 303.1 405.6 275.6Q353.5 270.3 314.2 284.3Z"/>
+<path d="M314.2 284.3Q327.5 246.4 320.8 196.4Q294.7 244 314.2 284.3Z"/>
+<path d="M332.6 262.9Q371.3 272.4 407.1 240.2Q362.5 243.5 332.6 262.9Z"/>
+<path d="M332.6 262.9Q336.8 223.4 321.5 175.9Q306.8 227.2 332.6 262.9Z"/>
+<path d="M349.7 240.1Q386.7 250.2 423.1 221.3Q379.9 223.5 349.7 240.1Z"/>
+<path d="M349.7 240.1Q352.8 204.7 337.8 162.6Q325.5 208.9 349.7 240.1Z"/>
+<path d="M365.6 216Q400.4 226.3 436.3 200.8Q395.1 202 365.6 216Z"/>
+<path d="M365.6 216Q366.5 184 350.6 146.8Q342.1 189.2 365.6 216Z"/>
+<path d="M380.2 190.7Q411.8 198.3 443 173.9Q406.1 176.8 380.2 190.7Z"/>
+<path d="M380.2 190.7Q381.9 163.2 368.5 131.3Q360 167.5 380.2 190.7Z"/>
+<path d="M393.5 164.1Q421.5 168.5 446.5 144.8Q414.8 150 393.5 164.1Z"/>
+<path d="M393.5 164.1Q393.3 139.7 379.5 112.2Q374.3 144.8 393.5 164.1Z"/>
+<path d="M405.5 136.2Q430.2 139.3 451.8 118.2Q424.1 123.5 405.5 136.2Z"/>
+<path d="M405.5 136.2Q401.3 114.3 385.2 91.3Q385.8 121.3 405.5 136.2Z"/>
+<path d="M416 108Q425.7 79.6 435.4 97.7" fill="none" stroke="#7a3b1e" stroke-width="7" stroke-linecap="round"/>
+</g>
+<path d="M149.9 398.8L223.3 417.2M149.9 398.8L174.8 327.3M177.2 386.3L266 408.7M177.2 386.3L205.7 299.3M203.2 372.5L306.6 392.4M203.2 372.5L235 272.1M227.9 357.4L333.4 362.7M227.9 357.4L253.7 255M251.4 341.1L349.2 357.2M251.4 341.1L272.3 244.1M273.6 323.5L366.1 329.9M273.6 323.5L284 231.3M294.5 304.5L379.7 290.8M294.5 304.5L296.9 218.3M314.2 284.3L393.7 276.7M314.2 284.3L320.2 204.7M332.6 262.9L402.8 241.5M332.6 262.9L323.3 190M349.7 240.1L414.6 223.5M349.7 240.1L339.5 173.9M365.6 216L424.7 203.3M365.6 216L352.8 156.9M380.2 190.7L432.4 176.7M380.2 190.7L369.7 137.7M393.5 164.1L438.3 147.8M393.5 164.1L381.1 118.1M405.5 136.2L443.9 121.3M405.5 136.2L388.6 98.7" stroke="#f1e5c8" stroke-width="1.7" opacity=".38" fill="none"/>
+</g>
+<g transform="rotate(46.3 150 168)"><rect x="98" y="155" width="104" height="26" rx="2" fill="#f1e5c8" opacity=".3"/><rect x="98" y="155" width="104" height="26" rx="2" fill="none" stroke="#f1e5c8" stroke-width="1.4" opacity=".5"/></g>
+<g transform="rotate(46.3 330 330)"><rect x="278" y="317" width="104" height="26" rx="2" fill="#f1e5c8" opacity=".3"/><rect x="278" y="317" width="104" height="26" rx="2" fill="none" stroke="#f1e5c8" stroke-width="1.4" opacity=".5"/></g>
+</g>
+<g id="a-rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#d6bf99" stroke-width="3" opacity=".55"/>
+</g>
+<g id="a-text">
+<g id="a-plaque" transform="rotate(1.8 256 418)">
+<rect x="150" y="386" width="212" height="64" rx="3" fill="#f1e5c8" stroke="#b89376" stroke-width="1.6" opacity=".95"/>
+<rect x="155" y="391" width="202" height="54" rx="2" fill="none" stroke="#b89376" stroke-width=".8" opacity=".6"/>
+<text x="256" y="420" text-anchor="middle" font-family="serif" font-size="23" letter-spacing="1.5" fill="#7a3b1e">MAKO</text>
+<text x="256" y="439" text-anchor="middle" font-family="sans-serif" font-size="11" letter-spacing="3" fill="#a5785b">No. 658</text>
+</g>
+</g>
+<title>MAKO</title>
+</g><circle cx="89" cy="94.25" r="70.02" fill="none" stroke="#417895" stroke-width="1.6" opacity=".55"/><circle cx="89" cy="94.25" r="75.71" fill="none" stroke="#cdbf9c" stroke-width=".9" opacity=".85"/></g><text x="180" y="46" font-family="sans-serif" font-size="10.5" letter-spacing="1.8" fill="#7d735c">UNRECORDED MOLD</text><text x="180" y="73.6" font-family="serif" font-size="30" letter-spacing="0.2" fill="#2c2a20">Warm Mako</text><text x="180" y="88.6" font-family="serif" font-size="12" font-style="italic" fill="#7d735c">first run</text><path d="M180 97.6L253.44 97.6" stroke="#417895" stroke-width="1.6" opacity="0.7" fill="none"/><path d="M180 112L396 112" stroke="#8d7f5e" stroke-width="1.1" opacity="0.7" fill="none"/><text x="207" y="135" font-family="serif" font-size="25" text-anchor="middle" fill="#2c2a20">5</text><text x="207" y="150" font-family="sans-serif" font-size="9.5" text-anchor="middle" letter-spacing="1.5" fill="#7d735c">SPEED</text><path d="M234 115L234 138.25" stroke="#cdbf9c" stroke-width="0.8" fill="none"/><text x="261" y="135" font-family="serif" font-size="25" text-anchor="middle" fill="#2c2a20">4</text><text x="261" y="150" font-family="sans-serif" font-size="9.5" text-anchor="middle" letter-spacing="1.5" fill="#7d735c">GLIDE</text><path d="M288 115L288 138.25" stroke="#cdbf9c" stroke-width="0.8" fill="none"/><text x="315" y="135" font-family="serif" font-size="25" text-anchor="middle" fill="#2c2a20">-1</text><text x="315" y="150" font-family="sans-serif" font-size="9.5" text-anchor="middle" letter-spacing="1.5" fill="#7d735c">TURN</text><path d="M342 115L342 138.25" stroke="#cdbf9c" stroke-width="0.8" fill="none"/><text x="369" y="135" font-family="serif" font-size="25" text-anchor="middle" fill="#2c2a20">1</text><text x="369" y="150" font-family="sans-serif" font-size="9.5" text-anchor="middle" letter-spacing="1.5" fill="#7d735c">FADE</text><path d="M180 162.5L396 162.5" stroke="#417895" stroke-width="1.4" opacity="0.55" fill="none"/><text x="402.4" y="175.5" font-family="sans-serif" font-size="8" text-anchor="end" letter-spacing="1.6" opacity="0.85" fill="#7d735c">PLATE · SINGLE · STANDARD</text><title>Warm Mako — botanical single plate (standard)</title></svg>

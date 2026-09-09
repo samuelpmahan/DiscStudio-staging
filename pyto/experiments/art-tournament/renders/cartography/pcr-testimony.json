@@ -1,0 +1,55 @@
+{
+  "registered_calculations": [
+    "fn.card.battle.render",
+    "fn.card.single.render",
+    "fn.discArt.contour-basin",
+    "fn.discArt.fairway-plat",
+    "fn.discArt.wind-rose",
+    "fn.tournament.render-art-map"
+  ],
+  "pcr": "cartography-card-art",
+  "ticks": [
+    {
+      "name": "compose",
+      "calculations": [
+        {
+          "id": "render-art",
+          "calculation": "fn.tournament.render-art-map",
+          "inputs": {
+            "specs": "px:px.tournament.art.specs"
+          },
+          "args": {},
+          "into": "px.tournament.art.map"
+        },
+        {
+          "id": "single-card",
+          "calculation": "fn.card.single.render",
+          "inputs": {
+            "card": "px:px.tournament.card.single",
+            "art": "fn:render-art"
+          },
+          "args": {
+            "width": 400
+          },
+          "into": "px.tournament.card.single.out"
+        },
+        {
+          "id": "battle-card",
+          "calculation": "fn.card.battle.render",
+          "inputs": {
+            "card": "px:px.tournament.card.battle",
+            "art": "fn:render-art"
+          },
+          "args": {
+            "width": 700
+          },
+          "into": "px.tournament.card.battle.out"
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "single_card_consumes_fn_render_art": true,
+    "battle_card_consumes_fn_render_art": true
+  }
+}

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="#9ac3d4" opacity=".93"/>
+<g id="grain" fill="#4b738f">
+<circle cx="466.4" cy="242.5" r="2.8" opacity="0.10"/>
+<circle cx="141.6" cy="375.1" r="1.4" opacity="0.15"/>
+<circle cx="258.4" cy="155.5" r="2.3" opacity="0.13"/>
+<circle cx="384.1" cy="402.6" r="3.3" opacity="0.12"/>
+<circle cx="112.9" cy="240.1" r="1.9" opacity="0.10"/>
+<circle cx="304.1" cy="220.9" r="2.8" opacity="0.15"/>
+<circle cx="221.1" cy="429.5" r="1.4" opacity="0.13"/>
+<circle cx="194.5" cy="154.1" r="2.3" opacity="0.12"/>
+<circle cx="452.5" cy="313.8" r="3.3" opacity="0.10"/>
+<circle cx="114.7" cy="325.2" r="1.9" opacity="0.15"/>
+<circle cx="287.8" cy="174.8" r="2.8" opacity="0.13"/>
+<circle cx="323.7" cy="431.5" r="1.4" opacity="0.12"/>
+<circle cx="135.1" cy="195.9" r="2.3" opacity="0.10"/>
+<circle cx="287.1" cy="247" r="3.3" opacity="0.15"/>
+<circle cx="167.4" cy="400.9" r="1.9" opacity="0.13"/>
+<circle cx="235.3" cy="150" r="2.8" opacity="0.12"/>
+<circle cx="415.7" cy="374" r="1.4" opacity="0.10"/>
+<circle cx="107.6" cy="271.7" r="2.3" opacity="0.15"/>
+<circle cx="303.3" cy="202.5" r="3.3" opacity="0.13"/>
+<circle cx="259.2" cy="437.3" r="1.9" opacity="0.12"/>
+<circle cx="169.7" cy="165.1" r="2.8" opacity="0.10"/>
+<circle cx="464" cy="270.5" r="1.4" opacity="0.15"/>
+<circle cx="129" cy="357" r="2.3" opacity="0.13"/>
+<circle cx="271" cy="161.5" r="3.3" opacity="0.12"/>
+<circle cx="362" cy="416.3" r="1.9" opacity="0.10"/>
+<circle cx="119.6" cy="221.9" r="2.8" opacity="0.15"/>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<path d="M208.5 184.2L205.4 204.1L203 224L201.4 243.8L200.6 263.5L200.5 283.1L201.3 302.7L202.9 322.1L205.3 341.4L208.5 360.7L212.5 379.8L217.3 398.8L223 417.8L229.4 436.6L236.6 455.3L244.7 473.9L253.5 492.1L277.6 479.9L268.3 462.5L259.9 445.2L252.3 427.7L245.4 410.1L239.3 392.3L234 374.4L229.4 356.3L225.5 338.1L222.5 319.7L220.1 301.1L218.6 282.4L217.8 263.5L217.8 244.5L218.5 225.2L220.1 205.8L222.4 186.2Z" fill="#0d3558"/>
+<path d="M212.8 321.4Q259 332.9 319.4 330.5Q263.8 277.4 212.8 321.4Z" fill="#0d3558" stroke="#9ac3d4" stroke-width="2.4" stroke-opacity=".5"/>
+<path d="M225.9 387.2Q170.1 365.6 146.2 428.7Q195.8 415 225.9 387.2Z" fill="#0d3558" stroke="#9ac3d4" stroke-width="2.4" stroke-opacity=".5"/>
+<path d="M263.9 250.8L274.8 300.3L240.8 262.7Z" fill="#0d3558"/>
+<path d="M233 264.8L222.2 303.7L207.1 266.3Z" fill="#0d3558"/>
+<path d="M199.1 265.1L171.2 302.1L174.8 255.9Z" fill="#0d3558"/>
+<path d="M168 251.5L123 278.5L149.6 233.2Z" fill="#0d3558"/>
+<path d="M145.1 226.5L102.7 229.1L135.7 202.3Z" fill="#0d3558"/>
+<path d="M134.4 194.3L86.8 179.1L135.6 168.4Z" fill="#0d3558"/>
+<path d="M137.7 160.6L106.7 130.4L149.4 137.4Z" fill="#0d3558"/>
+<path d="M154.4 131.1L134.7 86.4L174.6 114.6Z" fill="#0d3558"/>
+<path d="M181.7 110.9L182.6 64.9L206.8 104.1Z" fill="#0d3558"/>
+<path d="M214.8 103.6L235.5 54.6L240.5 107.6Z" fill="#0d3558"/>
+<path d="M248.1 110.4L278.2 87.5L269.9 124.5Z" fill="#0d3558"/>
+<path d="M275.7 130.2L316.3 119L289.9 151.9Z" fill="#0d3558"/>
+<path d="M292.8 159.4L328.2 166.8L297 185Z" fill="#0d3558"/>
+<path d="M296.6 193.1L334.5 216.5L290 218.2Z" fill="#0d3558"/>
+<path d="M286.4 225.4L307.9 259.3L270.1 245.7Z" fill="#0d3558"/>
+<circle cx="215.5" cy="185.2" r="88.7" fill="#0d3558"/>
+<g id="achenes" fill="#9ac3d4" opacity=".82">
+<circle cx="207.8" cy="180.9" r="2.4"/>
+<circle cx="229.3" cy="181.9" r="2.6"/>
+<circle cx="205.3" cy="200.2" r="2.7"/>
+<circle cx="212.4" cy="164.1" r="2.8"/>
+<circle cx="234.2" cy="200.4" r="2.8"/>
+<circle cx="188.9" cy="186.7" r="2.9"/>
+<circle cx="235.6" cy="164.4" r="3"/>
+<circle cx="214.6" cy="216.2" r="3"/>
+<circle cx="193.9" cy="160.2" r="3.1"/>
+<circle cx="250.1" cy="189.2" r="3.1"/>
+<circle cx="185.7" cy="206.6" r="3.2"/>
+<circle cx="223.2" cy="147.6" r="3.2"/>
+<circle cx="235.9" cy="219.5" r="3.3"/>
+<circle cx="175.7" cy="173.3" r="3.3"/>
+<circle cx="254.2" cy="166.5" r="3.4"/>
+<circle cx="199" cy="226.5" r="3.4"/>
+<circle cx="199.2" cy="142.3" r="3.4"/>
+<circle cx="257.7" cy="206.4" r="3.5"/>
+<circle cx="168.7" cy="198.4" r="3.5"/>
+<circle cx="241.7" cy="142.8" r="3.6"/>
+<circle cx="225" cy="235.4" r="3.6"/>
+<circle cx="173.5" cy="153.9" r="3.6"/>
+<circle cx="268.7" cy="179.9" r="3.7"/>
+<circle cx="179" cy="226" r="3.7"/>
+<circle cx="214.8" cy="129.3" r="3.7"/>
+<circle cx="254.5" cy="226.7" r="3.8"/>
+<circle cx="157.5" cy="180.8" r="3.8"/>
+<circle cx="262" cy="148.6" r="3.8"/>
+<circle cx="205.7" cy="244.6" r="3.8"/>
+<circle cx="181.9" cy="133.9" r="3.9"/>
+<circle cx="275.8" cy="200.6" r="3.9"/>
+<circle cx="159.6" cy="215.1" r="3.9"/>
+<circle cx="236.8" cy="124.5" r="4"/>
+<circle cx="241.1" cy="245.2" r="4"/>
+<circle cx="155.1" cy="157.9" r="4"/>
+<circle cx="279.3" cy="164.3" r="4"/>
+<circle cx="182" cy="244.6" r="4.1"/>
+<circle cx="199.8" cy="117.9" r="4.1"/>
+<circle cx="273.2" cy="224.7" r="4.1"/>
+<circle cx="145.3" cy="195.2" r="4.1"/>
+<circle cx="261" cy="129.8" r="4.2"/>
+<circle cx="219.4" cy="257.7" r="4.2"/>
+<circle cx="163" cy="133.7" r="4.2"/>
+<circle cx="289.8" cy="187.7" r="4.2"/>
+<circle cx="158.3" cy="234.1" r="4.3"/>
+<circle cx="224.7" cy="109.7" r="4.3"/>
+<circle cx="260.1" cy="247.7" r="4.3"/>
+<circle cx="139.5" cy="169.1" r="4.3"/>
+</g>
+<g transform="rotate(98.9 256.9 275.8)"><ellipse cx="256.9" cy="275.8" rx="6.4" ry="15.2" fill="#0d3558"/><path d="M256.9 260.6L229.6 243.8M256.9 260.6L236.7 235.7M256.9 260.6L246.2 230.4M256.9 260.6L256.9 228.5M256.9 260.6L267.6 230.4M256.9 260.6L277 235.7M256.9 260.6L284.2 243.8" stroke="#0d3558" stroke-width="1.8" opacity=".72" fill="none"/></g>
+<g transform="rotate(27.3 118.5 246.6)"><ellipse cx="118.5" cy="246.6" rx="5.6" ry="13.4" fill="#0d3558"/><path d="M118.5 233.2L94.5 218.5M118.5 233.2L100.8 211.3M118.5 233.2L109.1 206.7M118.5 233.2L118.5 205M118.5 233.2L127.8 206.7M118.5 233.2L136.2 211.3M118.5 233.2L142.4 218.5" stroke="#0d3558" stroke-width="1.8" opacity=".72" fill="none"/></g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#428bb4" stroke-width="5.3" opacity=".55"/>
+</g>
+<title>MAKO</title>
+</svg>

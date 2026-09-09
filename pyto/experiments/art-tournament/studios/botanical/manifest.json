@@ -1,0 +1,69 @@
+{
+  "studio": "botanical",
+  "angle": "warm paper and botanical print — pressed specimens, woodcut seed-heads and block-printed endpaper, set in serif on herbarium stock",
+  "families": [
+    {
+      "slug": "pressed-fern",
+      "name": "Pressed Fern",
+      "concept": "A frond pressed flat on a herbarium sheet: a tapered rachis bowed across the paper, pinnae swept toward a curled crozier tip, each blade cut apart from its neighbour by a paper-coloured woodcut outline, with the ghost of a second impression slipped behind it and gummed mounting tape holding the specimen down.",
+      "params": {
+        "seed": "Rotates the frond on the sheet, bows the rachis and picks which way it bends, sets the pinna backsweep, the blade width ratio and reach, the pitch of the pairs, the ghost impression's rotation and slip, a per-pinna length jitter, the plaque tilt, the paper-grain phase and the specimen number.",
+        "base": "The sheet: the disc fill, warmed toward cream (or, on a dark base, toward the accent) so the paper reads as paper in every palette.",
+        "accent": "The plant itself — rachis, pinnae, crozier — plus the rim, the plaque rules and the plaque type.",
+        "label": "Set in serif on the mount plaque at 220 above the specimen number; the aria-label and <title> at every target.",
+        "target": "42 = rachis + 5 pairs of fattened pinnae, no ghost, no grain; 96 = 10 pairs with the woodcut outline, the ghost impression, the curled crozier and paper grain; 220 = 14 pairs with midribs, two gummed tape strips, full grain and the mount plaque."
+      }
+    },
+    {
+      "slug": "nodding-seedhead",
+      "name": "Nodding Seed Head",
+      "concept": "A seed head nodding on its stalk: achenes packed in a golden-angle phyllotactic spiral and knocked out of the ink in paper, a ring of pointed bracts around the head, a tapered stalk with drooping leaves, and loosed seeds drifting off on their pappus rays.",
+      "params": {
+        "seed": "Places the head off-centre (bearing and distance) and sizes it, sets the bract count and reach, the phyllotactic phase, the stalk bow, which side the leaves take and how long they are, the four drifting seeds' bearings and spins, the plaque tilt, the grain phase and the printed achene count.",
+        "base": "The paper ground the specimen is printed on.",
+        "accent": "The head, bracts, stalk, leaves and drifting seeds; every achene is knocked out of that ink in paper.",
+        "label": "Set in serif on the mount plaque at 220 above the achene count; the aria-label and <title> at every target.",
+        "target": "42 = head with 9 chunky achenes, 8 bracts, stalk and one leaf; 96 = 48 achenes, every bract, two leaves, two drifting seeds, paper grain; 220 = 118 achenes, 11 parastichy arcs, alternating bract tints, leaf midribs, four drifting seeds and the mount plaque."
+      }
+    },
+    {
+      "slug": "block-print",
+      "name": "Block Print",
+      "concept": "A block-printed endpaper: two of three carved motifs — a three-blade sprig, a split seed pod, a berry cluster — alternating on a half-drop lattice, every cell rotated a little off true, with the second pull of the block slipped off-register in a let-down ink and a ticked border rule around the sheet.",
+      "params": {
+        "seed": "Rotates the block on the paper, sets the repeat pitch and whether it is a half-drop, chooses which two of the three motifs alternate and in which parity, the per-cell rotation jitter, the off-register direction and distance, the border tick count, the plaque tilt, the grain phase and the block number.",
+        "base": "The endpaper stock every motif is printed on.",
+        "accent": "The printing ink; the off-register second pull is that same ink let down toward the paper.",
+        "label": "Set in serif on the mount plaque at 220 above the block number and pull; the aria-label and <title> at every target.",
+        "target": "42 = a coarse one-pull repeat of solid motifs; 96 = a tighter repeat plus the off-register pull and paper grain; 220 = the full repeat with motif detail (pod seeds, berry highlights, sprig bud), a double border rule with ticks and the mount plaque."
+      }
+    }
+  ],
+  "cards": {
+    "single": {
+      "layouts": ["standard", "gallery"],
+      "sizes": {
+        "standard": "424x187 design units (149 with details off)",
+        "gallery": "340x483 design units (439 with details off)"
+      },
+      "details": "details=True adds the note in italic, the accent rule under the name, the SPEED/GLIDE/TURN/FADE captions, the outer specimen ring and the corner leaf ornaments. details=False keeps the eyebrow, the name, all four figures and their rules, and the plate shortens to suit."
+    },
+    "battle": {
+      "layouts": ["standard", "stacked"],
+      "sizes": {
+        "standard": "636x280 design units (232 with details off)",
+        "stacked": "470x410 design units (350 with details off)"
+      },
+      "details": "Same rule as single. The score slot is always drawn: standard sets a wax-seal cartouche on each specimen (its caption inside the seal, so it never crowds the name) with the measurement strip running the full width of each half; stacked gives each row its own seal at the right with the caption beneath.",
+      "scores": "card['scores'] is read as a presentationId->value map, an index map ({'0': 7}) or a list; a missing score renders as an empty seal. card['winner'] / card['manualWinner'] / card['highlight'] mark the winner with a tinted wash, a rule and a pressed-leaf mark beside the name."
+    }
+  },
+  "calculations": {
+    "fn.discArt.pressed-fern": "families.pressed_fern",
+    "fn.discArt.nodding-seedhead": "families.nodding_seedhead",
+    "fn.discArt.block-print": "families.block_print",
+    "fn.card.single.render": "cards.render_single",
+    "fn.card.battle.render": "cards.render_battle"
+  },
+  "notes": "Every family honours the paint_components contract: a full SVG document, 512 viewBox, width=height=target, art clipped to the r=220 disc, a rim, text only at 220, aria-label and <title>. All identity is drawn from random.Random(seed) at the top of the function and the tier only decides how many components are emitted, so 42, 96 and 220 consume the identical RNG sequence (selfcheck.py proves this by recording every draw and comparing the logs). Palette robustness is structural: tones() warms the paper toward cream on a light base and toward the accent on a dark one, so the ink never sits on a ground it cannot be read against, and the only white in the studio is the low-opacity depth gradient. Card art is inlined as a <g> copy with per-participant id namespacing rather than a nested <svg>: a nested <svg> is resized by any host stylesheet that targets `svg`, which the tournament rasterizer does, and two discs on one battle plate would otherwise collide on clipPath and gradient ids. Markup is kept lean (shared paint on groups, multi-subpath veins and arcs) so the worst-case battle plate carrying two 220px arts is 46.8KB of the 64KB cap. Run selfcheck.py for the contract proof and build_preview.py to regenerate preview/."
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="DiscBattle">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+<circle cx="256" cy="256" r="220" fill="#f1e5c8" opacity=".93"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="frond" transform="rotate(8.4 256 256)">
+<g fill="#7a3b1e">
+<path d="M112.5 431.1L132.2 419.4L151.7 407.2L170.8 394.5L189.3 381.3L207.4 367.7L225 353.7L242.2 339.2L258.8 324.3L275 308.9L290.7 293.1L305.9 276.8L320.7 260.2L334.9 243L348.7 225.5L362.1 207.5L374.9 189.1L387.3 170.2L399.2 151L410.7 131.3L421.6 111.2L410.4 104.8L398.6 124.1L386.5 142.9L373.9 161.2L360.9 179.1L347.4 196.4L333.6 213.3L319.3 229.7L304.6 245.7L289.5 261.2L274 276.2L258 290.7L241.7 304.8L224.9 318.4L207.7 331.5L190.1 344.2L172.1 356.4L153.6 368.2L134.7 379.5L115.5 390.4L95.5 400.9Z"/>
+<path d="M165.9 378.9Q219.2 415.7 277 367.1Q211.9 346.8 165.9 378.9Z"/>
+<path d="M165.9 378.9Q212.4 345.6 217.1 276.1Q150.4 314.7 165.9 378.9Z"/>
+<path d="M230.1 331.6Q293.3 374 363.8 319.3Q286.2 296.6 230.1 331.6Z"/>
+<path d="M230.1 331.6Q279.8 292.9 279.6 216.5Q208.4 262.2 230.1 331.6Z"/>
+<path d="M288.5 278.4Q343.8 303.7 390.3 250.2Q326.7 242.2 288.5 278.4Z"/>
+<path d="M288.5 278.4Q319.9 233.1 305.3 167.1Q256.8 223.5 288.5 278.4Z"/>
+<path d="M341.2 219.4Q386.6 238.1 424.4 194.6Q372.3 190.2 341.2 219.4Z"/>
+<path d="M341.2 219.4Q365.8 186.2 353.6 137.4Q316.4 178.7 341.2 219.4Z"/>
+<path d="M388 154.5Q422.1 165 446.6 131.1Q408.7 131.4 388 154.5Z"/>
+<path d="M388 154.5Q398.9 124.7 381.9 89.7Q362.9 128.1 388 154.5Z"/>
+</g>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#d6bf99" stroke-width="12.2" opacity=".55"/>
+</g>
+<title>DiscBattle</title>
+</svg>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="DiscBattle — fairway plat course chart disc">
+<defs><clipPath id="fp-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="fp-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#fp-disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+</g>
+<g id="art" clip-path="url(#fp-disc)">
+<g transform="rotate(15.6 256 256)">
+<rect x="-40" y="-40" width="592" height="592" fill="#8b765c"/>
+<circle cx="128.1" cy="288.5" r="13.9" fill="#4e4234" opacity=".8"/>
+<circle cx="152" cy="299.7" r="13.7" fill="#4e4234" opacity=".8"/>
+<circle cx="171.4" cy="297.1" r="13.4" fill="#4e4234" opacity=".8"/>
+<circle cx="176.5" cy="267.7" r="13" fill="#4e4234" opacity=".8"/>
+<circle cx="205.6" cy="284.2" r="12.4" fill="#4e4234" opacity=".8"/>
+<circle cx="213.2" cy="264.8" r="11.7" fill="#4e4234" opacity=".8"/>
+<circle cx="219.9" cy="247.1" r="11" fill="#4e4234" opacity=".8"/>
+<circle cx="251.4" cy="257.6" r="10.2" fill="#4e4234" opacity=".8"/>
+<circle cx="245.7" cy="229" r="9.3" fill="#4e4234" opacity=".8"/>
+<circle cx="262.6" cy="221.9" r="8.4" fill="#4e4234" opacity=".8"/>
+<circle cx="288" cy="218.7" r="8.5" fill="#4e4234" opacity=".8"/>
+<circle cx="274.3" cy="189.6" r="9.4" fill="#4e4234" opacity=".8"/>
+<circle cx="303.9" cy="185" r="10.3" fill="#4e4234" opacity=".8"/>
+<circle cx="313.7" cy="168" r="11.1" fill="#4e4234" opacity=".8"/>
+<circle cx="302.3" cy="142.7" r="11.8" fill="#4e4234" opacity=".8"/>
+<circle cx="171.9" cy="429.5" r="9.5" fill="#4e4234" opacity=".8"/>
+<circle cx="199.7" cy="426.7" r="8.6" fill="#4e4234" opacity=".8"/>
+<circle cx="214.3" cy="392.9" r="8.3" fill="#4e4234" opacity=".8"/>
+<circle cx="249.6" cy="406" r="9.2" fill="#4e4234" opacity=".8"/>
+<circle cx="266.4" cy="382.6" r="10" fill="#4e4234" opacity=".8"/>
+<circle cx="279.9" cy="357.4" r="10.9" fill="#4e4234" opacity=".8"/>
+<circle cx="316.5" cy="363.1" r="11.6" fill="#4e4234" opacity=".8"/>
+<circle cx="318" cy="326.6" r="12.3" fill="#4e4234" opacity=".8"/>
+<circle cx="337.5" cy="311.2" r="12.9" fill="#4e4234" opacity=".8"/>
+<circle cx="366.2" cy="302.2" r="13.4" fill="#4e4234" opacity=".8"/>
+<circle cx="355.5" cy="263.8" r="13.7" fill="#4e4234" opacity=".8"/>
+<circle cx="384.4" cy="252.6" r="13.9" fill="#4e4234" opacity=".8"/>
+<circle cx="395.8" cy="229.7" r="14" fill="#4e4234" opacity=".8"/>
+<circle cx="383.3" cy="196.6" r="13.9" fill="#4e4234" opacity=".8"/>
+<circle cx="417.3" cy="182" r="13.7" fill="#4e4234" opacity=".8"/>
+<ellipse cx="366" cy="146" rx="56.2" ry="49.4" fill="#f7f2e4" opacity=".95" stroke="#f7f1e2" stroke-width="5.3"/>
+<path d="M157.6 405.4L168.5 402.1L179.2 398.5L189.7 394.6L199.9 390.5L210 386L219.8 381.3L229.4 376.3L238.8 371.1L247.9 365.5L256.8 359.7L265.4 353.6L273.8 347.2L281.9 340.5L289.7 333.6L297.2 326.5L304.5 319.1L311.4 311.4L318 303.5L324.4 295.4L330.5 287.1L336.2 278.5L341.7 269.8L346.9 260.9L351.7 251.8L356.4 242.5L360.7 233.1L364.7 223.5L368.5 213.7L372 203.8L375.3 193.7L378.4 183.5L381.1 173.1L383.7 162.6L386 151.9L346 140.1L342.2 149.2L338.2 158.1L334.1 166.6L329.8 175L325.3 183L320.7 190.8L315.9 198.3L310.9 205.6L305.8 212.6L300.6 219.4L295.2 225.9L289.8 232.2L284.2 238.3L278.4 244.2L272.6 249.8L266.6 255.3L260.5 260.5L254.3 265.6L248 270.5L241.5 275.2L235 279.8L228.2 284.3L221.4 288.5L214.4 292.7L207.2 296.7L199.9 300.5L192.3 304.3L184.7 307.9L176.8 311.3L168.7 314.7L160.4 317.9L152 320.9L143.3 323.8L134.4 326.6Z" fill="#f0e5cb"/>
+<path d="M157.6 405.4L168.5 402.1L179.2 398.5L189.7 394.6L199.9 390.5L210 386L219.8 381.3L229.4 376.3L238.8 371.1L247.9 365.5L256.8 359.7L265.4 353.6L273.8 347.2L281.9 340.5L289.7 333.6L297.2 326.5L304.5 319.1L311.4 311.4L318 303.5L324.4 295.4L330.5 287.1L336.2 278.5L341.7 269.8L346.9 260.9L351.7 251.8L356.4 242.5L360.7 233.1L364.7 223.5L368.5 213.7L372 203.8L375.3 193.7L378.4 183.5L381.1 173.1L383.7 162.6L386 151.9L346 140.1L342.2 149.2L338.2 158.1L334.1 166.6L329.8 175L325.3 183L320.7 190.8L315.9 198.3L310.9 205.6L305.8 212.6L300.6 219.4L295.2 225.9L289.8 232.2L284.2 238.3L278.4 244.2L272.6 249.8L266.6 255.3L260.5 260.5L254.3 265.6L248 270.5L241.5 275.2L235 279.8L228.2 284.3L221.4 288.5L214.4 292.7L207.2 296.7L199.9 300.5L192.3 304.3L184.7 307.9L176.8 311.3L168.7 314.7L160.4 317.9L152 320.9L143.3 323.8L134.4 326.6Z" fill="none" stroke="#f7f1e2" stroke-width="5.3" opacity=".7"/>
+<path d="M146 366L169.7 358.2L192.1 349.2L213.3 339L233.3 327.6L252.1 314.9L269.6 301.1L286 286L301.1 269.6L314.9 252.1L327.6 233.3L339 213.3L349.2 192.1L358.2 169.7L366 146" fill="none" stroke="#7a3b1e" stroke-width="5.3" opacity=".85" stroke-dasharray="18 13" stroke-linecap="round"/>
+<g transform="translate(146 366) rotate(-16.4)"><rect x="-22.8" y="-31" width="45.7" height="62" rx="7" fill="#7a3b1e"/><rect x="-22.8" y="-31" width="45.7" height="62" rx="7" fill="none" stroke="#f7f1e2" stroke-width="5.3" opacity=".8"/></g>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#fp-depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="5.3" opacity=".28"/>
+</g>
+<g id="stamp">
+<circle cx="391.6" cy="179.7" r="27" fill="none" stroke="#7a3b1e" stroke-width="10"/>
+<circle cx="391.6" cy="179.7" r="10" fill="#7a3b1e"/>
+</g>
+<title>DiscBattle</title>
+</svg>

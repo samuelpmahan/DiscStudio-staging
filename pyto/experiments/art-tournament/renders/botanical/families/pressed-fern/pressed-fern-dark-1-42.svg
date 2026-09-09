@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#1e1e24"/>
+<circle cx="256" cy="256" r="220" fill="#3a3329" opacity=".93"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="frond" transform="rotate(-10.6 256 256)">
+<g fill="#f2c14e">
+<path d="M119.4 424L129.4 403.5L139.8 383.8L150.7 364.6L162.2 345.8L174.2 327.6L186.7 309.9L199.8 292.7L213.4 275.9L227.5 259.7L242.1 243.9L257.3 228.7L273.1 213.9L289.4 199.6L306.2 185.9L323.6 172.6L341.5 159.8L360 147.6L379.1 135.8L398.7 124.6L418.9 113.8L413.1 102.2L392.2 112.2L371.7 122.7L351.6 133.7L332.1 145.4L313.1 157.6L294.6 170.3L276.5 183.6L259 197.5L242 212L225.4 227L209.4 242.6L193.9 258.7L178.9 275.4L164.4 292.7L150.5 310.6L137 329L124.1 348L111.7 367.5L99.9 387.6L88.6 408Z"/>
+<path d="M139.8 352.4Q195.1 363 229.4 306.3Q169.6 313.4 139.8 352.4Z"/>
+<path d="M139.8 352.4Q166.2 313.3 151.6 257.6Q110.9 306.5 139.8 352.4Z"/>
+<path d="M186.6 287.5Q245.9 302.1 283.9 241.5Q219.1 245.6 186.6 287.5Z"/>
+<path d="M186.6 287.5Q217.6 242 204 175.9Q155.8 232.3 186.6 287.5Z"/>
+<path d="M240.1 229.3Q287.3 255.4 337.2 215.7Q280.2 204.5 240.1 229.3Z"/>
+<path d="M240.1 229.3Q272 199.4 270.6 145.9Q223.7 181.7 240.1 229.3Z"/>
+<path d="M300.4 178.1Q335.1 197.6 370 166.5Q328.5 157.9 300.4 178.1Z"/>
+<path d="M300.4 178.1Q325.8 152.4 326 107.9Q288 138.6 300.4 178.1Z"/>
+<path d="M367.5 133.7Q389.7 155.2 423.4 141.1Q393.5 126.3 367.5 133.7Z"/>
+<path d="M367.5 133.7Q388 117.8 392.2 86.2Q362.3 104.4 367.5 133.7Z"/>
+</g>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#f2c14e" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#51452e" stroke-width="12.2" opacity=".55"/>
+</g>
+<title>Warm Mako</title>
+</svg>

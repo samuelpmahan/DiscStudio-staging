@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="#9ac3d4" opacity=".93"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="frond" transform="rotate(-15.7 256 256)">
+<g fill="#0d3558">
+<path d="M109.7 432.3L132.8 423.7L155.3 414.1L177.1 403.8L198 392.6L218.2 380.7L237.5 368L256 354.4L273.7 340.2L290.6 325.1L306.7 309.3L321.9 292.7L336.3 275.4L349.9 257.3L362.6 238.5L374.6 218.9L385.7 198.6L396 177.6L405.5 155.8L414.2 133.3L422.1 110.2L409.9 105.8L401.2 128.2L391.7 149.7L381.5 170.4L370.6 190.3L358.9 209.3L346.5 227.6L333.5 245L319.7 261.6L305.2 277.4L290 292.4L274.1 306.6L257.4 320L240.1 332.6L222.1 344.5L203.3 355.5L183.8 365.9L163.6 375.4L142.7 384.2L121 392.3L98.3 399.7Z"/>
+<path d="M174.5 387.6Q210.2 430.8 271.2 406.8Q221.3 374.4 174.5 387.6Z"/>
+<path d="M174.5 387.6Q208.5 347.3 205.2 282.5Q153.2 331.2 174.5 387.6Z"/>
+<path d="M244.5 346.1Q291.2 390.3 358.5 355.8Q296.7 326 244.5 346.1Z"/>
+<path d="M244.5 346.1Q276.4 297.5 263 227.3Q212.6 287.6 244.5 346.1Z"/>
+<path d="M304.5 294.6Q348.7 323.6 398.2 286Q343.9 270.8 304.5 294.6Z"/>
+<path d="M304.5 294.6Q325.5 252.8 306.9 198.4Q272.5 251.5 304.5 294.6Z"/>
+<path d="M354.6 233Q392.4 246.5 420.7 209.1Q378.2 207.4 354.6 233Z"/>
+<path d="M354.6 233Q365.1 197.9 343.3 158.6Q324 204.2 354.6 233Z"/>
+<path d="M394.7 161.4Q424.3 170.9 447.7 142.8Q414.4 142.6 394.7 161.4Z"/>
+<path d="M394.7 161.4Q398.9 135.5 379.5 110Q370.2 144.1 394.7 161.4Z"/>
+</g>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#428bb4" stroke-width="12.2" opacity=".55"/>
+</g>
+<title>MAKO</title>
+</svg>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="MAKO — contour basin course chart disc">
+<defs><clipPath id="cb-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="cb-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#cb-disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+</g>
+<g id="art" clip-path="url(#cb-disc)">
+<g transform="rotate(13.9 256 256)">
+<path d="M502.9 259L456.7 293.8L434.1 324L435.3 364.4L434 415.7L406.1 460.7L351.8 481.1L289.7 475.4L235 458.7L187.9 445.9L140.4 439.1L90.3 429.7L43.2 410.1L4.8 380.2L-24.4 343.7L-43.5 302.7L-47 259L-29.5 217.5L4.3 183.7L39.4 156L64.7 124.8L85.9 83.2L119.6 39.4L173.4 15L235 25.4L284.6 62.8L318.4 100.4L354.8 117.8L412.4 119.2L483.9 128L536.2 160.7L540.9 211.1Z" fill="#eee2c5"/>
+<path d="M384.3 266.2L358.6 286.6L349.7 305.8L355.8 333.3L357.8 368.2L339.1 396.8L301.4 405.2L260.5 393.6L228.3 376.8L202.1 369.9L171.5 374.2L133.3 378.2L97 369.6L74.8 347L69.4 318L72.8 290.6L75.9 266.2L77.5 242.5L82.1 218.5L93.4 195.1L110.8 173.6L132.9 153.7L160.5 137.3L193.7 129.2L228.3 133.8L258.1 148.3L282.4 163.4L308.7 171.4L344 175L383.3 184.6L409.5 207.1L408.3 238Z" fill="#b18a6c"/>
+<path d="M264.1 273.3L259.6 279.3L258.3 285.3L259.4 293.3L258.7 302.6L252.3 309.6L241.4 311L230.1 307.1L221.6 302.6L214.4 301.7L205.2 304.5L193.2 306.8L182.4 304.3L177.3 296.6L178.8 287.3L182.5 279.5L183.4 273.3L180.6 266.9L177.9 259.1L179.2 251L185.6 245L194.8 241.8L204.3 240.4L213 239.5L221.6 239L230.1 239.5L238.5 241.1L246.8 243.6L255.4 246.7L263.4 251.3L268.4 258.1L268.3 266Z" fill="#804325"/>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#cb-depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="12.2" opacity=".28"/>
+</g>
+<g id="stamp">
+<circle cx="218.4" cy="264.6" r="20" fill="#fdfcf9"/>
+<circle cx="218.4" cy="264.6" r="8" fill="#804325"/>
+</g>
+<title>MAKO</title>
+</svg>

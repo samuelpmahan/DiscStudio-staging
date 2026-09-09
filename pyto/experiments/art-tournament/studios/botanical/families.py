@@ -236,11 +236,11 @@ def pressed_fern(seed: int, base: str, accent: str, target: int, label: str) -> 
     rng = random.Random(seed)
     rot = rng.uniform(-30, 30)
     bow = rng.uniform(0.14, 0.34) * (1.0 if rng.random() < 0.5 else -1.0)
-    back = rng.uniform(36, 56)
-    width_k = rng.uniform(0.21, 0.30)
-    reach = rng.uniform(0.84, 1.04)
+    back = rng.uniform(30, 48)
+    width_k = rng.uniform(0.15, 0.20)
+    reach = rng.uniform(0.92, 1.10)
     ghost_rot = rng.uniform(9, 21) * (-1.0 if bow > 0 else 1.0)
-    ghost_slip = rng.uniform(12, 26)
+    ghost_slip = rng.uniform(26, 46)
     pitch_k = rng.uniform(0.88, 1.14)
     jit = [rng.uniform(-1.0, 1.0) for _ in range(48)]
     number = rng.randrange(104, 989)
@@ -248,23 +248,29 @@ def pressed_fern(seed: int, base: str, accent: str, target: int, label: str) -> 
     grain_phase = rng.uniform(0, TAU)
     t = tones(base, accent)
 
-    p0 = (118.0, 404.0)
-    p2 = (404.0, 122.0)
+    p0 = (104.0, 416.0)
+    p2 = (416.0, 108.0)
     p1 = control(p0, p2, bow)
 
-    def frond(color: str, pairs: int, opacity: float, detail: bool, veins: bool) -> list[str]:
-        out: list[str] = [f'<g fill="{color}">']
+    def frond(color: str, pairs: int, opacity: float, detail: bool, veins: bool,
+              outline: str = "") -> list[str]:
+        bulk = 1.35 if target == 42 else 1.0
+        cut = (f' stroke="{outline}" stroke-width="2.6" stroke-opacity=".6" stroke-linejoin="round"'
+               if outline else "")
+        out: list[str] = [f'<g fill="{color}"{cut}>']
         vein: list[str] = []
         pts = [qpoint(p0, p1, p2, i / 20.0) for i in range(21)]
-        widths = [9.5 * (1.0 - 0.72 * (i / 20.0)) + 1.6 for i in range(21)]
+        widths = [11.5 * bulk * (1.0 - 0.70 * (i / 20.0)) + 1.8 for i in range(21)]
         out.append(f'<path d="{taper(pts, widths)}"/>')
         for i in range(pairs):
             u = 0.07 + (i + 0.5) / pairs * 0.90
             x, y = qpoint(p0, p1, p2, u)
             ang = qangle(p0, p1, p2, u)
-            prof = math.sin(math.pi * (0.10 + 0.86 * u)) * (1.06 - 0.44 * u)
-            length = 104.0 * reach * pitch_k * max(prof, 0.16)
-            w = length * width_k
+            # a frond swells just above the stipe and tapers to the crozier
+            prof = (1.16 - 0.86 * u) * min(1.0, 0.34 + 2.6 * u)
+            length = 150.0 * reach * pitch_k * max(prof, 0.16)
+            # at 42 the frond carries fewer, fatter pinnae so the mark keeps its mass
+            w = length * width_k * (1.55 if target == 42 else 1.0)
             for side in (1.0, -1.0):
                 j = jit[(i * 2 + (0 if side > 0 else 1)) % 48]
                 a = ang + side * (back + j * 7.0)
@@ -289,24 +295,25 @@ def pressed_fern(seed: int, base: str, accent: str, target: int, label: str) -> 
         return out
 
     art: list[str] = []
-    pairs = 7 if target == 42 else (11 if target == 96 else 15)
+    pairs = 5 if target == 42 else (10 if target == 96 else 14)
     if target != 42:
         art.append(f'<g id="ghost" transform="rotate({n(rot + ghost_rot)} 256 256)'
-                   f' translate({n(ghost_slip)} {n(ghost_slip * .5)})" opacity=".5">')
+                   f' translate({n(ghost_slip)} {n(ghost_slip * .5)})" opacity=".42">')
         art += frond(t["ghost"], max(5, pairs - 4), 1.0, False, False)
         art.append('</g>')
     art.append(f'<g id="frond" transform="rotate({n(rot)} 256 256)">')
-    art += frond(t["ink"], pairs, 1.0, target != 42, target == 220)
+    art += frond(t["ink"], pairs, 1.0, target != 42, target == 220,
+                 t["paper"] if target != 42 else "")
     art.append('</g>')
     if target == 220:
         # mounting tape, the way a pressed specimen is held to the sheet
         for k, (tx, ty, ta) in enumerate(((150.0, 168.0, 62.0), (330.0, 330.0, 62.0))):
             art.append(f'<g transform="rotate({n(ta + rot)} {n(tx)} {n(ty)})">'
-                       f'<rect x="{n(tx - 56)}" y="{n(ty - 15)}" width="112" height="30"'
-                       f' fill="{t["paper"]}" opacity=".42"/>'
-                       f'<rect x="{n(tx - 56)}" y="{n(ty - 15)}" width="112" height="30" fill="none"'
-                       f' stroke="{t["hair"]}" stroke-width="1.2" opacity=".5"/></g>')
-    text = plaque(t, label, f"FRONDS {pairs * 2} / No. {number}", tilt) if target == 220 else []
+                       f'<rect x="{n(tx - 52)}" y="{n(ty - 13)}" width="104" height="26" rx="2"'
+                       f' fill="{t["paper"]}" opacity=".3"/>'
+                       f'<rect x="{n(tx - 52)}" y="{n(ty - 13)}" width="104" height="26" rx="2" fill="none"'
+                       f' stroke="{t["paper"]}" stroke-width="1.4" opacity=".5"/></g>')
+    text = plaque(t, label, f"No. {number}", tilt) if target == 220 else []
     return document(target, label, base, t, art, text, grain_phase)
 
 
@@ -317,16 +324,16 @@ def nodding_seedhead(seed: int, base: str, accent: str, target: int, label: str)
     _check(base, accent, target)
     rng = random.Random(seed)
     head_a = rng.uniform(-2.55, -0.62)
-    head_d = rng.uniform(34, 72)
+    head_d = rng.uniform(62, 98)
     head_r = rng.uniform(82, 100)
     bracts = rng.randrange(11, 18)
     bract_len = rng.uniform(26, 44)
     seed_phase = rng.uniform(0, TAU)
     stalk_bow = rng.uniform(-0.30, 0.30)
     leaf_side = 1.0 if rng.random() < 0.5 else -1.0
-    leaf_len = rng.uniform(76, 108)
-    leaf_at = rng.uniform(0.44, 0.66)
-    drift = [(rng.uniform(0, TAU), rng.uniform(126, 196), rng.uniform(9, 15),
+    leaf_len = rng.uniform(92, 124)
+    leaf_at = rng.uniform(0.34, 0.52)
+    drift = [(rng.uniform(0, TAU), rng.uniform(140, 205), rng.uniform(12, 18),
               rng.uniform(0, 180)) for _ in range(4)]
     jit = [rng.uniform(-1.0, 1.0) for _ in range(40)]
     count = rng.randrange(23, 97)
@@ -339,7 +346,7 @@ def nodding_seedhead(seed: int, base: str, accent: str, target: int, label: str)
     stem_c = control((hx, hy), foot, stalk_bow * 0.42 + 0.14)
     steps = 16
     pts = [qpoint((hx, hy), stem_c, foot, i / steps) for i in range(steps + 1)]
-    widths = [7.0 + 6.0 * (i / steps) for i in range(steps + 1)]
+    widths = [7.0 + 6.5 * (i / steps) for i in range(steps + 1)]
 
     art: list[str] = []
     # stalk
@@ -351,10 +358,10 @@ def nodding_seedhead(seed: int, base: str, accent: str, target: int, label: str)
         lx, ly = qpoint((hx, hy), stem_c, foot, min(u, 0.92))
         ang = qangle((hx, hy), stem_c, foot, min(u, 0.92))
         side = leaf_side if i % 2 == 0 else -leaf_side
-        art.append(f'<path d="{blade(lx, ly, ang + side * 62, leaf_len * (1 - i * 0.16), leaf_len * 0.30, side * 0.55)}"'
-                   f' fill="{t["ink"]}"/>')
+        art.append(f'<path d="{blade(lx, ly, ang + side * 78, leaf_len * (1 - i * 0.16), leaf_len * 0.26, side * 0.95)}"'
+                   f' fill="{t["ink"]}" stroke="{t["paper"]}" stroke-width="2.4" stroke-opacity=".5"/>')
         if target == 220:
-            ar = math.radians(ang + side * 62)
+            ar = math.radians(ang + side * 78)
             art.append(f'<path d="M{n(lx)} {n(ly)}L{n(lx + math.cos(ar) * leaf_len * .8)}'
                        f' {n(ly + math.sin(ar) * leaf_len * .8)}" stroke="{t["paper"]}"'
                        f' stroke-width="2" opacity=".4" fill="none"/>')
@@ -461,7 +468,7 @@ def block_print(seed: int, base: str, accent: str, target: int, label: str) -> s
     pitch_k = rng.uniform(0.88, 1.12)
     half_drop = 0.5 if rng.random() < 0.62 else 0.0
     mis_a = rng.uniform(0, TAU)
-    mis_d = rng.uniform(5, 12)
+    mis_d = rng.uniform(3.5, 8.5)
     pair = _PAIRS[rng.randrange(3)]
     swap = rng.random() < 0.5
     jitter = rng.uniform(4, 15)
@@ -472,9 +479,9 @@ def block_print(seed: int, base: str, accent: str, target: int, label: str) -> s
     grain_phase = rng.uniform(0, TAU)
     t = tones(base, accent)
 
-    pitch = (168.0 if target == 42 else (132.0 if target == 96 else 116.0)) * pitch_k
+    pitch = (150.0 if target == 42 else (124.0 if target == 96 else 108.0)) * pitch_k
     row = pitch * 0.88
-    scale = pitch * 0.46
+    scale = pitch * 0.56
     detail = target == 220
     cols = int(560 / pitch) + 3
     rows = int(560 / row) + 3
@@ -500,7 +507,7 @@ def block_print(seed: int, base: str, accent: str, target: int, label: str) -> s
     art: list[str] = []
     art.append(f'<g id="repeat" transform="rotate({n(rot)} 256 256)">')
     if target != 42:
-        art.append(f'<g id="offregister" opacity=".55">')
+        art.append(f'<g id="offregister" opacity=".45">')
         art += field(t["ghost"], mx, my, False)
         art.append('</g>')
     art += field(t["ink"], 0.0, 0.0, detail)

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<radialGradient id="depth" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".20"/></radialGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#1e1e24"/>
+<circle cx="256" cy="256" r="220" fill="#3a3329" opacity=".93"/>
+<g id="grain" fill="#a1833e">
+<circle cx="156.8" cy="342.5" r="2.8" opacity="0.10"/>
+<circle cx="257.4" cy="243.6" r="1.4" opacity="0.15"/>
+<circle cx="354.5" cy="391" r="2.3" opacity="0.13"/>
+<circle cx="154.3" cy="235.5" r="3.3" opacity="0.12"/>
+<circle cx="424.1" cy="154.6" r="1.9" opacity="0.10"/>
+<circle cx="214.7" cy="396.2" r="2.8" opacity="0.15"/>
+<circle cx="227.5" cy="197.7" r="1.4" opacity="0.13"/>
+<circle cx="422.5" cy="321.4" r="2.3" opacity="0.12"/>
+<circle cx="142.4" cy="299.7" r="3.3" opacity="0.10"/>
+<circle cx="347.9" cy="71.2" r="1.9" opacity="0.15"/>
+<circle cx="300.1" cy="409.3" r="2.8" opacity="0.13"/>
+<circle cx="178.5" cy="208.6" r="1.4" opacity="0.12"/>
+<circle cx="442.3" cy="219.7" r="2.3" opacity="0.10"/>
+<circle cx="174.3" cy="366.4" r="3.3" opacity="0.15"/>
+<circle cx="251.7" cy="215" r="1.9" opacity="0.13"/>
+<circle cx="384.6" cy="369.8" r="2.8" opacity="0.12"/>
+<circle cx="145.1" cy="257.9" r="1.4" opacity="0.10"/>
+<circle cx="401.3" cy="118.2" r="2.3" opacity="0.15"/>
+<circle cx="245.4" cy="407" r="3.3" opacity="0.13"/>
+<circle cx="208.8" cy="196.6" r="1.9" opacity="0.12"/>
+<circle cx="436.8" cy="284.8" r="2.8" opacity="0.10"/>
+<circle cx="149.3" cy="326.5" r="1.4" opacity="0.15"/>
+<circle cx="307" cy="52.2" r="2.3" opacity="0.13"/>
+<circle cx="334.2" cy="400.4" r="3.3" opacity="0.12"/>
+<circle cx="162.4" cy="223.6" r="1.9" opacity="0.10"/>
+<circle cx="433.9" cy="178.9" r="2.8" opacity="0.15"/>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="repeat" transform="rotate(-5.6 256 256)">
+<g id="offregister" opacity=".45">
+<g fill="#7c6636" stroke="#7c6636">
+<g transform="translate(119.2 102.7) rotate(175.6)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(232.8 102.7) rotate(12.1)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(346.4 102.7) rotate(175.5)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(119.2 202.7) rotate(8.9)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(232.8 202.7) rotate(173.6)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(346.4 202.7) rotate(-7.3)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(460 202.7) rotate(167.7)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(119.2 302.6) rotate(177.7)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(232.8 302.6) rotate(2.3)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(346.4 302.6) rotate(177.7)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(460 302.6) rotate(-8.7)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(119.2 402.6) rotate(-10.3)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(232.8 402.6) rotate(182)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(346.4 402.6) rotate(0.9)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+</g>
+</g>
+<g fill="#f2c14e" stroke="#f2c14e">
+<g transform="translate(113.6 100) rotate(175.6)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(227.2 100) rotate(12.1)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(340.8 100) rotate(175.5)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(113.6 200) rotate(8.9)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(227.2 200) rotate(173.6)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(340.8 200) rotate(-7.3)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(454.4 200) rotate(167.7)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(113.6 299.9) rotate(177.7)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(227.2 299.9) rotate(2.3)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(340.8 299.9) rotate(177.7)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(454.4 299.9) rotate(-8.7)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(113.6 399.9) rotate(-10.3)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+<g transform="translate(227.2 399.9) rotate(182)">
+<path d="M0 39.4Q6.4 0 0 -42" fill="none" stroke-width="5.4" stroke-linecap="round"/>
+<path d="M0 19.1Q22.9 20.2 31.1 -5.2Q8.3 1.6 0 19.1Z" stroke="none"/>
+<path d="M0 1.3Q-9.7 -19.1 -36.1 -26.9Q-26.6 2.6 0 1.3Z" stroke="none"/>
+<path d="M0 -19.1Q19.9 -18.1 27.1 -40.2Q7.3 -34.3 0 -19.1Z" stroke="none"/>
+</g>
+<g transform="translate(340.8 399.9) rotate(0.9)">
+<path d="M0 0L0 -21.6" stroke-width="4.5" fill="none"/>
+<circle cx="0" cy="-21.6" r="15.9" stroke="none"/>
+<path d="M0 0L-19.1 12.7" stroke-width="4.5" fill="none"/>
+<circle cx="-19.1" cy="12.7" r="15.9" stroke="none"/>
+<path d="M0 0L19.1 14" stroke-width="4.5" fill="none"/>
+<circle cx="19.1" cy="14" r="15.9" stroke="none"/>
+</g>
+</g>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#f2c14e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="205" stroke="#51452e" stroke-width="5.3" opacity=".55"/>
+</g>
+<title>Warm Mako</title>
+</svg>

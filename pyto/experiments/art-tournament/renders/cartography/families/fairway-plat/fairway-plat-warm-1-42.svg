@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="Warm Mako — fairway plat course chart disc">
+<defs><clipPath id="fp-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="fp-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#fp-disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+</g>
+<g id="art" clip-path="url(#fp-disc)">
+<g transform="rotate(-19.7 256 256)">
+<rect x="-40" y="-40" width="592" height="592" fill="#8b765c"/>
+<ellipse cx="366" cy="146" rx="50.6" ry="44.5" fill="#f7f2e4" opacity=".95" stroke="#f7f1e2" stroke-width="12.2"/>
+<path d="M151.2 404.7L174.4 400.8L196.6 395.7L217.9 389.3L238.2 381.5L257.4 372.3L275.5 361.7L292.3 349.7L307.8 336.4L321.8 321.8L334.4 306.1L345.6 289.4L355.2 271.7L363.5 253.1L370.3 233.7L375.8 213.5L380.1 192.6L383.1 171L385.1 148.6L346.9 143.4L342 163.1L336.2 181.4L329.4 198.4L321.9 214.1L313.6 228.4L304.6 241.5L295 253.5L284.8 264.2L274 274L262.6 282.9L250.5 290.9L237.7 298.2L224.1 304.8L209.5 310.7L194 315.9L177.4 320.5L159.7 324.3L140.8 327.3Z" fill="#f0e5cb"/>
+<g transform="translate(146 366) rotate(-7.7)"><rect x="-22.6" y="-31" width="45.3" height="62" rx="7" fill="#7a3b1e"/><rect x="-22.6" y="-31" width="45.3" height="62" rx="7" fill="none" stroke="#f7f1e2" stroke-width="12.2" opacity=".8"/></g>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#fp-depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="12.2" opacity=".28"/>
+</g>
+<g id="stamp">
+<circle cx="322.4" cy="115.3" r="32" fill="#7a3b1e"/>
+<circle cx="322.4" cy="115.3" r="14" fill="#f9f4e9"/>
+</g>
+<title>Warm Mako</title>
+</svg>

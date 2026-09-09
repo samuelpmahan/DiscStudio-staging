@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+</defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#1e1e24"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="screen" fill="#f2c14e">
+<circle cx="473.1" cy="121.9" r="39.6"/>
+<circle cx="485.8" cy="169.1" r="39.6"/>
+<circle cx="498.4" cy="216.3" r="39.6"/>
+<circle cx="511.1" cy="263.6" r="39.6"/>
+<circle cx="406.9" cy="63.7" r="38.0"/>
+<circle cx="419.6" cy="110.9" r="37.7"/>
+<circle cx="432.2" cy="158.2" r="37.4"/>
+<circle cx="444.9" cy="205.4" r="37.0"/>
+<circle cx="457.5" cy="252.6" r="36.7"/>
+<circle cx="470.2" cy="299.8" r="36.4"/>
+<circle cx="482.9" cy="347.1" r="36.1"/>
+<circle cx="353.4" cy="52.8" r="33.3"/>
+<circle cx="366.0" cy="100.0" r="32.9"/>
+<circle cx="378.7" cy="147.2" r="32.6"/>
+<circle cx="391.3" cy="194.4" r="32.3"/>
+<circle cx="404.0" cy="241.7" r="32.0"/>
+<circle cx="416.6" cy="288.9" r="31.7"/>
+<circle cx="429.3" cy="336.1" r="31.4"/>
+<circle cx="442.0" cy="383.3" r="31.1"/>
+<circle cx="299.8" cy="41.8" r="28.7"/>
+<circle cx="312.5" cy="89.0" r="28.4"/>
+<circle cx="325.1" cy="136.2" r="28.1"/>
+<circle cx="337.8" cy="183.5" r="27.8"/>
+<circle cx="350.4" cy="230.7" r="27.5"/>
+<circle cx="363.1" cy="277.9" r="27.2"/>
+<circle cx="375.8" cy="325.1" r="26.9"/>
+<circle cx="388.4" cy="372.4" r="26.6"/>
+<circle cx="401.1" cy="419.6" r="26.3"/>
+<circle cx="246.3" cy="30.8" r="24.4"/>
+<circle cx="258.9" cy="78.1" r="24.1"/>
+<circle cx="271.6" cy="125.3" r="23.8"/>
+<circle cx="284.2" cy="172.5" r="23.5"/>
+<circle cx="296.9" cy="219.7" r="23.2"/>
+<circle cx="309.5" cy="267.0" r="23.0"/>
+<circle cx="322.2" cy="314.2" r="22.7"/>
+<circle cx="334.9" cy="361.4" r="22.4"/>
+<circle cx="347.5" cy="408.6" r="22.1"/>
+<circle cx="360.2" cy="455.9" r="21.8"/>
+<circle cx="205.4" cy="67.1" r="20.0"/>
+<circle cx="218.0" cy="114.3" r="19.8"/>
+<circle cx="230.7" cy="161.6" r="19.5"/>
+<circle cx="243.3" cy="208.8" r="19.2"/>
+<circle cx="256.0" cy="256.0" r="19.0"/>
+<circle cx="268.7" cy="303.2" r="18.7"/>
+<circle cx="281.3" cy="350.4" r="18.4"/>
+<circle cx="294.0" cy="397.7" r="18.2"/>
+<circle cx="306.6" cy="444.9" r="17.9"/>
+<circle cx="151.8" cy="56.1" r="16.2"/>
+<circle cx="164.5" cy="103.4" r="16.0"/>
+<circle cx="177.1" cy="150.6" r="15.7"/>
+<circle cx="189.8" cy="197.8" r="15.5"/>
+<circle cx="202.5" cy="245.0" r="15.3"/>
+<circle cx="215.1" cy="292.3" r="15.0"/>
+<circle cx="227.8" cy="339.5" r="14.8"/>
+<circle cx="240.4" cy="386.7" r="14.5"/>
+<circle cx="253.1" cy="433.9" r="14.3"/>
+<circle cx="265.7" cy="481.2" r="14.1"/>
+<circle cx="110.9" cy="92.4" r="12.6"/>
+<circle cx="123.6" cy="139.6" r="12.3"/>
+<circle cx="136.2" cy="186.9" r="12.1"/>
+<circle cx="148.9" cy="234.1" r="11.9"/>
+<circle cx="161.6" cy="281.3" r="11.7"/>
+<circle cx="174.2" cy="328.5" r="11.5"/>
+<circle cx="186.9" cy="375.8" r="11.3"/>
+<circle cx="199.5" cy="423.0" r="11.1"/>
+<circle cx="212.2" cy="470.2" r="10.8"/>
+<circle cx="70.0" cy="128.7" r="9.3"/>
+<circle cx="82.7" cy="175.9" r="9.1"/>
+<circle cx="95.4" cy="223.1" r="9.0"/>
+<circle cx="108.0" cy="270.3" r="8.8"/>
+<circle cx="120.7" cy="317.6" r="8.6"/>
+<circle cx="133.3" cy="364.8" r="8.4"/>
+<circle cx="146.0" cy="412.0" r="8.2"/>
+<circle cx="158.6" cy="459.2" r="8.1"/>
+<circle cx="41.8" cy="212.2" r="6.6"/>
+<circle cx="54.5" cy="259.4" r="6.5"/>
+<circle cx="67.1" cy="306.6" r="6.4"/>
+<circle cx="79.8" cy="353.8" r="6.2"/>
+<circle cx="92.4" cy="401.1" r="6.1"/>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#f2c14e" stroke-width="7.0" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="5.3" opacity=".30"/>
+</g>
+<g id="stamp" clip-path="url(#disc)">
+<g stroke="#1e1e24" stroke-width="16.0" stroke-linecap="butt">
+<line x1="404.1" y1="232.4" x2="475.2" y2="221.1"/>
+<line x1="279.6" y1="404.1" x2="290.9" y2="475.2"/>
+<line x1="107.9" y1="279.6" x2="36.8" y2="290.9"/>
+<line x1="232.4" y1="107.9" x2="221.1" y2="36.8"/>
+</g>
+<g stroke="#f2c14e" stroke-width="4.3" stroke-linecap="butt" opacity=".95">
+<line x1="410.1" y1="231.5" x2="475.2" y2="221.1"/>
+<line x1="280.5" y1="410.1" x2="290.9" y2="475.2"/>
+<line x1="101.9" y1="280.5" x2="36.8" y2="290.9"/>
+<line x1="231.5" y1="101.9" x2="221.1" y2="36.8"/>
+</g>
+</g>
+<title>Warm Mako</title>
+</svg>

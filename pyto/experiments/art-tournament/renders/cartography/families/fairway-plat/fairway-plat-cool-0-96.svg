@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="MAKO — fairway plat course chart disc">
+<defs><clipPath id="fp-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="fp-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#fp-disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+</g>
+<g id="art" clip-path="url(#fp-disc)">
+<g transform="rotate(-29.3 256 256)">
+<rect x="-40" y="-40" width="592" height="592" fill="#285774"/>
+<circle cx="68.7" cy="339.2" r="8.3" fill="#163141" opacity=".8"/>
+<circle cx="102.9" cy="320.5" r="9.2" fill="#163141" opacity=".8"/>
+<circle cx="88.4" cy="286" r="10.1" fill="#163141" opacity=".8"/>
+<circle cx="107.4" cy="264.4" r="10.9" fill="#163141" opacity=".8"/>
+<circle cx="134.6" cy="249.3" r="11.7" fill="#163141" opacity=".8"/>
+<circle cx="125.7" cy="212.2" r="12.4" fill="#163141" opacity=".8"/>
+<circle cx="160.9" cy="205.7" r="12.9" fill="#163141" opacity=".8"/>
+<circle cx="178.2" cy="187.1" r="13.4" fill="#163141" opacity=".8"/>
+<circle cx="183.9" cy="155.5" r="13.7" fill="#163141" opacity=".8"/>
+<circle cx="223.7" cy="163.6" r="13.9" fill="#163141" opacity=".8"/>
+<circle cx="235.5" cy="136.6" r="14" fill="#163141" opacity=".8"/>
+<circle cx="256.5" cy="121.1" r="13.9" fill="#163141" opacity=".8"/>
+<circle cx="291.5" cy="134.5" r="13.7" fill="#163141" opacity=".8"/>
+<circle cx="305.7" cy="101.3" r="13.4" fill="#163141" opacity=".8"/>
+<circle cx="335.7" cy="107" r="12.9" fill="#163141" opacity=".8"/>
+<circle cx="230.9" cy="382.4" r="13.6" fill="#163141" opacity=".8"/>
+<circle cx="211.8" cy="356.8" r="13.9" fill="#163141" opacity=".8"/>
+<circle cx="223.5" cy="341.2" r="14" fill="#163141" opacity=".8"/>
+<circle cx="245.5" cy="332.5" r="14" fill="#163141" opacity=".8"/>
+<circle cx="226.9" cy="303.5" r="13.8" fill="#163141" opacity=".8"/>
+<circle cx="252.8" cy="300.5" r="13.5" fill="#163141" opacity=".8"/>
+<circle cx="261.1" cy="287.6" r="13.1" fill="#163141" opacity=".8"/>
+<circle cx="253.8" cy="259.8" r="12.5" fill="#163141" opacity=".8"/>
+<circle cx="283.8" cy="268.2" r="11.9" fill="#163141" opacity=".8"/>
+<circle cx="284.1" cy="243.7" r="11.1" fill="#163141" opacity=".8"/>
+<circle cx="292.8" cy="226.2" r="10.3" fill="#163141" opacity=".8"/>
+<circle cx="319.3" cy="237.5" r="9.5" fill="#163141" opacity=".8"/>
+<circle cx="322.1" cy="202.7" r="8.6" fill="#163141" opacity=".8"/>
+<circle cx="343.3" cy="202.8" r="8.3" fill="#163141" opacity=".8"/>
+<circle cx="365.4" cy="206.5" r="9.2" fill="#163141" opacity=".8"/>
+<ellipse cx="366" cy="146" rx="45.2" ry="39.8" fill="#c2ddec" opacity=".95" stroke="#bedbea" stroke-width="5.3"/>
+<path d="M191.1 377.3L193.4 368.2L195.8 359.4L198.4 350.8L201.2 342.4L204.1 334.2L207.1 326.3L210.3 318.5L213.6 311L217.1 303.6L220.6 296.4L224.4 289.4L228.3 282.6L232.3 275.8L236.5 269.3L240.9 262.8L245.5 256.5L250.3 250.3L255.2 244.2L260.4 238.2L265.9 232.4L271.5 226.6L277.5 221L283.6 215.5L290.1 210.1L296.8 204.9L303.9 199.8L311.2 194.9L318.8 190.1L326.7 185.5L334.9 181.1L343.5 176.9L352.3 172.8L361.4 169L370.9 165.4L361.1 126.6L350.1 128.4L339.2 130.4L328.5 132.7L317.9 135.3L307.5 138.1L297.2 141.2L287.1 144.6L277.1 148.2L267.3 152.2L257.7 156.5L248.3 161.1L239 166L229.9 171.3L221 176.9L212.4 182.9L204 189.1L195.8 195.8L187.8 202.7L180.1 210L172.7 217.7L165.6 225.6L158.8 233.9L152.2 242.5L146 251.4L140.1 260.5L134.5 270L129.2 279.7L124.2 289.7L119.5 300L115.2 310.5L111.2 321.2L107.5 332.2L104.1 343.3L100.9 354.7Z" fill="#89bdd9"/>
+<path d="M191.1 377.3L193.4 368.2L195.8 359.4L198.4 350.8L201.2 342.4L204.1 334.2L207.1 326.3L210.3 318.5L213.6 311L217.1 303.6L220.6 296.4L224.4 289.4L228.3 282.6L232.3 275.8L236.5 269.3L240.9 262.8L245.5 256.5L250.3 250.3L255.2 244.2L260.4 238.2L265.9 232.4L271.5 226.6L277.5 221L283.6 215.5L290.1 210.1L296.8 204.9L303.9 199.8L311.2 194.9L318.8 190.1L326.7 185.5L334.9 181.1L343.5 176.9L352.3 172.8L361.4 169L370.9 165.4L361.1 126.6L350.1 128.4L339.2 130.4L328.5 132.7L317.9 135.3L307.5 138.1L297.2 141.2L287.1 144.6L277.1 148.2L267.3 152.2L257.7 156.5L248.3 161.1L239 166L229.9 171.3L221 176.9L212.4 182.9L204 189.1L195.8 195.8L187.8 202.7L180.1 210L172.7 217.7L165.6 225.6L158.8 233.9L152.2 242.5L146 251.4L140.1 260.5L134.5 270L129.2 279.7L124.2 289.7L119.5 300L115.2 310.5L111.2 321.2L107.5 332.2L104.1 343.3L100.9 354.7Z" fill="none" stroke="#bedbea" stroke-width="5.3" opacity=".7"/>
+<path d="M146 366L153 341.5L161.3 318.4L170.9 296.6L181.9 276.2L194.3 257.1L208 239.4L223 223L239.4 208L257.1 194.3L276.2 181.9L296.6 170.9L318.4 161.3L341.5 153L366 146" fill="none" stroke="#0d3558" stroke-width="5.3" opacity=".85" stroke-dasharray="18 13" stroke-linecap="round"/>
+<g transform="translate(146 366) rotate(-76)"><rect x="-31" y="-31" width="61.9" height="62" rx="7" fill="#0d3558"/><rect x="-31" y="-31" width="61.9" height="62" rx="7" fill="none" stroke="#bedbea" stroke-width="5.3" opacity=".8"/></g>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#fp-depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="5.3" opacity=".28"/>
+</g>
+<g id="stamp">
+<circle cx="298" cy="106.2" r="27" fill="none" stroke="#0d3558" stroke-width="10"/>
+<circle cx="298" cy="106.2" r="10" fill="#0d3558"/>
+</g>
+<title>MAKO</title>
+</svg>

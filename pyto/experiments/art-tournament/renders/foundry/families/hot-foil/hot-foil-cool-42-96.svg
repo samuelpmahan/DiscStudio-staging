@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="DiscBattle">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+<clipPath id="die"><polygon points="393.6,213.7 383.3,323.4 298.3,393.6 188.6,383.3 118.4,298.3 128.7,188.6 213.7,118.4 323.4,128.7"/></clipPath>
+</defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="knurl" stroke="#0d3558" stroke-width="14.0" stroke-linecap="butt" opacity=".92">
+<line x1="431.2" y1="272.5" x2="465.1" y2="275.7"/>
+<line x1="417.5" y1="325.9" x2="448.7" y2="339.4"/>
+<line x1="388.0" y1="372.4" x2="413.6" y2="394.8"/>
+<line x1="345.6" y1="407.5" x2="362.9" y2="436.7"/>
+<line x1="294.4" y1="427.8" x2="301.9" y2="460.9"/>
+<line x1="239.5" y1="431.2" x2="236.3" y2="465.1"/>
+<line x1="186.1" y1="417.5" x2="172.6" y2="448.7"/>
+<line x1="139.6" y1="388.0" x2="117.2" y2="413.6"/>
+<line x1="104.5" y1="345.6" x2="75.3" y2="362.9"/>
+<line x1="84.2" y1="294.4" x2="51.1" y2="301.9"/>
+<line x1="80.8" y1="239.5" x2="46.9" y2="236.3"/>
+<line x1="94.5" y1="186.1" x2="63.3" y2="172.6"/>
+<line x1="124.0" y1="139.6" x2="98.4" y2="117.2"/>
+<line x1="166.4" y1="104.5" x2="149.1" y2="75.3"/>
+<line x1="217.6" y1="84.2" x2="210.1" y2="51.1"/>
+<line x1="272.5" y1="80.8" x2="275.7" y2="46.9"/>
+<line x1="325.9" y1="94.5" x2="339.4" y2="63.3"/>
+<line x1="372.4" y1="124.0" x2="394.8" y2="98.4"/>
+<line x1="407.5" y1="166.4" x2="436.7" y2="149.1"/>
+<line x1="427.8" y1="217.6" x2="460.9" y2="210.1"/>
+</g>
+</g>
+<g id="stamp">
+<polygon points="393.6,213.7 383.3,323.4 298.3,393.6 188.6,383.3 118.4,298.3 128.7,188.6 213.7,118.4 323.4,128.7" fill="#0d3558"/>
+<g clip-path="url(#die)">
+<g transform="rotate(18.4 256 256)">
+<rect x="-16" y="-16" width="544" height="256" fill="#ffffff" opacity=".22"/>
+<rect x="-16" y="256" width="544" height="272" fill="#000000" opacity=".20"/>
+<rect x="-16" y="232" width="544" height="26" fill="#ffffff" opacity=".55"/>
+<rect x="-16" y="300" width="544" height="14" fill="#ffffff" opacity=".22"/>
+</g>
+</g>
+<polygon points="361.1,223.7 353.2,307.5 288.3,361.1 204.5,353.2 150.9,288.3 158.8,204.5 223.7,150.9 307.5,158.8" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".75"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7.0" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="5.3" opacity=".30"/>
+</g>
+<title>DiscBattle</title>
+</svg>
