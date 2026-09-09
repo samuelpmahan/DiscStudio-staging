@@ -5,6 +5,7 @@ import { esc, fieldNode } from './presentation.js';
 import { constraintDefinitions } from './constraints.js';
 import { reviewItems } from './review.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
+import { composePage, fetchPageSources } from '../pyto/viewer/embed.mjs';
 
 const DATA_KEY = 'discstudio.pxc.staging.world.v2', VIEW_KEY = 'discstudio.pxc.staging.view.v2';
 const app = document.querySelector('#app');
@@ -19,7 +20,7 @@ const ui = {
   nodeId: 'mold', query: '', fieldQuery: '', library: 'fields', onlyBag: false, traceOpen: false, inspectAddress: '', previewState: 'idle',
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
-  motionEntry: null, newField: false, latestReceipt: null, build: { commit: 'local', fingerprint: 'development' }
+  motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' }
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -31,6 +32,26 @@ const check = (label, control, value, attrs = '') => `<label class="check"><inpu
 const discInfo = (discId = ui.discId) => { const disc = get(w(), 'Disc', discId), mold = disc && get(w(), 'Mold', disc.moldId), maker = mold && get(w(), 'Manufacturer', mold.manufacturerId); return { disc, mold, maker }; };
 const previewEntry = () => ui.previewState === 'idle' ? null : { id: 'editor-preview', score: 3, highlighted: ui.previewState === 'highlight', winner: ui.previewState === 'winner' };
 function message(text, error = false) { ui.message = text; ui.error = error; }
+/** The viewer's own directory, resolved from whichever URL this page actually has. */
+function viewerBase() {
+  for (const [path, base] of [['../pyto/viewer/', import.meta.url], ['./pyto/viewer/', globalThis.document?.baseURI]]) {
+    try { if (base) return new URL(path, base); } catch { /* A data:/about: base cannot resolve a relative path. */ }
+  }
+  throw new Error('This page has no resolvable URL, so the Tick viewer sources cannot be read. Open the studio over http:// (npm run dev).');
+}
+let viewerSourcePromise = null;
+/** tick-viewer.html + adapters.js + tick-viewer.js as text, fetched once from this origin. */
+function viewerSources() {
+  const base = viewerBase();
+  viewerSourcePromise ??= fetchPageSources(base).catch(error => { viewerSourcePromise = null; throw new Error(`The Tick viewer sources could not be read from ${base}: ${error.message}`); });
+  return viewerSourcePromise;
+}
+/** The PCR name of the execution the open trace panel is showing. */
+function shownPcr() {
+  const name = ui.lastResult?.run?.composition?.PrincipleComponentRender;
+  if (!name) throw new Error('Render a composition before exporting its run record.');
+  return name;
+}
 function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component })); } catch { /* Nonessential view state. */ } }
 runtime.onChange(() => {
   if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
@@ -130,7 +151,7 @@ function competitionInspector() {
 function summaryValue(value) { return JSON.stringify(value, (key, v) => key === 'signature' ? '[full input signature retained in PxC; omitted here]' : typeof v === 'string' && v.startsWith('data:image/') ? `[embedded photo: ${v.length} characters]` : key === 'svg' && typeof v === 'string' && v.length > 1000 ? `${v.slice(0, 600)}… [${v.length} characters, full value in Part]` : v, 2); }
 function tracePanel(run) {
   if (!run) return '';
-  return `<section class="trace-panel ${ui.traceOpen ? 'open' : ''}"><button class="trace-heading" data-action="toggle-trace"><span>◎ <strong>PxC · actual execution</strong></span><span>${run.computed} computed / ${run.reused} reused <b>${ui.traceOpen ? '−' : '+'}</b></span></button>${ui.traceOpen ? `<div class="trace-flow"><span>Domain Parts</span><b>→</b><span>Registered Calculations</span><b>→</b><span>Bound presentation</span><b>→</b><span>SVG Part</span></div><div class="trace-table"><div class="trace-row table-heading"><span>Calculation</span><span>Output Part</span><span>This invocation</span></div>${run.trace.map(t => `<div class="trace-row"><span class="mono" title="${esc(Object.values(t.inputs).join('\n'))}">${esc(t.call)}</span>${button(esc(t.output), 'inspect-part', { value: t.output }, 'part-link mono')}<span class="cache-state ${t.reused ? 'reused' : ''}">${t.reused ? '↺ reused material' : '● computed'}</span></div>`).join('')}</div><div class="button-row">${button('Inspect PQL composition', 'inspect-pql', {}, 'quiet small')}${button('Browse all Parts', 'inspect-all', {}, 'quiet small')}${button('Download this execution receipt ↓', 'trace-export', {}, 'quiet small')}</div>${ui.inspectAddress ? `<div class="part-view"><h3>${esc(ui.inspectAddress)}</h3><pre>${esc(ui.inspectAddress === 'PQL' ? JSON.stringify(run.composition, null, 2) : ui.inspectAddress === 'Part index' ? runtime.parts().map(p => p.address).join('\n') : runtime.pxc.has(ui.inspectAddress) ? summaryValue(runtime.pxc.get(ui.inspectAddress)) : 'Part no longer exists in this context.')}</pre></div>` : ''}<p class="tiny muted">Cache hits return retained material from PxC. Each invocation is still recorded. A hit is not a claim that the calculation ran again.</p>` : ''}</section>`;
+  return `<section class="trace-panel ${ui.traceOpen ? 'open' : ''}"><button class="trace-heading" data-action="toggle-trace"><span>◎ <strong>PxC · actual execution</strong></span><span>${run.computed} computed / ${run.reused} reused <b>${ui.traceOpen ? '−' : '+'}</b></span></button>${ui.traceOpen ? `<div class="trace-flow"><span>Domain Parts</span><b>→</b><span>Registered Calculations</span><b>→</b><span>Bound presentation</span><b>→</b><span>SVG Part</span></div><div class="trace-table"><div class="trace-row table-heading"><span>Calculation</span><span>Output Part</span><span>This invocation</span></div>${run.trace.map(t => `<div class="trace-row"><span class="mono" title="${esc(Object.values(t.inputs).join('\n'))}">${esc(t.call)}</span>${button(esc(t.output), 'inspect-part', { value: t.output }, 'part-link mono')}<span class="cache-state ${t.reused ? 'reused' : ''}">${t.reused ? '↺ reused material' : '● computed'}</span></div>`).join('')}</div><div class="button-row">${button('Inspect PQL composition', 'inspect-pql', {}, 'quiet small')}${button('Browse all Parts', 'inspect-all', {}, 'quiet small')}${button('Download this execution receipt ↓', 'trace-export', {}, 'quiet small')}${button('Export run record ↓', 'record-export', {}, 'quiet small')}${button('Open Tick render ↗', 'record-render', {}, 'quiet small')}</div>${ui.inspectAddress ? `<div class="part-view"><h3>${esc(ui.inspectAddress)}</h3><pre>${esc(ui.inspectAddress === 'PQL' ? JSON.stringify(run.composition, null, 2) : ui.inspectAddress === 'Part index' ? runtime.parts().map(p => p.address).join('\n') : runtime.pxc.has(ui.inspectAddress) ? summaryValue(runtime.pxc.get(ui.inspectAddress)) : 'Part no longer exists in this context.')}</pre></div>` : ''}<p class="tiny muted">Cache hits return retained material from PxC. Each invocation is still recorded. A hit is not a claim that the calculation ran again.</p>` : ''}</section>`;
 }
 let renderedRoute = null;
 function render() {
@@ -178,7 +199,7 @@ function render() {
   }
   ui.motionEntry = null;
   const review = document.querySelector('neat-review');
-  review.getContext = () => ({ route: location.hash, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, stateId: w().battle.currentStateId, worldLabel: labelHash({ objects: w().objects, presets: w().presets, battle: w().battle }) });
+  review.getContext = () => ({ route: location.hash, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, stateId: w().battle.currentStateId, runRecordAddress: ui.recordAddress || null, worldLabel: labelHash({ objects: w().objects, presets: w().presets, battle: w().battle }) });
 }
 function freshDisc() {
   if (!get(w(), 'Manufacturer', 'unknown')) execute({ type: 'entity.add', record: { id: 'unknown', type: 'Manufacturer', name: 'Unknown manufacturer', website: '' } });
@@ -289,6 +310,24 @@ async function action(name, el) {
     case 'inspect-pql': ui.inspectAddress = 'PQL'; break;
     case 'inspect-all': ui.inspectAddress = 'Part index'; break;
     case 'trace-export': downloadJson(ui.lastResult?.run, 'discstudio-pql-execution.json'); break;
+    case 'record-export': {
+      const { address, record } = runtime.runRecord(shownPcr());
+      ui.recordAddress = address; ui.inspectAddress = address; ui.traceOpen = true;
+      downloadJson(record, `${record.pcr}-run-record.json`);
+      message(`pyto-run-record@1 accepted by the shared validator and kept as the Part ${address}: ${record.ticks.length} Ticks, ${record.counters.invocations} invocations, ${record.counters.hits} hits. No domain fact was written.`);
+      break;
+    }
+    case 'record-render': {
+      const { address, record } = runtime.runRecord(shownPcr());
+      const page = composePage({ ...await viewerSources(), record });
+      ui.recordAddress = address;
+      const blob = new Blob([page], { type: 'text/html' });
+      downloadBlob(blob, `${record.pcr}-tick-render.html`);
+      // A tab for reading now; the saved file is the one that opens over file:// later.
+      const url = URL.createObjectURL(blob); if (!window.open(url, '_blank')) URL.revokeObjectURL(url); else setTimeout(() => URL.revokeObjectURL(url), 30000);
+      message(`Tick render page built from ${address} and saved: the record is embedded and adapters.js and tick-viewer.js are inlined, so it opens over file:// with no server.`);
+      break;
+    }
   }
   persistView(); render();
 }

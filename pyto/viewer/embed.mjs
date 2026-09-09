@@ -13,14 +13,26 @@
  * The input may be a pyto-run-record@1 document or a raw runtime document
  * ({pql, receipt} / {receipts} / {records}); it is converted and validated
  * here, so an invalid record fails at build time instead of in the browser.
+ *
+ * `composePage` is the page builder itself and touches no file system and no
+ * network: it takes the three sources as text. DiscStudio's studio imports this
+ * module in the browser and calls it with sources it fetched over its own
+ * origin (src/app.js), so the studio and this CLI build the same page from the
+ * same code and the renderer is not forked. Everything below `composePage` that
+ * reads or writes files is Node-only and loads node: builtins only under Node.
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
 import { coerceToRecord } from './tick-viewer.js';
 
-const HERE = dirname(fileURLToPath(import.meta.url));
+const IS_NODE = typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
+const nodeFs = IS_NODE ? await import('node:fs') : null;
+const nodePath = IS_NODE ? await import('node:path') : null;
+const nodeUrl = IS_NODE ? await import('node:url') : null;
+
+const HERE = IS_NODE ? nodePath.dirname(nodeUrl.fileURLToPath(import.meta.url)) : null;
+
+/** The three files the page is composed from, in the order composePage takes them. */
+export const PAGE_SOURCES = ['tick-viewer.html', 'adapters.js', 'tick-viewer.js'];
 
 const PAGE_SCRIPT = `<script type="module">
   import { mount } from './tick-viewer.js';
@@ -49,11 +61,14 @@ export function embeddableJson(record) {
     .replace(/\u2029/g, '\\u2029');
 }
 
-/** Build the standalone page as a string. */
-export function buildPage(record, { viewerDir = HERE } = {}) {
-  const html = readFileSync(resolve(viewerDir, 'tick-viewer.html'), 'utf8');
-  const adapters = inlineModule(readFileSync(resolve(viewerDir, 'adapters.js'), 'utf8'), 'adapters.js');
-  const viewer = inlineModule(readFileSync(resolve(viewerDir, 'tick-viewer.js'), 'utf8'), 'tick-viewer.js');
+/**
+ * Build the standalone page from source text alone: no file system, no network,
+ * no Node builtins. `html` is tick-viewer.html, `adapters` is adapters.js and
+ * `viewer` is tick-viewer.js, each as read from disk or fetched over an origin.
+ */
+export function composePage({ html, adapters: adaptersSource, viewer: viewerSource, record }) {
+  const adapters = inlineModule(adaptersSource, 'adapters.js');
+  const viewer = inlineModule(viewerSource, 'tick-viewer.js');
 
   if (!html.includes(PAGE_SCRIPT)) throw new Error('tick-viewer.html: module bootstrap block not found; embed.mjs and the page have drifted apart');
   if (!html.includes(EMPTY_RECORD_BLOCK)) throw new Error('tick-viewer.html: empty record block not found; embed.mjs and the page have drifted apart');
@@ -71,8 +86,29 @@ export function buildPage(record, { viewerDir = HERE } = {}) {
   return html.replace(EMPTY_RECORD_BLOCK, () => recordBlock).replace(PAGE_SCRIPT, () => bundle);
 }
 
+/** Build the standalone page from a viewer directory on disk (Node). */
+export function buildPage(record, { viewerDir = HERE } = {}) {
+  const [html, adapters, viewer] = PAGE_SOURCES.map((name) => nodeFs.readFileSync(nodePath.resolve(viewerDir, name), 'utf8'));
+  return composePage({ html, adapters, viewer, record });
+}
+
+/**
+ * The same three sources fetched from a served viewer directory (the browser).
+ * `baseUrl` is the directory holding tick-viewer.html; a browser caller passes
+ * `new URL('../pyto/viewer/', import.meta.url)`.
+ */
+export async function fetchPageSources(baseUrl, fetchImpl = globalThis.fetch) {
+  const read = async (name) => {
+    const response = await fetchImpl(new URL(name, baseUrl));
+    if (!response.ok) throw new Error(`${name}: ${response.status} ${response.statusText}`);
+    return response.text();
+  };
+  const [html, adapters, viewer] = await Promise.all(PAGE_SOURCES.map(read));
+  return { html, adapters, viewer };
+}
+
 export function embedFile(inputPath, { viewerDir = HERE } = {}) {
-  const parsed = JSON.parse(readFileSync(inputPath, 'utf8'));
+  const parsed = JSON.parse(nodeFs.readFileSync(inputPath, 'utf8'));
   return buildPage(coerceToRecord(parsed), { viewerDir });
 }
 
@@ -90,9 +126,9 @@ function main(argv) {
     process.stderr.write('usage: node embed.mjs <record.json> [--out page.html]\n');
     process.exit(2);
   }
-  const page = embedFile(resolve(process.cwd(), input));
-  if (out) writeFileSync(resolve(process.cwd(), out), page);
+  const page = embedFile(nodePath.resolve(process.cwd(), input));
+  if (out) nodeFs.writeFileSync(nodePath.resolve(process.cwd(), out), page);
   else process.stdout.write(page);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) main(process.argv);
+if (IS_NODE && process.argv[1] && nodePath.resolve(process.argv[1]) === nodePath.resolve(nodeUrl.fileURLToPath(import.meta.url))) main(process.argv);
