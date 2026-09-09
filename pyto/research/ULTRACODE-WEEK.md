@@ -127,6 +127,23 @@ Failure criterion for the week, proposed in the owner's absence and open to corr
 fails if it ends without a browser page in which a person can see, per Tick, what a Calculation
 read and wrote, on receipts produced by both the JS runtime and pyto.
 
+## Reframing 5 (2026-09-09, owner): neat on PxC, the {?} root, storage as a first-class problem
+
+- **neat expanded, on its own PxC.** neat and tidy keep work-item (issue tracker) state and git
+  state as Parts in their own PxC so a change resolves against that memory deterministically: one
+  tree, no branch sprawl. The computer manages git. This is a surface for the week; the reference
+  is `pyto/reference/neat-delivery-src` (delivery spine Freeze, Offer, Inspect, Consume,
+  Disposition already composed through PxC/PQL/PCR).
+- **`{?} Label: description` is the root of the address tree.** Agents leave it wherever they are
+  unsure; the owner answers; the answer stays with its date. `pyto/questions.md` is that root, and
+  every session reads it first. The owner's challenge stands: this session should have used it at
+  the beginning and throughout instead of resolving alone.
+- **Data storage and representation are first class.** Keep the PxC facade simple and make the
+  storage the precise opposite of S3: specialized backends per kind (raster, graph, JSON, and
+  whatever grows), selected by address prefix or a declared Part kind, every backend honoring the
+  same receipts. The anti-Spring rule from the stewardship doc still applies: a backend lands when
+  a consumer needs it, not before.
+
 ## Winner and thesis
 
 **Winner.** Experiment-reuse-first (aggregate 62.5/72 across three judges vs Kernel-first 61.5, Replay-first 54.5, Agent-workshop 53.5, JS-parity 37.5), with five grafts: Kernel-first's replay-gated composition promotion (PromotionRefused / provisional / demote+inline reversibility) and fn.pcr.select round trip; Replay-first's fresh-process boundary (`python3 -I`, scrubbed env) plus hidden-state, determinism (PYTHONHASHSEED x CRLF/LF) and false-unchanged auditors and the digest+ref sidecar for non-JSON values; JS-parity's mutation-kill discipline and 'skip with a named reason, never pass silently' rule; Agent-workshop's CAPTURE.md run record, CHANGES.md pairing and provenance lens (every number in the returns resolves to a retained file); and the environment corrections all three judges converged on (isolated `pip wheel` works here while `--no-build-isolation` fails; arxiv unreachable so SUBDUE cites pyto/research/primary-sources.md; disc-stats needs PYTHONPATH=.; consumer tests need data/).
