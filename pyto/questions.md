@@ -678,3 +678,14 @@ customizer and card edits, "what changed since" in the review panel from the sam
 accidental inspector write is one undo away. JavaScript first (the runtime's set records the
 previous value), Python mirrors the receipt field. No new state store, per AGENTS.md. Bites:
 task 13, `RECORD.md` (one field), `src/runtime.js`, the review panel.
+
+### {?} CardRenderer
+Astra, handing back `astra/discstudio-1`: "The fixed port cannot preserve arbitrary authored
+nodes and styles. Approve extending its interface, or retain the existing generic card renderer?"
+Status: provisional, default taken 2026-09-09: retain the generic renderer. The studio's card is
+authored (nodes, bindings, styles the customizer edits), so the ported `cards.mjs` stays what it
+is, the byte-identical reference for the two promoted layouts used by fixtures and tests, and the
+ported painter draws the art inside the generic renderer (`kind: painted`). No renderer fork, per
+AGENTS.md. Their delivery already did this; the one gap, the generic renderer showing "Add image"
+for painted art, is fixed on their branch before landing. Bites: `src/presentation.js`,
+`port/painter/cards.mjs`.
