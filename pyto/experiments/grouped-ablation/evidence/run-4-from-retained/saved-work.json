@@ -52,9 +52,9 @@
   "invocations_skippable_by_digest": [
     "split"
   ],
-  "ms_saved": 0.044,
+  "ms_saved": 0.05,
   "ms_saved_by_invocation": {
-    "split": 0.04383799932838883
+    "split": 0.05042400152888149
   },
   "prior_run": "run-1",
   "program_lines_changed": {
@@ -62,6 +62,7 @@
     "program.py": 0,
     "total": 0
   },
+  "program_lines_changed_base": "d9dded6",
   "run": "run-4-from-retained",
   "skip_reason": "removed"
 }

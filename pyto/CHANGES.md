@@ -58,6 +58,25 @@ copy of `pyto` at d9dded6 and against this tree, and
 in-repo executable form of that check is the two tests above plus the 18 consumer
 tests, which exercise the same call site.
 
+**One consumer-served byte does move, by design.** The hard rule is scoped to the
+tick payload, and the tick payload is unchanged; but the seam is `pcr.py`, and
+`consumers/discstudio-card/app.py:33-36` computes `PYTO_SOURCE_SHA256` as the
+sha256 of the source *files* of `pyto.core` and `pyto.pcr`, then embeds it in the
+same `compositionEvidence` object at `app.py:52` that `app.py:170` serves to
+clients. `PYTO_SOURCE_SHA256["pyto.pcr"]` therefore moves across this seam --
+recompute both sides rather than trusting a literal:
+`git show d9dded6:pyto/src/pyto/pcr.py | sha256sum` versus
+`sha256sum pyto/src/pyto/pcr.py` (at the time of writing, `6280fe80...` ->
+`64cd374a...`), and with it the sha256 of the whole `compositionEvidence` object
+on the art path. That field exists to stamp the library version, so a moved value
+is the field working, not a break -- but an owner auditing "the consumer-bytes
+statement" against a live sandbox response would otherwise find a changed byte this
+ledger did not name (fixer round 1, finding 8). `PYTO_SOURCE_SHA256["pyto.core"]`
+does not move (`core.py` is untouched), the tick payload at `app.py:53` and
+`card_composition.py:177` does not move, and `card_composition`'s own evidence does
+not move end to end: `card_composition.py:174` hashes the source file of
+`Calculation`, i.e. `pyto/core.py`, not `pcr.py`.
+
 **Before.** At d9dded6, `PCR.run(pxc, observe=True)` raised
 `TypeError: PCR.run() got an unexpected keyword argument 'observe'`, `PcrRun` had
 no `receipts` attribute, and `from pyto.pcr import FrozenCalculation, Receipt`
@@ -87,9 +106,13 @@ raised `ImportError: cannot import name 'FrozenCalculation' from 'pyto.pcr'`
 | `Timing` | `test_duration_is_non_negative_and_started_is_monotonic` |
 | `ReceiptShape` | `test_receipt_is_frozen_and_json_serializable_after_asdict`, `test_registry_calculations_are_named_functions_not_lambdas` |
 
-Every other suite is unchanged and passing: `experiments/grouped-ablation` 31,
-`experiments/s3-synthetic` 5, consumer 18, disc-stats 4, both examples
-(`scripts/check_all.sh`).
+No other suite's *assertions* were changed by the seam, and all pass. Their counts
+have since grown with the day's own experiment work (Lane C/D and fixer round 1),
+so the numbers below are the ones `scripts/check_all.sh` printed on the last run of
+this entry, not the pre-seam ones: `experiments/grouped-ablation` 151,
+`experiments/s3-synthetic` 5, consumer 37, disc-stats 4, both examples. The 37
+consumer tests are the 18 pre-tournament plus the 19 the art tournament added
+(`scripts/check_all.sh:17-19`), none of them a change to a Day 1 assertion.
 
 **No digest through `default=`** (research/ULTRACODE-WEEK.md critic gap 10).
 `result_sha256` is `sha256(json.dumps(value, sort_keys=True, separators=(',', ':')))`
@@ -133,6 +156,33 @@ inputs versus calculation results").
   (research/lab-transfer-ledger.md:65-67): an `args` key that collides with a bound
   input still overrides silently; the receipt now *records* the collision in
   `shadowed_inputs`, and `pcr.py` still does not raise.
+
+**Fixer round 1 decisions that belong in this ledger** (the rest are
+experiment-local and cited in `experiments/grouped-ablation/`).
+
+- *Provider identity is carried, and comparing it is the caller's job.*
+  `docs/PYTHON-LAB-STEWARDSHIP.md:36-37` asks a record to carry "the Pyto
+  distribution version and calculation-provider identity needed to reject an
+  incompatible replay". `retain.provider_identity` carries it; `retain.replay`
+  deliberately does **not** compare it, because the LF-source-drift probe replays
+  under a deliberately different library copy and must not be refused. The
+  comparison now exists as `retain.verify_provider(record, registry)` -- reporting
+  only, it raises nothing -- and the fresh-process replay child asserts on it and
+  prints the accept/mismatch line into
+  `experiments/grouped-ablation/evidence/replay/fresh-process.log`. The docstring
+  that used to claim replay already compared has been corrected. No library change
+  was needed for any of this: `retain.py` is experiment-local.
+- *A predicted number was refuted by measurement and is recorded, not quietly
+  dropped.* `research/ULTRACODE-WEEK.md` Day 2 predicts "no single drop exceeds
+  +0.9 RMSE because each group holds at most two planted weights". The
+  cross-cutting regroup measures a largest |delta vs baseline| of 1.5415 against
+  run-1's 1.5896, so the bound is refuted while the *comparison* between the two
+  groupings (the regroup does not concentrate more planted weight into one group:
+  largest planted |w| per group is 2.0 in both) holds. Both numbers, and the
+  per-group planted weights they rest on, are computed at run time by
+  `run_regrouped.py` and written into
+  `experiments/grouped-ablation/evidence/run-2-regroup/interpretation.md`; the
+  values quoted here are that file's, not literals the ledger maintains.
 
 **Not exported from `pyto/__init__.py`.** `Receipt`, `FrozenCalculation` and
 `_TrackedPxC` are importable as `from pyto.pcr import ...` only — the same status

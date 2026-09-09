@@ -15,6 +15,7 @@ import io
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -106,6 +107,28 @@ class NoReconstruction(ThreeRunsGenerated):
                 self.assertEqual(payload["program_lines_changed"]["program.py"], 0)
                 self.assertEqual(payload["program_lines_changed"]["calculations.py"], 0)
 
+    def test_the_diff_base_is_recorded_and_is_an_ancestor_of_head(self):
+        """Fixer round 1, finding 11: the zero must be measured against the DAY's base.
+
+        HEAD moves as the day's checkpoints land, so a HEAD-based diff would report 0
+        even if a checkpoint had committed a program.py edit. The base is recorded in
+        saved-work.json and re-verified here against git.
+        """
+        for out in (self.regroup, self.reinput, self.from_retained):
+            with self.subTest(out=os.path.basename(out)):
+                base = _load(out, "saved-work.json")["program_lines_changed_base"]
+                self.assertEqual(base, se.DAY2_BASE)
+                ancestor = subprocess.run(
+                    ["git", "merge-base", "--is-ancestor", base, "HEAD"], cwd=HERE
+                )
+                self.assertEqual(ancestor.returncode, 0, f"{base} is not an ancestor of HEAD")
+                diff = subprocess.run(
+                    ["git", "diff", "--numstat", base, "--",
+                     os.path.join(HERE, "program.py"), os.path.join(HERE, "calculations.py")],
+                    cwd=HERE, capture_output=True, text=True, check=True,
+                )
+                self.assertEqual(diff.stdout.strip(), "")
+
     def test_no_reconstruction_required_files_were_written(self):
         for out in (self.regroup, self.reinput, self.from_retained):
             self.assertFalse(os.path.exists(os.path.join(out, "RECONSTRUCTION-REQUIRED.md")))
@@ -156,8 +179,8 @@ class Rankings(ThreeRunsGenerated):
 class SavedWorkFields(ThreeRunsGenerated):
     REQUIRED_KEYS = {
         "run", "prior_run", "calculations_inherited", "calculations_added",
-        "program_lines_changed", "input_parts_changed", "invocations_skippable_by_digest",
-        "ms_saved", "ms_saved_by_invocation",
+        "program_lines_changed", "program_lines_changed_base", "input_parts_changed",
+        "invocations_skippable_by_digest", "ms_saved", "ms_saved_by_invocation",
     }
 
     def _check(self, out_dir: str, expect_input_parts_changed: list[str]):
@@ -229,6 +252,37 @@ class InterpretationFiles(ThreeRunsGenerated):
         comparison = _load(self.regroup, "comparison.json")
         biggest = max(abs(row["delta_vs_baseline"]) for row in comparison["rows"] if row["variant"] != "all")
         self.assertIn(f"Largest |delta vs baseline| across the three cross-cutting drops: {biggest:.4f}.", text)
+
+    def test_regroup_interpretation_records_the_refuted_prediction_with_both_numbers(self):
+        """Fixer round 1, finding 10: the +0.9 sentence used to glue a computed False to a
+        because-clause of literals. Every supporting number is now read from evidence."""
+        text = _read(self.regroup, "interpretation.md")
+        comparison = _load(self.regroup, "comparison.json")
+        biggest = max(abs(row["delta_vs_baseline"]) for row in comparison["rows"] if row["variant"] != "all")
+        run_1_rows = _load(RUN_1, "comparison.json")["rows"]
+        run_1_biggest = max(abs(row["delta_vs_baseline"]) for row in run_1_rows if row["variant"] != "all")
+        verdict = "held" if biggest <= 0.9 else "REFUTED by measurement"
+        self.assertIn(f"The predicted bound is {verdict}: {biggest:.4f} against the predicted <= 0.9.", text)
+        self.assertIn(
+            f"Run-1's largest |delta vs baseline| (evidence/run-1/comparison.json): {run_1_biggest:.4f}.",
+            text,
+        )
+        weights = run_regrouped.planted_weight_per_group(run_regrouped.CROSS_GROUPS)
+        self.assertIn(f"this run (CROSS_GROUPS): {weights}", text)
+        self.assertIn(f"cross-cutting {max(weights.values())}", text)
+
+    def test_regroup_interpretation_reports_shared_changed_ids_from_explain_changes(self):
+        """Fixer round 1, finding 9: it used to assert 'added/removed ids, not a digest
+        drift on a shared id' while its own ledger listed three shared ids that drifted."""
+        text = _read(self.regroup, "interpretation.md")
+        saved = _load(self.regroup, "saved-work.json")
+        explanation = saved["explain_changes"]
+        shared_changed = {i: explanation["reason"][i] for i in explanation["changed"]}
+        self.assertTrue(shared_changed, "expected at least one shared id to have changed")
+        self.assertIn(f"computed: {shared_changed}", text)
+        self.assertIn(f"Ids only in this run (added): {explanation['added']}", text)
+        self.assertIn(f"Ids only in run-1 (removed): {explanation['removed']}", text)
+        self.assertNotIn("not a digest drift on a shared id", text)
 
     def test_reinput_interpretation_names_n_from_the_fixture_not_a_literal(self):
         text = _read(self.reinput, "interpretation.md")

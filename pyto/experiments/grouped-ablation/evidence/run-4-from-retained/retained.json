@@ -7552,5 +7552,9 @@
     "score.drop_g3": "6399d6b51b92b97c4be369a5cfb7d995f7d4da48f122866de6d323304296156f",
     "score.drop_g4": "3cbfa3e2c5e15101badb26ca3cd7e3331ba77329ae1adcfe72048fe5b1c4c8d2",
     "select": "543f82368703f91864818dd4f57614824feb4e4407f41feac7d43d6e8e07c1f7"
+  },
+  "retained": {
+    "commit": "f2d0677258c440d9da6c9cf0858d7ee8af6a4e38-dirty",
+    "provider_is": "the pyto modules and calculation-provider sources present when this record was retained, which are not necessarily the ones that produced the evidence beside it; retain.verify_provider(record, registry) performs the comparison, replay does not"
   }
 }

@@ -23,7 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-from features import FEATURES  # noqa: E402
+from features import FEATURES, GROUPS as DAY1_GROUPS, TRUE_W  # noqa: E402
 from calculations import REGISTRY  # noqa: E402
 import retain  # noqa: E402
 from run import EXTERNAL_ADDRESSES, run_experiment  # noqa: E402
@@ -43,9 +43,57 @@ assert sorted(c for cols in CROSS_GROUPS.values() for c in cols) == sorted(FEATU
 assert sum(len(cols) for cols in CROSS_GROUPS.values()) == len(FEATURES)
 
 
+def planted_weight_per_group(groups: dict[str, list[str]]) -> dict[str, float]:
+    """Sum of |TRUE_W| over each group's columns (features.py TRUE_W), computed here."""
+    return {
+        name: sum(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
+        for name, columns in groups.items()
+    }
+
+
+def planted_features_per_group(groups: dict[str, list[str]]) -> dict[str, int]:
+    """How many nonzero-weight features each group holds."""
+    return {
+        name: sum(1 for column in columns if TRUE_W[FEATURES.index(column)] != 0)
+        for name, columns in groups.items()
+    }
+
+
+def _entry(record: dict, invocation_id: str) -> dict | None:
+    for tick in record["program"]["ticks"]:
+        for entry in tick["calculations"]:
+            if entry["id"] == invocation_id:
+                return entry
+    return None
+
+
 def interpretation(comparison: list[dict], record_1: dict, record_2: dict, saved: dict) -> str:
+    """Every number below is computed here from the two retained records, this run's
+    comparison and run-1's committed comparison.json -- none is a literal in the text
+    (fixer round 1, findings 9 and 10)."""
     split_equal = record_1["results"]["split"] == record_2["results"]["split"]
     biggest = max(abs(row["delta_vs_baseline"]) for row in comparison if row["variant"] != "all")
+    run_1_rows = se.load_json(os.path.join(se.RUN_1, "comparison.json"))["rows"]
+    run_1_biggest = max(abs(row["delta_vs_baseline"]) for row in run_1_rows if row["variant"] != "all")
+
+    cross_weight = planted_weight_per_group(CROSS_GROUPS)
+    day1_weight = planted_weight_per_group(DAY1_GROUPS)
+    cross_max, day1_max = max(cross_weight.values()), max(day1_weight.values())
+    cross_planted = planted_features_per_group(CROSS_GROUPS)
+    day1_planted = planted_features_per_group(DAY1_GROUPS)
+
+    explanation = saved["explain_changes"]
+    shared_changed = {i: explanation["reason"][i] for i in explanation["changed"]}
+    args_detail = []
+    for invocation_id, why in shared_changed.items():
+        if why != "args":
+            continue
+        old_entry, new_entry = _entry(record_1, invocation_id), _entry(record_2, invocation_id)
+        args_detail.append(
+            f"  {invocation_id}: run-1 args={(old_entry or {}).get('args')} "
+            f"-> run-2 args={(new_entry or {}).get('args')}"
+        )
+
     lines = [
         "# run-2-regroup: cross-cutting 3x5 grouping",
         "",
@@ -53,22 +101,38 @@ def interpretation(comparison: list[dict], record_1: dict, record_2: dict, saved
         "",
         f"split digest equal to run-1 (same seed/n, groups is the only changed input Part): {split_equal}",
         "",
-        f"Largest |delta vs baseline| across the three cross-cutting drops: {biggest:.4f}.",
-        f"No single drop exceeds +0.9 RMSE: {biggest <= 0.9} -- each new group holds exactly one of the "
-        "three planted-weight features (features.py TRUE_W), the same as Day 1's per-group ablations; "
-        "the cross-cutting regroup does not concentrate more planted weight into one group than Day 1 did, "
-        "so it produces a comparably sized, not a larger, RMSE increase.",
+        "## The plan's predicted bound, measured",
         "",
-        f"Invocations skippable by digest against run-1 (compare_local.explain_changes, "
-        f"unchanged_upstream): {saved['invocations_skippable_by_digest']}. Only 'split' is expected: "
-        "'select' changes because the groups external differs; every fit.*/score.*/compare id changes "
-        "because the variant keys (h0/h1/h2 vs g0..g4) differ, which explain_changes reports as "
-        "added/removed ids, not a digest drift on a shared id.",
-        f"ms saved (run-1 receipts.json duration of the skippable ids): {saved['ms_saved']}",
+        "research/ULTRACODE-WEEK.md Day 2 predicts: \"no single drop exceeds +0.9 RMSE because "
+        "each group holds at most two planted weights\".",
+        f"Largest |delta vs baseline| across the three cross-cutting drops: {biggest:.4f}.",
+        f"No single drop exceeds +0.9 RMSE: {biggest <= 0.9}.",
+        f"The predicted bound is {'held' if biggest <= 0.9 else 'REFUTED by measurement'}: "
+        f"{biggest:.4f} against the predicted <= 0.9.",
+        f"Run-1's largest |delta vs baseline| (evidence/run-1/comparison.json): {run_1_biggest:.4f}. "
+        f"This regroup is larger than run-1: {biggest > run_1_biggest}.",
+        f"Planted |w| per group -- Day 1 (features.GROUPS): {day1_weight}; this run (CROSS_GROUPS): "
+        f"{cross_weight}.",
+        f"Largest planted |w| in any one group: Day 1 {day1_max}, cross-cutting {cross_max}; the "
+        f"regroup concentrates more planted weight into one group than Day 1 did: {cross_max > day1_max}.",
+        f"Nonzero-weight features per group -- Day 1: {day1_planted}; this run: {cross_planted}.",
+        "",
+        "## What changed against run-1, as compare_local.explain_changes reports it",
+        "",
+        f"Invocations skippable by digest (unchanged_upstream): {saved['invocations_skippable_by_digest']}. "
+        f"ms saved (run-1 receipts.json duration of those ids): {saved['ms_saved']}",
+        f"Ids only in this run (added): {explanation['added']}",
+        f"Ids only in run-1 (removed): {explanation['removed']}",
+        f"Ids present in BOTH programs whose retained state changed, with the reason explain_changes "
+        f"computed: {shared_changed}",
+    ]
+    lines.extend(args_detail)
+    lines += [
         "",
         "Reconstruction required: no. program.py and calculations.py are imported unchanged "
-        "(git diff shows program_lines_changed == 0 above); only the `groups` input Part and the "
-        "variants list it produces via select_variants differ from run-1.",
+        f"(git diff against {saved['program_lines_changed_base']} shows program_lines_changed "
+        f"{saved['program_lines_changed']}); only the `groups` input Part and the variants list it "
+        "produces via select_variants differ from run-1.",
         "",
     ]
     return "\n".join(lines)
