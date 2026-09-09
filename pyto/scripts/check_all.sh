@@ -147,9 +147,10 @@ echo
 # research/ULTRACODE-WEEK.md Reframing 4), so its Node 22 tests are a suite here
 # and not an optional extra. A missing node fails loudly with a named reason
 # rather than passing silently.
-# 77 after Day 3's build, + 3 for the fixer round: a hostile Part address
+# 77 after Day 3's build, + 4 for the fixer round: a hostile Part address
 # (`__proto__`/`constructor`) through derivePartIndex, validate refusing a
-# png-data-url that is not one, and the render-site fallback for the same.
+# png-data-url that is not one, materialize never emitting one it would
+# refuse, and the render-site fallback for the same.
 EXPECT_VIEWER="${EXPECT_VIEWER:-81}"
 echo "== suite: viewer  (cwd $PYTO/viewer)"
 viewer_ok=FAIL

@@ -530,3 +530,62 @@ the four value-kind schema cases moved onto the synthetic record); new suite
 `viewer-record-schema` 19. `scripts/check_all.sh` pins both (`EXPECT_VIEWER`,
 `EXPECT_RECORD_SCHEMA`). No Python library file changed; `materialize.py`, `pcr.py`,
 `core.py`, `pql.py` and `graph.py` are untouched by this entry.
+
+### Day 3 fixer round 1: record data is hostile until the reader says otherwise
+
+Four defects found by review, all in the seam where *record data* becomes *reader
+behaviour*. Nothing in `pcr.py`, `core.py`, `pql.py` or `graph.py` moved; the only library
+file touched is `materialize.py`, and consumer testimony bytes are unchanged.
+
+**A Part address is a string a record chose, so it can be `__proto__`.**
+`derivePartIndex` built its index on a bare `{}` (`viewer/adapters.js:297-317`). For the
+address `__proto__`, `parts[address] ??= {...}` reads `Object.prototype`, never assigns,
+and hands it back as the row: `part.preexisting = true` then wrote onto the page's own
+prototype chain — after which every fresh `{}` in the document reported
+`preexisting: true` — and `part.read_by.includes(...)` threw a bare `TypeError` rather
+than the `RecordSchemaError` the module promises. Reachable from every non-pyto adapter,
+since all three go through `assemble` → `derivePartIndex`. The index is now built on
+`Object.create(null)` with `hasOwnProperty` deciding existence
+(`viewer/adapters.js:303-316`), and handed back with a spread, which copies by
+`CreateDataProperty` and so yields the same own-property shape `JSON.parse` gives a
+consumer reading the index off disk. `fromDiscStudioReceipt`'s `inputs` map got the same
+treatment (`viewer/adapters.js:467,490`): a *binding name* of `__proto__` used to set the
+prototype and drop the binding entirely.
+
+**`png-data-url` named a kind but never checked the shape.** RECORD.md:60-61 says the data
+*is* a `data:image/png;base64,...` string; `validateValue` only required a string, and
+`tick-viewer.js` put it straight into an `<img src>`. A record could therefore make the
+no-network viewer issue an arbitrary outbound request. Three places now agree on
+`PNG_DATA_URL_PREFIX`: `viewer/adapters.js:26,124-130` rejects anything else with the
+offending path; `viewer/adapters.js:264` classifies on the raw string rather than a
+trimmed head, so `materialize` can never emit a block `validate` would refuse; and
+`viewer/tick-viewer.js:116-131` re-checks at the render site and falls back to an
+omitted-style note. The Python reader learned the same clause
+(`viewer/test/record_schema.py:34,158-167`), and the case is in `TheTwoValidatorsAgree`
+so the two runtimes cannot drift apart on it.
+
+**A hit was claimed for a value that failed to load.**
+`experiments/grouped-ablation/materials.py` incremented `hits` *before* `load_value()`,
+so a truncated `<key>.json` recorded a hit and then raised: a caller that caught the
+exception and recomputed was left with a ledger overstating reuse, in which
+`hits + misses` no longer accounted for `requests`. The hit is now counted only after a
+successful load, and a load failure degrades to the miss path
+(`experiments/grouped-ablation/materials.py:227-241`) — the same honesty rule the module
+already stated for a sidecar-only key. The sentinel is a private class, not `None`,
+because `null` is a legal cached value.
+
+**The two runtimes disagreed on a string that is already an image.**
+`render_value` sent every `str` to `svg` or `text`, so a PNG data URL was `text` in Python
+and `png-data-url` in JavaScript (`adapters.js:262-264`, pinned by
+`adapters.test.mjs`): the same Part would show as a picture from a DiscStudio record and
+as a wall of base64 from a pyto one. Resolved against the Python side, as "JS is first
+class" requires: `src/pyto/materialize.py:49,156-172` now tests the raw string for the
+PNG prefix between the svg and text branches, in JavaScript's order.
+
+**Counts.** `viewer` 77 → 81 (hostile Part address, `validate` refusing a non-PNG
+`png-data-url`, `materialize` never emitting one, and the render-site fallback);
+`experiments/grouped-ablation` 228 → 230 (a corrupt value file recomputes; a stored
+`null` is still a hit); `library` 93 → 94 (a PNG data URL string is `png-data-url`);
+`viewer-record-schema` stays 19 with two new cases inside existing tests.
+`scripts/check_all.sh:150-153` pins the viewer count. `bash pyto/scripts/check_all.sh`:
+ALL SUITES PASSED.
