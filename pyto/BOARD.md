@@ -144,10 +144,11 @@ any of this". Taken as the default: this proposal is the target, a named wider f
 first, agents stress-test it (findings and seven agent defaults under `{?} AddressRootIsAMount`
 in `questions.md`), and the owner is not asked about addressing again.
 
-**Stands.** Days 1 and 2 landed (receipts, retain, fresh-process replay, second experiment with
-zero program edits). Landing protocol in place (`LANDING.md`). Day 3 running (render,
-materializer, materials store), second fix round. Day 4 queued (the table and `px`), to run in a
-copy of the tree. Day 5 planned (node reads the table, a JS skill verified, cross-project hit,
+**Stands.** Days 1, 2 and 3 landed with receipts (receipts, retain, fresh-process replay, the
+second experiment with zero program edits; the render page, the materializer, the materials
+store, closed out by task 0). Landed tonight as well: digests and records that are the same bits
+on Linux and Windows, the address validator and census (task 2). Running: the Mounts type (task
+11). Day 4 (the table and `px`) waits behind the DiscStudio surfaces, per the owner's focus. Day 5 planned (node reads the table, a JS skill verified, cross-project hit,
 SUBDUE and WebShaper on recorded graphs).
 
 ## Lane 2: DiscStudio surfaces (Codex, briefed from lane 1)
@@ -167,9 +168,11 @@ you're saying. Idk any of this it just happened." Default taken: port to JS with
 the site stays static, Python is the workshop. The owner's contract, same night: "it needs to be
 stable and explainable. I know nothing. U explain it. That's why this works."
 
-**Stands.** Briefs written: Day 2 (as a bake-off reference), neat and tidy. Next brief: DiscShelf
-and OnTheCourse formats, written once Day 3 returns the viewer's real API so the studio can show
-a format's record.
+**Stands.** The studio's run-record export is being built as task 12 in its own copy, under the
+studio contract (`AGENTS.md`), landing only if `npm test`, the viewer suite and the browser check
+pass. Astra's three packages stand as briefed (painter port, record export, formats); whichever
+arrives first for the export competes on the same verifier. Next brief: DiscShelf and
+OnTheCourse formats.
 
 ## Lane 3: neat and tidy (the owner's neat expert)
 
@@ -192,9 +195,10 @@ no git command.
 **Open prompt.** none. The brief is at `research/briefs/neat-on-pxc-brief.md` with five `{?}`
 entries for the expert to bring back.
 
-**Stands.** `pyto/scripts/neat.sh` written (new, pack, show, drop, land, kill, list), being
-tested end to end in a scratch clone with its own origin. Brief for the PxC-backed version handed
-off; it should keep these seven commands. Ticket storage is a different mount from the board
+**Stands.** neat has nine commands (new, pack, show, drop, land, undo, update, kill, list), tested
+end to end in a scratch clone and used for every landing tonight; task 3 ("neat anywhere") is
+briefed for Codex so the work laptop gets the same commands. Brief for the PxC-backed version
+handed off; it should keep these commands. Ticket storage is a different mount from the board
 render and is not budget-bound.
 
 ## Lane 4: the record and the room (observability)
@@ -211,7 +215,9 @@ telemetry since ur gonna try to selfbootstrap and go ham overnight lol". The fie
 must name a landed commit, never a working-tree sha (the fresh-clone proof went red on exactly
 that); the proof run after each landing is the check.
 
-**Stands.** Observability ledger written; Day 3 builds the render and the materializer.
+**Stands.** Observability ledger written; Day 3 landed the render and the materializer, and task 0
+made the contract say what both runtimes do. Max telemetry per the owner: the record keeps its
+commit, and a stamp names a landed commit.
 
 ## Lane 5: research comparisons
 
