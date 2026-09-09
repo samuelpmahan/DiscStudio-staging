@@ -22,7 +22,7 @@ No npm packages, no CDN, no build step. Tests run under Node 22 with `node --tes
 | `adapters.js` | `validate` plus the four `from*` adapters; no DOM |
 | `embed.mjs` | `node embed.mjs record.json > page.html` — one self-contained file |
 | `fixtures/*.json` | one document per runtime (see below) |
-| `test/*.test.mjs` | 72 tests: schema, hit derivation, render safety, filter, embed |
+| `test/*.test.mjs` | 73 tests: schema, hit derivation, render safety, filter, embed |
 
 ## Opening it
 
@@ -71,7 +71,14 @@ a malformed record fails at build time, not in someone's browser. It accepts a
   `<img src="data:image/svg+xml;base64,…">`, `png-data-url` through an `<img>`, `omitted` as the
   note that says why.
 - **A Part index**: every address with the invocation that wrote it, the invocations that read it,
-  and whether it preexisted the run.
+  and whether it preexisted the run. `derivePartIndex` reads an invocation's `inputs` (the complete
+  binding map) as well as its `declared_consumes`, because pyto's `Receipt.declared_consumes`
+  (`../src/pyto/pcr.py:120`) lists only Part addresses and omits `fn:` result refs; and a `fn:<id>`
+  binding counts as a read of the Part that invocation wrote, since `pcr.py:112-116` rewrote a Part
+  binding into that ResultRef and the value published at `into` is the same one. That is what makes
+  the index answer "which invocations consume `scratch.ablation.split`" with all twelve fit/score
+  invocations rather than with none. It never turns an invocation into a hit: only a `px:` binding
+  does that.
 
 ### Filter
 
@@ -160,7 +167,7 @@ which is also what `embed.mjs` uses.
 ## Tests
 
 ```sh
-cd pyto/viewer && node --test test/*.test.mjs     # 72 tests
+cd pyto/viewer && node --test test/*.test.mjs     # 73 tests
 bash ../scripts/check_all.sh                      # runs them as the "viewer" suite
 ```
 

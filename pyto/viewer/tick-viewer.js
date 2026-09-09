@@ -61,7 +61,7 @@ export function searchTerms(invocation, tickName = '') {
   const terms = [invocation.id, tickName];
   if (invocation.calculation && invocation.calculation.address) terms.push(invocation.calculation.address);
   if (invocation.into) terms.push(invocation.into);
-  for (const binding of invocation.declared_consumes) terms.push(bareAddress(binding), binding);
+  for (const binding of [...Object.values(invocation.inputs), ...invocation.declared_consumes]) terms.push(bareAddress(binding), binding);
   for (const address of invocation.actual_consumes) terms.push(address);
   for (const address of invocation.actual_produces) terms.push(address);
   for (const write of invocation.writes) terms.push(write.address);

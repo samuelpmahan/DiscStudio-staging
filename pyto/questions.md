@@ -160,6 +160,42 @@ which would list only the addition and leave the removal to `explain_changes`. B
 `experiments/grouped-ablation/second_experiment.py:202-249`, every
 `evidence/run-*/saved-work.json`.
 
+## Questions the Day 2 verifier resolved alone (2026-09-09)
+
+### {?} DirtyStampUnderAConcurrentSession
+Does a `-dirty` working tree caused by ANOTHER session's in-flight files count as
+finding 7 failing?
+Status: provisional, decided by me 2026-09-09. The Day 2 acceptance check is
+"`evidence/run-1..4` carry a bare sha on the current tree when only evidence
+differs". On the live tree that precondition is not satisfiable right now: a
+concurrent Day 3 session has four untracked files in the experiment directory
+(`hits.py`, `materials.py`, `run_cached.py`, `test_materials.py`) plus
+`evidence/run-6-cached/`, so `run.commit_sha(exclude=run.evidence_excludes())`
+returns `dee7879...-dirty` and `run.dirty_paths(...)` is
+`['hits.py', 'materials.py', 'run_cached.py']`. I judged this a property of the
+tree at this instant, not a regression in the stamp, and verified the mechanism
+in a clean throwaway clone at the same HEAD instead: there, modifying committed
+evidence and adding an untracked file under `evidence/` both leave the stamp
+bare, while touching `run.py` or `pyto/src/pyto/pcr.py` stamps `-dirty`, and
+regenerating all four runs with `--force` writes a bare 40-hex sha into every
+`commit.txt` and every `retained.commit`. The owner may prefer the stricter
+reading -- that the criterion is about the real tree and is therefore failing
+until the Day 3 files are committed or removed, and that no clone may stand in
+for it. Bites: `experiments/grouped-ablation/run.py:235-265`,
+`evidence/OPEN-FINDINGS.md` Round 3 item 1, `{?} EvidenceDirtiness`.
+
+### {?} VerifierSuiteCountBaseline
+Is the pinned grouped-ablation count 211 or 228?
+Status: provisional, decided by me 2026-09-09. `check_all.sh` reported 211 and a
+later `unittest discover` over the same directory reported 228. The difference is
+entirely the concurrent session's untracked `test_materials.py` (17 tests), which
+appeared mid-verification; the Day 2 four modules are
+`test_grouped_ablation` 33 + `test_replay` 81 + `test_retain` 55 +
+`test_second_experiment` 42 = 211. I took 211 as the Day 2 number and treated 228
+as Day 3 bleed rather than suite growth needing a pin. The owner may prefer the
+suite counted as it stands on disk. Bites: `scripts/check_all.sh` (grouped-ablation
+carries no pin today), `experiments/runs/day2/meta.json` `counts_note`.
+
 ## Open, from the plan and the days
 
 ### {?} ExternalInputBoundary

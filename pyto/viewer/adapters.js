@@ -295,7 +295,12 @@ export function derivePartIndex(ticks) {
   const intoById = new Map();
   for (const tick of ticks) {
     for (const invocation of tick.invocations) {
-      for (const binding of invocation.declared_consumes) {
+      // `inputs` is the complete binding map; `declared_consumes` mirrors the
+      // producing runtime's own notion of a declared Part read, which in pyto
+      // omits `fn:` result refs (pcr.py:120 Receipt.declared_consumes). Read
+      // both so the index is the same whichever convention a producer follows.
+      const bindings = [...Object.values(invocation.inputs), ...invocation.declared_consumes];
+      for (const binding of bindings) {
         const address = binding.startsWith('fn:') ? intoById.get(bareAddress(binding)) : bareAddress(binding);
         if (!address) continue;
         const part = entry(address);

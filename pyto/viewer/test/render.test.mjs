@@ -300,7 +300,7 @@ test('the Part index lists every address with its writer, readers and preexistin
 
   const rowFor = (address) => rows.find((tr) => tr.children[0].textContent === address).children.map((td) => td.textContent);
   assert.deepEqual(rowFor('input.ablation.rows'), ['input.ablation.rows', '—', 'split', 'yes']);
-  assert.deepEqual(rowFor('scratch.ablation.comparison'), ['scratch.ablation.comparison', 'compare', 'sheet, retain', 'no']);
+  assert.deepEqual(rowFor('scratch.ablation.comparison'), ['scratch.ablation.comparison', 'compare', 'sheet, retain, table', 'no']);
   assert.equal(rows.find((tr) => tr.children[0].textContent === 'input.ablation.rows').className, 'preexisting');
 });
 

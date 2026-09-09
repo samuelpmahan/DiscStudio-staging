@@ -208,9 +208,15 @@ test('derivePartIndex names the writer, the readers and what preexisted', () => 
   const record = fromPytoRecord(pytoDoc);
   const parts = derivePartIndex(record.ticks);
   assert.deepEqual(parts['input.ablation.rows'], { written_by: null, read_by: ['split'], preexisting: true });
-  assert.deepEqual(parts['scratch.ablation.split'], { written_by: 'split', read_by: [], preexisting: false });
+  // A fn: binding counts as a read of the Part the producing invocation wrote:
+  // the twelve fit/score invocations of the real experiment all consume
+  // 'fn:split', and the index has to show that they consume the split Part.
+  assert.deepEqual(parts['scratch.ablation.split'], {
+    written_by: 'split', read_by: ['fit.all', 'score.all', 'fit.drop_g3', 'score.drop_g3'], preexisting: false
+  });
+  assert.deepEqual(parts['scratch.ablation.model.all'], { written_by: 'fit.all', read_by: ['score.all'], preexisting: false });
   assert.deepEqual(parts['scratch.ablation.comparison'].written_by, 'compare');
-  assert.deepEqual(parts['scratch.ablation.comparison'].read_by, ['sheet', 'retain']);
+  assert.deepEqual(parts['scratch.ablation.comparison'].read_by, ['sheet', 'retain', 'table']);
   assert.equal(parts['scratch.ablation.comparison'].preexisting, false);
   assert.deepEqual(parts, record.parts, 'the fixture carries the derived index');
 });
