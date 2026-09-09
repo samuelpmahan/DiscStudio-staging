@@ -11,6 +11,18 @@ treating "does PxC help" as open. The mechanism-by-mechanism comparison and the 
 to Days 2 to 5 are in `pyto/research/lab-transfer-ledger.md`; the reference sources are under
 `pyto/reference/lab/`. Day 1 is unaffected (no library changes).
 
+## Execution policy (owner directives, 2026-09-09)
+
+- Subagents run only on Opus, Sonnet or Haiku at high effort: Opus for design, judging, synthesis
+  and adversarial verification; Sonnet for implementation lanes and render/lint harnesses; Haiku for
+  trivial checks. The orchestrator stays on the session model. Day 1's workflow was launched before
+  this directive and finishes on the session model; every later workflow sets the model per agent.
+- A design tournament runs alongside the week to expand the agentic artistic surface: competing
+  studios propose disc-art families and Single/Battle card renderers as pyto Calculations, rendered
+  headless in Chromium and judged from pixels with LAB-style grid annotations; winners are promoted
+  into the DiscStudio Python consumer with byte-identity tests for the existing families, losers
+  are retained with verdicts under `pyto/experiments/art-tournament/`.
+
 ## Winner and thesis
 
 **Winner.** Experiment-reuse-first (aggregate 62.5/72 across three judges vs Kernel-first 61.5, Replay-first 54.5, Agent-workshop 53.5, JS-parity 37.5), with five grafts: Kernel-first's replay-gated composition promotion (PromotionRefused / provisional / demote+inline reversibility) and fn.pcr.select round trip; Replay-first's fresh-process boundary (`python3 -I`, scrubbed env) plus hidden-state, determinism (PYTHONHASHSEED x CRLF/LF) and false-unchanged auditors and the digest+ref sidecar for non-JSON values; JS-parity's mutation-kill discipline and 'skip with a named reason, never pass silently' rule; Agent-workshop's CAPTURE.md run record, CHANGES.md pairing and provenance lens (every number in the returns resolves to a retained file); and the environment corrections all three judges converged on (isolated `pip wheel` works here while `--no-build-isolation` fails; arxiv unreachable so SUBDUE cites pyto/research/primary-sources.md; disc-stats needs PYTHONPATH=.; consumer tests need data/).
