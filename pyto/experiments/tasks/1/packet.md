@@ -4,11 +4,12 @@ Intent: AHI runs on the owner's Windows D:/: neat new works (host path for pip, 
 Starting point: b2a284825708cd592bb0043eec59f1a88afb07b8 (checkpoint: neat, the caveman version: new, pack, show, drop, land, kill, list over one MAIN and EXP/<id>)
 Verify: none
 Allow: pyto/scripts/neat.sh pyto/experiments/grouped-ablation pyto/consumers/discstudio-card
-Candidate: 93 files, see below
+Candidate: 102 files, see below
 Evidence: suite exit 0, see below
 
 ## Candidate
 
+- A  mailbox/to-gpt/0002-neat-anywhere-task.md
 - M  pyto/BOARD.md
 - M  pyto/LANDING.md
 - M  pyto/consumers/discstudio-card/app.py
@@ -94,18 +95,27 @@ Evidence: suite exit 0, see below
 - A  pyto/experiments/landings/20260909T073723Z-windows-safety/verifier.txt
 - A  pyto/experiments/landings/20260909T073836Z-landing-protocol/check_all.txt
 - A  pyto/experiments/landings/20260909T073836Z-landing-protocol/receipt.json
+- A  pyto/experiments/landings/20260909T080631Z-task-1/check_all.txt
+- A  pyto/experiments/landings/20260909T081311Z-windows-venv/check_all.txt
+- A  pyto/experiments/landings/20260909T081311Z-windows-venv/receipt.json
+- A  pyto/experiments/landings/20260909T081311Z-windows-venv/verifier.txt
 - A  pyto/experiments/landings/failed/20260909T073102Z-windows-safety.json
 - A  pyto/experiments/landings/failed/20260909T073146Z-windows-safety.json
 - A  pyto/experiments/landings/failed/20260909T073247Z-windows-safety.json
 - A  pyto/experiments/landings/failed/20260909T073355Z-windows-safety.json
+- A  pyto/experiments/landings/failed/20260909T080631Z-task-1.json
+- A  pyto/experiments/landings/failed/20260909T081551Z-task-1.json
+- A  pyto/experiments/landings/failed/20260909T081613Z-task-1.json
 - M  pyto/questions.md
+- A  pyto/research/from-registry-to-os.md
 - M  pyto/scripts/check_all.sh
 - M  pyto/scripts/land.sh
 - M  pyto/scripts/neat.sh
 
 ```
-pyto/BOARD.md                                      |     7 +
- pyto/LANDING.md                                    |     3 +
+mailbox/to-gpt/0002-neat-anywhere-task.md          |    26 +
+ pyto/BOARD.md                                      |    34 +-
+ pyto/LANDING.md                                    |    20 +
  pyto/consumers/discstudio-card/app.py              |    25 +
  .../experiments/art-tournament/harness/fixtures.py |     4 +-
  .../grouped-ablation/evidence/determinism.log      |     2 +-
@@ -189,15 +199,23 @@ pyto/BOARD.md                                      |     7 +
  .../20260909T073723Z-windows-safety/verifier.txt   |     1 +
  .../check_all.txt                                  |  1164 +
  .../20260909T073836Z-landing-protocol/receipt.json |   399 +
+ .../landings/20260909T080631Z-task-1/check_all.txt |  1658 +
+ .../20260909T081311Z-windows-venv/check_all.txt    |  1164 +
+ .../20260909T081311Z-windows-venv/receipt.json     |    53 +
+ .../20260909T081311Z-windows-venv/verifier.txt     |     1 +
  .../failed/20260909T073102Z-windows-safety.json    |     9 +
  .../failed/20260909T073146Z-windows-safety.json    |     9 +
  .../failed/20260909T073247Z-windows-safety.json    |     9 +
  .../failed/20260909T073355Z-windows-safety.json    |     9 +
- pyto/questions.md                                  |    40 +
- pyto/scripts/check_all.sh                          |     7 +
- pyto/scripts/land.sh                               |    12 +-
- pyto/scripts/neat.sh                               |    24 +-
- 93 files changed, 65490 insertions(+), 55830 deletions(-)
+ .../landings/failed/20260909T080631Z-task-1.json   |     9 +
+ .../landings/failed/20260909T081551Z-task-1.json   |     9 +
+ .../landings/failed/20260909T081613Z-task-1.json   |     9 +
+ pyto/questions.md                                  |    68 +
+ pyto/research/from-registry-to-os.md               |   148 +
+ pyto/scripts/check_all.sh                          |    10 +-
+ pyto/scripts/land.sh                               |    29 +-
+ pyto/scripts/neat.sh                               |    56 +-
+ 102 files changed, 68681 insertions(+), 55840 deletions(-)
 ```
 
 ## Evidence
