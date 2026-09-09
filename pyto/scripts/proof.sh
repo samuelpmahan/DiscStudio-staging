@@ -145,5 +145,5 @@ print(bullet)
 PYEOF
 )"
 rm -f "$RESULTS_FILE" "$COMMANDS_FILE"
-[ "$KEEP" -eq 1 ] || rm -rf "$CLONE_DIR"
+[ "$KEEP" -eq 1 ] || rm -rf "$CLONE_DIR" "$HIT_DIR"
 printf '%s\n' "$TODAY_LINE"
