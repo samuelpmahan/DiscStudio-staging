@@ -23,6 +23,30 @@ to Days 2 to 5 are in `pyto/research/lab-transfer-ledger.md`; the reference sour
   into the DiscStudio Python consumer with byte-identity tests for the existing families, losers
   are retained with verdicts under `pyto/experiments/art-tournament/`.
 
+## Reframing 2 (2026-09-09, owner correction): PxC is first a cache under a 5000 ms budget
+
+The main use of PxC is as a semantic cache for the ChainSpot computer-vision algorithm, which must
+parse a disc golf course map from a phone-size screenshot within 5000 ms. The plan's "What the week
+refuses" list deferred memoization, skip-if-unchanged and content-addressed PxC keys; that deferral
+came from the DiscStudio stewardship framing and is withdrawn. Changes:
+
+- **Day 2** stands: receipts carry per-invocation `duration_ms` and result digests, and the reuse
+  ledger's "milliseconds saved" is the cache-hit accounting. Timings are synthetic and labelled so.
+- **Day 3** conventional comparison becomes a cache benchmark: the ChainSpot content-addressed
+  material mechanism (sha256 over revision, source hash, frame, dimensions, seed, masks, knobs;
+  `has` before `call`; hit/miss/write counters) ported experiment-locally and compared against
+  joblib.Memory and functools.cache on the same fixture, reporting recomputation avoided and what
+  each cannot express. The kernel ablation adds "content-addressed key" as a candidate primitive.
+- **Day 4** keys the shared art result by content address and reports hits, not only the
+  explanation of what need not rerun.
+- **Day 5** measures the same PQL document under node `src/core/exec.js` plus the `runtime.js` memo
+  ring and under Python, and reports a budget ledger per run: wall ms per invocation, ms saved by
+  hits, both against the 5000 ms figure as a stated target, never as a claim. Image-sized Parts are
+  out of reach in this checkout (no corpus); that limit is reported rather than generalized.
+- Open judgment `{?} CacheInvalidation`: the key's `revision` component is a calculation identity;
+  Day 2's `implementation_sha256` is the candidate, but its scope excludes helpers and assets
+  (ChessLab's own limitation string), so the owner decides what a revision means for the CV stages.
+
 ## Winner and thesis
 
 **Winner.** Experiment-reuse-first (aggregate 62.5/72 across three judges vs Kernel-first 61.5, Replay-first 54.5, Agent-workshop 53.5, JS-parity 37.5), with five grafts: Kernel-first's replay-gated composition promotion (PromotionRefused / provisional / demote+inline reversibility) and fn.pcr.select round trip; Replay-first's fresh-process boundary (`python3 -I`, scrubbed env) plus hidden-state, determinism (PYTHONHASHSEED x CRLF/LF) and false-unchanged auditors and the digest+ref sidecar for non-JSON values; JS-parity's mutation-kill discipline and 'skip with a named reason, never pass silently' rule; Agent-workshop's CAPTURE.md run record, CHANGES.md pairing and provenance lens (every number in the returns resolves to a retained file); and the environment corrections all three judges converged on (isolated `pip wheel` works here while `--no-build-isolation` fails; arxiv unreachable so SUBDUE cites pyto/research/primary-sources.md; disc-stats needs PYTHONPATH=.; consumer tests need data/).

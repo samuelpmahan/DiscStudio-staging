@@ -1,0 +1,371 @@
+{
+ "reads": [
+  {
+   "reader": "Cold reader 1 \u2014 no prior exposure to Pyto or this project. Worked only in /tmp/coldread1 (extracted from d9dded6); /home/user/DiscStudio-staging read-only.",
+   "executed": [
+    "mkdir -p /tmp/coldread1 && git -C /home/user/DiscStudio-staging archive d9dded6 pyto | tar -x -C /tmp/coldread1  ->  783 files extracted OK",
+    "python3 -c 'import pyto; print(pyto.__file__)'  ->  /home/user/DiscStudio-staging/pyto/src/pyto/__init__.py  (editable install; /usr/local/lib/python3.11/dist-packages/__editable__.pyto_lab-0.1.0.pth contains the single line /home/user/DiscStudio-staging/pyto/src). So the scratch tree's own src is NOT what imports resolve to.",
+    "CHECK_ALL_LOG_DIR=/tmp/coldread1/logs bash /tmp/coldread1/pyto/scripts/check_all.sh  ->  library 43 FAIL, experiments/grouped-ablation 31 FAIL, s3-synthetic 5 OK, consumer 18 OK, disc-stats 4 OK, examples 2 OK, 'SOME SUITES FAILED'. Both failures are artifacts, not base-commit breakage: (a) library fails test_results_keyed_by_id_not_tick_and_rerun_replaces with \"Tuples differ: ('pcr','ticks','results','receipts') != ('pcr','ticks','results')\" because the LIVE src already carries the Day-2 receipts seam; (b) grouped-ablation fails test_commit_txt_is_head_sha_with_dirty_marker... with 'fatal: not a git repository' because the scratch tree is not a git checkout.",
+    "PYTHONPATH=/tmp/coldread1/pyto/src python3 -m unittest discover -s tests  ->  Ran 43 tests, OK. Confirms the brief's 'library 43' at the base.",
+    "PYTHONPATH=/tmp/coldread1/pyto/src python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py'  ->  Ran 31 tests, FAILED (failures=1), sole failure the git-repo one above. Confirms 'grouped-ablation 31'.",
+    "grep -c 'def test_' across suites  ->  test_grouped_ablation.py 31, test_first_class.py 9 + test_graph.py 3 + test_semantics.py 31 = 43, test_s3_synthetic.py 5. Every per-suite count the brief states is correct.",
+    "ls experiments/grouped-ablation/evidence/run-1/  ->  commit.txt comparison.json comparison.md failed-variants.md mermaid.mmd saved-work.json testimony.json timings.json variants.json. There is NO retained.json and NO receipts.json. comparison.json ranking is drop_g3 > drop_g0 > drop_g1 > drop_g4 > drop_g2 (brief's three-way claim is the informative prefix, correct). testimony.json is exactly {pcr, ticks}, dumped with indent=2 sort_keys=True. commit.txt = ee1b75a (two commits BEFORE the base d9dded6).",
+    "Read run.py: resolve_out_dir() confirms --out relative paths resolve against the experiment directory (HERE), a fresh temp dir when omitted, and an existing non-empty --out refused unless --force. main() never passes `prior` to write_evidence, so the CLI cannot produce a non-null inherited_calculations ledger.",
+    "Ran a probe over build_program(select_variants({'groups': GROUPS})) printing each invocation's binding types  ->  only 'select' and 'split' have Part bindings; the other 13 invocations (6 fit, 6 score, compare) bind exclusively ResultRef. PCR.calc destroys the authored Part when it rewrites to ResultRef.",
+    "inspect.getsource over REGISTRY  ->  works for all 5 module-level callables; sha256 prefixes b0e6efd7 / 8674a964 / c3b71feb / 056432ed / 0f0199f6. inspect.getsource(len) raises TypeError (not OSError), so the brief's 'when inspect.getsource works' needs TypeError in the catch too.",
+    "grep -rn 'fn.ablation.rmse' over the whole tree  ->  TWO hits only: research/ULTRACODE-WEEK.md:67 (the sentence the brief's Deliverable D was derived from) and experiments/runs/day1/candidates/reader-ablation_spike.py:103, which is a Day-1 scratch candidate binding it to a LAMBDA. The live REGISTRY in calculations.py holds selectVariants, split, fit, score, compare. fn.ablation.rmse does not exist in anything the experiment runs.",
+    "Determinism probe, env -i PATH=... across flag/seed rows  ->  `-I` with PYTHONHASHSEED=0 gives hash_randomization=1 and a hash('pyto') that changes run to run (verified over 3 runs); `-E` behaves the same; `-s -P` with PYTHONHASHSEED=0 gives hash_randomization=0 and a stable hash. The brief's flag guidance is CORRECT and verifiable. Python is 3.11.15, so -P exists.",
+    "cd /tmp && env -i PATH=... python3 -I -c 'import pyto; print(pyto.__file__)'  ->  succeeds from outside the repo, resolving to /home/user/DiscStudio-staging/pyto/src/pyto/__init__.py via the site-packages .pth. So 'cwd outside the repository' does not isolate the child from the repository.",
+    "env -i PATH=... python3 -I -c 'import sys; print(sys.argv)' /some/dir /some/file.json  ->  ['-c', '/some/dir', '/some/file.json']; argv[0] is '-c'.",
+    "cd /home/user/DiscStudio-staging/pyto && git diff --stat d9dded6 -- pyto/src  ->  prints NOTHING, exit 0. From the repo root the same command prints ' pyto/src/pyto/pcr.py | 215 ++...'. The acceptance block runs after `cd pyto`, so this check silently passes no matter what changed.",
+    "grep -c 'lambda\\|<function' on a file with no matches  ->  prints 0, exit code 1. Under `set -e` the acceptance block aborts on the passing case.",
+    "Read reference/lab/chesslab-lab/contract.ts:55-150  ->  FrozenCalculation{address, implementationHash, identityScope:'runtime-function-body', limitation:'called helpers, constants, templates, and assets are not covered'}; Receipt{opId, frozenCalculations (a LIST), startedAtMs, durationMs, declaredConsumes, declaredProduces, actualConsumes, actualProduces, writes, probes, artifacts}; PxWriteTestimony kinds new-address|refinement|replacement.",
+    "Read src/core/exec.js:22-70  ->  trackAccess classifies refinement as 'address existed AND is in tick.consumes'. readPql requires every `with` VALUE to be a bare nonempty STRING address (text(address,...)) and invokePql does pxc.get(address) on it verbatim; it requires `into` to be a nonempty string and rejects a name present in both `with` and `args`.",
+    "Read src/pyto/graph.py to_pcr_dict()  ->  already emits {PrincipleComponentRender, Ticks:[{name, Calculations:[{id, call, with, args, into}]}]} but with `with` values shaped {kind:'px'|'fn', ref:...}, which readPql rejects.",
+    "awk on docs/PYTHON-LAB-STEWARDSHIP.md  ->  line 53 is 'The new shared capability is accepted only when a DiscStudio-owned fixture can run this sequence with an installed, versioned Pyto wheel:'. The external-input-boundary sentence is line 56.",
+    "file src/pyto/*.py  ->  all CRLF (pcr.py 219 CR); experiments/*.py and docs are LF. Confirms the brief's CRLF premise.",
+    "Drafted the first 20 lines of Deliverable A (Receipt/FrozenCalculation/PxWriteTestimony dataclasses) and Deliverable D (the python3 -I child snippet) at /tmp/coldread1/draft/A_first20.py and /tmp/coldread1/draft/D_first20.py; every {?} in those files is an unanswered question from the brief and is listed below."
+   ],
+   "ambiguities": [
+    {
+     "section": "D. Fresh-process replay \u2014 registry-hole test",
+     "problem": "The brief says 'Registry-hole test (remove `fn.ablation.rmse`; loud failure before execution)'. There is no `fn.ablation.rmse` in the experiment. calculations.py REGISTRY holds fn.ablation.selectVariants, .split, .fit, .score, .compare. The only occurrences of the name in the tree are research/ULTRACODE-WEEK.md:67 (which the brief does not tell the agent to read) and experiments/runs/day1/candidates/reader-ablation_spike.py:103, a Day-1 scratch file where it is a lambda.",
+     "what_a_cold_agent_would_do_wrong": "Greps, finds nothing in the registry, and then either (a) adds a fake fn.ablation.rmse Calculation to the registry purely so it can be removed \u2014 inventing an experiment fixture and inflating calculations_authored in every saved-work.json ledger \u2014 or (b) silently substitutes fn.ablation.score and never says it deviated, so the test no longer matches the brief the reference run executed. Either way the two bake-off trees stop being comparable.",
+     "fix": "Replace with 'remove `fn.ablation.score` from the registry handed to from_program'. State the expected error explicitly: from_program raises KeyError naming the missing address before any invocation runs (the brief already specifies exactly this behaviour under B).",
+     "severity": "blocker"
+    },
+    {
+     "section": "D + Acceptance + What to hand back \u2014 evidence/run-1/retained.json",
+     "problem": "D replays `evidence/run-1/retained.json`, the acceptance greps it, and the hand-back list names it \u2014 but it does not exist at d9dded6 and nothing in the brief instructs producing it. run.py's write_evidence() writes 9 files and none is retained.json; run-1 is committed evidence whose commit.txt (ee1b75a) predates the base commit, and run.py refuses to overwrite a non-empty --out without --force (a flag the brief never mentions).",
+     "what_a_cold_agent_would_do_wrong": "Either stalls, or runs `run.py --out evidence/run-1 --force`, which rewrites commit.txt to the agent's own dirty HEAD and rewrites timings.json and saved-work.json \u2014 dirtying Day-1 committed evidence and destroying the very baseline the testimony byte-equality test compares against. A different agent instead writes retained.json beside run-1 without regenerating, producing a retain record whose provider hashes do not match the run-1 that produced comparison.json.",
+     "fix": "Say explicitly: retained.json for run-1 is produced by re-running run.py with --out evidence/run-1 --force after retain.py exists; testimony.json/comparison.json/variants.json/failed-variants.md/mermaid.mmd must come back byte-identical (assert it), and commit.txt/timings.json/saved-work.json are expected to change. Or: write retained.json without touching the other nine files and say so.",
+     "severity": "blocker"
+    },
+    {
+     "section": "A. The receipts seam \u2014 testimony byte-equality test",
+     "problem": "'byte equality of `json.dumps([asdict(t) for t in run.ticks])` with observe on and off and against `evidence/run-1/testimony.json`'. The first half is well defined. The second is impossible as written: testimony.json is `{\"pcr\":..., \"ticks\":[...]}` written by run.py's _dump with indent=2 and sort_keys=True, while json.dumps([asdict(t) ...]) is a bare compact list with declaration-order keys. They can never be byte-equal.",
+     "what_a_cold_agent_would_do_wrong": "Writes the literal assertion, watches it fail, and then quietly weakens it to a parsed-structure comparison without saying so \u2014 or, worse, changes run.py's serializer to compact form to make the bytes match, which changes committed Day-1 evidence and defeats the invariant.",
+     "fix": "Specify the comparison precisely: `json.loads(Path('evidence/run-1/testimony.json').read_text())['ticks'] == json.loads(json.dumps(jsonable([asdict(t) for t in run.ticks])))`, and keep the literal byte-equality assertion only for observe-on vs observe-off within a single process.",
+     "severity": "blocker"
+    },
+    {
+     "section": "D. Fresh-process replay \u2014 tamper test",
+     "problem": "'Tamper test (edit one variant's columns in a copy; only that fit and its score digests change)'. This is factually wrong for the program in the tree. `compare` binds all six score results (verified: its bindings are six ResultRefs) and produces the ranking, so changing fit.drop_gN's columns changes fit.drop_gN, score.drop_gN AND compare \u2014 three digests, plus comparison.json's rows and possibly its ranking.",
+     "what_a_cold_agent_would_do_wrong": "Writes `assertEqual(changed_ids, {'fit.drop_g0','score.drop_g0'})`, sees compare in the diff, and concludes its retain/replay implementation is buggy \u2014 burning time debugging correct code, or 'fixing' it by excluding compare from the digest set, which hides a real downstream signal.",
+     "fix": "State the expected set as {fit.<key>, score.<key>, compare} and say that compare's inclusion is the point: it is the downstream-affected set explain_changes must also report. Keep 'unchanged upstream' as {select, split} plus the other ten fit/score ids.",
+     "severity": "blocker"
+    },
+    {
+     "section": "A. The receipts seam \u2014 actual_consumes / actual_produces",
+     "problem": "'observed through a tracked view of the PxC during that invocation (document that PCR.run performs these on the invocation's behalf)'. PCR.run resolves every binding itself (pcr.py: pxc.get for Part sources, results[...] for ResultRefs) and calls pxc.call(calculation, call_args) with a plain mapping \u2014 the callable never sees the PxC. So a tracked view can only observe PCR.run's own get/set, making actual_consumes definitionally equal to declared_consumes and actual_produces equal to declared_produces for EVERY program pyto can express. The brief also cites host.ts '(exact-conformance failure)' in the reference list but never says whether to implement it.",
+     "what_a_cold_agent_would_do_wrong": "Spends a long time hunting for a hook that lets the callable touch the PxC, then either (a) changes the calling convention to pass the tracked PxC into the callable \u2014 a second, breaking library change that alters every calculation signature and violates the one-change rule, or (b) implements the tautology, writes a conformance test that can never fail, and scores 0 on 'Killable tests' because no one-line mutation makes it fail.",
+     "fix": "Say outright that under the current calling convention actual == declared by construction, that this is the honest finding to record (it is exactly the 'Absent' row in lab-transfer-ledger.md for exact-conformance), that the tracked view must therefore be a wrapper PCR.run uses for its OWN get/set, and that no conformance check is implemented this day. Name the one mutation that kills the test (e.g. dropping the pxc.set from the into branch must make actual_produces empty).",
+     "severity": "blocker"
+    },
+    {
+     "section": "A. The receipts seam \u2014 declared_consumes for fn: bindings",
+     "problem": "'`declared_consumes` (bound Part addresses)'. 13 of the 15 invocations in build_program bind zero Parts (verified: fit.*, score.*, compare bind only ResultRefs, because PCR.calc rewrites the SPLIT Part to fn:split at declaration time and discards the original Part \u2014 Invocation.bindings holds Binding(ResultRef) with no memory of the authored address).",
+     "what_a_cold_agent_would_do_wrong": "Emits empty declared_consumes for 13/15 receipts and cannot tell whether that is correct or a bug it introduced; or reaches back for the producer's `into` address to fill the field, silently inventing a semantics the reference run does not share, so the two trees' receipts.json files stop being comparable.",
+     "fix": "State the choice: declared_consumes lists ONLY Part-bound addresses and is empty for fn:-bound invocations; add a separate field (e.g. declared_result_refs: tuple[str,...] of producer ids) if the fn: edges are wanted, or say explicitly that they are deliberately omitted and why.",
+     "severity": "major"
+    },
+    {
+     "section": "A. The receipts seam \u2014 writes / refinement kind",
+     "problem": "'writes with kind new-address, refinement (the address was among the invocation's bound Part inputs) or replacement'. core.py's PxC.set returns PxWrite with only new-address|replacement and no knowledge of declared consumes, and PCR.run discards its return value. Worse, refinement is nearly unreachable: PCR.calc raises 'multiple writers' whenever `into` already has a writer, so read-and-write-of-the-same-address is only possible for an externally seeded Part with no prior writer \u2014 a case no test or experiment in the tree constructs.",
+     "what_a_cold_agent_would_do_wrong": "Edits core.py to teach PxC.set about refinement \u2014 a second library change that breaks `git diff --stat ... exactly pcr.py` and the existing test_semantics assertion `pxc.set('px.a', 1) == PxWrite('px.a','new-address')`. Or implements refinement in pcr.py but ships it untested because it never finds a program that triggers it.",
+     "fix": "Say the classification is computed in pcr.py from the invocation's own bound Part addresses and that core.py is not touched, and hand the agent the fixture: a one-invocation PCR that binds Part('px.a') and writes into Part('px.a') over a pre-seeded value, asserting kind == 'refinement'.",
+     "severity": "major"
+    },
+    {
+     "section": "A. The receipts seam \u2014 where Receipt lives, vs the acceptance diff check",
+     "problem": "The acceptance requires `git diff --stat d9dded6 -- pyto/src` to be exactly pcr.py, but pyto/__init__.py exports every other public type including PxWrite, and tests import from `pyto` (tests/test_semantics.py imports PxWrite from pyto). The brief never says whether Receipt/FrozenCalculation/PxWriteTestimony are exported.",
+     "what_a_cold_agent_would_do_wrong": "Adds them to __init__.py's __all__ for consistency with the rest of the package, then discovers the acceptance diff check now names two files and cannot tell whether to revert the export or accept the diff. Or leaves them unexported and writes tests that reach into pyto.pcr, which reads as a private-API test.",
+     "fix": "State it: Receipt, FrozenCalculation and PxWriteTestimony are defined in pcr.py and NOT added to pyto/__init__.py this day; test_receipts.py imports them as `from pyto.pcr import Receipt` and questions.md records the export as an open {?}.",
+     "severity": "major"
+    },
+    {
+     "section": "B. Retain \u2014 retain_run(...)['results']",
+     "problem": "'`retain_run(pxc, run, external_addresses)` producing `{program, external, provider, results}`'. It is never said whether `results` holds values or digests. For run-1 the split result alone is 400 rows x 15 floats and the six models carry weight vectors; retaining raw values makes retained.json roughly a megabyte and duplicates `external`. But explain_changes' 'reason per id (digest, ...)' and the saved-work 'invocations skippable by digest' both need per-id digests.",
+     "what_a_cold_agent_would_do_wrong": "Guesses raw values, produces a huge retained.json, and then has no digest field for explain_changes; or guesses digests only, and then the fresh-process replay has nothing to compare per-result against except recomputation. Either guess makes the other tree's replay of this record fail \u2014 which the brief calls the strongest evidence either side can produce.",
+     "fix": "Specify: results is {id: {sha256, json_serializable: bool}} with no values, digests computed by the same canonicalisation as Receipt.result_sha256; raw values live only in `external` and the sidecar. Say so explicitly so both trees produce the same shape.",
+     "severity": "major"
+    },
+    {
+     "section": "C. The second experiment \u2014 run_from_retained.py",
+     "problem": "'consumes run-1's retained split as an external Part and counts the skipped Prepare invocations' time as saved'. build_program unconditionally emits select and split in the Prepare tick, and family() binds SPLIT which PCR.calc rewrites to fn:split. Seeding scratch.ablation.split into the PxC does not skip the split invocation \u2014 it is overwritten by it. There is no way to build this program without editing program.py, which the brief forbids.",
+     "what_a_cold_agent_would_do_wrong": "Writes a second, near-duplicate program builder inside run_from_retained.py (silently weakening the 'zero program edits' reuse claim it is supposed to demonstrate), or adds a `skip_prepare` flag to program.py and triggers the RECONSTRUCTION-REQUIRED path for the wrong reason, or gives up and reports zero ms saved.",
+     "fix": "Decide it: either 'run_from_retained.py builds its own PCR from retain.from_program on run-1's retained program with the Prepare tick's invocations dropped and scratch.ablation.split seeded as external \u2014 this is not a program.py edit and does not trigger RECONSTRUCTION-REQUIRED', or say the kill criterion applies here too. Also say where the 'skipped ms' number comes from (run-1 receipts' duration_ms for select+split) and that run-1 must therefore have been run with observe=True.",
+     "severity": "major"
+    },
+    {
+     "section": "C. The second experiment \u2014 'Change only input Parts and the variants list'",
+     "problem": "run.py's run_experiment(seed, n) hard-codes `GROUPS` imported from features.py and has no groups parameter, and write_evidence() has no CLI path for `prior` and writes none of retained.json/receipts.json/interpretation.md. The kill criterion names only program.py and calculations.py; the brief is silent on run.py.",
+     "what_a_cold_agent_would_do_wrong": "Either edits run.py (and cannot tell whether that counts as reconstruction, so does not record it), or copy-pastes run_experiment into each of the three new scripts, producing three divergent copies of the evidence writer and three saved-work.json files whose numbers are not comparable.",
+     "fix": "Say explicitly that run.py may be refactored (parameterise run_experiment on groups and accept --prior/--observe; extend write_evidence with retained.json, receipts.json and interpretation.md) and that run.py edits do NOT trigger RECONSTRUCTION-REQUIRED \u2014 only program.py and calculations.py do. Require that run-1 regenerates byte-identically after the refactor as the proof.",
+     "severity": "major"
+    },
+    {
+     "section": "B. pql_document.py \u2014 the browser grammar",
+     "problem": "'emitting the browser grammar {PrincipleComponentRender, Ticks:[{name, Calculations:[{call, with, args, into}]}]}' and 'optionally prove node accepts it through src/core/exec.js readPql'. readPql requires each `with` VALUE to be a bare nonempty string address and invokePql then calls pxc.get(address) on it verbatim. The brief's own retained-program spelling for bindings is 'px:<addr>', and graph.Pcr.to_pcr_dict() emits {kind, ref} objects \u2014 which readPql rejects outright.",
+     "what_a_cold_agent_would_do_wrong": "Reuses the retained-program binding spelling and emits with:{rows:'px:input.ablation.rows'}. readPql accepts it (it is a nonempty string), so the agent believes node validated the document \u2014 but invokePql would look up the literal address 'px:input.ablation.rows' and fail. A false green on the highest-value cross-language check.",
+     "fix": "State: in the PQL document the `px:` prefix is stripped and `with` values are bare addresses; the node check must run invokePql (or at minimum assert every with-value is a key the PxC snapshot holds), not readPql alone.",
+     "severity": "major"
+    },
+    {
+     "section": "B. pql_document.py \u2014 which program is documentable",
+     "problem": "to_pql_document emits 'only when every binding is px: and every invocation has into, otherwise raising with the first offending invocation'. No program in the tree qualifies: build_program always produces fn: bindings (13 of 15 invocations, verified). So the success path is never exercised by the ablation.",
+     "what_a_cold_agent_would_do_wrong": "Ships to_pql_document with only the raising path tested and no positive case, scoring 0 on 'Killable tests' for that function; or invents a toy program without documenting that it invented one, so the node check runs against a fixture the other tree does not have.",
+     "fix": "Name the positive fixture: either the disc-stats program (a single invocation with a px: binding and an into \u2014 it qualifies) or examples/basic.py's program, and say the ablation program is expected to raise and naming which invocation (fit.all) is the first offender.",
+     "severity": "major"
+    },
+    {
+     "section": "B. Retain the disc-stats run",
+     "problem": "consumers/discstudio-card/experiments/disc-stats/run_experiment.py is a bare top-level script: it builds the PxC/PCR and prints at import time, and it imports `stats` which only resolves under PYTHONPATH=. from its own directory. B is scoped 'experiment-local, under pyto/experiments/grouped-ablation/', so retain.py must reach across into a consumer directory it is not supposed to modify.",
+     "what_a_cold_agent_would_do_wrong": "Imports run_experiment (executing it and printing to stdout inside a test), or edits run_experiment.py to add a main()/build() function \u2014 touching a file the consumer suite (18 tests, an explicit invariant) depends on, without noticing that check_all.sh runs that suite with PYTHONPATH=. from a different cwd.",
+     "fix": "Say how: a retain harness under grouped-ablation reconstructs the same PxC/PCR itself (fixture, Calculation('fn.discStats', annotate), Part addresses px.synthetic.disc_history / px.synthetic.disc_stats) by importing stats with the disc-stats directory on sys.path, and run_experiment.py is not modified. Confirm the sidecar path is evidence/disc-stats-sidecar.json and name the non-JSON values expected there (datetime.date, the frozen dataclasses, the tuple-keyed mold_counts dict).",
+     "severity": "major"
+    },
+    {
+     "section": "D. Determinism matrix \u2014 flags per row",
+     "problem": "The brief correctly says -I ignores PYTHONHASHSEED and to use `-s -P` with no `-E` for hash-seed rows (I verified: -I/-E give hash_randomization=1 and a hash that varies run to run even at PYTHONHASHSEED=0; -s -P at seed 0 gives hash_randomization=0 and a stable hash). But it does not say which flags the LF-copy row uses, and PYTHONPATH is ignored under both -I and -E \u2014 so the LF row cannot be an -I row either. It also does not say how many seed rows or which seeds.",
+     "what_a_cold_agent_would_do_wrong": "Runs the LF row under `python3 -I` with PYTHONPATH set, gets the CRLF editable-install src anyway, and records 'digests equal, LF row recorded' \u2014 a fabricated pass on the exact row the scoring rubric calls out.",
+     "fix": "Give the row table: replay row = `-I`, env {PATH}; hash rows = `-s -P`, env {PATH, PYTHONHASHSEED in 0..4}; LF row = `-s -P`, env {PATH, PYTHONHASHSEED=0, PYTHONPATH=<lf-copy>}, asserting pyto.__file__ resolves into the LF copy before running. Require each row to record its argv, its env keys, sys.flags.hash_randomization, hash('pyto') and pyto.__file__.",
+     "severity": "major"
+    },
+    {
+     "section": "D. Fresh-process replay \u2014 'cwd outside the repository'",
+     "problem": "The editable install is a .pth in /usr/local/lib/python3.11/dist-packages pointing at /home/user/DiscStudio-staging/pyto/src. I verified `cd /tmp && env -i PATH=... python3 -I -c 'import pyto'` succeeds and resolves INTO the repository. So the child is not isolated from the repository at all; cwd and env stripping only isolate it from the experiment directory, which is then deliberately re-added to sys.path.",
+     "what_a_cold_agent_would_do_wrong": "Writes a replay report claiming full isolation and 'no leakage' on the strength of the sys.modules dump, when the library under test was loaded from the repo the whole time \u2014 scoring 3 on 'Replay honesty' for a claim that is not true.",
+     "fix": "Say it in the brief: the child imports pyto through the editable .pth, which points into the repository; fresh-process.log must record pyto.__file__ and the resolving sys.path entry and state plainly that the isolation claim covers cwd, env and the experiment package only. Add it to questions.md as {?} ReplayIsolation.",
+     "severity": "major"
+    },
+    {
+     "section": "D. Fresh-process replay \u2014 what the child snippet contains",
+     "problem": "The brief specifies the flags, the env, the cwd, the argv and the log line, but not what the `-c` snippet imports or how it locates the registry. retained.json's `provider` records 'registry addresses with module source hashes' \u2014 addresses and hashes, not an importable module name \u2014 so from_program(program, registry) cannot get its registry from the record. Also unspecified: is retained.json's path a second argv entry, stdin, or hard-coded; is the child run with observe=True; and how it reports digests back (stdout JSON? a file?).",
+     "what_a_cold_agent_would_do_wrong": "Hard-codes `from calculations import REGISTRY` in the snippet, which is fine for run-1 but means the replay harness cannot replay the disc-stats record or the other tree's record \u2014 killing the cross-tree replay the brief calls the strongest evidence either side can produce.",
+     "fix": "Specify the child's contract: argv = [experiment_dir, retained_json_path, registry_module_name]; the child imports registry_module_name and reads its REGISTRY; it prints one JSON object {results: {id: sha256}, comparison_rows: [...]} on stdout and nothing else; the parent parses stdout and diffs. Say whether observe=True.",
+     "severity": "major"
+    },
+    {
+     "section": "A. The receipts seam \u2014 Receipt field names and shape vs ChessLab",
+     "problem": "Scoring rewards 'receipt mirrors the ChessLab Receipt ... with the honesty strings', but the brief silently diverges from contract.ts on four points: ChessLab has opId (brief says 'invocation id' with no field name), frozenCalculations as a LIST (brief says a singular `calculation`), startedAtMs (brief says started_ms \u2014 epoch ms or a perf_counter origin? int or float?), and probes/artifacts (dropped without comment). implementation_sha256's input bytes are also unspecified: inspect.getsource output encoded how, with line endings normalised or not \u2014 which matters because D asserts digest equality across a CRLF/LF matrix. And the brief's catch list (TypeError, ValueError) is for result_sha256; getsource raises TypeError for builtins and OSError for C/REPL-defined callables.",
+     "what_a_cold_agent_would_do_wrong": "Picks its own names and its own hash input, produces a receipts.json the other tree cannot diff field-for-field, and loses the transfer-fidelity comparison for a reason that has nothing to do with the work. If it hashes raw getsource bytes it may also see a digest drift on the LF row and misreport it as nondeterminism.",
+     "fix": "Give the exact dataclass: fields id, calculation, started_ms (float, time.time()*1000), duration_ms (float), declared_consumes, declared_produces, actual_consumes, actual_produces, writes, result_sha256, effective_arg_keys, shadowed_inputs \u2014 in that order; implementation_sha256 = sha256(inspect.getsource(fn).encode('utf-8')) with no newline normalisation, None on TypeError/OSError; and one sentence saying probes and artifacts are deliberately not transferred (deferred with Telemetry in questions.md).",
+     "severity": "major"
+    },
+    {
+     "section": "A. The receipts seam \u2014 effective_arg_keys",
+     "problem": "pcr.py builds `call_args = dict(resolved_inputs); call_args.update(invocation.args)`. 'effective_arg_keys' could mean the literal args keys, or the keys of call_args as actually passed to the callable. The two differ for every fit.* invocation (args {columns, variant} vs call_args {split, columns, variant}).",
+     "what_a_cold_agent_would_do_wrong": "Picks the literal-args reading, making effective_arg_keys a duplicate of sorted(invocation.args) and the 'effective' qualifier meaningless \u2014 and making shadowed_inputs impossible to cross-check against it.",
+     "fix": "Say 'effective_arg_keys = tuple(sorted(call_args)) \u2014 the keys actually handed to the callable, resolved inputs included; shadowed_inputs = tuple(sorted(set(args) & set(resolved_inputs)))'.",
+     "severity": "minor"
+    },
+    {
+     "section": "B. Retain \u2014 provider records 'the pyto version'",
+     "problem": "There is no pyto.__version__ (verified). The only version is pyproject.toml's `version = \"0.1.0\"` / importlib.metadata.version('pyto-lab'). The brief also asks for 'source hashes of core.py and pcr.py' without saying whether they are hashed as raw bytes (CRLF) or normalised \u2014 which interacts directly with D's LF row.",
+     "what_a_cold_agent_would_do_wrong": "Reads pyto.__version__, gets AttributeError, and either adds __version__ to pyto/__init__.py (a second library change, breaking the exactly-pcr.py acceptance) or hard-codes '0.1.0' as a string, so the field cannot detect the wheel change Day 5 depends on.",
+     "fix": "Specify importlib.metadata.version('pyto-lab') with a documented fallback string when the package is not installed, and say source hashes are of raw file bytes (so the LF row is EXPECTED to differ, and that difference is the datum the LineEndings question wants).",
+     "severity": "minor"
+    },
+    {
+     "section": "Acceptance block",
+     "problem": "Two of the six acceptance commands do not do what they appear to. (1) `git diff --stat d9dded6 -- pyto/src` runs after `cd pyto`, where the pathspec pyto/src matches nothing \u2014 verified: prints nothing, exit 0, regardless of what changed. (2) `grep -c 'lambda\\|<function' ... # 0` exits 1 on the passing case \u2014 verified \u2014 so under `set -e` the block aborts exactly when it should pass.",
+     "what_a_cold_agent_would_do_wrong": "Treats the empty git diff output as proof it made exactly one library change, when it may have changed core.py and __init__.py too; and either wraps the grep in `|| true` (making it unfalsifiable) or reports the acceptance block as failing.",
+     "fix": "Change to `git -C .. diff --stat d9dded6 -- pyto/src` (or `git diff --stat d9dded6 -- src`) and to `test \"$(grep -c 'lambda\\|<function' experiments/grouped-ablation/evidence/run-1/retained.json)\" = 0`.",
+     "severity": "minor"
+    },
+    {
+     "section": "A. The receipts seam \u2014 the stewardship citation",
+     "problem": "'a note citing `docs/PYTHON-LAB-STEWARDSHIP.md:53` that this seam records digests and durations and makes no external-input boundary decision'. Line 53 is 'The new shared capability is accepted only when a DiscStudio-owned fixture can run this sequence with an installed, versioned Pyto wheel:'. The sentence about the external-input boundary is line 56 ('...the owner confirms which presentation/config values are external inputs versus calculation results').",
+     "what_a_cold_agent_would_do_wrong": "Copies the :53 citation into CHANGES.md unchecked, shipping a note whose cited line does not support the claim \u2014 precisely the 'numbers/claims in prose that do not resolve to a file' failure the owner-legibility criterion penalises.",
+     "fix": "Cite docs/PYTHON-LAB-STEWARDSHIP.md:56 for the boundary claim (or :53-56 for the acceptance sequence plus the boundary sentence).",
+     "severity": "minor"
+    },
+    {
+     "section": "What to hand back / Deliverables B, D \u2014 output locations",
+     "problem": "CHANGES.md is pinned to pyto/CHANGES.md, but nothing else is: `questions.md` (pyto/? pyto/research/? the experiment dir?), `candidates/`, `evidence/replay/fresh-process.log`, `evidence/tamper/`, `evidence/registry-hole.log`, `evidence/determinism.log` are all given as bare relative paths with no stated root, and evidence/ exists only under experiments/grouped-ablation/.",
+     "what_a_cold_agent_would_do_wrong": "Scatters them \u2014 determinism.log under pyto/evidence/, questions.md at the repo root \u2014 so the owner's 'run one command, read one file' anchor fails and the two trees' hand-backs are not diffable.",
+     "fix": "One line: all evidence paths are relative to pyto/experiments/grouped-ablation/, and questions.md is pyto/questions.md alongside pyto/CHANGES.md.",
+     "severity": "minor"
+    },
+    {
+     "section": "Bake-off rules / Environment",
+     "problem": "`python3 -m pip install -e ./pyto[drawing]` is written from the repository root, while every acceptance command assumes cwd pyto/. The brief also never says the editable install must point at the agent's own tree \u2014 I verified the installed .pth here points at /home/user/DiscStudio-staging/pyto/src, so running check_all.sh from any other checkout silently tests someone else's library (that is exactly why the base-commit library suite reported 43 FAIL for me until I forced PYTHONPATH).",
+     "what_a_cold_agent_would_do_wrong": "Runs check_all.sh in a fresh clone without reinstalling, sees failures or passes belonging to a different src tree, and cannot tell which. This is the single most likely cause of an unreproducible 'before' column in the required before/after check_all output.",
+     "fix": "Add: 'reinstall editable from YOUR checkout and verify with `python3 -c \"import pyto; print(pyto.__file__)\"` before recording the before-counts; check_all.sh prints this line already \u2014 paste it in the hand-back.'",
+     "severity": "minor"
+    },
+    {
+     "section": "A. The receipts seam \u2014 CHANGES.md 'before and after test names'",
+     "problem": "'Add pyto/CHANGES.md with before and after test names'. Ambiguous between (a) the list of test names before and after the change \u2014 which for a purely additive seam differs only by the new test_receipts names, or (b) the per-suite counts before and after, which is what the hand-back list separately asks for from check_all.sh.",
+     "what_a_cold_agent_would_do_wrong": "Writes a count table, duplicating the check_all hand-back and leaving no record of which named tests are new \u2014 or dumps 100+ test names into a changelog.",
+     "fix": "Say which: 'list the test names added (test_receipts.py) and the names of any existing test whose behaviour or assertion changed (expected: none), plus the before/after Ran-N line for each suite.'",
+     "severity": "minor"
+    }
+   ],
+   "verdict": "No \u2014 a strong agent could get roughly two thirds of the day done from the brief alone, but five load-bearing points are wrong or absent (fn.ablation.rmse does not exist; evidence/run-1/retained.json does not exist and the brief never says to create it; the testimony byte-equality target is not byte-comparable; the tamper test's expected result is factually wrong because compare consumes all six scores; and the tracked-PxC observation is tautological because PCR.run resolves every binding itself), so the agent must invent answers and the two bake-off trees stop being comparable."
+  },
+  {
+   "reader": "Cold reader 2 \u2014 no prior exposure to Pyto, DiscStudio, the LAB, or Day 1. Read /home/user/DiscStudio-staging/pyto/research/briefs/day2-brief.md in full first, then worked only in /tmp/coldread2 (base tree d9dded6 extracted via git archive). Live tree treated as read-only; `pyto` resolved to the LIVE editable src, so every check was re-run with PYTHONPATH=/tmp/coldread2/pyto/src to get true base-commit behavior (the editable install is a plain .pth path append, so PYTHONPATH shadows it \u2014 verified).",
+   "executed": [
+    "mkdir -p /tmp/coldread2 && git -C /home/user/DiscStudio-staging archive d9dded6 pyto | tar -x -C /tmp/coldread2 -> OK, full pyto/ tree extracted",
+    "python3 -c 'import pyto; print(pyto.__file__)' -> /home/user/DiscStudio-staging/pyto/src/pyto/__init__.py (the LIVE tree, which already carries the reference run's in-progress Day 2 work: git diff --stat d9dded6 -- pyto/src shows pcr.py +208/-7, plus untracked retain.py/compare_local.py/candidates/test_retain.py/disc-stats sidecars). All later runs pinned with PYTHONPATH=/tmp/coldread2/pyto/src.",
+    "PYTHONPATH=<scratch src> bash scripts/check_all.sh (from its own path) -> library 43 OK, experiments/grouped-ablation 31 FAIL, experiments/s3-synthetic 5 OK, consumer 18 OK, disc-stats 4 OK, examples 2 OK. The single failure is test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_paths_changed: 'unavailable: fatal: not a git repository' \u2014 a scratch-tree artifact, not a base-commit defect. All six suite counts named in the brief confirmed exactly.",
+    "python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py' -> Ran 31, 1 failure (the git one above).",
+    "Opened and confirmed shape of: src/pyto/pcr.py (PcrRun is @dataclass(frozen=True, slots=True) with exactly pcr/ticks/results; PCR.run(self, pxc) resolves every binding itself via pxc.get and calls pxc.call with a plain dict), src/pyto/core.py (PxC.set returns PxWrite(address, kind) with kind in {new-address, replacement} only \u2014 no 'refinement'), src/pyto/__init__.py (exports live under pyto/src), src/pyto/graph.py (to_pcr_dict already emits {PrincipleComponentRender, Ticks:[{name, Calculations:[{id,call,with,args,into}]}]} with `with` as {kind,ref} objects), experiments/grouped-ablation/{program.py,calculations.py,features.py,run.py,timing.py,test_grouped_ablation.py}, evidence/run-1/* (9 files), scripts/check_all.sh, docs/PYTHON-LAB-STEWARDSHIP.md, reference/lab/chesslab-lab/contract.ts, /home/user/DiscStudio-staging/src/core/exec.js.",
+    "Confirmed run-1 evidence matches the brief: comparison.json ranking drop_g3 > drop_g0 > drop_g1 (verified), testimony.json keys exactly ['pcr','ticks'] (verified), REGISTRY has 5 module-level Calculations, program.py exposes build_program and family(), 6 variants -> 12 fit/score invocations sharing one split.",
+    "PYTHONPATH=<scratch src> python3 experiments/grouped-ablation/run.py --out /tmp/coldread2/probe/out1 -> wrote the 9-file set; diff of comparison.json and testimony.json against evidence/run-1 -> IDENTICAL (regeneration is deterministic). run.py --out is resolved as os.path.join(HERE, out) when relative \u2014 i.e. relative to the experiment directory, NOT cwd.",
+    "Prototyped deliverable A (probe/a_probe.py): built the real program, ran it, dumped json.dumps([asdict(t) for t in run.ticks]) (3385 bytes), listed PcrRun fields, tested json.dumps(sort_keys, separators, no default) on all 15 results -> all JSON-ok, printed bindings. RESULT: only 'select' and 'split' have Part bindings; all 12 fit/score bindings are already ResultRef, so declared_consumes (bound Part addresses) is [] for 12 of 15 invocations. inspect.getsource works for all 5 REGISTRY callables.",
+    "Verified adding a trailing `receipts: dict = field(default_factory=dict)` to a frozen+slots dataclass works and asdict() picks it up.",
+    "grep for PcrRun shape assertions -> FOUND tests/test_semantics.py:535: self.assertEqual(tuple(f.name for f in dataclasses.fields(PcrRun)), ('pcr','ticks','results')). Adding `receipts` fails the 43-test library suite.",
+    "Prototyped deliverable D child (probe/d_child.py) under `env -i PATH=... python3 -I` from cwd=/tmp, both as a file and as the brief's literal `-c` form. RESULT: works, argv[0] is '-c' and the experiment dir is argv[1]; but pyto resolves to /home/user/DiscStudio-staging/pyto/src (the editable install .pth in system dist-packages, which -I does NOT suppress).",
+    "Determinism matrix probe: `python3 -I` with PYTHONHASHSEED=1,2 -> hash_randomization stays 1 and hash('pyto') varies (seed ignored, as the brief says). `python3 -s -P` with PYTHONHASHSEED=0,1,2 -> hash_randomization 0,1,1 and three distinct hashes. Confirms only the seed-0 row can 'prove hash_randomization == 0'.",
+    "Line-ending audit: all six src/pyto/*.py are CRLF; all Day-1 experiment files and examples are LF; tests/ is mixed (test_graph.py CRLF, the other two LF). No .gitattributes in the repo. Also verified inspect.getsource() returns LF-normalized text even from the CRLF files (linecache reads in text mode).",
+    "importlib.metadata probe: version('pyto') raises PackageNotFoundError; the distribution is 'pyto-lab' 0.1.0. No __version__ anywhere under src/.",
+    "Acceptance-command probe: `grep -c 'lambda\\|<function' evidence/run-1/testimony.json` prints 0 and exits 1; under `bash -c 'set -e; ...'` the shell aborts before the next line.",
+    "node --version -> v22.22.2 (present). Read readPql in /home/user/DiscStudio-staging/src/core/exec.js: `with` values must be plain strings (text()), `into` is mandatory, and a name in both `with` and `args` is rejected. Read trackAccess: writes kind = !existed ? 'new-address' : declaredConsumes.has(address) ? 'refinement' : 'replacement'.",
+    "Read reference/lab/chesslab-lab/contract.ts: FrozenCalculation{implementationHash, identityScope:'runtime-function-body', limitation:'called helpers, constants, templates, and assets are not covered'}; Receipt{opId, frozenCalculations[], startedAtMs, durationMs, declaredConsumes, declaredProduces, actualConsumes, actualProduces, writes, probes, artifacts}.",
+    "sed -n '53p' docs/PYTHON-LAB-STEWARDSHIP.md -> 'The new shared capability is accepted only when a DiscStudio-owned fixture can run this sequence with an installed, versioned Pyto wheel:'",
+    "Read consumers/discstudio-card/experiments/disc-stats/run_experiment.py: a module-level script (no main guard) that builds the PxC, runs the PCR and prints on import; its external fixture holds dataclass instances (MembershipObservation/date, DiscRecord, Description) -> genuinely non-JSON.",
+    "Discovered research/ULTRACODE-WEEK.md (68KB) contains a far more detailed Day 2 plan than the brief, plus experiments/runs/day1/prompt.md which already lists several of the brief's defects as known 'Gaps'. The brief cites neither."
+   ],
+   "ambiguities": [
+    {
+     "section": "Deliverable A \u2014 PcrRun gains `receipts`",
+     "problem": "tests/test_semantics.py:535 asserts `tuple(f.name for f in dataclasses.fields(PcrRun)) == ('pcr','ticks','results')`. Adding the `receipts` field fails the 43-test library suite. The brief never mentions this guard, and its Hard Rules say 'Exactly one library change (A)' while Acceptance requires `python3 -m unittest discover -s tests -v` to be green.",
+     "what_a_cold_agent_would_do_wrong": "Implements the seam exactly as specified, runs check_all.sh, sees library go 43 -> 42 pass / 1 fail, and then either (a) concludes the seam is forbidden and reverts it under the 'seam changes testimony bytes' kill criterion (wrong \u2014 bytes are fine, it is a field-shape guard), (b) hides `receipts` outside the dataclass (e.g. a module-level side table or a non-field attribute), which slots=True makes impossible and which loses the specified API, or (c) silently deletes the assertion without recording it, which is exactly the 'tests that pass against a mutated library' failure the rubric punishes.",
+     "fix": "State explicitly: 'test_semantics.py:535 pins PcrRun's field tuple and must be updated to ('pcr','ticks','results','receipts') as part of A; record the before/after test names in CHANGES.md and note that the guard's intent (no run id, no timestamp on PcrRun itself) is preserved because receipts defaults to {}.' Also say whether the sibling guard at test_semantics.py:583 on PxWrite must stay untouched.",
+     "severity": "blocker"
+    },
+    {
+     "section": "Deliverable A \u2014 where `Receipt` lives / Acceptance `git diff --stat d9dded6 -- pyto/src  # exactly pcr.py`",
+     "problem": "`src/pyto/__init__.py` is itself under `pyto/src`. The acceptance command demands the diff show exactly one file, pcr.py \u2014 so Receipt and FrozenCalculation can never be re-exported from the `pyto` package namespace. The brief says only 'Receipt is a frozen dataclass' and never names its module or its import path.",
+     "what_a_cold_agent_would_do_wrong": "Follows the established house style (every other public type is in `pyto.__all__`), adds `Receipt` and `FrozenCalculation` to `src/pyto/__init__.py`, writes `from pyto import Receipt` in test_receipts.py, and then fails the final acceptance check with two files in the diff \u2014 discovering it only at the end, when the CHANGES.md and tests are already written against the wrong import path.",
+     "what_a_cold_agent_would_do_wrong_note": "",
+     "fix": "Say: 'Receipt and FrozenCalculation are defined in src/pyto/pcr.py and are NOT added to src/pyto/__init__.py or __all__ \u2014 the acceptance diff must show pcr.py alone. Tests import them as `from pyto.pcr import Receipt, FrozenCalculation`.'",
+     "severity": "blocker"
+    },
+    {
+     "section": "Deliverable A \u2014 `actual_consumes`/`actual_produces` 'observed through a tracked view of the PxC'",
+     "problem": "There is nothing for a tracked view to observe. PCR.run resolves every binding itself (pxc.get in the binding loop) and hands the calculation a plain dict; the calculation never receives the PxC. So actual_consumes is by construction identical to declared_consumes, and actual_produces identical to declared_produces. Worse, the brief defines declared_consumes as 'bound Part addresses' \u2014 and I measured that in the Day-1 program 12 of 15 invocations have zero Part bindings (fit.*/score.* are all rewritten to ResultRef at declaration time). Those twelve receipts get declared_consumes == actual_consumes == []. The brief never says what `fn:` bindings contribute, even though the whole point of the program is that twelve invocations share one split via `fn:split`.",
+     "what_a_cold_agent_would_do_wrong": "Builds a real tracking proxy around PxC, wires it through run(), and produces receipts where actual == declared on every row \u2014 then cannot write a killable test for the actual_* fields (any mutation that breaks tracking also breaks declared, or nothing fails), and ships twelve receipts whose consumes lists are empty, which reads to the owner as 'the seam proves nothing about the shared split'. Alternatively the agent invents `fn:<id>` entries in declared_consumes to make the receipts non-vacuous, diverging from the reference run's format and breaking the cross-tree replay comparison the brief's last line asks for.",
+     "fix": "Decide and state one of: (a) declared_consumes carries `px:<addr>` for Part bindings and `fn:<id>` for ResultRef bindings (mirroring input_refs, so the shared split is visible), or (b) it carries bare Part addresses only and the brief accepts twelve empty lists. Then say what the tracked view is actually for \u2014 e.g. 'PCR.run performs the gets through the tracked view so that actual_* is derived from observed access rather than re-derived from the binding table; they are expected to be equal for every program pyto can express today, and the test asserts that equality as the conformance check.' Name the one-line mutation that kills that test.",
+     "severity": "blocker"
+    },
+    {
+     "section": "Deliverable D \u2014 which library the fresh process loads",
+     "problem": "I ran the brief's exact recipe (`env -i PATH=... python3 -I -c ...` from cwd=/tmp) and the child imported pyto from /home/user/DiscStudio-staging/pyto/src \u2014 the editable install's .pth in system dist-packages, which `-I` does not suppress. With the environment stripped to PATH there is no way to point the child at the agent's own checkout, and PYTHONPATH would be ignored by -I anyway. The brief never says which pyto the replay must exercise.",
+     "what_a_cold_agent_would_do_wrong": "Working in a branch worktree or any checkout that is not the installed path, the agent writes the replay, sees it pass, and reports a green fresh-process replay that in fact replayed against a different pyto than the one it just modified \u2014 the seam under test is never loaded. Or the agent notices mid-way and starts inventing env vars / sys.path surgery in the child, breaking the 'stripped to PATH' honesty claim the rubric scores.",
+     "fix": "State the invariant: 'The agent must work in the same tree that `pip install -e` points at; replay.py asserts `pyto.__file__` startswith the repository's pyto/src and writes it into fresh-process.log, skipping with a named reason if it does not.' If instead the child should load a specific tree, say which flag combination is permitted to do it (and note that this conflicts with -I).",
+     "severity": "blocker"
+    },
+    {
+     "section": "Deliverable A \u2014 `writes` element type and the 'refinement' kind",
+     "problem": "PxC.set returns PxWrite(address, kind) where kind is only 'new-address' or 'replacement' \u2014 core.py has no 'refinement'. The acceptance diff pins the library change to pcr.py, so core.py cannot gain it. The brief says writes have three kinds but never says what type a writes entry is (reuse PxWrite? a new frozen dataclass in pcr.py? a plain dict?), nor that pcr.py must re-classify what core.py returned.",
+     "what_a_cold_agent_would_do_wrong": "Edits core.py to add the refinement kind (breaks the acceptance diff AND test_semantics.py:583's PxWrite field guard), or reuses PxWrite verbatim and ships receipts that can never say 'refinement', silently losing a third of the specified behavior. Either way the reference-run comparison diverges.",
+     "fix": "Say: 'writes is a tuple of a new frozen dataclass declared in pcr.py (fields: address, kind) \u2014 PCR.run takes the PxWrite that PxC.set returns and upgrades kind from replacement to refinement when the address is among that invocation's bound Part input addresses, mirroring src/core/exec.js:28. core.py is not touched.' Also note that refinement is only reachable when a Part is both read and written by the same invocation with no earlier writer in the same PCR (the declaration-time rewrite otherwise turns the read into fn:), and require the test to construct that case rather than assume the ablation program produces one.",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable C \u2014 where the new evidence files come from",
+     "problem": "Two Day-1 guards block the obvious route. test_grouped_ablation.py:177 asserts write_evidence's return equals EXPECTED_FILES exactly (the 9-file Day-1 set), and test_saved_work_carries_no_literal_reuse_counts asserts 'invocations_skipped' and 'ms_saved' are absent from what saved_work() produces. The brief says every run writes 'the Day 1 file set plus retained.json, receipts.json, saved-work.json (\u2026 invocations skippable \u2026, milliseconds saved)'. It never says whether run.py is extended or a new writer is added.",
+     "what_a_cold_agent_would_do_wrong": "Extends run.py's write_evidence to emit retained.json/receipts.json and extends saved_work() with invocations_skipped/ms_saved \u2014 turning the 31-test Day-1 suite red in two places, then either deletes those guards (destroying the Day-1 kill criteria the rubric rewards) or thrashes. Separately: evidence/run-1/retained.json is a required handback but does not exist at base, and the agent must work out that it can be written by a new script without touching evidence/run-1's other nine files (I verified regeneration is byte-identical for comparison.json and testimony.json, so this is safe \u2014 but the brief never says so).",
+     "fix": "State: 'run.py, write_evidence and saved_work are frozen; the Day-1 31 tests must stay green. run-2/3/4 use a new experiment-local writer that calls write_evidence for the Day-1 nine files and then adds retained.json, receipts.json, saved-work.json (Day-2 ledger, a distinct file from run.py's) and interpretation.md. evidence/run-1/retained.json is produced by retain.py against a fresh deterministic run of seed 7 / n 400 and added to the existing directory; the other nine files in run-1 are not rewritten.'",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable C \u2014 'Change only input Parts and the variants list'",
+     "problem": "The rule names program.py and calculations.py as the trip-wire files but says nothing about run.py or features.py. run_experiment(seed, n) hardcodes `GROUPS` imported from features.py and has no groups parameter; failed_variants() calls planted_weight_by_group() which maps group names to weights via features.GROUPS and will not recognise a 3x5 regrouping's group names. And run_from_retained.py must skip the Prepare invocations, but build_program unconditionally emits `select` and `split`.",
+     "what_a_cold_agent_would_do_wrong": "Either edits features.py/run.py and reports 'zero program edits' (overclaiming reuse \u2014 the rubric's 3-anchor), or copies run_experiment wholesale into run_regrouped.py and reports it as inheritance, or writes RECONSTRUCTION-REQUIRED.md for a case the brief's authors did not intend as a reconstruction. For run_from_retained.py there is no route at all through build_program, so a cold agent must invent a second program builder \u2014 which is a program.py change in spirit if not in file.",
+     "fix": "Enumerate the permitted change surface by filename: 'features.py and run.py MAY gain parameters (groups, fixture label) as long as the Day-1 31 tests pass unchanged; program.py and calculations.py MUST NOT change. For run_from_retained.py, seeding the retained split into the PxC and building a program whose Prepare tick is empty counts as a variants-list change if and only if it is expressed through build_program's existing arguments; if it is not, that IS the RECONSTRUCTION-REQUIRED result and should be written as one.'",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable D \u2014 determinism matrix, the LF-PYTHONPATH row",
+     "problem": "The brief says to add 'a row with an LF-converted copy of pyto/src on PYTHONPATH' but never says which interpreter flags that row uses. I verified `-I` ignores PYTHONPATH entirely, so an LF row run under -I silently exercises the installed CRLF library and passes vacuously \u2014 the exact 'passes silently' failure the brief's own last sentence forbids. Compounding this: inspect.getsource() returns LF-normalized text even from the CRLF sources, so any digest computed through getsource is line-ending-invariant by construction and the row can never fail.",
+     "what_a_cold_agent_would_do_wrong": "Reuses the -I command for consistency with the replay, records 'digests equal', and ships a row that proves nothing. Or notices getsource normalizes and cannot tell whether the brief wants a raw-file digest (which WOULD differ) or a getsource digest (which cannot).",
+     "fix": "Specify the row's flags ('-s -P, no -E, PYTHONPATH=<lf-copy>') and require the row to assert `pyto.__file__` actually points at the LF copy, skipping with a named reason otherwise. Say explicitly whether implementation_sha256 hashes inspect.getsource() output (LF-normalized, line-ending-invariant \u2014 then the LF row's purpose is to prove that invariance) or the raw file bytes.",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable D \u2014 determinism matrix, hash_randomization",
+     "problem": "The Deliverables text says 'run hash-seed rows with -s -P \u2026 record sys.flags.hash_randomization and hash('pyto') per row'. The scoring table's 3-anchor says 'rows prove hash_randomization == 0'. I measured: PYTHONHASHSEED=0 gives hash_randomization 0; seeds 1 and 2 give 1 with different hash values. The two statements cannot both hold for a multi-seed matrix.",
+     "what_a_cold_agent_would_do_wrong": "Runs seeds 0/1/2, gets 0/1/1, and either asserts ==0 on every row (two rows fail, agent concludes the environment is broken) or drops the non-zero rows to satisfy the rubric, losing the whole point of a hash-seed matrix.",
+     "fix": "Reword the anchor: 'the matrix records hash_randomization per row (0 only for PYTHONHASHSEED=0), proves it is 1 under -I regardless of seed, and asserts result digests are equal across all rows.'",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable B \u2014 `provider` records the pyto version and source hashes",
+     "problem": "There is no `__version__` anywhere under src/. The distribution name is `pyto-lab`, not `pyto` \u2014 importlib.metadata.version('pyto') raises PackageNotFoundError (verified). The brief also does not say whether the core.py/pcr.py source hashes are taken from the installed module files (CRLF, possibly a different tree) or the working checkout.",
+     "what_a_cold_agent_would_do_wrong": "Writes `importlib.metadata.version('pyto')` and gets a hard crash inside retain_run, or falls back to a hardcoded '0.1.0' string \u2014 a prose constant, which the brief's own rule ('every number computed by code at run time') rejects. And hashes the checkout's pcr.py while the fresh-process replay loads the installed one, so provider identity does not describe the library that actually ran.",
+     "fix": "Say: \"provider['pyto_version'] = importlib.metadata.version('pyto-lab'); source hashes are sha256 of the bytes of pyto.core.__file__ and pyto.pcr.__file__ as resolved at run time (i.e. the library that actually executed), not of paths in the checkout.\"",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable B \u2014 to_pql_document and the optional node check",
+     "problem": "readPql (src/core/exec.js:37-49) requires each `with` value to be a plain string address; the brief says emit `{call, with, args, into}` 'only when every binding is px:' but never says whether to strip the `px:` prefix. Separately, no invocation in the Day-1 program qualifies \u2014 twelve of the fifteen bind `fn:split` \u2014 so to_pql_document(build_program(...)) always raises and there is no positive case in the repository to feed node.",
+     "what_a_cold_agent_would_do_wrong": "Emits `\"split\": \"px:scratch.ablation.split\"`, node accepts it (it is a string) but resolves an address literally named 'px:scratch\u2026' and the check passes or fails for the wrong reason. And, finding no program that satisfies the gate, the agent either skips the node check entirely (losing points) or hand-writes a toy program and presents it as the ablation's document.",
+     "fix": "Say: '`with` values are bare addresses with the px: prefix stripped, matching readPql. The Day-1 ablation program is deliberately a negative case (it raises on the first fn: binding, fit.all) \u2014 the positive node check is run against examples/shared_result_fanout.py-shaped program X, or is skipped with the named reason \"no all-px program in this experiment\".'",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable B \u2014 retaining the disc-stats run",
+     "problem": "run_experiment.py in consumers/discstudio-card/experiments/disc-stats/ is a bare module-level script with no main guard: importing it builds the PxC, executes the PCR and prints. It imports `stats` from its own directory. The brief asks grouped-ablation-local code to retain that run and write evidence/disc-stats-sidecar.json under grouped-ablation, i.e. a cross-directory sys.path injection \u2014 which check_all.sh's header calls out as a specially whitelisted exception, and which D's own rule ('intra-repository \u2026 cross-repository injection is not') gestures at but does not settle. The brief also says 'a digest-plus-reference sidecar file' (singular) while the external value here is one address holding dataclass instances.",
+     "what_a_cold_agent_would_do_wrong": "Imports run_experiment and gets its stdout mixed into test output, or refactors it (a consumer change the brief did not authorize), or re-implements the fixture inline and retains a copy rather than the actual run. And guesses at the sidecar layout \u2014 the reference run in the live tree produced BOTH disc-stats-sidecar.json and disc-stats-sidecar.external.px.synthetic.disc_history.json, a two-file convention nothing in the brief implies.",
+     "fix": "Name the mechanism and the file layout: whether run_experiment.py may be given a main guard, how sys.path reaches stats.py, and whether the sidecar is one index file plus one file per non-JSON external address (and if so, the exact naming rule).",
+     "severity": "major"
+    },
+    {
+     "section": "Deliverable A \u2014 Receipt field details",
+     "problem": "Unspecified: the name of the invocation-id field (ChessLab uses opId, the brief says 'invocation id'); the clock and epoch for started_ms (ChessLab is startedAtMs; time.time()*1000? perf_counter, which has no epoch?); the text encoding for result_sha256; whether `receipts` is keyed by bare invocation id across all ticks (ids are PCR-unique, so yes, but it is never stated); whether declared_produces is a single address or a list; and whether receipts appear when observe=False (brief says 'defaulting to empty' \u2014 empty dict, or dict of empty receipts?).",
+     "what_a_cold_agent_would_do_wrong": "Picks perf_counter for started_ms (no wall-clock meaning, and the reference run picks time.time), or emits declared_produces as a string where the reference emits a list \u2014 either way the two trees' retained records are not comparable, defeating the brief's own closing instruction to replay each other's records.",
+     "fix": "Give the exact dataclass definition with field names, types and the clock ('started_ms = round(time.time()*1000)', 'duration_ms = round(perf_counter delta*1000, 3)', 'declared_produces: tuple[str, ...]', 'result_sha256 over the UTF-8 bytes', 'receipts is {} when observe is False').",
+     "severity": "minor"
+    },
+    {
+     "section": "Acceptance block",
+     "problem": "`grep -c 'lambda\\|<function' \u2026 # 0` exits 1 when the count is 0 (verified: prints 0, exit 1, and aborts under set -e). The desired outcome is an interpreter-level failure.",
+     "what_a_cold_agent_would_do_wrong": "Chains the acceptance commands in a script with set -e or &&, sees the run abort on the check that is actually passing, and hunts a nonexistent bug \u2014 or 'fixes' it by inverting the assertion.",
+     "fix": "Write it as `! grep -q 'lambda\\|<function' \u2026` (the style check_all.sh already uses for zero-count assertions) or annotate '# prints 0; exit status 1 is expected'.",
+     "severity": "minor"
+    },
+    {
+     "section": "Deliverable A \u2014 the CHANGES.md citation",
+     "problem": "The brief tells the agent to cite docs/PYTHON-LAB-STEWARDSHIP.md:53 for the claim that 'this seam records digests and durations and makes no external-input boundary decision'. Line 53 actually reads 'The new shared capability is accepted only when a DiscStudio-owned fixture can run this sequence with an installed, versioned Pyto wheel:' \u2014 the intro to the numbered acceptance list. It does not support the claim.",
+     "what_a_cold_agent_would_do_wrong": "Copies the citation verbatim into CHANGES.md, producing a document whose one load-bearing reference does not say what it is claimed to say \u2014 precisely what the 'Owner legibility' criterion punishes. Or spends time hunting for the right line and picks a different one than the reference run did.",
+     "fix": "Cite the line that actually carries the meaning (step 2 at line 54, 'retain the program, bound external inputs, result identities, provider identity, and selected result hashes', or step 5 at line 57 for the explanation-not-cache point) and re-check the line number against the base commit.",
+     "severity": "minor"
+    },
+    {
+     "section": "Deliverable C \u2014 run_regrouped.py output paths",
+     "problem": "run.py resolves a relative --out against HERE (the experiment directory), not cwd. The brief specifies the exact stdout string run_regrouped.py must print but says nothing about where its evidence lands or how it takes its --out.",
+     "what_a_cold_agent_would_do_wrong": "Writes run_regrouped.py with cwd-relative paths, runs the acceptance command from pyto/, and scatters evidence into pyto/evidence/run-2-regroup/ instead of pyto/experiments/grouped-ablation/evidence/run-2-regroup/ \u2014 where the handback list expects it.",
+     "fix": "One line: 'the new run scripts resolve relative --out against their own directory, matching run.py:288; default --out is evidence/run-2-regroup, evidence/run-3-reinput, evidence/run-4-from-retained respectively.'",
+     "severity": "minor"
+    },
+    {
+     "section": "Hard rules \u2014 'New files use LF line endings'",
+     "problem": "Every file under src/pyto is CRLF and there is no .gitattributes. The rule covers new files but is silent on edits to pcr.py, the one existing file the agent must modify.",
+     "what_a_cold_agent_would_do_wrong": "Appends LF lines to a CRLF file, producing a mixed-ending pcr.py and a git diff that is far larger or far noisier than 'exactly pcr.py' suggests \u2014 and, if an editor normalizes on save, a whole-file rewrite that makes the diff unreviewable.",
+     "fix": "Add: 'pcr.py stays CRLF; new lines added to it use CRLF. Everything new under pyto/ uses LF. Verify with `file` on the changed files before committing.'",
+     "severity": "minor"
+    },
+    {
+     "section": "Bake-off rules \u2014 'Everything you need is in the repository at that commit'",
+     "problem": "The brief itself is not in d9dded6 (there is no research/briefs/ directory at base). More consequentially, research/ULTRACODE-WEEK.md contains a much fuller Day 2 plan \u2014 including the retain/replay shape, the `env -i PATH=$PATH python3 -I` recipe, and named {?} labels \u2014 and experiments/runs/day1/prompt.md already lists several of this brief's defects as known 'Gaps' (including the grep -c exit-status trap and the testimony-shape drift after the seam). The brief points only at lab-transfer-ledger.md.",
+     "what_a_cold_agent_would_do_wrong": "Never opens ULTRACODE-WEEK.md (68KB, unmentioned) and re-derives from scratch decisions that are already recorded there, diverging from the reference run on format details that the closing cross-replay comparison depends on. Or, conversely, finds it late and has to redo work.",
+     "fix": "Either point at research/ULTRACODE-WEEK.md's Day 2 section and experiments/runs/day1/ explicitly as required reading, or state that they are deliberately out of scope and the brief is the sole spec.",
+     "severity": "minor"
+    },
+    {
+     "section": "What exists at the base commit \u2014 'check_all.sh runs every suite'",
+     "problem": "check_all.sh imports pyto from the installed package (it prints `pyto module:` from a plain `import pyto`) and runs the examples with plain python3. In any working copy that is not the editable-install target, it silently validates a different library. And in a non-git working copy the grouped-ablation suite fails at base (31 tests, 1 failure on commit.txt), which I hit immediately.",
+     "what_a_cold_agent_would_do_wrong": "Starts the day with a red suite and no baseline, and either debugs a Day-1 test that is fine or assumes the base commit is broken. Or works in a worktree and reports 'consumer suites unchanged' about a library it never loaded.",
+     "fix": "Add to the brief: 'Before starting, run check_all.sh and confirm 43/31/5/18/4/2 all green; if grouped-ablation fails on commit.txt your working copy is not a git checkout. Confirm `python3 -c \"import pyto; print(pyto.__file__)\"` points inside your own checkout \u2014 check_all.sh and the fresh-process replay both use the installed package.'",
+     "severity": "minor"
+    }
+   ],
+   "verdict": "No \u2014 a strong agent could get most of B, C and D standing up from the brief alone, but Deliverable A cannot be landed green as written without independently discovering and relaxing the PcrRun field guard at tests/test_semantics.py:535, inferring that Receipt must not be exported from src/pyto/__init__.py, and inventing an answer for actual_consumes (which is vacuous by construction and empty for 12 of the 15 invocations), while Deliverable D's fresh process silently loads whatever pyto the editable install points at; those four are guesses no amount of care removes, so the brief needs the fixes above before it is executable cold."
+  }
+ ]
+}
