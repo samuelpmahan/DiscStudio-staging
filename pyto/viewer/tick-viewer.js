@@ -11,7 +11,7 @@
  * run under a minimal document shim in `node --test` with no jsdom.
  */
 
-import { validate, bareAddress, tickDurationMs, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords } from './adapters.js';
+import { validate, bareAddress, tickDurationMs, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex } from './adapters.js';
 
 /* ------------------------------------------------------------------ */
 /* small DOM helpers (doc is always explicit)                          */
@@ -337,6 +337,53 @@ export function renderRecord(record, { doc = globalThis.document, filter = '' } 
 }
 
 /* ------------------------------------------------------------------ */
+/* watch it think: playback scheduling (pure -- no DOM, no timers)     */
+/* ------------------------------------------------------------------ */
+
+// A run with no recorded durations plays at this fixed pace, unscaled by speed.
+const FIXED_STEP_MS = 400;
+
+function scheduleRound3(value) {
+  return Math.round(value * 1000) / 1000;
+}
+
+/**
+ * Ordered {tick, invocation, at_ms} events: each Calculation "finishes" at
+ * the cumulative sum of the durations recorded before it, in record order,
+ * scaled by speedFactor (1 = real time, 10/100 = that many times slower).
+ */
+export function computeSchedule(record, speedFactor = 1) {
+  const hasDurations = record.ticks.some((tick) => tick.invocations.some((invocation) => typeof invocation.duration_ms === 'number'));
+  const events = [];
+  let cumulative = 0;
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) {
+      if (hasDurations) cumulative += typeof invocation.duration_ms === 'number' ? invocation.duration_ms : 0;
+      else cumulative += FIXED_STEP_MS;
+      events.push({ tick: tick.index, invocation: invocation.id, at_ms: hasDurations ? scheduleRound3(cumulative * speedFactor) : cumulative });
+    }
+  }
+  return events;
+}
+
+/** The record as it stood at atMs, with parts/counters re-derived so it still validates, and the event currently completing. */
+export function scheduleFrame(record, schedule, atMs) {
+  const shown = new Set();
+  let now = null;
+  for (const event of schedule) {
+    if (event.at_ms > atMs) break;
+    shown.add(event.invocation);
+    now = event;
+  }
+  const ticks = [];
+  for (const tick of record.ticks) {
+    const invocations = tick.invocations.filter((invocation) => shown.has(invocation.id));
+    if (invocations.length) ticks.push({ ...tick, invocations });
+  }
+  return { record: { ...record, ticks, parts: derivePartIndex(ticks), counters: deriveCounters(ticks) }, now };
+}
+
+/* ------------------------------------------------------------------ */
 /* loading a record: embedded block, file, drop, ?src=                 */
 /* ------------------------------------------------------------------ */
 
@@ -364,6 +411,85 @@ export function coerceToRecord(parsed) {
   throw new Error('Unrecognized document: expected a pyto-run-record@1, or {pql, receipt} / {receipts} / {records} from a LAB runtime.');
 }
 
+/** Playback controller: Play, Pause, Step, Speed, and the now/clock markers. */
+function createPlayback(doc, output, filterBox, getRecord) {
+  const toggle = doc.getElementById('playback-toggle');
+  const bar = doc.getElementById('playback-bar');
+  if (!toggle || !bar) return { isActive: () => false, render() {}, onRecordChanged() {}, autostart() {} };
+
+  const speedSel = doc.getElementById('speed');
+  const nowEl = doc.getElementById('playback-now');
+  const clockEl = doc.getElementById('playback-clock');
+  let active = false;
+  let schedule = [];
+  let shown = 0;
+  let timer = null;
+
+  const clearTimer = () => { if (timer !== null) { clearTimeout(timer); timer = null; } };
+  const speedFactor = () => Number(speedSel ? speedSel.value : 1) || 1;
+
+  const render = () => {
+    while (output.firstChild) output.removeChild(output.firstChild);
+    const record = getRecord();
+    if (!record) return;
+    const atMs = shown ? schedule[shown - 1].at_ms : -1;
+    const { record: partial, now } = scheduleFrame(record, schedule, atMs);
+    output.appendChild(partial.ticks.length
+      ? renderRecord(partial, { doc, filter: filterBox ? filterBox.value : '' })
+      : el(doc, 'p', { className: 'none', text: 'watching for the first Calculation…' }));
+    if (nowEl) nowEl.textContent = now ? `tick ${now.tick} · ${now.invocation}` : 'not started';
+    if (clockEl) clockEl.textContent = `${now ? now.at_ms.toFixed(0) : '0'} ms`;
+  };
+
+  const revealOne = () => {
+    if (shown >= schedule.length) return;
+    shown += 1;
+    render();
+  };
+  const scheduleNext = () => {
+    clearTimer();
+    if (shown >= schedule.length) return;
+    const from = shown ? schedule[shown - 1].at_ms : 0;
+    timer = setTimeout(() => { revealOne(); scheduleNext(); }, Math.max(0, schedule[shown].at_ms - from));
+  };
+  const reset = () => {
+    clearTimer();
+    const record = getRecord();
+    schedule = record ? computeSchedule(record, speedFactor()) : [];
+    shown = 0;
+  };
+
+  toggle.addEventListener('click', () => {
+    active = !active;
+    toggle.setAttribute('aria-pressed', String(active));
+    bar.hidden = !active;
+    if (active) reset(); else clearTimer();
+    render();
+  });
+  const on = (id, fn) => { const node = doc.getElementById(id); if (node) node.addEventListener('click', fn); };
+  on('play-btn', () => { if (active) scheduleNext(); });
+  on('pause-btn', clearTimer);
+  on('step-btn', () => { if (active) { clearTimer(); revealOne(); } });
+  if (speedSel) speedSel.addEventListener('change', () => { if (active) { reset(); render(); } });
+
+  return {
+    isActive: () => active,
+    render,
+    onRecordChanged: () => { if (active) { reset(); render(); } },
+    autostart: () => {
+      const params = new URLSearchParams(globalThis.location ? globalThis.location.search : '');
+      const flagged = params.get('play') === '1' || (doc.body && doc.body.getAttribute && doc.body.getAttribute('data-play') === '1');
+      if (!flagged) return;
+      active = true;
+      toggle.setAttribute('aria-pressed', 'true');
+      bar.hidden = false;
+      reset();
+      render();
+      scheduleNext();
+    }
+  };
+}
+
 /** Wire the page: embedded record, ?src=, file picker, drag and drop. */
 export function mount(doc = globalThis.document) {
   const output = doc.getElementById('output');
@@ -372,12 +498,15 @@ export function mount(doc = globalThis.document) {
   const picker = doc.getElementById('file');
   let current = null;
 
+  const playback = createPlayback(doc, output, filterBox, () => current);
+
   const say = (message, isError = false) => {
     status.textContent = message;
     status.className = isError ? 'status error' : 'status';
   };
 
   const draw = () => {
+    if (playback.isActive()) { playback.render(); return; }
     while (output.firstChild) output.removeChild(output.firstChild);
     if (!current) return;
     output.appendChild(renderRecord(current, { doc, filter: filterBox ? filterBox.value : '' }));
@@ -387,6 +516,7 @@ export function mount(doc = globalThis.document) {
     try {
       current = coerceToRecord(parsed);
       say(`${label}: ${current.pcr} · ${current.source.runtime} · ${current.counters.invocations} invocations`);
+      playback.onRecordChanged();
       draw();
     } catch (error) {
       current = null;
@@ -431,6 +561,7 @@ export function mount(doc = globalThis.document) {
     current = embedded;
     say(`embedded record: ${embedded.pcr} · ${embedded.source.runtime} · ${embedded.counters.invocations} invocations`);
     draw();
+    playback.autostart();
     return;
   }
 
@@ -445,6 +576,7 @@ export function mount(doc = globalThis.document) {
     fetch(src)
       .then((response) => (response.ok ? response.text() : Promise.reject(new Error(`${response.status} ${response.statusText}`))))
       .then((text) => loadText(text, src))
+      .then(() => playback.autostart())
       .catch((error) => say(`${src}: ${error.message}`, true));
     return;
   }
