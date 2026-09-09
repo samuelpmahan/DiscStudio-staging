@@ -706,3 +706,20 @@ their Parts and the Calculations they wrote, so a tutoring agent reads how they 
 own records (what they retry, where they write `{?}`, what they undo, how long a Tick takes them),
 never from a profile.
 Owner, 2026-09-09 evening, on why any of this exists when ChainSpot and DiscStudio do not need it: "Workspace. Educational." and, of Homeroom Heroes, "this would be a good reason why". So the workspace is not a side effect; it is the product for that audience, and the studio is its first tenant.
+
+### {?} NeatLearning
+The owner, 2026-09-09 night: "imagine neat-learning (like awesome-* but neat based). Easy, neat based
+teacher-student stuff. Teacher says okay assignments in, they submit and get instant scores." Status:
+an idea, nothing built; task 23 (students) is the seed. The mapping is one to one: course = repo,
+teacher owns MAIN; assignment = a package brief (student folder as allowed paths, teacher's tests as
+the verifier, a reference the tests encode); start = neat new; submit = neat pack (the score is in
+the evidence before anyone looks); accepted = neat land (disjoint folders, no conflicts); grade record
+= the landing receipt; gradebook = the Today log; resubmit = a new task, every attempt kept; write-up
+= HANDOFF.md read cold by the teacher or an agent first; copying = identical result digests on a
+step. The awesome-* part: neat-learning is a repo of assignment packages (brief, verifier, reference,
+sample hand-off) and contributors add them through neat, so the collection grades its own additions.
+Missing: a score in the receipt (passed of total, not exit 0/1) and `neat list` showing it.
+Defaults, all overturnable: one class repo with desks visible (digests make copying visible; reading
+another desk is learning); the verifier is the teacher's reference and the cold read stays the real
+grade; personal Parts accumulate on the student's own desk across the term and that is what a
+tutoring agent reads, never a profile. Bites: pyto/experiments/students/, LANDING.md, neat.sh.
