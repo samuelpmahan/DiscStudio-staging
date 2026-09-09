@@ -50,14 +50,139 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 
 ## What changed (the candidate)
 
+- A  mailbox/to-gpt/0002-neat-anywhere-task.md
+- M  pyto/BOARD.md
 - M  pyto/CHANGES.md
+- M  pyto/LANDING.md
+- M  pyto/consumers/discstudio-card/app.py
+- M  pyto/experiments/grouped-ablation/calculations.py
+- M  pyto/experiments/grouped-ablation/evidence/lf-source-drift.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/forged-record-refused.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-2-regroup.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-3-reinput.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-4-from-retained.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/digest-forged.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/module-leak.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/registry-forged.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/source-sha-mismatch.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/value-forged-rows.log
+- M  pyto/experiments/grouped-ablation/evidence/run-1/commit.txt
+- M  pyto/experiments/grouped-ablation/evidence/run-1/comparison.json
+- M  pyto/experiments/grouped-ablation/evidence/run-1/comparison.md
+- M  pyto/experiments/grouped-ablation/evidence/run-1/failed-variants.md
+- M  pyto/experiments/grouped-ablation/evidence/run-1/receipts.json
+- M  pyto/experiments/grouped-ablation/evidence/run-1/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-1/saved-work.json
+- M  pyto/experiments/grouped-ablation/evidence/run-1/timings.json
+- M  pyto/experiments/grouped-ablation/evidence/run-1/variants.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/commit.txt
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/comparison.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/comparison.md
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/interpretation.md
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/receipts.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/saved-work.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/timings.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/commit.txt
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/comparison.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/comparison.md
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/failed-variants.md
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/interpretation.md
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/receipts.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/saved-work.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/timings.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/variants.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/commit.txt
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/comparison.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/comparison.md
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/failed-variants.md
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/interpretation.md
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/receipts.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/saved-work.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/timings.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/variants.json
 - M  pyto/experiments/grouped-ablation/evidence/run-6-cached/interpretation.md
 - M  pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json
+- M  pyto/experiments/grouped-ablation/evidence/tamper/mutating-baseline-refused-record.json
+- M  pyto/experiments/grouped-ablation/evidence/tamper/mutating-baseline-refused.json
+- M  pyto/experiments/grouped-ablation/evidence/tamper/report.json
+- M  pyto/experiments/grouped-ablation/evidence/tamper/retained-tampered.json
+- M  pyto/experiments/grouped-ablation/features.py
 - M  pyto/experiments/grouped-ablation/hits.py
 - M  pyto/experiments/grouped-ablation/materialize_run.py
+- M  pyto/experiments/grouped-ablation/replay.py
 - M  pyto/experiments/grouped-ablation/run_cached.py
+- M  pyto/experiments/grouped-ablation/second_experiment.py
+- M  pyto/experiments/grouped-ablation/test_materials.py
+- M  pyto/experiments/grouped-ablation/test_replay.py
 - A  pyto/experiments/grouped-ablation/test_run_cached.py
+- A  pyto/experiments/landings/20260909T080631Z-task-1/check_all.txt
+- A  pyto/experiments/landings/20260909T081311Z-windows-venv/check_all.txt
+- A  pyto/experiments/landings/20260909T081311Z-windows-venv/receipt.json
+- A  pyto/experiments/landings/20260909T081311Z-windows-venv/verifier.txt
+- A  pyto/experiments/landings/20260909T081928Z-task-1/check_all.txt
+- A  pyto/experiments/landings/20260909T081928Z-task-1/receipt.json
+- A  pyto/experiments/landings/20260909T084119Z-landing-bookkeeping/check_all.txt
+- A  pyto/experiments/landings/20260909T084119Z-landing-bookkeeping/verifier.txt
+- A  pyto/experiments/landings/20260909T084437Z-portable-sums/check_all.txt
+- A  pyto/experiments/landings/20260909T084437Z-portable-sums/verifier.txt
+- A  pyto/experiments/landings/20260909T084525Z-portable-sums/check_all.txt
+- A  pyto/experiments/landings/20260909T084525Z-portable-sums/verifier.txt
+- A  pyto/experiments/landings/20260909T084626Z-portable-sums/check_all.txt
+- A  pyto/experiments/landings/20260909T084626Z-portable-sums/verifier.txt
+- A  pyto/experiments/landings/20260909T084745Z-portable-sums/check_all.txt
+- A  pyto/experiments/landings/20260909T084745Z-portable-sums/verifier.txt
+- A  pyto/experiments/landings/20260909T084944Z-portable-sums/check_all.txt
+- A  pyto/experiments/landings/20260909T084944Z-portable-sums/receipt.json
+- A  pyto/experiments/landings/20260909T084944Z-portable-sums/verifier.txt
+- A  pyto/experiments/landings/20260909T085038Z-task-4/check_all.txt
+- A  pyto/experiments/landings/20260909T085038Z-task-4/receipt.json
+- A  pyto/experiments/landings/20260909T085038Z-task-4/verifier.txt
+- A  pyto/experiments/landings/20260909T085131Z-task-5/check_all.txt
+- A  pyto/experiments/landings/20260909T085131Z-task-5/receipt.json
+- A  pyto/experiments/landings/20260909T085131Z-task-5/verifier.txt
+- A  pyto/experiments/landings/20260909T085216Z-task-7/check_all.txt
+- A  pyto/experiments/landings/20260909T085216Z-task-7/receipt.json
+- A  pyto/experiments/landings/20260909T085216Z-task-7/verifier.txt
+- A  pyto/experiments/landings/20260909T085915Z-task-2/check_all.txt
+- A  pyto/experiments/landings/20260909T085915Z-task-2/verifier.txt
+- A  pyto/experiments/landings/20260909T090043Z-suite-hygiene/check_all.txt
+- A  pyto/experiments/landings/20260909T090043Z-suite-hygiene/receipt.json
+- A  pyto/experiments/landings/20260909T090043Z-suite-hygiene/verifier.txt
+- A  pyto/experiments/landings/20260909T090128Z-task-2/check_all.txt
+- A  pyto/experiments/landings/20260909T090128Z-task-2/receipt.json
+- A  pyto/experiments/landings/20260909T090128Z-task-2/verifier.txt
+- A  pyto/experiments/landings/failed/20260909T080631Z-task-1.json
+- A  pyto/experiments/landings/failed/20260909T081551Z-task-1.json
+- A  pyto/experiments/landings/failed/20260909T081613Z-task-1.json
+- A  pyto/experiments/landings/failed/20260909T083746Z-task-4.json
+- A  pyto/experiments/landings/failed/20260909T083759Z-task-5.json
+- A  pyto/experiments/landings/failed/20260909T083814Z-task-7.json
+- A  pyto/experiments/landings/failed/20260909T084036Z-task-4.json
+- A  pyto/experiments/landings/failed/20260909T084037Z-task-5.json
+- A  pyto/experiments/landings/failed/20260909T084038Z-task-7.json
+- A  pyto/experiments/landings/failed/20260909T084119Z-landing-bookkeeping.json
+- A  pyto/experiments/landings/failed/20260909T084149Z-task-4.json
+- A  pyto/experiments/landings/failed/20260909T084150Z-task-5.json
+- A  pyto/experiments/landings/failed/20260909T084151Z-task-7.json
+- A  pyto/experiments/landings/failed/20260909T084437Z-portable-sums.json
+- A  pyto/experiments/landings/failed/20260909T084525Z-portable-sums.json
+- A  pyto/experiments/landings/failed/20260909T084626Z-portable-sums.json
+- A  pyto/experiments/landings/failed/20260909T084745Z-portable-sums.json
+- A  pyto/experiments/landings/failed/20260909T085915Z-task-2.json
 - M  pyto/questions.md
+- A  pyto/research/from-registry-to-os.md
+- A  pyto/scripts/address_census.py
+- M  pyto/scripts/check_all.sh
+- A  pyto/scripts/check_board_log.sh
+- A  pyto/scripts/check_receipts.sh
+- M  pyto/scripts/land.sh
+- M  pyto/scripts/neat.sh
+- A  pyto/src/pyto/address.py
+- A  pyto/tests/test_address.py
 - M  pyto/tests/test_materialize.py
 - M  pyto/viewer/README.md
 - M  pyto/viewer/RECORD.md
@@ -71,44 +196,169 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 - M  pyto/viewer/tick-viewer.js
 
 ```
-pyto/CHANGES.md                                    | 152 +++++++++++++
- .../evidence/run-6-cached/interpretation.md        |  18 +-
- .../evidence/run-6-cached/reuse-ledger.json        |  39 +++-
- pyto/experiments/grouped-ablation/hits.py          |   2 +-
- .../grouped-ablation/materialize_run.py            |   2 +-
- pyto/experiments/grouped-ablation/run_cached.py    | 136 ++++++++++--
- .../grouped-ablation/test_run_cached.py            | 241 +++++++++++++++++++++
- pyto/questions.md                                  |   2 +-
- pyto/tests/test_materialize.py                     | 120 +++++++++-
- pyto/viewer/README.md                              |  15 ++
- pyto/viewer/RECORD.md                              |  57 ++++-
- pyto/viewer/adapters.js                            |  93 ++++++--
- pyto/viewer/fixtures/pyto-value-kinds.json         |  26 +--
- pyto/viewer/test/adapters.test.mjs                 | 103 ++++++++-
- pyto/viewer/test/emit_adapter_records.mjs          |   4 +-
- pyto/viewer/test/record_schema.py                  |  40 ++--
- pyto/viewer/test/render.test.mjs                   |   2 +-
- pyto/viewer/test/test_record_schema.py             |  40 +++-
- pyto/viewer/tick-viewer.js                         |   2 +-
- 19 files changed, 970 insertions(+), 124 deletions(-)
+mailbox/to-gpt/0002-neat-anywhere-task.md          |    26 +
+ pyto/BOARD.md                                      |    70 +-
+ pyto/CHANGES.md                                    |   152 +
+ pyto/LANDING.md                                    |    17 +
+ pyto/consumers/discstudio-card/app.py              |    25 +
+ pyto/experiments/grouped-ablation/calculations.py  |    21 +-
+ .../grouped-ablation/evidence/lf-source-drift.log  |     6 +-
+ .../evidence/replay/forged-record-refused.log      |    12 +-
+ .../replay/fresh-process-run-2-regroup.log         |     8 +-
+ .../replay/fresh-process-run-3-reinput.log         |     8 +-
+ .../replay/fresh-process-run-4-from-retained.log   |     8 +-
+ .../evidence/replay/fresh-process.log              |     8 +-
+ .../evidence/replay/refusals/digest-forged.log     |    12 +-
+ .../evidence/replay/refusals/module-leak.log       |     8 +-
+ .../evidence/replay/refusals/registry-forged.log   |    12 +-
+ .../replay/refusals/source-sha-mismatch.log        |     8 +-
+ .../evidence/replay/refusals/value-forged-rows.log |    12 +-
+ .../grouped-ablation/evidence/run-1/commit.txt     |     2 +-
+ .../evidence/run-1/comparison.json                 |    32 +-
+ .../grouped-ablation/evidence/run-1/comparison.md  |    14 +-
+ .../evidence/run-1/failed-variants.md              |     4 +-
+ .../grouped-ablation/evidence/run-1/receipts.json  |   112 +-
+ .../grouped-ablation/evidence/run-1/retained.json  | 16034 +++++-----
+ .../evidence/run-1/saved-work.json                 |    18 +-
+ .../grouped-ablation/evidence/run-1/timings.json   |     6 +-
+ .../grouped-ablation/evidence/run-1/variants.json  |    16 +-
+ .../evidence/run-2-regroup/commit.txt              |     2 +-
+ .../evidence/run-2-regroup/comparison.json         |    14 +-
+ .../evidence/run-2-regroup/comparison.md           |     8 +-
+ .../evidence/run-2-regroup/interpretation.md       |    12 +-
+ .../evidence/run-2-regroup/receipts.json           |    80 +-
+ .../evidence/run-2-regroup/retained.json           | 16026 +++++-----
+ .../evidence/run-2-regroup/saved-work.json         |    12 +-
+ .../evidence/run-2-regroup/timings.json            |     6 +-
+ .../evidence/run-3-reinput/commit.txt              |     2 +-
+ .../evidence/run-3-reinput/comparison.json         |    32 +-
+ .../evidence/run-3-reinput/comparison.md           |    14 +-
+ .../evidence/run-3-reinput/failed-variants.md      |     4 +-
+ .../evidence/run-3-reinput/interpretation.md       |     2 +-
+ .../evidence/run-3-reinput/receipts.json           |   112 +-
+ .../evidence/run-3-reinput/retained.json           | 32034 +++++++++----------
+ .../evidence/run-3-reinput/saved-work.json         |     6 +-
+ .../evidence/run-3-reinput/timings.json            |     6 +-
+ .../evidence/run-3-reinput/variants.json           |    12 +-
+ .../evidence/run-4-from-retained/commit.txt        |     2 +-
+ .../evidence/run-4-from-retained/comparison.json   |    32 +-
+ .../evidence/run-4-from-retained/comparison.md     |    14 +-
+ .../run-4-from-retained/failed-variants.md         |     4 +-
+ .../evidence/run-4-from-retained/interpretation.md |     2 +-
+ .../evidence/run-4-from-retained/receipts.json     |   106 +-
+ .../evidence/run-4-from-retained/retained.json     | 14430 ++++-----
+ .../evidence/run-4-from-retained/saved-work.json   |     6 +-
+ .../evidence/run-4-from-retained/timings.json      |     2 +-
+ .../evidence/run-4-from-retained/variants.json     |    12 +-
+ .../evidence/run-6-cached/interpretation.md        |    20 +-
+ .../evidence/run-6-cached/reuse-ledger.json        |    45 +-
+ .../tamper/mutating-baseline-refused-record.json   | 16034 +++++-----
+ .../evidence/tamper/mutating-baseline-refused.json |    56 +-
+ .../grouped-ablation/evidence/tamper/report.json   |    56 +-
+ .../evidence/tamper/retained-tampered.json         | 16034 +++++-----
+ pyto/experiments/grouped-ablation/features.py      |    35 +-
+ pyto/experiments/grouped-ablation/hits.py          |     2 +-
+ .../grouped-ablation/materialize_run.py            |     2 +-
+ pyto/experiments/grouped-ablation/replay.py        |    40 +-
+ pyto/experiments/grouped-ablation/run_cached.py    |   137 +-
+ .../grouped-ablation/second_experiment.py          |    32 +-
+ .../experiments/grouped-ablation/test_materials.py |    27 +-
+ pyto/experiments/grouped-ablation/test_replay.py   |     9 +-
+ .../grouped-ablation/test_run_cached.py            |   241 +
+ .../landings/20260909T080631Z-task-1/check_all.txt |  1658 +
+ .../20260909T081311Z-windows-venv/check_all.txt    |  1164 +
+ .../20260909T081311Z-windows-venv/receipt.json     |    53 +
+ .../20260909T081311Z-windows-venv/verifier.txt     |     1 +
+ .../landings/20260909T081928Z-task-1/check_all.txt |  1164 +
+ .../landings/20260909T081928Z-task-1/receipt.json  |   358 +
+ .../check_all.txt                                  |  1569 +
+ .../verifier.txt                                   |     0
+ .../20260909T084437Z-portable-sums/check_all.txt   |  1763 +
+ .../20260909T084437Z-portable-sums/verifier.txt    |     1 +
+ .../20260909T084525Z-portable-sums/check_all.txt   |  1550 +
+ .../20260909T084525Z-portable-sums/verifier.txt    |     1 +
+ .../20260909T084626Z-portable-sums/check_all.txt   |  1303 +
+ .../20260909T084626Z-portable-sums/verifier.txt    |     1 +
+ .../20260909T084745Z-portable-sums/check_all.txt   |  1303 +
+ .../20260909T084745Z-portable-sums/verifier.txt    |     1 +
+ .../20260909T084944Z-portable-sums/check_all.txt   |  1164 +
+ .../20260909T084944Z-portable-sums/receipt.json    |   258 +
+ .../20260909T084944Z-portable-sums/verifier.txt    |     1 +
+ .../landings/20260909T085038Z-task-4/check_all.txt |  1164 +
+ .../landings/20260909T085038Z-task-4/receipt.json  |   399 +
+ .../landings/20260909T085038Z-task-4/verifier.txt  |     1 +
+ .../landings/20260909T085131Z-task-5/check_all.txt |  1164 +
+ .../landings/20260909T085131Z-task-5/receipt.json  |   424 +
+ .../landings/20260909T085131Z-task-5/verifier.txt  |     1 +
+ .../landings/20260909T085216Z-task-7/check_all.txt |  1164 +
+ .../landings/20260909T085216Z-task-7/receipt.json  |   449 +
+ .../landings/20260909T085216Z-task-7/verifier.txt  |     1 +
+ .../landings/20260909T085915Z-task-2/check_all.txt |  1211 +
+ .../landings/20260909T085915Z-task-2/verifier.txt  |     5 +
+ .../20260909T090043Z-suite-hygiene/check_all.txt   |  1164 +
+ .../20260909T090043Z-suite-hygiene/receipt.json    |    38 +
+ .../20260909T090043Z-suite-hygiene/verifier.txt    |     5 +
+ .../landings/20260909T090128Z-task-2/check_all.txt |  1198 +
+ .../landings/20260909T090128Z-task-2/receipt.json  |   503 +
+ .../landings/20260909T090128Z-task-2/verifier.txt  |     5 +
+ .../landings/failed/20260909T080631Z-task-1.json   |     9 +
+ .../landings/failed/20260909T081551Z-task-1.json   |     9 +
+ .../landings/failed/20260909T081613Z-task-1.json   |     9 +
+ .../landings/failed/20260909T083746Z-task-4.json   |     9 +
+ .../landings/failed/20260909T083759Z-task-5.json   |     9 +
+ .../landings/failed/20260909T083814Z-task-7.json   |     9 +
+ .../landings/failed/20260909T084036Z-task-4.json   |     9 +
+ .../landings/failed/20260909T084037Z-task-5.json   |     9 +
+ .../landings/failed/20260909T084038Z-task-7.json   |     9 +
+ .../20260909T084119Z-landing-bookkeeping.json      |     9 +
+ .../landings/failed/20260909T084149Z-task-4.json   |     9 +
+ .../landings/failed/20260909T084150Z-task-5.json   |     9 +
+ .../landings/failed/20260909T084151Z-task-7.json   |     9 +
+ .../failed/20260909T084437Z-portable-sums.json     |     9 +
+ .../failed/20260909T084525Z-portable-sums.json     |     9 +
+ .../failed/20260909T084626Z-portable-sums.json     |     9 +
+ .../failed/20260909T084745Z-portable-sums.json     |     9 +
+ .../landings/failed/20260909T085915Z-task-2.json   |     9 +
+ pyto/questions.md                                  |   138 +-
+ pyto/research/from-registry-to-os.md               |   148 +
+ pyto/scripts/address_census.py                     |   325 +
+ pyto/scripts/check_all.sh                          |    32 +-
+ pyto/scripts/check_board_log.sh                    |    42 +
+ pyto/scripts/check_receipts.sh                     |    57 +
+ pyto/scripts/land.sh                               |    31 +-
+ pyto/scripts/neat.sh                               |    61 +-
+ pyto/src/pyto/address.py                           |   118 +
+ pyto/tests/test_address.py                         |   157 +
+ pyto/tests/test_materialize.py                     |   120 +-
+ pyto/viewer/README.md                              |    15 +
+ pyto/viewer/RECORD.md                              |    57 +-
+ pyto/viewer/adapters.js                            |    93 +-
+ pyto/viewer/fixtures/pyto-value-kinds.json         |    26 +-
+ pyto/viewer/test/adapters.test.mjs                 |   103 +-
+ pyto/viewer/test/emit_adapter_records.mjs          |     4 +-
+ pyto/viewer/test/record_schema.py                  |    40 +-
+ pyto/viewer/test/render.test.mjs                   |     2 +-
+ pyto/viewer/test/test_record_schema.py             |    40 +-
+ pyto/viewer/tick-viewer.js                         |     2 +-
+ 144 files changed, 80429 insertions(+), 55968 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python3 -m unittest tests.test_materialize && node --test viewer/test/*.test.mjs && python3 -m unittest discover -s experiments/grouped-ablation -p 'test_materials.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.UrjNw8ehpM) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
     suite                         tests  status
-    library                         106  OK
+    library                         123  OK
     experiments/grouped-ablation    240  OK
     experiments/s3-synthetic          5  OK
     consumer                         61  OK
     disc-stats                        4  OK
     examples                          3  OK
     art-registry-md                   -  OK
-    viewer                           87  FAIL
+    viewer                           87  OK
     viewer-record-schema             19  OK
     
-    SOME SUITES FAILED (logs in /tmp/tmp.UrjNw8ehpM)
+    ALL SUITES PASSED
 
 ## Uncertain
 
