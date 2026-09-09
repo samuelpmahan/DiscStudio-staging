@@ -48,7 +48,8 @@ next_id() { # the highest id seen anywhere: local copies, landed packets, and ex
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
-  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##'); do
+  # landed tasks on origin's copy of this branch count too: another clone may have landed since we pulled
+  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##') $(git -C "$ROOT" ls-tree --name-only "origin/$BRANCH:$TASKS" 2>/dev/null); do
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done

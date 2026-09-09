@@ -57,6 +57,8 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 15:37 **landed** `neat-ids-2`: task ids also count tasks landed on origin since the last pull (1 files since 9fba660, suites green, receipt 20260909T153644Z-neat-ids-2)
+- 2026-09-09 15:35 **refused** `task-15`: merge conflict with exp/15 in: pyto/experiments/tasks/15/HANDOFF.md pyto/experiments/tasks/15/evidence/check_all.txt pyto/experiments/tasks/15/evidence/verify.txt pyto/experiments/tasks/15/packet.md 
 - 2026-09-09 13:59 **landed** `task-18`: four worlds, one terminal: one page opens the ChainSpot, ChessLab, Wumpus, DiscStudio and pyto records side by side with a picker, the same tick page for every runtime, playback included (25 files since e1e888a, suites green, receipt 20260909T135832Z-task-18)
 - 2026-09-09 13:51 **landed** `task-17`: cross-project hit: a second tiny domain reads the same per-user materials store and gets a verified hit on material the ablation experiment produced, with counters and a receipt (25 files since 12c6528, suites green, receipt 20260909T135010Z-task-17)
 - 2026-09-09 13:41 **landed** `task-16`: watch it think: the tick page plays a record Tick by Tick with play, pause and step, each Calculation's reads, writes and value appearing when it finished, at recorded speed or slower (10 files since 12c6528, suites green, receipt 20260909T134004Z-task-16)
