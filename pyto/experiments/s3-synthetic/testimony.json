@@ -1,0 +1,36 @@
+{
+  "pcr": "S3.quick-anno",
+  "ticks": [
+    {
+      "calculations": [
+        {
+          "args": {},
+          "calculation": "fn.quickAnno.s3.accountRings",
+          "id": "accountRings",
+          "inputs": {
+            "family": "px:px.tees.family",
+            "rings": "px:px.tees.rings"
+          },
+          "into": "scratch.s3.ringLedger"
+        }
+      ],
+      "name": "AccountRings"
+    },
+    {
+      "calculations": [
+        {
+          "args": {},
+          "calculation": "fn.quickAnno.s3.checkBalance",
+          "id": "checkBalance",
+          "inputs": {
+            "ledger": "fn:accountRings",
+            "teePx": "px:px.tees.px",
+            "tees": "px:px.tees"
+          },
+          "into": "scratch.s3.teeSummary"
+        }
+      ],
+      "name": "CheckBalance"
+    }
+  ]
+}

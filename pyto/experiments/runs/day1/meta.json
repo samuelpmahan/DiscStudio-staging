@@ -1,0 +1,19 @@
+{
+  "day": 1,
+  "base_sha": "3b91d83",
+  "commit_sha": "pending",
+  "date": "2026-09-09",
+  "agents": [
+    {"lane": "A", "role": "test_first_class.py rewritten as unittest.TestCase plus PcrRun.results / CalculationTestimony.into assertions; README.md:19 test line", "targets": ["pyto/tests/test_first_class.py", "pyto/README.md"]},
+    {"lane": "B", "role": "tests/test_semantics.py characterization tests from scratchpad probe_rules.py, each mutation-verified", "targets": ["pyto/tests/test_semantics.py"]},
+    {"lane": "C", "role": "grouped-ablation experiment package landed from scratchpad ablation_spike.py with evidence/run-1", "targets": ["pyto/experiments/grouped-ablation/**"]},
+    {"lane": "D", "role": "CAPTURE.md run-record contract, scripts/check_all.sh v0, runs/day1 skeleton, s3-synthetic retained snapshot (gap 12)", "targets": ["pyto/experiments/CAPTURE.md", "pyto/scripts/check_all.sh", "pyto/experiments/runs/day1/", "pyto/experiments/s3-synthetic/**"]},
+    {"lane": "mutation-lens", "role": "applies one-line src mutations in a scratch copy; rejects any new test that survives", "targets": ["pyto/experiments/runs/day1/verdicts/mutation.json", "pyto/experiments/runs/day1/mutation-kill.md"]},
+    {"lane": "semantics-lens", "role": "checks inputs['split']=='fn:split' on all fit/score invocations; rejects args/input name collisions (pcr.py:159-160)", "targets": ["pyto/experiments/runs/day1/verdicts/semantics.json"]},
+    {"lane": "prohibition-lens", "role": "greps evidence for lambda and <function; confirms git diff --stat -- pyto/src empty; confirms no subset enumeration", "targets": ["pyto/experiments/runs/day1/verdicts/prohibition.json"]},
+    {"lane": "synthesizer", "role": "merges survivors, runs scripts/check_all.sh, writes runs/day1 per CAPTURE.md", "targets": ["pyto/experiments/runs/day1/tests.txt", "pyto/experiments/runs/day1/diff.patch"]},
+    {"lane": "completeness-critic", "role": "diffs the 'NOT verified by any test' list against test names; lists untested rules as missing", "targets": ["pyto/experiments/runs/day1/verdicts/completeness.json"]}
+  ],
+  "tokens": null,
+  "notes": "Skeleton written by Lane D before the lenses ran. commit_sha stays 'pending' until the orchestrator commits and regenerates diff.patch. HEAD was 6d95be7 while Lane D wrote (a commit landed after the 3b91d83 base named in the brief); base_sha follows the brief."
+}
