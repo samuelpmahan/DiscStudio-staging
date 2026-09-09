@@ -92,7 +92,7 @@
       "written_by": "select"
     }
   },
-  "pcr": "ablation.grouped",
+  "pcr": "ablation.grouped.value-kinds",
   "schema": "pyto-run-record@1",
   "source": {
     "commit": "42f4a66932264f97be49bd5da1fc2bcc3fea4e9a",

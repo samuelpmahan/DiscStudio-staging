@@ -20,7 +20,12 @@ import {
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const fixture = (name) => JSON.parse(readFileSync(resolve(HERE, '..', 'fixtures', name), 'utf8'));
+// The real record pyto.materialize wrote (fixtures/pyto-grouped-ablation.json is
+// that file byte for byte; adapters.test.mjs pins the copy). Its values are all
+// `json`, so the four other value kinds are rendered from the synthetic
+// pyto-value-kinds.json, which exists for exactly that.
 const record = fromPytoRecord(fixture('pyto-grouped-ablation.json'));
+const kindsRecord = fromPytoRecord(fixture('pyto-value-kinds.json'));
 
 /* ---------------------------------------------------------------- */
 /* the shim                                                          */
@@ -60,6 +65,7 @@ const withClass = (root, className) => [...walk(root)].filter((node) => String(n
 const textOf = (node) => [...walk(node)].map((n) => n.textContent).join(' ');
 
 const doc = createStubDocument();
+const byIdIn = (rec, id) => rec.ticks.flatMap((tick) => tick.invocations).find((invocation) => invocation.id === id);
 
 /* ---------------------------------------------------------------- */
 /* structure                                                         */
@@ -226,27 +232,45 @@ test('an empty filter keeps every row', () => {
 });
 
 test('a substring filter narrows rows to the matching addresses', () => {
+  // `compare` reads every score Part, so a substring filter finds the readers
+  // of an address as well as its writer -- across Ticks.
   const kept = filterTicks(record.ticks, 'score');
   const ids = kept.flatMap((tick) => tick.invocations.map((i) => i.id));
-  assert.deepEqual(ids, ['score.all', 'score.drop_g3']);
-  assert.equal(kept.length, 1, 'ticks with no surviving invocation are dropped');
+  assert.deepEqual(ids, ['score.all', 'score.drop_g0', 'score.drop_g1', 'score.drop_g2', 'score.drop_g3', 'score.drop_g4', 'compare']);
+  assert.deepEqual(kept.map((tick) => tick.name), ['Score', 'Compare']);
+  // Prepare and Fit have no surviving invocation and are dropped entirely.
+  assert.equal(kept.length, 2, 'ticks with no surviving invocation are dropped');
+
+  // The reach of the filter is exactly what the invocation spells. `compare`
+  // binds `fn:score.drop_g3`, never the address, and its actual_consumes is
+  // empty because a fn: result never touches the store -- so the full address
+  // finds the writer only, even though the Part index (derived through the fn:
+  // ref) lists `compare` as a reader of it. The filter reports the testimony;
+  // the Part index reports the resolution.
+  assert.deepEqual(filterTicks(record.ticks, 'scratch.ablation.score.drop_g3').flatMap((t) => t.invocations.map((i) => i.id)), ['score.drop_g3']);
+  assert.deepEqual(record.parts['scratch.ablation.score.drop_g3'].read_by, ['compare']);
+  assert.deepEqual(byIdIn(record, 'compare').actual_consumes, []);
 });
 
 test('a trailing * filters by address prefix, the way PQL.prefix describes itself', () => {
+  const fits = ['fit.all', 'fit.drop_g0', 'fit.drop_g1', 'fit.drop_g2', 'fit.drop_g3', 'fit.drop_g4'];
   const kept = filterTicks(record.ticks, 'scratch.ablation.model.*');
   const ids = kept.flatMap((tick) => tick.invocations.map((i) => i.id));
-  assert.deepEqual(ids, ['fit.all', 'fit.drop_g3']);
+  assert.deepEqual(ids, fits);
+  assert.equal(kept.length, 1, 'only the Fit Tick survives');
 
   // The same text without the star is a substring match, so it also finds the
   // score invocations that read those models by fn: ref -- and it must not.
-  assert.deepEqual(filterTicks(record.ticks, 'scratch.ablation.model').flatMap((t) => t.invocations.map((i) => i.id)), ['fit.all', 'fit.drop_g3']);
+  assert.deepEqual(filterTicks(record.ticks, 'scratch.ablation.model').flatMap((t) => t.invocations.map((i) => i.id)), fits);
   // A prefix that matches nothing keeps nothing.
   assert.deepEqual(filterTicks(record.ticks, 'scratch.ablation.model.*x'), []);
 });
 
 test('the filter matches calculation addresses and tick names too, case-insensitively', () => {
-  assert.deepEqual(filterTicks(record.ticks, 'fn.ablation.fit').flatMap((t) => t.invocations.map((i) => i.id)), ['fit.all', 'fit.drop_g3']);
-  assert.deepEqual(filterTicks(record.ticks, 'MATERIALIZE').flatMap((t) => t.invocations.map((i) => i.id)), ['sheet', 'snapshot']);
+  assert.deepEqual(filterTicks(record.ticks, 'fn.ablation.fit').flatMap((t) => t.invocations.map((i) => i.id)),
+    ['fit.all', 'fit.drop_g0', 'fit.drop_g1', 'fit.drop_g2', 'fit.drop_g3', 'fit.drop_g4']);
+  assert.deepEqual(filterTicks(record.ticks, 'COMPARE').flatMap((t) => t.invocations.map((i) => i.id)), ['compare']);
+  assert.deepEqual(filterTicks(kindsRecord.ticks, 'MATERIALIZE').flatMap((t) => t.invocations.map((i) => i.id)), ['sheet', 'snapshot']);
   const wumpus = fromWumpusRecords(fixture('wumpus-belief-tick.json').records);
   assert.deepEqual(filterTicks(wumpus.ticks, 'px.agent.belief').flatMap((t) => t.invocations.map((i) => i.id)), ['tick-2', 'tick-3']);
 });
@@ -265,10 +289,10 @@ test('matchesFilter and searchTerms agree on what an invocation can be found by'
 });
 
 test('renderRecord reports what the filter narrowed and says so when nothing matches', () => {
-  const narrowed = renderRecord(record, { doc, filter: 'score' });
-  assert.equal(withClass(narrowed, 'inv').length, 2);
+  const narrowed = renderRecord(record, { doc, filter: 'fn.ablation.score' });
+  assert.equal(withClass(narrowed, 'inv').length, 6);
   assert.equal(withClass(narrowed, 'tick').length, 1);
-  assert.match(withClass(narrowed, 'filtered')[0].textContent, /filter "score": 2 of 11 invocations, 1 of 6 ticks/);
+  assert.match(withClass(narrowed, 'filtered')[0].textContent, /filter "fn\.ablation\.score": 6 of 15 invocations, 1 of 4 ticks/);
 
   const empty = renderRecord(record, { doc, filter: 'zzz' });
   assert.equal(withClass(empty, 'tick').length, 0);
@@ -287,8 +311,8 @@ test('the header shows pcr, source and counters', () => {
   assert.ok(withClass(head, 'source')[0].textContent.startsWith('pyto 0.1.0 · '));
   const counters = withClass(head, 'counters')[0].children.map((li) => li.children.map((s) => s.textContent));
   assert.deepEqual(counters.map((c) => c[1]), ['invocations', 'hits', 'computed', 'wall', 'ticks']);
-  assert.deepEqual(counters.map((c) => c[0]).slice(0, 3), ['11', '2', '9']);
-  assert.equal(counters[4][0], '6');
+  assert.deepEqual(counters.map((c) => c[0]).slice(0, 3), ['15', '2', '13']);
+  assert.equal(counters[4][0], '4');
 });
 
 test('the Part index lists every address with its writer, readers and preexisting flag', () => {
@@ -300,7 +324,9 @@ test('the Part index lists every address with its writer, readers and preexistin
 
   const rowFor = (address) => rows.find((tr) => tr.children[0].textContent === address).children.map((td) => td.textContent);
   assert.deepEqual(rowFor('input.ablation.rows'), ['input.ablation.rows', '—', 'split', 'yes']);
-  assert.deepEqual(rowFor('scratch.ablation.comparison'), ['scratch.ablation.comparison', 'compare', 'sheet, retain, table', 'no']);
+  // Written, never read: the em dash says so rather than the address vanishing.
+  assert.deepEqual(rowFor('scratch.ablation.comparison'), ['scratch.ablation.comparison', 'compare', '—', 'no']);
+  assert.deepEqual(rowFor('scratch.ablation.model.drop_g2'), ['scratch.ablation.model.drop_g2', 'fit.drop_g2', 'score.drop_g2', 'no']);
   assert.equal(rows.find((tr) => tr.children[0].textContent === 'input.ablation.rows').className, 'preexisting');
 });
 

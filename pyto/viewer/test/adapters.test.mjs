@@ -5,10 +5,17 @@
  * The DiscStudio case is checked twice: against the committed fixture and
  * against a live run of ../../../src/runtime.js, so the fixture cannot drift
  * away from the runtime it claims to come from.
+ *
+ * The pyto fixture is the byte-for-byte file `pyto.materialize.run_record`
+ * wrote for grouped-ablation run-1, not a transcription of it: the first test
+ * below compares the two files and fails if they diverge. Its values are all
+ * `json`, which is what that run actually produces, so the four other value
+ * kinds are covered by `pyto-value-kinds.json` -- a synthetic record, named as
+ * one, used only where the real run has nothing to show.
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
@@ -22,6 +29,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const fixture = (name) => JSON.parse(readFileSync(resolve(HERE, '..', 'fixtures', name), 'utf8'));
 
 const pytoDoc = fixture('pyto-grouped-ablation.json');
+const valueKindsDoc = fixture('pyto-value-kinds.json');
 const dsDoc = fixture('discstudio-display-card.json');
 const chessDoc = fixture('chesslab-s0-s1.json');
 const wumpusDoc = fixture('wumpus-belief-tick.json');
@@ -29,11 +37,27 @@ const wumpusDoc = fixture('wumpus-belief-tick.json');
 const invocations = (record) => record.ticks.flatMap((tick) => tick.invocations);
 const byId = (record, id) => invocations(record).find((invocation) => invocation.id === id);
 
+/** The file pyto.materialize.run_record wrote, as committed under experiments/. */
+const REAL_RECORD = resolve(HERE, '..', '..', 'experiments', 'grouped-ablation', 'evidence', 'run-1', 'record.json');
+
 /* ---------------------------------------------------------------- */
+
+test('the pyto fixture is the Python materializer output byte for byte', () => {
+  // Not "equivalent JSON": the same bytes. RECORD.md asks for sorted keys and
+  // two-space indentation, so a record that round-trips through both runtimes
+  // has one spelling, and the viewer is tested against the producer's own file
+  // rather than against a transcription that can quietly drift from it.
+  assert.equal(
+    readFileSync(resolve(HERE, '..', 'fixtures', 'pyto-grouped-ablation.json'), 'utf8'),
+    readFileSync(REAL_RECORD, 'utf8'),
+    'fixtures/pyto-grouped-ablation.json must be a copy of experiments/grouped-ablation/evidence/run-1/record.json'
+  );
+});
 
 test('every adapter output passes validate', () => {
   const records = [
     fromPytoRecord(pytoDoc),
+    fromPytoRecord(valueKindsDoc),
     fromDiscStudioReceipt(dsDoc.first.pql, dsDoc.first.receipt, { version: 'transcribed-82f8fc9' }),
     fromDiscStudioReceipt(dsDoc.second.pql, dsDoc.second.receipt),
     fromChessLabReceipts(chessDoc.receipts, { pcr: 'chesslab.debugger' }),
@@ -44,7 +68,7 @@ test('every adapter output passes validate', () => {
     assert.equal(record.schema, SCHEMA);
     record.ticks.forEach((tick, index) => assert.equal(tick.index, index));
   }
-  assert.deepEqual(records.map((r) => r.source.runtime), ['pyto', 'discstudio', 'discstudio', 'chesslab', 'wumpus']);
+  assert.deepEqual(records.map((r) => r.source.runtime), ['pyto', 'pyto', 'discstudio', 'discstudio', 'chesslab', 'wumpus']);
 });
 
 test('fromPytoRecord is a validating pass-through, from an object or a string', () => {
@@ -74,8 +98,12 @@ test('pyto record: hits are exactly the invocations that read a preexisting Part
   assert.deepEqual(hits, ['select', 'split']);
   assert.equal(record.counters.hits, 2);
   assert.equal(record.counters.hits + record.counters.computed, record.counters.invocations);
-  // sheet reads scratch.ablation.comparison, produced by `compare` in this run.
-  assert.equal(byId(record, 'sheet').hit, false);
+  // The twelve fit/score invocations read `fn:split`, a result of this run, and
+  // `compare` reads only score results, so none of them is a hit -- the two
+  // px: readers of the seeded input Parts are.
+  assert.deepEqual(invocations(record).filter((i) => !i.hit).map((i) => i.id).length, 13);
+  assert.equal(byId(record, 'fit.all').hit, false);
+  assert.equal(byId(record, 'compare').hit, false);
 });
 
 test('DiscStudio: reused === true makes every invocation of the second run a hit', () => {
@@ -212,13 +240,19 @@ test('derivePartIndex names the writer, the readers and what preexisted', () => 
   // the twelve fit/score invocations of the real experiment all consume
   // 'fn:split', and the index has to show that they consume the split Part.
   assert.deepEqual(parts['scratch.ablation.split'], {
-    written_by: 'split', read_by: ['fit.all', 'score.all', 'fit.drop_g3', 'score.drop_g3'], preexisting: false
+    written_by: 'split',
+    read_by: [
+      'fit.all', 'fit.drop_g0', 'fit.drop_g1', 'fit.drop_g2', 'fit.drop_g3', 'fit.drop_g4',
+      'score.all', 'score.drop_g0', 'score.drop_g1', 'score.drop_g2', 'score.drop_g3', 'score.drop_g4'
+    ],
+    preexisting: false
   });
   assert.deepEqual(parts['scratch.ablation.model.all'], { written_by: 'fit.all', read_by: ['score.all'], preexisting: false });
-  assert.deepEqual(parts['scratch.ablation.comparison'].written_by, 'compare');
-  assert.deepEqual(parts['scratch.ablation.comparison'].read_by, ['sheet', 'retain', 'table']);
-  assert.equal(parts['scratch.ablation.comparison'].preexisting, false);
-  assert.deepEqual(parts, record.parts, 'the fixture carries the derived index');
+  assert.deepEqual(parts['scratch.ablation.comparison'], { written_by: 'compare', read_by: [], preexisting: false });
+  // scratch.ablation.variants is written and never read: the index says so
+  // instead of omitting the address.
+  assert.deepEqual(parts['scratch.ablation.variants'], { written_by: 'select', read_by: [], preexisting: false });
+  assert.deepEqual(parts, record.parts, 'the Python index and the JavaScript derivation agree');
 });
 
 test('bareAddress strips only the testimony marker', () => {
@@ -242,8 +276,8 @@ const caught = (fn) => {
   throw new assert.AssertionError({ message: 'expected a RecordSchemaError, none was thrown' });
 };
 
-const mutate = (path, value) => {
-  const clone = structuredClone(pytoDoc);
+const mutateIn = (document, path, value) => {
+  const clone = structuredClone(document);
   const keys = path.split('.');
   let node = clone;
   for (const key of keys.slice(0, -1)) node = node[/^\d+$/.test(key) ? Number(key) : key];
@@ -252,6 +286,8 @@ const mutate = (path, value) => {
   else node[/^\d+$/.test(last) ? Number(last) : last] = value;
   return clone;
 };
+
+const mutate = (path, value) => mutateIn(pytoDoc, path, value);
 
 const cases = [
   ['schema', 'nope', 'schema'],
@@ -270,9 +306,6 @@ const cases = [
   ['ticks.0.invocations.0.duration_ms', 'fast', 'ticks[0].invocations[0].duration_ms'],
   ['ticks.0.invocations.0.hit', 'yes', 'ticks[0].invocations[0].hit'],
   ['ticks.0.invocations.0.value.kind', 'binary', 'ticks[0].invocations[0].value.kind'],
-  ['ticks.3.invocations.0.value.data', 12, 'ticks[3].invocations[0].value.data'],
-  ['ticks.4.invocations.0.value.note', null, 'ticks[4].invocations[0].value.note'],
-  ['ticks.4.invocations.0.value.data', 'something', 'ticks[4].invocations[0].value.data'],
   ['counters.invocations', 99, 'counters.invocations'],
   ['counters.hits', 1, 'counters.hits'],
   ['counters.computed', 1, 'counters.computed'],
@@ -287,6 +320,31 @@ for (const [path, value, expectedPath] of cases) {
     assert.ok(error.message.startsWith(`${SCHEMA} ${expectedPath}: `), error.message);
   });
 }
+
+// The real run's values are all `json`, so the kind-specific rules of RECORD.md
+// are exercised against the synthetic record that carries the other four kinds:
+// ticks[3] is the svg/png Materialize Tick, ticks[4] the omitted Retain Tick.
+const kindCases = [
+  ['ticks.3.invocations.0.value.data', 12, 'ticks[3].invocations[0].value.data'],
+  ['ticks.3.invocations.1.value.data', null, 'ticks[3].invocations[1].value.data'],
+  ['ticks.4.invocations.0.value.note', null, 'ticks[4].invocations[0].value.note'],
+  ['ticks.4.invocations.0.value.data', 'something', 'ticks[4].invocations[0].value.data']
+];
+
+for (const [path, value, expectedPath] of kindCases) {
+  test(`validate rejects ${path} in the value-kinds record and names ${expectedPath}`, () => {
+    const error = caught(() => validate(mutateIn(valueKindsDoc, path, value)));
+    assert.ok(error instanceof RecordSchemaError, `expected RecordSchemaError, got ${error}`);
+    assert.equal(error.path, expectedPath, error.message);
+  });
+}
+
+test('the synthetic record carries the four value kinds the real run never produces', () => {
+  const kinds = invocations(fromPytoRecord(valueKindsDoc)).map((invocation) => invocation.value.kind);
+  assert.deepEqual([...new Set(kinds)].sort(), ['json', 'omitted', 'png-data-url', 'svg', 'text']);
+  const real = invocations(fromPytoRecord(pytoDoc)).map((invocation) => invocation.value.kind);
+  assert.deepEqual([...new Set(real)], ['json'], 'grouped-ablation run-1 materializes JSON only');
+});
 
 test('validate rejects a duplicate invocation id, because ids anchor annotations', () => {
   const clone = structuredClone(pytoDoc);
@@ -314,12 +372,7 @@ test('validate rejects a non-object document', () => {
 /* the Python materializer's own output                              */
 /* ---------------------------------------------------------------- */
 
-const REAL_RECORD = resolve(HERE, '..', '..', 'experiments', 'grouped-ablation', 'evidence', 'run-1', 'record.json');
-const realRecordExists = existsSync(REAL_RECORD);
-
-test('the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged', {
-  skip: realRecordExists ? false : `${REAL_RECORD} is absent; the Python materializer has not written a record here yet`
-}, () => {
+test('the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged', () => {
   const record = fromPytoRecord(JSON.parse(readFileSync(REAL_RECORD, 'utf8')));
   assert.equal(record.source.runtime, 'pyto');
   assert.equal(record.counters.invocations, 15);
