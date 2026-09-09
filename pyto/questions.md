@@ -700,4 +700,8 @@ demonstration). From tonight: the explicability gate is a rubric with no teacher
 `{?}` habit is most of learning to program. The caveat to teach first: identical digests prove
 the same computation, not the right answer; a verifier still needs a reference. Default: after
 DiscStudio ships, one experiment: a homework-sized PCR with a hand-off page graded by a cold
-reader. Bites: `LANDING.md` (the gate), `HANDOFF.md` template, the viewer.
+reader. Bites: `LANDING.md` (the gate), `HANDOFF.md` template, the viewer. Owner, later: "personal
+parts and calculations let the agent learn how the student learns": a student's own mount holds
+their Parts and the Calculations they wrote, so a tutoring agent reads how they learn from their
+own records (what they retry, where they write `{?}`, what they undo, how long a Tick takes them),
+never from a profile.
