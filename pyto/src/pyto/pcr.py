@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from time import perf_counter
 from typing import Any, Mapping
 
-from .core import Calculation, Part, PxC, PxWrite
+from .core import RECEIPT_PREFIX, Calculation, Part, PxC, PxWrite
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,6 +29,32 @@ class Invocation:
     into: Part[Any] | None = None
 
 
+def receipt_address(pcr: str, tick: str, invocation_id: str) -> str:
+    """The one address scheme: ``px.receipt.<pcr>.<tick>.<invocation-id>``.
+
+    Predictable from the PCR alone -- the invocation id is what `PCR.calc` already
+    keeps unique (`PCR._ids`), so no invocation index is needed and no two
+    invocations of one run can collide, not even two invocations of the same
+    Calculation in the same Tick (`fit.all` and `fit.none` in the Day 1 program).
+    Written by `PCR.run(..., observe=True)` only; see viewer/RECORD.md.
+    """
+    return f"{RECEIPT_PREFIX}{pcr}.{tick}.{invocation_id}"
+
+
+def _refuse_receipt_into(owner: str, output: Part[Any] | None) -> None:
+    """Refuse, at bind time, a Calculation whose `into` is under `px.receipt.`.
+
+    The receipt segment is written by observation and by nothing else, so a program
+    that produced into it would be forging its own testimony.
+    """
+    if output is not None and output.address.startswith(RECEIPT_PREFIX):
+        raise ValueError(
+            f"{owner} may not bind '{output.address}': the reserved '{RECEIPT_PREFIX}' "
+            "segment is written by PCR.run(..., observe=True) and by nothing else; "
+            "no Calculation may produce into it"
+        )
+
+
 @dataclass(slots=True)
 class Tick:
     name: str
@@ -47,6 +73,7 @@ class Tick:
         if any(existing.id == id for existing in self.calculations):
             raise ValueError(f"Tick '{self.name}' has duplicate calculation id '{id}'")
         output = Part(into) if isinstance(into, str) else into
+        _refuse_receipt_into(f"Tick '{self.name}' calculation '{id}'", output)
         bindings = {name: Binding(source) for name, source in inputs.items()}
         self.calculations.append(
             Invocation(
@@ -136,7 +163,8 @@ class PcrRun:
     consumers embed in compositionEvidence
     (consumers/discstudio-card/card_composition.py:177,
     consumers/discstudio-card/app.py:53) -- is byte-identical with observe on or
-    off. It is empty unless PCR.run was called with observe=True.
+    off. It is empty unless PCR.run was called with observe=True, in which case the
+    same Receipts are also Parts in the store under `px.receipt.` (see PCR.run).
     """
 
     pcr: str
@@ -270,6 +298,7 @@ class PCR:
             normalized[name] = source
 
         output = Part(into) if isinstance(into, str) else into
+        _refuse_receipt_into(f"PCR '{self.name}' calculation '{id}'", output)
         if output is not None:
             prior = self._writers.get(output.address)
             if prior is not None:
@@ -293,9 +322,15 @@ class PCR:
         id in PcrRun.receipts. A Receipt is an observation of what this method did
         on the invocation's behalf -- the reads it resolved, the write it made, the
         arguments it passed, how long the call took, the digest of the result --
-        not an observation of the callable itself (see Receipt). Observation adds
-        fields to PcrRun only: the testimony in `ticks` is byte-identical with
-        observe on or off.
+        not an observation of the callable itself (see Receipt).
+
+        With observe=True the same Receipt object is also written into the store at
+        `receipt_address(pcr, tick, invocation_id)` -- `px.receipt.<pcr>.<tick>.<id>`
+        -- so PQL reads receipts like any other Part. With observe=False nothing is
+        written: the store is byte-for-byte what the program itself produced.
+        Observation adds fields to PcrRun and Parts under the reserved receipt
+        segment only: the testimony in `ticks`, the produced results and the run
+        record (materialize.run_record) are the same with observe on or off.
         """
         results: dict[str, Any] = {}
         testimonies: list[TickTestimony] = []
@@ -342,7 +377,7 @@ class PCR:
 
                 if isinstance(board, _TrackedPxC):
                     duration_ms = (perf_counter() - started) * 1000.0
-                    receipts[invocation.id] = Receipt(
+                    receipt = Receipt(
                         invocation_id=invocation.id,
                         calculation=FrozenCalculation(
                             address=invocation.calculation.address,
@@ -368,6 +403,14 @@ class PCR:
                             name for name in resolved_inputs if name in invocation.args
                         ),
                     )
+                    receipts[invocation.id] = receipt
+                    # Everything is a Part: the receipt is written into the store under
+                    # its reserved segment, so PQL reads it like any other Part. It goes
+                    # to `pxc` and not to `board`, and only after the Receipt above is
+                    # frozen: the tracked view is this invocation's, and filing a receipt
+                    # is not something the invocation did. Written the other way round,
+                    # every invocation would testify that it produced its own receipt.
+                    pxc.set(receipt_address(self.name, tick.name, invocation.id), receipt)
 
                 calc_testimony.append(
                     CalculationTestimony(

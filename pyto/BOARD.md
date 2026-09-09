@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 21:56 **landed** `task-22`: Everything is a Part: with observe on, each invocation's receipt is also written into the store under the reserved px.receipt segment, so PQL can read receipts like anything else; with observe off nothing is written; no Calculation may bind a px.receipt address; the testimony stays byte-identical either way (207 files since 76bc3d2, suites green, receipt 20260909T215529Z-task-22)
 - 2026-09-09 21:49 **landed** `task-21`: The studio exports its own run record: an Export run record action produces a pyto-run-record@1 JSON for the current composition through the existing adapter, and a link opens the Tick render page with that record embedded; no new state store, no renderer fork, no field whitelist (26 files since 0b502d0, suites green, receipt 20260909T214855Z-task-21)
 - 2026-09-09 21:44 **landed** `task-3`: neat anywhere: the same seven commands in any git repo, no pyto assumptions, with a selftest that proves new, pack, land and undo in a scratch repo in under two minutes (18 files since e072078, suites green, receipt 20260909T214354Z-task-3)
 - 2026-09-09 21:42 **refused** `task-21`: merge conflict with exp/21 in: pyto/viewer/embed.mjs scripts/browser_test.py src/review-data.js src/runtime.js tests/core.test.js 

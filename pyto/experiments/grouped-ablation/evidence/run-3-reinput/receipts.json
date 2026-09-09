@@ -14,7 +14,7 @@
     "declared_produces": [
       "scratch.ablation.comparison"
     ],
-    "duration_ms": 0.0447389975306578,
+    "duration_ms": 0.05146499984221009,
     "effective_arg_keys": [
       "all",
       "drop_g0",
@@ -27,7 +27,7 @@
     "invocation_id": "compare",
     "result_sha256": "cca7ee9f70c1bc69df55c7b63bac5f3431c1b276aee35d6c8b564fe47d312186",
     "shadowed_inputs": [],
-    "started_ms": 32835753.225513,
+    "started_ms": 1627819.866557,
     "writes": [
       {
         "address": "scratch.ablation.comparison",
@@ -50,7 +50,7 @@
     "declared_produces": [
       "scratch.ablation.model.all"
     ],
-    "duration_ms": 13.302081999427173,
+    "duration_ms": 8.858392000092863,
     "effective_arg_keys": [
       "split",
       "columns",
@@ -59,7 +59,7 @@
     "invocation_id": "fit.all",
     "result_sha256": "08289fcad66200b61b3352b3933051ad164faabfc00fce4e5ee0e37554857798",
     "shadowed_inputs": [],
-    "started_ms": 32835686.266903996,
+    "started_ms": 1627774.606918,
     "writes": [
       {
         "address": "scratch.ablation.model.all",
@@ -82,7 +82,7 @@
     "declared_produces": [
       "scratch.ablation.model.drop_g0"
     ],
-    "duration_ms": 8.528639002179261,
+    "duration_ms": 5.880806000050143,
     "effective_arg_keys": [
       "split",
       "columns",
@@ -91,7 +91,7 @@
     "invocation_id": "fit.drop_g0",
     "result_sha256": "2bc8b2052613674c7b12a8c4875c3be1abfe77f49dcde20f428ae3bec93e2a5a",
     "shadowed_inputs": [],
-    "started_ms": 32835700.495633,
+    "started_ms": 1627784.056513,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g0",
@@ -114,7 +114,7 @@
     "declared_produces": [
       "scratch.ablation.model.drop_g1"
     ],
-    "duration_ms": 8.850787999108434,
+    "duration_ms": 5.827756999906342,
     "effective_arg_keys": [
       "split",
       "columns",
@@ -123,7 +123,7 @@
     "invocation_id": "fit.drop_g1",
     "result_sha256": "6faa67682a0e1f8e0bad7bc8db91b2b26472ff73cfb39c68b17b1f6718ed628f",
     "shadowed_inputs": [],
-    "started_ms": 32835709.862543996,
+    "started_ms": 1627790.455887,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g1",
@@ -146,7 +146,7 @@
     "declared_produces": [
       "scratch.ablation.model.drop_g2"
     ],
-    "duration_ms": 8.761612996750046,
+    "duration_ms": 5.747613000039564,
     "effective_arg_keys": [
       "split",
       "columns",
@@ -155,7 +155,7 @@
     "invocation_id": "fit.drop_g2",
     "result_sha256": "4ae65baa7f5e5a3c06b4ad55f994479005c61446769f8d7484893bcf512c1f57",
     "shadowed_inputs": [],
-    "started_ms": 32835719.560616,
+    "started_ms": 1627796.769013,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g2",
@@ -178,7 +178,7 @@
     "declared_produces": [
       "scratch.ablation.model.drop_g3"
     ],
-    "duration_ms": 8.818301997962408,
+    "duration_ms": 5.716277000146874,
     "effective_arg_keys": [
       "split",
       "columns",
@@ -187,7 +187,7 @@
     "invocation_id": "fit.drop_g3",
     "result_sha256": "c84534f90414ba51a14b1220355668d51a443fee1341e33f2851e026d5ed8e6e",
     "shadowed_inputs": [],
-    "started_ms": 32835729.135993004,
+    "started_ms": 1627802.98187,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g3",
@@ -210,7 +210,7 @@
     "declared_produces": [
       "scratch.ablation.model.drop_g4"
     ],
-    "duration_ms": 8.66516899986891,
+    "duration_ms": 5.760817999998835,
     "effective_arg_keys": [
       "split",
       "columns",
@@ -219,7 +219,7 @@
     "invocation_id": "fit.drop_g4",
     "result_sha256": "241a161d2d58aeeccfb537e6e40232e6c54eb759cffa7be9c6a104784e21201c",
     "shadowed_inputs": [],
-    "started_ms": 32835738.77253,
+    "started_ms": 1627809.1338,
     "writes": [
       {
         "address": "scratch.ablation.model.drop_g4",
@@ -242,7 +242,7 @@
     "declared_produces": [
       "scratch.ablation.score.all"
     ],
-    "duration_ms": 0.4094989999430254,
+    "duration_ms": 0.30994600001577055,
     "effective_arg_keys": [
       "split",
       "model"
@@ -250,7 +250,7 @@
     "invocation_id": "score.all",
     "result_sha256": "ab296c9e803aca7f66b6c300df5d588b36fa4298b25d63989f00fbba3594bae9",
     "shadowed_inputs": [],
-    "started_ms": 32835748.354609996,
+    "started_ms": 1627815.383063,
     "writes": [
       {
         "address": "scratch.ablation.score.all",
@@ -273,7 +273,7 @@
     "declared_produces": [
       "scratch.ablation.score.drop_g0"
     ],
-    "duration_ms": 0.3263950056862086,
+    "duration_ms": 0.3444980000040232,
     "effective_arg_keys": [
       "split",
       "model"
@@ -281,7 +281,7 @@
     "invocation_id": "score.drop_g0",
     "result_sha256": "39dab3848bc21a41bd71000157f272ae45c9981025a65df1c3fe9aebdacd3e5a",
     "shadowed_inputs": [],
-    "started_ms": 32835749.267970998,
+    "started_ms": 1627815.9811489999,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g0",
@@ -304,7 +304,7 @@
     "declared_produces": [
       "scratch.ablation.score.drop_g1"
     ],
-    "duration_ms": 0.35130700416630134,
+    "duration_ms": 0.3531120000843657,
     "effective_arg_keys": [
       "split",
       "model"
@@ -312,7 +312,7 @@
     "invocation_id": "score.drop_g1",
     "result_sha256": "ad39b8311c28c01663b889ab4d92ad7f9d0109a67e9d87f432c4d43ad6bef19b",
     "shadowed_inputs": [],
-    "started_ms": 32835749.992703997,
+    "started_ms": 1627816.702725,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g1",
@@ -335,7 +335,7 @@
     "declared_produces": [
       "scratch.ablation.score.drop_g2"
     ],
-    "duration_ms": 0.31304200092563406,
+    "duration_ms": 0.33760499991331017,
     "effective_arg_keys": [
       "split",
       "model"
@@ -343,7 +343,7 @@
     "invocation_id": "score.drop_g2",
     "result_sha256": "3a925dfdae157811c593c4645a5205c5d7a0b38a611c39e6671632352a08d061",
     "shadowed_inputs": [],
-    "started_ms": 32835750.746133998,
+    "started_ms": 1627817.548259,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g2",
@@ -366,7 +366,7 @@
     "declared_produces": [
       "scratch.ablation.score.drop_g3"
     ],
-    "duration_ms": 0.33206299849553034,
+    "duration_ms": 0.3234799999063398,
     "effective_arg_keys": [
       "split",
       "model"
@@ -374,7 +374,7 @@
     "invocation_id": "score.drop_g3",
     "result_sha256": "9f5fa51dfbeaadb7f3c88d6023c038a331162ead61c81c92dc7dcbcdd9d00fbe",
     "shadowed_inputs": [],
-    "started_ms": 32835751.609275997,
+    "started_ms": 1627818.3688369999,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g3",
@@ -397,7 +397,7 @@
     "declared_produces": [
       "scratch.ablation.score.drop_g4"
     ],
-    "duration_ms": 0.3327869999338873,
+    "duration_ms": 0.3552860000581859,
     "effective_arg_keys": [
       "split",
       "model"
@@ -405,7 +405,7 @@
     "invocation_id": "score.drop_g4",
     "result_sha256": "38aa5397b4f600cdf0dbe163d4e2d4a9f219cc205d0f83ffc0ee04999ab82cb7",
     "shadowed_inputs": [],
-    "started_ms": 32835752.452334,
+    "started_ms": 1627819.066298,
     "writes": [
       {
         "address": "scratch.ablation.score.drop_g4",
@@ -432,14 +432,14 @@
     "declared_produces": [
       "scratch.ablation.variants"
     ],
-    "duration_ms": 0.03305999416625127,
+    "duration_ms": 0.022344999933920917,
     "effective_arg_keys": [
       "groups"
     ],
     "invocation_id": "select",
     "result_sha256": "543f82368703f91864818dd4f57614824feb4e4407f41feac7d43d6e8e07c1f7",
     "shadowed_inputs": [],
-    "started_ms": 32835671.456048004,
+    "started_ms": 1627764.927771,
     "writes": [
       {
         "address": "scratch.ablation.variants",
@@ -466,14 +466,14 @@
     "declared_produces": [
       "scratch.ablation.split"
     ],
-    "duration_ms": 0.12556400179164484,
+    "duration_ms": 0.06751199998689117,
     "effective_arg_keys": [
       "rows"
     ],
     "invocation_id": "split",
     "result_sha256": "9301137a7f080af34b7759b241b3b4ea22792a670948778b897dd599db1bee5d",
     "shadowed_inputs": [],
-    "started_ms": 32835674.836227,
+    "started_ms": 1627767.353202,
     "writes": [
       {
         "address": "scratch.ablation.split",

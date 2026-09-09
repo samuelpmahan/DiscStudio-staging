@@ -29,8 +29,10 @@ import sys
 import unittest
 from dataclasses import asdict
 
-from pyto import Calculation, Part, PCR, PxC, PxWrite
-from pyto.pcr import FrozenCalculation, Receipt  # __init__.py does not export these (see CHANGES.md)
+from pyto import Calculation, Part, PCR, PQL, PxC, PxWrite
+from pyto.core import RECEIPT_PREFIX
+from pyto.materialize import run_record
+from pyto.pcr import FrozenCalculation, Receipt, receipt_address  # __init__.py does not export these (see CHANGES.md)
 
 # Intra-repo sys.path insert (experiments/CAPTURE.md, "sys.path: what is logged and what
 # is forbidden"): the Day 1 program lives in experiments/grouped-ablation/ and its modules
@@ -187,6 +189,218 @@ class ReceiptsAreOptional(unittest.TestCase):
         _, _, run = build_day1(observe=True)
         ids = [calc.id for tick in run.ticks for calc in tick.calculations]
         self.assertEqual(sorted(run.receipts), sorted(ids))
+
+
+class ReceiptsAreParts(unittest.TestCase):
+    """Everything is a Part: with observe on, each receipt is also written into the
+    store under the reserved `px.receipt.` segment; with observe off nothing is.
+
+    The address scheme is `px.receipt.<pcr>.<tick>.<invocation-id>`
+    (pcr.py `receipt_address`, viewer/RECORD.md "Receipts as Parts").
+    """
+
+    def two_invocation_run(self, observe):
+        pxc = PxC()
+        pxc.set(Part("input.v"), 3)
+        pcr = PCR("parts")
+        pcr.calc("Prepare", TAKE_VALUE, id="take", value=Part("input.v"), into=Part("out.v"))
+        pcr.calc("Prepare", CONST_SEVEN, id="seven", into=Part("out.seven"))
+        return pxc, pcr.run(pxc, observe=observe)
+
+    def test_receipt_address_is_pcr_tick_and_invocation_id(self):
+        """pcr.py `receipt_address`: f"{RECEIPT_PREFIX}{pcr}.{tick}.{invocation_id}".
+
+        Mutation: drop the tick (or the pcr) from the f-string -- the addresses below
+        stop being predictable from the PCR and the two-tick case collides.
+        """
+        pxc, _ = self.two_invocation_run(observe=True)
+        self.assertEqual(
+            [a for a in pxc.addresses() if a.startswith(RECEIPT_PREFIX)],
+            ["px.receipt.parts.Prepare.seven", "px.receipt.parts.Prepare.take"],
+        )
+        self.assertEqual(receipt_address("parts", "Prepare", "take"), "px.receipt.parts.Prepare.take")
+
+    def test_same_calculation_twice_in_one_tick_gets_two_addresses(self):
+        """The scheme keys on the invocation id, which PCR.calc keeps unique, not on the
+        Calculation address, which repeats (`fit.all`/`fit.none` in the Day 1 program).
+
+        Mutation: `receipt_address(..., invocation.calculation.address)` -- the second
+        invocation overwrites the first and only one receipt Part survives.
+        """
+        pxc = PxC()
+        pxc.set(Part("input.v"), 3)
+        pcr = PCR("twice")
+        pcr.calc("T", TAKE_VALUE, id="first", value=Part("input.v"), into=Part("out.a"))
+        pcr.calc("T", TAKE_VALUE, id="second", value=Part("input.v"), into=Part("out.b"))
+        run = pcr.run(pxc, observe=True)
+        self.assertEqual(
+            [a for a in pxc.addresses() if a.startswith(RECEIPT_PREFIX)],
+            ["px.receipt.twice.T.first", "px.receipt.twice.T.second"],
+        )
+        self.assertIsNot(run.receipts["first"], run.receipts["second"])
+
+    def test_the_stored_part_is_the_receipt_object_pql_reads(self):
+        """pcr.py: `pxc.set(receipt_address(...), receipt)` stores the Receipt itself, so
+        PQL reads receipts like anything else -- no second, divergent projection.
+
+        Mutation: store `asdict(receipt)` (or the invocation id) -- the identity and the
+        attribute reads below fail.
+        """
+        pxc, run = self.two_invocation_run(observe=True)
+        matches = PQL.prefix(RECEIPT_PREFIX).matches(pxc)
+        self.assertEqual(len(matches), 2)
+        by_address = {match.address: match.value for match in matches}
+        self.assertIs(by_address["px.receipt.parts.Prepare.take"], run.receipts["take"])
+        stored = PQL.part("px.receipt.parts.Prepare.seven").one(pxc)
+        self.assertIsInstance(stored, Receipt)
+        self.assertEqual(stored.invocation_id, "seven")
+        self.assertEqual(stored.result_sha256, canonical_sha256(7))
+        self.assertEqual(
+            [m.address for m in PQL.prefix(RECEIPT_PREFIX).where(
+                lambda m: m.value.declared_produces == ("out.v",)).matches(pxc)],
+            ["px.receipt.parts.Prepare.take"],
+        )
+
+    def test_observe_off_leaves_the_store_untouched(self):
+        """The intent's second half: with observe off nothing is written, asserted by
+        comparing the store's contents before and after.
+
+        pcr.py: the store write lives inside the `isinstance(board, _TrackedPxC)` branch,
+        which only observe=True enters.
+
+        Mutation: `def run(self, pxc, *, observe: bool = True)` -- the two unobserved
+        runs below file receipts and the comparison sees a store that grew.
+        """
+        pxc = PxC()
+        pxc.set(Part("input.v"), 3)
+        pcr = PCR("quiet")
+        pcr.calc("Prepare", TAKE_VALUE, id="take", value=Part("input.v"), into=Part("out.v"))
+        pcr.run(pxc)  # produce out.v first, so the comparison is of a settled store
+        before = pxc.items()
+        pcr.run(pxc)
+        pcr.run(pxc, observe=False)
+        self.assertEqual(pxc.items(), before)
+        self.assertEqual(pxc.addresses(), ("input.v", "out.v"))
+
+    def test_the_receipt_write_is_invisible_to_the_receipts_themselves(self):
+        """Observation must not leak into the testimony it observes: no receipt address
+        appears in any receipt's own declared/actual access or writes.
+
+        This is the invariant behind two decisions rather than a single line: the write
+        goes to `pxc` and not to `board` (the tracked view belongs to the invocation, and
+        a receipt is not something the invocation produced), and it happens after the
+        Receipt is frozen. Filing the receipt through the board *before* freezing it --
+        the shape this rules out -- would make every invocation testify that it produced
+        its own receipt.
+        """
+        _, run = self.two_invocation_run(observe=True)
+        for invocation_id, receipt in run.receipts.items():
+            with self.subTest(id=invocation_id):
+                addresses = (
+                    receipt.actual_produces
+                    + receipt.actual_consumes
+                    + receipt.declared_produces
+                    + tuple(write.address for write in receipt.writes)
+                )
+                self.assertEqual([a for a in addresses if a.startswith(RECEIPT_PREFIX)], [])
+
+    def test_a_receipt_part_can_be_read_back_by_a_later_invocation(self):
+        """Everything is a Part, in both directions: reading `px.receipt.` is ordinary
+        (only producing into it is refused), and run_record does not call this run's own
+        receipt a Part that preexisted the run.
+
+        Mutation: materialize.py drop `address not in own_receipts` from the
+        `preexisting` fallback -- the receipt row below reports preexisting: true for a
+        Part this very run wrote.
+        """
+        pxc = PxC()
+        pxc.set(Part("input.v"), 3)
+        pcr = PCR("readback")
+        pcr.calc("One", TAKE_VALUE, id="take", value=Part("input.v"), into=Part("out.v"))
+        pcr.calc(
+            "Two",
+            TAKE_VALUE,
+            id="reader",
+            value=Part("px.receipt.readback.One.take"),
+            into=Part("out.copy"),
+        )
+        run = pcr.run(pxc, observe=True)
+        self.assertIs(run.results["reader"], run.receipts["take"])
+        record = run_record(run, pxc)  # preexisting inferred, the fallback path
+        row = record["parts"]["px.receipt.readback.One.take"]
+        self.assertFalse(row["preexisting"])
+        self.assertEqual(row["read_by"], ["reader"])
+        self.assertTrue(record["parts"]["input.v"]["preexisting"])
+
+    def test_run_record_names_no_receipt_of_its_own(self):
+        """The same invariant one layer up: the run record's part index is built from the
+        testimony and the receipts, never from the store, so this run's own receipt Parts
+        are not rows in it (viewer/RECORD.md, "Receipts as Parts").
+        """
+        pxc = PxC()
+        pxc.set(Part("input.v"), 3)
+        pcr = PCR("record")
+        pcr.calc("Prepare", TAKE_VALUE, id="take", value=Part("input.v"), into=Part("out.v"))
+        record = run_record(pcr.run(pxc, observe=True), pxc)
+        self.assertEqual([a for a in record["parts"] if a.startswith(RECEIPT_PREFIX)], [])
+
+    def test_the_day_1_program_writes_one_receipt_part_per_invocation(self):
+        _, pxc, run = build_day1(observe=True)
+        ids = [calc.id for tick in run.ticks for calc in tick.calculations]
+        expected = sorted(
+            receipt_address(run.pcr, tick.name, calc.id)
+            for tick in run.ticks
+            for calc in tick.calculations
+        )
+        self.assertEqual(sorted(a for a in pxc.addresses() if a.startswith(RECEIPT_PREFIX)), expected)
+        self.assertEqual(len(expected), len(ids))
+        _, unobserved_pxc, _ = build_day1(observe=False)
+        self.assertEqual([a for a in unobserved_pxc.addresses() if a.startswith(RECEIPT_PREFIX)], [])
+
+
+class ReceiptSegmentIsNotBindable(unittest.TestCase):
+    """No Calculation may bind a `px.receipt.` address as its `into`."""
+
+    def test_pcr_calc_refuses_a_receipt_into(self):
+        """pcr.py `_refuse_receipt_into`, called from PCR.calc before the writer is recorded.
+
+        Mutation: delete the call in PCR.calc -- the program below binds the segment and
+        forges its own testimony.
+        """
+        pcr = PCR("forge")
+        with self.assertRaises(ValueError) as caught:
+            pcr.calc("T", CONST_SEVEN, id="forge", into="px.receipt.forge.T.forge")
+        message = str(caught.exception)
+        self.assertIn("px.receipt.", message)
+        self.assertIn("forge", message)
+        self.assertIn("no Calculation may produce into it", message)
+        # the refusal left no writer and no id behind: the same id still binds elsewhere
+        pcr.calc("T", CONST_SEVEN, id="forge", into="out.seven")
+        self.assertEqual(pcr.run(PxC()).results["forge"], 7)
+
+    def test_tick_calc_refuses_a_receipt_into(self):
+        """pcr.py `_refuse_receipt_into`, called from Tick.calc as well: the Tick's own
+        binder is reachable directly (test_materialize.py:667 uses it).
+
+        Mutation: delete the call in Tick.calc -- PCR.calc still refuses, this does not.
+        """
+        pcr = PCR("forge-tick")
+        with self.assertRaises(ValueError):
+            pcr.tick("T").calc(CONST_SEVEN, id="forge", into=Part("px.receipt.anything"))
+        self.assertEqual(pcr.tick("T").calculations, [])
+
+    def test_an_ordinary_address_that_merely_mentions_receipt_still_binds(self):
+        """The rule is the reserved second segment, not the word: `px.receipts.` and
+        `px.badges.receipt` are ordinary domain nouns.
+
+        Mutation: test `"receipt" in address` instead of the `px.receipt.` prefix.
+        """
+        pcr = PCR("ordinary")
+        pcr.calc("T", CONST_SEVEN, id="a", into="px.receipts.mine")
+        pcr.calc("T", CONST_SEVEN, id="b", into="px.badges.receipt")
+        pxc = PxC()
+        pcr.run(pxc)
+        self.assertEqual(pxc.addresses(), ("px.badges.receipt", "px.receipts.mine"))
 
 
 class FrozenCalculationIdentity(unittest.TestCase):

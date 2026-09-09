@@ -1,0 +1,7 @@
+[tests/test_receipts] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation')
+[tests/test_materialize] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')
+..................................................................................................................
+----------------------------------------------------------------------
+Ran 114 tests in 1.859s
+
+OK

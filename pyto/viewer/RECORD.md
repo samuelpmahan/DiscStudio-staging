@@ -115,6 +115,23 @@ two derive. It carries both binding spellings on purpose -- `split` binds a Part
 - `parts` is derived from the invocations and is present for convenience only.
 - Records are JSON with sorted keys and two-space indentation when written to disk.
 
+## Receipts as Parts
+
+`PCR.run(pxc, observe=True)` writes each invocation's `Receipt` into the store as an ordinary Part at
+`px.receipt.<pcr>.<tick>.<invocation-id>` -- the PCR name, the Tick name and the invocation id, under
+the reserved `receipt` second segment (`pyto/src/pyto/address.py`), so a reader predicts every
+receipt address from the PCR alone and PQL reads receipts like anything else
+(`PQL.prefix("px.receipt.")`). The key is the invocation id, not the Calculation address, because one
+Calculation runs many times in one Tick (`fit.all`, `fit.none`); with `observe=False` nothing is
+written at all, and no Calculation may bind an address under `px.receipt.` as its `into` -- `PCR.calc`
+and `Tick.calc` refuse it, so the segment is written by observation and by nothing else.
+
+This record does not enumerate store slots and so carries no receipt rows: `ticks` comes from the
+testimony and the receipts, and `parts` from the addresses those name. The one place
+`pyto.materialize.run_record` reads the store is the `preexisting` fallback (when the caller did not
+capture `set(pxc.addresses())` before the run), and it excludes the receipt addresses this run's own
+observation wrote, exactly as it excludes the addresses the run produced.
+
 ## Adapters
 
 | Source | Where the fields come from |
