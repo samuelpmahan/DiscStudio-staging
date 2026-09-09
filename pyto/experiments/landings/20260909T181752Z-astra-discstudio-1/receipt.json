@@ -1,0 +1,95 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T181752Z-astra-discstudio-1",
+  "package": "astra-discstudio-1",
+  "base_sha": "a10b969df04891792ca8744f93174e8dd1c01f67",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test && npm run build && python3 scripts/browser_test.py --embedded && (cd pyto/consumers/discstudio-card/port/painter && node verify_port.mjs ./painter.mjs ./cards.mjs)",
+    "exit": 0,
+    "output_sha256": "f4111806598dca5328ecd758e9013228b28ed69a54422f81cbf5c5d56e780fe1"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "e4805282674bca82abcb08ff3bbd9b032dee3e6bbf2e8f9e7b50ef41873b890c",
+    "counts": {
+      "library": 144,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 240,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 103,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": ".neat/items/DS-STUDIO-02.json",
+      "bytes": 2090,
+      "sha256": "e473209ebf562ac4519b200e325cdb630102b51be95b3c0e336a57c4ce824bd2"
+    },
+    {
+      "path": "pyto/consumers/discstudio-card/port/painter/painter.mjs",
+      "bytes": 8226,
+      "sha256": "5aeab9b991c0a17de632585cc05d9bdb0a0abce731cbf579eabf3d740b1b5cfc"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 10343,
+      "sha256": "f7557996fccf42cae1c978f733e5b202d8687a9f99461c52386a48c7b5c82019"
+    },
+    {
+      "path": "src/formats/shelf-sheet.js",
+      "bytes": 3700,
+      "sha256": "b0153d80f2f74539ac2412743fb1d50a9dafb8951b0cae734a357bf1bab785cf"
+    },
+    {
+      "path": "src/presentation.js",
+      "bytes": 11555,
+      "sha256": "477d36bf4707afe46e92d06e375daecbb163047839f78315b4a819074e217b41"
+    },
+    {
+      "path": "src/review-data.js",
+      "bytes": 3106,
+      "sha256": "3bf5b077a490bbb0c6033e7c542f4b7e935410bf75f74d249a94af36a0a706d3"
+    },
+    {
+      "path": "src/runtime.js",
+      "bytes": 10374,
+      "sha256": "cdd8763a14dc82b8fc0a9a6c1ca3695f52fca992adaeff168bcec1c060ceac38"
+    },
+    {
+      "path": "tests/core.test.js",
+      "bytes": 12140,
+      "sha256": "5aeae6a7b6cba4a4d8eb187f1bc03b27357474561436f498fa6579d60e63649f"
+    },
+    {
+      "path": "tests/embedded_harness.py",
+      "bytes": 2147,
+      "sha256": "9e67475905d0ce8162afa404618a7e389552b630b3016c267b0702c4f4b5f056"
+    },
+    {
+      "path": "tests/fixtures/shelf-sheet.json",
+      "bytes": 7160,
+      "sha256": "abe4f2c15019f38b36f1dc17f0b397c9c71f86ea0e3a377f4f599642f6145d7b"
+    },
+    {
+      "path": "tests/formats.test.js",
+      "bytes": 2745,
+      "sha256": "19bf2a3a4d1c559c2d10580da3a6dee6d10229b414b3dc938eb72b7b6867f76c"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/questions.md",
+      "bytes": 44054,
+      "sha256": "5678d696a4e4ded87eb8cd88f2438ced2678558a744c92b2f7f464805ad3f4f9"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-09T18:19:01.111177Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

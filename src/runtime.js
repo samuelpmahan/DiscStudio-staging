@@ -2,6 +2,7 @@ import { createExecBoard, pxFn, readPql, invokePql } from './core/exec.js';
 import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materialFor, discoverFields, applyCommand, validateWorld, id } from './domain.js';
 import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
+import { shelfSheet } from './formats/shelf-sheet.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
 export function createStudioRuntime(initial) {
@@ -34,6 +35,7 @@ export function createStudioRuntime(initial) {
   register('fn.constraint.oneMold', oneMold);
   register('fn.constraint.teamThrows', teamThrows);
   register('fn.constraint.combine', ({ combine, ...results }) => combineConstraints({ results, combine }));
+  register('fn.disc.format.shelfSheet', shelfSheet);
   function publishWorld(world) {
     validateWorld(world); pxc.set('px.studio.world', world);
     const present = new Set();

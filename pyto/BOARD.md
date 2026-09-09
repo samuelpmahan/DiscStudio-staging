@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 18:19 **landed** `astra-discstudio-1`: Astra package one: the studio draws disc art through the ported painter and ships a printable shelf sheet; painted art inside the generic card (12 files since a10b969, suites green, receipt 20260909T181752Z-astra-discstudio-1)
 - 2026-09-09 15:38 **landed** `task-19`: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases (67 files since af0bf06, suites green, receipt 20260909T153806Z-task-19)
 - 2026-09-09 15:37 **landed** `neat-ids-2`: task ids also count tasks landed on origin since the last pull (1 files since 9fba660, suites green, receipt 20260909T153644Z-neat-ids-2)
 - 2026-09-09 15:35 **refused** `task-15`: merge conflict with exp/15 in: pyto/experiments/tasks/15/HANDOFF.md pyto/experiments/tasks/15/evidence/check_all.txt pyto/experiments/tasks/15/evidence/verify.txt pyto/experiments/tasks/15/packet.md 

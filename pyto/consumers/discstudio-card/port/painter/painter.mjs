@@ -1,6 +1,6 @@
 // painter.mjs -- the disc-art painter in JavaScript, byte-identical to the Python.
 //
-//   import { render } from './painter.mjs';
+//   import { render } from 'painter.mjs';   (this file)
 //   render(family, seed, base, accent, target, label) -> string  // the whole SVG document
 //
 // `family` is a slug from art_registry.ALL_FAMILIES ('orbit-foundry', 'wind-rose',
