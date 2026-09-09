@@ -4,8 +4,36 @@ Intent: neat anywhere: the same seven commands in any git repo, no pyto assumpti
 Starting point: 50ec3f7b87108ebe6d9bc5f0e448bfbbc4a8dca3 (checkpoint: neat ids count origin's exp branches; board: undo tested)
 Verify: bash pyto/scripts/neat.sh selftest
 Allow: pyto/scripts/neat.sh pyto/scripts/land.sh pyto/LANDING.md pyto/experiments/tasks/3
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 2 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/scripts/land.sh
+- M  pyto/scripts/neat.sh
+
+```
+pyto/scripts/land.sh | 108 ++++++++++++++++++++++++++++++---------
+ pyto/scripts/neat.sh | 140 ++++++++++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 200 insertions(+), 48 deletions(-)
+```
+
+## Evidence
+
+- verify: `bash pyto/scripts/neat.sh selftest` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         144  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    240  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+    viewer                          103  OK
+    viewer-record-schema             19  OK
 
 ## Uncertain
 
