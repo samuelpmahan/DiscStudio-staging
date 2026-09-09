@@ -26,7 +26,7 @@
     },
     {
       "lane": "C",
-      "role": "run_regrouped.py, run_reinput.py, run_from_retained.py, second_experiment.py (shared saved-work ledger, ms_saved from run-1 receipts.json); evidence/run-{2-regroup,3-reinput,4-from-retained}/ with interpretation.md; test_second_experiment.py (170-test grouped-ablation suite grew from Day 1's 31)",
+      "role": "run_regrouped.py, run_reinput.py, run_from_retained.py, second_experiment.py (shared saved-work ledger, ms_saved from run-1 receipts.json); evidence/run-{2-regroup,3-reinput,4-from-retained}/ with interpretation.md; test_second_experiment.py (grouped-ablation suite grew from Day 1's 31 to 170 at this record, and to 211 after fixer round 3 -- see check_all_after_round_3)",
       "targets": [
         "pyto/experiments/grouped-ablation/run_regrouped.py",
         "pyto/experiments/grouped-ablation/run_reinput.py",
@@ -151,7 +151,24 @@
       "art-registry-md": "OK (regenerated, matches committed ART-REGISTRY.md)"
     },
     "unittest_total": 304,
-    "tests_txt_last_line": "ALL SUITES PASSED"
+    "tests_txt_last_line": "ALL SUITES PASSED",
+    "counts_note": "the counts above are this record's, traceable to tests.txt in this directory; check_all_after_round_3 below is a fresh run pasted after Day 2's third fixer round (experiments/runs/day2/untested.md, 'Suite counts')"
+  },
+  "check_all_after_round_3": {
+    "exit": 0,
+    "date": "2026-09-09",
+    "counts": {
+      "library": 93,
+      "experiments/grouped-ablation": 211,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "art-registry-md": "OK (regenerated, matches committed ART-REGISTRY.md)"
+    },
+    "unittest_total": 374,
+    "tests_txt_last_line": "ALL SUITES PASSED",
+    "delta_note": "grouped-ablation 170 -> 211 is round 3's eight findings' tests; library 64 -> 93 is NOT Day 2's -- pyto/tests/test_materialize.py arrived with a concurrent Day 3 line of work (pyto/src/pyto/materialize.py). consumer (61) and disc-stats (4) are unchanged, so the EXPECT_CONSUMER / EXPECT_DISC_STATS pins in scripts/check_all.sh did not need updating and no suite shrank."
   },
   "head_sha_at_record": "d8b0c5d98e7f2b81e470d48ae3585a564719390d",
   "commits_since_base": [

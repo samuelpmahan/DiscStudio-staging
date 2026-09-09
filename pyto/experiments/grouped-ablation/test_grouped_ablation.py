@@ -24,9 +24,11 @@ from calculations import REGISTRY  # noqa: E402
 from features import FEATURES, GROUPS  # noqa: E402
 from run import (  # noqa: E402
     AUTHORING_FILES,
+    EVIDENCE_ROOT,
     WATCHED_PATHS,
     commit_sha,
     dirty_paths,
+    evidence_excludes,
     failed_variants,
     jsonable,
     main,
@@ -239,18 +241,62 @@ class GroupedAblationEvidence(unittest.TestCase):
         self.assertEqual(payload["calculations_authored"], len(REGISTRY))
         self.assertEqual(saved_work(self.result, "/nowhere/run-9/", None)["run"], "run-9")
 
-    def test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_paths_changed(self):
+    def test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed(self):
         """commit.txt = `git rev-parse HEAD` plus `-dirty` exactly when this experiment dir or pyto/src differs
-        from HEAD (round 2, finding 1), so a bare sha means the producing code is in that commit.
+        from HEAD **outside evidence/** (round 2 finding 1; round 3 finding 7), so a bare sha means the producing
+        code is in that commit.
         Mutation: `WATCHED_PATHS = (HERE, SRC_DIR)` -> `WATCHED_PATHS = (HERE,)` (stop watching the library) fails the
         WATCHED_PATHS assertion unconditionally; `return f"{sha}-dirty" if ... else sha` -> `return sha` fails the
-        iff assertion whenever the tree is dirty (state-dependent; CommitShaDirtyMarker kills it unconditionally)."""
+        iff assertion whenever the tree is dirty (state-dependent; CommitShaDirtyMarker kills it unconditionally).
+
+        The `exclude` is what `write_evidence` itself passes (`run.py:328`): outputs are not the code that
+        produced them, so a freshly regenerated sibling run must not make this one read `-dirty`. Comparing
+        against a bare `commit_sha()` here would assert the OPPOSITE of what run.py does and fail the moment
+        anything under evidence/ is regenerated -- which is every time these scripts are run."""
+        excludes = evidence_excludes()
         text = self._read("commit.txt")
         self.assertRegex(text, COMMIT_LINE)
-        self.assertEqual(text, commit_sha() + "\n")
-        self.assertEqual(text.endswith("-dirty\n"), bool(dirty_paths()))
+        self.assertEqual(text, commit_sha(exclude=excludes) + "\n")
+        self.assertEqual(text.endswith("-dirty\n"), bool(dirty_paths(exclude=excludes)))
         self.assertEqual(WATCHED_PATHS, (HERE, os.path.normpath(os.path.join(HERE, "..", "..", "src"))))
         self.assertTrue(all(os.path.isdir(p) for p in WATCHED_PATHS))
+
+    def test_evidence_excludes_names_the_evidence_tree_and_nothing_else(self):
+        """Round 3, finding 7. The exclusion must be exactly the outputs.
+
+        Kills: widening it to the experiment directory (which would stop the stamp
+        seeing an edit to calculations.py) or to pyto/src. An out_dir already inside
+        evidence/ adds nothing; one outside it is added, because a run written to a
+        temp directory inside the repository would otherwise count as dirt."""
+        self.assertEqual(evidence_excludes(), (os.path.abspath(EVIDENCE_ROOT),))
+        self.assertEqual(EVIDENCE_ROOT, os.path.join(HERE, "evidence"))
+        self.assertEqual(
+            evidence_excludes(os.path.join(EVIDENCE_ROOT, "run-1")),
+            (os.path.abspath(EVIDENCE_ROOT),),
+        )
+        self.assertEqual(
+            evidence_excludes("/tmp/somewhere-else"),
+            (os.path.abspath(EVIDENCE_ROOT), os.path.abspath("/tmp/somewhere-else")),
+        )
+        for producing in (HERE, os.path.join(HERE, "calculations.py"), os.path.join(HERE, "..", "..", "src")):
+            for excluded in evidence_excludes():
+                self.assertNotEqual(os.path.abspath(producing), excluded)
+
+    def test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded(self):
+        """The half of the stamp that must NOT be relaxed: an uncommitted edit to code
+        is still dirt even though the evidence tree is not."""
+        marker = os.path.join(HERE, "_round3_dirty_probe.py")
+        with open(marker, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write("# temporary probe written by test_grouped_ablation.py\n")
+        try:
+            paths = dirty_paths(exclude=evidence_excludes())
+            self.assertTrue(
+                any(path.endswith("_round3_dirty_probe.py") for path in paths),
+                f"an untracked file in the experiment directory was not seen as dirt: {paths}",
+            )
+            self.assertTrue(commit_sha(exclude=evidence_excludes()).endswith("-dirty"))
+        finally:
+            os.remove(marker)
 
     def test_comparison_md_lists_drop_g3_first(self):
         text = self._read("comparison.md")

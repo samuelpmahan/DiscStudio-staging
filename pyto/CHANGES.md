@@ -276,3 +276,187 @@ expected to do.
 - Dropping `shadowed_inputs` fails
   `ShadowedInputs::test_args_key_colliding_with_a_bound_input_is_recorded_not_raised`
   (1 of 1).
+
+**Fixer round 3 decisions that belong in this ledger** (the rest are
+experiment-local and cited in `experiments/grouped-ablation/`). **No library change
+was made in this round either**: `src/pyto/` is untouched by everything below, and
+`json.dumps([asdict(t) for t in run.ticks])` is unchanged because `pcr.py` is
+unchanged -- now also asserted through the replay path
+(`test_replay.py::ReplayObserveSeam::test_testimony_bytes_are_identical_with_observe_on_and_off`).
+
+- *Verification never rewrites committed evidence.* Running the suite used to
+  rewrite thirteen tracked files under `evidence/`, because
+  `replay.ensure_retained_record` wrote `evidence/run-1/retained.json` and every
+  check logged into `evidence/replay/`, `evidence/tamper/` and so on. Every writer
+  in `replay.py` now takes the path it writes to and defaults to a fresh temp
+  directory; `ensure_retained_record` rebuilds into a temp dir and compares against
+  the committed record as an **oracle**, returning the committed bytes. The
+  committed tree is written only by the run scripts and by `python3
+  experiments/grouped-ablation/replay.py --force`, which refuses a non-empty
+  destination without `--force` the way `run.py` always has (`replay.OWNED_EVIDENCE`).
+  The refusal logs and the two `evidence/tamper/mutating-baseline-*` files, which
+  used to exist only because a test wrote them, are now produced by `replay.main`
+  (`replay.run_refusal`, `replay.run_forged_record_refusal`).
+  `test_replay.py::CheckAllLeavesTheTreeClean` runs the two evidence-writing suites
+  in a child interpreter and asserts `git status --porcelain` for `evidence/` is
+  unchanged (round 3, finding 1).
+- *The replay child observes.* The fresh-process child now calls
+  `retain.replay(record, REGISTRY, observe=True)` and reports
+  `Receipt.result_sha256` per invocation. The parent asserts three files agree --
+  the child's receipt digests, `record["results"]`, and the committed
+  `receipts.json` `result_sha256` -- and logs both comparisons; either inequality is
+  its own `VERDICT: refused` reason (round 3, finding 2).
+- *The module-leak check reads the whole table.* It used to subtract the child's
+  `sys.modules` *before* its first import, so anything a site hook had already
+  pulled in was invisible. It is now computed over the child's full `sys.modules`
+  minus an explicitly enumerated startup-resident set
+  (`replay._STARTUP_RESIDENT_MODULES = {__main__, _distutils_hack, sitecustomize}`)
+  plus the stdlib and the four modules the replay may reach; and `pyto`,
+  `calculations`, `features` and `retain` are asserted **absent** from
+  `sys_modules_before` (round 3, finding 3).
+- *`input_parts_changed` is computed, not declared.* Each Day 2 script used to hand
+  `second_experiment.saved_work` a literal list naming what its author believed the
+  run had changed, so the field agreed with the script's intent by construction. It
+  is now derived from the two records' external digests
+  (`second_experiment.input_parts_changed`), and `saved_work` no longer accepts the
+  keyword at all. run-4 consequently reports both halves of its boundary move
+  (`input.ablation.rows` dropped, `scratch.ablation.split` added) where the literal
+  named only the addition -- recorded as `{?} InputPartsChangedScope` in
+  `pyto/questions.md` (round 3, finding 4).
+- *`receipts.json` is deterministic apart from two fields.* `Determinism` only
+  asserted that the file's TEXT differs across two regenerations, which one changed
+  millisecond satisfies. `test_second_experiment.py::ReceiptsDeterminism` parses
+  both, drops `started_ms` and `duration_ms` per receipt, requires the remainder
+  equal, and requires at least one timing to differ so the equality is not
+  trivially met by a frozen clock (round 3, finding 5).
+- *`retained.json` and `receipts.json` are one measurement at two moments.*
+  `retain.retain_run`'s docstring now says why: `pcr.py:334-336` publishes the value
+  a Calculation returned into `run.results[id]` as the very same object,
+  `pyto.pcr._result_sha256` digests it as the invocation returns and
+  `retain.digest_of` digests that alias after the run, both over the same canonical
+  JSON with no `default=`. An inequality means the object was mutated in between.
+  `test_second_experiment.py::RetainedDigestsEqualReceiptDigests` asserts the
+  equality per id for all four committed runs (round 3, finding 6).
+- *Outputs are not code, for the `-dirty` stamp.* `run.evidence_excludes` excludes
+  the whole `evidence/` tree from the dirt judgement in `run.py`,
+  `second_experiment.py` and `replay.py`, where each previously excluded only the
+  one directory it was writing -- so regenerating run-2 after run-1 saw run-1's
+  fresh output as dirt. Uncommitted edits to producing code still stamp `-dirty`.
+  Recorded as `{?} EvidenceDirtiness` in `pyto/questions.md`; the "Close it by"
+  block in `evidence/OPEN-FINDINGS.md` is rewritten to match and now lists
+  exhaustively which fields of which files a regeneration may change (round 3,
+  finding 7).
+
+
+## Day 3 (base 83422cf): `pyto/src/pyto/materialize.py`, a Tick materializer
+
+**What landed.** One new module, `pyto/src/pyto/materialize.py`. No existing library
+file changed: `pcr.py`, `core.py`, `pql.py`, `graph.py` and `neon.py` are byte-identical
+to their state at 83422cf, and `pyto/__init__.py` is untouched, so the module is reached
+as `from pyto.materialize import run_record` (the same status `pyto.pcr.Receipt` has).
+
+- `run_record(run, pxc, *, preexisting=None, pcr_name=None, source=None,
+  value_cap_bytes=262144, array_cap=200) -> dict` — the `pyto-run-record@1` document of
+  pyto/viewer/RECORD.md: ticks joined to receipts by invocation id (grouping and order
+  from `PcrRun.ticks`, `index` from position), Calculation identity from the receipt's
+  `FrozenCalculation` when `observe=True` and `{address, implementation_sha256: None,
+  identity_scope: None}` otherwise, `hit` from the `px:` bindings, values from
+  `PcrRun.results`, plus the derived `parts` map and `counters`.
+- `render_value(value, *, value_cap_bytes, array_cap) -> {kind, data, note}` — the value
+  dispatch: `png-data-url` (a PIL image through an in-memory PNG), `svg` (a string
+  opening an SVG document, carried verbatim), `text`, `json` (arrays over the cap cut to
+  their first `array_cap` entries with a note), `omitted` (with a note carrying the size
+  and digest, or why the value is not serializable).
+- `write_record(record, path)` — sorted keys, two-space indent, LF, trailing newline
+  (RECORD.md:67).
+- `tick_sheets(record, out_dir, *, cols=2)` — one neon PNG per Tick through
+  `neon.panel`/`neon.sheet`: a text panel per invocation carrying the annotation anchor
+  `(pcr, tick, invocation id, part address)`, the reads, the writes, the duration, the
+  hit and the first lines of the value, plus an image panel for image values.
+
+**What it is a transfer of.** Nothing in another runtime: this is the gap
+`research/tick-observability-ledger.md:60-85` records as absent in *both* directions
+("no function in `pyto/src/pyto/` consumes a `PcrRun`", "no Tick↔receipt join", "no value
+in any serialized form"). The *output* is a transfer: the document is the shared record
+format `pyto/viewer/RECORD.md`, which the JS runtime's adapters also emit, and the JS
+runtime is the reference where the two could differ (ULTRACODE-WEEK.md, Reframing 4).
+The panel vocabulary is `pyto/src/pyto/neon.py:161-190` unchanged.
+
+**Testimony bytes are unchanged, and this is why the module could be additive.**
+`run_record` only reads a `PcrRun`; it never constructs, mutates or re-serializes one.
+`tests/test_materialize.py::TestimonyBytesUnchangedByMaterializing` is the oracle:
+`json.dumps([asdict(t) for t in run.ticks])` before materializing equals the same
+expression after `run_record` + `write_record` + `tick_sheets`. The Day 2 statement
+therefore still holds unqualified — the bytes consumers embed in compositionEvidence
+(consumers/discstudio-card/card_composition.py:177, app.py:53) never see this seam.
+
+**Value blindness is where the record deliberately parts from the receipt.**
+`Receipt.result_sha256` is one-way by construction (pcr.py:125) and `retained.json`
+keeps `{invocation id: sha256|None}` (experiments/grouped-ablation/retain.py:28), so no
+serialized artifact carried the values `PCR.run` was holding
+(tick-observability-ledger.md:107-118). The record carries them, under two caps taken
+from RECORD.md:63-64 rather than invented here: 256 KB per value and 200 array entries.
+Over either cap the record says so in `note` with the size and the digest; it never
+silently truncates.
+
+**What this module does not decide.**
+
+- *Not a cache and not a replay seam.* It reads a completed run. Reuse decisions,
+  content addressing and the materials store are still `{?}` and still experiment-local.
+- *Not a `hit` definition of its own.* It implements the owner's answer verbatim
+  (ULTRACODE-WEEK.md:79-82, RECORD.md:53-56): a `px:` binding whose address is in
+  `preexisting` or was not produced earlier in the same run. Reading `fn:<id>` is never a
+  hit, which is why all twelve Day 1 fit/score invocations are `computed`, not hits — the
+  declaration-order rewrite (pcr.py:112-116) is what makes them share one `split`.
+- *Not a Part kind system.* `Part` still carries an address and nothing else
+  (core.py:11-22, ledger gap 4); the dispatch is on the runtime type of the *value*, not
+  on any new Part metadata, so no library type grew a field.
+- *Not an SVG rasterizer.* `tick_sheets` writes an SVG value verbatim beside the sheet
+  and draws a placeholder panel naming the file. Rasterizing needs a renderer pyto does
+  not depend on; the harness or a browser does it.
+- *Not a Tick identity.* `index` is the position in `PcrRun.ticks`, honestly derived, not
+  a stable id assigned by the runtime (ledger gap 5 stays open).
+
+**Pillow stays optional.** Importing `pyto.materialize` does not import PIL (`pyto.neon`
+imports it at module level, so the import is deferred into the drawing functions). Without
+Pillow the record is still produced, with any image value `omitted` and the note saying
+why; `tick_sheets` raises `RuntimeError` naming the missing dependency rather than
+writing half a sheet.
+
+**Before.** At 83422cf, `import pyto.materialize` raised
+`ModuleNotFoundError: No module named 'pyto.materialize'`, and no function anywhere in
+`pyto/src/pyto/` took a `PcrRun` (the ledger's first missing item).
+
+**After.** The library suite is Day 2's 64 tests plus `tests/test_materialize.py` (29):
+93, all passing under `scripts/check_all.sh`, which pins no library count and needed no
+edit. One test *helper* changed outside this file's scope and it is recorded here rather
+than buried: `experiments/grouped-ablation/test_grouped_ablation.py::_snapshot` walked a
+directory with a flat `os.listdir` and raised `IsADirectoryError` once
+`evidence/run-1/ticks/` existed. It now recurses (`os.walk`), which keeps its assertion —
+`run.py` leaves the tracked run-1 untouched — and extends it over the sheets. No
+assertion, count or expectation of any existing test changed.
+
+**Mutation check** (scratch only: `src/pyto` is copied out, mutated there, and put on
+`PYTHONPATH`; the repository is never written). Counts are what the runs printed.
+
+- Dropping the `fn:<id>` → writer's `into` edge from the `parts` map fails
+  `DayOneRecord::test_parts_map_lists_the_twelve_fn_readers_of_the_split_part` and
+  `HitLedger::test_an_address_produced_earlier_in_the_run_is_not_a_hit` — **2**. That edge
+  is what makes `scratch.ablation.split` show its twelve readers (RECORD.md:44) even
+  though every one of them binds it as `fn:split`.
+- Reducing `hit` to `address in preexisting` (dropping "not produced earlier in this
+  run") fails
+  `HitLedger::test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set`
+  — **1**. Without that test the clause was invisible, because a caller passing the true
+  pre-run store gets the same answer either way.
+- Removing the `str` branch, so a string falls through to `json`, fails four tests
+  (`text`, `svg`, the XML prologue, and the SVG written beside the sheet) — **4**.
+- Raising the array cap check from `> cap` to `> cap + 1000` fails **2** (the 1000-element
+  list and the `array_cap` parameter).
+- Digesting an omitted value through plain `repr` instead of the canonical repr fails
+  **2**, one of them
+  `ValueKinds::test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed`,
+  which runs three child processes under different `PYTHONHASHSEED` values. `repr(set)`
+  order is salted per process, so the plain-`repr` digest would report two identical sets
+  as different material — the process-dependent digest ULTRACODE-WEEK.md critic gap 10
+  refuses.

@@ -111,7 +111,14 @@ for it (Receipt for Observation, `tests/test_receipts.py` for
   planted-|w|-per-group tables — recomputed exactly from `features.py`
   `TRUE_W`/`GROUPS`/`CROSS_GROUPS` by the cross-verification lens.
 
-## Suite counts as of this record (traceable to `tests.txt`, not asserted as prose)
+## Suite counts
+
+Two tables, because this record was written before Day 2's third fixer round and
+the counts moved. Neither is asserted as prose: the first is what `tests.txt`
+in this directory holds, the second is a fresh `bash scripts/check_all.sh` run
+pasted verbatim from its `== per-suite counts` block.
+
+### As of this record (traceable to `tests.txt`)
 
 | suite | tests | status |
 | --- | --- | --- |
@@ -129,6 +136,43 @@ prepended to `tests.txt` ahead of the `check_all.sh` output, so the file
 still ends with `ALL SUITES PASSED` per `experiments/CAPTURE.md`, "How a day
 closes".
 
+### After fixer round 3 (re-run, 2026-09-09)
+
+    == per-suite counts
+    suite                         tests  status
+    library                          93  OK
+    experiments/grouped-ablation    211  OK
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+
+    ALL SUITES PASSED
+
+Where the two differ, and why:
+
+- `experiments/grouped-ablation` 170 -> 211. Round 3 added the tests its eight
+  findings asked for: the evidence-is-never-rewritten checks and the log/report
+  oracles (`test_replay.py::VerificationWritesNoEvidence`,
+  `::CheckAllLeavesTheTreeClean`, `test_second_experiment.py::EvidenceIsNeverRewritten`),
+  the receipts-from-the-child join (`::ReceiptDigestsFromTheChild`,
+  `::ReplayObserveSeam`), the module-table check (`::ChildModuleTable`), the
+  computed `input_parts_changed` (`::InputPartsChangedIsComputed`), the
+  receipts.json determinism check (`::ReceiptsDeterminism`) and the
+  retained-vs-receipts digest join (`::RetainedDigestsEqualReceiptDigests`), plus
+  two in `test_grouped_ablation.py` for the `-dirty` stamp's new evidence
+  exclusion (`::test_evidence_excludes_names_the_evidence_tree_and_nothing_else`,
+  `::test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded`).
+- `library` 64 -> 93. **Not Day 2's.** Those 29 tests are `pyto/tests/test_materialize.py`,
+  which arrived with a concurrent Day 3 line of work in the same tree
+  (`pyto/src/pyto/materialize.py`, `pyto/experiments/grouped-ablation/materialize_run.py`,
+  `pyto/viewer/adapters.js`). The Day 2 library seam is still exactly one file
+  under `pyto/src` (`pcr.py`), and round 3 changed nothing there.
+- `consumer` (61) and `disc-stats` (4) are unchanged, which is what
+  `EXPECT_CONSUMER` / `EXPECT_DISC_STATS` in `scripts/check_all.sh` pin. Neither
+  pin needed updating; no suite shrank.
+
 ## Blockers for committing
 
 None of the open findings above block a commit of the Day 2 seam itself:
@@ -145,16 +189,25 @@ None of the open findings above block a commit of the Day 2 seam itself:
 - `git status --porcelain` is clean at record time except the files this
   record stage itself wrote.
 
-One item is worth the orchestrator's attention before or shortly after
-committing, since it affects what a THIRD reader of this evidence can
-trust, but it is not a defect in the seam itself:
+One item was worth the orchestrator's attention before or shortly after
+committing, since it affected what a THIRD reader of this evidence could
+trust. **It is closed by fixer round 3** and the paragraph is kept, corrected,
+rather than deleted, because it is what the record said at the time:
 
-- **`bash scripts/check_all.sh` (via `replay.ensure_retained_record`)
+- ~~**`bash scripts/check_all.sh` (via `replay.ensure_retained_record`)
   rewrites 13 committed evidence files as a side effect of running the
-  test suite** (hidden-state and determinism lens findings). This record
+  test suite**~~ (hidden-state and determinism lens findings). This record
   stage ran `check_all.sh` once for `tests.txt` and reverted the resulting
   evidence diff with `git checkout -- pyto/experiments/grouped-ablation/evidence/`
   so the working tree stays byte-identical to what `diff.patch` and
-  `meta.json` describe; a future run (including the orchestrator's own
-  verification) will reproduce the same 13-file churn until a fixer round
-  3 addresses it.
+  `meta.json` describe.
+
+  **Closed, round 3 finding 1.** Verification now writes into temp
+  directories and compares against the committed files as oracles;
+  `replay.ensure_retained_record` no longer writes `evidence/run-1/retained.json`
+  at all, and the committed artifacts are regenerated only by the run scripts
+  and by `python3 experiments/grouped-ablation/replay.py --force`. Running the
+  affected suites now leaves `git status --short` empty for `evidence/`, which
+  `test_replay.py::CheckAllLeavesTheTreeClean` asserts by running them in a
+  child interpreter and reading `git status --porcelain` before and after. The
+  13-file churn no longer happens.

@@ -37,7 +37,7 @@ files -- would remove the very check that makes the stamp worth reading.
 **Close it by** (orchestrator, on a tree whose only uncommitted change is
 `evidence/`). Round 3 removed the half of this that no amount of care could fix:
 the stamp now excludes the whole `evidence/` tree, not just the one directory being
-written (`run.evidence_excludes`, `run.py:229-257`), so regenerating run-2 after
+written (`run.evidence_excludes`, `run.py:235-265`), so regenerating run-2 after
 run-1 no longer sees run-1's fresh output as dirt. What is left is honest and
 unavoidable: uncommitted edits to producing code -- `run.py`, `retain.py`,
 `replay.py`, `second_experiment.py`, the three `run_*.py`, `program.py`,
@@ -51,7 +51,7 @@ unavoidable: uncommitted edits to producing code -- `run.py`, `retain.py`,
     python3 experiments/grouped-ablation/replay.py --force
 
 `replay.py` now takes `--force` and refuses to write over its own committed
-artifacts without it (`replay.OWNED_EVIDENCE`, `replay.py:1194-1252`), the way the
+artifacts without it (`replay.OWNED_EVIDENCE`, `replay.py:1328-1400`), the way the
 run scripts always have; it also regenerates the refusal logs under
 `evidence/replay/refusals/` and the two `evidence/tamper/mutating-baseline-*`
 files, which used to exist only because a test wrote them.
@@ -238,8 +238,8 @@ Eight required fixes; what this round could not close, and who can.
 ## 1. `commit.txt` still carries `-dirty`, but for one reason instead of two
 
 Round 3 took the fix finding 7 named: the `-dirty` judgement now excludes the whole
-`evidence/` tree (`run.evidence_excludes`, `run.py:229-257`, used by `run.py:296`,
-`second_experiment.py:184` and `:278`, and `replay.py:151`). Outputs are not code,
+`evidence/` tree (`run.evidence_excludes`, `run.py:235-265`, used by `run.py:328`,
+`second_experiment.py:184` and `:325`, and `replay.py:178`). Outputs are not code,
 so a regeneration no longer marks the next run dirty on account of the previous
 one's files. All four runs were regenerated in that order, plus every artifact
 `replay.py --force` owns.

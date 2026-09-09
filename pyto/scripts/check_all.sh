@@ -143,6 +143,36 @@ fi
 SUMMARY+=("$(printf '%-28s %6s  %s' art-registry-md - "$art_registry_ok")")
 echo
 
+# 7. viewer suite: the Tick viewer is JavaScript ("JS is first class",
+# research/ULTRACODE-WEEK.md Reframing 4), so its Node 22 tests are a suite here
+# and not an optional extra. A missing node fails loudly with a named reason
+# rather than passing silently.
+EXPECT_VIEWER="${EXPECT_VIEWER:-71}"
+echo "== suite: viewer  (cwd $PYTO/viewer)"
+viewer_ok=FAIL
+viewer_count="?"
+if ! command -v node > /dev/null 2>&1; then
+    echo "-- viewer: FAILED (node is not on PATH; the Tick viewer tests cannot run)"; FAILED=1
+else
+    echo "   \$ node --test test/*.test.mjs   ($(node --version))"
+    viewer_log="$LOG_DIR/viewer.log"
+    viewer_rc=0
+    (cd "$PYTO/viewer" && node --test test/*.test.mjs) > "$viewer_log" 2>&1 || viewer_rc=$?
+    cat "$viewer_log"
+    viewer_count="$(grep -E '^# pass [0-9]+' "$viewer_log" | tail -1 | sed -E 's/^# pass ([0-9]+).*/\1/' || true)"
+    viewer_count="${viewer_count:-?}"
+    viewer_fail="$(grep -E '^# fail [0-9]+' "$viewer_log" | tail -1 | sed -E 's/^# fail ([0-9]+).*/\1/' || true)"
+    if [ "$viewer_rc" -ne 0 ] || [ "${viewer_fail:-1}" != "0" ]; then
+        echo "-- viewer: FAILED (exit $viewer_rc, passed $viewer_count, failed ${viewer_fail:-?})"; FAILED=1
+    elif [ "$viewer_count" != "$EXPECT_VIEWER" ]; then
+        echo "-- viewer: FAILED (expected exactly $EXPECT_VIEWER tests, got $viewer_count)"; FAILED=1
+    else
+        echo "-- viewer: OK (ran $viewer_count)"; viewer_ok=OK
+    fi
+fi
+SUMMARY+=("$(printf '%-28s %6s  %s' viewer "$viewer_count" "$viewer_ok")")
+echo
+
 echo "== per-suite counts"
 printf '%-28s %6s  %s\n' suite tests status
 for line in "${SUMMARY[@]}"; do echo "$line"; done
