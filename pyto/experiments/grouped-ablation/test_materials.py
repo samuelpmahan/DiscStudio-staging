@@ -38,6 +38,7 @@ if os.name == "nt" and os.environ.get("SystemRoot"):
     # test_subprocess.py::test_empty_env on win32 for this reason). It is the one
     # variable the strip keeps, and only there.
     STRIPPED_ENV["SystemRoot"] = os.environ["SystemRoot"]
+    STRIPPED_ENV["SystemDrive"] = os.environ.get("SystemDrive", "C:")  # else a literal "%SystemDrive%" folder appears in cwd
 
 
 def _fresh_store(root: str | None = None) -> materials.MaterialsStore:

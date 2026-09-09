@@ -54,6 +54,7 @@ def render_art_via_pyto(payload: dict[str, object]) -> tuple[str, dict[str, obje
     }
 
 MAX_BODY = 256 * 1024
+MAX_DRAIN = 4 * 1024 * 1024  # cap on how much of an oversized body we'll read-and-discard
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
 HOST_RE = re.compile(r"^\[?([^\]:]+|::1)\]?(?::\d+)?$")
 
@@ -81,6 +82,28 @@ class SandboxHandler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
+
+    def drain_body(self, length: int) -> None:
+        """Read and discard up to `length` bytes (capped at MAX_DRAIN) of the
+        request body from self.rfile without ever holding it in memory.
+
+        We're HTTP/1.0 (BaseHTTPRequestHandler default) and self.close_connection
+        closes the socket after this request regardless of what we answer. If we
+        answer an oversized POST with 413 and close without reading the body the
+        client already sent, that's an abortive close: unread inbound data plus a
+        close makes the OS send RST instead of a clean FIN. Most clients tolerate
+        that (the response was already flushed), but on Windows the client's own
+        socket read of our response can then raise ConnectionAbortedError
+        ([WinError 10053]) instead of returning the body -- this doesn't reproduce
+        on Linux, where the same close is quiet. Draining first lets the socket
+        close cleanly on every platform.
+        """
+        remaining = min(length, MAX_DRAIN)
+        while remaining > 0:
+            chunk = self.rfile.read(min(remaining, 64 * 1024))
+            if not chunk:
+                break
+            remaining -= len(chunk)
 
     def do_GET(self) -> None:
         if self.path == "/api/health":
@@ -125,6 +148,8 @@ class SandboxHandler(BaseHTTPRequestHandler):
         except ValueError:
             size = -1
         if size < 0 or size > MAX_BODY:
+            if size > 0:
+                self.drain_body(size)
             self.send_json(413, {"error": "request body exceeds 256KB limit"})
             return
         try:

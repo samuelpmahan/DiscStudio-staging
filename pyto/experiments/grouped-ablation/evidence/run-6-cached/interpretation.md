@@ -3,7 +3,7 @@
 Ported from ChainSpot's `createMatrixMaterials` (pyto/reference/lab/chainspot-matrix/matrix/materials.ts:263-317), experiment-local (`materials.py`), applied to `fn.ablation.split`.
 
 revision (fn.ablation.split's implementation_sha256, Day 2's receipts seam): `8674a964aba6e3cf16317f233884204439271c1853c0f945548a4a625e05bc86`
-content-addressed key: `5354fbae89c3c21efcddcde94cf9dc75e2bb9d27d3c27270a5ccc101a44d8e3f`
+content-addressed key: `41f4791137f9229a52aa1f063565fc6af6651f38735d8ac07a7064b1f4cb64c4`
 
 ## In-process counters (two fresh PxCs sharing one MaterialsStore)
 
@@ -18,9 +18,9 @@ requests=2 hits=1 misses=1 writes=1
 ## Milliseconds saved
 
 Read from the sibling full-program run's own receipts.json duration_ms for 'split' (the smaller of the two), never by re-running split to time the skipped call -- that would defeat the point of the cache hit. Synthetic-fixture wall time, labelled so (research/ULTRACODE-WEEK.md Reframing 2).
-split duration_ms, program run 1: 0.08015599814825691; program run 2: 0.050760001613525674.
-ms saved per cache hit (conservative, the smaller of the two): 0.050760001613525674.
-Two disk hits occurred (resolutions 2 and 3) -> ms saved this run: 0.102.
+split duration_ms, program run 1: 0.04189999890513718; program run 2: 0.03880000440403819.
+ms saved per cache hit (conservative, the smaller of the two): 0.03880000440403819.
+Two disk hits occurred (resolutions 2 and 3) -> ms saved this run: 0.078.
 
 ## Ordinary within-program reuse (hits.py, for comparison)
 
