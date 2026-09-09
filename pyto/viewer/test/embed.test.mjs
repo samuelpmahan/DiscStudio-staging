@@ -138,3 +138,21 @@ test('the CLI exits 2 with a usage line when no record is named', () => {
   assert.equal(error.status, 2);
   assert.match(String(error.stderr), /usage: node embed\.mjs/);
 });
+
+test('the inlined bundle is valid module syntax with no duplicate top-level bindings', () => {
+  // Concatenating two modules can collide on a top-level name (both files once
+  // declared `const encoder`), which throws at load and renders nothing.
+  // node --check parses the bundle without executing it, so the collision is a
+  // test failure here instead of a blank page in someone's browser.
+  const page = buildPage(fromPytoRecord(fixture('pyto-grouped-ablation.json')));
+  const open = '<script type="module">\n';
+  const start = page.indexOf(open, page.indexOf('</script>')) + open.length;
+  const end = page.indexOf('\n</script>', start);
+  const bundle = page.slice(start, end);
+  assert.ok(bundle.includes('function renderRecord'), 'the bundle was located');
+
+  const dir = mkdtempSync(join(tmpdir(), 'tick-bundle-'));
+  const file = join(dir, 'bundle.mjs');
+  writeFileSync(file, bundle);
+  execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' });
+});

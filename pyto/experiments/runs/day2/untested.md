@@ -147,6 +147,7 @@ closes".
     disc-stats                        4  OK
     examples                          3  OK
     art-registry-md                   -  OK
+    viewer                           72  OK
 
     ALL SUITES PASSED
 
@@ -169,9 +170,14 @@ Where the two differ, and why:
   (`pyto/src/pyto/materialize.py`, `pyto/experiments/grouped-ablation/materialize_run.py`,
   `pyto/viewer/adapters.js`). The Day 2 library seam is still exactly one file
   under `pyto/src` (`pcr.py`), and round 3 changed nothing there.
+- `viewer` (72) is a whole suite that did not exist at this record. **Not Day 2's**
+  either: it arrived with the same concurrent Day 3 work (`pyto/viewer/`, Node 22,
+  `EXPECT_VIEWER` in `scripts/check_all.sh`).
 - `consumer` (61) and `disc-stats` (4) are unchanged, which is what
   `EXPECT_CONSUMER` / `EXPECT_DISC_STATS` in `scripts/check_all.sh` pin. Neither
-  pin needed updating; no suite shrank.
+  pin needed updating by round 3; no suite shrank. The suites round 3 grew --
+  `library` and `experiments/grouped-ablation` -- carry no pin by design, so
+  nothing in `check_all.sh` needed bumping for them either.
 
 ## Blockers for committing
 

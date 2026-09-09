@@ -3,7 +3,7 @@
     "computed": 9,
     "hits": 2,
     "invocations": 11,
-    "wall_ms": 12.969
+    "wall_ms": 13.977
   },
   "parts": {
     "input.ablation.groups": {
@@ -24,18 +24,23 @@
       "preexisting": false,
       "read_by": [
         "sheet",
-        "retain"
+        "retain",
+        "table"
       ],
       "written_by": "compare"
     },
     "scratch.ablation.model.all": {
       "preexisting": false,
-      "read_by": [],
+      "read_by": [
+        "score.all"
+      ],
       "written_by": "fit.all"
     },
     "scratch.ablation.model.drop_g3": {
       "preexisting": false,
-      "read_by": [],
+      "read_by": [
+        "score.drop_g3"
+      ],
       "written_by": "fit.drop_g3"
     },
     "scratch.ablation.retained": {
@@ -56,6 +61,7 @@
     "scratch.ablation.sheet": {
       "preexisting": false,
       "read_by": [
+        "snapshot",
         "retain"
       ],
       "written_by": "sheet"
@@ -67,7 +73,12 @@
     },
     "scratch.ablation.split": {
       "preexisting": false,
-      "read_by": [],
+      "read_by": [
+        "fit.all",
+        "score.all",
+        "fit.drop_g3",
+        "score.drop_g3"
+      ],
       "written_by": "split"
     },
     "scratch.ablation.table": {
@@ -84,7 +95,7 @@
   "pcr": "ablation.grouped",
   "schema": "pyto-run-record@1",
   "source": {
-    "commit": "a08b082dca8f5af2cf38821fecd6a7f375cb3d63-dirty",
+    "commit": "42f4a66932264f97be49bd5da1fc2bcc3fea4e9a",
     "runtime": "pyto",
     "version": "0.1.0"
   },
@@ -157,7 +168,7 @@
           "declared_consumes": [
             "px:input.ablation.rows"
           ],
-          "duration_ms": 0.046,
+          "duration_ms": 0.047,
           "hit": true,
           "id": "split",
           "inputs": {
@@ -215,7 +226,7 @@
           "declared_consumes": [
             "fn:split"
           ],
-          "duration_ms": 5.07,
+          "duration_ms": 5.663,
           "hit": false,
           "id": "fit.all",
           "inputs": {
@@ -258,7 +269,7 @@
             "fn:split",
             "fn:fit.all"
           ],
-          "duration_ms": 0.177,
+          "duration_ms": 0.172,
           "hit": false,
           "id": "score.all",
           "inputs": {
@@ -304,7 +315,7 @@
           "declared_consumes": [
             "fn:split"
           ],
-          "duration_ms": 3.296,
+          "duration_ms": 3.667,
           "hit": false,
           "id": "fit.drop_g3",
           "inputs": {
@@ -347,7 +358,7 @@
             "fn:split",
             "fn:fit.drop_g3"
           ],
-          "duration_ms": 0.175,
+          "duration_ms": 0.221,
           "hit": false,
           "id": "score.drop_g3",
           "inputs": {
@@ -394,7 +405,7 @@
             "implementation_sha256": "0f0199f6a96302f175031e0eed60b5d388042107f43c4489e0d8ac9d0e448e9b"
           },
           "declared_consumes": [],
-          "duration_ms": 0.03,
+          "duration_ms": 0.032,
           "hit": false,
           "id": "compare",
           "inputs": {},

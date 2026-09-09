@@ -287,13 +287,19 @@ export function derivePartIndex(ticks) {
   const parts = {};
   const entry = (address) => (parts[address] ??= { written_by: null, read_by: [], preexisting: false });
   const produced = new Set();
+  // A `fn:<id>` binding is a read of the Part that invocation wrote: pcr.py:112-116
+  // rewrites a Part binding into the producing invocation's ResultRef, and the
+  // value is the same one published at `into`. Counting it keeps the index
+  // useful ("who consumes scratch.ablation.model.all") and matches what
+  // pyto.materialize emits. It never makes a hit -- only a `px:` binding does.
+  const intoById = new Map();
   for (const tick of ticks) {
     for (const invocation of tick.invocations) {
       for (const binding of invocation.declared_consumes) {
-        if (!binding.startsWith('px:')) continue;
-        const address = bareAddress(binding);
+        const address = binding.startsWith('fn:') ? intoById.get(bareAddress(binding)) : bareAddress(binding);
+        if (!address) continue;
         const part = entry(address);
-        if (!produced.has(address)) part.preexisting = true;
+        if (!binding.startsWith('fn:') && !produced.has(address)) part.preexisting = true;
         if (!part.read_by.includes(invocation.id)) part.read_by.push(invocation.id);
       }
       for (const address of invocation.actual_consumes) {
@@ -310,6 +316,7 @@ export function derivePartIndex(ticks) {
         const part = entry(invocation.into);
         if (part.written_by === null) part.written_by = invocation.id;
         produced.add(invocation.into);
+        intoById.set(invocation.id, invocation.into);
       }
     }
   }

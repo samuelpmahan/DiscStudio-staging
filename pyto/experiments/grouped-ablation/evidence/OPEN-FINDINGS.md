@@ -235,24 +235,33 @@ per-function provider digest), and it is a change to the experiment-local
 
 Eight required fixes; what this round could not close, and who can.
 
-## 1. `commit.txt` still carries `-dirty`, but for one reason instead of two
+## 1. `commit.txt` carries a bare sha again -- round 1 item 1 is CLOSED
 
 Round 3 took the fix finding 7 named: the `-dirty` judgement now excludes the whole
 `evidence/` tree (`run.evidence_excludes`, `run.py:235-265`, used by `run.py:328`,
 `second_experiment.py:184` and `:325`, and `replay.py:178`). Outputs are not code,
 so a regeneration no longer marks the next run dirty on account of the previous
 one's files. All four runs were regenerated in that order, plus every artifact
-`replay.py --force` owns.
+`replay.py --force` owns, on a tree whose only uncommitted change was `evidence/`:
 
-**What remains.** `git rev-parse HEAD` plus `-dirty` is still what the four
-`commit.txt` files carry, because this round's own edits to `test_replay.py` and
-`test_second_experiment.py` are uncommitted and this round is forbidden to `git
-commit` -- and, at the time of writing, `pyto/src/pyto/materialize.py`,
-`pyto/tests/test_materialize.py`, `pyto/viewer/adapters.js` and
-`pyto/viewer/fixtures/` (a concurrent Day 3 line of work in the same tree) are
-untracked under `WATCHED_PATHS` as well. That is the stamp working: the evidence
-really was produced by code that is in no commit. The close-it recipe in round 1
-item 1 above is unchanged and now sufficient -- run it once those files land.
+    evidence/run-1/commit.txt               42f4a66932264f97be49bd5da1fc2bcc3fea4e9a
+    evidence/run-2-regroup/commit.txt       42f4a66932264f97be49bd5da1fc2bcc3fea4e9a
+    evidence/run-3-reinput/commit.txt       42f4a66932264f97be49bd5da1fc2bcc3fea4e9a
+    evidence/run-4-from-retained/commit.txt 42f4a66932264f97be49bd5da1fc2bcc3fea4e9a
+
+40 hex characters, no suffix, and each `retained.json`'s `retained.commit` carries
+the same sha. `run.dirty_paths(exclude=run.evidence_excludes())` is `[]`.
+
+**Two things to know about that.** First, it is only true while it is true: the sha
+names the commit HEAD was at when the regeneration ran, so any later commit makes
+these four files name an ancestor. The recipe in round 1 item 1 is how to refresh
+them and the table there says exactly which fields may move. Second, this is not the
+stamp going soft. Uncommitted edits to producing code -- `run.py`, `retain.py`,
+`replay.py`, `second_experiment.py`, the three `run_*.py`, `program.py`,
+`calculations.py`, `features.py`, anything under `pyto/src` -- still stamp `-dirty`,
+and `test_grouped_ablation.py::test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded`
+writes an untracked file into the experiment directory and requires the stamp to go
+dirty, so the exclusion cannot quietly widen.
 
 `{?} EvidenceDirtiness` in `pyto/questions.md` records the decision the owner may
 disagree with: an owner who wants a regenerated-but-uncommitted evidence tree to

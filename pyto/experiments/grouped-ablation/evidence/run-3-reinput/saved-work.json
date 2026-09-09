@@ -55,7 +55,7 @@
   ],
   "ms_saved": 0.023,
   "ms_saved_by_invocation": {
-    "select": 0.02287399911438115
+    "select": 0.023161999706644565
   },
   "prior_run": "run-1",
   "program_lines_changed": {

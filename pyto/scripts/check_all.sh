@@ -147,7 +147,7 @@ echo
 # research/ULTRACODE-WEEK.md Reframing 4), so its Node 22 tests are a suite here
 # and not an optional extra. A missing node fails loudly with a named reason
 # rather than passing silently.
-EXPECT_VIEWER="${EXPECT_VIEWER:-71}"
+EXPECT_VIEWER="${EXPECT_VIEWER:-72}"
 echo "== suite: viewer  (cwd $PYTO/viewer)"
 viewer_ok=FAIL
 viewer_count="?"

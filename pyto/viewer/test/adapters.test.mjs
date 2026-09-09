@@ -8,7 +8,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
@@ -302,4 +302,25 @@ test('validate rejects a malformed parts entry with the address in the path', ()
 test('validate rejects a non-object document', () => {
   assert.throws(() => validate(null), /document: expected an object/);
   assert.throws(() => validate([]), /document: expected an object/);
+});
+
+/* ---------------------------------------------------------------- */
+/* the Python materializer's own output                              */
+/* ---------------------------------------------------------------- */
+
+const REAL_RECORD = resolve(HERE, '..', '..', 'experiments', 'grouped-ablation', 'evidence', 'run-1', 'record.json');
+const realRecordExists = existsSync(REAL_RECORD);
+
+test('the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged', {
+  skip: realRecordExists ? false : `${REAL_RECORD} is absent; the Python materializer has not written a record here yet`
+}, () => {
+  const record = fromPytoRecord(JSON.parse(readFileSync(REAL_RECORD, 'utf8')));
+  assert.equal(record.source.runtime, 'pyto');
+  assert.equal(record.counters.invocations, 15);
+  // The same hit rule the viewer applies to every runtime: exactly the two
+  // invocations that read a Part seeded before the run.
+  const hits = invocations(record).filter((invocation) => invocation.hit).map((invocation) => invocation.id);
+  assert.deepEqual(hits, ['select', 'split']);
+  assert.equal(record.counters.hits, 2);
+  assert.deepEqual(derivePartIndex(record.ticks), record.parts, 'the writer/reader index agrees with the invocations');
 });

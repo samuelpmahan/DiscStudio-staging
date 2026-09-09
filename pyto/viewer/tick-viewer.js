@@ -26,11 +26,13 @@ export function el(doc, tag, { className = null, text = null, attrs = null } = {
   return node;
 }
 
-const encoder = new TextEncoder();
+// Named apart from adapters.js's own encoder: embed.mjs concatenates both
+// modules into one script, where two top-level `encoder` bindings would clash.
+const base64Encoder = new TextEncoder();
 
 /** UTF-8 safe base64 for data: URLs; btoa alone throws above U+00FF. */
 export function toBase64(text) {
-  const bytes = encoder.encode(text);
+  const bytes = base64Encoder.encode(text);
   let binary = '';
   for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
   return btoa(binary);
