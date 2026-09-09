@@ -64,6 +64,10 @@ from record_schema import validate as validate_record  # noqa: E402
 
 SEED, N = 7, 400  # run.py:main defaults; evidence/run-1/comparison.json records seed 7, n 400
 
+# The committed Day 1 evidence: the shipped bytes of a real run, read here as a
+# record rather than regenerated, so the rule is checked against what was published.
+RUN_1_RECORD = os.path.join(EXPERIMENT_DIR, "evidence", "run-1", "record.json")
+
 SVG_DOCUMENT = (
     '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8">'
     '<rect width="8" height="8" fill="#39ff14"/></svg>'
@@ -118,8 +122,14 @@ def bump_counter(args):
     return {"n": args["counter"]["n"] + 1}
 
 
+def join_two_parts(args):
+    # Two Part bindings whose parameter names sort the other way round from the
+    # order they were bound in, so "binding order" and "sorted by name" disagree.
+    return {"z": args["zebra"], "a": args["alpha"]}
+
+
 def emit_undecodable_png_data_url(args):
-    # RECORD.md:60-61 fixes the prefix, not the payload; this exact string is the
+    # RECORD.md:109-110 fixes the prefix, not the payload; this exact string is the
     # repo's own JS render fixture (viewer/test/render.test.mjs:218), where the
     # viewer renders it as an <img> without complaint.
     return "data:image/png;base64,iVBORw0KGgo="
@@ -255,7 +265,7 @@ class DayOneRecord(unittest.TestCase):
 
         RECORD.md marks its nullable fields explicitly (`"<hex or null>"`,
         `"<sha or null>"`) and marks none of `calculation.identity_scope`,
-        `actual_consumes`, `actual_produces`, `writes`, so RECORD.md:65 ("missing
+        `actual_consumes`, `actual_produces`, `writes`, so RECORD.md:114 ("missing
         fields are null, never invented") does not license nulling them: the
         reference reader (adapters.js `validate`) refuses the result, and so does
         the independent Python validator. Emitting it anyway was a document that
@@ -299,6 +309,100 @@ class DayOneRecord(unittest.TestCase):
         validate_record(record)
 
 
+def _px_subset(inputs):
+    """The rule as RECORD.md states it: the `px:` bindings, in binding order."""
+    return [binding for binding in inputs.values() if binding.startswith("px:")]
+
+
+def _rule_violations(record):
+    """Every invocation whose `declared_consumes` is not the `px:` subset of `inputs`."""
+    return [
+        (invocation["id"], invocation["declared_consumes"], _px_subset(invocation["inputs"]))
+        for tick in record["ticks"]
+        for invocation in tick["invocations"]
+        if invocation["declared_consumes"] != _px_subset(invocation["inputs"])
+    ]
+
+
+class DeclaredConsumesIsThePartSubsetOfInputs(unittest.TestCase):
+    """RECORD.md field rules, after the Day 3 amendment.
+
+    `inputs` is the complete binding map; `declared_consumes` is the producing
+    runtime's declared *Part* reads only -- the `px:` bindings, in binding order --
+    so it is empty wherever every binding is an `fn:` result ref. The earlier text
+    ("declared_consumes repeats them in binding order") described a document pyto
+    has never emitted: pcr.py:308-315 fills Receipt.declared_consumes from bindings
+    whose source is a Part and from nothing else, and materialize.py:416 only adds
+    the `px:` prefix. Both reference readers already union the two fields
+    (viewer/adapters.js:385-390, viewer/test/record_schema.py:290-299), so the
+    contract text was the only thing out of step. These tests pin the shipped
+    convention on both sides of it: the published bytes, and the producer.
+    """
+
+    def test_the_committed_evidence_record_carries_only_the_px_bindings(self):
+        if not os.path.isfile(RUN_1_RECORD):  # pragma: no cover - the evidence is committed
+            self.skipTest(f"{RUN_1_RECORD} is not present")
+        with open(RUN_1_RECORD, encoding="utf-8") as handle:
+            record = json.load(handle)
+        self.assertEqual(_rule_violations(record), [])
+        invocations = [inv for tick in record["ticks"] for inv in tick["invocations"]]
+        self.assertEqual(len(invocations), 15)
+        # The shape that made the old sentence false: an invocation bound only to
+        # results declares no Part read at all, so the field is empty, not a copy
+        # of `inputs`. 13 of the 15 -- everything downstream of `split`.
+        empty = [inv["id"] for inv in invocations if not inv["declared_consumes"]]
+        self.assertEqual(len(empty), 13)
+        self.assertEqual(
+            [inv["id"] for inv in invocations if inv["declared_consumes"]], ["select", "split"]
+        )
+        for invocation in invocations:
+            if not invocation["declared_consumes"]:
+                with self.subTest(invocation=invocation["id"]):
+                    self.assertTrue(invocation["inputs"])
+                    self.assertTrue(
+                        all(b.startswith("fn:") for b in invocation["inputs"].values())
+                    )
+
+    def test_a_freshly_materialized_day_one_record_obeys_the_same_rule(self):
+        run, pxc, preexisting = _day_one_run()
+        record = run_record(run, pxc, preexisting=preexisting)
+        self.assertEqual(_rule_violations(record), [])
+        by_id = {inv["id"]: inv for tick in record["ticks"] for inv in tick["invocations"]}
+        self.assertEqual(by_id["split"]["declared_consumes"], ["px:input.ablation.rows"])
+        self.assertEqual(by_id["fit.all"]["inputs"], {"split": "fn:split"})
+        self.assertEqual(by_id["fit.all"]["declared_consumes"], [])
+        # `fn:` is served from the run's results, never from the store, so the
+        # actuals are empty too -- which is why a part index needs the union.
+        self.assertEqual(by_id["fit.all"]["actual_consumes"], [])
+        self.assertEqual(by_id["compare"]["declared_consumes"], [])
+
+    def test_two_part_bindings_keep_binding_order_not_alphabetical_order(self):
+        pxc = PxC()
+        pxc.set(Part("input.spec.zebra"), 1)
+        pxc.set(Part("input.spec.alpha"), 2)
+        preexisting = set(pxc.addresses())
+        pcr = PCR("materialize.order")
+        pcr.calc(
+            "Only",
+            Calculation("fn.spec.join", join_two_parts),
+            id="only",
+            zebra=Part("input.spec.zebra"),
+            alpha=Part("input.spec.alpha"),
+            into="scratch.spec.joined",
+        )
+        record = run_record(pcr.run(pxc, observe=True), pxc, preexisting=preexisting)
+        invocation = record["ticks"][0]["invocations"][0]
+        self.assertEqual(
+            invocation["declared_consumes"], ["px:input.spec.zebra", "px:input.spec.alpha"]
+        )
+        self.assertEqual(_rule_violations(record), [])
+        # Named so a sorted() creeping into the collection is a failure and not a
+        # coincidence: alphabetical order is the other answer here.
+        self.assertNotEqual(
+            invocation["declared_consumes"], sorted(invocation["declared_consumes"])
+        )
+
+
 class TestimonyBytesUnchangedByMaterializing(unittest.TestCase):
     """The record is derived; producing it must not touch the testimony consumers embed."""
 
@@ -317,7 +421,7 @@ class TestimonyBytesUnchangedByMaterializing(unittest.TestCase):
 
 
 class ValueKinds(unittest.TestCase):
-    """RECORD.md:59-64: json | text | svg | png-data-url | omitted, with the caps."""
+    """RECORD.md:108-113: json | text | svg | png-data-url | omitted, with the caps."""
 
     def _value(self, calculation_address, body):
         run, pxc, preexisting = _one_calc_run(Calculation(calculation_address, body))
@@ -351,7 +455,7 @@ class ValueKinds(unittest.TestCase):
         self.assertEqual(rendered["data"], url)
         self.assertIsNone(rendered["note"])
         # The test is on the raw string, not a stripped one: `data` is what a
-        # viewer puts in an <img src>, and RECORD.md:60-61 fixes those bytes.
+        # viewer puts in an <img src>, and RECORD.md:109-110 fixes those bytes.
         self.assertEqual(render_value("   " + url)["kind"], "text")
         self.assertEqual(render_value("data:image/svg+xml,<svg/>")["kind"], "text")
         # An SVG document still wins, in that order.
@@ -425,7 +529,7 @@ class ValueKinds(unittest.TestCase):
                 self.assertEqual(render_value(candidate)["kind"], "omitted")
 
     def test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error(self):
-        """RECORD.md:62 assigns "not serializable" to `omitted`, cycles included.
+        """RECORD.md:111 assigns "not serializable" to `omitted`, cycles included.
 
         The JS reference does exactly that (adapters.js:281-295 materialize returns
         `{kind: 'omitted', note: 'value is not JSON serializable: Converting
@@ -500,7 +604,7 @@ class HitLedger(unittest.TestCase):
     def test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set(self):
         """The second half of the rule: `preexisting` is not the only evidence.
 
-        RECORD.md:53-56 -- a `px:` binding whose address was not produced by an earlier
+        RECORD.md:104-107 -- a `px:` binding whose address was not produced by an earlier
         invocation of the same run is a hit. A caller that cannot supply the pre-run
         store (or supplies an empty one) still gets the Day 1 answer, because nothing
         in the run wrote `input.ablation.rows`.
@@ -539,7 +643,7 @@ class HitLedger(unittest.TestCase):
     def test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript(self):
         """The one shape on which the two runtimes used to disagree.
 
-        RECORD.md:55-56 states the rule with its own exclusion -- "a `px:` binding
+        RECORD.md:104-105 states the rule with its own exclusion -- "a `px:` binding
         whose address was not produced by an earlier invocation of the same run" --
         and adapters.js:244-249 `deriveHit` implements exactly that: it never
         consults a preexisting set. `bump` reads a Part nothing had produced (a
@@ -672,7 +776,7 @@ class TickSheets(unittest.TestCase):
     def test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel(self):
         """Drawing degrades per panel; it never aborts mid-directory.
 
-        RECORD.md:60-61 fixes the `data:image/png;base64,` prefix, not the payload,
+        RECORD.md:109-110 fixes the `data:image/png;base64,` prefix, not the payload,
         so a truncated or non-PNG payload is a legal record -- adapters.js accepts
         it and the viewer renders it as an <img> without complaint
         (viewer/test/render.test.mjs:218 uses this exact string). An unguarded

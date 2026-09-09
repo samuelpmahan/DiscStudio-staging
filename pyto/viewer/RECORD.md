@@ -11,6 +11,10 @@ the viewer's adapters from DiscStudio `px.receipt.<name>` records and ChessLab-s
 JavaScript. It is a view for people and tools, never the program itself (stewardship: an
 inspection receipt is derived from a program and a run).
 
+The block below is abridged: two of the fifteen invocations of one run, and the `parts` rows those
+two derive. It carries both binding spellings on purpose -- `split` binds a Part, `fit.all` binds
+`split`'s result -- because that is the pair the `declared_consumes` rule turns on.
+
 ```json
 {
   "schema": "pyto-run-record@1",
@@ -34,6 +38,28 @@ inspection receipt is derived from a program and a run).
           "writes": [{"address": "scratch.ablation.split", "kind": "new-address"}],
           "duration_ms": 3.921,
           "result_sha256": "<hex or null>",
+          "hit": true,
+          "value": {"kind": "json", "data": {"...": "..."}, "note": null}
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Fit",
+      "invocations": [
+        {
+          "id": "fit.all",
+          "calculation": {"address": "fn.ablation.fit", "implementation_sha256": "<hex or null>",
+                          "identity_scope": "runtime-function-body"},
+          "inputs": {"split": "fn:split"},
+          "args": {"variant": "all"},
+          "into": "scratch.ablation.model.all",
+          "declared_consumes": [],
+          "actual_consumes": [],
+          "actual_produces": ["scratch.ablation.model.all"],
+          "writes": [{"address": "scratch.ablation.model.all", "kind": "new-address"}],
+          "duration_ms": 5.663,
+          "result_sha256": "<hex or null>",
           "hit": false,
           "value": {"kind": "json", "data": {"...": "..."}, "note": null}
         }
@@ -41,7 +67,9 @@ inspection receipt is derived from a program and a run).
     }
   ],
   "parts": {
-    "scratch.ablation.split": {"written_by": "split", "read_by": ["fit.all", "score.all"], "preexisting": false}
+    "scratch.ablation.raw": {"written_by": null, "read_by": ["split"], "preexisting": true},
+    "scratch.ablation.split": {"written_by": "split", "read_by": ["fit.all"], "preexisting": false},
+    "scratch.ablation.model.all": {"written_by": "fit.all", "read_by": [], "preexisting": false}
   },
   "counters": {"invocations": 15, "hits": 2, "computed": 13, "wall_ms": 27.0}
 }
@@ -49,9 +77,30 @@ inspection receipt is derived from a program and a run).
 
 ## Field rules
 
-- `inputs` keeps the testimony spelling: `px:<address>` for a Part binding, `fn:<id>` for a result
-  binding. `declared_consumes` repeats them in binding order. `actual_consumes` and
-  `actual_produces` are bare addresses as observed on the store.
+- `inputs` is the complete binding map, in testimony spelling: one entry per bound parameter,
+  `px:<address>` for a Part binding, `fn:<id>` for a result binding (the id of the invocation whose
+  `into` published the value). It is the only field that carries every read the program declared.
+- `declared_consumes` is the producing runtime's own declared Part reads and nothing else: exactly
+  the `px:` bindings of `inputs`, in binding order. Every entry is spelled `px:<address>` and every
+  entry appears in `inputs.values()` -- a strict rule, not a convention: both validators reject an
+  `fn:` entry and an entry `inputs` does not carry, at the same path. It is therefore empty for an
+  invocation whose every binding is an `fn:` result ref -- the common case in a fanned-out PCR: 13
+  of the 15 invocations in the Day 1 evidence record
+  (`experiments/grouped-ablation/evidence/run-1/record.json`), and `fit.all` above. In pyto that
+  is literal -- `Receipt.declared_consumes` (`src/pyto/pcr.py:120`) is filled only from bindings
+  whose source is a `Part` (`src/pyto/pcr.py:308-315`), and `materialize.py:416` prefixes each
+  with `px:`. It is a second, narrower witness -- it says which reads went through the store --
+  not a restatement of `inputs`.
+- Consequently a reader that wants every read reads `inputs.values()` and resolves each `fn:<id>`
+  through that invocation's `into`; reading `declared_consumes` alone loses the result bindings.
+  Because `declared_consumes` is a subset, unioning it in adds nothing to a conformant record;
+  both reference readers union it anyway, defensively, so that a producer the validator never saw
+  costs a duplicated edge rather than a lost one: `viewer/adapters.js:385-390` and
+  `viewer/test/record_schema.py:290-299`. An `fn:` binding counts as a read of the address the
+  named invocation wrote; it never makes a `hit`.
+- `actual_consumes` and `actual_produces` are bare addresses as observed on the store. An `fn:`
+  binding is served from the run's results, not from the store, so it leaves `actual_consumes`
+  empty (`fit.all` above) -- another reason the part index cannot be built from the actuals alone.
 - `hit` is true when the invocation read a Part that existed before this run (a `px:` binding whose
   address was not produced by an earlier invocation of the same run), or when the runtime reports
   reuse (`reused: true` in a DiscStudio trace). The owner's definition: any Part or Calculation being

@@ -223,9 +223,7 @@
             "identity_scope": "runtime-function-body",
             "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b"
           },
-          "declared_consumes": [
-            "fn:split"
-          ],
+          "declared_consumes": [],
           "duration_ms": 5.663,
           "hit": false,
           "id": "fit.all",
@@ -265,10 +263,7 @@
             "identity_scope": "runtime-function-body",
             "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0"
           },
-          "declared_consumes": [
-            "fn:split",
-            "fn:fit.all"
-          ],
+          "declared_consumes": [],
           "duration_ms": 0.172,
           "hit": false,
           "id": "score.all",
@@ -312,9 +307,7 @@
             "identity_scope": "runtime-function-body",
             "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b"
           },
-          "declared_consumes": [
-            "fn:split"
-          ],
+          "declared_consumes": [],
           "duration_ms": 3.667,
           "hit": false,
           "id": "fit.drop_g3",
@@ -354,10 +347,7 @@
             "identity_scope": "runtime-function-body",
             "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0"
           },
-          "declared_consumes": [
-            "fn:split",
-            "fn:fit.drop_g3"
-          ],
+          "declared_consumes": [],
           "duration_ms": 0.221,
           "hit": false,
           "id": "score.drop_g3",
@@ -531,9 +521,7 @@
             "identity_scope": "runtime-function-body",
             "implementation_sha256": null
           },
-          "declared_consumes": [
-            "fn:sheet"
-          ],
+          "declared_consumes": [],
           "duration_ms": 0.44,
           "hit": false,
           "id": "snapshot",
@@ -616,9 +604,7 @@
             "identity_scope": "runtime-function-body",
             "implementation_sha256": null
           },
-          "declared_consumes": [
-            "fn:compare"
-          ],
+          "declared_consumes": [],
           "duration_ms": 0.19,
           "hit": false,
           "id": "table",

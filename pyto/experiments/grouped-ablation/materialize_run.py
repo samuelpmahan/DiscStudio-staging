@@ -20,7 +20,7 @@ and is checked against the committed comparison.json before anything is written
 (`--allow-drift` downgrades that check to a warning).
 
 `preexisting` is `run.EXTERNAL_ADDRESSES` -- the two Parts run_experiment seeds before
-executing -- which is the accurate pre-run store RECORD.md:73 asks the pyto adapter
+executing -- which is the accurate pre-run store RECORD.md:122 asks the pyto adapter
 for, so `select` and `split` are the run's two hits and the other thirteen invocations
 are computed.
 """

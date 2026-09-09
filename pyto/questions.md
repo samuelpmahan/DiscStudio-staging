@@ -441,7 +441,7 @@ Both labels were already named, undetailed, in the mega-list above ("{?} ValueRe
 ### {?} ValueRetention
 What happens to a Part's value when it is too large for the run record to carry whole?
 Status: open. Records carry values up to 256 KB; image Parts beyond that are digests + sidecars.
-`viewer/RECORD.md:63` ("Values over 256 KB are replaced by `omitted` with a note carrying the
+`viewer/RECORD.md:112` ("Values over 256 KB are replaced by `omitted` with a note carrying the
 size and the digest") is the rule pinned on the pyto side by
 `pyto/src/pyto/materialize.py` (`VALUE_CAP_BYTES = 262144`, `ARRAY_CAP = 200`, materialize.py:49-50)
 and on the JS side by `viewer/adapters.js`'s `capped()`. The owner has not said whether 256 KB is the
