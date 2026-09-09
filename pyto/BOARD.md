@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 Socratic session on the owner's D:/: DiscStudio is the focus; the brain dump is the conversation, not a file; addressing goes by default (owner: "idk any of this"), a stress test found no Part root is enforced and Python has no mount type. On this Windows machine `neat new` failed (pip got a `/d/` path, the install check was a shell glob) and two suites fail: the ablation fixture uses `random.gauss`, whose libm calls drift one ULP from the Linux-made evidence, and the card server answers 413 without draining the body, which Windows turns into a connection abort. All three fixes are on `exp/1`, being verified there, to land through neat. "AHI runs on D:/" is not true here until they do.
 - 2026-09-09 07:39 **landed** `landing-protocol`: one script, one receipt per landing, checkpoints labelled; neat as the caveman front (96 files since 4641ea8, suites green, receipt 20260909T073836Z-landing-protocol)
 - 2026-09-09 07:38 **landed** `windows-safety`: digests ignore line endings, kernel LF, evidence regenerated, harness path from its own location, child processes keep SystemRoot on Windows (37 files since b2a2848, suites green, receipt 20260909T073723Z-windows-safety)
 - 2026-09-09 07:34 **refused** `windows-safety`: the tree changed while the suites ran (someone is writing); nothing committed
@@ -98,8 +99,12 @@ second segment is the noun that outlives the stage that made it (`px.badges`, `p
 `px.board`), which is where connection lives; four reserved second segments, `scratch`, `view`,
 `proposal`, `run`; the mount id is content-derived (`imgid:<sha12>`, `disc:<bag>`,
 `chess:<game>`) with human labels in a side map; `material` goes, because kind is a declared field
-on the reference, not a prefix; `?` stays outside the address as the root of questions. Owner's
-turn: refine or give the final answer. Default if unanswered: this proposal.
+on the reference, not a prefix; `?` stays outside the address as the root of questions. Owner
+(2026-09-09): "MDL is good but if u need to start with a wider footprint and refine over time
+thats fine the whole point is learning while moving safely", and to the question itself, "idk
+any of this". Taken as the default: this proposal is the target, a named wider footprint may ship
+first, agents stress-test it (findings and seven agent defaults under `{?} AddressRootIsAMount`
+in `questions.md`), and the owner is not asked about addressing again.
 
 **Stands.** Days 1 and 2 landed (receipts, retain, fresh-process replay, second experiment with
 zero program edits). Landing protocol in place (`LANDING.md`). Day 3 running (render,
@@ -145,7 +150,9 @@ its own PxC so a change resolves against that memory deterministically; the comp
 Declared intent stays separate from produced facts; proposals never write into facts. neat's own
 semantics (persistent PxC, total-order telemetry, failed runs return a result) are the reference
 for neat. The neat agent runs this board: ingest dumps and research, resolve which questions got
-answered and which lanes moved, propose the next prompts.
+answered and which lanes moved, propose the next prompts. The brain dump is interactive: the owner talks, the Socratic session
+writes the decision in the owner's words, commits and pushes; the owner opens no file and types
+no git command.
 
 **Open prompt.** none. The brief is at `research/briefs/neat-on-pxc-brief.md` with five `{?}`
 entries for the expert to bring back.
