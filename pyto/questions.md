@@ -656,3 +656,13 @@ sub-programs, the Day 5 plan. Default: workshop only, Python, after DiscStudio s
 dev course images; the one piece that can land any time is a scalar Part with the count of
 unclaimed pixels per Tick, which makes competition Ticks scoreable. Bites: Day 5, Lane 5, the
 competition Ticks, `research/primary-sources.md` (Cook and Holder 1994).
+
+### {?} HidingPrimitives
+The owner: the ANN logs would be neat's, the LAB's, the paint studio's, to see if they hide
+command primitives. Status: provisional, running as task 20. A primitive hiding in a log is a
+subsequence that recurs with different arguments and has no name; ANN groups near-identical
+instances, SUBDUE names the shared skeleton and scores it by compression; the output is a
+proposal with evidence, the owner names it, it becomes a Calculation or a neat command. The logs
+become Parts when receipts (task 13) and the `oc` table land. First substrate, needing no new
+recording: the paint studio's call graphs, mined and reported beside the helpers the JavaScript
+port extracted by hand. Bites: Lane 5, Day 5, the `oc` table, `neat`.
