@@ -104,7 +104,7 @@ off, and equal digests between the two are the proof the compile changed nothing
 compiled-operation model (`planFingerprint`, `executeCompiledPlan` in the ChessLab contract
 header) is that idea already; the record is what makes it checkable.
 
-**Open prompt.** *Addressing, round five.* The mining found ChainSpot already decided the hard
+**Open prompt.** none. *Addressing, round five, taken by default.* The mining found ChainSpot already decided the hard
 part: the world (a course, a game, a repo, a user's bag) is a mount outside the address, never a
 segment, with a test that `px.DashsTrack.s1.badges` is never created. So `px.badges.px` means the
 same thing in every world, and a cross-project hit is an identity check. Proposal: three roots
