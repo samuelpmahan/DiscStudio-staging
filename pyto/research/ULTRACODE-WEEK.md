@@ -2,6 +2,15 @@
 
 Produced 2026-09-09 by a 17-agent workflow (7 subsystem readers, 5 planners with distinct angles, 3 judges, 1 synthesizer, 1 completeness critic) over the checkpoint at commit a4dc559. It is a plan with kill criteria, not a claim of results. Each day is executed by its own multi-agent workflow; every day ends with runnable code, tests the owner can run, and retained evidence committed under `pyto/`. Open judgments are marked `{?}` and are the owner's to resolve.
 
+## Reframing (2026-09-09, owner correction)
+
+Pyto is a Python transfer of the LAB, which is already proven across ChainSpot, ChessLab and
+EmbodiedWumpusWorld. The concept is proven even where the implementation is incomplete. The week
+therefore measures transfer fidelity and completeness against the proven runtimes rather than
+treating "does PxC help" as open. The mechanism-by-mechanism comparison and the resulting changes
+to Days 2 to 5 are in `pyto/research/lab-transfer-ledger.md`; the reference sources are under
+`pyto/reference/lab/`. Day 1 is unaffected (no library changes).
+
 ## Winner and thesis
 
 **Winner.** Experiment-reuse-first (aggregate 62.5/72 across three judges vs Kernel-first 61.5, Replay-first 54.5, Agent-workshop 53.5, JS-parity 37.5), with five grafts: Kernel-first's replay-gated composition promotion (PromotionRefused / provisional / demote+inline reversibility) and fn.pcr.select round trip; Replay-first's fresh-process boundary (`python3 -I`, scrubbed env) plus hidden-state, determinism (PYTHONHASHSEED x CRLF/LF) and false-unchanged auditors and the digest+ref sidecar for non-JSON values; JS-parity's mutation-kill discipline and 'skip with a named reason, never pass silently' rule; Agent-workshop's CAPTURE.md run record, CHANGES.md pairing and provenance lens (every number in the returns resolves to a retained file); and the environment corrections all three judges converged on (isolated `pip wheel` works here while `--no-build-isolation` fails; arxiv unreachable so SUBDUE cites pyto/research/primary-sources.md; disc-stats needs PYTHONPATH=.; consumer tests need data/).
