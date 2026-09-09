@@ -1,0 +1,36 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createSeed } from '../src/seed.js';
+import { createStudioRuntime } from '../src/runtime.js';
+
+test('format gateways retain upstream PQL material and create format receipts', () => {
+  const runtime = createStudioRuntime(createSeed());
+  runtime.dispatch({ type: 'preset.set', id: 'broadcast', nodeId: 'maker', patch: { x: 41 } });
+  const context = { bagId: 'everyday', competitionId: 'putterwarz', roundId: 'hole-1' };
+  const share = runtime.shareImage(context);
+  assert.equal(share.width, 1080);
+  assert.match(share.svg, /data-entry="entry-1"/);
+  assert.match(share.svg, /x="41"/);
+  assert.match(share.svg, /Discraft/);
+  assert.doesNotMatch(share.svg, /Authored winner/);
+  assert.equal(share.run.composition.PrincipleComponentRender, 'disc-share-image');
+  assert.ok(share.renderedRun.trace.some(step => step.call === 'fn.disc.art'));
+  assert.equal(share.run.trace[0].inputs.rendered, 'px.course.svg');
+  assert.equal(share.run.trace[0].output, 'px.share.image');
+  runtime.dispatch({ type: 'battle.score', id: 'entry-1', score: 7 });
+  runtime.dispatch({ type: 'battle.highlight', id: 'entry-1' });
+  runtime.dispatch({ type: 'battle.winner', id: 'entry-1' });
+  const authored = runtime.shareImage(context), repeated = runtime.shareImage(context);
+  assert.match(authored.svg, />7</);
+  assert.match(authored.svg, /aria-label="Authored winner"/);
+  assert.equal(authored.svg, repeated.svg);
+  const bag = runtime.bagExport('everyday');
+  const repeatedBag = runtime.bagExport('everyday');
+  assert.equal(bag.bagId, 'everyday');
+  assert.equal(bag.run.composition.PrincipleComponentRender, 'disc-bag-export');
+  assert.equal(bag.run.trace[0].inputs.bag, 'px.domain.Bag.everyday');
+  assert.equal(bag.run.trace[0].output, 'px.bag-export.result');
+  assert.equal(bag.json, repeatedBag.json);
+  assert.equal(bag.csv, repeatedBag.csv);
+  assert.equal(runtime.pxc.get('px.pql.disc-bag-export').PrincipleComponentRender, 'disc-bag-export');
+});

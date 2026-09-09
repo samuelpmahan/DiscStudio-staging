@@ -61,6 +61,12 @@
       "summary": "Ported painter disc-art Calculation and deterministic shelf-sheet Calculation are available for review.",
       "verification": "npm test and build passed in the integration workspace; embedded browser verification could not start because Playwright is unavailable in the runtime.",
       "acceptance": null
+    },
+    {
+      "id": "astra-discstudio-3",
+      "summary": "Share-image and Bag export Calculations frame existing rendered material and export shared physical-disc records through PxC/PQL.",
+      "verification": "npm test and npm run build passed; painter port verification passed 432/8 immutable. Embedded browser verification could not launch because the Playwright Chromium executable is absent. Human acceptance is not recorded.",
+      "acceptance": null
     }
   ],
   "acceptanceRefs": [],

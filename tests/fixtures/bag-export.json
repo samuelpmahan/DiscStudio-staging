@@ -1,0 +1,19 @@
+{
+  "input": {
+    "bag": {"id":"bag-z","name":"Zed, \"daily\"","discIds":["disc-b","disc-a"],"notes":"local"},
+    "discs": {
+      "disc-a": {"id":"disc-a","type":"Disc","moldId":"mold-a","nickname":"Alpha","plastic":"Blend","weight":null,"color":"Blue","photo":"data:image/png;base64,AA==","notes":"line 1\nline 2","custom":{"edition":"First","tag":"A","odd key.with.dot":{"Ω":"yes"},"array":["x",2]}},
+      "disc-b": {"id":"disc-b","type":"Disc","moldId":"mold-a","nickname":"Beta","plastic":"Star, \"special\"","weight":175,"color":"Red","photo":"https://example.invalid/x","notes":"","newFlag":true}
+    },
+    "molds": {"mold-a":{"id":"mold-a","type":"Mold","name":"Alpha mold","manufacturerId":"maker-a","category":"Mid","flight":{"speed":5,"glide":null,"turn":-1,"fade":1},"future":{"rating":2}}},
+    "manufacturers": {"maker-a":{"id":"maker-a","type":"Manufacturer","name":"Maker","website":"https://maker.invalid"}}
+  },
+  "expectedSha256": {
+    "json": "41c49ffedadaed5f206c11262607208327738a8cb9caacc96a58711d4ba446da",
+    "csv": "31453ae3277bf04dfa1c6c1a02e0933ce16b199c968ea3227cf3c8de66afb3bd"
+  },
+  "expectedBytes": {
+    "encoding": "utf8",
+    "note": "The JSON and CSV properties above are byte fixtures; hashes provide compact integrity checks for review tooling."
+  }
+}

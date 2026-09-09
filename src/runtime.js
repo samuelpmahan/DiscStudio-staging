@@ -3,6 +3,8 @@ import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materi
 import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
 import { shelfSheet } from './formats/shelf-sheet.js';
+import { shareImage as shareImageFormat } from './formats/share-image.js';
+import { bagExport as bagExportFormat } from './formats/bag-export.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
 export function createStudioRuntime(initial) {
@@ -36,6 +38,8 @@ export function createStudioRuntime(initial) {
   register('fn.constraint.teamThrows', teamThrows);
   register('fn.constraint.combine', ({ combine, ...results }) => combineConstraints({ results, combine }));
   register('fn.disc.format.shelfSheet', shelfSheet);
+  register('fn.disc.format.shareImage', shareImageFormat);
+  register('fn.disc.format.bagExport', bagExportFormat);
   function publishWorld(world) {
     validateWorld(world); pxc.set('px.studio.world', world);
     const present = new Set();
@@ -121,8 +125,28 @@ export function createStudioRuntime(initial) {
     const run = execute('competition', ticks);
     return { ...pxc.get('px.competition.validation'), run, part: 'px.competition.validation' };
   }
+  /** Frame the already materialized Single or DiscBattle SVG; it does not render cards again. */
+  function shareImage(options = {}) {
+    const rendered = scene(options), renderedPart = rendered.part;
+    const background = source('px.share.background', options.background ?? 'transparent'), label = source('px.share.label', options.label ?? 'DiscStudio share image');
+    const run = execute('disc-share-image', [step('ShareImage', 'fn.disc.format.shareImage', { rendered: renderedPart, background, label }, 'px.share.image')]);
+    return { ...pxc.get('px.share.image'), part: 'px.share.image', renderedPart, renderedRun: rendered.run, run };
+  }
+  /** Export one Bag's shared physical-disc references in authored bag order. */
+  function bagExport(bagId) {
+    const w = world(), bag = get(w, 'Bag', bagId);
+    if (!bag) throw new Error(`Bag '${bagId}' is missing.`);
+    const inputs = {
+      bag: partAddress('Bag', bagId),
+      discs: source('px.bag-export.discs', w.objects.Disc),
+      molds: source('px.bag-export.molds', w.objects.Mold),
+      manufacturers: source('px.bag-export.manufacturers', w.objects.Manufacturer)
+    };
+    const run = execute('disc-bag-export', [step('BagExport', 'fn.disc.format.bagExport', inputs, 'px.bag-export.result')]);
+    return { ...pxc.get('px.bag-export.result'), part: 'px.bag-export.result', run };
+  }
   return {
-    pxc, world, dispatch, card, scene, constraints, counters,
+    pxc, world, dispatch, card, scene, constraints, shareImage, bagExport, counters,
     onChange(fn) { listener = fn; },
     replace(next) { publishWorld(freeze(validateWorld(next))); listener(world(), { type: 'draft.import' }, null); },
     parts() { return [...addresses].sort().map(address => ({ address, value: pxc.get(address) })); },

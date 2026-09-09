@@ -1,0 +1,10 @@
+{
+  "input": {
+    "width": 1920,
+    "height": 1080,
+    "label": "Round result",
+    "background": "#f9f7ef",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1920\" height=\"1080\" viewBox=\"0 0 1920 1080\"><g data-entry=\"entry-winner\"><rect x=\"20\" y=\"30\" width=\"500\" height=\"300\" fill=\"#203d36\" stroke=\"#b9d789\" stroke-width=\"4\"/><image href=\"data:image/png;base64,AA==\" width=\"100\" height=\"100\"/><text x=\"150\" y=\"150\" fill=\"#fcfbf5\">7</text><g aria-label=\"Authored winner\"><circle cx=\"490\" cy=\"50\" r=\"12\" fill=\"#b9d789\"/></g></g></svg>"
+  },
+  "expectedSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1080\" height=\"1080\" viewBox=\"0 0 1080 1080\" role=\"img\" aria-label=\"Round result\"><rect width=\"1080\" height=\"1080\" fill=\"#f9f7ef\"/><g transform=\"translate(60 270) scale(0.5)\"><g data-entry=\"entry-winner\"><rect x=\"20\" y=\"30\" width=\"500\" height=\"300\" fill=\"#203d36\" stroke=\"#b9d789\" stroke-width=\"4\"/><image href=\"data:image/png;base64,AA==\" width=\"100\" height=\"100\"/><text x=\"150\" y=\"150\" fill=\"#fcfbf5\">7</text><g aria-label=\"Authored winner\"><circle cx=\"490\" cy=\"50\" r=\"12\" fill=\"#b9d789\"/></g></g></g></svg>"
+}
