@@ -1,0 +1,53 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T081311Z-windows-venv",
+  "package": "windows-venv",
+  "base_sha": "291b7f7fcdae06bd11660b3bc45270bcf09e4953",
+  "result": "verified",
+  "verifier": {
+    "command": "bash -c 'cd /tmp && PYTHON= bash /home/user/DiscStudio-staging/pyto/scripts/neat.sh list >/dev/null && echo scripts-resolve-python-ok'",
+    "exit": 0,
+    "output_sha256": "9f881479d2833325e47a9bf64110faf12b21aacc1cbc0927e55a5901e8e252e7"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "59f2a3365cef12375d39f2a5e596b173a1a805a3b756e61db7ae72e577d3dd1c",
+    "counts": {
+      "library": 103,
+      "experiments/grouped-ablation": 230,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 83,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 19780,
+      "sha256": "ed02703532bed57709db6d28c5fa6c2aeb0ffaf622fa73ced7693b0a16ffacf3"
+    },
+    {
+      "path": "pyto/scripts/check_all.sh",
+      "bytes": 10488,
+      "sha256": "d5325340261be8d97fbe4267545f94caba032ba44add4ef71fed36c1d451a0ea"
+    },
+    {
+      "path": "pyto/scripts/land.sh",
+      "bytes": 11387,
+      "sha256": "bcc7f4a90ab7263afbd04838a707dc169e143832f9910dfdf92e0b7f330763b3"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 17380,
+      "sha256": "7bc9b09b1f0e49a2bb9b2e7b1c4d30da34cbca9606ccce60b18a77495d6bfa2f"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-09T08:13:50.459981Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

@@ -28,9 +28,9 @@ skip when the browser is absent):
 ```
 git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging.git /d/DiscStudio-staging
 cd /d/DiscStudio-staging
-python -m pip install -e "./pyto[drawing]"
+python -m venv .venv && .venv/Scripts/python -m pip install -e "./pyto[drawing]"   # the scripts find .venv on their own
 bash pyto/scripts/check_all.sh                                   # every suite, the same table as here
-python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit   # one miss, then two hits, the second from a fresh process
+.venv/Scripts/python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit   # one miss, then two hits, the second from a fresh process
 node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
 ```
 
@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 08:13 **landed** `windows-venv`: the scripts find the repository's .venv on their own, so isolated child processes import pyto on Windows too; the D:/ commands make that venv (4 files since 291b7f7, suites green, receipt 20260909T081311Z-windows-venv)
 - 2026-09-09 10:20 Owner: go big, one more: a Fable uses Sonnets to self-improve in branching manners that must remain human explicable. Running now: Sonnets mine the record for small useful changes to the loop itself, each becomes a neat task in its own copy, and a cold reader who sees only the hand-off must explain it correctly before it may land (the explicability gate, now in LANDING.md). Losers stay packed.
 - 2026-09-09 10:05 Owner: a task Codex can run as a good neighbour, and a personal neat for the work laptop where only Rovo and Windsurf exist. Both are one task: 3, "neat anywhere", on `exp/3` with a brief sized for one agent (read five files, run one command, stop when the selftest passes). The prompt to paste is in `mailbox/to-gpt/0002`. When it lands, the two scripts copied into any repository give the work laptop the same seven commands, and an editor agent only has to run them.
 - 2026-09-09 09:50 `neat undo` tested in the scratch clone: the probe task came back out of MAIN in 38 seconds with its own receipt and line. Two writers taught neat one thing: task ids now count the branches on origin too, so the D:/ session's task 1 and this session's next task cannot collide.

@@ -18,6 +18,15 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="$(cd "$HERE/.." && pwd)"
 ROOT="$(cd "$PY/.." && pwd)"
+# The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
+# then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
+# where a Store Python's editable install lands in the user site that -I ignores.
+_root_for_python="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [ -z "${PYTHON:-}" ]; then
+  for _c in "$_root_for_python/.venv/bin/python" "$_root_for_python/.venv/Scripts/python.exe"; do
+    [ -x "$_c" ] && PYTHON="$_c" && break
+  done
+fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 EXP="$ROOT/EXP"
 TASKS="pyto/experiments/tasks"

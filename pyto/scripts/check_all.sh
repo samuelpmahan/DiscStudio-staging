@@ -10,7 +10,15 @@
 #     suite, whitelisted as intra-directory (run_experiment.py names stats.py in cwd).
 # Zero-count assertions use `! grep -q` (critic gap 18a).
 set -euo pipefail
-# The interpreter: python3 where it exists (Linux, macOS), python on Windows (Git Bash); PYTHON overrides.
+# The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
+# then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
+# where a Store Python's editable install lands in the user site that -I ignores.
+_root_for_python="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [ -z "${PYTHON:-}" ]; then
+  for _c in "$_root_for_python/.venv/bin/python" "$_root_for_python/.venv/Scripts/python.exe"; do
+    [ -x "$_c" ] && PYTHON="$_c" && break
+  done
+fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 
 PYTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
