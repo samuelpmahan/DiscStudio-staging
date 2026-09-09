@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 23:23 **correction**: `task-3` (neat anywhere) was written by the owner's D:/ session under his own git identity, not by Codex; Codex never received it. The board and two replies said Codex. Earlier lines stand as written; this line is the record.
 - 2026-09-09 23:22 **landed** `task-24`: the board says when a task starts, not only when it lands: neat new writes a started line, neat kill a killed line, and land.sh --note writes any one plain line, commits and pushes it (7 files since 9138dfc, suites green, receipt 20260909T232223Z-task-24)
 - 2026-09-09 22:11 **landed** `task-23`: students: a homework-sized PCR with a hand-off page graded mechanically by grade.py, leaving only the plain-words explanation to a cold reader; no kernel change (13 files since d13fcd1, suites green, receipt 20260909T221055Z-task-23)
 - 2026-09-09 22:10 **refused** `task-23`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T221014Z-task-23/check_all.txt)
