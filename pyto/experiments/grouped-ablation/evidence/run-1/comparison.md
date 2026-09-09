@@ -5,11 +5,11 @@ Rank 1 is the largest RMSE increase when the group is dropped.
 
 | rank | variant | rmse | delta vs all | planted |w| in group |
 |---:|---|---:|---:|---:|
-| 1 | drop_g3 | 1.9097 | +1.5896 | 2.0 |
-| 2 | drop_g0 | 1.5468 | +1.2267 | 1.5 |
-| 3 | drop_g1 | 0.9603 | +0.6402 | 0.8 |
-| 4 | all | 0.3201 | +0.0000 | 4.3 |
-| 5 | drop_g4 | 0.3194 | -0.0007 | 0.0 |
-| 6 | drop_g2 | 0.3170 | -0.0031 | 0.0 |
+| 1 | drop_g3 | 2.1689 | +1.8653 | 2.0 |
+| 2 | drop_g0 | 1.6896 | +1.3860 | 1.5 |
+| 3 | drop_g1 | 0.8491 | +0.5455 | 0.8 |
+| 4 | drop_g2 | 0.3041 | +0.0005 | 0.0 |
+| 5 | drop_g4 | 0.3038 | +0.0002 | 0.0 |
+| 6 | all | 0.3036 | +0.0000 | 4.3 |
 
-Ranking (ablations only): drop_g3 > drop_g0 > drop_g1 > drop_g4 > drop_g2
+Ranking (ablations only): drop_g3 > drop_g0 > drop_g1 > drop_g2 > drop_g4

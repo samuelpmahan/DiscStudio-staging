@@ -59,6 +59,10 @@ venv_python() { # <id>
   else echo "$PYTHON"; fi
 }
 packet_of() { echo "$EXP/$1/$TASKS/$1/packet.md"; }
+hostpath() { # Git Bash on Windows: pip and python want D:/... not /d/...; elsewhere the path is unchanged
+  if command -v cygpath >/dev/null 2>&1; then cygpath -m "$1"; else printf '%s
+' "$1"; fi
+}
 need_exp() { [ -d "$EXP/$1" ] || die "no experiment EXP/$1 (neat list)"; }
 
 cmd_new() {
@@ -89,11 +93,11 @@ EOF
   echo "Task $id: EXP/$id is a copy of MAIN at ${base:0:7}. Work there."
   echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
   "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
-  "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$EXP/$id/pyto[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
-  case "$("$(venv_python "$id")" -c 'import pyto; print(pyto.__file__)' 2>/dev/null)" in
-    "$EXP/$id/"*) echo "  its python imports pyto from EXP/$id";;
-    *) die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working.";;
-  esac
+  "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$(hostpath "$EXP/$id/pyto")[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
+  if "$(venv_python "$id")" -c 'import os, sys, pyto; sys.exit(0 if os.path.realpath(pyto.__file__).startswith(os.path.realpath(sys.argv[1])) else 1)' "$(hostpath "$EXP/$id")" 2>/dev/null
+  then echo "  its python imports pyto from EXP/$id"
+  else die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working."
+  fi
   echo "  done. When the work is done: bash pyto/scripts/neat.sh pack $id"
 }
 

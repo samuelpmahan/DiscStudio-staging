@@ -79,6 +79,7 @@ STRIPPED_ENV_BASE = {"PATH": os.environ.get("PATH", "")}
 if os.name == "nt" and os.environ.get("SystemRoot"):
     # Windows cannot start python.exe from an environment block without SystemRoot (see replay.py).
     STRIPPED_ENV_BASE["SystemRoot"] = os.environ["SystemRoot"]
+    STRIPPED_ENV_BASE["SystemDrive"] = os.environ.get("SystemDrive", "C:")  # else a literal "%SystemDrive%" folder appears in cwd
 
 CHILD_SNIPPET = textwrap.dedent(
     """\
