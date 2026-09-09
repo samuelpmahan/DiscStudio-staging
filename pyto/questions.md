@@ -100,6 +100,114 @@ ChessLab and Wumpus were built (`research/github-growth-review.md`), and it is t
 human-facing surfaces (record, render, `{?}`) come before more code. Bites: every brief must be
 executable cold by an agent and inspectable by a non-JS reader.
 
+### {?} Focus
+What is the focus right now?
+Status: resolved 2026-09-09 by owner. "DiscStudio is the focus rn". Bites: Lane 2 first; Lane 1
+addressing only as far as DiscStudio surfaces need it.
+
+### {?} HorizonDump
+Where does the owner brain-dump the horizon, and who manages the files and git?
+Status: resolved 2026-09-09 by owner. "set up a local neat that allows me to brain dump the
+horizon"; "I just dont want to have to slow down and debug shit"; "braindump is interactive";
+"notice how the tree is designed so I dont manage even git?". So: the dump is the conversation
+with the Socratic session; the owner talks, the session reads each decision back in the owner's
+words, writes it here, commits and pushes. The owner opens no file and types no git command. A
+horizon file in EXP/0 was made and removed for that reason. Bites: this file, `BOARD.md` lanes,
+the Socratic session's write rules.
+
+### {?} AddressRootIsAMount
+Do `disc`, `chess`, `wumpus`, `neat`, `tidy` leave the address and become mounts, three roots
+only (`px`, `fn`, `oc`), so `px.badges.px` means the same thing in every world?
+Status: resolved 2026-09-09 by owner, by default. Owner: "MDL is good but if u need to start
+with a wider footprint and refine over time thats fine the whole point is learning while moving
+safely"; asked the question itself: "idk any of this". So the board's proposal is the target; a
+wider footprint may ship first if it is named and can be narrowed without breaking records; the
+owner is not asked addressing questions again, agents stress-test instead. A Sonnet stress test
+(2026-09-09, read-only census of `pyto/`) found: no Part root is enforced today (`core.py:17-19`),
+which let in bare `scratch.` (526 hits) and `input.` (113) in grouped-ablation, `material.<sha>`
+in `materials.py:39,222`, and world names as second segments in two hand-written viewer
+fixtures (`chesslab-s0-s1.json`, the `buzzz-mint` card); Python has no mount type at all, so
+trimming addresses to bare nouns without building one makes two experiments collide; adopting
+the proposal regenerates 37 retained evidence files and needs a per-version record validator
+(`adapters.js:13,179` accepts one schema string); the viewer hard-codes two roots in four places
+(`adapters.js:105-112,234,247,336`), so `oc` needs those edits. Its own `{?}` lines, each with the
+default the agent takes: MaterialRootRename (default: exempt the experiment-scoped store until it
+is promoted to `pyto/src`); OcNoPrecedent (default: enforce `oc` only when the first `oc` exists);
+DiscProductSegment (default: `px.disc.*` and `px.card.*` are allowed, DiscStudio is the consumer,
+not a per-instance world); ReceiptSegmentReserved (default: `receipt` joins the reserved second
+segments); ScratchStoreShape (default: `px.scratch.<experiment>.*`); FixtureHonesty (default:
+relabel the two fixtures "pre-mount, illustrative", do not rewrite); PartyMountType (default:
+build the Python mount type in round five, since nothing else prevents collisions). Bites: round
+five, `core.py`, `adapters.js`, `materials.py`, Day 5.
+
+### {?} Purpose
+What is all of this for?
+Status: resolved 2026-09-09 by owner. "the point of all this is to explore things idk that I want
+to." and "im not linus torvalds I just did lots of weird systems programming but all in Java at
+Adaptiva basically being a ghost behind Windows managing and optimizing everything so I have a
+weird OS insticnt but 0 understanding". Filed as: pyto is an exploration instrument for its owner;
+questions to the owner are invitations to explore in OS-instinct vocabulary, never decisions that
+need the theory. Bites: every prompt on the board; `{?} AddressRootIsAMount` (why it went by
+default).
+
+### {?} TheTestSeen
+When it works on D:/, what is the first thing the owner wants to see?
+Status: resolved 2026-09-09 by owner. "every delulu out there thinks they have AIOS. I need proof
+im not one of them". Filed as: not a demo, proof a skeptic can run and cannot talk around. Bites:
+"The test" on the board; the fresh-clone proof below.
+
+### {?} ProofShape
+Who is the skeptic, and what must fail to break?
+Status: resolved 2026-09-09 by owner. "Uh me in 5 hours might be skeptical this is all worth it
+but in general every kook thinks they have an ai os. Not every kook worked at Adaptiva which
+manages mega corporate fleets. I turned my cv alg into workflow engine (like they had but yknow
+generic stuff nothing protectable). Then kept chasing primitives then an agent I started with an
+art tourney went from 'this is a function registry' to talking bout AIOS and function schedulers
+and Claude has not been helpful on this project for like 2 weeks while I did this generalization
+and then suddenly THAT happens". Filed as: the skeptic is the owner five hours from now; the proof
+is what that reader can run from a fresh clone on D:/ and cannot dismiss, and its result is
+written on the board as a result, never as a claim. Owner, later: "My entire past month of GitHub is proof this process works." First run, 2026-09-09 08:22, fresh clone of
+3b8b5e5 into `D:/pyto-fresh-20260909`, the board's commands verbatim: the venv and install
+worked; `run_cached.py` gave one miss and one hit with a write, from a fresh process; the tick
+page rendered (296 KB); the suite was red on one test and its nested twin:
+`retained.commit` names `dbc069dd…-dirty`, a working-tree sha from the experiment that produced
+the evidence, which exists in no clone. Every other suite was green. That failure is Lane 4's
+open prompt made concrete. Bites: `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`, Lane 4;
+the proof run after every landing.
+
+### {?} RecordRemembersCommit
+Should a saved run remember its commit at all?
+Status: resolved 2026-09-09 by owner. "I made neat to not care about git but let's say max
+telemetry since ur gonna try to selfbootstrap and go ham overnight lol". So the field stays, and
+the record may carry more, not less: neat is what spares the owner git, the stamp's job is to be
+true. Consequence for the fresh-clone failure (`{?} ProofShape`): a stamp must name a landed
+commit that every clone has, never a working-tree sha; evidence regenerated inside an experiment
+is stamped at its landing base, and the proof run after each landing is the check. Bites: Lane 4's
+open prompt (closed), `{?} EvidenceDirtiness`, `{?} VerificationOracleStamp`,
+`experiments/grouped-ablation/run.py:235-265`, `replay.py`, the landing script.
+
+### {?} RenderersForUsers
+Should the studio stay static with the Python card renderers ported to JS and proven
+byte-identical, or get a backend?
+Status: resolved 2026-09-09 by owner, by default. Owner: "Bruh idk what you're saying. Idk any of
+this it just happened." Default taken: port to JS with digest equality (same inputs, same SVG
+bytes in both runtimes, the record is the proof), the site stays static, Python stays the
+workshop where formats are designed and verified before they ship. Plain words: the studio is a
+website with no server, browsers cannot run Python, so the drawers are rewritten in the browser's
+language and the rewrite is proven identical byte for byte. Bites: Lane 2's open prompt (closed),
+the DiscShelf and OnTheCourse brief, Astra's painter-port package.
+
+### {?} StableAndExplainable
+What does the owner need from the kernel, given they do not want to know how it works?
+Status: resolved 2026-09-09 by owner. "My Adaptiva work was all java so I can basically write sick
+services above the os so that's why it needs to be stable and explainable. I know nothing. U
+explain it. That's why this works." Filed as the working contract: the kernel is the stable layer
+the owner writes services above, the way Adaptiva's services sat above Windows; every question to
+the owner comes with a plain-words explanation and a default; the agent explains, the owner
+decides at the altitude of the services; "it just happened" is fine, the record is what makes it
+explainable after the fact. Bites: every prompt on the board; `LANDING.md`'s explicability gate;
+the hand-off primer (`{?} ConvincingAFreshAgent`).
+
 ## Questions I resolved alone and should have asked (recorded late, 2026-09-09)
 
 ### {?} PlanPrimacy
@@ -493,4 +601,32 @@ the viewer page), plus the `{?}` root. To be tested with cold readers. Bites: HA
 ### {?} BPlusTree
 Could neat be a B+ tree? Status: open, lean later: a B+ tree organizes stored records for lookup;
 it can sit under neat's PxC once tasks are Parts; it gives no isolation or landing by itself.
+
+## Everything is a file (2026-09-09, the owner's line)
+
+### {?} EverythingIsAPart
+The owner: "The function stopped being the subject; the receipt became the subject. One of the
+few things I actually know about Linux is 'everything file'." The mapping: in Unix the file is
+not the interesting object either; one interface (a path, read, write) covers devices, pipes and
+processes, so a few tools compose over all of them. pyto's version: everything is a Part (an
+address and a value), and every use leaves a receipt, which is a Part too. The reference runtime
+already does this: `src/runtime.js:57` writes `px.receipt.<name>` beside `px.pql.<name>`. Python
+keeps receipts on the run object (`PcrRun.receipts`, `pcr.py:145`) instead of in the store, which
+is the one place the transfer breaks the rule. Status: provisional, lean adopt: receipts, landing
+receipts, packets, decisions and proposals are Parts under reserved second segments (`receipt`,
+`proposal`, ...), written only when visibility is on and never read by a Calculation (ChainSpot's
+`px.view.*` precedent), so the CV runtime with visibility off writes none and the byte-identity
+guarantee holds. This collapses `{?} ObservationSeam`, `{?} TickEqualsReceipt`,
+`{?} ReceiptSegmentReserved` and the "agent reads become oc receipts" half of `{?} GuardEnforcement`
+into one rule; PQL is then `ls` and `grep` over all of them, the viewer is `cat`. Bites: `pcr.py`
+(a `receipt` mount or segment written under `observe=True`), `materialize.py`, `neat`.
+
+### {?} OvernightLanding
+What may land while the owner sleeps? Status: resolved 2026-09-09 by owner: "I want minimal hard
+stops ... I can't keep track of git and I need to keep track of this. Like go wild too but it's
+gotta augment me. AHI." So: everything that passes its verifier and the suite lands, kernel
+changes included, with a receipt and a Today line; a decision taken by default is written here in
+the owner's words with the default; `neat undo <id>` reverts a landed task with its own receipt,
+so control is a way back, not a gate. Nothing is deleted; a losing attempt stays as a packed task.
+Bites: tonight's queue on the board, `neat.sh`.
 

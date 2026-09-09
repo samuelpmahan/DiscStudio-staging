@@ -6,7 +6,8 @@
 #   neat show <id>            print the hand-off (what a fresh agent gets)
 #   neat drop <id> <path>...  put those files back to the starting point, repack
 #   neat land <id>            merge into MAIN, verify, receipt, commit, push; EXP/<id> goes away
-#   neat kill <id>            abandon: EXP/<id> and its branch go away, nothing lands
+#   neat kill <id>            abandon: EXP/<id> goes away, nothing lands; exp/<id> is kept (nothing is deleted)
+#   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
 #   neat list                 every experiment and its state
 #
 # MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN),
@@ -17,6 +18,15 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="$(cd "$HERE/.." && pwd)"
 ROOT="$(cd "$PY/.." && pwd)"
+# The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
+# then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
+# where a Store Python's editable install lands in the user site that -I ignores.
+_root_for_python="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [ -z "${PYTHON:-}" ]; then
+  for _c in "$_root_for_python/.venv/bin/python" "$_root_for_python/.venv/Scripts/python.exe"; do
+    [ -x "$_c" ] && PYTHON="$_c" && break
+  done
+fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 EXP="$ROOT/EXP"
 TASKS="pyto/experiments/tasks"
@@ -25,14 +35,19 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,11p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,12p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: "
   grep -m1 "^$1: " "$2" | sed "s/^$1: //"
 }
-next_id() {
+next_id() { # the highest id seen anywhere: local copies, landed packets, and exp/* branches here or on origin
   local max=-1 d n
+  git -C "$ROOT" fetch -q origin 'refs/heads/exp/*:refs/remotes/origin/exp/*' 2>/dev/null || true
   for d in "$EXP"/*/ "$ROOT/$TASKS"/*/; do
     [ -d "$d" ] || continue; n="$(basename "$d")"
+    case "$n" in ''|*[!0-9]*) continue;; esac
+    [ "$n" -gt "$max" ] && max="$n"
+  done
+  for n in $(git -C "$ROOT" for-each-ref --format='%(refname:short)' 'refs/heads/exp/*' 'refs/remotes/origin/exp/*' | sed 's#.*exp/##'); do
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
@@ -44,6 +59,10 @@ venv_python() { # <id>
   else echo "$PYTHON"; fi
 }
 packet_of() { echo "$EXP/$1/$TASKS/$1/packet.md"; }
+hostpath() { # Git Bash on Windows: pip and python want D:/... not /d/...; elsewhere the path is unchanged
+  if command -v cygpath >/dev/null 2>&1; then cygpath -m "$1"; else printf '%s
+' "$1"; fi
+}
 need_exp() { [ -d "$EXP/$1" ] || die "no experiment EXP/$1 (neat list)"; }
 
 cmd_new() {
@@ -74,11 +93,11 @@ EOF
   echo "Task $id: EXP/$id is a copy of MAIN at ${base:0:7}. Work there."
   echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
   "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
-  "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$EXP/$id/pyto[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
-  case "$("$(venv_python "$id")" -c 'import pyto; print(pyto.__file__)' 2>/dev/null)" in
-    "$EXP/$id/"*) echo "  its python imports pyto from EXP/$id";;
-    *) die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working.";;
-  esac
+  "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$(hostpath "$EXP/$id/pyto")[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
+  if "$(venv_python "$id")" -c 'import os, sys, pyto; sys.exit(0 if os.path.realpath(pyto.__file__).startswith(os.path.realpath(sys.argv[1])) else 1)' "$(hostpath "$EXP/$id")" 2>/dev/null
+  then echo "  its python imports pyto from EXP/$id"
+  else die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working."
+  fi
   echo "  done. When the work is done: bash pyto/scripts/neat.sh pack $id"
 }
 
@@ -264,9 +283,27 @@ cmd_kill() {
   local id="${1:-}"; [ -n "$id" ] || usage
   git -C "$ROOT" worktree remove --force "$EXP/$id" 2>/dev/null || true
   rm -rf "$EXP/$id"
-  git -C "$ROOT" branch -D "exp/$id" >/dev/null 2>&1 || true
-  git -C "$ROOT" push -q origin --delete "exp/$id" 2>/dev/null || true
-  echo "task $id abandoned; nothing landed"
+  echo "task $id abandoned; nothing landed. exp/$id is kept (git branch -D exp/$id, and on origin: git push origin --delete exp/$id, when you're sure)"
+}
+
+cmd_undo() {
+  local id="${1:-}"; [ -n "$id" ] || usage
+  local sha intent parents
+  sha="$(git -C "$ROOT" log --format=%H --grep="^land(task-$id): " -n 1)"
+  [ -n "$sha" ] || die "no landing commit for task $id (git log --grep 'land(task-$id)')"
+  [ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all | cut -c4- | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$')" ] || die "MAIN is not clean; undo needs a clean tree"
+  intent="$(git -C "$ROOT" log -1 --format=%s "$sha" | sed "s/^land(task-$id): //")"
+  parents="$(git -C "$ROOT" rev-list --parents -n 1 "$sha" | wc -w)"
+  echo "== undo task $id: $intent  (landing ${sha:0:7})"
+  if [ "$parents" -gt 2 ]; then git -C "$ROOT" revert --no-commit -m 1 "$sha" >/dev/null 2>&1 || { git -C "$ROOT" revert --abort; die "the revert conflicts with later landings in: $(git -C "$ROOT" diff --name-only --diff-filter=U | tr '\n' ' ')"; }
+  else git -C "$ROOT" revert --no-commit "$sha" >/dev/null 2>&1 || { git -C "$ROOT" revert --abort; die "the revert conflicts with later landings in: $(git -C "$ROOT" diff --name-only --diff-filter=U | tr '\n' ' ')"; }; fi
+  git -C "$ROOT" reset -q  # leave the revert as ordinary dirty files for land.sh to claim
+  if bash "$HERE/land.sh" "undo-task-$id" --message "undo task $id: $intent"; then
+    echo "task $id is out of MAIN; its packet and landing stay in history (git log --grep 'task-$id')"
+  else
+    git -C "$ROOT" checkout -q -- . && git -C "$ROOT" clean -fdq -e pyto/experiments/landings
+    echo "undo of task $id did not land (see the reason above); MAIN is as it was" >&2; exit 1
+  fi
 }
 
 cmd_list() {
@@ -287,5 +324,5 @@ cmd_list() {
 
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
-  land) cmd_land "$@";; kill) cmd_kill "$@";; list) cmd_list "$@";; *) usage;;
+  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; list) cmd_list "$@";; *) usage;;
 esac

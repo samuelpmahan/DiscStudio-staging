@@ -28,9 +28,9 @@ skip when the browser is absent):
 ```
 git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging.git /d/DiscStudio-staging
 cd /d/DiscStudio-staging
-python -m pip install -e "./pyto[drawing]"
+python -m venv .venv && .venv/Scripts/python -m pip install -e "./pyto[drawing]"   # the scripts find .venv on their own
 bash pyto/scripts/check_all.sh                                   # every suite, the same table as here
-python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit   # one miss, then two hits, the second from a fresh process
+.venv/Scripts/python pyto/experiments/grouped-ablation/run_cached.py --out /d/pyto-hit   # one miss, then two hits, the second from a fresh process
 node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
 ```
 
@@ -42,6 +42,41 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 09:02 **landed** `task-2`: Address validator and census: parse any address into root, reserved second segment and rest; report every address in pyto that would fail the three-root rule; enforce nothing (145 files since 50ec3f7, suites green, receipt 20260909T090128Z-task-2)
+- 2026-09-09 09:01 **landed** `suite-hygiene`: the experiment suite proves it changes nothing under pyto/src, instead of demanding a pristine tree that no branch landing can satisfy mid-merge (1 files since 67112e7, suites green, receipt 20260909T090043Z-suite-hygiene)
+- 2026-09-09 08:59 **refused** `task-2`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T085915Z-task-2/check_all.txt)
+- 2026-09-09 08:52 **landed** `task-7`: Add a fast check that every bullet under BOARD.md's '## Today' starts with the exact '- YYYY-MM-DD HH:MM ' stamp the landing script's board() function writes, so a bug in that heredoc that corrupts the owner's one-page log is caught mechanically instead of by eyeballing. (121 files since 1b38f28, suites green, receipt 20260909T085216Z-task-7)
+- 2026-09-09 08:52 **landed** `task-5`: Add a standalone, sub-second selftest that every committed landing receipt JSON (verified and failed) has the fields land.sh actually writes, so a schema regression in land.sh is caught without running check_all.sh or a scratch clone. (113 files since 1b38f28, suites green, receipt 20260909T085131Z-task-5)
+- 2026-09-09 08:51 **landed** `task-4`: Stop `neat kill` from deleting the abandoned task's branch (local and on origin); only remove the disposable worktree directory. (105 files since 1b38f28, suites green, receipt 20260909T085038Z-task-4)
+- 2026-09-09 08:50 **landed** `portable-sums`: floats add left to right (Python 3.11 and 3.13 agree bit for bit), every record regenerated, and the no-program-edits diff is taken against the program as last landed (45 files since 1c5447f, suites green, receipt 20260909T084944Z-portable-sums)
+- 2026-09-09 08:48 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084745Z-portable-sums/check_all.txt)
+- 2026-09-09 08:47 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084626Z-portable-sums/check_all.txt)
+- 2026-09-09 08:46 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084525Z-portable-sums/check_all.txt)
+- 2026-09-09 08:45 **refused** `portable-sums`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084437Z-portable-sums/check_all.txt)
+- 2026-09-09 08:41 **refused** `task-7`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
+- 2026-09-09 08:41 **refused** `task-5`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
+- 2026-09-09 08:41 **refused** `task-4`: the tree is not clean; a branch can only land into a clean tree (dirty: pyto/scripts/land.sh pyto/scripts/neat.sh )
+- 2026-09-09 08:41 **refused** `landing-bookkeeping`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T084119Z-landing-bookkeeping/check_all.txt)
+- 2026-09-09 08:40 **refused** `task-7`: the tree is not clean; a branch can only land into a clean tree
+- 2026-09-09 08:40 **refused** `task-5`: the tree is not clean; a branch can only land into a clean tree
+- 2026-09-09 08:40 **refused** `task-4`: the tree is not clean; a branch can only land into a clean tree
+- 2026-09-09 08:45 **refused** task 9 by the explicability gate: the hand-off's narrative claimed land.sh is exercised "two ways" and misplaced the BOARD.md reset, when check_land_refusals.sh actually makes three calls (no-args, unknown branch, dirty-outside-allow) with the reset sitting between the second and third; it stays packed (neat show 9)
+- 2026-09-09 The Socratic session read the night's 92 commits and the docs at the tip (owner: "figure out what you're not getting"). What it was not getting: the test is the per-Tick page showing what each Calculation read and wrote with the value present, from both runtimes, not a suite run; the founding need is observability and the roadbumps were agent-context failures, which this session reproduced by repo-hunting; two agents talk to the owner at once, so "resolved" means resolved against the branch tip, where the explicability gate and `neat undo` already were; the owner's vocabulary (AHI, everything is a Part, fn and oc, checkpoint versus landed, green names a receipt) is the record's. Codex's unpushed Day 2 on D:/ holds evidence the branch lacks: two implementations of one brief cannot read each other's records, and digests drift between Python 3.11 and 3.14.
+- 2026-09-09 Owner on the last open prompt: "I know nothing. U explain it. That's why this works." Renderers port to JS by default, site stays static. No open prompts left on the board; nine answers in the root tonight.
+- 2026-09-09 Owner: "max telemetry"; the record keeps its commit and the stamp must name a landed commit. Owner: the past month of GitHub is the proof the process works. Seven answers in the root now.
+- 2026-09-09 08:22 Fresh-clone proof on D:/ (owner: "I need proof im not one of them"): clone of 3b8b5e5, venv, install; one miss then one hit from a fresh process; the tick page rendered; the suite red on one test only: the record's `retained.commit` names a working-tree sha that no clone has. Lane 4's prompt, with evidence.
+- 2026-09-09 08:21 **landed** `task-1`: AHI runs on the owner's Windows D:/: neat new works (host path for pip, python checks the install), the ablation fixture is bit-portable (no libm), the card server drains a 413 body, stripped child environments keep SystemDrive (65 files since 8604a0c, suites green, receipt 20260909T081928Z-task-1)
+- 2026-09-09 08:16 **refused** `task-1`: MAIN is behind origin/HEAD by  commit(s) (someone landed elsewhere); run: git pull --rebase origin HEAD  then land again
+- 2026-09-09 08:13 **landed** `windows-venv`: the scripts find the repository's .venv on their own, so isolated child processes import pyto on Windows too; the D:/ commands make that venv (4 files since 291b7f7, suites green, receipt 20260909T081311Z-windows-venv)
+- 2026-09-09 10:20 Owner: go big, one more: a Fable uses Sonnets to self-improve in branching manners that must remain human explicable. Running now: Sonnets mine the record for small useful changes to the loop itself, each becomes a neat task in its own copy, and a cold reader who sees only the hand-off must explain it correctly before it may land (the explicability gate, now in LANDING.md). Losers stay packed.
+- 2026-09-09 08:15 **refused** `task-1`: MAIN is behind origin/claude/python-ultracode-supercharge-st8hnu by 2 commit(s) (someone landed elsewhere); run: git pull --rebase origin claude/python-ultracode-supercharge-st8hnu  then land again
+- 2026-09-09 10:05 Owner: a task Codex can run as a good neighbour, and a personal neat for the work laptop where only Rovo and Windsurf exist. Both are one task: 3, "neat anywhere", on `exp/3` with a brief sized for one agent (read five files, run one command, stop when the selftest passes). The prompt to paste is in `mailbox/to-gpt/0002`. When it lands, the two scripts copied into any repository give the work laptop the same seven commands, and an editor agent only has to run them.
+- 2026-09-09 09:50 `neat undo` tested in the scratch clone: the probe task came back out of MAIN in 38 seconds with its own receipt and line. Two writers taught neat one thing: task ids now count the branches on origin too, so the D:/ session's task 1 and this session's next task cannot collide.
+- 2026-09-09 09:35 Owner: minimal hard stops, go wild, but it has to augment me (AHI). Rule changed: everything that passes its verifier and the suite lands tonight, kernel changes included; each decision taken by default is written at the root in the owner's words; and `neat undo <id>` takes any landed task back out with a receipt, so the way back is one command, not git. This log is the owner's track; git is the machine's.
+- 2026-09-09 09:20 Owner to bed. Tonight, in order, each as a neat task with a packet: land the Day 3 close-out (running); Day 3's own receipt; the studio exports its run record and opens the viewer (product, lands if its verifier and the browser check pass); a Mounts type ported from ChainSpot with the negative test (additive, lands if green); an address validator plus a census of what would fail the three-root rule, enforcing nothing (lands if green); a text `px ps` over a record, for a terminal without a browser (lands if green); receipts as Parts under `px.receipt.*` with the byte-identity test; an `oc` syscall-table prototype. Rule, as revised at 09:35: everything lands on green. Morning brief is this log plus `bash pyto/scripts/neat.sh list`.
+- 2026-09-09 08:45 The loop closed both ways: the owner's Socratic session on D:/ pushed answers (Focus is DiscStudio; the brain dump is the conversation; addressing goes by default) and this session read them on its next push. Queue reordered: after Day 3 lands, DiscStudio surfaces come before the table and `px`. The D:/ session's fixes ride on `exp/1` and land through neat; landing now refuses when MAIN is behind origin, since two clones land into one branch.
+- 2026-09-09 08:07 **refused** `task-1`: check_all exited 1 (see /d/pyto-socratic-20260909/pyto/experiments/landings/20260909T080631Z-task-1/check_all.txt)
+- 2026-09-09 Socratic session on the owner's D:/: DiscStudio is the focus; the brain dump is the conversation, not a file; addressing goes by default (owner: "idk any of this"), a stress test found no Part root is enforced and Python has no mount type. On this Windows machine `neat new` failed (pip got a `/d/` path, the install check was a shell glob) and two suites fail: the ablation fixture uses `random.gauss`, whose libm calls drift one ULP from the Linux-made evidence, and the card server answers 413 without draining the body, which Windows turns into a connection abort. All three fixes are on `exp/1`, being verified there, to land through neat. "AHI runs on D:/" is not true here until they do.
 - 2026-09-09 07:39 **landed** `landing-protocol`: one script, one receipt per landing, checkpoints labelled; neat as the caveman front (96 files since 4641ea8, suites green, receipt 20260909T073836Z-landing-protocol)
 - 2026-09-09 07:38 **landed** `windows-safety`: digests ignore line endings, kernel LF, evidence regenerated, harness path from its own location, child processes keep SystemRoot on Windows (37 files since b2a2848, suites green, receipt 20260909T073723Z-windows-safety)
 - 2026-09-09 07:34 **refused** `windows-safety`: the tree changed while the suites ran (someone is writing); nothing committed
@@ -89,7 +124,7 @@ off, and equal digests between the two are the proof the compile changed nothing
 compiled-operation model (`planFingerprint`, `executeCompiledPlan` in the ChessLab contract
 header) is that idea already; the record is what makes it checkable.
 
-**Open prompt.** *Addressing, round five.* The mining found ChainSpot already decided the hard
+**Open prompt.** none. *Addressing, round five, taken by default.* The mining found ChainSpot already decided the hard
 part: the world (a course, a game, a repo, a user's bag) is a mount outside the address, never a
 segment, with a test that `px.DashsTrack.s1.badges` is never created. So `px.badges.px` means the
 same thing in every world, and a cross-project hit is an identity check. Proposal: three roots
@@ -98,8 +133,12 @@ second segment is the noun that outlives the stage that made it (`px.badges`, `p
 `px.board`), which is where connection lives; four reserved second segments, `scratch`, `view`,
 `proposal`, `run`; the mount id is content-derived (`imgid:<sha12>`, `disc:<bag>`,
 `chess:<game>`) with human labels in a side map; `material` goes, because kind is a declared field
-on the reference, not a prefix; `?` stays outside the address as the root of questions. Owner's
-turn: refine or give the final answer. Default if unanswered: this proposal.
+on the reference, not a prefix; `?` stays outside the address as the root of questions. Owner
+(2026-09-09): "MDL is good but if u need to start with a wider footprint and refine over time
+thats fine the whole point is learning while moving safely", and to the question itself, "idk
+any of this". Taken as the default: this proposal is the target, a named wider footprint may ship
+first, agents stress-test it (findings and seven agent defaults under `{?} AddressRootIsAMount`
+in `questions.md`), and the owner is not asked about addressing again.
 
 **Stands.** Days 1 and 2 landed (receipts, retain, fresh-process replay, second experiment with
 zero program edits). Landing protocol in place (`LANDING.md`). Day 3 running (render,
@@ -119,13 +158,10 @@ order: DiscShelf, OnTheCourse, formats (export and import), the PCR render insid
 reducer in both runtimes, competition Ticks with proposals written to `proposal.disc.*`, review
 and comments on the (pcr, tick, invocation, part) anchor.
 
-**Open prompt.** *Where do the Python renderers run for users?* The studio is a static site
-(GitHub Pages, no backend by design), so the promoted Python card renderers cannot serve users as
-they are. Two roads: port them to JS with the record as the proof (the same inputs must give the
-same SVG bytes in both runtimes; the SVG builders are arithmetic and string formatting, so the
-port is mechanical and checkable), or add a backend. Default if unanswered: port with digest
-equality, keep the site static; Python stays the workshop where formats are designed, judged and
-verified before they ship.
+**Open prompt.** none. *Where do the Python renderers run for users?* Owner (2026-09-09): "idk what
+you're saying. Idk any of this it just happened." Default taken: port to JS with digest equality,
+the site stays static, Python is the workshop. The owner's contract, same night: "it needs to be
+stable and explainable. I know nothing. U explain it. That's why this works."
 
 **Stands.** Briefs written: Day 2 (as a bake-off reference), neat and tidy. Next brief: DiscShelf
 and OnTheCourse formats, written once Day 3 returns the viewer's real API so the studio can show
@@ -145,7 +181,9 @@ its own PxC so a change resolves against that memory deterministically; the comp
 Declared intent stays separate from produced facts; proposals never write into facts. neat's own
 semantics (persistent PxC, total-order telemetry, failed runs return a result) are the reference
 for neat. The neat agent runs this board: ingest dumps and research, resolve which questions got
-answered and which lanes moved, propose the next prompts.
+answered and which lanes moved, propose the next prompts. The brain dump is interactive: the owner talks, the Socratic session
+writes the decision in the owner's words, commits and pushes; the owner opens no file and types
+no git command.
 
 **Open prompt.** none. The brief is at `research/briefs/neat-on-pxc-brief.md` with five `{?}`
 entries for the expert to bring back.
@@ -164,8 +202,10 @@ wrote, took, and whether it was a hit. Agents annotate on the anchor (pcr, tick,
 plus a grid coordinate for images, so notes carry meaning rather than being dumb receipts. The
 `{?}` root is where an agent says "I was confused here"; the owner answers; the answer stays.
 
-**Open prompt.** *Should a saved run remember its commit?* It makes every record comparison
-break on the next commit. Default if unanswered: remove the field; git and receipts already know.
+**Open prompt.** none. *Should a saved run remember its commit?* Owner (2026-09-09): "let's say max
+telemetry since ur gonna try to selfbootstrap and go ham overnight lol". The field stays; a stamp
+must name a landed commit, never a working-tree sha (the fresh-clone proof went red on exactly
+that); the proof run after each landing is the check.
 
 **Stands.** Observability ledger written; Day 3 builds the render and the materializer.
 

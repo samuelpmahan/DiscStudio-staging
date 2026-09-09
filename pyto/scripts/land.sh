@@ -8,6 +8,15 @@
 #         candidate; the receipt lists every file changed since base, split into claimed (under
 #         the allowed paths) and unclaimed (present, verified with the mixture, not this package's).
 set -euo pipefail
+# The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
+# then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
+# where a Store Python's editable install lands in the user site that -I ignores.
+_root_for_python="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [ -z "${PYTHON:-}" ]; then
+  for _c in "$_root_for_python/.venv/bin/python" "$_root_for_python/.venv/Scripts/python.exe"; do
+    [ -x "$_c" ] && PYTHON="$_c" && break
+  done
+fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="$(cd "$HERE/.." && pwd)"
@@ -62,9 +71,17 @@ EOF
   exit 1
 }
 
-# 0. A branch candidate: the main tree must be clean, then the branch is merged without committing.
+# 0a. Two clones land into one branch (the owner's D:/ and the cloud), so MAIN must not be behind
+#     origin: what the suites verify here must be what gets pushed.
+UPSTREAM="$(git rev-parse --abbrev-ref HEAD)"
+if git fetch -q origin "$UPSTREAM" 2>/dev/null && ! git merge-base --is-ancestor "origin/$UPSTREAM" HEAD 2>/dev/null; then
+  fail "MAIN is behind origin/$UPSTREAM by $(git rev-list --count "HEAD..origin/$UPSTREAM") commit(s) (someone landed elsewhere); run: git pull --rebase origin $UPSTREAM  then land again"
+fi
+
+# 0b. A branch candidate: the main tree must be clean, then the branch is merged without committing.
 if [ -n "$FROM" ]; then
-  [ -z "$(git status --porcelain --untracked-files=all)" ] || fail "the tree is not clean; a branch can only land into a clean tree"
+  # Refusals leave failed receipts and board lines behind; those are the landing's own bookkeeping, not a candidate.
+  [ -z "$(git status --porcelain --untracked-files=all | cut -c4- | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$')" ] || fail "the tree is not clean; a branch can only land into a clean tree (dirty: $(git status --porcelain --untracked-files=all | cut -c4- | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$' | tr '\n' ' '))"
   git rev-parse -q --verify "$FROM^{commit}" >/dev/null || fail "no such branch: $FROM"
   [ -n "$BASE" ] || BASE_SHA="$(git merge-base HEAD "$FROM")"
   if ! git merge --no-commit --no-ff -q "$FROM" >/dev/null 2>&1; then
@@ -74,7 +91,7 @@ fi
 
 # 1. Clean start: the dirty files are what this landing will commit; files committed since --base are
 #    part of the candidate too (checkpoints never claim, landings do).
-DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
+DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$' || true)"
 SINCE="$(git diff --name-only "$BASE_SHA" HEAD)"
 CHANGED="$(printf '%s\n%s\n' "$SINCE" "$DIRTY" | grep -v '^$' | sort -u || true)"
 [ -n "$CHANGED" ] || fail "nothing to land: the tree is clean and nothing changed since $BASE_SHA"
@@ -151,7 +168,7 @@ if [ $DRY -eq 1 ]; then
 fi
 
 # 5. Commit and push. Only the files that were dirty at the start; if the tree moved meanwhile, stop.
-NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
+NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$' || true)"
 if [ "$(printf '%s\n' "$NOW" | grep -v '^$' | sort -u)" != "$(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u)" ]; then
   delta="$(diff <(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u) <(printf '%s\n' "$NOW" | grep -v '^$' | sort -u) | grep '^[<>]' | sed 's/^</ gone:/; s/^>/ new:/' | tr '\n' ' ')"
   fail "the tree changed while the suites ran (someone is writing); nothing committed. Changed:$delta"
@@ -167,7 +184,11 @@ Landing receipt: pyto/experiments/landings/$ID/receipt.json
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_014pqrhfQfjpSAYTvH8j3y93"
-git push -q -u origin "$(git rev-parse --abbrev-ref HEAD)"
+if ! git push -q -u origin "$UPSTREAM" 2>/dev/null; then
+  echo "LANDED LOCALLY $(git rev-parse --short HEAD) $PACKAGE, but the push was rejected: someone landed on origin while the suites ran." >&2
+  echo "Run: git pull --rebase origin $UPSTREAM && bash pyto/scripts/check_all.sh && git push -u origin $UPSTREAM   (the receipt's base is what was verified here; the rebased result is verified by that check_all)" >&2
+  exit 1
+fi
 echo "LANDED $(git rev-parse --short HEAD) $PACKAGE"
 if [ -n "$FROM" ]; then
   wt="$(git worktree list --porcelain | awk -v b="refs/heads/$FROM" '$1=="worktree"{w=$2} $1=="branch"&&$2==b{print w}')"

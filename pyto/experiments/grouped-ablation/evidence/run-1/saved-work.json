@@ -1,14 +1,14 @@
 {
   "ablation_variants": 5,
   "authoring_lines": {
-    "calculations.py": 126,
-    "features.py": 38,
+    "calculations.py": 139,
+    "features.py": 67,
     "program.py": 75
   },
-  "authoring_lines_total": 239,
+  "authoring_lines_total": 281,
   "authoring_sha256": {
-    "calculations.py": "92384feab36a6b31ef713374c48d0b74307e371281ad0ef9c3345d8a2f97a152",
-    "features.py": "7eb2fdf759bede4918bfd9ed4802fb4f8321706f4cec316fc1b88b612e48bbad",
+    "calculations.py": "e2aac12b6823d4e7b7fe86276bf2fde3df9674a3bd312ac6e0658fe34b9e9d75",
+    "features.py": "305b60304504d9aef0c53ef53fa9af4286c1d4963e5125636a15c63c9687b1d0",
     "program.py": "240c576945bf5c270da46a9c38d9a9543767101ba3ac55d547c53fe2cb758d55"
   },
   "calculation_addresses": [
@@ -33,9 +33,9 @@
   ],
   "variants": 6,
   "wall_ms": {
-    "build_program": 0.166,
-    "make_data": 4.188,
-    "pcr.run": 39.877
+    "build_program": 0.186,
+    "make_data": 11.155,
+    "pcr.run": 44.783
   },
-  "wall_ms_total": 44.231
+  "wall_ms_total": 56.124
 }

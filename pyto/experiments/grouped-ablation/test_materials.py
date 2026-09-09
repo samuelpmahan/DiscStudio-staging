@@ -38,6 +38,7 @@ if os.name == "nt" and os.environ.get("SystemRoot"):
     # test_subprocess.py::test_empty_env on win32 for this reason). It is the one
     # variable the strip keeps, and only there.
     STRIPPED_ENV["SystemRoot"] = os.environ["SystemRoot"]
+    STRIPPED_ENV["SystemDrive"] = os.environ.get("SystemDrive", "C:")  # else a literal "%SystemDrive%" folder appears in cwd
 
 
 def _fresh_store(root: str | None = None) -> materials.MaterialsStore:
@@ -338,18 +339,32 @@ class HitLedger(unittest.TestCase):
             hit_ledger(["not", "a", "record"])
 
 
+def _src_status() -> str:
+    completed = subprocess.run(
+        ["git", "status", "--porcelain", "--", "pyto/src"],
+        cwd=REPO, capture_output=True, text=True, timeout=30,
+    )
+    assert completed.returncode == 0, completed.stderr
+    return completed.stdout.strip()
+
+
+# Taken once, when this module is imported, before any test in the discovered run has done
+# anything: the state of pyto/src the suite started from. A landing verifies with the candidate
+# merged but not yet committed, so pyto/src is legitimately "dirty" then; what this suite must
+# guarantee is that IT changes nothing there, not that nobody else has.
+_SRC_STATUS_AT_IMPORT = _src_status()
+
+
 class LibraryUntouched(unittest.TestCase):
     def test_no_new_module_under_pyto_src(self):
         self.assertFalse(os.path.exists(os.path.join(SRC_PYTO, "materials.py")))
         self.assertFalse(os.path.exists(os.path.join(SRC_PYTO, "hits.py")))
 
-    def test_git_status_is_clean_under_pyto_src(self):
-        completed = subprocess.run(
-            ["git", "status", "--porcelain", "--", "pyto/src"],
-            cwd=REPO, capture_output=True, text=True, timeout=30,
+    def test_this_suite_changes_nothing_under_pyto_src(self):
+        self.assertEqual(
+            _src_status(), _SRC_STATUS_AT_IMPORT,
+            "pyto/src changed while this suite ran:\n" + _src_status(),
         )
-        self.assertEqual(completed.returncode, 0, completed.stderr)
-        self.assertEqual(completed.stdout.strip(), "", f"pyto/src is not clean:\n{completed.stdout}")
 
 
 if __name__ == "__main__":

@@ -10,6 +10,19 @@ from __future__ import annotations
 
 import random
 
+
+def _total(values) -> float:
+    """Left-to-right IEEE addition, bit-identical on every platform and Python version.
+
+    Not `sum()`: since Python 3.12 the builtin sums floats with Neumaier compensation,
+    so the same draws give different last bits on 3.11 (naive) and 3.13 (compensated).
+    This fixture's evidence is byte-compared across the owner's machines, which run both.
+    """
+    total = 0.0
+    for value in values:
+        total += value
+    return total
+
 FEATURES: tuple[str, ...] = tuple(f"f{i:02d}" for i in range(15))
 GROUPS: dict[str, list[str]] = {f"g{k}": list(FEATURES[3 * k : 3 * k + 3]) for k in range(5)}
 
@@ -23,8 +36,24 @@ def planted_weight_by_group() -> dict[str, float]:
     """Sum of |planted weight| per group; zero means the group is uninformative."""
     weights = {}
     for group, columns in GROUPS.items():
-        weights[group] = sum(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
+        weights[group] = _total(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
     return weights
+
+
+def _standard_normal(rng: random.Random) -> float:
+    """Approximate one N(0, 1) draw via Irwin-Hall (sum of 12 U(0,1), minus 6: mean
+    0, variance 1), using only +, -, * and / on values from rng.random(). This
+    fixture's evidence (evidence/run-*/retained.json etc.) is byte-compared across
+    platforms by replay.py/retain.py, so every value it derives from must be
+    bit-identical everywhere it runs. random.Random.random() is bit-exact across
+    platforms (it is built from getrandbits()/integer division, not libm), but
+    random.Random.gauss() is not: it goes through log/sqrt/sin/cos, and those libm
+    calls can differ by 1 ULP between platforms (observed: Windows vs. the Linux
+    box that produced the originally committed evidence), which fails the replay
+    byte-comparison. Irwin-Hall trades a bit of tail accuracy (values are bounded
+    to +/-6) for being reproducible everywhere; nothing here needs exact normality.
+    """
+    return _total(rng.random() for _ in range(12)) - 6.0
 
 
 def make_data(seed: int, n: int = 400) -> list[list]:
@@ -32,7 +61,7 @@ def make_data(seed: int, n: int = 400) -> list[list]:
     rng = random.Random(seed)
     rows: list[list] = []
     for _ in range(n):
-        x = [rng.gauss(0, 1) for _ in FEATURES]
-        y = sum(w * v for w, v in zip(TRUE_W, x)) + rng.gauss(0, NOISE_SD)
+        x = [_standard_normal(rng) for _ in FEATURES]
+        y = _total(w * v for w, v in zip(TRUE_W, x)) + _standard_normal(rng) * NOISE_SD
         rows.append([x, y])
     return rows

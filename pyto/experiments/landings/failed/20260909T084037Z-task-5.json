@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T084037Z-task-5",
+  "package": "task-5",
+  "base_sha": "5bef7128de140280445909e86b5e146d77722030",
+  "result": "failed",
+  "reason": "the tree is not clean; a branch can only land into a clean tree",
+  "at": "2026-09-09T08:40:38.204325Z"
+}

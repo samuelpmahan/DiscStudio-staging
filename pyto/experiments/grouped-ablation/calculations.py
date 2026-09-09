@@ -13,6 +13,19 @@ replay process. Args conventions:
 
 from __future__ import annotations
 
+
+def _total(values) -> float:
+    """Left-to-right IEEE addition, bit-identical on every platform and Python version.
+
+    Not `sum()`: since Python 3.12 the builtin sums floats with Neumaier compensation,
+    so the same draws give different last bits on 3.11 (naive) and 3.13 (compensated).
+    This fixture's evidence is byte-compared across the owner's machines, which run both.
+    """
+    total = 0.0
+    for value in values:
+        total += value
+    return total
+
 from pyto import Calculation
 
 from features import FEATURES
@@ -75,10 +88,10 @@ def fit(args: dict) -> dict:
     xs = [[r[i] for i in idx] for r in x_rows]
     d = len(idx)
     gram = [
-        [sum(xs[k][i] * xs[k][j] for k in range(len(xs))) + (RIDGE_LAMBDA if i == j else 0.0) for j in range(d)]
+        [_total(xs[k][i] * xs[k][j] for k in range(len(xs))) + (RIDGE_LAMBDA if i == j else 0.0) for j in range(d)]
         for i in range(d)
     ]
-    rhs = [sum(xs[k][i] * y[k] for k in range(len(xs))) for i in range(d)]
+    rhs = [_total(xs[k][i] * y[k] for k in range(len(xs))) for i in range(d)]
     return {"columns": list(columns), "w": solve(gram, rhs), "variant": args.get("variant")}
 
 
@@ -88,8 +101,8 @@ def score(args: dict) -> dict:
     columns, w = model["columns"], model["w"]
     x_rows, y = args["split"]["test"]
     idx = [FEATURES.index(c) for c in columns]
-    err = [(sum(wi * r[i] for wi, i in zip(w, idx)) - yi) ** 2 for r, yi in zip(x_rows, y)]
-    return {"rmse": (sum(err) / len(err)) ** 0.5, "n": len(err)}
+    err = [(_total(wi * r[i] for wi, i in zip(w, idx)) - yi) ** 2 for r, yi in zip(x_rows, y)]
+    return {"rmse": (_total(err) / len(err)) ** 0.5, "n": len(err)}
 
 
 def _delta_desc(row: dict) -> float:

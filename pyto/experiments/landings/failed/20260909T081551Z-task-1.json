@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T081551Z-task-1",
+  "package": "task-1",
+  "base_sha": "ef025449de7b3f94576ab0e1202ddcb9fbd2a6e2",
+  "result": "failed",
+  "reason": "MAIN is behind origin/claude/python-ultracode-supercharge-st8hnu by 2 commit(s) (someone landed elsewhere); run: git pull --rebase origin claude/python-ultracode-supercharge-st8hnu  then land again",
+  "at": "2026-09-09T08:15:53.551071Z"
+}

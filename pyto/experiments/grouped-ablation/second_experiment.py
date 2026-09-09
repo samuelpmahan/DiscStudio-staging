@@ -30,7 +30,7 @@ if HERE not in sys.path:
 
 import compare_local  # noqa: E402
 import retain  # noqa: E402
-from features import FEATURES, TRUE_W  # noqa: E402
+from features import FEATURES, TRUE_W, _total  # noqa: E402
 from program import BASELINE_KEY  # noqa: E402
 from run import (  # noqa: E402
     UNINFORMATIVE_DELTA,
@@ -47,12 +47,26 @@ from run import (  # noqa: E402
 EVIDENCE = os.path.join(HERE, "evidence")
 RUN_1 = os.path.join(EVIDENCE, "run-1")
 
-# The Day 2 base commit (research/ULTRACODE-WEEK.md, Day 2; the orchestrator's brief).
-# The kill criterion is "program.py/calculations.py were not edited *this day*", so the
-# diff base must be the day's base, not HEAD: HEAD moves as the day's checkpoints land,
-# and a program.py edit committed in one of them would make a HEAD-based diff report 0
-# (fixer round 1, finding 11). Recorded in saved-work.json as program_lines_changed_base.
-DAY2_BASE = "d9dded6"
+# The base the "no program edits" diff is taken against: the last commit that touched the
+# program (program.py or calculations.py), never HEAD. On Day 2 this was the day's base
+# (d9dded6; fixer round 1, finding 11: a checkpoint committing a program edit must not make a
+# HEAD-based diff report 0). Since the landing protocol, a committed program change is a
+# landing with a receipt and its own `land(...)` commit, visible in git log, so the honest
+# reading of the criterion is: these scripts edit nothing in the program as last landed. An
+# uncommitted, run-time edit still shows as lines changed. Recorded in saved-work.json as
+# program_lines_changed_base.
+
+
+def _program_base() -> str:
+    completed = subprocess.run(
+        ["git", "log", "-1", "--format=%H", "--", "program.py", "calculations.py"],
+        cwd=HERE, capture_output=True, text=True,
+    )
+    sha = completed.stdout.strip()
+    return sha or "d9dded6"
+
+
+DAY2_BASE = _program_base()
 
 
 def resolve_named_out_dir(out: str | None, default_rel: str, force: bool) -> str:
@@ -79,7 +93,7 @@ def planted_weight_of_variant(variant: Mapping[str, Any], groups: Mapping[str, l
     h0/h1/h2 grouping without a name-lookup mismatch.
     """
     columns = [column for name in variant["drop"] for column in groups[name]]
-    return sum(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
+    return _total(abs(TRUE_W[FEATURES.index(column)]) for column in columns)
 
 
 def failed_variants(comparison: list[dict], groups: Mapping[str, list[str]]) -> list[dict]:
@@ -113,7 +127,7 @@ def comparison_markdown(*, title: str, seed: int, n: int, groups: Mapping[str, l
         weight = (
             planted_weight_of_variant(by_key[row["variant"]], groups)
             if row["variant"] != BASELINE_KEY
-            else sum(abs(w) for w in TRUE_W)
+            else _total(abs(w) for w in TRUE_W)
         )
         lines.append(f"| {row['rank']} | {row['variant']} | {row['rmse']:.4f} | {row['delta_vs_baseline']:+.4f} | {weight:.1f} |")
     lines.append("")

@@ -8,31 +8,31 @@
   ],
   "rows": [
     {
-      "delta_vs_baseline": 1.5415,
+      "delta_vs_baseline": 1.8503,
       "n": 100,
       "rank": 1,
-      "rmse": 1.8615,
+      "rmse": 2.1539,
       "variant": "drop_h2"
     },
     {
-      "delta_vs_baseline": 1.2212,
+      "delta_vs_baseline": 1.3559,
       "n": 100,
       "rank": 2,
-      "rmse": 1.5413,
+      "rmse": 1.6595,
       "variant": "drop_h0"
     },
     {
-      "delta_vs_baseline": 0.639,
+      "delta_vs_baseline": 0.5419,
       "n": 100,
       "rank": 3,
-      "rmse": 0.9591,
+      "rmse": 0.8455,
       "variant": "drop_h1"
     },
     {
       "delta_vs_baseline": 0.0,
       "n": 100,
       "rank": 4,
-      "rmse": 0.3201,
+      "rmse": 0.3036,
       "variant": "all"
     }
   ],

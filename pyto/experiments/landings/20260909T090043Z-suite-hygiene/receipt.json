@@ -1,0 +1,38 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T090043Z-suite-hygiene",
+  "package": "suite-hygiene",
+  "base_sha": "67112e79751a8fe7be1cfb66445706e1e3d8fc28",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto/experiments/grouped-ablation && python3 -m unittest test_materials.LibraryUntouched",
+    "exit": 0,
+    "output_sha256": "cc4ce8d54ec0f6a2d972abf34157488e5e132e9d71efaebb422979f2bf3356f8"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "90971a0500b822e1387385ed53a27896d7ee7bf5d187126175fc491e770e3ee5",
+    "counts": {
+      "library": 103,
+      "experiments/grouped-ablation": 230,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 83,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/experiments/grouped-ablation/test_materials.py",
+      "bytes": 17831,
+      "sha256": "7a3703a2536f77aeb88cf511fbd39b9ca92109d2523fe23dcdd251f387c247be"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-09T09:01:25.858019Z",
+  "result_sha": "98b5bf529749724eb6690085a9e421fc0a1e0eea",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
