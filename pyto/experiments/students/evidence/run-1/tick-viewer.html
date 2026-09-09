@@ -1,0 +1,1966 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tick viewer — pyto-run-record@1</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f7f8f7;
+  --panel: #ffffff;
+  --ink: #14181b;
+  --muted: #5b6670;
+  --line: #d9dee2;
+  --accent: #0b6e4f;
+  --hit: #0b6e4f;
+  --hit-bg: #dff3e9;
+  --computed: #7a4a00;
+  --computed-bg: #fdefd8;
+  --warn: #9a2020;
+  --warn-bg: #fbe4e4;
+  --code: #f1f3f4;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1114;
+    --panel: #151b20;
+    --ink: #e6edf1;
+    --muted: #93a1ad;
+    --line: #27313a;
+    --accent: #4fd7a0;
+    --hit: #4fd7a0;
+    --hit-bg: #10281f;
+    --computed: #f0b862;
+    --computed-bg: #2b2113;
+    --warn: #ff9b9b;
+    --warn-bg: #331a1a;
+    --code: #0f1519;
+  }
+}
+* { box-sizing: border-box; }
+html, body { max-width: 100%; }
+/* clip, not hidden: `overflow: hidden` would make body a scroll container and
+   break the sticky toolbar. Wide content scrolls inside .scroll and pre. */
+body {
+  overflow-x: clip;
+  overflow-wrap: anywhere;
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body[data-drop="over"] { outline: 3px dashed var(--accent); outline-offset: -8px; }
+code, pre, .addr, .digest, .impl, .inv-id, .inv-call {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+.shell { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.toolbar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  padding: 12px 16px; background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.toolbar h1 { font-size: 15px; margin: 0 8px 0 0; letter-spacing: .02em; }
+.toolbar label { font-size: 12px; color: var(--muted); }
+.toolbar input[type=search] {
+  flex: 1 1 220px; min-width: 160px; padding: 6px 8px;
+  border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--ink); font: inherit;
+}
+.toolbar input[type=file] { font: inherit; color: var(--muted); max-width: 100%; }
+.status { padding: 8px 16px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--line); }
+.status.error { color: var(--warn); background: var(--warn-bg); }
+.hint { color: var(--muted); font-size: 12.5px; margin: 12px 0 0; }
+.hint code { background: var(--code); padding: 1px 4px; border-radius: 4px; }
+
+.record-head { padding: 4px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.record-head h1 { font-size: 22px; margin: 8px 0 2px; }
+.record-head .source { margin: 0; color: var(--muted); font-size: 12.5px; }
+.record-head .filtered { margin: 8px 0 0; color: var(--accent); font-size: 12.5px; }
+.counters { list-style: none; display: flex; flex-wrap: wrap; gap: 18px; padding: 0; margin: 12px 0 0; }
+.counters li { display: flex; flex-direction: column; }
+.counters .n { font-size: 18px; font-weight: 600; }
+.counters .k { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+
+.tick { margin: 0 0 22px; }
+.tick-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+.tick-head h2 { font-size: 16px; margin: 0; display: flex; align-items: baseline; gap: 8px; }
+.tick-index {
+  display: inline-block; min-width: 22px; text-align: center;
+  background: var(--accent); color: var(--panel); border-radius: 5px;
+  font-size: 12px; padding: 1px 5px;
+}
+.tick-meta { margin: 0; color: var(--muted); font-size: 12.5px; }
+
+.inv { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin: 10px 0; padding: 10px 12px; }
+.inv-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.inv-id { font-weight: 600; }
+.inv-call { color: var(--accent); word-break: break-all; }
+.impl, .dur { color: var(--muted); font-size: 12px; }
+.pill { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-radius: 999px; padding: 2px 8px; }
+.pill.hit { color: var(--hit); background: var(--hit-bg); }
+.pill.computed { color: var(--computed); background: var(--computed-bg); }
+
+.inv-meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; margin: 8px 0; font-size: 12.5px; }
+.inv-meta dt { color: var(--muted); }
+.inv-meta dd { margin: 0; word-break: break-all; }
+
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { text-align: left; padding: 3px 8px 3px 0; vertical-align: top; word-break: break-word; }
+th { color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+tr.diverges td { background: var(--warn-bg); color: var(--warn); }
+tr.diverges .flag { font-weight: 600; }
+tr.resultref .addr { color: var(--muted); }
+.reads, .writes { margin: 8px 0; }
+.none { color: var(--muted); font-size: 12.5px; margin: 4px 0; }
+.write-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3px; }
+.write-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 12.5px; }
+.kind { font-size: 11px; border-radius: 4px; padding: 1px 6px; background: var(--code); color: var(--muted); }
+.kind-new-address { color: var(--hit); background: var(--hit-bg); }
+.kind-replacement { color: var(--warn); background: var(--warn-bg); }
+.kind-refinement { color: var(--computed); background: var(--computed-bg); }
+
+details { margin: 8px 0; }
+summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
+pre { background: var(--code); border-radius: 6px; padding: 8px 10px; margin: 6px 0 0; overflow-x: auto; max-height: 340px; font-size: 12px; }
+.value .note { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+.value .note.omitted { background: var(--code); border-radius: 6px; padding: 8px 10px; }
+figure.material { margin: 8px 0 0; }
+figure.material img { max-width: 100%; height: auto; background: #ffffff; border: 1px solid var(--line); border-radius: 6px; display: block; }
+figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top: 4px; }
+
+.parts { margin-top: 28px; }
+.parts h2 { font-size: 16px; border-bottom: 2px solid var(--line); padding-bottom: 6px; }
+.scroll { overflow-x: auto; }
+.part-table tr.preexisting .addr { color: var(--accent); }
+
+#world-wrap select { font: inherit; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.unknown-panel { border-radius: 8px; margin: 16px 0; }
+.unknown-panel p { margin: 4px 0; }
+.unknown-panel .unknown-title { font-weight: 600; }
+#playback-toggle[aria-pressed="true"] { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+.playback-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 8px 16px; background: var(--panel); border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+/* Pre-existing gap: an author `display` rule always beats the UA's `[hidden]{display:none}`
+   (author normal outranks UA normal in the cascade, regardless of specificity), so
+   `.playback-bar[hidden]` rendered anyway. A world-picker switch onto a record-less
+   slot calls forceOff(), which sets `hidden` and depends on it actually hiding the bar. */
+.playback-bar[hidden] { display: none; }
+.playback-bar button, .playback-bar select, #playback-toggle { font: inherit; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); cursor: pointer; }
+#playback-now { font-weight: 600; color: var(--ink); }
+#playback-clock { font-family: ui-monospace, monospace; }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <h1>Tick viewer</h1>
+  <label for="file">record</label>
+  <input id="file" type="file" accept=".json,application/json">
+  <span id="world-wrap" hidden>
+    <label for="world">world</label>
+    <select id="world"></select>
+  </span>
+  <label for="filter">filter</label>
+  <input id="filter" type="search" placeholder="address substring, or scratch.ablation.* for a prefix">
+  <button id="playback-toggle" type="button" aria-pressed="false" title="Watch the Ticks and Calculations appear as they finished">Watch it think</button>
+</div>
+<div id="playback-bar" class="playback-bar" hidden>
+  <button id="play-btn" type="button">Play</button>
+  <button id="pause-btn" type="button">Pause</button>
+  <button id="step-btn" type="button">Step</button>
+  <label for="speed">speed</label>
+  <select id="speed">
+    <option value="1">1x real</option>
+    <option value="10" selected>10x slower</option>
+    <option value="100">100x slower</option>
+  </select>
+  <span>now: <span id="playback-now">not started</span></span>
+  <span id="playback-clock">0 ms</span>
+</div>
+<p id="status" class="status">Loading…</p>
+<div class="shell">
+  <div id="output"></div>
+  <p class="hint">
+    Loads a <code>pyto-run-record@1</code> document (see <code>RECORD.md</code>): pick a file, drop one
+    on the page, pass <code>?src=fixtures/pyto-grouped-ablation.json</code> when served over http,
+    or embed one with <code>node embed.mjs record.json &gt; page.html</code>. Raw
+    <code>{pql, receipt}</code>, <code>{receipts}</code> and <code>{records}</code> documents from the
+    DiscStudio, ChessLab and Wumpus runtimes are converted by <code>adapters.js</code> on load.
+  </p>
+</div>
+<script type="application/json" id="record">
+{
+  "counters": {
+    "computed": 4,
+    "hits": 1,
+    "invocations": 5,
+    "wall_ms": 0.13221100061855395
+  },
+  "parts": {
+    "px.students.histogram": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "histogram"
+    },
+    "px.students.letters": {
+      "preexisting": false,
+      "read_by": [
+        "histogram"
+      ],
+      "written_by": "letters"
+    },
+    "px.students.mean": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "mean"
+    },
+    "px.students.median": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "median"
+    },
+    "px.students.roster": {
+      "preexisting": false,
+      "read_by": [
+        "mean",
+        "median",
+        "letters"
+      ],
+      "written_by": "parse"
+    },
+    "px.students.scores_csv": {
+      "preexisting": true,
+      "read_by": [
+        "parse"
+      ],
+      "written_by": null
+    }
+  },
+  "pcr": "students-homework",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": "d13fcd1c38eab147d1a9d01b2c6c4e4ebf7abf90",
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.students.scores_csv"
+          ],
+          "actual_produces": [
+            "px.students.roster"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.students.parse",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "734297dcbbb4c557d7fadef148e57de8cb1a745ca876c7c38b1e076c0dbf6cc3"
+          },
+          "declared_consumes": [
+            "px:px.students.scores_csv"
+          ],
+          "duration_ms": 0.03286900027887896,
+          "hit": true,
+          "id": "parse",
+          "inputs": {
+            "text": "px:px.students.scores_csv"
+          },
+          "into": "px.students.roster",
+          "result_sha256": "0be97ba80b4e28b0b2afee87ad31d65e32e8fd2d5da01b0f2a97e0edb2c41378",
+          "value": {
+            "data": [
+              {
+                "name": "Ada",
+                "score": 91
+              },
+              {
+                "name": "Bao",
+                "score": 78
+              },
+              {
+                "name": "Cleo",
+                "score": 84
+              },
+              {
+                "name": "Dev",
+                "score": 66
+              },
+              {
+                "name": "Eli",
+                "score": 95
+              },
+              {
+                "name": "Fen",
+                "score": 73
+              },
+              {
+                "name": "Gus",
+                "score": 88
+              },
+              {
+                "name": "Hana",
+                "score": 59
+              },
+              {
+                "name": "Ines",
+                "score": 84
+              },
+              {
+                "name": "Jae",
+                "score": 70
+              },
+              {
+                "name": "Kit",
+                "score": 97
+              },
+              {
+                "name": "Lior",
+                "score": 81
+              }
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.students.roster",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Parse"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.students.mean"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.students.mean",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "52c2348bf909078bdf32e7b55a95140e366884feb69c89a94cd07c4da464bc6d"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.03024099987669615,
+          "hit": false,
+          "id": "mean",
+          "inputs": {
+            "roster": "fn:parse"
+          },
+          "into": "px.students.mean",
+          "result_sha256": "a1a9f34b0711500b5d41ed1f553bf9d04af30672d5850e7496b44b51482fff3a",
+          "value": {
+            "data": {
+              "mean": 80.5,
+              "n": 12,
+              "total": 966
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.students.mean",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Mean"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.students.median"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.students.median",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "e40b65bbc48b2a45c76bb9800ed9c5b8240a7192c2d07d0ff89b02c5c19dc312"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.0192300003618584,
+          "hit": false,
+          "id": "median",
+          "inputs": {
+            "roster": "fn:parse"
+          },
+          "into": "px.students.median",
+          "result_sha256": "848edcd4f2130990a2371124dff160e019f75ee61626eab42611d25c5b656e89",
+          "value": {
+            "data": {
+              "median": 82.5,
+              "n": 12
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.students.median",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Median"
+    },
+    {
+      "index": 3,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.students.letters"
+          ],
+          "args": {
+            "cutoffs": [
+              [
+                "A",
+                90
+              ],
+              [
+                "B",
+                80
+              ],
+              [
+                "C",
+                70
+              ],
+              [
+                "D",
+                60
+              ],
+              [
+                "F",
+                0
+              ]
+            ]
+          },
+          "calculation": {
+            "address": "fn.students.letters",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "bdb6828b307fcb2522327e41429c5db7c433ec73388dba8c29e04a072dec51eb"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.028363000183162512,
+          "hit": false,
+          "id": "letters",
+          "inputs": {
+            "roster": "fn:parse"
+          },
+          "into": "px.students.letters",
+          "result_sha256": "6bcd64ec55370df02f57986b8cf278abd53405686aab0a416d38706d1d9edee0",
+          "value": {
+            "data": [
+              {
+                "letter": "A",
+                "name": "Ada",
+                "score": 91
+              },
+              {
+                "letter": "C",
+                "name": "Bao",
+                "score": 78
+              },
+              {
+                "letter": "B",
+                "name": "Cleo",
+                "score": 84
+              },
+              {
+                "letter": "D",
+                "name": "Dev",
+                "score": 66
+              },
+              {
+                "letter": "A",
+                "name": "Eli",
+                "score": 95
+              },
+              {
+                "letter": "C",
+                "name": "Fen",
+                "score": 73
+              },
+              {
+                "letter": "B",
+                "name": "Gus",
+                "score": 88
+              },
+              {
+                "letter": "F",
+                "name": "Hana",
+                "score": 59
+              },
+              {
+                "letter": "B",
+                "name": "Ines",
+                "score": 84
+              },
+              {
+                "letter": "C",
+                "name": "Jae",
+                "score": 70
+              },
+              {
+                "letter": "A",
+                "name": "Kit",
+                "score": 97
+              },
+              {
+                "letter": "B",
+                "name": "Lior",
+                "score": 81
+              }
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.students.letters",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Letters"
+    },
+    {
+      "index": 4,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.students.histogram"
+          ],
+          "args": {
+            "bar": "#",
+            "cutoffs": [
+              [
+                "A",
+                90
+              ],
+              [
+                "B",
+                80
+              ],
+              [
+                "C",
+                70
+              ],
+              [
+                "D",
+                60
+              ],
+              [
+                "F",
+                0
+              ]
+            ]
+          },
+          "calculation": {
+            "address": "fn.students.histogram",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "6618353f306c11b17d0e037e91d044df4f6ee22712bcca7578d731be9f0ed7ce"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.021507999917957932,
+          "hit": false,
+          "id": "histogram",
+          "inputs": {
+            "letters": "fn:letters"
+          },
+          "into": "px.students.histogram",
+          "result_sha256": "0b10c417a9a0c1259099faf06d3771c4a766494a4a34c3394837e06b758ee78d",
+          "value": {
+            "data": "A ### 3\nB #### 4\nC ### 3\nD # 1\nF # 1",
+            "kind": "text",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.students.histogram",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Histogram"
+    }
+  ]
+}
+</script>
+<script type="module">
+/* adapters.js + tick-viewer.js, inlined by embed.mjs. No imports, no network. */
+/**
+ * pyto-run-record@1 adapters and validator.
+ *
+ * One record format, four producers. The schema and every field rule live in
+ * ./RECORD.md; this file is its executable form. Dependency-free ES module:
+ * it runs unchanged in a browser <script type="module"> and under `node --test`.
+ *
+ * Reference semantics are the JS runtime's (ULTRACODE-WEEK.md "Reframing 4",
+ * "JS is first class"): where the JS and Python records could differ, the
+ * shapes in ../../src/core/exec.js and ../../src/runtime.js decide.
+ */
+
+const SCHEMA = 'pyto-run-record@1';
+
+/** RECORD.md: values over 256 KB are replaced by `omitted` with a note. */
+const MAX_VALUE_BYTES = 262144;
+
+/** RECORD.md: arrays longer than 200 entries carry the first 200 and a note. */
+const MAX_ARRAY_ENTRIES = 200;
+
+const RUNTIMES = ['pyto', 'discstudio', 'chesslab', 'wumpus'];
+const VALUE_KINDS = ['json', 'text', 'svg', 'png-data-url', 'omitted'];
+const WRITE_KINDS = ['new-address', 'refinement', 'replacement'];
+
+/** RECORD.md:109-110: a `png-data-url` value's data is exactly this shape. */
+const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
+
+const encoder = new TextEncoder();
+
+function utf8Length(text) {
+  return encoder.encode(text).length;
+}
+
+/* ------------------------------------------------------------------ */
+/* validate                                                            */
+/* ------------------------------------------------------------------ */
+
+class RecordSchemaError extends Error {
+  constructor(path, message) {
+    super(`${SCHEMA} ${path}: ${message}`);
+    this.name = 'RecordSchemaError';
+    this.path = path;
+  }
+}
+
+function fail(path, message) {
+  throw new RecordSchemaError(path, message);
+}
+
+function show(value) {
+  if (value === undefined) return 'undefined';
+  if (typeof value === 'string') return JSON.stringify(value.length > 60 ? `${value.slice(0, 57)}...` : value);
+  if (value === null || typeof value !== 'object') return String(value);
+  if (Array.isArray(value)) return `an array of ${value.length}`;
+  return 'an object';
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function requireObject(value, path) {
+  if (!isPlainObject(value)) fail(path, `expected an object, got ${show(value)}`);
+  return value;
+}
+
+function requireArray(value, path) {
+  if (!Array.isArray(value)) fail(path, `expected an array, got ${show(value)}`);
+  return value;
+}
+
+function requireString(value, path, { nonEmpty = true } = {}) {
+  if (typeof value !== 'string') fail(path, `expected a string, got ${show(value)}`);
+  if (nonEmpty && value.length === 0) fail(path, 'expected a non-empty string');
+  return value;
+}
+
+function requireNullableString(value, path) {
+  if (value === null) return null;
+  return requireString(value, path);
+}
+
+function requireNullableNumber(value, path) {
+  if (value === null) return null;
+  if (typeof value !== 'number' || !Number.isFinite(value)) fail(path, `expected a finite number or null, got ${show(value)}`);
+  return value;
+}
+
+function requireBoolean(value, path) {
+  if (typeof value !== 'boolean') fail(path, `expected a boolean, got ${show(value)}`);
+  return value;
+}
+
+function requireEnum(value, allowed, path) {
+  if (!allowed.includes(value)) fail(path, `expected one of ${allowed.map((v) => JSON.stringify(v)).join(', ')}, got ${show(value)}`);
+  return value;
+}
+
+function requireStringArray(value, path) {
+  requireArray(value, path);
+  value.forEach((entry, index) => requireString(entry, `${path}[${index}]`));
+  return value;
+}
+
+/** RECORD.md: `inputs` keeps the testimony spelling `px:<address>` / `fn:<id>`. */
+function requireBindingSpelling(value, path) {
+  requireString(value, path);
+  if (!value.startsWith('px:') && !value.startsWith('fn:')) {
+    fail(path, `expected a testimony binding spelled "px:<address>" or "fn:<id>", got ${show(value)}`);
+  }
+  return value;
+}
+
+function validateValue(value, path) {
+  requireObject(value, path);
+  const kind = requireEnum(value.kind, VALUE_KINDS, `${path}.kind`);
+  if (!('data' in value)) fail(`${path}.data`, 'is required (null when the kind is "omitted")');
+  if (!('note' in value)) fail(`${path}.note`, 'is required (null when there is nothing to say)');
+  requireNullableString(value.note, `${path}.note`);
+  if (kind === 'omitted') {
+    if (value.data !== null) fail(`${path}.data`, `expected null for kind "omitted", got ${show(value.data)}`);
+    if (typeof value.note !== 'string' || !value.note.length) fail(`${path}.note`, 'kind "omitted" must say why in note');
+  } else if (kind !== 'json') {
+    requireString(value.data, `${path}.data`, { nonEmpty: false });
+    // RECORD.md:109-110 states the shape; tick-viewer.js:118 puts this string
+    // straight into an <img src>, so an unchecked kind is an outbound request
+    // the record chose. Enforce the clause here rather than trusting a producer.
+    if (kind === 'png-data-url' && !value.data.startsWith(PNG_DATA_URL_PREFIX)) {
+      fail(`${path}.data`, `expected a string beginning ${JSON.stringify(PNG_DATA_URL_PREFIX)} for kind "png-data-url", got ${show(value.data)}`);
+    }
+  } else if (value.data === undefined) {
+    fail(`${path}.data`, 'expected a JSON value, got undefined');
+  }
+  return value;
+}
+
+function validateInvocation(invocation, path, seenIds) {
+  requireObject(invocation, path);
+  const id = requireString(invocation.id, `${path}.id`);
+  if (seenIds.has(id)) fail(`${path}.id`, `duplicate invocation id ${JSON.stringify(id)}; ids anchor annotations and must be unique in a record`);
+  seenIds.add(id);
+
+  const calculation = requireObject(invocation.calculation, `${path}.calculation`);
+  requireNullableString(calculation.address, `${path}.calculation.address`);
+  requireNullableString(calculation.implementation_sha256, `${path}.calculation.implementation_sha256`);
+  requireString(calculation.identity_scope, `${path}.calculation.identity_scope`);
+
+  const inputs = requireObject(invocation.inputs, `${path}.inputs`);
+  for (const [name, binding] of Object.entries(inputs)) requireBindingSpelling(binding, `${path}.inputs.${name}`);
+  requireObject(invocation.args, `${path}.args`);
+  requireNullableString(invocation.into, `${path}.into`);
+
+  // RECORD.md's declared_consumes rule is strict, so it is checked and not
+  // assumed: exactly the `px:` bindings of `inputs`, in binding order. An `fn:`
+  // entry or an address `inputs` does not carry would add a read edge no
+  // binding declares, because derivePartIndex below unions the two fields.
+  requireArray(invocation.declared_consumes, `${path}.declared_consumes`);
+  const boundValues = new Set(Object.values(inputs));
+  invocation.declared_consumes.forEach((entry, i) => {
+    const where = `${path}.declared_consumes[${i}]`;
+    requireBindingSpelling(entry, where);
+    if (!entry.startsWith('px:')) {
+      fail(where, `declared_consumes carries Part bindings only, spelled "px:<address>", got ${show(entry)}`);
+    }
+    if (!boundValues.has(entry)) {
+      fail(where, `declared_consumes is a subset of inputs.values(), which does not carry ${show(entry)}`);
+    }
+  });
+  requireStringArray(invocation.actual_consumes, `${path}.actual_consumes`);
+  requireStringArray(invocation.actual_produces, `${path}.actual_produces`);
+
+  requireArray(invocation.writes, `${path}.writes`);
+  invocation.writes.forEach((write, i) => {
+    requireObject(write, `${path}.writes[${i}]`);
+    requireString(write.address, `${path}.writes[${i}].address`);
+    if (!('kind' in write)) fail(`${path}.writes[${i}].kind`, 'is required (null when the runtime does not record it)');
+    if (write.kind !== null) requireEnum(write.kind, WRITE_KINDS, `${path}.writes[${i}].kind`);
+  });
+
+  requireNullableNumber(invocation.duration_ms, `${path}.duration_ms`);
+  requireNullableString(invocation.result_sha256, `${path}.result_sha256`);
+  requireBoolean(invocation.hit, `${path}.hit`);
+  validateValue(invocation.value, `${path}.value`);
+  return invocation;
+}
+
+/**
+ * Throw a RecordSchemaError naming the offending path on any violation of
+ * RECORD.md; return the record unchanged when it conforms.
+ */
+function validate(record) {
+  requireObject(record, 'document');
+  if (record.schema !== SCHEMA) fail('schema', `expected ${JSON.stringify(SCHEMA)}, got ${show(record.schema)}`);
+  requireString(record.pcr, 'pcr');
+
+  const source = requireObject(record.source, 'source');
+  requireEnum(source.runtime, RUNTIMES, 'source.runtime');
+  requireNullableString(source.version, 'source.version');
+  requireNullableString(source.commit, 'source.commit');
+
+  const ticks = requireArray(record.ticks, 'ticks');
+  const seenIds = new Set();
+  let invocationCount = 0;
+  let hitCount = 0;
+  ticks.forEach((tick, index) => {
+    const path = `ticks[${index}]`;
+    requireObject(tick, path);
+    if (tick.index !== index) fail(`${path}.index`, `expected ${index} (position in ticks), got ${show(tick.index)}`);
+    requireString(tick.name, `${path}.name`);
+    const invocations = requireArray(tick.invocations, `${path}.invocations`);
+    invocations.forEach((invocation, i) => {
+      validateInvocation(invocation, `${path}.invocations[${i}]`, seenIds);
+      invocationCount += 1;
+      if (invocation.hit) hitCount += 1;
+    });
+  });
+
+  const parts = requireObject(record.parts, 'parts');
+  for (const [address, part] of Object.entries(parts)) {
+    const path = `parts[${JSON.stringify(address)}]`;
+    requireObject(part, path);
+    requireNullableString(part.written_by, `${path}.written_by`);
+    requireStringArray(part.read_by, `${path}.read_by`);
+    requireBoolean(part.preexisting, `${path}.preexisting`);
+  }
+
+  const counters = requireObject(record.counters, 'counters');
+  for (const key of ['invocations', 'hits', 'computed']) {
+    const value = counters[key];
+    if (!Number.isInteger(value) || value < 0) fail(`counters.${key}`, `expected a non-negative integer, got ${show(value)}`);
+  }
+  requireNullableNumber(counters.wall_ms, 'counters.wall_ms');
+  if (counters.invocations !== invocationCount) fail('counters.invocations', `expected ${invocationCount} (invocations in ticks), got ${counters.invocations}`);
+  if (counters.hits !== hitCount) fail('counters.hits', `expected ${hitCount} (invocations with hit=true), got ${counters.hits}`);
+  if (counters.hits + counters.computed !== counters.invocations) {
+    fail('counters.computed', `expected ${counters.invocations - counters.hits} so hits + computed === invocations, got ${counters.computed}`);
+  }
+  return record;
+}
+
+/* ------------------------------------------------------------------ */
+/* shared derivations                                                  */
+/* ------------------------------------------------------------------ */
+
+/** Strip the testimony marker: "px:a.b" -> "a.b", "fn:split" -> "split". */
+function bareAddress(binding) {
+  if (typeof binding !== 'string') return '';
+  return binding.startsWith('px:') || binding.startsWith('fn:') ? binding.slice(3) : binding;
+}
+
+/**
+ * RECORD.md: hit is true when the invocation read a Part that existed before
+ * this run (a `px:` binding whose address was not produced by an earlier
+ * invocation of the same run), or when the runtime reports reuse. The owner's
+ * definition (ULTRACODE-WEEK.md "Reframing 4"): any Part or Calculation being
+ * used is a hit; do not over-define it.
+ */
+function deriveHit(declaredConsumes, producedSoFar, reused = false) {
+  if (reused === true) return true;
+  for (const binding of declaredConsumes) {
+    if (!binding.startsWith('px:')) continue;
+    if (!producedSoFar.has(bareAddress(binding))) return true;
+  }
+  return false;
+}
+
+/** Classify a raw runtime value into a RECORD.md `value` block. */
+function materialize(raw, { digest = null, note = null } = {}) {
+  if (raw === undefined) {
+    return { kind: 'omitted', data: null, note: note || 'the runtime did not retain a value for this invocation' };
+  }
+  if (typeof raw === 'string') {
+    const head = raw.slice(0, 400).trimStart();
+    let kind = 'text';
+    if (head.startsWith('<svg') || (head.startsWith('<?xml') && head.includes('<svg'))) kind = 'svg';
+    // Tested on `raw`, not on the trimmed `head`: the classification has to
+    // agree with validateValue, which reads the bytes that land in `data`.
+    else if (raw.startsWith(PNG_DATA_URL_PREFIX)) kind = 'png-data-url';
+    return capped({ kind, data: raw, note }, utf8Length(raw), digest);
+  }
+  // Serializability is decided on the whole value, before anything is cut, the
+  // way ../../src/pyto/materialize.py:229-234 decides it: a cycle or an
+  // unserializable entry past the cap must still reach `omitted`, not be sliced
+  // out of sight first.
+  try {
+    if (JSON.stringify(raw) === undefined) {
+      return { kind: 'omitted', data: null, note: 'value is not JSON serializable' };
+    }
+  } catch (error) {
+    return { kind: 'omitted', data: null, note: `value is not JSON serializable: ${error.message}` };
+  }
+  const lengths = [];
+  const data = truncateArrays(raw, MAX_ARRAY_ENTRIES, lengths);
+  const arrayNote = lengths.length
+    ? `${lengths.length} array(s) truncated to the first ${MAX_ARRAY_ENTRIES} entries; `
+      + `original lengths: [${lengths.slice().sort((a, b) => b - a).join(', ')}]`
+    : note;
+  return capped({ kind: 'json', data, note: arrayNote ?? null }, utf8Length(JSON.stringify(data)), digest);
+}
+
+/**
+ * Copy `value` with every array longer than `cap` cut to its first `cap`
+ * entries, appending each original length to `lengths`.
+ *
+ * Recursive, and deliberately the same traversal as
+ * ../../src/pyto/materialize.py:151-164 `_truncate_arrays`: array first (cut,
+ * record the length, then recurse into the surviving entries), then dict in key
+ * order, then everything else untouched. RECORD.md states the cap without
+ * qualifying it by depth ("arrays longer than 200 entries carry the first 200
+ * and a note with the full length", RECORD.md:113 as it now stands), so
+ * `{"rows": [0..999]}` has to be a 200-row record in both runtimes; truncating only a top-level array made the browser keep all
+ * 1000 with note null.
+ *
+ * `isDictLike` stands in for Python's `isinstance(value, dict)`: a Date or
+ * any other object carrying `toJSON` is left whole rather than rebuilt as an
+ * empty plain object, so JSON.stringify still sees what it would have seen.
+ */
+function truncateArrays(value, cap, lengths) {
+  if (Array.isArray(value)) {
+    let items = value;
+    if (items.length > cap) {
+      lengths.push(items.length);
+      items = items.slice(0, cap);
+    }
+    return items.map((item) => truncateArrays(item, cap, lengths));
+  }
+  if (isDictLike(value)) {
+    const copy = {};
+    for (const key of Object.keys(value)) copy[key] = truncateArrays(value[key], cap, lengths);
+    return copy;
+  }
+  return value;
+}
+
+function isDictLike(value) {
+  if (value === null || typeof value !== 'object') return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+function capped(block, bytes, digest) {
+  if (bytes > MAX_VALUE_BYTES) {
+    const tail = digest ? `; digest ${digest}` : '; digest unavailable';
+    return { kind: 'omitted', data: null, note: `value omitted: ${bytes} bytes over the ${MAX_VALUE_BYTES}-byte cap${tail}` };
+  }
+  return { ...block, note: block.note ?? null };
+}
+
+/**
+ * Derive `parts` from the invocations, in RECORD.md's terms: written_by is the
+ * first invocation that produced the address, read_by is every invocation whose
+ * bindings resolved it, preexisting is true when it was read before any
+ * invocation in this record produced it.
+ */
+function derivePartIndex(ticks) {
+  // A Part address is record data, so it can be `__proto__` or `constructor`.
+  // On a `{}` map those names reach Object.prototype instead of an own slot:
+  // the index would answer for addresses no run wrote, and mutate the page's
+  // prototype chain. A null-prototype map has no inherited names to hit, and
+  // hasOwnProperty decides existence rather than truthiness.
+  const parts = Object.create(null);
+  const entry = (address) => {
+    if (!Object.prototype.hasOwnProperty.call(parts, address)) {
+      Object.defineProperty(parts, address, {
+        value: { written_by: null, read_by: [], preexisting: false },
+        enumerable: true, writable: true, configurable: true
+      });
+    }
+    return parts[address];
+  };
+  // Spread, not assignment, to hand back the shape JSON.parse gives a consumer
+  // reading the same index off disk: a plain object carrying `__proto__` as an
+  // own data property. `{ ...map }` copies with CreateDataProperty, so the
+  // hostile name stays a row here too; `Object.assign` would not.
+  const plain = () => ({ ...parts });
+  const produced = new Set();
+  // A `fn:<id>` binding is a read of the Part that invocation wrote: pcr.py:112-116
+  // rewrites a Part binding into the producing invocation's ResultRef, and the
+  // value is the same one published at `into`. Counting it keeps the index
+  // useful ("who consumes scratch.ablation.model.all") and matches what
+  // pyto.materialize emits. It never makes a hit -- only a `px:` binding does.
+  const intoById = new Map();
+  for (const tick of ticks) {
+    for (const invocation of tick.invocations) {
+      // `inputs` is the complete binding map and is sufficient on its own:
+      // `declared_consumes` is a validated subset of it (validateInvocation
+      // above), so unioning the two adds nothing to a conformant record. The
+      // union is kept as a defence for a record that reached this reader
+      // without passing validate -- a duplicated edge, never a lost one.
+      const bindings = [...Object.values(invocation.inputs), ...invocation.declared_consumes];
+      for (const binding of bindings) {
+        const address = binding.startsWith('fn:') ? intoById.get(bareAddress(binding)) : bareAddress(binding);
+        if (!address) continue;
+        const part = entry(address);
+        if (!binding.startsWith('fn:') && !produced.has(address)) part.preexisting = true;
+        if (!part.read_by.includes(invocation.id)) part.read_by.push(invocation.id);
+      }
+      for (const address of invocation.actual_consumes) {
+        const part = entry(address);
+        if (!produced.has(address)) part.preexisting = true;
+        if (!part.read_by.includes(invocation.id)) part.read_by.push(invocation.id);
+      }
+      for (const write of invocation.writes) {
+        const part = entry(write.address);
+        if (part.written_by === null) part.written_by = invocation.id;
+        produced.add(write.address);
+      }
+      if (invocation.into) {
+        const part = entry(invocation.into);
+        if (part.written_by === null) part.written_by = invocation.id;
+        produced.add(invocation.into);
+        intoById.set(invocation.id, invocation.into);
+      }
+    }
+  }
+  return plain();
+}
+
+function deriveCounters(ticks, wallMs = null) {
+  let invocations = 0;
+  let hits = 0;
+  let measured = 0;
+  let sawDuration = false;
+  for (const tick of ticks) {
+    for (const invocation of tick.invocations) {
+      invocations += 1;
+      if (invocation.hit) hits += 1;
+      if (typeof invocation.duration_ms === 'number') {
+        measured += invocation.duration_ms;
+        sawDuration = true;
+      }
+    }
+  }
+  const wall = wallMs === null || wallMs === undefined ? (sawDuration ? round3(measured) : null) : wallMs;
+  return { invocations, hits, computed: invocations - hits, wall_ms: wall };
+}
+
+function round3(value) {
+  return Math.round(value * 1000) / 1000;
+}
+
+/** Tick wall time: the sum of the durations the runtime recorded, or null. */
+function tickDurationMs(tick) {
+  let total = 0;
+  let saw = false;
+  for (const invocation of tick.invocations) {
+    if (typeof invocation.duration_ms === 'number') {
+      total += invocation.duration_ms;
+      saw = true;
+    }
+  }
+  return saw ? round3(total) : null;
+}
+
+function assemble({ pcr, source, ticks, wallMs = null }) {
+  const record = {
+    schema: SCHEMA,
+    pcr,
+    source,
+    ticks,
+    parts: derivePartIndex(ticks),
+    counters: deriveCounters(ticks, wallMs)
+  };
+  return validate(record);
+}
+
+function uniqueId(base, seen) {
+  let id = base;
+  let n = 2;
+  while (seen.has(id)) id = `${base}#${n++}`;
+  seen.add(id);
+  return id;
+}
+
+/* ------------------------------------------------------------------ */
+/* pyto                                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * pyto's own materializer (pyto.materialize.run_record) already emits this
+ * format, so the adapter is a validating pass-through: the viewer never
+ * repairs a producer's record silently.
+ */
+function fromPytoRecord(document) {
+  const parsed = typeof document === 'string' ? JSON.parse(document) : document;
+  return validate(parsed);
+}
+
+/* ------------------------------------------------------------------ */
+/* DiscStudio (src/runtime.js)                                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Map one DiscStudio execution to a record.
+ *
+ * `pqlRun` is `px.pql.<name>` as invokePql wrote it (../../src/core/exec.js:60-66):
+ * Ticks[].Calculations[] with `call`, `with` (name -> address), `args`,
+ * `into`, `actualCall`, `inputs` (name -> resolved value) and `output` (value).
+ * `receipt` is `px.receipt.<name>` (../../src/runtime.js:55-57): a flat `trace`
+ * in Tick/Calculation order carrying `reused`, `material` and `revision`.
+ *
+ * Access is recorded per binding, not by a tracked board -- runtime.js does not
+ * use trackAccess -- so `writes[].kind` is derived with exec.js:28's rule over
+ * what this record can see: refinement when the invocation also reads the
+ * address, replacement when an earlier invocation of the same run wrote it,
+ * new-address otherwise. README.md states that limit.
+ */
+function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit = null } = {}) {
+  requireObject(pqlRun, 'discstudio.pqlRun');
+  const name = requireString(pqlRun.PrincipleComponentRender, 'discstudio.pqlRun.PrincipleComponentRender');
+  const pqlTicks = requireArray(pqlRun.Ticks, 'discstudio.pqlRun.Ticks');
+  const trace = receipt ? requireArray(receipt.trace, 'discstudio.receipt.trace') : [];
+
+  const produced = new Set();
+  const seen = new Set();
+  const ticks = [];
+  let flat = 0;
+
+  pqlTicks.forEach((tick, index) => {
+    const invocations = requireArray(tick.Calculations, `discstudio.pqlRun.Ticks[${index}].Calculations`).map((calculation) => {
+      const step = trace[flat] ?? null;
+      flat += 1;
+      const bindings = calculation.with ?? {};
+      // Null-prototype for the same reason as derivePartIndex: a binding named
+      // `__proto__` on a `{}` would set the prototype and drop the binding.
+      const inputs = Object.create(null);   // filled below, spread into a plain object
+      const declared = [];
+      const actual = [];
+      for (const [key, address] of Object.entries(bindings)) {
+        inputs[key] = `px:${address}`;
+        declared.push(`px:${address}`);
+        actual.push(address);
+      }
+      const into = calculation.into ?? null;
+      const kind = into === null ? null : actual.includes(into) ? 'refinement' : produced.has(into) ? 'replacement' : 'new-address';
+      const reused = step ? step.reused === true : false;
+      const hit = deriveHit(declared, produced, reused);
+      const material = step && typeof step.material === 'string' ? step.material : null;
+      const revision = step && step.revision !== undefined ? step.revision : null;
+      const invocation = {
+        id: uniqueId(into ?? `${tick.name}:${calculation.call}`, seen),
+        calculation: {
+          address: calculation.actualCall ?? calculation.call ?? null,
+          // runtime.js keys memo identity on { revision, inputs } (runtime.js:15),
+          // never on the function body, so there is no implementation digest here.
+          implementation_sha256: null,
+          identity_scope: revision === null ? 'registered-address-only' : `registered-address-and-revision:${revision}`
+        },
+        inputs: { ...inputs },
+        args: isPlainObject(calculation.args) ? calculation.args : {},
+        into,
+        declared_consumes: declared,
+        actual_consumes: actual,
+        actual_produces: into === null ? [] : [into],
+        writes: into === null ? [] : [{ address: into, kind }],
+        // runtime.js records reuse and material identity, never a duration.
+        duration_ms: null,
+        result_sha256: material,
+        hit,
+        value: discStudioValue(calculation.output, material, reused)
+      };
+      if (into !== null) produced.add(into);
+      return invocation;
+    });
+    ticks.push({ index, name: requireString(tick.name, `discstudio.pqlRun.Ticks[${index}].name`), invocations });
+  });
+
+  return assemble({ pcr: name, source: { runtime: 'discstudio', version, commit }, ticks });
+}
+
+function discStudioValue(output, material, reused) {
+  // presentation.js:69 cardSvg returns { svg, width, height }; the record shows
+  // the material, so that wrapper renders as an image rather than as JSON.
+  if (isPlainObject(output) && typeof output.svg === 'string' && output.svg.trimStart().startsWith('<svg')) {
+    const block = materialize(output.svg, { digest: material });
+    if (block.kind !== 'omitted') block.note = `DiscStudio card wrapper { svg, width: ${output.width}, height: ${output.height} }`;
+    return block;
+  }
+  const block = materialize(output, { digest: material });
+  if (reused && block.kind !== 'omitted' && block.note === null) block.note = 'reused from the memo ring (runtime.js:17-19)';
+  return block;
+}
+
+/* ------------------------------------------------------------------ */
+/* ChessLab (reference/lab/chesslab-lab/contract.ts)                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Map ChessLab `Receipt`s (contract.ts:127-141, `TickTestimony = Receipt`).
+ * One Tick per receipt, one invocation per entry in `frozenCalculations`;
+ * access is declared at Tick granularity there, so every invocation of a Tick
+ * repeats that Tick's reads and writes (README.md states this).
+ * Receipt has no value field, so every value is `omitted`.
+ */
+function fromChessLabReceipts(receipts, { pcr = 'chesslab', version = null, commit = null } = {}) {
+  requireArray(receipts, 'chesslab.receipts');
+  const produced = new Set();
+  const seen = new Set();
+  const ticks = receipts.map((receipt, index) => {
+    const path = `chesslab.receipts[${index}]`;
+    requireObject(receipt, path);
+    const opId = requireString(receipt.opId, `${path}.opId`);
+    const declared = requireStringArray(receipt.declaredConsumes ?? [], `${path}.declaredConsumes`).map((slot) => `px:${slot}`);
+    const actual = requireStringArray(receipt.actualConsumes ?? [], `${path}.actualConsumes`);
+    const produces = requireStringArray(receipt.declaredProduces ?? [], `${path}.declaredProduces`);
+    const actualProduces = requireStringArray(receipt.actualProduces ?? [], `${path}.actualProduces`);
+    const writes = requireArray(receipt.writes ?? [], `${path}.writes`).map((write, i) => ({
+      address: requireString(write.address, `${path}.writes[${i}].address`),
+      kind: write.kind === undefined || write.kind === null ? null : requireEnum(write.kind, WRITE_KINDS, `${path}.writes[${i}].kind`)
+    }));
+    const frozen = requireArray(receipt.frozenCalculations ?? [], `${path}.frozenCalculations`);
+    const bound = frozen.length ? frozen : [null];
+    const hit = deriveHit(declared, produced);
+    const inputs = Object.fromEntries(declared.map((binding) => [bareAddress(binding), binding]));
+    const invocations = bound.map((calculation, i) => ({
+      id: uniqueId(bound.length === 1 ? opId : `${opId}#${i}`, seen),
+      calculation: {
+        address: calculation ? requireString(calculation.address, `${path}.frozenCalculations[${i}].address`) : null,
+        implementation_sha256: calculation && typeof calculation.implementationHash === 'string' ? calculation.implementationHash : null,
+        identity_scope: (calculation && calculation.identityScope) || 'runtime-function-body'
+      },
+      inputs,
+      args: {},
+      into: produces[0] ?? null,
+      declared_consumes: declared,
+      actual_consumes: actual,
+      actual_produces: actualProduces,
+      writes,
+      duration_ms: typeof receipt.durationMs === 'number' ? receipt.durationMs : null,
+      result_sha256: null,
+      hit,
+      value: { kind: 'omitted', data: null, note: 'ChessLab receipts retain no Part values (contract.ts:127-141 has no value field); artifacts are content-addressed elsewhere' }
+    }));
+    for (const address of [...produces, ...actualProduces, ...writes.map((w) => w.address)]) produced.add(address);
+    return { index, name: opId, invocations };
+  });
+  return assemble({ pcr, source: { runtime: 'chesslab', version, commit }, ticks });
+}
+
+/* ------------------------------------------------------------------ */
+/* Wumpus (reference/lab/wumpus-core/execute.js)                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Map `executeTick` records (execute.js:19-37). One Tick per record; one
+ * invocation per entry in `calculations` (execute.js:29-35, each with its own
+ * input args and output value), or one invocation carrying `result` when the
+ * Tick called no registered Calculation. Access is recorded per Tick, so an
+ * invocation repeats its Tick's reads and writes.
+ */
+function fromWumpusRecords(records, { pcr = 'wumpus', version = null, commit = null } = {}) {
+  requireArray(records, 'wumpus.records');
+  const produced = new Set();
+  const seen = new Set();
+  const ticks = records.map((record, index) => {
+    const path = `wumpus.records[${index}]`;
+    requireObject(record, path);
+    const id = requireString(record.id, `${path}.id`);
+    const invocationId = typeof record.invocationId === 'string' ? record.invocationId : id;
+    const declared = requireStringArray(record.consumes ?? [], `${path}.consumes`).map((slot) => `px:${slot}`);
+    const actual = requireStringArray(record.actualConsumes ?? [], `${path}.actualConsumes`);
+    const actualProduces = requireStringArray(record.actualProduces ?? [], `${path}.actualProduces`);
+    const produces = requireStringArray(record.produces ?? [], `${path}.produces`);
+    const writes = requireArray(record.writes ?? [], `${path}.writes`).map((write, i) => ({
+      address: requireString(write.address, `${path}.writes[${i}].address`),
+      kind: write.kind === undefined || write.kind === null ? null : requireEnum(write.kind, WRITE_KINDS, `${path}.writes[${i}].kind`)
+    }));
+    const calculations = requireArray(record.calculations ?? [], `${path}.calculations`);
+    const hit = deriveHit(declared, produced);
+    const inputs = Object.fromEntries(declared.map((binding) => [bareAddress(binding), binding]));
+    const duration = typeof record.durationMs === 'number' ? record.durationMs : null;
+    const bound = calculations.length ? calculations : [null];
+    const invocations = bound.map((calculation, i) => ({
+      id: uniqueId(bound.length === 1 ? invocationId : `${invocationId}#${i}`, seen),
+      calculation: {
+        address: calculation ? requireString(calculation.address, `${path}.calculations[${i}].address`) : null,
+        // execute.js:33-34: the address is the identity; no body is hashed.
+        implementation_sha256: null,
+        identity_scope: (calculation && calculation.identityScope) || 'registered-address-only'
+      },
+      inputs,
+      args: calculation && isPlainObject(calculation.input) ? calculation.input : {},
+      into: produces[0] ?? actualProduces[0] ?? null,
+      declared_consumes: declared,
+      actual_consumes: actual,
+      actual_produces: actualProduces,
+      writes,
+      duration_ms: duration,
+      result_sha256: null,
+      hit,
+      value: materialize(calculation ? calculation.output : record.result)
+    }));
+    for (const address of [...produces, ...actualProduces, ...writes.map((w) => w.address)]) produced.add(address);
+    return { index, name: id, invocations };
+  });
+  return assemble({ pcr, source: { runtime: 'wumpus', version, commit }, ticks });
+}
+
+/**
+ * Kibana for Ticks: render one pyto-run-record@1 document as one section per
+ * Tick, one row per invocation, with the Part value shown as material.
+ *
+ * Dependency-free ES module. Every node is built with createElement and
+ * textContent -- no innerHTML with record data, ever -- and an `svg` value is
+ * rendered through an <img src="data:image/svg+xml;base64,...">, never inlined
+ * as markup, so a value that contains <script> cannot become a script element.
+ *
+ * The DOM is reached only through the `doc` argument, so the render functions
+ * run under a minimal document shim in `node --test` with no jsdom.
+ */
+
+
+/* ------------------------------------------------------------------ */
+/* small DOM helpers (doc is always explicit)                          */
+/* ------------------------------------------------------------------ */
+
+function el(doc, tag, { className = null, text = null, attrs = null } = {}, children = []) {
+  const node = doc.createElement(tag);
+  if (className !== null) node.className = className;
+  if (text !== null) node.textContent = String(text);
+  if (attrs) for (const [name, value] of Object.entries(attrs)) node.setAttribute(name, String(value));
+  for (const child of children) if (child) node.appendChild(child);
+  return node;
+}
+
+// Named apart from adapters.js's own encoder: embed.mjs concatenates both
+// modules into one script, where two top-level `encoder` bindings would clash.
+const base64Encoder = new TextEncoder();
+
+/** UTF-8 safe base64 for data: URLs; btoa alone throws above U+00FF. */
+function toBase64(text) {
+  const bytes = base64Encoder.encode(text);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(binary);
+}
+
+function svgDataUrl(svgText) {
+  return `data:image/svg+xml;base64,${toBase64(svgText)}`;
+}
+
+function shortHash(hex, keep = 12) {
+  if (typeof hex !== 'string' || !hex.length) return null;
+  return hex.length <= keep ? hex : `${hex.slice(0, keep)}…`;
+}
+
+function ms(value) {
+  if (typeof value !== 'number') return '—';
+  return `${value.toFixed(value < 10 ? 3 : 1)} ms`;
+}
+
+/* ------------------------------------------------------------------ */
+/* filter: PQL-like, address substring or prefix                       */
+/* ------------------------------------------------------------------ */
+
+/** Every address-ish string an invocation can be found by. */
+function searchTerms(invocation, tickName = '') {
+  const terms = [invocation.id, tickName];
+  if (invocation.calculation && invocation.calculation.address) terms.push(invocation.calculation.address);
+  if (invocation.into) terms.push(invocation.into);
+  for (const binding of [...Object.values(invocation.inputs), ...invocation.declared_consumes]) terms.push(bareAddress(binding), binding);
+  for (const address of invocation.actual_consumes) terms.push(address);
+  for (const address of invocation.actual_produces) terms.push(address);
+  for (const write of invocation.writes) terms.push(write.address);
+  return terms.filter((term) => typeof term === 'string' && term.length);
+}
+
+/**
+ * PQL's own two selectors (pyto/src/pyto/pql.py:26-45): an exact address, and
+ * a prefix written the way PQL.prefix describes itself, `scratch.ablation.*`.
+ * Anything else is an ordinary case-insensitive substring.
+ */
+function matchesFilter(invocation, query, tickName = '') {
+  const trimmed = (query || '').trim();
+  if (!trimmed) return true;
+  const terms = searchTerms(invocation, tickName);
+  if (trimmed.endsWith('*')) {
+    const prefix = trimmed.slice(0, -1).toLowerCase();
+    return terms.some((term) => term.toLowerCase().startsWith(prefix));
+  }
+  const needle = trimmed.toLowerCase();
+  return terms.some((term) => term.toLowerCase().includes(needle));
+}
+
+/** Ticks with their non-matching invocations removed; empty Ticks dropped. */
+function filterTicks(ticks, query) {
+  const kept = [];
+  for (const tick of ticks) {
+    const invocations = tick.invocations.filter((invocation) => matchesFilter(invocation, query, tick.name));
+    if (invocations.length) kept.push({ ...tick, invocations });
+  }
+  return kept;
+}
+
+/* ------------------------------------------------------------------ */
+/* value as material                                                   */
+/* ------------------------------------------------------------------ */
+
+function renderValue(doc, value) {
+  const box = el(doc, 'div', { className: 'value' });
+  if (value.kind === 'omitted') {
+    box.appendChild(el(doc, 'p', { className: 'note omitted', text: value.note || 'value omitted' }));
+    return box;
+  }
+  if (value.kind === 'svg') {
+    // Never inline the markup: the value becomes the src of an <img>, where a
+    // <script> inside it is inert and no script element is created.
+    const figure = el(doc, 'figure', { className: 'material' }, [
+      el(doc, 'img', { className: 'svg', attrs: { src: svgDataUrl(value.data), alt: 'SVG Part value', loading: 'lazy' } }),
+      el(doc, 'figcaption', { text: `svg · ${value.data.length} chars` })
+    ]);
+    box.appendChild(figure);
+  } else if (value.kind === 'png-data-url') {
+    // adapters.js validateValue already refuses any other shape; re-check at the
+    // render site so a record that reached the DOM by another path still cannot
+    // turn an <img src> into an outbound request from a page with no network.
+    if (typeof value.data !== 'string' || !value.data.startsWith(PNG_DATA_URL_PREFIX)) {
+      box.appendChild(el(doc, 'p', {
+        className: 'note omitted',
+        text: `value not rendered: kind "png-data-url" must be a ${PNG_DATA_URL_PREFIX}... string (RECORD.md:109-110)`
+      }));
+    } else {
+      box.appendChild(el(doc, 'figure', { className: 'material' }, [
+        el(doc, 'img', { className: 'png', attrs: { src: value.data, alt: 'PNG Part value', loading: 'lazy' } }),
+        el(doc, 'figcaption', { text: `png-data-url · ${value.data.length} chars` })
+      ]));
+    }
+  } else if (value.kind === 'text') {
+    box.appendChild(el(doc, 'pre', { className: 'text', text: value.data }));
+  } else {
+    const details = el(doc, 'details', { className: 'json' });
+    const text = JSON.stringify(value.data, null, 2);
+    const lines = text.split('\n').length;
+    details.appendChild(el(doc, 'summary', { text: `json · ${lines} line${lines === 1 ? '' : 's'}` }));
+    details.appendChild(el(doc, 'pre', { text }));
+    box.appendChild(details);
+  }
+  if (value.note) box.appendChild(el(doc, 'p', { className: 'note', text: value.note }));
+  return box;
+}
+
+/* ------------------------------------------------------------------ */
+/* reads, writes, one invocation                                       */
+/* ------------------------------------------------------------------ */
+
+function renderReads(doc, invocation) {
+  const declaredBare = invocation.declared_consumes.map(bareAddress);
+  const actual = invocation.actual_consumes;
+  const addresses = [];
+  for (const address of [...declaredBare, ...actual]) if (!addresses.includes(address)) addresses.push(address);
+
+  const wrap = el(doc, 'div', { className: 'reads' });
+  if (!addresses.length && !Object.keys(invocation.inputs).length) {
+    wrap.appendChild(el(doc, 'p', { className: 'none', text: 'reads nothing off the store' }));
+    return wrap;
+  }
+  const table = el(doc, 'table', { className: 'reads-table' });
+  const head = el(doc, 'tr', {}, [
+    el(doc, 'th', { text: 'binding' }), el(doc, 'th', { text: 'declared' }),
+    el(doc, 'th', { text: 'actual' }), el(doc, 'th', { text: '' })
+  ]);
+  table.appendChild(el(doc, 'thead', {}, [head]));
+  const body = el(doc, 'tbody');
+  const nameFor = (address) => {
+    for (const [name, binding] of Object.entries(invocation.inputs)) if (bareAddress(binding) === address) return name;
+    return '';
+  };
+  for (const address of addresses) {
+    const declared = declaredBare.includes(address);
+    const observed = actual.includes(address);
+    const diverges = declared !== observed;
+    const binding = Object.entries(invocation.inputs).find(([, value]) => bareAddress(value) === address);
+    const spelling = binding ? binding[1] : (declared ? invocation.declared_consumes[declaredBare.indexOf(address)] : `px:${address}`);
+    const row = el(doc, 'tr', { className: diverges ? 'diverges' : '' }, [
+      el(doc, 'td', { className: 'bindname', text: nameFor(address) || '—' }),
+      el(doc, 'td', { className: 'addr', text: declared ? spelling : '—' }),
+      el(doc, 'td', { className: 'addr', text: observed ? address : '—' }),
+      el(doc, 'td', { className: 'flag', text: diverges ? (declared ? 'declared, never read' : 'read, never declared') : '' })
+    ]);
+    body.appendChild(row);
+  }
+  // fn: bindings resolve to an earlier invocation's result, never to the store.
+  for (const [name, spelling] of Object.entries(invocation.inputs)) {
+    if (!spelling.startsWith('fn:')) continue;
+    body.appendChild(el(doc, 'tr', { className: 'resultref' }, [
+      el(doc, 'td', { className: 'bindname', text: name }),
+      el(doc, 'td', { className: 'addr', text: spelling }),
+      el(doc, 'td', { className: 'addr', text: 'result of ' + bareAddress(spelling) }),
+      el(doc, 'td', { className: 'flag', text: '' })
+    ]));
+  }
+  table.appendChild(body);
+  wrap.appendChild(table);
+  return wrap;
+}
+
+function renderWrites(doc, invocation) {
+  const wrap = el(doc, 'div', { className: 'writes' });
+  if (!invocation.writes.length) {
+    wrap.appendChild(el(doc, 'p', { className: 'none', text: 'wrote nothing' }));
+    return wrap;
+  }
+  const list = el(doc, 'ul', { className: 'write-list' });
+  for (const write of invocation.writes) {
+    list.appendChild(el(doc, 'li', {}, [
+      el(doc, 'span', { className: 'addr', text: write.address }),
+      el(doc, 'span', { className: `kind kind-${write.kind || 'unknown'}`, text: write.kind || 'kind not recorded' })
+    ]));
+  }
+  wrap.appendChild(list);
+  return wrap;
+}
+
+function renderInvocation(doc, invocation) {
+  const address = invocation.calculation.address || '(no calculation address recorded)';
+  const impl = shortHash(invocation.calculation.implementation_sha256);
+  const row = el(doc, 'article', { className: 'inv', attrs: { 'data-invocation': invocation.id } });
+
+  const head = el(doc, 'header', { className: 'inv-head' }, [
+    el(doc, 'span', { className: 'inv-id', text: invocation.id }),
+    el(doc, 'span', { className: 'inv-call', text: address }),
+    impl ? el(doc, 'span', { className: 'impl', attrs: { title: invocation.calculation.implementation_sha256 }, text: `impl ${impl}` }) : null,
+    el(doc, 'span', { className: `pill ${invocation.hit ? 'hit' : 'computed'}`, text: invocation.hit ? 'hit' : 'computed' }),
+    el(doc, 'span', { className: 'dur', text: ms(invocation.duration_ms) })
+  ]);
+  row.appendChild(head);
+
+  const meta = el(doc, 'dl', { className: 'inv-meta' }, [
+    el(doc, 'dt', { text: 'into' }),
+    el(doc, 'dd', { className: 'addr', text: invocation.into || '—' }),
+    el(doc, 'dt', { text: 'digest' }),
+    el(doc, 'dd', { className: 'digest', attrs: invocation.result_sha256 ? { title: invocation.result_sha256 } : {}, text: shortHash(invocation.result_sha256, 16) || '—' }),
+    el(doc, 'dt', { text: 'identity scope' }),
+    el(doc, 'dd', { text: invocation.calculation.identity_scope })
+  ]);
+  row.appendChild(meta);
+
+  row.appendChild(renderReads(doc, invocation));
+  row.appendChild(renderWrites(doc, invocation));
+
+  if (Object.keys(invocation.args).length) {
+    const details = el(doc, 'details', { className: 'args' });
+    details.appendChild(el(doc, 'summary', { text: `args · ${Object.keys(invocation.args).join(', ')}` }));
+    details.appendChild(el(doc, 'pre', { text: JSON.stringify(invocation.args, null, 2) }));
+    row.appendChild(details);
+  }
+
+  row.appendChild(renderValue(doc, invocation.value));
+  return row;
+}
+
+/* ------------------------------------------------------------------ */
+/* ticks and part index                                                */
+/* ------------------------------------------------------------------ */
+
+function renderTick(doc, tick) {
+  const section = el(doc, 'section', { className: 'tick', attrs: { 'data-tick': String(tick.index) } });
+  const count = tick.invocations.length;
+  const duration = tickDurationMs(tick);
+  section.appendChild(el(doc, 'header', { className: 'tick-head' }, [
+    el(doc, 'h2', {}, [
+      el(doc, 'span', { className: 'tick-index', text: String(tick.index) }),
+      el(doc, 'span', { className: 'tick-name', text: tick.name })
+    ]),
+    el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${duration === null ? 'no durations recorded' : ms(duration)}` })
+  ]));
+  for (const invocation of tick.invocations) section.appendChild(renderInvocation(doc, invocation));
+  return section;
+}
+
+function renderPartIndex(doc, parts) {
+  const section = el(doc, 'section', { className: 'parts' });
+  section.appendChild(el(doc, 'h2', { text: 'Part index' }));
+  const addresses = Object.keys(parts).sort();
+  if (!addresses.length) {
+    section.appendChild(el(doc, 'p', { className: 'none', text: 'no Parts recorded' }));
+    return section;
+  }
+  const table = el(doc, 'table', { className: 'part-table' });
+  table.appendChild(el(doc, 'thead', {}, [el(doc, 'tr', {}, [
+    el(doc, 'th', { text: 'address' }), el(doc, 'th', { text: 'written by' }),
+    el(doc, 'th', { text: 'read by' }), el(doc, 'th', { text: 'preexisting' })
+  ])]));
+  const body = el(doc, 'tbody');
+  for (const address of addresses) {
+    const part = parts[address];
+    body.appendChild(el(doc, 'tr', { className: part.preexisting ? 'preexisting' : '' }, [
+      el(doc, 'td', { className: 'addr', text: address }),
+      el(doc, 'td', { text: part.written_by || '—' }),
+      el(doc, 'td', { text: part.read_by.length ? part.read_by.join(', ') : '—' }),
+      el(doc, 'td', { text: part.preexisting ? 'yes' : 'no' })
+    ]));
+  }
+  table.appendChild(body);
+  section.appendChild(el(doc, 'div', { className: 'scroll' }, [table]));
+  return section;
+}
+
+/* ------------------------------------------------------------------ */
+/* the whole record                                                    */
+/* ------------------------------------------------------------------ */
+
+function renderRecord(record, { doc = globalThis.document, filter = '' } = {}) {
+  validate(record);
+  const root = el(doc, 'main', { className: 'record' });
+
+  const total = record.counters.invocations;
+  const ticks = filterTicks(record.ticks, filter);
+  const shown = ticks.reduce((sum, tick) => sum + tick.invocations.length, 0);
+
+  const source = record.source;
+  const header = el(doc, 'header', { className: 'record-head' }, [
+    el(doc, 'h1', { text: record.pcr }),
+    el(doc, 'p', { className: 'source', text: `${source.runtime}${source.version ? ` ${source.version}` : ''}${source.commit ? ` · ${source.commit}` : ''}` }),
+    el(doc, 'ul', { className: 'counters' }, [
+      el(doc, 'li', {}, [el(doc, 'span', { className: 'n', text: String(record.counters.invocations) }), el(doc, 'span', { className: 'k', text: 'invocations' })]),
+      el(doc, 'li', {}, [el(doc, 'span', { className: 'n', text: String(record.counters.hits) }), el(doc, 'span', { className: 'k', text: 'hits' })]),
+      el(doc, 'li', {}, [el(doc, 'span', { className: 'n', text: String(record.counters.computed) }), el(doc, 'span', { className: 'k', text: 'computed' })]),
+      el(doc, 'li', {}, [el(doc, 'span', { className: 'n', text: record.counters.wall_ms === null ? '—' : ms(record.counters.wall_ms) }), el(doc, 'span', { className: 'k', text: 'wall' })]),
+      el(doc, 'li', {}, [el(doc, 'span', { className: 'n', text: String(record.ticks.length) }), el(doc, 'span', { className: 'k', text: 'ticks' })])
+    ])
+  ]);
+  if (filter && filter.trim()) {
+    header.appendChild(el(doc, 'p', { className: 'filtered', text: `filter ${JSON.stringify(filter.trim())}: ${shown} of ${total} invocations, ${ticks.length} of ${record.ticks.length} ticks` }));
+  }
+  root.appendChild(header);
+
+  if (!ticks.length) {
+    root.appendChild(el(doc, 'p', { className: 'none', text: `no invocation matches ${JSON.stringify((filter || '').trim())}` }));
+  }
+  for (const tick of ticks) root.appendChild(renderTick(doc, tick));
+  root.appendChild(renderPartIndex(doc, record.parts));
+  return root;
+}
+
+/* ------------------------------------------------------------------ */
+/* watch it think: playback scheduling (pure -- no DOM, no timers)     */
+/* ------------------------------------------------------------------ */
+
+// A run with no recorded durations plays at this fixed pace, unscaled by speed.
+const FIXED_STEP_MS = 400;
+
+function scheduleRound3(value) {
+  return Math.round(value * 1000) / 1000;
+}
+
+/**
+ * Ordered {tick, invocation, at_ms} events: each Calculation "finishes" at
+ * the cumulative sum of the durations recorded before it, in record order,
+ * scaled by speedFactor (1 = real time, 10/100 = that many times slower).
+ */
+function computeSchedule(record, speedFactor = 1) {
+  const hasDurations = record.ticks.some((tick) => tick.invocations.some((invocation) => typeof invocation.duration_ms === 'number'));
+  const events = [];
+  let cumulative = 0;
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) {
+      if (hasDurations) cumulative += typeof invocation.duration_ms === 'number' ? invocation.duration_ms : 0;
+      else cumulative += FIXED_STEP_MS;
+      events.push({ tick: tick.index, invocation: invocation.id, at_ms: hasDurations ? scheduleRound3(cumulative * speedFactor) : cumulative });
+    }
+  }
+  return events;
+}
+
+/** The record as it stood at atMs, with parts/counters re-derived so it still validates, and the event currently completing. */
+function scheduleFrame(record, schedule, atMs) {
+  const shown = new Set();
+  let now = null;
+  for (const event of schedule) {
+    if (event.at_ms > atMs) break;
+    shown.add(event.invocation);
+    now = event;
+  }
+  const ticks = [];
+  for (const tick of record.ticks) {
+    const invocations = tick.invocations.filter((invocation) => shown.has(invocation.id));
+    if (invocations.length) ticks.push({ ...tick, invocations });
+  }
+  return { record: { ...record, ticks, parts: derivePartIndex(ticks), counters: deriveCounters(ticks) }, now };
+}
+
+/* ------------------------------------------------------------------ */
+/* loading a record: embedded block, file, drop, ?src=                 */
+/* ------------------------------------------------------------------ */
+
+/** A record embedded by embed.mjs as <script type="application/json" id="record">. */
+function readEmbeddedRecord(doc) {
+  const node = doc.getElementById ? doc.getElementById('record') : null;
+  if (!node) return null;
+  const text = (node.textContent || '').trim();
+  if (!text) return null;
+  return fromPytoRecord(JSON.parse(text));
+}
+
+/**
+ * "Four worlds, one terminal": records baked by `embed.mjs --out worlds.html`
+ * (two-or-more inputs, or `--worlds`), as <script id="records">[{label,
+ * record, error, empty, note}]<\/script>. `record` is already a validated
+ * pyto-run-record@1; `error` names why a world's input never became one.
+ */
+function readEmbeddedWorlds(doc) {
+  const node = doc.getElementById ? doc.getElementById('records') : null;
+  if (!node) return null;
+  const text = (node.textContent || '').trim();
+  if (!text) return null;
+  const parsed = JSON.parse(text);
+  return Array.isArray(parsed) && parsed.length ? parsed : null;
+}
+
+/** A world whose input failed validation: loud, naming the reason, never a blank panel. */
+function renderUnknown(doc, label, reason) {
+  return el(doc, 'div', { className: 'status error unknown-panel' }, [
+    el(doc, 'p', { className: 'unknown-title', text: `UNKNOWN — ${label}` }),
+    el(doc, 'p', { className: 'unknown-reason', text: reason })
+  ]);
+}
+
+/** A world with no input at all (ChainSpot): a labelled empty slot, not a fake record. */
+function renderEmptySlot(doc, label, note) {
+  return el(doc, 'p', { className: 'none', text: `${label}: ${note}` });
+}
+
+/**
+ * Accept either a record or a raw runtime document and return a record.
+ * The wrappers are the fixture shapes in ./fixtures: DiscStudio `{first,second}`
+ * or `{pql, receipt}`, ChessLab `{receipts}`, Wumpus `{records}`.
+ */
+function coerceToRecord(parsed) {
+  if (parsed && parsed.schema) return fromPytoRecord(parsed);
+  if (parsed && parsed.pql && parsed.receipt) return fromDiscStudioReceipt(parsed.pql, parsed.receipt);
+  if (parsed && parsed.first && parsed.first.pql) return fromDiscStudioReceipt(parsed.first.pql, parsed.first.receipt);
+  if (parsed && Array.isArray(parsed.receipts)) return fromChessLabReceipts(parsed.receipts);
+  if (parsed && Array.isArray(parsed.records)) return fromWumpusRecords(parsed.records);
+  if (parsed && parsed.PrincipleComponentRender) return fromDiscStudioReceipt(parsed, null);
+  throw new Error('Unrecognized document: expected a pyto-run-record@1, or {pql, receipt} / {receipts} / {records} from a LAB runtime.');
+}
+
+/** Playback controller: Play, Pause, Step, Speed, and the now/clock markers. */
+function createPlayback(doc, output, filterBox, getRecord) {
+  const toggle = doc.getElementById('playback-toggle');
+  const bar = doc.getElementById('playback-bar');
+  if (!toggle || !bar) return { isActive: () => false, render() {}, onRecordChanged() {}, forceOff() {}, autostart() {} };
+
+  const speedSel = doc.getElementById('speed');
+  const nowEl = doc.getElementById('playback-now');
+  const clockEl = doc.getElementById('playback-clock');
+  let active = false;
+  let schedule = [];
+  let shown = 0;
+  let timer = null;
+
+  const clearTimer = () => { if (timer !== null) { clearTimeout(timer); timer = null; } };
+  const speedFactor = () => Number(speedSel ? speedSel.value : 1) || 1;
+
+  const render = () => {
+    while (output.firstChild) output.removeChild(output.firstChild);
+    const record = getRecord();
+    if (!record) return;
+    const atMs = shown ? schedule[shown - 1].at_ms : -1;
+    const { record: partial, now } = scheduleFrame(record, schedule, atMs);
+    output.appendChild(partial.ticks.length
+      ? renderRecord(partial, { doc, filter: filterBox ? filterBox.value : '' })
+      : el(doc, 'p', { className: 'none', text: 'watching for the first Calculation…' }));
+    if (nowEl) nowEl.textContent = now ? `tick ${now.tick} · ${now.invocation}` : 'not started';
+    if (clockEl) clockEl.textContent = `${now ? now.at_ms.toFixed(0) : '0'} ms`;
+  };
+
+  const revealOne = () => {
+    if (shown >= schedule.length) return;
+    shown += 1;
+    render();
+  };
+  const scheduleNext = () => {
+    clearTimer();
+    if (shown >= schedule.length) return;
+    const from = shown ? schedule[shown - 1].at_ms : 0;
+    timer = setTimeout(() => { revealOne(); scheduleNext(); }, Math.max(0, schedule[shown].at_ms - from));
+  };
+  const reset = () => {
+    clearTimer();
+    const record = getRecord();
+    schedule = record ? computeSchedule(record, speedFactor()) : [];
+    shown = 0;
+  };
+
+  toggle.addEventListener('click', () => {
+    active = !active;
+    toggle.setAttribute('aria-pressed', String(active));
+    bar.hidden = !active;
+    if (active) reset(); else clearTimer();
+    render();
+  });
+  const on = (id, fn) => { const node = doc.getElementById(id); if (node) node.addEventListener('click', fn); };
+  on('play-btn', () => { if (active) scheduleNext(); });
+  on('pause-btn', clearTimer);
+  on('step-btn', () => { if (active) { clearTimer(); revealOne(); } });
+  if (speedSel) speedSel.addEventListener('change', () => { if (active) { reset(); render(); } });
+
+  return {
+    isActive: () => active,
+    render,
+    onRecordChanged: () => { if (active) { reset(); render(); } },
+    // A world-picker switch onto a slot with no record: stop and rewind.
+    forceOff: () => {
+      clearTimer();
+      schedule = [];
+      shown = 0;
+      if (active) { active = false; toggle.setAttribute('aria-pressed', 'false'); bar.hidden = true; }
+    },
+    autostart: () => {
+      const params = new URLSearchParams(globalThis.location ? globalThis.location.search : '');
+      const flagged = params.get('play') === '1' || (doc.body && doc.body.getAttribute && doc.body.getAttribute('data-play') === '1');
+      if (!flagged) return;
+      active = true;
+      toggle.setAttribute('aria-pressed', 'true');
+      bar.hidden = false;
+      reset();
+      render();
+      scheduleNext();
+    }
+  };
+}
+
+/** Wire the page: embedded record, ?src=, file picker, drag and drop. */
+function mount(doc = globalThis.document) {
+  const output = doc.getElementById('output');
+  const status = doc.getElementById('status');
+  const filterBox = doc.getElementById('filter');
+  const picker = doc.getElementById('file');
+  const worldWrap = doc.getElementById('world-wrap');
+  const worldSelect = doc.getElementById('world');
+  let current = null;
+  let currentEntry = null; // world-picker mode only: the selected {label, record, error, empty, note}
+
+  const playback = createPlayback(doc, output, filterBox, () => current);
+
+  const say = (message, isError = false) => {
+    status.textContent = message;
+    status.className = isError ? 'status error' : 'status';
+  };
+
+  const draw = () => {
+    if (playback.isActive()) { playback.render(); return; }
+    while (output.firstChild) output.removeChild(output.firstChild);
+    if (currentEntry && !currentEntry.record) {
+      output.appendChild(currentEntry.error != null
+        ? renderUnknown(doc, currentEntry.label, currentEntry.error)
+        : renderEmptySlot(doc, currentEntry.label, currentEntry.note || 'no record on file yet'));
+      return;
+    }
+    if (!current) return;
+    output.appendChild(renderRecord(current, { doc, filter: filterBox ? filterBox.value : '' }));
+  };
+
+  const show = (parsed, label) => {
+    try {
+      current = coerceToRecord(parsed);
+      say(`${label}: ${current.pcr} · ${current.source.runtime} · ${current.counters.invocations} invocations`);
+      playback.onRecordChanged();
+      draw();
+    } catch (error) {
+      current = null;
+      draw();
+      say(`${label}: ${error.message}`, true);
+    }
+  };
+
+  const loadText = (text, label) => {
+    try {
+      show(JSON.parse(text), label);
+    } catch (error) {
+      current = null;
+      draw();
+      say(`${label}: ${error.message}`, true);
+    }
+  };
+
+  if (filterBox) filterBox.addEventListener('input', draw);
+  if (picker) {
+    picker.addEventListener('change', () => {
+      const file = picker.files && picker.files[0];
+      if (file) file.text().then((text) => loadText(text, file.name));
+    });
+  }
+
+  const body = doc.body;
+  for (const type of ['dragover', 'dragenter']) {
+    body.addEventListener(type, (event) => { event.preventDefault(); body.setAttribute('data-drop', 'over'); });
+  }
+  for (const type of ['dragleave', 'drop']) {
+    body.addEventListener(type, () => body.removeAttribute('data-drop'));
+  }
+  body.addEventListener('drop', (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+    if (file) file.text().then((text) => loadText(text, file.name));
+  });
+
+  // Four worlds, one terminal: a picker switch swaps current/currentEntry and
+  // redraws -- never a reload -- and always resets playback state.
+  const worlds = readEmbeddedWorlds(doc);
+  if (worlds && worldSelect) {
+    worlds.forEach((entry, index) => {
+      worldSelect.appendChild(el(doc, 'option', { text: entry.label, attrs: { value: String(index) } }));
+    });
+    const selectWorld = (index) => {
+      const entry = worlds[index];
+      currentEntry = entry;
+      current = entry.record || null;
+      if (current) {
+        playback.onRecordChanged();
+        say(`${entry.label}: ${current.pcr} · ${current.source.runtime} · ${current.counters.invocations} invocations`);
+      } else {
+        playback.forceOff();
+        say(`${entry.label}: ${entry.error || entry.note || 'no record'}`, entry.error != null);
+      }
+      draw();
+    };
+    worldSelect.addEventListener('change', () => selectWorld(Number(worldSelect.value)));
+    if (worldWrap) worldWrap.hidden = false;
+    selectWorld(0);
+    return;
+  }
+
+  const embedded = readEmbeddedRecord(doc);
+  if (embedded) {
+    current = embedded;
+    say(`embedded record: ${embedded.pcr} · ${embedded.source.runtime} · ${embedded.counters.invocations} invocations`);
+    draw();
+    playback.autostart();
+    return;
+  }
+
+  const src = new URLSearchParams(globalThis.location ? globalThis.location.search : '').get('src');
+  if (src) {
+    // Same-origin only: an absolute URL is refused rather than fetched.
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(src) || src.startsWith('//')) {
+      say(`?src= is same-origin only; refused ${JSON.stringify(src)}`, true);
+      return;
+    }
+    say(`loading ${src}…`);
+    fetch(src)
+      .then((response) => (response.ok ? response.text() : Promise.reject(new Error(`${response.status} ${response.statusText}`))))
+      .then((text) => loadText(text, src))
+      .then(() => playback.autostart())
+      .catch((error) => say(`${src}: ${error.message}`, true));
+    return;
+  }
+
+  say('Choose a record, or drop one on the page. file:// pages cannot fetch, so ?src= needs a local server.');
+}
+
+mount(document);
+</script>
+</body>
+</html>

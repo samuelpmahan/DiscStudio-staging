@@ -5,6 +5,8 @@ tests that pinned the behaviour before and after, what it does *not* decide, and
 the consumer-bytes statement. At most one library seam lands per day
 (research/ULTRACODE-WEEK.md, "Execution policy"), so this file is also the count.
 
+## exp/23 (base d13fcd1): no library seam -- `experiments/students` is the first student-facing experiment (a five-Tick homework over a class's scores, its committed `evidence/run-1`, a hand-off page, and `grade.py`'s four mechanical checks: record contract, fresh-process replay on the compared fields, receipt source digests against today's source, hand-off names every Tick and file); `git diff -- pyto/src` is empty and the plain-words explanation is left to a cold reader.
+
 ## exp/22 (base 76bc3d2): receipts are Parts -- `PCR.run(..., observe=True)` also writes each `Receipt` into the store at `px.receipt.<pcr>.<tick>.<invocation-id>`, `PCR.calc`/`Tick.calc` refuse a Calculation binding into `px.receipt.`, observe=False still writes nothing, and the testimony, the results and the `pyto-run-record@1` document are unchanged either way (`pcr.py`, `core.RECEIPT_PREFIX`, `materialize.run_record` preexisting fallback; pinned by `tests/test_receipts.py::ReceiptsAreParts` and `::ReceiptSegmentIsNotBindable`).
 
 ## Semantic flips

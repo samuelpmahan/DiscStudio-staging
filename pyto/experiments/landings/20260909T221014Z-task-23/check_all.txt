@@ -1,0 +1,1258 @@
+== check_all.sh v0
+pyto root:    /home/user/DiscStudio-staging/pyto
+logs:         /tmp/tmp.t2IwrKS7n2
+python:       /usr/local/bin/python3 (Python 3.11.15)
+pyto module:  None
+
+== suite: library  (cwd /home/user/DiscStudio-staging/pyto)
+   $ /usr/local/bin/python3 -m unittest discover -s tests -v
+test_address (unittest.loader._FailedTest.test_address) ... ERROR
+test_first_class (unittest.loader._FailedTest.test_first_class) ... ERROR
+test_graph (unittest.loader._FailedTest.test_graph) ... ERROR
+test_materialize (unittest.loader._FailedTest.test_materialize) ... ERROR
+test_mounts (unittest.loader._FailedTest.test_mounts) ... ERROR
+test_receipts (unittest.loader._FailedTest.test_receipts) ... ERROR
+test_semantics (unittest.loader._FailedTest.test_semantics) ... ERROR
+
+======================================================================
+ERROR: test_address (unittest.loader._FailedTest.test_address)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_address
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/tests/test_address.py", line 17, in <module>
+    from pyto.address import RESERVED_SECOND, ROOTS, Address, check, parse
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_first_class (unittest.loader._FailedTest.test_first_class)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_first_class
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/tests/test_first_class.py", line 13, in <module>
+    from pyto import Calculation, Match, Part, PCR, Pcr, PQL, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_graph (unittest.loader._FailedTest.test_graph)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_graph
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/tests/test_graph.py", line 3, in <module>
+    from pyto import Pcr
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_materialize (unittest.loader._FailedTest.test_materialize)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_materialize
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/tests/test_materialize.py", line 29, in <module>
+    from pyto import Calculation, Part, PCR, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_mounts (unittest.loader._FailedTest.test_mounts)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_mounts
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/tests/test_mounts.py", line 23, in <module>
+    from pyto.core import Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_receipts (unittest.loader._FailedTest.test_receipts)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_receipts
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/tests/test_receipts.py", line 32, in <module>
+    from pyto import Calculation, Part, PCR, PQL, PxC, PxWrite
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_semantics (unittest.loader._FailedTest.test_semantics)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_semantics
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/tests/test_semantics.py", line 20, in <module>
+    from pyto import (
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.000s
+
+FAILED (errors=7)
+-- library: FAILED (exit 1, ran 7)
+
+== suite: experiments/cross-project  (cwd /home/user/DiscStudio-staging/pyto)
+   $ /usr/local/bin/python3 -m unittest discover -s experiments/cross-project -p test_*.py -v
+test_cross_project (unittest.loader._FailedTest.test_cross_project) ... ERROR
+
+======================================================================
+ERROR: test_cross_project (unittest.loader._FailedTest.test_cross_project)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_cross_project
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/cross-project/test_cross_project.py", line 25, in <module>
+    from pyto import PxC  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)
+-- experiments/cross-project: FAILED (exit 1, ran 1)
+
+== suite: experiments/grouped-ablation  (cwd /home/user/DiscStudio-staging/pyto)
+   $ /usr/local/bin/python3 -m unittest discover -s experiments/grouped-ablation -p test_*.py -v
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation')  # this experiment's own modules (retain, compare_local, pql_document, calculations)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/experiments/disc-stats')  # run_experiment.py imports stats.py by top-level name (disc-stats/run_experiment.py:4)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation')  # this experiment's own modules
+test_grouped_ablation (unittest.loader._FailedTest.test_grouped_ablation) ... ERROR
+test_materials (unittest.loader._FailedTest.test_materials) ... ERROR
+test_replay (unittest.loader._FailedTest.test_replay) ... ERROR
+test_retain (unittest.loader._FailedTest.test_retain) ... ERROR
+test_run_cached (unittest.loader._FailedTest.test_run_cached) ... ERROR
+test_second_experiment (unittest.loader._FailedTest.test_second_experiment) ... ERROR
+
+======================================================================
+ERROR: test_grouped_ablation (unittest.loader._FailedTest.test_grouped_ablation)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_grouped_ablation
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/test_grouped_ablation.py", line 23, in <module>
+    from calculations import REGISTRY  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py", line 29, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_materials (unittest.loader._FailedTest.test_materials)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_materials
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/test_materials.py", line 24, in <module>
+    from pyto import PxC  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_replay (unittest.loader._FailedTest.test_replay)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_replay
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 49, in <module>
+    import replay  # noqa: E402
+    ^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 119, in <module>
+    from pyto import Calculation, PxC  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_retain (unittest.loader._FailedTest.test_retain)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_retain
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/test_retain.py", line 46, in <module>
+    import retain  # noqa: E402
+    ^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/retain.py", line 82, in <module>
+    import pyto
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_run_cached (unittest.loader._FailedTest.test_run_cached)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_run_cached
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/test_run_cached.py", line 33, in <module>
+    import materials  # noqa: E402
+    ^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/materials.py", line 75, in <module>
+    from pyto import Calculation, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_second_experiment (unittest.loader._FailedTest.test_second_experiment)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_second_experiment
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 39, in <module>
+    import run_regrouped  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 27, in <module>
+    from calculations import REGISTRY  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py", line 29, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.000s
+
+FAILED (errors=6)
+-- experiments/grouped-ablation: FAILED (exit 1, ran 6)
+
+== suite: experiments/hiding-primitives  (cwd /home/user/DiscStudio-staging/pyto)
+   $ /usr/local/bin/python3 -m unittest discover -s experiments/hiding-primitives -p test_*.py -v
+test_instances_survive_relabelling_of_unrelated_nodes (test_mine.Miner.test_instances_survive_relabelling_of_unrelated_nodes) ... ok
+test_planted_motif_is_the_top_result (test_mine.Miner.test_planted_motif_is_the_top_result) ... ok
+test_reads_stay_inside_the_studio (test_mine.Miner.test_reads_stay_inside_the_studio) ... ok
+test_the_report_is_deterministic (test_mine.Miner.test_the_report_is_deterministic) ... ok
+test_two_instances_pay_and_one_does_not (test_mine.Miner.test_two_instances_pay_and_one_does_not) ... ok
+test_every_mutation_is_killed (test_mine.Mutations.test_every_mutation_is_killed) ... /home/user/DiscStudio-staging/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/pyto/experiments/hiding-primitives/graphs.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/pyto/experiments/hiding-primitives/subdue.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 6.011s
+
+OK
+-- experiments/hiding-primitives: OK (ran 6)
+
+== suite: experiments/s3-synthetic  (cwd /home/user/DiscStudio-staging/pyto)
+   $ /usr/local/bin/python3 -m unittest discover -s experiments/s3-synthetic -p test_*.py -v
+[s3-synthetic] sys.path.insert(0, /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno) intra-repo reference dir
+test_s3_synthetic (unittest.loader._FailedTest.test_s3_synthetic) ... ERROR
+
+======================================================================
+ERROR: test_s3_synthetic (unittest.loader._FailedTest.test_s3_synthetic)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_s3_synthetic
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/s3-synthetic/test_s3_synthetic.py", line 53, in <module>
+    import s3  # noqa: E402  (reference/chainspot-quick-anno/s3.py)
+    ^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/s3.py", line 17, in <module>
+    from investigation import StageInvestigation
+  File "/home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/investigation.py", line 23, in <module>
+    from pyto import PCR
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)
+-- experiments/s3-synthetic: FAILED (exit 1, ran 1)
+
+== suite: experiments/students  (cwd /home/user/DiscStudio-staging/pyto)
+   $ /usr/local/bin/python3 -m unittest discover -s experiments/students -p test_*.py -v
+[students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+test_students (unittest.loader._FailedTest.test_students) ... ERROR
+
+======================================================================
+ERROR: test_students (unittest.loader._FailedTest.test_students)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_students
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/experiments/students/test_students.py", line 47, in <module>
+    from pyto import PxC  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)
+-- experiments/students: FAILED (exit 1, ran 1)
+
+== suite: consumer  (cwd /home/user/DiscStudio-staging/pyto/consumers/discstudio-card)
+   $ /usr/local/bin/python3 -m unittest discover -s . -p test_*.py -v
+[test_art_registry] sys.path.insert pyto/experiments/art-tournament/harness  (tournament lint checks and card fixtures)
+test_art_replay_receipt_and_no_mutation_on_invalid (test_art_backend.ArtBackendTest.test_art_replay_receipt_and_no_mutation_on_invalid) ... FAIL
+test_concurrent_events_are_complete_json_lines (test_art_backend.ArtBackendTest.test_concurrent_events_are_complete_json_lines) ... FAIL
+test_health_recipe_event_and_reload (test_art_backend.ArtBackendTest.test_health_recipe_event_and_reload) ... FAIL
+test_rejects_bad_input_origin_and_traversal (test_art_backend.ArtBackendTest.test_rejects_bad_input_origin_and_traversal) ... FAIL
+test_root_only_serves_index (test_art_backend.ArtBackendTest.test_root_only_serves_index) ... FAIL
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... FAIL
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... FAIL
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... FAIL
+test_art_registry (unittest.loader._FailedTest.test_art_registry) ... ERROR
+test_card_composition (unittest.loader._FailedTest.test_card_composition) ... ERROR
+test_card_render (unittest.loader._FailedTest.test_card_render) ... ERROR
+test_every_original_family_and_target_matches_its_recorded_hash (test_paint_families.ClassicFamiliesAreFrozenTest.test_every_original_family_and_target_matches_its_recorded_hash) ... ok
+test_promotion_only_appended_to_the_family_list (test_paint_families.ClassicFamiliesAreFrozenTest.test_promotion_only_appended_to_the_family_list) ... ok
+test_no_two_families_rasterize_alike_at_42px (test_paint_families.FamiliesAreDistinctAt42Test.test_no_two_families_rasterize_alike_at_42px) ... ok
+test_document_contract_holds_at_every_target (test_paint_families.PromotedFamiliesTest.test_document_contract_holds_at_every_target) ... ok
+test_every_family_and_target_is_lint_clean (test_paint_families.PromotedFamiliesTest.test_every_family_and_target_is_lint_clean) ... ok
+test_render_is_deterministic_within_and_across_processes (test_paint_families.PromotedFamiliesTest.test_render_is_deterministic_within_and_across_processes) ... ok
+test_reuse_surface_is_registrable (test_paint_families.PromotedFamiliesTest.test_reuse_surface_is_registrable) ... ok
+test_unknown_family_is_rejected (test_paint_families.PromotedFamiliesTest.test_unknown_family_is_rejected) ... ok
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... FAIL
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... FAIL
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... FAIL
+
+======================================================================
+ERROR: test_art_registry (unittest.loader._FailedTest.test_art_registry)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_art_registry
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_art_registry.py", line 66, in <module>
+    import fixtures  # noqa: E402  the tournament's shared palettes, seeds and sample cards
+    ^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/experiments/art-tournament/harness/fixtures.py", line 26, in <module>
+    from card_composition import compose  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/card_composition.py", line 13, in <module>
+    from pyto import Calculation, PCR, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_card_composition (unittest.loader._FailedTest.test_card_composition)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_card_composition
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_card_composition.py", line 11, in <module>
+    from card_composition import compose, execute_card, normalize_recipe
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/card_composition.py", line 13, in <module>
+    from pyto import Calculation, PCR, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_card_render (unittest.loader._FailedTest.test_card_render)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_card_render
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_card_render.py", line 26, in <module>
+    from pyto import Calculation, PCR, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_art_replay_receipt_and_no_mutation_on_invalid (test_art_backend.ArtBackendTest.test_art_replay_receipt_and_no_mutation_on_invalid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_concurrent_events_are_complete_json_lines (test_art_backend.ArtBackendTest.test_concurrent_events_are_complete_json_lines)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_health_recipe_event_and_reload (test_art_backend.ArtBackendTest.test_health_recipe_event_and_reload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_rejects_bad_input_origin_and_traversal (test_art_backend.ArtBackendTest.test_rejects_bad_input_origin_and_traversal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_root_only_serves_index (test_art_backend.ArtBackendTest.test_root_only_serves_index)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+======================================================================
+FAIL: test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/test_sandbox.py", line 31, in setUp
+    self.assertTrue(line.startswith("READY http://127.0.0.1:"), line)
+AssertionError: False is not true : 
+
+----------------------------------------------------------------------
+Ran 22 tests in 2.284s
+
+FAILED (failures=11, errors=3)
+-- consumer: FAILED (exit 1, ran 22)
+
+== suite: disc-stats  (cwd /home/user/DiscStudio-staging/pyto/consumers/discstudio-card/experiments/disc-stats)
+   $ env PYTHONPATH=. /usr/local/bin/python3 -m unittest discover -s . -p test_*.py -v
+test_description_denominators_and_raw_phrases (test_stats.StatsTests.test_description_denominators_and_raw_phrases) ... ok
+test_later_shot_windows_and_empty_denominator (test_stats.StatsTests.test_later_shot_windows_and_empty_denominator) ... ok
+test_membership_gap_and_censoring (test_stats.StatsTests.test_membership_gap_and_censoring) ... ok
+test_mold_identity_dedupe_and_conflict (test_stats.StatsTests.test_mold_identity_dedupe_and_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+-- disc-stats: OK (ran 4)
+
+== suite: examples  (cwd /home/user/DiscStudio-staging/pyto)
+   $ python3 examples/basic.py -> Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/examples/basic.py", line 1, in <module>
+    from pyto import Calculation, Part, PCR, PxC
+ModuleNotFoundError: No module named 'pyto'
+-- examples/basic.py: FAILED (expected '42', got 'Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/examples/basic.py", line 1, in <module>
+    from pyto import Calculation, Part, PCR, PxC
+ModuleNotFoundError: No module named 'pyto'', exit 1)
+   $ python3 examples/shared_result_fanout.py -> ModuleNotFoundError: No module named 'pyto'
+-- examples/shared_result_fanout.py: FAILED (exit 1)
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/examples/shared_result_fanout.py", line 7, in <module>
+    from pyto import Calculation, Part, PCR, PQL, PxC
+ModuleNotFoundError: No module named 'pyto'
+   $ python3 examples/art_registry_demo.py -> ModuleNotFoundError: No module named 'pyto'
+-- examples/art_registry_demo.py: FAILED (exit 1)
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/examples/art_registry_demo.py", line 45, in <module>
+    import art_registry  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/art_registry.py", line 53, in <module>
+    from pyto import Calculation, PxC
+ModuleNotFoundError: No module named 'pyto'
+-- examples: FAIL (3 scripts)
+
+== suite: art-registry-md  (cwd /home/user/DiscStudio-staging/pyto/consumers/discstudio-card)
+   $ python3 scripts/generate_art_registry_md.py -> Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/scripts/generate_art_registry_md.py", line 38, in <module>
+    import art_registry  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/consumers/discstudio-card/art_registry.py", line 53, in <module>
+    from pyto import Calculation, PxC
+ModuleNotFoundError: No module named 'pyto'
+-- art-registry-md: FAILED (generator exited 1)
+
+== suite: viewer  (cwd /home/user/DiscStudio-staging/pyto/viewer)
+   $ node --test test/*.test.mjs   (v22.22.2)
+TAP version 13
+# Subtest: the pyto fixture is the Python materializer output byte for byte
+ok 1 - the pyto fixture is the Python materializer output byte for byte
+  ---
+  duration_ms: 2.245602
+  type: 'test'
+  ...
+# Subtest: every adapter output passes validate
+ok 2 - every adapter output passes validate
+  ---
+  duration_ms: 6.809828
+  type: 'test'
+  ...
+# Subtest: fromPytoRecord is a validating pass-through, from an object or a string
+ok 3 - fromPytoRecord is a validating pass-through, from an object or a string
+  ---
+  duration_ms: 3.467087
+  type: 'test'
+  ...
+# Subtest: deriveHit: a px: binding not produced earlier in the run is a hit
+ok 4 - deriveHit: a px: binding not produced earlier in the run is a hit
+  ---
+  duration_ms: 0.149005
+  type: 'test'
+  ...
+# Subtest: deriveHit: an address this run overwrote is not a hit, however it started life
+ok 5 - deriveHit: an address this run overwrote is not a hit, however it started life
+  ---
+  duration_ms: 0.123706
+  type: 'test'
+  ...
+# Subtest: pyto record: hits are exactly the invocations that read a preexisting Part
+ok 6 - pyto record: hits are exactly the invocations that read a preexisting Part
+  ---
+  duration_ms: 0.376689
+  type: 'test'
+  ...
+# Subtest: DiscStudio: reused === true makes every invocation of the second run a hit
+ok 7 - DiscStudio: reused === true makes every invocation of the second run a hit
+  ---
+  duration_ms: 2.379123
+  type: 'test'
+  ...
+# Subtest: DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
+ok 8 - DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
+  ---
+  duration_ms: 0.694925
+  type: 'test'
+  ...
+# Subtest: DiscStudio adapter also accepts a live run of src/runtime.js
+ok 9 - DiscStudio adapter also accepts a live run of src/runtime.js
+  ---
+  duration_ms: 40.382803
+  type: 'test'
+  ...
+# Subtest: ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
+ok 10 - ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
+  ---
+  duration_ms: 0.655802
+  type: 'test'
+  ...
+# Subtest: Wumpus: values are present and the SVG Part is classified as svg
+ok 11 - Wumpus: values are present and the SVG Part is classified as svg
+  ---
+  duration_ms: 0.579222
+  type: 'test'
+  ...
+# Subtest: materialize classifies text, svg, png data URLs and JSON
+ok 12 - materialize classifies text, svg, png data URLs and JSON
+  ---
+  duration_ms: 0.170844
+  type: 'test'
+  ...
+# Subtest: materialize honours RECORD.md size and array caps
+ok 13 - materialize honours RECORD.md size and array caps
+  ---
+  duration_ms: 0.694991
+  type: 'test'
+  ...
+# Subtest: materialize truncates nested arrays exactly as the Python materializer does
+ok 14 - materialize truncates nested arrays exactly as the Python materializer does
+  ---
+  duration_ms: 0.712738
+  type: 'test'
+  ...
+# Subtest: materialize still reaches omitted for a cycle hidden past the array cap
+ok 15 - materialize still reaches omitted for a cycle hidden past the array cap
+  ---
+  duration_ms: 0.21098
+  type: 'test'
+  ...
+# Subtest: materialize counts UTF-8 bytes, not characters
+ok 16 - materialize counts UTF-8 bytes, not characters
+  ---
+  duration_ms: 1.689607
+  type: 'test'
+  ...
+# Subtest: derivePartIndex names the writer, the readers and what preexisted
+ok 17 - derivePartIndex names the writer, the readers and what preexisted
+  ---
+  duration_ms: 0.365791
+  type: 'test'
+  ...
+# Subtest: bareAddress strips only the testimony marker
+ok 18 - bareAddress strips only the testimony marker
+  ---
+  duration_ms: 0.076085
+  type: 'test'
+  ...
+# Subtest: validate rejects schema and names schema
+ok 19 - validate rejects schema and names schema
+  ---
+  duration_ms: 3.748766
+  type: 'test'
+  ...
+# Subtest: validate rejects pcr and names pcr
+ok 20 - validate rejects pcr and names pcr
+  ---
+  duration_ms: 0.517567
+  type: 'test'
+  ...
+# Subtest: validate rejects source.runtime and names source.runtime
+ok 21 - validate rejects source.runtime and names source.runtime
+  ---
+  duration_ms: 0.536557
+  type: 'test'
+  ...
+# Subtest: validate rejects source.commit and names source.commit
+ok 22 - validate rejects source.commit and names source.commit
+  ---
+  duration_ms: 1.028244
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.index and names ticks[0].index
+ok 23 - validate rejects ticks.0.index and names ticks[0].index
+  ---
+  duration_ms: 0.51005
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.name and names ticks[0].name
+ok 24 - validate rejects ticks.0.name and names ticks[0].name
+  ---
+  duration_ms: 0.387654
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
+ok 25 - validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
+  ---
+  duration_ms: 0.68332
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
+ok 26 - validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
+  ---
+  duration_ms: 0.441281
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
+ok 27 - validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
+  ---
+  duration_ms: 0.369539
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
+ok 28 - validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
+  ---
+  duration_ms: 0.429619
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
+ok 29 - validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
+  ---
+  duration_ms: 0.370487
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+ok 30 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+  ---
+  duration_ms: 0.39583
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+ok 31 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+  ---
+  duration_ms: 0.346629
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
+ok 32 - validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
+  ---
+  duration_ms: 0.339897
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
+ok 33 - validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
+  ---
+  duration_ms: 0.770067
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
+ok 34 - validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
+  ---
+  duration_ms: 0.602195
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.invocations and names counters.invocations
+ok 35 - validate rejects counters.invocations and names counters.invocations
+  ---
+  duration_ms: 0.651022
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.hits and names counters.hits
+ok 36 - validate rejects counters.hits and names counters.hits
+  ---
+  duration_ms: 0.735074
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.computed and names counters.computed
+ok 37 - validate rejects counters.computed and names counters.computed
+  ---
+  duration_ms: 0.772513
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.wall_ms and names counters.wall_ms
+ok 38 - validate rejects counters.wall_ms and names counters.wall_ms
+  ---
+  duration_ms: 0.578192
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
+ok 39 - validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
+  ---
+  duration_ms: 0.401304
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
+ok 40 - validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
+  ---
+  duration_ms: 0.195898
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
+ok 41 - validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
+  ---
+  duration_ms: 0.271312
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
+ok 42 - validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
+  ---
+  duration_ms: 0.204325
+  type: 'test'
+  ...
+# Subtest: the synthetic record carries the four value kinds the real run never produces
+ok 43 - the synthetic record carries the four value kinds the real run never produces
+  ---
+  duration_ms: 0.270634
+  type: 'test'
+  ...
+# Subtest: validate rejects a declared_consumes entry spelled fn:, naming the path
+ok 44 - validate rejects a declared_consumes entry spelled fn:, naming the path
+  ---
+  duration_ms: 1.139441
+  type: 'test'
+  ...
+# Subtest: validate rejects a declared_consumes entry that inputs does not carry, naming the path
+ok 45 - validate rejects a declared_consumes entry that inputs does not carry, naming the path
+  ---
+  duration_ms: 0.602904
+  type: 'test'
+  ...
+# Subtest: validate rejects a duplicate invocation id, because ids anchor annotations
+ok 46 - validate rejects a duplicate invocation id, because ids anchor annotations
+  ---
+  duration_ms: 0.451032
+  type: 'test'
+  ...
+# Subtest: validate rejects a malformed parts entry with the address in the path
+ok 47 - validate rejects a malformed parts entry with the address in the path
+  ---
+  duration_ms: 0.510865
+  type: 'test'
+  ...
+# Subtest: validate rejects a non-object document
+ok 48 - validate rejects a non-object document
+  ---
+  duration_ms: 0.108558
+  type: 'test'
+  ...
+# Subtest: the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
+ok 49 - the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
+  ---
+  duration_ms: 1.704704
+  type: 'test'
+  ...
+# Subtest: a Part address named __proto__ or constructor is an ordinary row, not a prototype write
+ok 50 - a Part address named __proto__ or constructor is an ordinary row, not a prototype write
+  ---
+  duration_ms: 0.378552
+  type: 'test'
+  ...
+# Subtest: validate rejects a png-data-url whose data is not a PNG data URL
+ok 51 - validate rejects a png-data-url whose data is not a PNG data URL
+  ---
+  duration_ms: 3.810008
+  type: 'test'
+  ...
+# Subtest: materialize never classifies a string as png-data-url that validate would refuse
+ok 52 - materialize never classifies a string as png-data-url that validate would refuse
+  ---
+  duration_ms: 2.325772
+  type: 'test'
+  ...
+# Subtest: coerceToRecord accepts a record and every raw runtime document
+ok 53 - coerceToRecord accepts a record and every raw runtime document
+  ---
+  duration_ms: 11.813593
+  type: 'test'
+  ...
+# Subtest: readEmbeddedRecord reads the block, and returns null when it is empty
+ok 54 - readEmbeddedRecord reads the block, and returns null when it is empty
+  ---
+  duration_ms: 5.273987
+  type: 'test'
+  ...
+# Subtest: embeddableJson escapes every character that could end the script element
+ok 55 - embeddableJson escapes every character that could end the script element
+  ---
+  duration_ms: 0.220542
+  type: 'test'
+  ...
+# Subtest: buildPage inlines the viewer and embeds the record, with no module graph left
+ok 56 - buildPage inlines the viewer and embeds the record, with no module graph left
+  ---
+  duration_ms: 11.786903
+  type: 'test'
+  ...
+# Subtest: embedFile converts a raw runtime document on the way in
+ok 57 - embedFile converts a raw runtime document on the way in
+  ---
+  duration_ms: 6.335701
+  type: 'test'
+  ...
+# Subtest: embedFile refuses a document that is not a record and not a known runtime shape
+ok 58 - embedFile refuses a document that is not a record and not a known runtime shape
+  ---
+  duration_ms: 0.655978
+  type: 'test'
+  ...
+# Subtest: buildPage fails loudly when the page and the embedder drift apart
+ok 59 - buildPage fails loudly when the page and the embedder drift apart
+  ---
+  duration_ms: 9.397197
+  type: 'test'
+  ...
+# Subtest: node embed.mjs record.json > page.html writes the same page from the command line
+ok 60 - node embed.mjs record.json > page.html writes the same page from the command line
+  ---
+  duration_ms: 126.831943
+  type: 'test'
+  ...
+# Subtest: the CLI exits 2 with a usage line when no record is named
+ok 61 - the CLI exits 2 with a usage line when no record is named
+  ---
+  duration_ms: 43.413307
+  type: 'test'
+  ...
+# Subtest: the inlined bundle is valid module syntax with no duplicate top-level bindings
+ok 62 - the inlined bundle is valid module syntax with no duplicate top-level bindings
+  ---
+  duration_ms: 31.352201
+  type: 'test'
+  ...
+# Subtest: a record carrying $&, $` and $' is embedded literally, not expanded
+ok 63 - a record carrying $&, $` and $' is embedded literally, not expanded
+  ---
+  duration_ms: 3.254384
+  type: 'test'
+  ...
+# Subtest: loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
+ok 64 - loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
+  ---
+  duration_ms: 1.271304
+  type: 'test'
+  ...
+# Subtest: buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
+ok 65 - buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
+  ---
+  duration_ms: 12.503282
+  type: 'test'
+  ...
+# Subtest: a bad input becomes a world entry naming the failure, never a blank page or an aborted build
+ok 66 - a bad input becomes a world entry naming the failure, never a blank page or an aborted build
+  ---
+  duration_ms: 1.670638
+  type: 'test'
+  ...
+# Subtest: node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
+ok 67 - node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
+  ---
+  duration_ms: 56.417459
+  type: 'test'
+  ...
+# Subtest: --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
+ok 68 - --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
+  ---
+  duration_ms: 75.32883
+  type: 'test'
+  ...
+# Subtest: computeSchedule orders events exactly as the record does: Tick order, then invocation order
+ok 69 - computeSchedule orders events exactly as the record does: Tick order, then invocation order
+  ---
+  duration_ms: 2.126921
+  type: 'test'
+  ...
+# Subtest: at 1x, at_ms is the cumulative sum of recorded durations, strictly increasing
+ok 70 - at 1x, at_ms is the cumulative sum of recorded durations, strictly increasing
+  ---
+  duration_ms: 0.53167
+  type: 'test'
+  ...
+# Subtest: the last event lands on the run total, at 1x and scaled by speed
+ok 71 - the last event lands on the run total, at 1x and scaled by speed
+  ---
+  duration_ms: 0.233518
+  type: 'test'
+  ...
+# Subtest: speed scales every event proportionally, not just the last one
+ok 72 - speed scales every event proportionally, not just the last one
+  ---
+  duration_ms: 0.137582
+  type: 'test'
+  ...
+# Subtest: a run with no durations recorded plays at a fixed 400 ms per Calculation, unaffected by speed
+ok 73 - a run with no durations recorded plays at a fixed 400 ms per Calculation, unaffected by speed
+  ---
+  duration_ms: 3.977197
+  type: 'test'
+  ...
+# Subtest: scheduleFrame reveals Ticks and Calculations in order and never a partial Tick out of sequence
+ok 74 - scheduleFrame reveals Ticks and Calculations in order and never a partial Tick out of sequence
+  ---
+  duration_ms: 1.022362
+  type: 'test'
+  ...
+# Subtest: scheduleFrame keeps counters and the Part index honest for the partial record
+ok 75 - scheduleFrame keeps counters and the Part index honest for the partial record
+  ---
+  duration_ms: 0.347084
+  type: 'test'
+  ...
+# Subtest: the real record renders as four Tick sections and fifteen invocation rows
+ok 76 - the real record renders as four Tick sections and fifteen invocation rows
+  ---
+  duration_ms: 11.052315
+  type: 'test'
+  ...
+# Subtest: one section per Tick, in order, with index, name and invocation count
+ok 77 - one section per Tick, in order, with index, name and invocation count
+  ---
+  duration_ms: 7.384415
+  type: 'test'
+  ...
+# Subtest: an invocation row carries id, address, short implementation hash, pill, duration and digest
+ok 78 - an invocation row carries id, address, short implementation hash, pill, duration and digest
+  ---
+  duration_ms: 2.063289
+  type: 'test'
+  ...
+# Subtest: hit and computed pills follow the record, never the renderer
+ok 79 - hit and computed pills follow the record, never the renderer
+  ---
+  duration_ms: 3.184327
+  type: 'test'
+  ...
+# Subtest: reads show declared beside actual and highlight a divergence
+ok 80 - reads show declared beside actual and highlight a divergence
+  ---
+  duration_ms: 1.477176
+  type: 'test'
+  ...
+# Subtest: a fn: binding is shown as an earlier invocation result, not as a store read
+ok 81 - a fn: binding is shown as an earlier invocation result, not as a store read
+  ---
+  duration_ms: 0.275024
+  type: 'test'
+  ...
+# Subtest: writes carry their kind
+ok 82 - writes carry their kind
+  ---
+  duration_ms: 0.172951
+  type: 'test'
+  ...
+# Subtest: an invocation that records no writes says so instead of rendering an empty list
+ok 83 - an invocation that records no writes says so instead of rendering an empty list
+  ---
+  duration_ms: 0.176711
+  type: 'test'
+  ...
+# Subtest: an svg value containing <script> renders as an <img> data URL and creates no script node
+ok 84 - an svg value containing <script> renders as an <img> data URL and creates no script node
+  ---
+  duration_ms: 0.563762
+  type: 'test'
+  ...
+# Subtest: a whole record whose Parts are hostile SVG still produces no script node
+ok 85 - a whole record whose Parts are hostile SVG still produces no script node
+  ---
+  duration_ms: 8.815076
+  type: 'test'
+  ...
+# Subtest: json is collapsible, text is a pre, png-data-url is an img, omitted is the note
+ok 86 - json is collapsible, text is a pre, png-data-url is an img, omitted is the note
+  ---
+  duration_ms: 0.36001
+  type: 'test'
+  ...
+# Subtest: a png-data-url that is not a PNG data URL never reaches an <img src>
+ok 87 - a png-data-url that is not a PNG data URL never reaches an <img src>
+  ---
+  duration_ms: 2.598394
+  type: 'test'
+  ...
+# Subtest: a note is rendered beside the material it qualifies
+ok 88 - a note is rendered beside the material it qualifies
+  ---
+  duration_ms: 0.162012
+  type: 'test'
+  ...
+# Subtest: toBase64 and svgDataUrl survive non-Latin1 text
+ok 89 - toBase64 and svgDataUrl survive non-Latin1 text
+  ---
+  duration_ms: 0.105925
+  type: 'test'
+  ...
+# Subtest: an empty filter keeps every row
+ok 90 - an empty filter keeps every row
+  ---
+  duration_ms: 0.098773
+  type: 'test'
+  ...
+# Subtest: a substring filter narrows rows to the matching addresses
+ok 91 - a substring filter narrows rows to the matching addresses
+  ---
+  duration_ms: 0.683376
+  type: 'test'
+  ...
+# Subtest: a trailing * filters by address prefix, the way PQL.prefix describes itself
+ok 92 - a trailing * filters by address prefix, the way PQL.prefix describes itself
+  ---
+  duration_ms: 0.231869
+  type: 'test'
+  ...
+# Subtest: the filter matches calculation addresses and tick names too, case-insensitively
+ok 93 - the filter matches calculation addresses and tick names too, case-insensitively
+  ---
+  duration_ms: 1.29254
+  type: 'test'
+  ...
+# Subtest: matchesFilter and searchTerms agree on what an invocation can be found by
+ok 94 - matchesFilter and searchTerms agree on what an invocation can be found by
+  ---
+  duration_ms: 0.196755
+  type: 'test'
+  ...
+# Subtest: renderRecord reports what the filter narrowed and says so when nothing matches
+ok 95 - renderRecord reports what the filter narrowed and says so when nothing matches
+  ---
+  duration_ms: 1.048748
+  type: 'test'
+  ...
+# Subtest: the header shows pcr, source and counters
+ok 96 - the header shows pcr, source and counters
+  ---
+  duration_ms: 2.802692
+  type: 'test'
+  ...
+# Subtest: the Part index lists every address with its writer, readers and preexisting flag
+ok 97 - the Part index lists every address with its writer, readers and preexisting flag
+  ---
+  duration_ms: 0.308822
+  type: 'test'
+  ...
+# Subtest: an empty Part index says so
+ok 98 - an empty Part index says so
+  ---
+  duration_ms: 0.080955
+  type: 'test'
+  ...
+# Subtest: renderRecord validates before it renders
+ok 99 - renderRecord validates before it renders
+  ---
+  duration_ms: 3.898462
+  type: 'test'
+  ...
+# Subtest: a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
+ok 100 - a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
+  ---
+  duration_ms: 0.15741
+  type: 'test'
+  ...
+# Subtest: a world with no input at all is a labelled empty slot, never a faked record
+ok 101 - a world with no input at all is a labelled empty slot, never a faked record
+  ---
+  duration_ms: 0.07279
+  type: 'test'
+  ...
+# Subtest: the page carries a playback toggle and its control bar, wired to mount()
+ok 102 - the page carries a playback toggle and its control bar, wired to mount()
+  ---
+  duration_ms: 0.364802
+  type: 'test'
+  ...
+# Subtest: the page carries a hidden world picker and an empty records block for embed.mjs --worlds
+ok 103 - the page carries a hidden world picker and an empty records block for embed.mjs --worlds
+  ---
+  duration_ms: 0.261862
+  type: 'test'
+  ...
+1..103
+# tests 103
+# suites 0
+# pass 103
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 506.58425
+-- viewer: OK (ran 103)
+
+== suite: viewer-record-schema  (cwd /home/user/DiscStudio-staging/pyto/viewer)
+   $ /usr/local/bin/python3 -m unittest discover -s test -p test_*.py -v
+test_a_runtime_that_records_nothing_writes_null_and_never_invents (test_record_schema.AdapterOutputs.test_a_runtime_that_records_nothing_writes_null_and_never_invents) ... ok
+test_all_four_runtimes_of_RECORD_md_are_covered (test_record_schema.AdapterOutputs.test_all_four_runtimes_of_RECORD_md_are_covered) ... ok
+test_counters_are_recomputable_from_the_ticks (test_record_schema.AdapterOutputs.test_counters_are_recomputable_from_the_ticks) ... ok
+test_every_javascript_adapter_output_passes_the_python_validator (test_record_schema.AdapterOutputs.test_every_javascript_adapter_output_passes_the_python_validator) ... ok
+test_the_javascript_pass_through_changes_no_field_of_the_python_record (test_record_schema.AdapterOutputs.test_the_javascript_pass_through_changes_no_field_of_the_python_record) ... ok
+test_the_parts_index_agrees_with_a_third_reading_of_the_rule (test_record_schema.AdapterOutputs.test_the_parts_index_agrees_with_a_third_reading_of_the_rule) ... ok
+test_the_round_trip_is_equal_as_JSON_and_not_promised_as_bytes (test_record_schema.AdapterOutputs.test_the_round_trip_is_equal_as_JSON_and_not_promised_as_bytes) ... ok
+test_javascript_accepts_the_record_python_accepts (test_record_schema.TheTwoValidatorsAgree.test_javascript_accepts_the_record_python_accepts) ... ok
+test_javascript_refuses_what_python_refuses_and_names_the_same_path (test_record_schema.TheTwoValidatorsAgree.test_javascript_refuses_what_python_refuses_and_names_the_same_path) ... ok
+test_python_is_the_stricter_reader_only_where_RECORD_md_says_so (test_record_schema.TheTwoValidatorsAgree.test_python_is_the_stricter_reader_only_where_RECORD_md_says_so) ... ok
+test_a_boolean_is_not_an_integer_counter (test_record_schema.TheValidatorActuallyRejects.test_a_boolean_is_not_an_integer_counter) ... ok
+test_a_duplicate_invocation_id_is_rejected_because_ids_anchor_annotations (test_record_schema.TheValidatorActuallyRejects.test_a_duplicate_invocation_id_is_rejected_because_ids_anchor_annotations) ... ok
+test_a_malformed_parts_entry_names_the_address (test_record_schema.TheValidatorActuallyRejects.test_a_malformed_parts_entry_names_the_address) ... ok
+test_a_non_object_document_is_rejected (test_record_schema.TheValidatorActuallyRejects.test_a_non_object_document_is_rejected) ... ok
+test_an_invented_field_is_rejected_wherever_it_appears (test_record_schema.TheValidatorActuallyRejects.test_an_invented_field_is_rejected_wherever_it_appears) ... ok
+test_an_omitted_field_is_rejected_rather_than_read_as_null (test_record_schema.TheValidatorActuallyRejects.test_an_omitted_field_is_rejected_rather_than_read_as_null) ... ok
+test_every_typed_rule_of_RECORD_md_rejects_its_violation (test_record_schema.TheValidatorActuallyRejects.test_every_typed_rule_of_RECORD_md_rejects_its_violation) ... ok
+test_the_unmutated_record_passes (test_record_schema.TheValidatorActuallyRejects.test_the_unmutated_record_passes) ... ok
+test_the_value_kind_rules_of_RECORD_md_59_to_63 (test_record_schema.TheValidatorActuallyRejects.test_the_value_kind_rules_of_RECORD_md_59_to_63) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.601s
+
+OK
+-- viewer-record-schema: OK (ran 19)
+
+== per-suite counts
+suite                         tests  status
+library                           7  FAIL
+experiments/cross-project         1  FAIL
+experiments/grouped-ablation      6  FAIL
+experiments/hiding-primitives      6  OK
+experiments/s3-synthetic          1  FAIL
+experiments/students              1  FAIL
+consumer                         22  FAIL
+disc-stats                        4  OK
+examples                          3  FAIL
+art-registry-md                   -  FAIL
+viewer                          103  OK
+viewer-record-schema             19  OK
+
+SOME SUITES FAILED (logs in /tmp/tmp.t2IwrKS7n2)
