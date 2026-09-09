@@ -82,6 +82,48 @@ external-input boundary (`docs/PYTHON-LAB-STEWARDSHIP.md:56`). Day 2 landed the 
 anyway, arguing it makes no boundary decision.
 Status: provisional, owner to confirm. Bites: `CHANGES.md`, `{?} ExternalInputBoundary`.
 
+## Questions I resolved alone in Day 2's third fixer round (2026-09-09)
+
+### {?} EvidenceDirtiness
+evidence trees are excluded from the `-dirty` stamp; the owner may prefer stamping
+outputs too.
+Status: provisional, decided by me 2026-09-09. `commit.txt` and `retained.commit` are
+`git rev-parse HEAD` plus `-dirty` when watched code differs from HEAD. The watch used
+to exclude only the evidence directory being written, so regenerating run-2 after run-1
+saw run-1's fresh output as dirt and stamped itself `-dirty` -- the stamp stopped
+distinguishing "the code was uncommitted" from "the evidence was just regenerated",
+which is the only thing it exists to say. The whole `evidence/` tree is now excluded
+(`run.evidence_excludes`, used by `run.py`, `second_experiment.py` and `replay.py`);
+uncommitted edits to any producing source still stamp `-dirty`. The owner may prefer
+the opposite reading -- a regenerated-but-uncommitted evidence tree is also a state no
+commit describes -- in which case the fix is to delete `evidence_excludes` and accept a
+permanent `-dirty`. Bites: `experiments/grouped-ablation/run.py:229-257`,
+`second_experiment.py:184,278`, `replay.py:151`, every `evidence/*/commit.txt`.
+
+### {?} VerificationOracleStamp
+The retained-record oracle compares everything except `retained.commit`.
+Status: provisional, decided by me 2026-09-09. `replay.ensure_retained_record` now
+rebuilds the Day 1 record into a temp directory and compares it against the committed
+`evidence/run-1/retained.json` instead of overwriting it. The comparison blanks
+`retained.commit` on both sides (`replay.unstamped`), because that field is a fact
+about the working tree at the moment of retaining and would otherwise turn the oracle
+into a test of whether anyone has committed since. The stamp is checked separately, on
+its shape and on git knowing the sha. An owner who wants the stamp inside the oracle
+would have to accept that the record must be regenerated after every commit. Bites:
+`experiments/grouped-ablation/replay.py:171-235`, `test_replay.py`.
+
+### {?} InputPartsChangedScope
+`input_parts_changed` counts an input Part that one run reads and the other does not.
+Status: provisional, decided by me 2026-09-09. The field is now computed from the two
+retained records' external digests rather than passed as a literal, over the UNION of
+both records' external addresses. run-4 therefore reports both
+`input.ablation.rows` (dropped: it consumes run-1's retained split instead) and
+`scratch.ablation.split` (added), where the old literal named only the addition. The
+owner may prefer the narrower reading -- "the input Parts of THIS run that changed" --
+which would list only the addition and leave the removal to `explain_changes`. Bites:
+`experiments/grouped-ablation/second_experiment.py:220-249`, every
+`evidence/run-*/saved-work.json`.
+
 ## Open, from the plan and the days
 
 ### {?} ExternalInputBoundary

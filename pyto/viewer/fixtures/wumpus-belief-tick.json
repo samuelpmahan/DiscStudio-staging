@@ -1,0 +1,342 @@
+{
+  "note": "Captured by running pyto/reference/lab/wumpus-core/execute.js under node: three executeTick calls on one createPxC board. Durations are wall milliseconds from Date.now() (execute.js:36) and are synthetic fixture timings.",
+  "records": [
+    {
+      "invocationId": "tick-1",
+      "id": "Sense",
+      "consumes": [
+        "px.world.grid",
+        "px.agent.at"
+      ],
+      "produces": [
+        "px.agent.percept"
+      ],
+      "actualConsumes": [
+        "px.world.grid",
+        "px.agent.at"
+      ],
+      "actualProduces": [
+        "px.agent.percept"
+      ],
+      "inputs": [
+        {
+          "address": "px.world.grid",
+          "value": {
+            "width": 4,
+            "height": 4,
+            "pits": [
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "wumpus": [
+              0,
+              2
+            ],
+            "gold": [
+              1,
+              2
+            ]
+          }
+        },
+        {
+          "address": "px.agent.at",
+          "value": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "address": "px.agent.percept",
+          "value": {
+            "breeze": false,
+            "stench": false,
+            "glitter": false
+          }
+        }
+      ],
+      "writes": [
+        {
+          "address": "px.agent.percept",
+          "kind": "new-address"
+        }
+      ],
+      "calculations": [
+        {
+          "address": "fn.wumpus.sense",
+          "input": {
+            "grid": {
+              "width": 4,
+              "height": 4,
+              "pits": [
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  2
+                ]
+              ],
+              "wumpus": [
+                0,
+                2
+              ],
+              "gold": [
+                1,
+                2
+              ]
+            },
+            "at": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "output": {
+            "breeze": false,
+            "stench": false,
+            "glitter": false
+          },
+          "identityScope": "registered-address-only",
+          "limitation": "function bodies, closures, and transitive dependencies are not hashed"
+        }
+      ],
+      "startedAt": 1788932133141,
+      "finishedAt": 1788932133142,
+      "durationMs": 1
+    },
+    {
+      "invocationId": "tick-2",
+      "id": "Believe",
+      "consumes": [
+        "px.agent.percept",
+        "px.agent.at"
+      ],
+      "produces": [
+        "px.agent.belief"
+      ],
+      "actualConsumes": [
+        "px.agent.percept",
+        "px.agent.at"
+      ],
+      "actualProduces": [
+        "px.agent.belief"
+      ],
+      "inputs": [
+        {
+          "address": "px.agent.percept",
+          "value": {
+            "breeze": false,
+            "stench": false,
+            "glitter": false
+          }
+        },
+        {
+          "address": "px.agent.at",
+          "value": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "address": "px.agent.belief",
+          "value": {
+            "at": {
+              "x": 0,
+              "y": 0
+            },
+            "safeNeighbours": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          }
+        }
+      ],
+      "writes": [
+        {
+          "address": "px.agent.belief",
+          "kind": "new-address"
+        }
+      ],
+      "calculations": [
+        {
+          "address": "fn.wumpus.believe",
+          "input": {
+            "percept": {
+              "breeze": false,
+              "stench": false,
+              "glitter": false
+            },
+            "at": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "output": {
+            "at": {
+              "x": 0,
+              "y": 0
+            },
+            "safeNeighbours": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "identityScope": "registered-address-only",
+          "limitation": "function bodies, closures, and transitive dependencies are not hashed"
+        }
+      ],
+      "startedAt": 1788932133142,
+      "finishedAt": 1788932133142,
+      "durationMs": 0
+    },
+    {
+      "invocationId": "tick-3",
+      "id": "Render",
+      "consumes": [
+        "px.agent.belief",
+        "px.world.grid"
+      ],
+      "produces": [
+        "px.agent.map"
+      ],
+      "actualConsumes": [
+        "px.agent.belief",
+        "px.world.grid"
+      ],
+      "actualProduces": [
+        "px.agent.map"
+      ],
+      "inputs": [
+        {
+          "address": "px.agent.belief",
+          "value": {
+            "at": {
+              "x": 0,
+              "y": 0
+            },
+            "safeNeighbours": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "address": "px.world.grid",
+          "value": {
+            "width": 4,
+            "height": 4,
+            "pits": [
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "wumpus": [
+              0,
+              2
+            ],
+            "gold": [
+              1,
+              2
+            ]
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "address": "px.agent.map",
+          "value": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 80 80\" width=\"80\" height=\"80\" role=\"img\" aria-label=\"Wumpus belief grid\"><rect x=\"0\" y=\"0\" width=\"19\" height=\"19\" fill=\"#4fa3ff\"/><rect x=\"20\" y=\"0\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"0\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"0\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"0\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"20\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"0\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"20\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"0\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"20\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/></svg>"
+        }
+      ],
+      "writes": [
+        {
+          "address": "px.agent.map",
+          "kind": "new-address"
+        }
+      ],
+      "calculations": [
+        {
+          "address": "fn.wumpus.render",
+          "input": {
+            "belief": {
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "safeNeighbours": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            },
+            "grid": {
+              "width": 4,
+              "height": 4,
+              "pits": [
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  2
+                ]
+              ],
+              "wumpus": [
+                0,
+                2
+              ],
+              "gold": [
+                1,
+                2
+              ]
+            }
+          },
+          "output": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 80 80\" width=\"80\" height=\"80\" role=\"img\" aria-label=\"Wumpus belief grid\"><rect x=\"0\" y=\"0\" width=\"19\" height=\"19\" fill=\"#4fa3ff\"/><rect x=\"20\" y=\"0\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"0\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"0\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"0\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"20\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"20\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"0\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"20\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"40\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"0\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"20\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"40\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/><rect x=\"60\" y=\"60\" width=\"19\" height=\"19\" fill=\"#233\"/></svg>",
+          "identityScope": "registered-address-only",
+          "limitation": "function bodies, closures, and transitive dependencies are not hashed"
+        }
+      ],
+      "startedAt": 1788932133142,
+      "finishedAt": 1788932133143,
+      "durationMs": 1
+    }
+  ]
+}

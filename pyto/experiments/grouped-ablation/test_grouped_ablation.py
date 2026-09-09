@@ -352,13 +352,22 @@ class CommitShaDirtyMarker(unittest.TestCase):
 
 
 def _snapshot(directory: str) -> dict[str, bytes]:
-    """name -> bytes for every file in directory ({} when it does not exist)."""
+    """relative path -> bytes for every file under directory ({} when it does not exist).
+
+    Walks subdirectories: Day 3 writes evidence/run-1/ticks/*.png beside the run's
+    files (materialize_run.py), and a flat os.listdir would raise IsADirectoryError on
+    it. Recursing keeps the assertion this feeds -- run.py leaves the tracked run-1
+    untouched -- covering the sheets too rather than skipping them.
+    """
     if not os.path.isdir(directory):
         return {}
     out = {}
-    for name in sorted(os.listdir(directory)):
-        with open(os.path.join(directory, name), "rb") as fh:
-            out[name] = fh.read()
+    for root, dirnames, filenames in os.walk(directory):
+        dirnames.sort()
+        for name in sorted(filenames):
+            path = os.path.join(root, name)
+            with open(path, "rb") as fh:
+                out[os.path.relpath(path, directory)] = fh.read()
     return out
 
 

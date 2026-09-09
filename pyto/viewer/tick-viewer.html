@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tick viewer — pyto-run-record@1</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f7f8f7;
+  --panel: #ffffff;
+  --ink: #14181b;
+  --muted: #5b6670;
+  --line: #d9dee2;
+  --accent: #0b6e4f;
+  --hit: #0b6e4f;
+  --hit-bg: #dff3e9;
+  --computed: #7a4a00;
+  --computed-bg: #fdefd8;
+  --warn: #9a2020;
+  --warn-bg: #fbe4e4;
+  --code: #f1f3f4;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1114;
+    --panel: #151b20;
+    --ink: #e6edf1;
+    --muted: #93a1ad;
+    --line: #27313a;
+    --accent: #4fd7a0;
+    --hit: #4fd7a0;
+    --hit-bg: #10281f;
+    --computed: #f0b862;
+    --computed-bg: #2b2113;
+    --warn: #ff9b9b;
+    --warn-bg: #331a1a;
+    --code: #0f1519;
+  }
+}
+* { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: hidden; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body[data-drop="over"] { outline: 3px dashed var(--accent); outline-offset: -8px; }
+code, pre, .addr, .digest, .impl, .inv-id, .inv-call {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+.shell { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.toolbar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  padding: 12px 16px; background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.toolbar h1 { font-size: 15px; margin: 0 8px 0 0; letter-spacing: .02em; }
+.toolbar label { font-size: 12px; color: var(--muted); }
+.toolbar input[type=search] {
+  flex: 1 1 220px; min-width: 160px; padding: 6px 8px;
+  border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--ink); font: inherit;
+}
+.toolbar input[type=file] { font: inherit; color: var(--muted); max-width: 100%; }
+.status { padding: 8px 16px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--line); }
+.status.error { color: var(--warn); background: var(--warn-bg); }
+.hint { color: var(--muted); font-size: 12.5px; margin: 12px 0 0; }
+.hint code { background: var(--code); padding: 1px 4px; border-radius: 4px; }
+
+.record-head { padding: 4px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.record-head h1 { font-size: 22px; margin: 8px 0 2px; }
+.record-head .source { margin: 0; color: var(--muted); font-size: 12.5px; }
+.record-head .filtered { margin: 8px 0 0; color: var(--accent); font-size: 12.5px; }
+.counters { list-style: none; display: flex; flex-wrap: wrap; gap: 18px; padding: 0; margin: 12px 0 0; }
+.counters li { display: flex; flex-direction: column; }
+.counters .n { font-size: 18px; font-weight: 600; }
+.counters .k { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+
+.tick { margin: 0 0 22px; }
+.tick-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+.tick-head h2 { font-size: 16px; margin: 0; display: flex; align-items: baseline; gap: 8px; }
+.tick-index {
+  display: inline-block; min-width: 22px; text-align: center;
+  background: var(--accent); color: var(--panel); border-radius: 5px;
+  font-size: 12px; padding: 1px 5px;
+}
+.tick-meta { margin: 0; color: var(--muted); font-size: 12.5px; }
+
+.inv { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin: 10px 0; padding: 10px 12px; }
+.inv-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.inv-id { font-weight: 600; }
+.inv-call { color: var(--accent); word-break: break-all; }
+.impl, .dur { color: var(--muted); font-size: 12px; }
+.pill { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-radius: 999px; padding: 2px 8px; }
+.pill.hit { color: var(--hit); background: var(--hit-bg); }
+.pill.computed { color: var(--computed); background: var(--computed-bg); }
+
+.inv-meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; margin: 8px 0; font-size: 12.5px; }
+.inv-meta dt { color: var(--muted); }
+.inv-meta dd { margin: 0; word-break: break-all; }
+
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { text-align: left; padding: 3px 8px 3px 0; vertical-align: top; word-break: break-word; }
+th { color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+tr.diverges td { background: var(--warn-bg); color: var(--warn); }
+tr.diverges .flag { font-weight: 600; }
+tr.resultref .addr { color: var(--muted); }
+.reads, .writes { margin: 8px 0; }
+.none { color: var(--muted); font-size: 12.5px; margin: 4px 0; }
+.write-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3px; }
+.write-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 12.5px; }
+.kind { font-size: 11px; border-radius: 4px; padding: 1px 6px; background: var(--code); color: var(--muted); }
+.kind-new-address { color: var(--hit); background: var(--hit-bg); }
+.kind-replacement { color: var(--warn); background: var(--warn-bg); }
+.kind-refinement { color: var(--computed); background: var(--computed-bg); }
+
+details { margin: 8px 0; }
+summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
+pre { background: var(--code); border-radius: 6px; padding: 8px 10px; margin: 6px 0 0; overflow-x: auto; max-height: 340px; font-size: 12px; }
+.value .note { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+.value .note.omitted { background: var(--code); border-radius: 6px; padding: 8px 10px; }
+figure.material { margin: 8px 0 0; }
+figure.material img { max-width: 100%; height: auto; background: #ffffff; border: 1px solid var(--line); border-radius: 6px; display: block; }
+figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top: 4px; }
+
+.parts { margin-top: 28px; }
+.parts h2 { font-size: 16px; border-bottom: 2px solid var(--line); padding-bottom: 6px; }
+.scroll { overflow-x: auto; }
+.part-table tr.preexisting .addr { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <h1>Tick viewer</h1>
+  <label for="file">record</label>
+  <input id="file" type="file" accept=".json,application/json">
+  <label for="filter">filter</label>
+  <input id="filter" type="search" placeholder="address substring, or scratch.ablation.* for a prefix">
+</div>
+<p id="status" class="status">Loading…</p>
+<div class="shell">
+  <div id="output"></div>
+  <p class="hint">
+    Loads a <code>pyto-run-record@1</code> document (see <code>RECORD.md</code>): pick a file, drop one
+    on the page, pass <code>?src=fixtures/pyto-grouped-ablation.json</code> when served over http,
+    or embed one with <code>node embed.mjs record.json &gt; page.html</code>. Raw
+    <code>{pql, receipt}</code>, <code>{receipts}</code> and <code>{records}</code> documents from the
+    DiscStudio, ChessLab and Wumpus runtimes are converted by <code>adapters.js</code> on load.
+  </p>
+</div>
+<script type="application/json" id="record"></script>
+<script type="module">
+  import { mount } from './tick-viewer.js';
+  mount(document);
+</script>
+</body>
+</html>

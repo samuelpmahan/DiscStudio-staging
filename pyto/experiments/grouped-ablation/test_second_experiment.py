@@ -6,11 +6,19 @@ sys.path (docs: experiments/CAPTURE.md, "sys.path: what is logged and what is
 forbidden"): this file makes one intra-repo insert, logged to stderr, and
 `test_sys_path_insert_is_intra_repo` asserts it is inside this repository.
 Nothing here reaches outside the repository and nothing sets PYTHONPATH.
+
+**Nothing here writes under evidence/** (fixer round 3, finding 1): every run this
+file regenerates goes into a temp directory, and the committed evidence is read as
+an oracle. `EvidenceIsNeverRewritten` asserts that directly, and
+`test_replay.py::CheckAllLeavesTheTreeClean` asserts it for this module and
+test_replay.py together by running both in a child interpreter and reading
+`git status --porcelain`.
 """
 
 from __future__ import annotations
 
 import contextlib
+import copy
 import io
 import json
 import os
@@ -35,12 +43,27 @@ import second_experiment as se  # noqa: E402
 from calculations import REGISTRY  # noqa: E402
 
 RUN_1 = os.path.join(EVIDENCE, "run-1")
+COMMITTED_RUNS = ("run-1", "run-2-regroup", "run-3-reinput", "run-4-from-retained")
 FORBIDDEN_TOKENS = ("lambda", "<function")
 
 # Fields that are expected to differ across two regenerations of the same run:
 # wall-clock timing only (kill criteria, Day 2: "regenerating each run is
 # deterministic except timings"). Everything else must be byte-identical.
 TIMING_ONLY_FILES = {"receipts.json", "timings.json"}
+
+# The two wall-clock fields of pyto.pcr.Receipt (src/pyto/pcr.py:119-120). Everything
+# else a Receipt carries -- the frozen calculation, the declared/actual Part sets, the
+# writes, result_sha256, the effective arg keys, the shadowed inputs -- is a statement
+# about the program and its values, so it must reproduce exactly (finding 5).
+RECEIPT_TIMING_KEYS = ("started_ms", "duration_ms")
+
+
+def receipts_without_timings(payload: dict) -> dict:
+    """`receipts.json` with the two wall-clock fields dropped from every receipt."""
+    return {
+        invocation_id: {k: v for k, v in receipt.items() if k not in RECEIPT_TIMING_KEYS}
+        for invocation_id, receipt in payload.items()
+    }
 
 
 def _run_into(main, out_dir: str, force: bool = True) -> int:
@@ -218,12 +241,93 @@ class SavedWorkFields(ThreeRunsGenerated):
         self.assertEqual(payload["skip_reason"], "unchanged_upstream")
 
     def test_from_retained_saved_work(self):
+        # run-4 both drops an input Part (rows: it consumes run-1's retained split
+        # instead) and adds one (the split itself). Both halves of that boundary move
+        # are reported, because both are differences between the two records'
+        # external maps (second_experiment.input_parts_changed).
+        self._check(self.from_retained, ["input.ablation.rows", "scratch.ablation.split"])
         payload = _load(self.from_retained, "saved-work.json")
-        self.assertEqual(payload["input_parts_changed"], ["scratch.ablation.split"])
         self.assertEqual(payload["invocations_skippable_by_digest"], ["split"])
         self.assertEqual(payload["skip_reason"], "removed")
         self.assertGreater(payload["ms_saved"], 0)
         self.assertEqual(payload["ms_saved_by_invocation"]["split"], self.receipts_1["split"]["duration_ms"])
+
+
+class InputPartsChangedIsComputed(ThreeRunsGenerated):
+    """Finding 4: `input_parts_changed` is derived from the records, never asserted.
+
+    Each of the three scripts used to hand `second_experiment.saved_work` a literal
+    list naming what its author believed the run had changed. The field therefore
+    agreed with the script's intent by construction: a script that changed a
+    DIFFERENT input Part, or none at all, would have published the same sentence.
+    It is now computed from the two retained records' external digests, and
+    `saved_work` no longer accepts it as a parameter at all -- which is what makes
+    "never passed as a literal" checkable rather than a convention.
+    """
+
+    def test_saved_work_has_no_input_parts_changed_parameter(self):
+        """Kills: re-adding the parameter. A keyword nobody may pass cannot be a literal."""
+        import inspect
+
+        parameters = inspect.signature(se.saved_work).parameters
+        self.assertNotIn("input_parts_changed", parameters)
+        for name in ("record_prior", "record_this"):
+            self.assertIn(name, parameters)
+
+    def test_no_run_script_names_the_field(self):
+        for name in ("run_regrouped.py", "run_reinput.py", "run_from_retained.py"):
+            with self.subTest(script=name):
+                with open(os.path.join(HERE, name), encoding="utf-8") as handle:
+                    self.assertNotIn("input_parts_changed", handle.read())
+
+    def test_each_run_reports_exactly_what_the_two_records_disagree_on(self):
+        for out, prior in (
+            (self.regroup, self.record_1),
+            (self.reinput, self.record_1),
+            (self.from_retained, self.record_1),
+        ):
+            with self.subTest(out=os.path.basename(out)):
+                record = _load(out, "retained.json")
+                self.assertEqual(
+                    _load(out, "saved-work.json")["input_parts_changed"],
+                    se.input_parts_changed(prior, record),
+                )
+
+    def test_external_digests_are_the_same_measurement_as_the_records_results(self):
+        """The digest an external carries is `retain.digest_of` over canonical JSON,
+        the same function that produced `record['results']` -- not a separate notion."""
+        digests = se.external_digests(self.record_1)
+        self.assertEqual(sorted(digests), sorted(self.record_1["external"]))
+        for address, value in self.record_1["external"].items():
+            self.assertEqual(digests[address], run_regrouped.retain.digest_of(value))
+
+    def test_an_unchanged_input_part_is_not_listed(self):
+        """A record compared with itself changes nothing."""
+        self.assertEqual(se.input_parts_changed(self.record_1, self.record_1), [])
+
+    def test_a_changed_value_at_an_unchanged_address_is_detected(self):
+        """Kills: comparing address SETS instead of digests. Both records here declare
+        exactly the same two external addresses; only one value moved."""
+        forged = copy.deepcopy(self.record_1)
+        forged["external"]["input.ablation.rows"][0][1] += 1.0
+        self.assertEqual(
+            sorted(forged["external"]), sorted(self.record_1["external"])
+        )
+        self.assertEqual(
+            se.input_parts_changed(self.record_1, forged), ["input.ablation.rows"]
+        )
+
+    def test_a_sidecar_external_is_compared_by_its_recorded_digest(self):
+        """A value JSON cannot inline is referenced as {"digest", "ref"}; the digest is
+        the comparison, so a sidecar whose bytes changed is a changed input Part and a
+        sidecar merely renamed is not."""
+        left = copy.deepcopy(self.record_1)
+        right = copy.deepcopy(self.record_1)
+        left["external"]["input.ablation.rows"] = {"digest": "a" * 64, "ref": "left.json"}
+        right["external"]["input.ablation.rows"] = {"digest": "a" * 64, "ref": "right.json"}
+        self.assertEqual(se.input_parts_changed(left, right), [])
+        right["external"]["input.ablation.rows"] = {"digest": "b" * 64, "ref": "right.json"}
+        self.assertEqual(se.input_parts_changed(left, right), ["input.ablation.rows"])
 
 
 class NoLambdaOrCode(ThreeRunsGenerated):
@@ -355,6 +459,177 @@ class CommittedEvidenceResolvesToCommittedRunOne(unittest.TestCase):
         for name in ("run-2-regroup", "run-3-reinput", "run-4-from-retained"):
             with self.subTest(run=name):
                 self.assertEqual(_load(self._committed(name), "saved-work.json")["prior_run"], "run-1")
+
+
+class RetainedDigestsEqualReceiptDigests(unittest.TestCase):
+    """Finding 6, on the COMMITTED evidence: `retained.json`'s `results[id]` equals
+    `receipts.json`'s `result_sha256[id]`, for every id of every run.
+
+    They are the same measurement of one object taken at two moments (documented at
+    `retain.retain_run`): `pcr.py:334-336` publishes the value a Calculation returned
+    into `run.results[id]` -- and into the PxC, when there is an `into` -- as the very
+    same object, with no copy; `pyto.pcr._result_sha256` digests it at the instant the
+    invocation returns, and `retain.digest_of` digests the same alias once the run has
+    finished. Both are sha256 over `json.dumps(value, sort_keys=True,
+    separators=(",", ":"))` with no `default=`.
+
+    So an inequality here is not a formatting difference to reconcile: it means
+    something mutated the object between the two moments. Nothing in this registry
+    does, and this test is what would say so if something started.
+    """
+
+    def test_every_committed_run_agrees_id_by_id(self):
+        for name in COMMITTED_RUNS:
+            with self.subTest(run=name):
+                out = os.path.join(EVIDENCE, name)
+                record = _load(out, "retained.json")
+                receipts = _load(out, "receipts.json")
+                self.assertEqual(sorted(record["results"]), sorted(receipts))
+                for invocation_id, digest in record["results"].items():
+                    self.assertEqual(
+                        digest,
+                        receipts[invocation_id]["result_sha256"],
+                        f"{name}/{invocation_id}: retained.json's digest and "
+                        f"receipts.json's result_sha256 describe the same object at two "
+                        f"moments; regenerate the run if this is an intended change",
+                    )
+
+    def test_the_run_ids_are_the_programs_invocation_ids(self):
+        """Neither file may quietly cover a different set of invocations than the program."""
+        for name in COMMITTED_RUNS:
+            with self.subTest(run=name):
+                out = os.path.join(EVIDENCE, name)
+                record = _load(out, "retained.json")
+                ids = sorted(
+                    entry["id"]
+                    for tick in record["program"]["ticks"]
+                    for entry in tick["calculations"]
+                )
+                self.assertEqual(sorted(record["results"]), ids)
+                self.assertEqual(sorted(_load(out, "receipts.json")), ids)
+
+    def test_the_aliasing_is_documented_where_the_digest_is_taken(self):
+        """The claim above must live in the code, not only in a test name."""
+        doc = run_regrouped.retain.retain_run.__doc__
+        self.assertIn("same measurement of one object taken at two moments", doc)
+        self.assertIn("result_sha256", doc)
+
+    def test_run_4_has_no_split_in_either_file(self):
+        """The one run whose invocation set differs: split is an external Part there,
+        so it is absent from both the digests and the receipts rather than zeroed."""
+        out = os.path.join(EVIDENCE, "run-4-from-retained")
+        self.assertNotIn("split", _load(out, "retained.json")["results"])
+        self.assertNotIn("split", _load(out, "receipts.json"))
+
+
+class ReceiptsDeterminism(unittest.TestCase):
+    """Finding 5: receipts.json is deterministic apart from its two wall-clock fields.
+
+    `Determinism` below already asserts that receipts.json TEXT differs across two
+    regenerations -- but text-differs is satisfied by a single changed millisecond and
+    says nothing about the rest of the receipt. This parses both files, drops
+    `started_ms` and `duration_ms` from every receipt, and requires the remainder --
+    the frozen calculation and its implementation digest, declared/actual consumes and
+    produces, writes, result_sha256, effective arg keys, shadowed inputs -- to be
+    equal, while requiring the timings themselves to differ so the comparison is not
+    trivially satisfied by a frozen clock.
+    """
+
+    def _two_regenerations(self, main, run_label: str) -> tuple[dict, dict]:
+        parent = tempfile.mkdtemp(prefix="receipts-determinism-")
+        self.addCleanup(shutil.rmtree, parent, ignore_errors=True)
+        a = os.path.join(parent, "a", run_label)
+        b = os.path.join(parent, "b", run_label)
+        self.assertEqual(_run_into(main, a), 0)
+        self.assertEqual(_run_into(main, b), 0)
+        return _load(a, "receipts.json"), _load(b, "receipts.json")
+
+    def _check(self, main, run_label: str):
+        first, second = self._two_regenerations(main, run_label)
+        self.assertEqual(sorted(first), sorted(second))
+        self.assertEqual(
+            receipts_without_timings(first),
+            receipts_without_timings(second),
+            f"{run_label}: receipts.json differs across two regenerations in a field "
+            f"that is not a timing",
+        )
+        differing = [
+            invocation_id
+            for invocation_id in first
+            if any(first[invocation_id][key] != second[invocation_id][key] for key in RECEIPT_TIMING_KEYS)
+        ]
+        self.assertTrue(
+            differing,
+            f"{run_label}: no receipt's started_ms or duration_ms differed across two "
+            f"real runs, so the equality above proves nothing about what was dropped",
+        )
+        # The keys that were dropped are exactly the two named, and both really are
+        # present on every receipt (a renamed field would silently stop being dropped).
+        for invocation_id, receipt in first.items():
+            for key in RECEIPT_TIMING_KEYS:
+                self.assertIn(key, receipt, invocation_id)
+
+    @unittest.skipUnless(os.path.isdir(RUN_1), "evidence/run-1 not generated yet")
+    def test_run_regrouped_receipts_are_deterministic_apart_from_timings(self):
+        self._check(run_regrouped.main, "run-2-regroup")
+
+    @unittest.skipUnless(os.path.isdir(RUN_1), "evidence/run-1 not generated yet")
+    def test_run_reinput_receipts_are_deterministic_apart_from_timings(self):
+        self._check(run_reinput.main, "run-3-reinput")
+
+    @unittest.skipUnless(os.path.isdir(RUN_1), "evidence/run-1 not generated yet")
+    def test_run_from_retained_receipts_are_deterministic_apart_from_timings(self):
+        self._check(run_from_retained.main, "run-4-from-retained")
+
+    @unittest.skipUnless(os.path.isdir(RUN_1), "evidence/run-1 not generated yet")
+    def test_the_committed_receipts_survive_the_same_comparison(self):
+        """A regeneration of run-2 must agree with the COMMITTED run-2 receipts too,
+        modulo timings -- otherwise the committed file is stale and the comparison
+        above only proves two fresh runs agree with each other."""
+        first, _second = self._two_regenerations(run_regrouped.main, "run-2-regroup")
+        committed = _load(os.path.join(EVIDENCE, "run-2-regroup"), "receipts.json")
+        self.assertEqual(
+            receipts_without_timings(first),
+            receipts_without_timings(committed),
+            "evidence/run-2-regroup/receipts.json is stale; regenerate it with "
+            "`python3 run_regrouped.py --out evidence/run-2-regroup --force`",
+        )
+
+
+class EvidenceIsNeverRewritten(unittest.TestCase):
+    """Finding 1, from this module's side: regenerating runs must not touch evidence/.
+
+    `test_replay.py::CheckAllLeavesTheTreeClean` is the end-to-end version (it runs
+    both modules in a child interpreter and reads git status). This is the fast,
+    local one: run all three scripts the way the tests do and require the committed
+    evidence directories to be byte-identical afterwards.
+    """
+
+    @unittest.skipUnless(os.path.isdir(RUN_1), "evidence/run-1 not generated yet")
+    def test_regenerating_all_three_runs_leaves_the_committed_evidence_alone(self):
+        before = {}
+        for name in COMMITTED_RUNS:
+            directory = os.path.join(EVIDENCE, name)
+            for entry in sorted(os.listdir(directory)):
+                path = os.path.join(directory, entry)
+                if os.path.isfile(path):
+                    with open(path, "rb") as handle:
+                        before[f"{name}/{entry}"] = handle.read()
+        tmp = tempfile.mkdtemp(prefix="never-rewritten-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        for main, label in (
+            (run_regrouped.main, "run-2-regroup"),
+            (run_reinput.main, "run-3-reinput"),
+            (run_from_retained.main, "run-4-from-retained"),
+        ):
+            self.assertEqual(_run_into(main, os.path.join(tmp, label)), 0)
+        after = {}
+        for key in before:
+            name, entry = key.split("/", 1)
+            with open(os.path.join(EVIDENCE, name, entry), "rb") as handle:
+                after[key] = handle.read()
+        changed = sorted(key for key in before if before[key] != after[key])
+        self.assertEqual(changed, [], f"regenerating into a temp dir modified {changed}")
 
 
 class Determinism(unittest.TestCase):

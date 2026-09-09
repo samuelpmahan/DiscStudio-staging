@@ -34,19 +34,50 @@ four scripts with `--force`, and this round is explicitly forbidden to `git
 commit`. Gaming it -- narrowing `WATCHED_PATHS`, or excluding the fixer's own
 files -- would remove the very check that makes the stamp worth reading.
 
-**Close it by** (orchestrator, after this round is merged, on a clean tree):
+**Close it by** (orchestrator, on a tree whose only uncommitted change is
+`evidence/`). Round 3 removed the half of this that no amount of care could fix:
+the stamp now excludes the whole `evidence/` tree, not just the one directory being
+written (`run.evidence_excludes`, `run.py:229-257`), so regenerating run-2 after
+run-1 no longer sees run-1's fresh output as dirt. What is left is honest and
+unavoidable: uncommitted edits to producing code -- `run.py`, `retain.py`,
+`replay.py`, `second_experiment.py`, the three `run_*.py`, `program.py`,
+`calculations.py`, `features.py`, anything under `pyto/src` -- still stamp
+`-dirty`, and a round forbidden to `git commit` cannot clear that.
 
-    python3 experiments/grouped-ablation/run.py              --out evidence/run-1              --force
-    python3 experiments/grouped-ablation/run_regrouped.py    --out evidence/run-2-regroup      --force
-    python3 experiments/grouped-ablation/run_reinput.py      --out evidence/run-3-reinput      --force
+    python3 experiments/grouped-ablation/run.py               --out evidence/run-1               --force
+    python3 experiments/grouped-ablation/run_regrouped.py     --out evidence/run-2-regroup       --force
+    python3 experiments/grouped-ablation/run_reinput.py       --out evidence/run-3-reinput       --force
     python3 experiments/grouped-ablation/run_from_retained.py --out evidence/run-4-from-retained --force
-    python3 experiments/grouped-ablation/replay.py
+    python3 experiments/grouped-ablation/replay.py --force
 
-then confirm every `evidence/*/commit.txt` is 40 hex characters with no suffix.
-Only `commit.txt`, `timings.json`, `receipts.json` and each `retained.json`'s
-`retained.commit` field should change (the last three are wall-clock or the sha
-itself); a change anywhere else means the regeneration was not a no-op and must be
+`replay.py` now takes `--force` and refuses to write over its own committed
+artifacts without it (`replay.OWNED_EVIDENCE`, `replay.py:1194-1252`), the way the
+run scripts always have; it also regenerates the refusal logs under
+`evidence/replay/refusals/` and the two `evidence/tamper/mutating-baseline-*`
+files, which used to exist only because a test wrote them.
+
+Run in that order (run-1 first: runs 2-4 quote its `receipts.json` durations). Then
+confirm every `evidence/*/commit.txt` is 40 hex characters with no suffix. If any
+still carries `-dirty`, run
+
+    python3 -c "import sys; sys.path.insert(0, 'experiments/grouped-ablation'); import run; print(run.dirty_paths(exclude=run.evidence_excludes()))"
+
+which prints exactly the non-evidence paths responsible.
+
+**What may change, exhaustively.** Everything below is wall-clock or the sha
+itself; a change anywhere else means the regeneration was not a no-op and must be
 explained before the day closes.
+
+| file | fields that may differ |
+| --- | --- |
+| `evidence/*/commit.txt` | the whole file (HEAD, plus `-dirty`) |
+| `evidence/*/retained.json` | `retained.commit` only |
+| `evidence/*/timings.json` | `timings[*].wall_ms` |
+| `evidence/*/receipts.json` | `started_ms` and `duration_ms` of each receipt, and nothing else (`test_second_experiment.py::ReceiptsDeterminism` parses both, drops exactly these two keys and requires the remainder equal) |
+| `evidence/run-1/saved-work.json` | `wall_ms` (its three `make_data`/`build_program`/`pcr.run` entries) and `wall_ms_total` -- Day 1's ledger carries wall clock, unlike runs 2-4's |
+| `evidence/run-{2,3,4}*/saved-work.json` | `ms_saved` and `ms_saved_by_invocation`, which are run-1 receipt durations read back |
+| `evidence/run-{2,3,4}*/interpretation.md` | the one `ms saved (...)` line, which quotes that number |
+| `evidence/replay/*.log` | the `record:`/`cwd (outside repo):` paths and the per-source `sha256` rows; `replay.oracle_lines` names the lines that must NOT move |
 
 ## 2. Nothing here needs a second library change
 
@@ -197,3 +228,76 @@ pyto/src/` is empty. The day's one library seam remains the receipts seam in
 above is the only place where a library-shaped change was *considered* (a
 per-function provider digest), and it is a change to the experiment-local
 `retain.py` record shape, not to `pyto/src/`.
+
+---
+
+## Round 3
+
+Eight required fixes; what this round could not close, and who can.
+
+## 1. `commit.txt` still carries `-dirty`, but for one reason instead of two
+
+Round 3 took the fix finding 7 named: the `-dirty` judgement now excludes the whole
+`evidence/` tree (`run.evidence_excludes`, `run.py:229-257`, used by `run.py:296`,
+`second_experiment.py:184` and `:278`, and `replay.py:151`). Outputs are not code,
+so a regeneration no longer marks the next run dirty on account of the previous
+one's files. All four runs were regenerated in that order, plus every artifact
+`replay.py --force` owns.
+
+**What remains.** `git rev-parse HEAD` plus `-dirty` is still what the four
+`commit.txt` files carry, because this round's own edits to `test_replay.py` and
+`test_second_experiment.py` are uncommitted and this round is forbidden to `git
+commit` -- and, at the time of writing, `pyto/src/pyto/materialize.py`,
+`pyto/tests/test_materialize.py`, `pyto/viewer/adapters.js` and
+`pyto/viewer/fixtures/` (a concurrent Day 3 line of work in the same tree) are
+untracked under `WATCHED_PATHS` as well. That is the stamp working: the evidence
+really was produced by code that is in no commit. The close-it recipe in round 1
+item 1 above is unchanged and now sufficient -- run it once those files land.
+
+`{?} EvidenceDirtiness` in `pyto/questions.md` records the decision the owner may
+disagree with: an owner who wants a regenerated-but-uncommitted evidence tree to
+read as dirt should delete `evidence_excludes` and accept a permanent `-dirty`.
+
+## 2. Provider identity is still module-granular (round 2 item 1(a), unchanged)
+
+Round 3 did not take the per-function provider digest either, for the reason round 2
+gave: it changes the `provider.registry` shape in all four retained records and in
+the child's `calculations_source_matches_record` check. It remains a lane-B/lane-D
+re-cut. The forgery it would close is still caught -- by the result digests, now
+also by the receipt digests -- and `test_replay.py::ProviderIdentityIsModuleGranular`
+still proves both halves.
+
+## 3. Stale `pcr.py:<line>` citations outside the permitted file set (round 2 item 2, unchanged)
+
+`tests/test_semantics.py`, `tests/test_first_class.py`, `experiments/CAPTURE.md`,
+`experiments/s3-synthetic/` and `experiments/runs/day1/` still carry the citations
+round 2 tabulated. Round 3 edited none of those files and the table above is still
+the correction list.
+
+## 4. `program.py`'s two stale citations still cannot be corrected (round 2 item 3, unchanged)
+
+`program.py:4` and `program.py:37` cite `pcr.py:99-133` and `pcr.py:112-116`; the
+correct targets are `pcr.py:247-282` and `pcr.py:261-265`. Editing them breaks the
+day's own kill criterion (`program_lines_changed == 0` against `d9dded6`), which
+`test_second_experiment.py::NoReconstruction` enforces. Day 3 or later.
+
+## 5. Round 3 needed no library change
+
+`pyto/src/` is untouched by this round: the receipts seam in `pcr.py` is read
+(through `PCR.run(pxc, observe=True)`, now also from the replay child) and never
+edited, and `json.dumps([asdict(t) for t in run.ticks])` is unchanged because
+`pcr.py` is unchanged --
+`test_replay.py::ReplayObserveSeam::test_testimony_bytes_are_identical_with_observe_on_and_off`
+asserts that through the replay path as well.
+
+## 6. `CheckAllLeavesTheTreeClean` is sensitive to a concurrent writer
+
+`test_replay.py::CheckAllLeavesTheTreeClean` runs the two evidence-writing suites in
+a child interpreter and compares `git status --porcelain` for `evidence/` before and
+after. That is exactly the property finding 1 asks for, and in a tree with one writer
+it is exact. In a tree where another process is writing under `evidence/` at the same
+time -- which happened once during this round, when a concurrent Day 3 session wrote
+`evidence/run-1/record.json` and `evidence/run-1/ticks/` mid-run -- it reports that
+foreign write as a failure. The test cannot tell the two apart, and making it ignore
+untracked additions would blind it to the very thing it guards. Left as is; a
+re-run on a settled tree passes.

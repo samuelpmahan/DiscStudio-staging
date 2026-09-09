@@ -1,0 +1,635 @@
+{
+  "counters": {
+    "computed": 9,
+    "hits": 2,
+    "invocations": 11,
+    "wall_ms": 12.969
+  },
+  "parts": {
+    "input.ablation.groups": {
+      "preexisting": true,
+      "read_by": [
+        "select"
+      ],
+      "written_by": null
+    },
+    "input.ablation.rows": {
+      "preexisting": true,
+      "read_by": [
+        "split"
+      ],
+      "written_by": null
+    },
+    "scratch.ablation.comparison": {
+      "preexisting": false,
+      "read_by": [
+        "sheet",
+        "retain"
+      ],
+      "written_by": "compare"
+    },
+    "scratch.ablation.model.all": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "fit.all"
+    },
+    "scratch.ablation.model.drop_g3": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "fit.drop_g3"
+    },
+    "scratch.ablation.retained": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "retain"
+    },
+    "scratch.ablation.score.all": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "score.all"
+    },
+    "scratch.ablation.score.drop_g3": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "score.drop_g3"
+    },
+    "scratch.ablation.sheet": {
+      "preexisting": false,
+      "read_by": [
+        "retain"
+      ],
+      "written_by": "sheet"
+    },
+    "scratch.ablation.snapshot": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "snapshot"
+    },
+    "scratch.ablation.split": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "split"
+    },
+    "scratch.ablation.table": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "table"
+    },
+    "scratch.ablation.variants": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "select"
+    }
+  },
+  "pcr": "ablation.grouped",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": "a08b082dca8f5af2cf38821fecd6a7f375cb3d63-dirty",
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "input.ablation.groups"
+          ],
+          "actual_produces": [
+            "scratch.ablation.variants"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.selectVariants",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "b0e6efd714f28d4a5c0547114f82e264d1621b92223464aab713a119ec10d5d3"
+          },
+          "declared_consumes": [
+            "px:input.ablation.groups"
+          ],
+          "duration_ms": 0.023,
+          "hit": true,
+          "id": "select",
+          "inputs": {
+            "groups": "px:input.ablation.groups"
+          },
+          "into": "scratch.ablation.variants",
+          "result_sha256": "543f82368703f91864818dd4f57614824feb4e4407f41feac7d43d6e8e07c1f7",
+          "value": {
+            "data": [
+              {
+                "policy": "leave-one-group-out",
+                "variant": "all"
+              },
+              {
+                "policy": "leave-one-group-out",
+                "variant": "drop_g0"
+              },
+              {
+                "policy": "leave-one-group-out",
+                "variant": "drop_g3"
+              }
+            ],
+            "kind": "json",
+            "note": "array truncated: showing the first 3 of 6 entries"
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.variants",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "input.ablation.rows"
+          ],
+          "actual_produces": [
+            "scratch.ablation.split"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.split",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "8674a964aba6e3cf16317f233884204439271c1853c0f945548a4a625e05bc86"
+          },
+          "declared_consumes": [
+            "px:input.ablation.rows"
+          ],
+          "duration_ms": 0.046,
+          "hit": true,
+          "id": "split",
+          "inputs": {
+            "rows": "px:input.ablation.rows"
+          },
+          "into": "scratch.ablation.split",
+          "result_sha256": "a356f9a95abbaa7e0a2677738ff7d80cb2aab9d8cd8f986d46e53eafcd371e38",
+          "value": {
+            "data": {
+              "columns": [
+                "f00",
+                "f01",
+                "f02",
+                "f03",
+                "f04"
+              ],
+              "seed": 7,
+              "test": 100,
+              "train": 300
+            },
+            "kind": "json",
+            "note": "columns truncated to the first 5 of 15 for this fixture"
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.split",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Prepare"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.ablation.model.all"
+          ],
+          "args": {
+            "columns": [
+              "f00",
+              "f01",
+              "f02"
+            ],
+            "variant": "all"
+          },
+          "calculation": {
+            "address": "fn.ablation.fit",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b"
+          },
+          "declared_consumes": [
+            "fn:split"
+          ],
+          "duration_ms": 5.07,
+          "hit": false,
+          "id": "fit.all",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.all",
+          "result_sha256": "339d487ebda662830c0b8c27b407d46dbdec3fcf957a6ea82c4bf5f68932213f",
+          "value": {
+            "data": {
+              "intercept": 0.0134,
+              "variant": "all",
+              "weights": {
+                "f00": 1.9812,
+                "f01": -0.0043,
+                "f02": 0.0071
+              }
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.model.all",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.ablation.score.all"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.score",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0"
+          },
+          "declared_consumes": [
+            "fn:split",
+            "fn:fit.all"
+          ],
+          "duration_ms": 0.177,
+          "hit": false,
+          "id": "score.all",
+          "inputs": {
+            "model": "fn:fit.all",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.all",
+          "result_sha256": "c1b8ad4982170d36c1888fe8085f55d43187d65f1c2dae420ae265f4f1cbfe6d",
+          "value": {
+            "data": {
+              "n": 100,
+              "rmse": 0.3201,
+              "variant": "all"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.score.all",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.ablation.model.drop_g3"
+          ],
+          "args": {
+            "columns": [
+              "f00",
+              "f01",
+              "f02"
+            ],
+            "variant": "drop_g3"
+          },
+          "calculation": {
+            "address": "fn.ablation.fit",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "c3b71febd60efc3563b30eac0a0ccf2cca26c341910008f703b9b058333aa43b"
+          },
+          "declared_consumes": [
+            "fn:split"
+          ],
+          "duration_ms": 3.296,
+          "hit": false,
+          "id": "fit.drop_g3",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_g3",
+          "result_sha256": "d88892fa98ef8972fb44f56e80d932872a00056b807f10a246b1200e6158f902",
+          "value": {
+            "data": {
+              "intercept": 0.0134,
+              "variant": "drop_g3",
+              "weights": {
+                "f00": 1.9812,
+                "f01": -0.0043,
+                "f02": 0.0071
+              }
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.model.drop_g3",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.ablation.score.drop_g3"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.score",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "056432ed0c8a35e4462d6fe2ccdbab98a1aadb637863e405c84c7f79510ce3b0"
+          },
+          "declared_consumes": [
+            "fn:split",
+            "fn:fit.drop_g3"
+          ],
+          "duration_ms": 0.175,
+          "hit": false,
+          "id": "score.drop_g3",
+          "inputs": {
+            "model": "fn:fit.drop_g3",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_g3",
+          "result_sha256": "6399d6b51b92b97c4be369a5cfb7d995f7d4da48f122866de6d323304296156f",
+          "value": {
+            "data": {
+              "n": 100,
+              "rmse": 1.9097,
+              "variant": "drop_g3"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.score.drop_g3",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Fit"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.ablation.comparison"
+          ],
+          "args": {
+            "all": "fn:score.all",
+            "baseline": "all",
+            "drop_g3": "fn:score.drop_g3"
+          },
+          "calculation": {
+            "address": "fn.ablation.compare",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "0f0199f6a96302f175031e0eed60b5d388042107f43c4489e0d8ac9d0e448e9b"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.03,
+          "hit": false,
+          "id": "compare",
+          "inputs": {},
+          "into": "scratch.ablation.comparison",
+          "result_sha256": "664991b13ce937d0308131fd0a58cad1d46da85b3d3ea8470aa0468588123f10",
+          "value": {
+            "data": {
+              "baseline": "all",
+              "n": 400,
+              "ranking": [
+                "drop_g3",
+                "drop_g0",
+                "drop_g1",
+                "drop_g4",
+                "drop_g2"
+              ],
+              "rows": [
+                {
+                  "delta_vs_baseline": 1.5896,
+                  "n": 100,
+                  "rank": 1,
+                  "rmse": 1.9097,
+                  "variant": "drop_g3"
+                },
+                {
+                  "delta_vs_baseline": 1.2267,
+                  "n": 100,
+                  "rank": 2,
+                  "rmse": 1.5468,
+                  "variant": "drop_g0"
+                },
+                {
+                  "delta_vs_baseline": 0.6402,
+                  "n": 100,
+                  "rank": 3,
+                  "rmse": 0.9603,
+                  "variant": "drop_g1"
+                },
+                {
+                  "delta_vs_baseline": 0,
+                  "n": 100,
+                  "rank": 4,
+                  "rmse": 0.3201,
+                  "variant": "all"
+                },
+                {
+                  "delta_vs_baseline": -0.0007,
+                  "n": 100,
+                  "rank": 5,
+                  "rmse": 0.3194,
+                  "variant": "drop_g4"
+                },
+                {
+                  "delta_vs_baseline": -0.0031,
+                  "n": 100,
+                  "rank": 6,
+                  "rmse": 0.317,
+                  "variant": "drop_g2"
+                }
+              ],
+              "seed": 7
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.comparison",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Compare"
+    },
+    {
+      "index": 3,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "scratch.ablation.comparison"
+          ],
+          "actual_produces": [
+            "scratch.ablation.sheet"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.sheet",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [
+            "px:scratch.ablation.comparison"
+          ],
+          "duration_ms": 1.204,
+          "hit": false,
+          "id": "sheet",
+          "inputs": {
+            "comparison": "px:scratch.ablation.comparison"
+          },
+          "into": "scratch.ablation.sheet",
+          "result_sha256": null,
+          "value": {
+            "data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 96\" width=\"240\" height=\"96\" role=\"img\" aria-label=\"Ranked ablation deltas\"><rect width=\"240\" height=\"96\" fill=\"#0b0f14\"/><rect x=\"8\" y=\"8\" width=\"145\" height=\"12\" fill=\"#39ff88\" opacity=\"1\"/><text x=\"157\" y=\"18\" font-family=\"monospace\" font-size=\"10\" fill=\"#cfe8dd\">drop_g3 +1.5896</text><rect x=\"8\" y=\"25\" width=\"112\" height=\"12\" fill=\"#39ff88\" opacity=\"0.85\"/><text x=\"124\" y=\"35\" font-family=\"monospace\" font-size=\"10\" fill=\"#cfe8dd\">drop_g0 +1.2267</text><rect x=\"8\" y=\"42\" width=\"60\" height=\"12\" fill=\"#39ff88\" opacity=\"0.7\"/><text x=\"72\" y=\"52\" font-family=\"monospace\" font-size=\"10\" fill=\"#cfe8dd\">drop_g1 +0.6402</text><rect x=\"8\" y=\"59\" width=\"2\" height=\"12\" fill=\"#39ff88\" opacity=\"0.55\"/><text x=\"14\" y=\"69\" font-family=\"monospace\" font-size=\"10\" fill=\"#cfe8dd\">all +0</text><rect x=\"8\" y=\"76\" width=\"2\" height=\"12\" fill=\"#39ff88\" opacity=\"0.4\"/><text x=\"14\" y=\"86\" font-family=\"monospace\" font-size=\"10\" fill=\"#cfe8dd\">drop_g4 +-0.0007</text><rect x=\"8\" y=\"93\" width=\"2\" height=\"12\" fill=\"#39ff88\" opacity=\"0.25\"/><text x=\"14\" y=\"103\" font-family=\"monospace\" font-size=\"10\" fill=\"#cfe8dd\">drop_g2 +-0.0031</text></svg>",
+            "kind": "svg",
+            "note": "neon sheet, one bar per ranked variant (pyto/src/pyto/neon.py:32-181)"
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.sheet",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.ablation.snapshot"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.snapshot",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [
+            "fn:sheet"
+          ],
+          "duration_ms": 0.44,
+          "hit": false,
+          "id": "snapshot",
+          "inputs": {
+            "sheet": "fn:sheet"
+          },
+          "into": "scratch.ablation.snapshot",
+          "result_sha256": null,
+          "value": {
+            "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+            "kind": "png-data-url",
+            "note": "1x1 placeholder; a real materializer rasterizes the sheet"
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.snapshot",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Materialize"
+    },
+    {
+      "index": 4,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "scratch.ablation.comparison",
+            "scratch.ablation.sheet"
+          ],
+          "actual_produces": [
+            "scratch.ablation.retained"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.retain",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [
+            "px:scratch.ablation.comparison",
+            "px:scratch.ablation.sheet"
+          ],
+          "duration_ms": 2.318,
+          "hit": false,
+          "id": "retain",
+          "inputs": {
+            "comparison": "px:scratch.ablation.comparison",
+            "sheet": "px:scratch.ablation.sheet"
+          },
+          "into": "scratch.ablation.retained",
+          "result_sha256": "9a1e0c66d3d0b7e0d1d3f8b0c2a4e6f80123456789abcdef0123456789abcdef",
+          "value": {
+            "data": null,
+            "kind": "omitted",
+            "note": "value omitted: 419430 bytes over the 262144-byte cap; digest 9a1e0c66d3d0b7e0d1d3f8b0c2a4e6f80123456789abcdef0123456789abcdef"
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.retained",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Retain"
+    },
+    {
+      "index": 5,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.ablation.table"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.ablation.table",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [
+            "fn:compare"
+          ],
+          "duration_ms": 0.19,
+          "hit": false,
+          "id": "table",
+          "inputs": {
+            "comparison": "fn:compare"
+          },
+          "into": "scratch.ablation.table",
+          "result_sha256": null,
+          "value": {
+            "data": "| variant | rmse | delta |\n|---|---|---|\n| drop_g3 | 1.9097 | +1.5896 |\n| drop_g0 | 1.5468 | +1.2267 |\n| drop_g1 | 0.9603 | +0.6402 |\n| all | 0.3201 | +0 |\n| drop_g4 | 0.3194 | +-0.0007 |\n| drop_g2 | 0.317 | +-0.0031 |",
+            "kind": "text",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.ablation.table",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Text"
+    }
+  ]
+}

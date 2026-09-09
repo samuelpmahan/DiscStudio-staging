@@ -47,14 +47,15 @@
     ]
   },
   "input_parts_changed": [
+    "input.ablation.rows",
     "scratch.ablation.split"
   ],
   "invocations_skippable_by_digest": [
     "split"
   ],
-  "ms_saved": 0.055,
+  "ms_saved": 0.046,
   "ms_saved_by_invocation": {
-    "split": 0.055058000725694
+    "split": 0.04579999949783087
   },
   "prior_run": "run-1",
   "program_lines_changed": {
