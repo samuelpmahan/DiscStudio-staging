@@ -22,7 +22,11 @@ that application's cold-start cost, measured, never configured; DuckDB (5.3 s) a
 of the runtime for that reason. JS is first class, Python is the workshop that replays, compares
 and materializes the same records. Simple stays simple; extra effort earns its place. The demo
 that justifies the week: `px add <address>`, verified in 2.5 seconds by replaying its own shipped
-record in a fresh process. Verification is replay; there is no other kind.
+record in a fresh process. Verification is replay; there is no other kind. Scheduling, when it is needed: the JS event loop
+is already the scheduler, and a Tick boundary is the yield point, the observation point and the
+budget checkpoint at once; Calculations inside a Tick with no dependency between them may run on
+workers with pixels transferred, the placement recorded in receipts so replay stays exact. The
+first version is one `await` between Ticks; nothing more until a Tick is measured too slow.
 
 **Open prompt.** *Addressing.* Each segment must discriminate and the root must connect. The
 branch mining is reading `lab/pxc-root-mounts` and `review/pxc-root-alignment` for what was
