@@ -4,8 +4,34 @@ Intent: Add a fast check that every bullet under BOARD.md's '## Today' starts wi
 Starting point: 1b38f283e1e12d29a6fa73077c14c2d749c3fba8 (land(windows-venv): the scripts find the repository's .venv on their own, so isolated child processes import pyto on Windows too; the D:/ commands make that venv)
 Verify: bash pyto/scripts/check_board_log.sh   # exits 0 iff every non-blank line under '## Today' up to the next '## ' heading in pyto/BOARD.md matches '^- [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} '; a few grep/sed calls, well under a second
 Allow: pyto/scripts/check_board_log.sh
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 1 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- A  pyto/scripts/check_board_log.sh
+
+```
+pyto/scripts/check_board_log.sh | 42 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+```
+
+## Evidence
+
+- verify: `bash pyto/scripts/check_board_log.sh   # exits 0 iff every non-blank line under '## Today' up to the next '## ' heading in pyto/BOARD.md matches '^- [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} '; a few grep/sed calls, well under a second` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         103  OK
+    experiments/grouped-ablation    230  OK
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+    viewer                           83  OK
+    viewer-record-schema             19  OK
+    
+    ALL SUITES PASSED
 
 ## Uncertain
 
