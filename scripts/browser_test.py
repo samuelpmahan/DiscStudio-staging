@@ -1,7 +1,7 @@
 """Browser interaction/export checks. CI uses HTTP and real origin storage.
 --embedded uses a disclosed localStorage test double for restricted local environments.
 """
-import argparse, base64, hashlib, json, os, struct, sys
+import argparse, base64, functools, hashlib, http.server, json, os, socketserver, struct, sys, threading
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,8 +23,9 @@ def assert_world(page,js): assert page.evaluate('()=>'+js),js
 with sync_playwright() as p:
     launch={'headless':True,'args':['--no-sandbox']}
     if a.embedded:
-        # the first Chromium that exists: $CHROMIUM, the Debian path, the Playwright path; else Playwright's default
-        found=next((c for c in (os.environ.get('CHROMIUM'),'/usr/bin/chromium','/opt/pw-browsers/chromium') if c and os.path.exists(c)),None)
+        # the first Chromium that exists: this checkout's bundled Playwright browser,
+        # $CHROMIUM, the Debian path; else Playwright's own default
+        found=next((c for c in ('/opt/pw-browsers/chromium',os.environ.get('CHROMIUM'),'/usr/bin/chromium') if c and os.path.exists(c)),None)
         if found: launch['executable_path']=found
     browser=p.chromium.launch(**launch)
     context=browser.new_context(viewport={'width':1536,'height':960},accept_downloads=True)
@@ -118,6 +119,42 @@ with sync_playwright() as p:
     page.locator('[data-action="throw-record"][data-id="team-luna"]').click()
     assert page.locator('.section-heading .result-status.fail').count()==1
     record('Competition UI records real team throws and changes composed status from pending to pass to fail')
+    # The studio builds the Tick render page from the viewer's own three files, read
+    # over its origin, so this block drives the real app on a real local origin
+    # (Python standard library, no new dependency). The page it produces is then
+    # opened over file:// with no server at all, which is the claim being checked.
+    quiet=type('Quiet',(http.server.SimpleHTTPRequestHandler,),{'log_message':lambda *a,**k:None})
+    server=socketserver.TCPServer(('127.0.0.1',0),functools.partial(quiet,directory=str(ROOT)))
+    threading.Thread(target=server.serve_forever,daemon=True).start()
+    studio=context.new_page();studio.set_default_timeout(10000)
+    studio.on('pageerror',lambda e:errors.append(str(e)))
+    studio.goto(f'http://127.0.0.1:{server.server_address[1]}/',wait_until='load')
+    studio.wait_for_selector('.app-header')
+    route(studio,'course?trace=1')
+    with studio.expect_download() as d: studio.locator('[data-action="record-export"]').click()
+    d.value.save_as(str(out/'run-record.json'));run_record=json.loads((out/'run-record.json').read_text())
+    assert run_record['schema']=='pyto-run-record@1' and run_record['pcr']=='on-the-course'
+    assert run_record['source']['runtime']=='discstudio'
+    pql=studio.evaluate('discStudio.preview.run.composition.Ticks')
+    assert [t['name'] for t in run_record['ticks']]==[t['name'] for t in pql]
+    assert [len(t['invocations']) for t in run_record['ticks']]==[len(t['Calculations']) for t in pql]
+    assert run_record['counters']['invocations']==sum(len(t['invocations']) for t in run_record['ticks'])
+    # Kept as a Part at the reserved `run` second segment; never written into a fact.
+    assert studio.evaluate('discStudio.runtime.pxc.get("px.run.on-the-course")')==run_record
+    assert studio.evaluate('discStudio.runtime.parts().some(p=>p.address==="px.run.on-the-course")')
+    assert not studio.evaluate('discStudio.runtime.parts().some(p=>p.address.startsWith("px.domain.")&&p.value&&p.value.schema)')
+    with studio.expect_download() as d: studio.locator('[data-action="record-render"]').click()
+    d.value.save_as(str(out/'tick-render.html'))
+    assert '<script type="application/json" id="record">' in (out/'tick-render.html').read_text()
+    viewer=context.new_page();viewer.set_default_timeout(10000)
+    viewer.on('pageerror',lambda e:errors.append(str(e)))
+    viewer.goto((out/'tick-render.html').resolve().as_uri())
+    viewer.wait_for_selector('section.tick')
+    assert viewer.locator('section.tick').count()==len(run_record['ticks'])
+    assert viewer.locator('section.tick .tick-name').all_text_contents()==[t['name'] for t in run_record['ticks']]
+    assert viewer.evaluate("performance.getEntriesByType('resource').length")==0,'the standalone page fetched something'
+    server.shutdown();server.server_close()
+    record('Export run record writes a validated pyto-run-record@1 Part and file; its Tick render page opens over file:// with one section per Tick and no requests')
     # Reset screenshot state without erasing the verified export/review artifacts.
     page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:"state-1"})')
     for name in ['shelf','course','components','competition']:
@@ -130,7 +167,7 @@ with sync_playwright() as p:
     record('Four routes render at desktop and mobile widths without horizontal page overflow')
     assert not errors,errors
     record('No browser JavaScript errors')
-    report={'mode':'embedded DOM; memory storage double' if a.embedded else 'HTTP; real origin storage','checks':checks,'count':len(checks),'errors':errors}
+    report={'mode':'embedded DOM; memory storage double; run-record block on a real local origin and file://' if a.embedded else 'HTTP; real origin storage','checks':checks,'count':len(checks),'errors':errors}
     (out/'browser-report.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2),flush=True)
     browser.close()

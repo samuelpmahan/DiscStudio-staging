@@ -49,6 +49,12 @@
     {
       "id": "feedback",
       "text": "Item comments persist and export with checkpoint identity"
+    },
+    {
+      "id": "record",
+      "text": "The composition exports its own pyto-run-record@1 and opens a Tick render",
+      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cExport run record \u2193\u201d, expect a downloaded pyto-run-record@1 the shared validator accepted and the Part px.run.on-the-course (14 Ticks, one invocation per PQL Calculation); press \u201cOpen Tick render \u2197\u201d, expect a saved standalone page that opens over file:// with no server and shows one section per Tick.",
+      "verification": "Verified by npm test (tests/core.test.js: the record validates, one Tick per composition Tick, the receipt's material digests reach it, composePage's page round-trips the record and renders one section per Tick), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose new block drives the studio on a real local origin and opens the saved page over file:// with zero network requests. Deployed build: scripts/build.mjs now copies pyto/viewer/ into dist/ because src/app.js and src/runtime.js import it directly; npm run build confirms dist/pyto/viewer/ exists. The deployed page itself has not been opened in a browser. Automated verification only; no human acceptance is recorded."
     }
   ],
   "dependencies": [],

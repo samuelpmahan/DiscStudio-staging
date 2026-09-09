@@ -2,6 +2,7 @@ import { createExecBoard, pxFn, readPql, invokePql } from './core/exec.js';
 import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materialFor, discoverFields, applyCommand, validateWorld, id } from './domain.js';
 import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
+import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
 import { shelfSheet } from './formats/shelf-sheet.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
@@ -58,6 +59,22 @@ export function createStudioRuntime(initial) {
     const receipt = freeze({ composition, trace, computed: trace.filter(r => !r.reused).length, reused: trace.filter(r => r.reused).length });
     pxc.set(`px.receipt.${name}`, receipt);
     return receipt;
+  }
+  /**
+   * The pyto-run-record@1 view of one recorded execution (pyto/viewer/RECORD.md),
+   * built by the shared adapter (pyto/viewer/adapters.js:508) from the two Parts the
+   * run already wrote -- px.pql.<name> (core/exec.js:66) and px.receipt.<name>
+   * (runtime.js:58) -- and validated by the shared validator before it is kept.
+   * It is kept at the reserved `run` second segment (pyto/BOARD.md:135-136), one
+   * address per composition name, so re-exporting replaces it; domain facts under
+   * px.domain.* are never written here.
+   */
+  function runRecord(name) {
+    const composition = `px.pql.${name}`, receipt = `px.receipt.${name}`, address = `px.run.${name}`;
+    if (!pxc.has(composition) || !pxc.has(receipt)) throw new Error(`No execution named '${name}' has been recorded in this session yet. Render the composition first.`);
+    const record = validate(fromDiscStudioReceipt(pxc.get(composition), pxc.get(receipt)));
+    pxc.set(address, record);
+    return { address, record };
   }
   function dispatch(command) {
     source('px.input.command', { ...command, eventId: id('event'), time: new Date().toISOString() });
@@ -122,7 +139,7 @@ export function createStudioRuntime(initial) {
     return { ...pxc.get('px.competition.validation'), run, part: 'px.competition.validation' };
   }
   return {
-    pxc, world, dispatch, card, scene, constraints, counters,
+    pxc, world, dispatch, card, scene, constraints, counters, runRecord,
     onChange(fn) { listener = fn; },
     replace(next) { publishWorld(freeze(validateWorld(next))); listener(world(), { type: 'draft.import' }, null); },
     parts() { return [...addresses].sort().map(address => ({ address, value: pxc.get(address) })); },

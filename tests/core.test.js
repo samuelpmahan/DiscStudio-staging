@@ -4,6 +4,11 @@ import { createSeed } from '../src/seed.js';
 import { createStudioRuntime } from '../src/runtime.js';
 import { discoverFields, materialFor, currentBattle, clone, validateWorld } from '../src/domain.js';
 import { fieldNode } from '../src/presentation.js';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { validate } from '../pyto/viewer/adapters.js';
+import { renderRecord } from '../pyto/viewer/tick-viewer.js';
+import { buildPage, composePage } from '../pyto/viewer/embed.mjs';
 import { render as painterRender } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 const make = () => createStudioRuntime(createSeed());
 const context = { bagId: 'everyday', competitionId: 'putterwarz', roundId: 'hole-1' };
@@ -144,6 +149,66 @@ test('large authored cards and a twelve-disc row still fit the export frame', ()
   const scene = r.scene(context), b = scene.bounds;
   assert.equal(scene.cardCount, 12);
   assert.ok(b.x >= 0 && b.y >= 0 && b.x + b.width <= 1920 && b.y + b.height <= 1080);
+});
+
+/* ------------------------------------------------------------------ */
+/* the run record and its standalone Tick render page                  */
+/* ------------------------------------------------------------------ */
+
+const RECORD_OPEN = '<script type="application/json" id="record">';
+const viewerSource = name => readFileSync(resolve(import.meta.dirname, '../pyto/viewer', name), 'utf8');
+const pageSources = () => ({ html: viewerSource('tick-viewer.html'), adapters: viewerSource('adapters.js'), viewer: viewerSource('tick-viewer.js') });
+const embeddedRecordOf = page => { const start = page.indexOf(RECORD_OPEN) + RECORD_OPEN.length; return JSON.parse(page.slice(start, page.indexOf('</script>', start))); };
+// The viewer's own DOM shim: plain objects, so the assertions walk its output tree.
+const stubDoc = () => ({ createElement(tagName) { return { tagName: String(tagName).toLowerCase(), className: '', textContent: '', attributes: Object.create(null), children: [], appendChild(child) { this.children.push(child); return child; }, setAttribute(name, value) { this.attributes[name] = String(value); }, getAttribute(name) { return name in this.attributes ? this.attributes[name] : null; } }; } });
+function* walk(node) { yield node; for (const child of node.children) yield* walk(child); }
+const withClass = (root, className) => [...walk(root)].filter(n => String(n.className).split(/\s+/).includes(className));
+const seededScene = () => { const r = make(); r.scene({ mode: 'battle', ...context }); return r; };
+
+// Kills: writing the record under px.domain.<name> (a fact address) instead of the
+// reserved `run` second segment of pyto/BOARD.md:135-136.
+test('a seeded composition exports a validated pyto-run-record@1 kept as a Part outside the facts', () => {
+  const r = seededScene(), { address, record } = r.runRecord('on-the-course');
+  assert.equal(address, 'px.run.on-the-course');
+  assert.equal(validate(record), record);
+  assert.equal(record.schema, 'pyto-run-record@1');
+  assert.equal(record.source.runtime, 'discstudio');
+  const composition = r.pxc.get('px.receipt.on-the-course').composition;
+  assert.equal(record.ticks.length, composition.Ticks.length);
+  assert.deepEqual(record.ticks.map(t => t.name), composition.Ticks.map(t => t.name));
+  assert.deepEqual(record.ticks.map(t => t.invocations.length), composition.Ticks.map(t => t.Calculations.length));
+  const parts = r.parts().map(p => p.address);
+  assert.ok(parts.includes(address), 'the review panel can read it as a Part');
+  assert.deepEqual(parts.filter(a => a.startsWith('px.domain.') && r.pxc.get(a)?.schema), [], 'no run record was written into a domain fact');
+  assert.deepEqual(r.pxc.get('px.domain.Disc.buzzz-mint'), r.world().objects.Disc['buzzz-mint']);
+});
+
+// Kills: building the record from the PQL run alone (passing null for
+// px.receipt.<name>), which silently drops every material digest and reuse flag.
+test('the execution receipt reaches the run record: material digests and reuse are carried', () => {
+  const r = seededScene(), first = r.runRecord('on-the-course').record;
+  const digests = first.ticks.flatMap(t => t.invocations).map(i => i.result_sha256);
+  assert.equal(digests.filter(d => typeof d === 'string' && d.includes(':')).length, digests.length);
+  assert.match(first.ticks[0].invocations[0].result_sha256, /^domain\.fields:/);
+  r.scene({ mode: 'battle', ...context });
+  const again = r.runRecord('on-the-course').record.ticks.flatMap(t => t.invocations);
+  assert.ok(again.every(i => i.hit), 'a repeated render reads only material that already existed');
+  assert.ok(again.some(i => i.value.note === 'reused from the memo ring (runtime.js:17-19)'));
+});
+
+// Kills: composePage dropping the inlined adapters.js from the bundle, which
+// leaves a page whose viewer cannot validate or render the record it carries.
+test('composePage builds the same standalone page as buildPage, one section per Tick', () => {
+  const record = seededScene().runRecord('on-the-course').record;
+  const page = composePage({ ...pageSources(), record });
+  assert.equal(page, buildPage(record), 'the browser and the CLI build the same page from the same builder');
+  assert.deepEqual(embeddedRecordOf(page), JSON.parse(JSON.stringify(record)));
+  assert.equal(page.match(/^\s*(import|export)\s/gm), null, 'no module statement survives inlining');
+  assert.ok(page.includes('function validate') && page.includes('function renderRecord'), 'adapters and viewer are inlined');
+  assert.ok(!/<script[^>]+src=/.test(page) && !/https?:\/\/(?!www\.w3\.org)/.test(page.replace(/xmlns="[^"]*"/g, '')), 'nothing is fetched');
+  const root = renderRecord(embeddedRecordOf(page), { doc: stubDoc() });
+  assert.equal(withClass(root, 'tick').length, record.ticks.length);
+  assert.deepEqual(withClass(root, 'tick').map(s => withClass(s, 'tick-name')[0].textContent), record.ticks.map(t => t.name));
 });
 
 test('a disc without a photo shows painted art inside the generic card, never the Add image placeholder', () => {
