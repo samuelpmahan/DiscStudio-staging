@@ -73,9 +73,6 @@ while IFS= read -r f; do
   [ -n "$f" ] || continue
   in_scope "$f" || fail "dirty file outside allowed paths: $f  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- $f  then land, then git stash pop)"
 done <<< "$DIRTY"
-if [ -z "$ALLOW" ] || ! printf '%s\n' $ALLOW | grep -q '^pyto/src'; then
-  if printf '%s\n' "$DIRTY" | grep -q '^pyto/src/'; then fail "pyto/src is dirty but the package does not allow it"; fi
-fi
 
 # 3. Verify.
 mkdir -p "$WORK"

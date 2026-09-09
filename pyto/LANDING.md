@@ -33,8 +33,10 @@ awaiting their own landing). Over time the unclaimed lists shrink to nothing.
    are in the tree, stop: one writer per directory at a time, and one landing at a time. The
    script never moves anyone's files; it names them and prints the parking command
    (`git stash push -u -m parked -- <paths>`, land, `git stash pop`) for when their writer is done.
-2. **Scope.** Every changed file must be under an allowed path. A file outside stops the landing.
-   `pyto/src` is never allowed unless the package says so by name.
+2. **Scope.** When the package names allowed paths, every file the landing would commit must be
+   under one; a file outside stops it and is named. A package without paths has no scope check.
+   (Astra's packages all name paths, none of which is `pyto/src`; that is how the kernel stays
+   closed to outside teams without a rule of its own.)
 3. **Verify.** Run the package's verifier, then `bash pyto/scripts/check_all.sh`. Both must exit 0.
    Outputs are captured, not summarized.
 4. **Record.** Write the receipt: package, base sha, claimed and unclaimed files with sizes and digests, verifier commands
@@ -67,10 +69,19 @@ dies leaves a stale copy that blocks nobody; when its branch no longer merges, t
 with the conflicting files and nothing changes. Astra's hand-backs (`astra/<team>/<package>`) are
 the same thing from outside. The landing removes the copy and its branch when it succeeds.
 
+## Friction
+
+A check that costs more than it catches gets disabled, so the protocol is built to be cheap on
+the happy path: `land.sh <package> --from wip/<package>` is the whole command for a copy, and
+`land.sh <package>` for edits made in the main tree; `--verify` and `--allow` come from the
+package's brief when there is one. Every refusal names the file and the command that resolves
+it. The only fixed cost is the suite, once per landing.
+
 ## Rules that do not bend
 
 - No `git add -A` without the scope check. No commit with a failing suite. No landing while the
-  tree holds anyone else's work.
+  tree holds anyone else's work. No disabling a check to get past it: if a check is wrong, the fix
+  lands through the protocol like everything else, with the reason in the commit.
 - Checkpoints are labelled `checkpoint:`; landings are labelled `land(...)`. A reader can tell
   them apart from `git log --oneline` alone.
 - The receipt is the record. If the receipt says a verifier ran, its output digest is in the
