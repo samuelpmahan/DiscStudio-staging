@@ -50,9 +50,17 @@ FIRST_LINE="$(printf '%s\n' "$BLOCK" | grep -m1 '^git clone ')"
 [ -n "$FIRST_LINE" ] || { echo "proof.sh: first command is not a git clone: $FIRST_LINE" >&2; exit 1; }
 ORIG_DIR="$(printf '%s' "${FIRST_LINE%%#*}" | awk '{print $NF}')"
 SUBSTITUTED="$(printf '%s\n' "$BLOCK" | sed "s#$ORIG_DIR#$CLONE_DIR#g")"
+# The block's first --out path (the board's fixed hit dir) gets its own dir per run too, so a
+# second proof on one machine never trips over the evidence the first one left.
+OUT_DIR="$(printf '%s
+' "$BLOCK" | grep -o -m1 -- '--out [^ ]*' | awk '{print $2}' || true)"
+HIT_DIR="$CLONE_DIR-hit"
+[ -n "$OUT_DIR" ] && SUBSTITUTED="$(printf '%s
+' "$SUBSTITUTED" | sed "s#$OUT_DIR#$HIT_DIR#g")"
 mapfile -t CMDS < <(printf '%s\n' "$SUBSTITUTED" | sed '/^[[:space:]]*$/d')
 if [ "$SELFTEST" -eq 1 ]; then
   echo "target dir: $CLONE_DIR"
+  [ -n "$OUT_DIR" ] && echo "hit dir: $HIT_DIR"
   printf '%s\n' "${CMDS[@]}"
   [ "${#CMDS[@]}" -ge 4 ] && [[ "${CMDS[0]}" == git\ clone* ]] && exit 0
   exit 1
