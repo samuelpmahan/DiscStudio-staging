@@ -1,8 +1,10 @@
 # Task 3 brief: neat anywhere
 
-For one Codex agent, working alone. Written to be cheap: read only the files named here, run only
-the commands named here, stop when the selftest passes. Expected effort: one to two hours of
-careful editing, a few minutes of machine time.
+For two implementers (Lunas) on disjoint files, one Terra that integrates and runs the selftest,
+and Astra who assigns and reads the hand-back and implements nothing. Written to be cheap: each
+Luna reads only the files named in its lane, runs only the commands named there, and stops when
+its own check passes; the Terra runs the selftest and does at most two repair rounds. Expected
+effort: an hour or two of careful editing in parallel, a few minutes of machine time.
 
 ## What neat is, in five lines
 
@@ -49,6 +51,44 @@ Claude Code or Codex there, only editor agents that can run a shell command).
    path via `cygpath -w` when present, the install check asks python rather than a shell glob).
    Use `command -v python3 || command -v python`, never a bare `python3`.
 
+## The split, so nobody has to talk
+
+The two scripts share one layout rule and one command-line contract. Both are fixed here; each
+Luna implements its side and never edits the other's file.
+
+**Layout rule (both files, same logic, each its own copy):** `ROOT="$(git rev-parse --show-toplevel)"`
+from the script's own directory. If `$ROOT/pyto/pyproject.toml` exists: pyto mode, and every
+path stays exactly what it is today (`pyto/experiments/landings`, `pyto/experiments/tasks`,
+`pyto/BOARD.md`, suite `pyto/scripts/check_all.sh`, the venv and pip install in `neat new`).
+Otherwise: plain mode, `.neat/landings`, `.neat/tasks/<id>`, `.neat/BOARD.md` (created with a
+title and a `## Today` section on first use), no venv, no pip, and the suite is the packet's
+`Verify:` alone (`none` means the landing verifies nothing and the receipt says so). `.neat/` is
+committed, not ignored: it is the record.
+
+**Command-line contract (unchanged):** `land.sh <package> [--from <branch>] [--verify "<cmd>"]
+[--allow "<paths>"] [--base <sha>] [--message "<line>"] [--dry-run]`, exit 0 only on a landing.
+`neat.sh` calls it exactly as today.
+
+**Luna A owns `pyto/scripts/land.sh`:** the layout rule; `LAND_DIR`, the receipt and board paths
+from it; the suite step runs `check_all.sh` only in pyto mode; the board function creates
+`.neat/BOARD.md` when absent; `$PYTHON` resolved as `command -v python3 || command -v python`.
+Check: `bash -n land.sh`, then in a scratch git repo with one committed file and no `pyto/`, a
+dirty edit lands with `--verify true` and writes `.neat/landings/<id>/receipt.json` and a
+`## Today` line in `.neat/BOARD.md`; and in this repository `--dry-run` still names
+`pyto/experiments/landings`.
+
+**Luna B owns `pyto/scripts/neat.sh`:** the layout rule; `TASKS` and `EXP` from it; `neat new`
+skips the venv and pip in plain mode (keep task 1's Windows fixes: `cygpath -w` for pip, the
+install check asks python); `next_id`, `pack`, `show`, `drop`, `land`, `kill`, `undo`, `list` use
+the resolved paths; and the new `selftest` subcommand described above, which copies both scripts
+into the scratch repo it builds. Check: `bash -n neat.sh`, then `neat selftest` against the
+current `land.sh` (it may fail on Luna A's half until the Terra integrates; that is expected).
+
+**Terra:** merge nothing by hand; both Lunas commit to `exp/3`, disjoint files, so git does it.
+Run `bash pyto/scripts/neat.sh selftest`; on failure, read the failing check's line, fix the one
+file it names (or send the line back to that Luna), at most two rounds. Then hand back. Never run
+`pyto/scripts/check_all.sh`; the cloud session runs it once at pack.
+
 ## Verify
 
 ```
@@ -61,7 +101,8 @@ lands this task.
 
 ## Hand back
 
-Commit on this branch (`exp/3`) with messages starting `exp/3:`, push it, and stop. Append one
+Commit on this branch (`exp/3`) with messages starting `exp/3:` (Lunas: `exp/3: land.sh ...` and
+`exp/3: neat.sh ...`; Terra: `exp/3: selftest green`), push it, and stop. Append one
 `- {?} Label: description` line under "## Uncertain" in `pyto/experiments/tasks/3/packet.md` for
 anything you were unsure about (for example: should `.neat/` be committed or ignored in a foreign
 repo; default: committed, it is the record). Touch nothing outside the files named in the packet's
