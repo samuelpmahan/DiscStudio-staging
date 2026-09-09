@@ -1,0 +1,35 @@
+# Every push to the working branch mirrors it to samuelpmahan/neat-pyto-ds-bundle as main, whose own
+# Action (.github/workflows/bundle.yml) then builds the zip and attaches it to its "latest" release.
+#
+# One secret is needed once, in this repository: Settings > Secrets and variables > Actions >
+# BUNDLE_PUSH_TOKEN = a fine-grained personal access token with Contents: read and write on
+# neat-pyto-ds-bundle only. GITHUB_TOKEN cannot push to another repository. Until the secret exists
+# this job fails with that one message.
+name: Mirror to bundle
+on:
+  push:
+    branches: [main, claude/python-ultracode-supercharge-st8hnu]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mirror-bundle
+  cancel-in-progress: true
+jobs:
+  mirror:
+    if: github.repository == 'samuelpmahan/DiscStudio-staging'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push this branch to neat-pyto-ds-bundle main
+        env:
+          TOKEN: ${{ secrets.BUNDLE_PUSH_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::BUNDLE_PUSH_TOKEN is not set in this repository's Actions secrets; add a fine-grained PAT with Contents read/write on samuelpmahan/neat-pyto-ds-bundle"
+            exit 1
+          fi
+          git push --force "https://x-access-token:${TOKEN}@github.com/samuelpmahan/neat-pyto-ds-bundle.git" "HEAD:refs/heads/main"
+          echo "mirrored $GITHUB_SHA to neat-pyto-ds-bundle main"
