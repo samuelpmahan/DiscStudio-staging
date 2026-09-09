@@ -4,8 +4,26 @@ import { createSeed } from '../src/seed.js';
 import { createStudioRuntime } from '../src/runtime.js';
 import { discoverFields, materialFor, currentBattle, clone, validateWorld } from '../src/domain.js';
 import { fieldNode } from '../src/presentation.js';
+import { render as painterRender } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 const make = () => createStudioRuntime(createSeed());
 const context = { bagId: 'everyday', competitionId: 'putterwarz', roundId: 'hole-1' };
+
+test('studio art and single card Parts are byte-identical to the ported painter', () => {
+  const r = make(), rendered = r.card('buzzz-mint', 'broadcast', context);
+  const artTrace = rendered.run.trace.find(step => step.call === 'fn.disc.art');
+  const art = r.pxc.get(artTrace.output);
+  assert.equal(art.svg, painterRender(...art.inputs));
+});
+
+test('ported painter inputs use sanitized authored colors', () => {
+  const r = make();
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'artBase', value: 'url(#bad)' });
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'artAccent', value: '#abc' });
+  const rendered = r.card('buzzz-mint', 'broadcast', context);
+  const art = r.pxc.get(rendered.run.trace.find(step => step.call === 'fn.disc.art').output);
+  assert.deepEqual(art.inputs.slice(2, 4), ['#e6ebde', '#456157']);
+  assert.equal(art.svg, painterRender(...art.inputs));
+});
 
 test('manufacturer, mold, optional values and every registered field are discoverable', () => {
   const r = make(), c = r.card('buzzz-mint', 'broadcast', context), paths = c.fields.map(f => f.path);
