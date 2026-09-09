@@ -1,4 +1,4 @@
-# Task 15
+# Task 19
 
 Intent: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
 Starting point: af0bf062f5bbcd891e5880808641efca8ba172dc (checkpoint: the test's cache step overwrites its own scratch, so a repeated proof cannot trip on the last one)
