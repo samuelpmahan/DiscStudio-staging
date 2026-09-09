@@ -16,11 +16,17 @@
 # the candidate. IDs are plain numbers from 0.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PY="$(cd "$HERE/.." && pwd)"
-ROOT="$(cd "$PY/.." && pwd)"
+ROOT="$(git -C "$HERE" rev-parse --show-toplevel)"
+PY="$ROOT/pyto"
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 EXP="$ROOT/EXP"
-TASKS="pyto/experiments/tasks"
+if [ -f "$ROOT/pyto/pyproject.toml" ]; then
+  PYTO_MODE=1
+  TASKS="pyto/experiments/tasks"
+else
+  PYTO_MODE=0
+  TASKS=".neat/tasks"
+fi
 BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
 URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#https://#' || echo '<origin>')"
 cmd="${1:-}"; shift || true
@@ -78,13 +84,21 @@ Evidence: not packed yet
 \`{?} Label: description\`, and leaves the decision to the owner. Empty means nothing was unsure.)
 EOF
   echo "Task $id: EXP/$id is a copy of MAIN at ${base:0:7}. Work there."
-  echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
-  "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
-  "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$EXP/$id/pyto[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
-  case "$("$(venv_python "$id")" -c 'import pyto; print(pyto.__file__)' 2>/dev/null)" in
-    "$EXP/$id/"*) echo "  its python imports pyto from EXP/$id";;
-    *) die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working.";;
-  esac
+  if [ "$PYTO_MODE" -eq 1 ]; then
+    echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
+    "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
+    pip_target="$EXP/$id/pyto[drawing]"
+    if command -v cygpath >/dev/null 2>&1; then
+      pip_target="$(cygpath -w "$EXP/$id/pyto")[drawing]"
+    fi
+    "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$pip_target" 2>&1 | grep -v "^$" | tail -2 || true
+    case "$("$(venv_python "$id")" -c 'import pyto; print(pyto.__file__)' 2>/dev/null)" in
+      "$EXP/$id/"*) echo "  its python imports pyto from EXP/$id";;
+      *) die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working.";;
+    esac
+  else
+    echo "  plain repository: no venv or pip install"
+  fi
   echo "  done. When the work is done: bash pyto/scripts/neat.sh pack $id"
 }
 
@@ -213,7 +227,14 @@ cmd_pack() {
     echo "   exit $vexit"
   fi
   echo "== suite in EXP/$id (python: $vpy)"
-  cexit=0; (cd "$wt" && PYTHON="$vpy" bash "$wt/pyto/scripts/check_all.sh") > "$wt/$TASKS/$id/evidence/check_all.txt" 2>&1 || cexit=$?
+  cexit=0
+  if [ "$PYTO_MODE" -eq 1 ]; then
+    (cd "$wt" && PYTHON="$vpy" bash "$wt/pyto/scripts/check_all.sh") > "$wt/$TASKS/$id/evidence/check_all.txt" 2>&1 || cexit=$?
+  elif [ "$verify" = "none" ]; then
+    echo "suite skipped (Verify: none)" > "$wt/$TASKS/$id/evidence/check_all.txt"
+  else
+    (cd "$wt" && PYTHON="$vpy" bash -c "$verify") > "$wt/$TASKS/$id/evidence/check_all.txt" 2>&1 || cexit=$?
+  fi
   tail -12 "$wt/$TASKS/$id/evidence/check_all.txt" | sed 's/^/   /'
   write_packet_and_handoff "$id" "$vexit" "$cexit"
   git -C "$wt" add -A
@@ -295,6 +316,67 @@ cmd_undo() {
   fi
 }
 
+cmd_selftest() {
+  local tmp seed clone origin tools_dir out failures=0
+  tmp="$(mktemp -d "${TMPDIR:-/tmp}/neat-selftest.XXXXXX")"
+  origin="$tmp/origin.git"; seed="$tmp/seed"; clone="$tmp/clone"; tools_dir="$clone/tools"
+  git init -q --bare "$origin"
+  git init -q "$seed"
+  git -C "$seed" config user.email selftest@example.invalid
+  git -C "$seed" config user.name selftest
+  printf 'Verify: true\n' > "$seed/README.md"
+  git -C "$seed" add README.md
+  git -C "$seed" commit -q -m initial
+  git -C "$seed" remote add origin "$origin"
+  git -C "$seed" push -q -u origin HEAD
+  git clone -q "$origin" "$clone"
+  git -C "$clone" config user.email selftest@example.invalid
+  git -C "$clone" config user.name selftest
+  mkdir -p "$tools_dir"
+  cp "$HERE/neat.sh" "$tools_dir/neat.sh"
+  cp "$HERE/land.sh" "$tools_dir/land.sh"
+  chmod +x "$tools_dir/neat.sh" "$tools_dir/land.sh"
+  if bash "$tools_dir/neat.sh" new "selftest" --verify true >"$tmp/new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if [ -d "$clone/EXP/0" ] && [ -f "$clone/EXP/0/.neat/tasks/0/packet.md" ]; then
+    echo "selftest new: pass"
+  else
+    echo "selftest new: FAIL"; failures=$((failures + 1))
+  fi
+  printf 'edit\n' > "$clone/EXP/0/edit.txt"
+  if bash "$tools_dir/neat.sh" pack 0 >"$tmp/pack.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if grep -q '^## Candidate$' "$clone/EXP/0/.neat/tasks/0/packet.md" &&
+     grep -q '^## Evidence$' "$clone/EXP/0/.neat/tasks/0/packet.md" &&
+     grep -q '^## Uncertain$' "$clone/EXP/0/.neat/tasks/0/packet.md"; then
+    echo "selftest packet sections: pass"
+  else
+    echo "selftest packet sections: FAIL"; failures=$((failures + 1))
+  fi
+  if bash "$tools_dir/neat.sh" land 0 >"$tmp/land.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if git -C "$clone" log --format=%s -n 20 | grep -q '^land(task-0): '; then
+    echo "selftest landing commit: pass"
+  else
+    echo "selftest landing commit: FAIL"; failures=$((failures + 1))
+  fi
+  if ! git --git-dir="$origin" show-ref --verify --quiet refs/heads/exp/0; then
+    echo "selftest origin branch removal: pass"
+  else
+    echo "selftest origin branch removal: FAIL"; failures=$((failures + 1))
+  fi
+  if grep -q '^## Today$' "$clone/.neat/BOARD.md" && grep -q 'task-0' "$clone/.neat/BOARD.md"; then
+    echo "selftest board: pass"
+  else
+    echo "selftest board: FAIL"; failures=$((failures + 1))
+  fi
+  if bash "$tools_dir/neat.sh" undo 0 >"$tmp/undo.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if [ ! -e "$clone/edit.txt" ] && [ -z "$(git -C "$clone" status --porcelain --untracked-files=all)" ]; then
+    echo "selftest undo clean: pass"
+  else
+    echo "selftest undo clean: FAIL"; failures=$((failures + 1))
+  fi
+  rm -rf "$tmp"
+  [ "$failures" -eq 0 ]
+}
+
 cmd_list() {
   local d id packet base n state
   printf '%-4s %-8s %-6s %s\n' id state files intent
@@ -313,5 +395,5 @@ cmd_list() {
 
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
-  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; list) cmd_list "$@";; *) usage;;
+  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; list) cmd_list "$@";; selftest) cmd_selftest "$@";; *) usage;;
 esac
