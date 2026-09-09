@@ -1,0 +1,425 @@
+[
+ {
+  "runtime": "ChainSpot \u2014 two disjoint code surfaces were inspected: (1) the read-only clone /home/user/samuelpmahan/chainspot@main, the actual shipping SvelteKit product; (2) the reference bundle under /home/user/DiscStudio-staging/pyto/reference/{chainspot-quick-anno,lab/chainspot-matrix}/*, an experimental Python+Node investigation harness that runs against a ChainSpot algorithm package (@chainspot/alg, packages/alg/, experiments/) that is NOT present anywhere in the clone or elsewhere on this filesystem. Grepping the entire main-branch clone for PrincipleComponentRender, 'PCR', Calculation, engram, and PixelCache returns zero hits. So ChainSpot's actual product code has no PxC/Tick/Calculation shape at all today; every Tick/Calculation/Part-observability artifact found lives only in the reference-material side channel and depends on a ChainSpot package this clone does not contain.",
+  "views": [
+   {
+    "name": "ChainSpot product app (Annotate Round / Create Graphics / Stitch Map, main branch)",
+    "what_is_visible": "Nothing PCR/Tick-shaped. The app shows domain state (ProjectState, AnnotatedHole) and, per docs/annotate-round-pipeline-debug-view.md:1-101, an *unimplemented* design for a per-hole table of {detector, confidence, gate decision, reason, user correction} sourced from CorrectionEvent records \u2014 explicitly 'design only, nothing here is implemented' (line 3) and gated to never ship (line 6-10).",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "N/A \u2014 does not exist. The debug view, if built, would cost nothing beyond a dev-flag-gated route reading an existing IndexedDB store (doc line 96-100).",
+    "evidence": "/home/user/samuelpmahan/chainspot/docs/annotate-round-pipeline-debug-view.md:1-10,96-101; repo-wide grep for PrincipleComponentRender|PCR\\b|Calculation|engram|PixelCache in /home/user/samuelpmahan/chainspot returned no matches (Bash grep, this session)."
+   },
+   {
+    "name": "scripts/cv-probes ad-hoc diagnostic overlays (grayt_tune.py era)",
+    "what_is_visible": "Per-script PNG overlays (e.g. 'main overlay = only what the system would claim; diagnostic overlay = every candidate, gate-passed or rejected, in context', per docs/annotate-round-pipeline-debug-view.md:21-24) produced by dozens of independent scripts under scripts/cv-probes/ (grayt_tune.py, hole_path_capsule_fit.py, etc.), each with its own ad hoc output shape (overlay.png, results.json, findings.md). This matches origin.md's 'lab folder' stage (origin.md:13) \u2014 no Tick, no Calculation, no Part address; each script invents its own primitives.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "One Python script run per probe; no shared engine, no corpus contract, no build step beyond the script's own imports.",
+    "evidence": "/home/user/samuelpmahan/chainspot/scripts/cv-probes/ (directory listing, this session, ~90 files); /home/user/samuelpmahan/chainspot/docs/annotate-round-pipeline-debug-view.md:21-24; /home/user/DiscStudio-staging/pyto/research/origin.md:13."
+   },
+   {
+    "name": "quick-anno-python PCR/Tick/Calculation graph (pyto core, authored per Stage)",
+    "what_is_visible": "The only code where Tick and Calculation are literally the origin.md shape: PCR.tick()/Tick.calc() group Invocations under a named Tick (pyto/src/pyto/pcr.py:32-60,240-282), and PCR.mermaid() (pcr.py:380-420) renders Part addresses as nodes and each Tick as a Mermaid subgraph containing its Calculation addresses, with edges labelled by the bound argument name. This is a structure diagram only \u2014 Part/Calculation identity and wiring, not values.",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": true,
+    "pixels_retained": false,
+    "cost_to_produce": "In-process Python object graph plus one write of a .mmd text file; StageInvestigation.write_mermaid (investigation.py:87-97) is explicitly called only 'when a graph is big enough that a human would rather look than read' and is unused by s3.py's actual run.",
+    "evidence": "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py:32-60,240-282,380-420; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/investigation.py:87-97; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/s3.py:72-90 (pcr.mermaid() available but not invoked in main())."
+   },
+   {
+    "name": "PCR.run Receipt/testimony machinery (pyto core, observe=True path)",
+    "what_is_visible": "When PCR.run(pxc, observe=True) is used, PcrRun.receipts carries one Receipt per invocation with declared_consumes/declared_produces (from the authored bindings) and actual_consumes/actual_produces/writes (from a _TrackedPxC wrapper that records every PxC.get/set during that invocation), plus result_sha256, a digest of the produced value (pcr.py:96-127,178-227,338-365). This is the one artifact in the whole ChainSpot-adjacent codebase that literally answers 'which Calculation wrote a Part and what it read.' It is explicitly scoped as an observation of PCR.run's own resolved reads/writes, not of the callable body (pcr.py:105-113).",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": true,
+    "pixels_retained": false,
+    "cost_to_produce": "Free at the call site (pass observe=True) but NOT exercised: s3.py:90 calls pcr.run(pxc) with the default observe=False, so today's quick-anno investigation scripts never actually populate a Receipt \u2014 the capability exists in pyto/src/pyto/pcr.py but its output is unused by every reference script inspected.",
+    "evidence": "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py:96-127,178-227,284-378; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/s3.py:90 (observe not passed)."
+   },
+   {
+    "name": "PQL point/prefix query over PxC (pyto core)",
+    "what_is_visible": "A person who already knows an exact Part address (e.g. 'scratch.s3.teeSummary') or an address prefix can pull its current value out of a PxC with PQL.part(...).one(pxc) / PQL.prefix(...).values(pxc) (pql.py:27-47). There is no browse/list-all-addresses UI beyond PxC.addresses() (core.py:85-86); a person must already know the name they are looking for.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "One Python call; no build, no bridge, no corpus. Cheap, but requires prior knowledge of the address and is text-only (no rendering).",
+    "evidence": "/home/user/DiscStudio-staging/pyto/src/pyto/pql.py:27-73; /home/user/DiscStudio-staging/pyto/src/pyto/core.py:85-86; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/s3.py:100 (PQL.part('scratch.s3.teeSummary').one(pxc))."
+   },
+   {
+    "name": "Neon-first correctness sheet (materialize_s1_neon.py / materialize_s3_neon.py, backed by export_s*_snapshot.cjs Node bridge)",
+    "what_is_visible": "A composited PNG sheet of 7 (S1) or 11 (S3) panels, each an actual pixel raster (paint_pixels/draw_boxes/crops onto the real canonical image; neon.py:32-158) showing owned/muted/removed pixel sets, badge boxes, ring candidates, rejection buckets by color (grey diamond, red Badge-muted, orange unframed, magenta voted-out), and \u2014 added specifically because bbox panels weren't enough \u2014 per-object identity crops (materialize_s3_neon.py:72-96, S3_CHECKPOINT.md:94-112). This is keyed by *Stage* (S0..S3 panel labels like 's3:CroppedImage'), not by Tick: the Node bridge runs each stage's whole @chainspot/alg contract.execute() and exports named 'panels', with no Tick boundary inside a Stage exposed to the viewer.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "A Node bridge (export_s3_snapshot.cjs requires ../../packages/alg/dist/... \u2014 a built @chainspot/alg, absent from this clone) run as a subprocess (investigation.py:71-79), against a sibling corpus checkout at ../chainspot-corpus/dev/*/<Course>-full.* (investigation.py:53-63), followed by a second Python subprocess (materialize_*_neon.py) requiring PIL/Pillow. Two processes, one build, one external corpus, per course per stage.",
+    "evidence": "/home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/materialize_s1_neon.py:25-66; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/materialize_s3_neon.py:42-146; /home/user/DiscStudio-staging/pyto/src/pyto/neon.py:32-158; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/export_s3_snapshot.cjs:4-9,46-67; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/investigation.py:53-79; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/S3_CHECKPOINT.md:94-153 (what visual inspection found, only visible via panels 8/9)."
+   },
+   {
+    "name": "DEV6_S3_SURVEY cross-course identity crops",
+    "what_is_visible": "The same per-object crop panels (panel 8/9 above) re-run across six Dev6 courses and reported as a markdown table with a manually-transcribed accounting ledger per course (encl/diam/elong/bMute/cand/meas/unfr/voted/tees/teePx) plus a per-course chrome-acceptance table. The doc states explicitly: 'Every one of these calls came from the per-object identity crop panels, and none of them is visible in the course-zoom panels that preceded them' (line 172-174) \u2014 the coarser full-course pixel view (panels 1-7) hid the finding that the identity-crop view (panel 8/9) surfaced.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "Six repetitions of the S3 neon-sheet pipeline above (Node bridge + corpus + Python materializer), one per course, plus a human manually reading crops and hand-writing the survey markdown \u2014 no automated aggregation across courses.",
+    "evidence": "/home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/DEV6_S3_SURVEY.md:13-20,29-55,172-175."
+   },
+   {
+    "name": "chainspot-matrix LAB Sweep receipts + per-case source-crop gallery (matrix.ts, branch-space-fill experiment)",
+    "what_is_visible": "Per case\u00d7variant: an immutable JSON receipt (case, variant, status, cache counters) plus one cropGallery PNG (matrix.ts:190), aggregated into a summary.json (matrix.ts:231,297) and a progress.txt (matrix.ts:269). Cache observability is explicit (profileHits/profileMisses/hit \u2014 matrix.ts:197; types.ts:95-101 CacheCounters) but this is keyed by case/variant/job, not by Tick \u2014 there is no Tick type anywhere in matrix.ts, evidence.ts, manifest.ts, materials.ts, or types.ts (grepped, no match).",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "Depends on a built @chainspot/alg (matrix/materials.ts:14-16 imports '@chainspot/alg/detectors/threeFactor/features/st.fourLaneSensor' and '@chainspot/alg/exec/board') and the 'public ALG ABFeatureSet gateway' (README.md:3) \u2014 neither present in the clone \u2014 run via './lab sweep matrix <manifest> [COURSE] [--resume]' (README.md:12-14), producing artifacts/sweep/matrix/source-edge-branching-matrix-v1/summary.json.",
+    "evidence": "/home/user/DiscStudio-staging/pyto/reference/lab/chainspot-matrix/matrix.ts:190,197,231,258,269,293-298; /home/user/DiscStudio-staging/pyto/reference/lab/chainspot-matrix/matrix/types.ts:60-70,95-101; /home/user/DiscStudio-staging/pyto/reference/lab/chainspot-matrix/matrix/materials.ts:14-16; /home/user/DiscStudio-staging/pyto/reference/lab/chainspot-matrix/README.md:3,12-14,40-46."
+   },
+   {
+    "name": "Portable filterable gallery (render.py / gallery.py, matrix-review)",
+    "what_is_visible": "README.md:41-46 says these two scripts read summary.json and produce a 'source comparison' plot ('one parent-linked branch... green marks a sensor acceptance') and a 'portable filterable gallery' that 'retains failure groups and missing prerequisites.' Neither script's source could be located: not in the ChainSpot clone (no experiments/ or matrix-review/ directory exists under /home/user/samuelpmahan/chainspot), not in pyto/reference/lab/chainspot-matrix/*, and a filesystem-wide search for gallery.py or render.py found no such files anywhere accessible to this session.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "MISSING \u2014 cannot be determined; described only secondhand in README.md as consuming artifacts/sweep/matrix/.../summary.json.",
+    "evidence": "MISSING: /home/user/DiscStudio-staging/pyto/reference/lab/chainspot-matrix/README.md:41-46 describes render.py/gallery.py at experiments/dashs-track-edge-sensing/matrix-review/, but a filesystem-wide search (this session) returned no gallery.py or render.py under any project path, and no such path exists in /home/user/samuelpmahan/chainspot."
+   },
+   {
+    "name": "chainspot-matrix materials cache (matrix/materials.ts createMatrixMaterials)",
+    "what_is_visible": "A content-addressed PxC cache of derived numeric measurements (widthFamily candidates, per-offset luminance bands, edge coherence, center-reference tolerance) keyed by sha256 of source bytes+seed+masks+knobs (materials.ts:139-176,343-367) \u2014 this is the 'LAB stores actual calibration and pose profiles at PxC addresses' line from DEV6_S3_SURVEY.md:34-35. The raw source RgbaImage is held in-memory on the returned MatrixMaterials.image field (materials.ts:124,366) but is not itself exported/rendered by this module \u2014 visualizing it requires the separate cropGallery call in matrix.ts.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "In-process TS call against a PxC board and a built @chainspot/alg detector module; no separate build step of its own but inherits the ALG build dependency.",
+    "evidence": "/home/user/DiscStudio-staging/pyto/reference/lab/chainspot-matrix/matrix/materials.ts:14-16,124,139-176,343-367; /home/user/DiscStudio-staging/pyto/reference/chainspot-quick-anno/DEV6_S3_SURVEY.md:34-35."
+   }
+  ],
+  "gaps": [
+   "ChainSpot's actual shipping product (the clone at /home/user/samuelpmahan/chainspot@main) contains zero references to PrincipleComponentRender, PCR, Calculation-as-a-registered-address, engram, or PixelCache anywhere in src/, docs/, scripts/, or AGENTS.md/README.md (full-repo grep, this session). The founding-need fix described in origin.md has not reached ChainSpot's own codebase as of this clone; it exists only in a side-channel investigation harness.",
+   "That side-channel (pyto/reference/chainspot-quick-anno and pyto/reference/lab/chainspot-matrix) depends throughout on a @chainspot/alg package (imports of '@chainspot/alg/...', requires of '../../packages/alg/dist/...') and an experiments/ directory tree that do not exist anywhere in the read-only clone, nor anywhere else searched on this filesystem. The real production Stage/Gate/ABFeature execution engine that all these views observe is therefore unauditable from what was made available \u2014 only its exported JSON snapshots and the Python/TS wrappers around it could be inspected.",
+   "gallery.py and render.py (the matrix-review 'portable filterable gallery' and 'source comparison' generators, README.md:41-46) could not be located anywhere: not in the clone, not in the reference bundle, not via a filesystem-wide find for gallery.py/render.py. Their actual visible output, and whether it is per-Tick or per-Part, is unverifiable from code and recorded as missing.",
+   "No artifact anywhere inspected renders a Tick boundary visually. The literal Tick type (pyto/src/pyto/pcr.py:32-60) only ever surfaces as Mermaid subgraph structure (addresses/edges, no values) or as JSON TickTestimony (addresses/edges/args, no values, no pixels) \u2014 never as a picture a person can look at per Tick. Every pixel-bearing artifact found (neon sheets, matrix crops) is keyed by Stage or by case\u00d7variant, a coarser grain than a Tick.",
+   "The one mechanism that actually records which Calculation wrote/read which Part (PCR.run's Receipt/_TrackedPxC machinery, pcr.py:96-227,338-365) is present in code but not exercised: the reference s3.py investigation calls pcr.run(pxc) with observe defaulting to False (s3.py:90), so no Receipt is ever produced by the one script inspected that would demonstrate this end-to-end.",
+   "Cost-to-produce for every pixel-bearing view found is uniformly high and manual: a Node bridge subprocess against a built ALG package, a sibling corpus checkout (../chainspot-corpus/dev/...), and a second Python subprocess per course per stage (investigation.py:71-104) \u2014 there is no single-command or live/interactive way to see a Tick's or Stage's material; a person must run two processes by hand and then open the resulting PNG file.",
+   "No storybook, LAB viewer route, or interactive inspector was found under src/routes or src/lib in the ChainSpot clone (grep for storybook/PxC/Tick/receipt/materialize returned only one unrelated hit, AnnotationWorkspace.svelte, which has no PxC/Tick content) \u2014 the task's premise of 'LAB viewer/storybook routes under src/routes and src/lib' does not match what exists in this clone; that surface, if it exists, is not in the code made available."
+  ],
+  "agent_annotation_surface": "There is no live or interactive surface for a person or agent to inspect Tick state in ChainSpot today. What exists is entirely file-based and produced on demand: run a Node subprocess (export_s*_snapshot.cjs) against a built @chainspot/alg and a corpus image to get snapshot.json, then run a Python subprocess (materialize_s*_neon.py) against that JSON to get a composited neon PNG sheet with painted pixels, boxes, and per-object crops \u2014 viewed afterward by opening the PNG file. Separately, the pyto Python core can produce a Mermaid diagram (PCR.mermaid()) or, if observe=True were passed (it currently is not, in any inspected script), a JSON Receipt naming each Calculation's declared/actual Part reads and writes \u2014 but neither is wired to a picture a person looks at, and the Receipt path is dormant. The matrix-review gallery generators (gallery.py/render.py) that the README describes as the 'portable filterable gallery' are missing from every location searched, so their actual annotation surface cannot be confirmed from code."
+ },
+ {
+  "runtime": "Two runtimes examined: ChessLab (TypeScript, src/lab + src/chess + src/tui.ts/replayView.ts) and EmbodiedWumpusWorld (JavaScript, src/core/execute.js+pxc.js+provenance.js, src/tui/materialize.js, src/investigation.js, src/browser-workbench.js). Both implement PCR->Tick[]->Calculation[] (ChessLab: contract.ts Receipt/host.ts loadCartridge; Wumpus: core/execute.js executeTick), but they diverge on the one thing the origin need is about: whether a Tick's record retains the actual Part *values*, not just the addresses that moved.",
+  "views": [
+   {
+    "name": "ChessLab CLI/browser 'run [clean|exp]' (raw DebuggerRun JSON dump)",
+    "what_is_visible": "Full JSON: snapshot.observed/policy plus ticks[] = the S0(materializePieces) and S1(analyzeFrame) Receipts (declaredConsumes/produces, actualConsumes/produces, writes[{address,kind}], frozenCalculations[{address,implementationHash}], timing).",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Type 'run' (CLI tui.ts:17) or click Run (browser.js:218); output is one unformatted nested JSON blob \u2014 a learner must find and manually diff declaredConsumes vs actualConsumes / declaredProduces vs actualProduces themselves; the tool renders no pass/fail comparison, and a real mismatch instead throws and aborts the whole run rather than displaying one.",
+    "evidence": "tui.ts:17; chesslab/web/browser.js:218; src/chess/debugger.ts:47-70; src/lab/contract.ts:127-141 (Receipt has no value field); src/lab/host.ts:22-27,35 (mismatch throws; probes/artifacts hardcoded empty); src/lab/board.ts:140-143 (call() records only the fn address, never args/result)"
+   },
+   {
+    "name": "ChessLab CLI/browser 'receipt' (S0/S1 cartridge receipts, declared-vs-actual enforced)",
+    "what_is_visible": "Same Receipt[] as above but isolated; this is the actual 'declared-vs-actual access panel': every S0/S1 stage carries accessConformance:'exact' so a real divergence between what an OperationSpec declared and what the tracked board actually saw throws PxC: Tick '...' actual access differs from its exact declaration.",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Same JSON-dump cost as 'run'; the conformance check itself is invisible when it passes (nothing is displayed) and fatal when it fails (crash, not a diff view).",
+    "evidence": "src/chess/cartridge.ts:6,15,16 (accessConformance:'exact' on both S0 and S1); src/lab/host.ts:22-27"
+   },
+   {
+    "name": "ChessLab CLI 'receipt' in Study/King-Queen mode (state.ts session, no cartridge)",
+    "what_is_visible": "occurrence, calculation (fn.chess.compose address string only \u2014 no FrozenCalculation/implementationHash), previousHash/hash, reads[], writes[{address,kind}] for one hand-written 'compose-state' tick; the board's positional/state fields are stripped out of the printed object.",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Type 'receipt' after 'inspect'/'place'/'turn' (tui.ts:36); this path never sets accessConformance and never builds an OperationSpec, so unlike S0/S1 it has zero declared-vs-actual enforcement \u2014 a completely different, weaker testimony guarantee than the debugger path, reached by the same CLI.",
+    "evidence": "tui.ts:26-38 (inspect/place/turn/receipt on `lab`, a state.ts session, entirely separate from runDebugger); src/state.ts:69-76 (refine() builds the record with no OperationSpec/exact check, and 'calculation' is just composeFn.address, a bare string); src/lab/board.ts:87-146 (trackAccess used directly, no host.ts gate)"
+   },
+   {
+    "name": "ChessLab CLI 'mind'/'why' and browser 'why' (debuggerView.ts / analysisText \u2014 the learner-facing 'inspect both sides' panel)",
+    "what_is_visible": "Per-side status (check/mate/stalemate), piece list, top 5 scored candidate moves with score components and reasonText, check witnesses \u2014 i.e. the outcome the README calls 'inspect both sides'.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "One command ('mind white'/'mind black', tui.ts:18); cheapest, most-used view \u2014 but it is a pure post-hoc projection of snapshot.policy/observed and never touches receipts/ticks at all, so this is the view a learner is pointed to by the README and it shows zero Tick/Calculation trace.",
+    "evidence": "src/chess/debuggerView.ts:1-24 (reads only run.snapshot, never run.ticks); chesslab README.md 'inspect both sides' framing and Terminal-commands list"
+   },
+   {
+    "name": "ChessLab terminal game replay ('next'/'back'/'replay N', replayView.ts)",
+    "what_is_visible": "Board diagram, side to move, arrival/departure marks, a historical title/note string for the frame.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Free \u2014 it is the default startup view; but createReplay (lab/replay.ts:3-9) only seeks a cursor over static, pre-baked famousGame.frames \u2014 no Calculation ever runs here, so there is nothing PxC-observable to show; it is narrative, not execution trace.",
+    "evidence": "src/replayView.ts:1-26; src/lab/replay.ts:1-9 (seek/next/back only set px.story.frame/cursor, no calculation registered or called)"
+   },
+   {
+    "name": "Wumpus TUI default play/watch (materialize.js, no --inspect)",
+    "what_is_visible": "Grid, percept line, arrow/gold/heading, prior pit probability and 'surviving hypotheses' count.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Default, zero extra cost, but shows no Tick/Calculation trace at all \u2014 same gap as ChessLab's default debugger view.",
+    "evidence": "src/tui/materialize.js:1-32"
+   },
+   {
+    "name": "Wumpus TUI '--inspect' 'RECENT TICKS' panel",
+    "what_is_visible": "Last 3 tick records' id + actualConsumes -> actualProduces address lists, and each calculation's bare address (no input/output, no implementation identity beyond the address string).",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Toggle 'i' in the TUI (cli.js:96) or pass --inspect; but session.js's snapshot() actively deletes inputs/outputs/result before the frame reaches materialize.js, and reduces each calculation entry to {address} only \u2014 so even though executeTick computed full input/output values (execute.js:26-27), the interactive human view never receives them, and only the last 3 ticks are kept per frame (records.slice(-3)).",
+    "evidence": "src/tui/materialize.js:33,43-45; src/session.js:26-29 (`records.slice(-3).map(({inputs, outputs, result, calculations, ...record}) => ({...record, calculations: calculations?.map(({address})=>({address}))}))`); src/core/execute.js:22-37 (freezeSnapshot includes inputs/outputs before stripping)"
+   },
+   {
+    "name": "Wumpus --save export file (session.export(), full unstripped receipts)",
+    "what_is_visible": "Every tick ever run in the session, each with full inputs[{address,value}], outputs[{address,value}], calculations[{address,input,output}] \u2014 the complete PxC testimony the engine computed.",
+    "per_tick": true,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": true,
+    "pixels_retained": true,
+    "cost_to_produce": "Requires passing --save FILE and then opening/parsing the JSON file outside the TUI (cli.js:61, session.js:55 `records: structuredClone(records)`); this is the only place a person gets full per-Tick values for a play session, and it is not rendered as any kind of view \u2014 it is a file a person or agent must load and read manually.",
+    "evidence": "src/cli.js:61; src/session.js:46,55; src/core/execute.js:19-37; src/core/pxc.js:26-69 (captureValue clones typed structures for safe exposure)"
+   },
+   {
+    "name": "Wumpus browser-workbench.js 'reasoning explorer' lineage panel (traceAddress tree, click-to-reveal value)",
+    "what_is_visible": "A dropdown-selected PxC address's full producer chain: which tick produced it, which fn.* calculations ran, and (on clicking a node) that node's actual captured value.",
+    "per_tick": true,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": true,
+    "pixels_retained": true,
+    "cost_to_produce": "Select an address from a <select>, then click each lineage node individually to reveal its value (one at a time, not all shown together); values >40 array entries are truncated to {count, first40} by compact(); the underlying records come from investigate()'s unstripped ticks (investigation.js never strips inputs/outputs, unlike session.js). This is the closest Wumpus analog to ChessLab's 'inspect both sides' \u2014 but it exists only in the browser workbench, not the TUI.",
+    "evidence": "src/browser-workbench.js:21-34 (showMaterial/traceAddress/compact); src/core/provenance.js:41-80 (traceAddress builds node.value from producer output or fallback); src/investigation.js:13-36 (records pushed with full input/output, never stripped)"
+   },
+   {
+    "name": "Wumpus browser-workbench.js constraint-result line ('travel.riskBudget')",
+    "what_is_visible": "One line: STATUS (satisfied/violated/unknown) plus a human reason string, e.g. danger upper bound vs budget.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Rendered automatically once a cell is selected (browser-workbench.js:46); but evaluateConstraint actually computes and returns `reads` (every address it consulted) and `missing` (addresses it needed but didn't have) alongside `measurements` (constraint.js:44-49,56-66) \u2014 none of `reads`/`missing`/`measurements` is displayed; the panel shows only `.status` and `.reason`, discarding the constraint's own declared-vs-actual-read testimony.",
+    "evidence": "src/core/constraint.js:44-49 (evaluateLeaf builds reads/missing),56-66 (normalizePredicateResult carries measurements/details); src/browser-workbench.js:46 (`${evaluation.status.toUpperCase()} \u00b7 ${evaluation.reason}` \u2014 reads/measurements never referenced)"
+   },
+   {
+    "name": "experiments/failure-profile (PxC-run oracle, published results.json/README)",
+    "what_is_visible": "Per-task earliestFailure classification, missing/extra/duplicate worlds, expected vs reported numerator/denominator/answer, own-ledger recompute \u2014 a diagnostic summary, not a Tick trace.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Free to read (results.json/README are static); but src/failure-profile.js:12-20 runs 4 named executeTicks (profile.materialize/enumerate/constrain/resolve) whose `records` are computed and returned, then profileTask() (failure-profile.js:22-33) and run.js discard `records` entirely before writing results.json \u2014 so the project's own PxC-based research artifact never surfaces its own Ticks to a reader, even though it is a direct application of the same execution engine.",
+    "evidence": "src/failure-profile.js:12-20 (records built),22-33 (profileTask return omits records); experiments/failure-profile/run.js:3-6 (maps parsed.tasks through profileTask, never touches .records); experiments/failure-profile/results.json (task objects confirmed to carry only id/schemaValid/earliestFailure/flags/missing/extra/duplicates/weightErrors/reportedConfidence/expected/reported/ownLedger \u2014 no records field)"
+   }
+  ],
+  "gaps": [
+   "ChessLab's generic Receipt type (contract.ts:127-141) carries no value field at all \u2014 declaredConsumes/actualConsumes/actualProduces/writes are address strings and write-kind labels, never the Part's actual content; the only place a learner sees an actual computed value (piece list, candidate score, check witness) is debugger.ts's hand-assembled snapshot.observed/policy, which is bespoke per-cartridge code, not something the shared host.ts/board.ts/contract.ts machinery gives for free to a new domain.",
+   "ChessLab's declared-vs-actual conformance (accessConformance:'exact', cartridge.ts:6,15-16; enforced host.ts:22-27) is a silent pass / fatal-crash gate, not a rendered comparison panel \u2014 a learner only ever sees the raw declaredConsumes/actualConsumes arrays side by side inside a JSON dump ('run'/'receipt') and must diff them by eye; there is no UI that highlights the delta.",
+   "ChessLab has two structurally different 'receipt' commands reachable from the same CLI: the S0/S1 cartridge path (host.ts, exact-conformance-checked, calculation-hash-frozen) versus the King/Queen Study path (state.ts session, no OperationSpec, no conformance check, no calculation hash) \u2014 a learner typing 'receipt' in Study mode is getting materially weaker testimony than 'receipt'/'run' in debugger mode, with no signal in the UI that the two are different guarantees.",
+   "ChessLab's default learner-facing view named by the README ('inspect both sides' -> 'mind'/'why') shows only outcomes (candidates, scores, witnesses) and never shows a Tick or a Calculation identity \u2014 recovering 'what the algorithm used' still requires a separate, differently-formatted raw-JSON command ('run'), which is exactly the gap origin.md says PxC was built to close; it is closed for an agent reading JSON, not yet for the learner using the named debugger.",
+   "ChessLab's replayView.ts historical game replay runs no Calculations at all (lab/replay.ts is a pure frame cursor) \u2014 for that mode there is nothing to show; the 'run'/'mind' commands are the only way to get any Tick, and they operate on the live current replay frame, not the historical frame's own game context.",
+   "Wumpus's interactive TUI '--inspect' panel is fed a snapshot that deliberately deletes inputs/outputs/result and reduces calculations to bare addresses (session.js:26-29) even though execute.js computed and froze the full values moments earlier (execute.js:22-37) \u2014 the richest part of the receipt is thrown away before it reaches the only always-available human view, and only the last 3 ticks survive per frame.",
+   "Full per-Tick values in Wumpus are recoverable only via --save-to-file (opened outside the TUI) or the browser-workbench's traceAddress click-through (one node's value at a time, arrays over 40 entries truncated by compact()) \u2014 there is no view that shows a full Tick's complete inputs/outputs together in one place for a human, only piecewise or file-based access.",
+   "Wumpus's constraint evaluator computes and returns exactly which addresses it read and which were missing (constraint.js reads/missing), i.e. its own declared-vs-actual-read testimony, but the only UI consuming it (browser-workbench.js:46) discards reads/missing/measurements and shows just a status word and a prose reason.",
+   "Wumpus's own failure-profile research experiment runs named PxC Ticks over the profiling oracle but strips the records before publishing results.json/README \u2014 even the project's internal use of the engine for a written finding does not carry the Tick trace into the artifact a reader sees.",
+   "Neither runtime has a UI that lets a person browse 'every historical value an address held, across every Tick that touched it' \u2014 Wumpus's traceAddress can do this programmatically for a given end record set, but no rendered view exposes it as a scrollable/browsable history; ChessLab cannot do it even programmatically because addresses are never versioned or value-captured in receipts.",
+   "docs/core.md:20 states outright that Wumpus's provenance/composition metadata 'does not grant access to engine internals and is not required for ordinary world execution' \u2014 the origin need (seeing what the algorithm used) is explicitly framed there as optional/descriptive rather than load-bearing, which is a documented design position, not an oversight, but it does mean the founding need is only met when a caller opts in (--inspect, --save, or the workbench), not by default."
+  ],
+  "agent_annotation_surface": "For an agent (not a human UI), the two runtimes offer very different surfaces to read/write Tick material. Wumpus: `investigate(frame).records`, `session.records`, and `session.export()` (session.js:46,55; investigation.js:13-36) are plain JSON-serializable arrays where every record already carries full `inputs`, `outputs`, and per-calculation `input`/`output` values (execute.js:22-37, pxc.js:26-69 captureValue), and `traceAddress(records, address)` (provenance.js:41-80) walks producer chains over that same array to build a value-annotated lineage tree \u2014 an agent gets complete, generically-addressable Part values with zero extra instrumentation, the same data structure whether it's coming from a play session, the investigation module, or the failure-profile oracle. ChessLab: `runDebugger(frame, variant).ticks` (Receipt[], contract.ts:127-141) is also JSON-serializable and carries declared/actual address sets, write-kind testimony, and frozen-calculation identity hashes, but it carries no Part values at all; an agent wanting a value at a given address must separately call `host.px.get(address)` on the live PxC board while it is still in scope (board.ts:56-64) \u2014 there is no snapshot/versioning, so a later Tick's write silently overwrites what an earlier Tick's receipt referred to, with no record of the prior value anywhere. The one place ChessLab values do reach an agent-readable structure is debugger.ts's `snapshot.observed`/`policy` (debugger.ts:56-69), but that is bespoke composition code written once for the chess cartridge; a new cartridge author would have to hand-write an equivalent composition step to get any value-observability at all, whereas in Wumpus every cartridge/domain gets full-value receipts for free from executeTick itself."
+ },
+ {
+  "runtime": "Two runtimes were inspected, both against the PCR -> Tick[] -> Calculation[] shape from pyto/research/origin.md:20-23 (\"Each Tick is where its Calculations become observable\"). (1) DiscStudio browser app: src/app.js (UI), src/runtime.js (adapter that builds Tick[]/Calculation[] via `step()` and executes via PQL), src/core/exec.js (readPql/invokePql/trackAccess), src/review.js + public/tick-part-checklist.js + src/review-data.js (review overlay), README.md (Integration contract / Review sections). (2) pyto Python library: pyto/src/pyto/pcr.py (PCR/Tick/Invocation, PcrRun testimony+receipts, mermaid()), pyto/src/pyto/core.py (Part/Calculation/PxC), pyto/src/pyto/neon.py (pixel-level materialization helpers), and three experiment trees that each write their own evidence files on top of that library: pyto/experiments/grouped-ablation/evidence/* (testimony.json, receipts.json, retained.json, comparison.md/json, mermaid.mmd), pyto/experiments/art-tournament/{harness,renders,studios} (rendered SVG/PNG + pcr-testimony.json + contact sheets), pyto/experiments/runs/day1/verdicts/*.json (test-verification lenses, not execution traces). Across both runtimes the generic trace/testimony/receipt machinery is address- and hash-only; wherever an actual computed value becomes human-visible without running code, it is because one specific screen (DiscStudio's \"Inspect Part\" click) or one specific experiment script (grouped-ablation's comparison.md, art-tournament's rendered PNGs) chose to surface it, not because the PCR/PxC contract does.",
+  "views": [
+   {
+    "name": "DiscStudio: on-screen trace table (\"PxC \u00b7 actual execution\")",
+    "what_is_visible": "A flat list of rows, one per Calculation invoked in the latest run: the registered fn.* address that ran (t.call), the output Part address as a clickable button, and a computed/reused badge; hovering the call name shows a tooltip listing the raw input address strings.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "One click to open (toggle-trace); otherwise free \u2014 regenerated in the DOM on every render() since dispatch/card/scene calls execute() each time. Nothing is cached as pixels or kept once re-rendered.",
+    "evidence": "src/app.js:131-134 (tracePanel renders t.call/t.output/t.reused, never t.tick \u2014 confirmed no `t.tick` reference exists in src/app.js); src/runtime.js:54-58 (trace built as {tick:t.name, call:c.actualCall, inputs:c.with, output:c.into} then merged with {call,reused,material,revision} from `calls`); src/core/exec.js:36-58 (invokePql resolves real `inputs`/`output` values per calculation, but runtime.js's trace line re-extracts only the address forms c.with/c.into, discarding those resolved values)."
+   },
+   {
+    "name": "DiscStudio: Inspect Part (single Part value panel)",
+    "what_is_visible": "Clicking an output-Part button sets ui.inspectAddress; a <pre> then shows JSON.stringify of the live value read via runtime.pxc.get(address), through summaryValue() which truncates SVG/photo data-URIs and redacts memo signatures.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "One click per Part, and only reachable for Parts currently shown as an `output` button in the open trace table \u2014 the exhaustive Part index has no click-through (see next view), so most of the store is unreachable from the UI.",
+    "evidence": "src/app.js:130,133 (summaryValue, part-view rendering); src/app.js:288 (case 'inspect-part': ui.inspectAddress = d.value); src/runtime.js:9 (pxc.set wrapper), src/runtime.js:126-128 (parts()/select() exist but are only wired to window.discStudio devtools, not the click UI)."
+   },
+   {
+    "name": "DiscStudio: Inspect PQL composition",
+    "what_is_visible": "The pre-execution parsed composition (readPql output): Ticks[] each carrying its `name` plus Calculations[] each with call address, `with` address bindings, and `into` address \u2014 the authored PCR->Tick[]->Calculation[] shape, by name, addresses only.",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "One click (\"Inspect PQL composition\"); free, textual JSON dump regenerated on click.",
+    "evidence": "src/app.js:133 (ui.inspectAddress === 'PQL' ? JSON.stringify(run.composition,...)); src/runtime.js:52 (composition = readPql(...)); src/core/exec.js:34-42 (readPql shape, tick.name preserved)."
+   },
+   {
+    "name": "DiscStudio: Browse all Parts (Part index)",
+    "what_is_visible": "An alphabetically sorted plain-text list of every Part address ever set through the wrapped runtime store this session.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "One click (\"Browse all Parts\"); free, but the result is inert text with no click-through to a value.",
+    "evidence": "src/app.js:133 ('Part index' ? runtime.parts().map(p=>p.address).join('\\n')); src/runtime.js:126 (parts()); src/runtime.js:9 (addresses Set)."
+   },
+   {
+    "name": "DiscStudio: Download execution receipt (trace-export)",
+    "what_is_visible": "Downloads ui.lastResult.run (composition + trace rows, including the tick name, the memo `material` hash tag, and `revision`) as a JSON file \u2014 the same address/flag content as the on-screen table plus fields the screen never renders.",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "One click (\"Download this execution receipt \u2193\"); produces a durable local file, unlike the ephemeral DOM views above.",
+    "evidence": "src/app.js:291 (case 'trace-export': downloadJson(ui.lastResult?.run,...)); src/runtime.js:54-58 (trace row shape, tick/material/revision fields present but unused on screen)."
+   },
+   {
+    "name": "DiscStudio: Review & comments checklist (neat-review / tick-part-checklist)",
+    "what_is_visible": "A fixed, hand-authored checklist (review-data.js) of 3 groups x several items, each with a label, a deep link, a verification instruction, a checkbox and a free-text comment box, persisted to localStorage keyed by checkpoint/build fingerprint and exportable as inspection JSON.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": false,
+    "cost_to_produce": "Free to open; the component's generic data model calls its groups \"ticks\" and items \"parts\" (public/tick-part-checklist.js:2), but review-data.js's ids ('domain','presentations','infrastructure'/'identity','bags',...) are curated review topics, not the runtime's actual Tick/Calculation names or addresses \u2014 no PCR identity is attached to a comment.",
+    "evidence": "src/review-data.js:1-19; src/review.js:9-31; public/tick-part-checklist.js:2; README.md:47-51 (Review section)."
+   },
+   {
+    "name": "pyto: PCR.mermaid() diagram",
+    "what_is_visible": "A flowchart: Part addresses as nodes, one subgraph per Tick containing boxes labelled by the Calculation's fn.* address, and edges from bound input Part (or upstream Calculation) to Calculation to output Part.",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": true,
+    "pixels_retained": true,
+    "cost_to_produce": "A plain method call (pcr.mermaid()) producing text, no execution needed since it only reads the declared program \u2014 but requires running Python; no UI button anywhere renders it. The .mmd file, once written, is a durable artifact (e.g. evidence/run-1/mermaid.mmd).",
+    "evidence": "pyto/src/pyto/pcr.py:380-420 (mermaid()); pyto/experiments/grouped-ablation/evidence/run-1/mermaid.mmd:1-40 (Tick_Prepare/Tick_Fit/Tick_Score/Tick_Compare subgraphs, addresses only)."
+   },
+   {
+    "name": "pyto: testimony.json (per PcrRun)",
+    "what_is_visible": "PcrRun.ticks serialized: an array grouped by Tick name, each holding CalculationTestimony entries (id, calculation address, input refs as 'px:<addr>' or 'fn:<id>' strings, the literal authored `args` such as column-name lists, and the `into` address).",
+    "per_tick": true,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "Requires calling PCR.run() and then json.dumps([asdict(t) for t in run.ticks]) from an experiment's own script (no generic CLI ships this); PcrRun.__doc__ states this shape is byte-identical whether or not observe=True (pcr.py:130-140).",
+    "evidence": "pyto/src/pyto/pcr.py:63-146 (Tick/CalculationTestimony/PcrRun); pyto/experiments/grouped-ablation/evidence/run-1/testimony.json:1-95 (args like columns/variant are literal values; inputs/into are address strings only); pyto/experiments/grouped-ablation/run.py:12,265."
+   },
+   {
+    "name": "pyto: receipts.json (per invocation, observe=True)",
+    "what_is_visible": "Flat dict keyed by invocation id: FrozenCalculation (address + sha256 of the function's own source text), started/duration ms, declared/actual consumes and produces (address lists), `writes` (address+kind), `effective_arg_keys`, `shadowed_inputs`, and `result_sha256` (a one-way digest of the canonical JSON output).",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": true,
+    "pixels_retained": true,
+    "cost_to_produce": "Opt-in (observe=True); adds a _TrackedPxC wrapper per invocation plus source- and result-hash computation. Not grouped by Tick in the file itself \u2014 Tick membership must be cross-referenced from testimony.json's ids.",
+    "evidence": "pyto/src/pyto/pcr.py:95-128 (Receipt docstring: 'records digests and durations only... not the replay seam'); pyto/src/pyto/pcr.py:338-365 (receipt construction); pyto/experiments/grouped-ablation/evidence/run-1/receipts.json:1-70 (result_sha256 strings, no values)."
+   },
+   {
+    "name": "pyto: retained.json (retain_run record)",
+    "what_is_visible": "`program` (same Tick/Calculation structure as testimony), `external` (actual raw input Part values, or {digest, sidecar-ref} when large), and `results` \u2014 explicitly documented and confirmed on disk as `{invocation id: sha256 | None}`: every intermediate and terminal computed Part value is reduced to a hash, never retained as data.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": true,
+    "shows_what_a_calculation_read": true,
+    "pixels_retained": true,
+    "cost_to_produce": "Opt-in, requires calling retain_run() from an experiment script; designed for determinism replay and tamper-detection (byte-for-byte hash comparison across fresh processes), not for human inspection of what a Tick computed.",
+    "evidence": "pyto/experiments/grouped-ablation/retain.py:1-30 (record shape docstring: \"results\": {invocation id: sha256|None}); direct read of pyto/experiments/grouped-ablation/evidence/run-1/retained.json (results.fit.all and results.compare are sha256 hex strings, not values; external.input.ablation.rows is the one place raw numeric data appears, because it is a session input, not a computed Part)."
+   },
+   {
+    "name": "pyto: comparison.md / comparison.json / variants.json (grouped-ablation terminal report)",
+    "what_is_visible": "A fully human-readable table of the FINAL 'Compare' Tick's output (rmse, delta-vs-baseline, planted |w|, ranking) \u2014 the only place in this experiment where an actual computed value, not a hash, is visible to a person without running code.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "Bespoke and hand-written per experiment (run.py's _dump/comparison_markdown calls that serialize the in-memory Python result directly, bypassing the generic retain/testimony/receipt machinery entirely); covers only the terminal Tick \u2014 the Fit and Score ticks that fed it have no equivalent readable dump anywhere in this evidence tree.",
+    "evidence": "pyto/experiments/grouped-ablation/evidence/run-1/comparison.md:1-16; pyto/experiments/grouped-ablation/evidence/run-1/comparison.json:1-40; pyto/experiments/grouped-ablation/run.py:292-293 (_dump/_text calls building these files from result[\"comparison\"])."
+   },
+   {
+    "name": "pyto: art-tournament contact sheets / renders (materialized SVG/PNG)",
+    "what_is_visible": "The actual rendered visual output (SVG text plus rasterized PNG) of the terminal render Calculations (fn.card.single.render, fn.card.battle.render), plus a batch 'contact sheet' overlaying a labelled coordinate grid so a judge can reference exact pixel positions when leaving notes.",
+    "per_tick": false,
+    "shows_parts_values": true,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "Requires running render_svg.py (headless Chromium via Playwright) and contact_sheet.py \u2014 real rasterization per candidate, materially more expensive than any text-only view above; a sibling pcr-testimony.json exists in the same folder with the address/Tick structure, but nothing in either file links a specific rendered filename to a specific Part address or Calculation id (checked studios/botanical/manifest.json \u2014 it holds design-language prose, not an address/filename map).",
+    "evidence": "pyto/experiments/art-tournament/harness/render_svg.py:1-20,39-60; pyto/experiments/art-tournament/harness/contact_sheet.py:1-64 (grid overlay, 'so judges can reference exact positions when leaving notes'); pyto/experiments/art-tournament/renders/botanical/pcr-testimony.json:1-40; pyto/experiments/art-tournament/renders/botanical/cards/*.png."
+   },
+   {
+    "name": "pyto: runs/day1 verdicts (completeness/mutation/prohibition/semantics)",
+    "what_is_visible": "JSON reports scoring test coverage and mutation-kill rates against pcr.py's rules, citing source line numbers (e.g. 'pcr.py:45') and paths like 'experiments/grouped-ablation/evidence/run-1/testimony.json' as evidence.",
+    "per_tick": false,
+    "shows_parts_values": false,
+    "shows_which_calculation_wrote_it": false,
+    "shows_what_a_calculation_read": false,
+    "pixels_retained": true,
+    "cost_to_produce": "Produced by a separate fixer/verification workflow, unrelated to running a PCR; these are meta-verification of the test suite, not an execution-trace viewer, and do not display any Tick's Calculation content.",
+    "evidence": "pyto/experiments/runs/day1/verdicts/completeness.json:1-16; mutation.json:1-25; prohibition.json:1-20; semantics.json:1-16."
+   }
+  ],
+  "gaps": [
+   "DiscStudio's on-screen trace table drops the Tick name: runtime.js:55 attaches `tick: t.name` to every trace row, but app.js's tracePanel() never reads `.tick` (verified: no `t.tick` reference exists anywhere in src/app.js) \u2014 a person watching the live UI sees which fn.* Calculation ran, not which named step ('Fields:discId', 'ArrangeComparison', ...) it belongs to, even though DiscStudio's own step() helper makes Tick and Calculation 1:1 so the name would be free to show.",
+   "DiscStudio's trace/receipt objects never carry resolved Part values, even though invokePql (src/core/exec.js:47) computes them in memory as `inputs`/`output` per calculation \u2014 runtime.js:55 explicitly re-extracts the address forms (c.with, c.into) instead, so neither the on-screen table nor the downloadable receipt (trace-export) ever embeds a value.",
+   "DiscStudio's only value-bearing view ('Inspect Part') is reachable solely for Parts that currently appear as an `output` button in the open trace table; the exhaustive Part index (src/app.js:133, runtime.parts()) lists every address ever set but has no click-through, so most of the PxC store is unreachable from the UI without opening the browser console and using window.discStudio.runtime.pxc.get(address) directly (src/app.js:393) \u2014 i.e. still requires writing code.",
+   "pyto's generic PCR/retain/testimony/receipt machinery is value-blind by explicit design: retained.json's 'results' are literally {invocation id: sha256|None} (pyto/experiments/grouped-ablation/retain.py:28, confirmed against evidence/run-1/retained.json), and Receipt.result_sha256 (pcr.py:125) is a one-way digest. There is no generic pyto file or command that lets a person see what a Tick's Calculations actually computed without writing and running Python to call pxc.get(address) or PCR.run(...).results themselves.",
+   "The one place pyto surfaces an actual computed value in readable form (comparison.md/json in grouped-ablation) exists only because that experiment's run.py hand-wrote a report from the in-memory Python result, bypassing testimony/receipts/retained entirely; it covers only the terminal 'Compare' Tick. No equivalent readable dump exists anywhere in the evidence tree for the 'Fit' or 'Score' Ticks that fed it \u2014 their values are hash-only.",
+   "The art-tournament renders make final Part values visible as literal pixels (the strongest 'pixels retained' evidence found in either runtime), but no file in that tree links a specific rendered filename to the Part address or invocation id that produced it \u2014 pcr-testimony.json carries the addresses, the PNG/SVG files carry the pixels, and nothing observed ties the two together by address (studios/botanical/manifest.json was checked and contains design prose, not a filename-to-address map).",
+   "Neither runtime's annotation surface is scoped to a PCR Tick/Calculation/Part identity: DiscStudio's neat-review checklist (src/review-data.js) keys comments to a fixed, hand-authored list of feature-review topics ('domain', 'trace', 'feedback', ...), not to any runtime Tick name or fn.* address; pyto's closest analogue (runs/day1 verdict findings) keys its notes to source line numbers ('pcr.py:45'), not to Tick/Calculation/invocation ids, even though testimony.json/mermaid.mmd/receipts.json already assign exactly those stable ids. This reproduces, inside the current tooling, the origin.md complaint that 'agents had to annotate, and the annotations carried no meaning' (origin.md:11-12)."
+  ],
+  "agent_annotation_surface": "No surface examined lets a human or agent attach a comment scoped to the PCR's own Tick/Calculation/Part identity, despite that identity existing and being fully computed in both runtimes. DiscStudio's real annotation surface is the neat-review checklist (src/review.js, src/review-data.js, public/tick-part-checklist.js): comments are keyed to fixed reviewIds from a hand-authored feature list ('identity','bags','trace','feedback',...) plus a captured UI context snapshot (route/discId/presetId/nodeId/stateId/worldLabel \u2014 src/app.js:181), not to any runtime Tick name or fn.* address; the actual PQL structure that DOES carry Tick names and addresses ('Inspect PQL composition', src/app.js:133) has no comment affordance attached to it at all. pyto's closest analogue is the runs/day1/verdicts findings and grouped-ablation's OPEN-FINDINGS.md, which anchor notes to source line numbers ('pcr.py:45', 'pql.py:73') or to whole evidence file paths, never to a Tick name or invocation id even though testimony.json/mermaid.mmd/receipts.json already assign exactly those stable, addressable ids per Calculation. The art-tournament contact_sheet.py grid overlay (harness/contact_sheet.py:9-11,23-40) is the one artifact literally built for annotation ('so judges can reference exact positions when leaving notes'), but it annotates pixel coordinates in a rendered image, not a Tick/Calculation/Part identity. Net: an agent today has three disconnected ways to leave a note (a fixed checklist id, a source line number, or an image pixel coordinate), and none of them is 'this Tick's this Calculation wrote this Part' \u2014 the identity scheme origin.md treats as the fix is present in the data (testimony.json ids, mermaid.mmd subgraphs, PQL composition Tick names) but has no comment box wired to it in either runtime."
+ }
+]
