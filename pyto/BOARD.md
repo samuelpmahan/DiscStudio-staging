@@ -33,7 +33,12 @@ and what it produced as Parts so replay plays the Part back instead of re-runnin
 Keep it simple and safe: an `oc` is allowed by name, never by pattern. Visibility is a flag, not a
 build: `observe` costs nothing when off, the CV runtime runs with it off to hit the budget, and the
 test that outputs are byte-identical with it on and off is the guarantee that stripping visibility
-changes nothing else.
+changes nothing else. Which is another reason for a somewhat compilable thing: the retained
+program (the PQL document) plus the registry is the compile input, the workshop runs it with
+visibility on and keeps the receipts, the compiled runtime runs the same document with visibility
+off, and equal digests between the two are the proof the compile changed nothing. ChainSpot's
+compiled-operation model (`planFingerprint`, `executeCompiledPlan` in the ChessLab contract
+header) is that idea already; the record is what makes it checkable.
 
 **Open prompt.** *Addressing.* Each segment must discriminate and the root must connect. The
 branch mining is reading `lab/pxc-root-mounts` and `review/pxc-root-alignment` for what was
