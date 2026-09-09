@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T085915Z-task-2",
+  "package": "task-2",
+  "base_sha": "50ec3f7b87108ebe6d9bc5f0e448bfbbc4a8dca3",
+  "result": "failed",
+  "reason": "check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T085915Z-task-2/check_all.txt)",
+  "at": "2026-09-09T08:59:59.796870Z"
+}
