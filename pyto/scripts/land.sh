@@ -62,7 +62,14 @@ EOF
   exit 1
 }
 
-# 0. A branch candidate: the main tree must be clean, then the branch is merged without committing.
+# 0a. Two clones land into one branch (the owner's D:/ and the cloud), so MAIN must not be behind
+#     origin: what the suites verify here must be what gets pushed.
+UPSTREAM="$(git rev-parse --abbrev-ref HEAD)"
+if git fetch -q origin "$UPSTREAM" 2>/dev/null && ! git merge-base --is-ancestor "origin/$UPSTREAM" HEAD 2>/dev/null; then
+  fail "MAIN is behind origin/$UPSTREAM by $(git rev-list --count "HEAD..origin/$UPSTREAM") commit(s) (someone landed elsewhere); run: git pull --rebase origin $UPSTREAM  then land again"
+fi
+
+# 0b. A branch candidate: the main tree must be clean, then the branch is merged without committing.
 if [ -n "$FROM" ]; then
   [ -z "$(git status --porcelain --untracked-files=all)" ] || fail "the tree is not clean; a branch can only land into a clean tree"
   git rev-parse -q --verify "$FROM^{commit}" >/dev/null || fail "no such branch: $FROM"
@@ -167,7 +174,11 @@ Landing receipt: pyto/experiments/landings/$ID/receipt.json
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_014pqrhfQfjpSAYTvH8j3y93"
-git push -q -u origin "$(git rev-parse --abbrev-ref HEAD)"
+if ! git push -q -u origin "$UPSTREAM" 2>/dev/null; then
+  echo "LANDED LOCALLY $(git rev-parse --short HEAD) $PACKAGE, but the push was rejected: someone landed on origin while the suites ran." >&2
+  echo "Run: git pull --rebase origin $UPSTREAM && bash pyto/scripts/check_all.sh && git push -u origin $UPSTREAM   (the receipt's base is what was verified here; the rebased result is verified by that check_all)" >&2
+  exit 1
+fi
 echo "LANDED $(git rev-parse --short HEAD) $PACKAGE"
 if [ -n "$FROM" ]; then
   wt="$(git worktree list --porcelain | awk -v b="refs/heads/$FROM" '$1=="worktree"{w=$2} $1=="branch"&&$2==b{print w}')"
