@@ -50,9 +50,11 @@ WORK="$LAND_DIR/$ID"
 BASE_SHA="$(git rev-parse "${BASE:-HEAD}")"
 board() { # one plain line for the owner, newest first under "## Today" on pyto/BOARD.md
   "$PYTHON" - "$BOARD" "$1" "$PYTO_MODE" <<'PYEOF'
-import sys, datetime
+import sys, datetime, os
 path, line, pyto_mode = sys.argv[1:4]
 stamp = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M')
+if pyto_mode == '0':
+    os.makedirs(os.path.dirname(path), exist_ok=True)
 try:
     text = open(path).read()
 except FileNotFoundError:
@@ -97,8 +99,21 @@ if git fetch -q origin "$UPSTREAM" 2>/dev/null && ! git merge-base --is-ancestor
 fi
 
 # 0b. A branch candidate: the main tree must be clean, then the branch is merged without committing.
+# Ignore only untracked landing receipts and registered neat worktrees. Other EXP files remain blockers.
+main_status() {
+  local line path worktree
+  while IFS= read -r line; do
+    case "$line" in
+      "?? $LAND_REL"*) continue;;
+      "?? EXP/"*)
+        path="${line#?? }"; path="${path%/}"; worktree="$ROOT/$path"
+        if git worktree list --porcelain | awk -v worktree="$worktree" '$0 == "worktree " worktree { found = 1 } END { exit !found }'; then continue; fi;;
+    esac
+    printf '%s\n' "$line"
+  done < <(git status --porcelain --untracked-files=all)
+}
 if [ -n "$FROM" ]; then
-  [ -z "$(git status --porcelain --untracked-files=all)" ] || fail "the tree is not clean; a branch can only land into a clean tree"
+  [ -z "$(main_status)" ] || fail "the tree is not clean; a branch can only land into a clean tree"
   git rev-parse -q --verify "$FROM^{commit}" >/dev/null || fail "no such branch: $FROM"
   [ -n "$BASE" ] || BASE_SHA="$(git merge-base HEAD "$FROM")"
   if ! git merge --no-commit --no-ff -q "$FROM" >/dev/null 2>&1; then
@@ -108,7 +123,7 @@ fi
 
 # 1. Clean start: the dirty files are what this landing will commit; files committed since --base are
 #    part of the candidate too (checkpoints never claim, landings do).
-DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v "^$LAND_REL" || true)"
+DIRTY="$(main_status | cut -c4- | sed 's/.* -> //' || true)"
 SINCE="$(git diff --name-only "$BASE_SHA" HEAD)"
 CHANGED="$(printf '%s\n%s\n' "$SINCE" "$DIRTY" | grep -v '^$' | sort -u || true)"
 [ -n "$CHANGED" ] || fail "nothing to land: the tree is clean and nothing changed since $BASE_SHA"
@@ -193,7 +208,7 @@ if [ $DRY -eq 1 ]; then
 fi
 
 # 5. Commit and push. Only the files that were dirty at the start; if the tree moved meanwhile, stop.
-NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v "^$LAND_REL" || true)"
+NOW="$(main_status | cut -c4- | sed 's/.* -> //' || true)"
 if [ "$(printf '%s\n' "$NOW" | grep -v '^$' | sort -u)" != "$(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u)" ]; then
   delta="$(diff <(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u) <(printf '%s\n' "$NOW" | grep -v '^$' | sort -u) | grep '^[<>]' | sed 's/^</ gone:/; s/^>/ new:/' | tr '\n' ' ')"
   fail "the tree changed while the suites ran (someone is writing); nothing committed. Changed:$delta"

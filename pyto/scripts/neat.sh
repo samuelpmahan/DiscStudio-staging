@@ -23,9 +23,11 @@ EXP="$ROOT/EXP"
 if [ -f "$ROOT/pyto/pyproject.toml" ]; then
   PYTO_MODE=1
   TASKS="pyto/experiments/tasks"
+  LAND_REL="pyto/experiments/landings/"
 else
   PYTO_MODE=0
   TASKS=".neat/tasks"
+  LAND_REL=".neat/landings/"
 fi
 BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
 URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#https://#' || echo '<origin>')"
@@ -57,6 +59,12 @@ venv_python() { # <id>
 }
 packet_of() { echo "$EXP/$1/$TASKS/$1/packet.md"; }
 need_exp() { [ -d "$EXP/$1" ] || die "no experiment EXP/$1 (neat list)"; }
+status_without_untracked_landings() {
+  local line
+  while IFS= read -r line; do
+    case "$line" in "?? $LAND_REL"*) ;; *) printf '%s\n' "$line";; esac
+  done < <(git -C "$ROOT" status --porcelain --untracked-files=all)
+}
 
 cmd_new() {
   local intent="${1:-}"; shift || true
@@ -301,7 +309,7 @@ cmd_undo() {
   local sha intent parents
   sha="$(git -C "$ROOT" log --format=%H --grep="^land(task-$id): " -n 1)"
   [ -n "$sha" ] || die "no landing commit for task $id (git log --grep 'land(task-$id)')"
-  [ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all | grep -v '^?? pyto/experiments/landings/')" ] || die "MAIN is not clean; undo needs a clean tree"
+  [ -z "$(status_without_untracked_landings)" ] || die "MAIN is not clean; undo needs a clean tree"
   intent="$(git -C "$ROOT" log -1 --format=%s "$sha" | sed "s/^land(task-$id): //")"
   parents="$(git -C "$ROOT" rev-list --parents -n 1 "$sha" | wc -w)"
   echo "== undo task $id: $intent  (landing ${sha:0:7})"
@@ -311,7 +319,7 @@ cmd_undo() {
   if bash "$HERE/land.sh" "undo-task-$id" --message "undo task $id: $intent"; then
     echo "task $id is out of MAIN; its packet and landing stay in history (git log --grep 'task-$id')"
   else
-    git -C "$ROOT" checkout -q -- . && git -C "$ROOT" clean -fdq -e pyto/experiments/landings
+    git -C "$ROOT" checkout -q -- . && git -C "$ROOT" clean -fdq -e "$LAND_REL"
     echo "undo of task $id did not land (see the reason above); MAIN is as it was" >&2; exit 1
   fi
 }
@@ -336,6 +344,8 @@ cmd_selftest() {
   cp "$HERE/neat.sh" "$tools_dir/neat.sh"
   cp "$HERE/land.sh" "$tools_dir/land.sh"
   chmod +x "$tools_dir/neat.sh" "$tools_dir/land.sh"
+  git -C "$clone" add tools
+  git -C "$clone" commit -q -m "selftest tools"
   if bash "$tools_dir/neat.sh" new "selftest" --verify true >"$tmp/new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
   if [ -d "$clone/EXP/0" ] && [ -f "$clone/EXP/0/.neat/tasks/0/packet.md" ]; then
     echo "selftest new: pass"

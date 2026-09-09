@@ -11,3 +11,5 @@ Evidence: not packed yet
 
 (The agent working on this writes one line per thing it was unsure about, as
 `{?} Label: description`, and leaves the decision to the owner. Empty means nothing was unsure.)
+- {?} Plain-mode handoff: `neat pack` still writes a handoff with pyto-specific setup and `check_all.sh` commands; this approved selftest repair did not change that output.
+- {?} Java verification: the selftest uses `Verify: true`; Java, Spring, Camunda, and test-automation commands must be supplied in a real task packet and were not run here.
