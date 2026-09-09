@@ -59,7 +59,7 @@ pyto/scripts/check_land_refusals.sh | 100 ++++++++++++++++++++++++++++++++++++
 
 ## Evidence
 
-- verify: `bash pyto/scripts/check_land_refusals.sh   # builds a throwaway git repo under mktemp, calls land.sh with no args (expect exit 2), then with a dirty file outside --allow (expect exit 1 and a new pyto/experiments/landings/failed/*.json), asserts the working tree it started from is untouched; no check_all.sh, no network, sub-second` exit 0 (evidence/verify.txt)
+- verify: `bash pyto/scripts/check_land_refusals.sh   # builds a throwaway git repo under mktemp and calls land.sh three times: (1) no args: expect exit 2 and no receipt; (2) --from a branch that does not exist: expect exit 1 and a new pyto/experiments/landings/failed/*.json; then BOARD.md is reset with git checkout because every refusal rewrites it; (3) a dirty file outside --allow: expect exit 1, a new failed receipt, the file untouched; finally asserts the working tree it started from is unchanged; no check_all.sh, no network, sub-second` exit 0 (evidence/verify.txt)
 - suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
     suite                         tests  status
     library                         103  OK
