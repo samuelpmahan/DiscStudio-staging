@@ -4,8 +4,50 @@ Intent: The studio exports its own run record: an Export run record action produ
 Starting point: 7d2448de2e38568967ca14fc8f1a722da7cd7b5d (land(task-0): Day 3 close-out: the record contract says what both runtimes do (declared_consumes, nested array cap), run_cached derives hit or miss from counters, viewer and materializer agree on every fixture)
 Verify: npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded
 Allow: src/runtime.js src/app.js src/review.js src/review-data.js tests scripts/browser_test.py scripts/build.mjs scripts/review_checkpoint.mjs pyto/viewer/adapters.js pyto/viewer/embed.mjs .neat/items pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 9 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  .neat/items/DS-STUDIO-02.json
+- M  pyto/viewer/embed.mjs
+- M  scripts/browser_test.py
+- M  scripts/build.mjs
+- M  scripts/review_checkpoint.mjs
+- M  src/app.js
+- M  src/review-data.js
+- M  src/runtime.js
+- M  tests/core.test.js
+
+```
+.neat/items/DS-STUDIO-02.json |  6 ++++
+ pyto/viewer/embed.mjs         | 62 ++++++++++++++++++++++++++++++++---------
+ scripts/browser_test.py       | 43 ++++++++++++++++++++++++++--
+ scripts/build.mjs             |  2 +-
+ scripts/review_checkpoint.mjs |  2 +-
+ src/app.js                    | 45 ++++++++++++++++++++++++++++--
+ src/review-data.js            |  3 +-
+ src/runtime.js                | 19 ++++++++++++-
+ tests/core.test.js            | 65 +++++++++++++++++++++++++++++++++++++++++++
+ 9 files changed, 224 insertions(+), 23 deletions(-)
+```
+
+## Evidence
+
+- verify: `npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         123  OK
+    experiments/grouped-ablation    240  OK
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+    viewer                           87  OK
+    viewer-record-schema             19  OK
+    
+    ALL SUITES PASSED
 
 ## Uncertain
 
