@@ -42,7 +42,7 @@ import os
 from typing import Any, Mapping
 
 from .core import PxC
-from .pcr import PcrRun
+from .pcr import PcrRun, receipt_address
 
 SCHEMA = "pyto-run-record@1"
 RUNTIME = "pyto"
@@ -295,7 +295,9 @@ def run_record(
     `preexisting=set(pxc.addresses())` captured *before* the run for the accurate
     answer (RECORD.md:73); the fallback here is "every address the post-run store
     holds that no invocation of this run produced", which is right whenever the run
-    did not overwrite a seeded Part.
+    did not overwrite a seeded Part. The Parts this run's own observation wrote
+    under the reserved `px.receipt.` segment are excluded from that fallback for
+    the same reason the produced addresses are: they did not preexist the run.
 
     Joins, in the order RECORD.md needs them:
 
@@ -342,7 +344,22 @@ def run_record(
 
     if preexisting is None:
         produced_anywhere = {address for address in into_by_id.values() if address}
-        preexisting = {address for address in pxc.addresses() if address not in produced_anywhere}
+        # This run's own receipts are excluded exactly like the Parts it produced:
+        # with observe=True the run wrote one Part per invocation under
+        # `px.receipt.<pcr>.<tick>.<id>` (pcr.py:receipt_address), so calling them
+        # "preexisting" would report observation as something that preceded the run
+        # it observes. Only this run's addresses are excluded; a receipt an earlier
+        # run left in the store did preexist this one.
+        own_receipts = {
+            receipt_address(run.pcr, tick.name, testimony.id)
+            for tick in run.ticks
+            for testimony in tick.calculations
+        }
+        preexisting = {
+            address
+            for address in pxc.addresses()
+            if address not in produced_anywhere and address not in own_receipts
+        }
     preexisting = set(preexisting)
 
     produced_so_far: set[str] = set()

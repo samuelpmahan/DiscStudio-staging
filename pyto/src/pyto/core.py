@@ -37,6 +37,16 @@ class Calculation(Generic[Args, Result]):
         return self.calculate(args)
 
 
+RECEIPT_PREFIX = "px.receipt."
+"""The reserved receipt segment (address.py: six reserved second segments under ``px``).
+
+Addresses under it are written by ``PCR.run(..., observe=True)`` only
+(``pcr.py:receipt_address``); a Calculation may not bind one as its ``into``
+(``pcr.py:_refuse_receipt_into``). ``PxC`` itself still stores any address: this is
+the name the binder checks against, not a rule ``set`` enforces.
+"""
+
+
 @dataclass(frozen=True, slots=True)
 class PxWrite:
     address: str

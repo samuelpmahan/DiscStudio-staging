@@ -5,6 +5,8 @@ tests that pinned the behaviour before and after, what it does *not* decide, and
 the consumer-bytes statement. At most one library seam lands per day
 (research/ULTRACODE-WEEK.md, "Execution policy"), so this file is also the count.
 
+## exp/22 (base 76bc3d2): receipts are Parts -- `PCR.run(..., observe=True)` also writes each `Receipt` into the store at `px.receipt.<pcr>.<tick>.<invocation-id>`, `PCR.calc`/`Tick.calc` refuse a Calculation binding into `px.receipt.`, observe=False still writes nothing, and the testimony, the results and the `pyto-run-record@1` document are unchanged either way (`pcr.py`, `core.RECEIPT_PREFIX`, `materialize.run_record` preexisting fallback; pinned by `tests/test_receipts.py::ReceiptsAreParts` and `::ReceiptSegmentIsNotBindable`).
+
 ## Semantic flips
 
 None. Every seam so far is additive: no existing field, default, exception, order
