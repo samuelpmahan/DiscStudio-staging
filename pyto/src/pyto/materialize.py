@@ -10,9 +10,11 @@ renders it.
 
 The output document is `pyto-run-record@1`, specified in pyto/viewer/RECORD.md and
 read by both runtimes. This module is an adapter onto that schema, never a second
-schema: fields absent from RECORD.md are not added here, and fields RECORD.md
-declares are emitted as null when this runtime did not observe them ("Missing
-fields are null, never invented", RECORD.md:65).
+schema: fields absent from RECORD.md are not added here, and only the fields
+RECORD.md marks nullable are ever null ("Missing fields are null, never
+invented", RECORD.md:65, licenses null for a declared-nullable field -- not for
+`identity_scope`, `actual_consumes`, `actual_produces` or `writes`, which is why
+`run_record` requires `observe=True` rather than nulling them).
 
 The record is *derived*: it is an inspection view of a program and a run, never the
 program itself (RECORD.md:11-12). It reads `PcrRun` and never mutates it, so the
@@ -37,7 +39,7 @@ import hashlib
 import io
 import json
 import os
-from typing import Any, Iterable, Mapping
+from typing import Any, Mapping
 
 from .core import PxC
 from .pcr import PcrRun
@@ -74,7 +76,7 @@ def _is_svg(text: str) -> bool:
     return stripped.startswith("<?xml") and "<svg" in stripped
 
 
-def _stable_repr(value: Any) -> str:
+def _stable_repr(value: Any, _active: set[int] | None = None) -> str:
     """A repr with the unordered containers ordered, for digesting a non-JSON value.
 
     `repr(value)` alone is not a defensible digest input for a set: str hashing is
@@ -82,16 +84,64 @@ def _stable_repr(value: Any) -> str:
     processes and the digest would say two identical values differ. Sets and dict
     keys are therefore sorted by their own element repr before digesting. This is a
     digest of a *rendering*, not of the value, and the note says so.
+
+    `_active` is the id() memo of the containers currently on the recursion stack.
+    Builtin `repr()` carries one -- `repr()` of a self-referential dict is
+    `{'name': 'node', 'self': {...}}`, not a RecursionError -- and this rendering
+    has to carry one too: without it a cyclic value recursed until the interpreter
+    gave up, and the RecursionError escaped `render_value` and took the whole
+    record down (the JS reference returns `omitted` for the same value,
+    adapters.js:281-295).
     """
+    if _active is None:
+        _active = set()
+    marker = id(value)
     if isinstance(value, (set, frozenset)):
-        return "{" + ", ".join(sorted(_stable_repr(item) for item in value)) + "}"
+        if marker in _active:
+            return "{...}"
+        _active.add(marker)
+        try:
+            return "{" + ", ".join(sorted(_stable_repr(item, _active) for item in value)) + "}"
+        finally:
+            _active.discard(marker)
     if isinstance(value, dict):
-        items = sorted((_stable_repr(k), _stable_repr(v)) for k, v in value.items())
-        return "{" + ", ".join(f"{k}: {v}" for k, v in items) + "}"
+        if marker in _active:
+            return "{...}"
+        _active.add(marker)
+        try:
+            items = sorted(
+                (_stable_repr(k, _active), _stable_repr(v, _active)) for k, v in value.items()
+            )
+            return "{" + ", ".join(f"{k}: {v}" for k, v in items) + "}"
+        finally:
+            _active.discard(marker)
     if isinstance(value, (list, tuple)):
-        inner = ", ".join(_stable_repr(item) for item in value)
-        return f"[{inner}]" if isinstance(value, list) else f"({inner})"
+        if marker in _active:
+            return "[...]" if isinstance(value, list) else "(...)"
+        _active.add(marker)
+        try:
+            inner = ", ".join(_stable_repr(item, _active) for item in value)
+            return f"[{inner}]" if isinstance(value, list) else f"({inner})"
+        finally:
+            _active.discard(marker)
     return repr(value)
+
+
+def _unserializable_note(value, error: BaseException) -> str:
+    """The `omitted` note for a value json.dumps refused, digesting what it can.
+
+    Every step here is a step that can itself fail on a hostile value (a __repr__
+    that raises, a structure too deep to render at all), and a failure to describe
+    a value must not be worse than the value: the note degrades, the record stands.
+    """
+    try:
+        reason = f"not JSON-serializable ({type(value).__name__}: {error})"
+    except Exception:  # pragma: no cover - a __str__ that raises
+        reason = f"not JSON-serializable ({type(error).__name__})"
+    try:
+        return f"{reason}; sha256 of a canonical repr = {_digest(_stable_repr(value))}"
+    except Exception as second:
+        return f"{reason}; no canonical repr could be taken either ({type(second).__name__})"
 
 
 def _digest(text: str) -> str:
@@ -170,21 +220,28 @@ def render_value(
         return _capped({"kind": kind, "data": value, "note": None}, value_cap_bytes)
 
     lengths: list[int] = []
+    # `except Exception`, not `(TypeError, ValueError)`: RECORD.md:62 assigns every
+    # unserializable value to `omitted`, and a value that is merely awkward -- a
+    # reference cycle, a structure nested past the recursion limit, a __getattr__
+    # that raises -- must degrade to `omitted` here rather than escape and lose the
+    # whole record. json.dumps raises RecursionError (not a ValueError) on both of
+    # the first two, which is exactly how the record used to be lost.
     try:
         json.dumps(value)
-    except (TypeError, ValueError) as error:
-        rendering = _stable_repr(value)
+    except Exception as error:
+        return _omitted(_unserializable_note(value, error))
+    try:
+        data = _truncate_arrays(value, array_cap, lengths)
+        if lengths:
+            note = (
+                f"{len(lengths)} array(s) truncated to the first {array_cap} entries; "
+                f"original lengths: {sorted(lengths, reverse=True)}"
+            )
+        return _capped({"kind": "json", "data": data, "note": note}, value_cap_bytes)
+    except Exception as error:  # pragma: no cover - json.dumps already accepted it
         return _omitted(
-            f"not JSON-serializable ({type(value).__name__}: {error}); "
-            f"sha256 of a canonical repr = {_digest(rendering)}"
+            f"JSON value could not be rendered: {type(error).__name__}: {error}"
         )
-    data = _truncate_arrays(value, array_cap, lengths)
-    if lengths:
-        note = (
-            f"{len(lengths)} array(s) truncated to the first {array_cap} entries; "
-            f"original lengths: {sorted(lengths, reverse=True)}"
-        )
-    return _capped({"kind": "json", "data": data, "note": note}, value_cap_bytes)
 
 
 def _capped(rendered: dict[str, Any], value_cap_bytes: int) -> dict[str, Any]:
@@ -247,13 +304,37 @@ def run_record(
     - each invocation is joined to `run.receipts[id]` by invocation id -- the join
       nothing in pyto did before (ledger:69);
     - the value is `run.results[id]` rendered by `render_value`;
-    - `hit` is the owner's definition (ULTRACODE-WEEK.md:79-82, RECORD.md:53-56):
-      a `px:` binding whose address this run had not produced yet, or that is in
-      `preexisting`. Reading `fn:<id>` is not a hit: that Part was computed here.
+    - `hit` is the JS reference rule, `adapters.js:244-249 deriveHit`, which is the
+      RECORD.md:55-56 rule verbatim: a `px:` binding whose address was not produced
+      by an earlier invocation of the same run. Reading `fn:<id>` is not a hit (that
+      Part was computed here), and neither is re-reading a `preexisting` address
+      this run has already overwritten -- nothing was reused, and RECORD.md's own
+      parenthetical excludes it. `preexisting` decides `parts[...].preexisting`
+      only; the two runtimes agree row for row.
 
-    Without receipts (`observe=False`) the document is still emitted, with the
-    observed-only fields null rather than guessed.
+    `run.receipts` is required: `PCR.run(pxc, observe=True)`. Without it this
+    runtime could only emit `calculation.identity_scope`, `actual_consumes`,
+    `actual_produces` and `writes` as null -- four fields RECORD.md does not mark
+    nullable and the reference reader (`adapters.js validate`) refuses -- so a
+    receipt-less run raises instead of producing a document that claims a schema it
+    does not satisfy.
     """
+    missing = [
+        testimony.id
+        for tick in run.ticks
+        for testimony in tick.calculations
+        if testimony.id not in run.receipts
+    ]
+    if missing:
+        raise ValueError(
+            f"run_record needs the receipts of the run it describes; {len(missing)} of "
+            f"{sum(len(tick.calculations) for tick in run.ticks)} invocation(s) have none "
+            f"(first: {missing[0]!r}). Call PCR.run(pxc, observe=True). Without receipts "
+            "this runtime can only null calculation.identity_scope, actual_consumes, "
+            "actual_produces and writes, which pyto/viewer/RECORD.md does not declare "
+            "nullable and which the reference reader (viewer/adapters.js validate) "
+            "refuses -- a document tagged pyto-run-record@1 that is not one."
+        )
     into_by_id: dict[str, str | None] = {}
     for tick in run.ticks:
         for testimony in tick.calculations:
@@ -282,7 +363,7 @@ def run_record(
     for index, tick in enumerate(run.ticks):
         invocations: list[dict[str, Any]] = []
         for testimony in tick.calculations:
-            receipt = run.receipts.get(testimony.id)
+            receipt = run.receipts[testimony.id]
             invocation_count += 1
 
             px_reads = [
@@ -295,9 +376,11 @@ def run_record(
                 for spelling in testimony.inputs.values()
                 if spelling.startswith("fn:")
             ]
-            hit = any(
-                address in preexisting or address not in produced_so_far for address in px_reads
-            )
+            # adapters.js:244-249 deriveHit, exactly: a `px:` binding this run has
+            # not produced yet. `preexisting` is deliberately not consulted -- an
+            # address that is preexisting *and* unproduced is already covered, and
+            # one this run overwrote and then re-read reused nothing.
+            hit = any(address not in produced_so_far for address in px_reads)
             if hit:
                 hit_count += 1
 
@@ -315,53 +398,30 @@ def run_record(
                     touch(address)
                     if testimony.id not in read_by[address]:
                         read_by[address].append(testimony.id)
-            if receipt is not None:
-                for address in receipt.actual_consumes:
-                    touch(address)
-                    if testimony.id not in read_by[address]:
-                        read_by[address].append(testimony.id)
+            for address in receipt.actual_consumes:
+                touch(address)
+                if testimony.id not in read_by[address]:
+                    read_by[address].append(testimony.id)
 
-            produces: Iterable[str] = (
-                receipt.actual_produces
-                if receipt is not None
-                else ((testimony.into,) if testimony.into else ())
-            )
-            for address in produces:
+            for address in receipt.actual_produces:
                 touch(address)
                 written_by[address] = testimony.id
                 produced_so_far.add(address)
 
-            if receipt is not None:
-                calculation = {
-                    "address": receipt.calculation.address,
-                    "implementation_sha256": receipt.calculation.implementation_sha256,
-                    "identity_scope": receipt.calculation.identity_scope,
-                }
-                declared_consumes: list[str] | None = [
-                    f"px:{address}" for address in receipt.declared_consumes
-                ]
-                actual_consumes: list[str] | None = list(receipt.actual_consumes)
-                actual_produces: list[str] | None = list(receipt.actual_produces)
-                writes: list[dict[str, str]] | None = [
-                    {"address": write.address, "kind": write.kind} for write in receipt.writes
-                ]
-                duration_ms: float | None = receipt.duration_ms
-                result_sha256: str | None = receipt.result_sha256
-                wall_ms = receipt.duration_ms if wall_ms is None else wall_ms + receipt.duration_ms
-            else:
-                # observe=False: the identity is the authored address only, and every
-                # observed-only field is null. RECORD.md:65.
-                calculation = {
-                    "address": testimony.calculation,
-                    "implementation_sha256": None,
-                    "identity_scope": None,
-                }
-                declared_consumes = [f"px:{address}" for address in px_reads]
-                actual_consumes = None
-                actual_produces = None
-                writes = None
-                duration_ms = None
-                result_sha256 = None
+            calculation = {
+                "address": receipt.calculation.address,
+                "implementation_sha256": receipt.calculation.implementation_sha256,
+                "identity_scope": receipt.calculation.identity_scope,
+            }
+            declared_consumes = [f"px:{address}" for address in receipt.declared_consumes]
+            actual_consumes = list(receipt.actual_consumes)
+            actual_produces = list(receipt.actual_produces)
+            writes = [
+                {"address": write.address, "kind": write.kind} for write in receipt.writes
+            ]
+            duration_ms: float | None = receipt.duration_ms
+            result_sha256: str | None = receipt.result_sha256
+            wall_ms = receipt.duration_ms if wall_ms is None else wall_ms + receipt.duration_ms
 
             invocations.append(
                 {
@@ -529,7 +589,16 @@ def _value_image(neon, value: Mapping[str, Any]) -> Any | None:
     if value["kind"] != "png-data-url" or not isinstance(value["data"], str):
         return None
     _, _, payload = value["data"].partition(",")
-    return Image.open(io.BytesIO(base64.b64decode(payload))).convert("RGBA")
+    try:
+        return Image.open(io.BytesIO(base64.b64decode(payload))).convert("RGBA")
+    except Exception:
+        # RECORD.md:60-61 fixes the prefix, not the payload, so a `png-data-url`
+        # whose base64 is truncated or is not a PNG is a legal record -- the JS
+        # viewer renders it as a broken <img> and carries on. Drawing must degrade
+        # the same way: this invocation keeps its text panel (kind and note are on
+        # it) instead of the decoder aborting the run and leaving a half-written
+        # ticks/ directory behind.
+        return None
 
 
 def tick_sheets(record: Mapping[str, Any], out_dir: str, *, cols: int = 2) -> list[str]:

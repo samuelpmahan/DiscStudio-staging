@@ -60,7 +60,15 @@ export function buildPage(record, { viewerDir = HERE } = {}) {
 
   const bundle = `<script type="module">\n/* adapters.js + tick-viewer.js, inlined by embed.mjs. No imports, no network. */\n${adapters}\n${viewer}\nmount(document);\n</script>`;
   const recordBlock = `<script type="application/json" id="record">\n${embeddableJson(record)}\n</script>`;
-  return html.replace(EMPTY_RECORD_BLOCK, recordBlock).replace(PAGE_SCRIPT, bundle);
+  // Both replacements pass a FUNCTION, never a string. String.prototype.replace
+  // expands `$&`, `$'`, '$`' and `$1` inside a replacement *string*, and both of
+  // these replacements are record- or source-derived: a Part value, an address or
+  // a pcr name holding `$'` (a shell snippet such as `printf $'%s\n'` is enough)
+  // spliced the page's own tail into the JSON block, so the record no longer
+  // parsed and the module bootstrap was left un-inlined -- a page that can never
+  // mount, produced silently at build time. A function replacement is inserted
+  // literally.
+  return html.replace(EMPTY_RECORD_BLOCK, () => recordBlock).replace(PAGE_SCRIPT, () => bundle);
 }
 
 export function embedFile(inputPath, { viewerDir = HERE } = {}) {

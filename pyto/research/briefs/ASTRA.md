@@ -33,7 +33,10 @@ One mechanism answers all five: every agent read and write is an `oc` receipt wi
   `{?} Label: description` your team wants the owner to see. I verify with the same command, score
   with the package's rubric, and either land it (merge to the working branch) or return findings.
 - **Landed** means: on the working branch, every suite green (`bash pyto/scripts/check_all.sh`),
-  evidence retained. Anything else is a checkpoint, not a claim.
+  evidence retained. Anything else is a checkpoint, not a claim. The mechanics are one script,
+  `pyto/scripts/land.sh <package> --verify "<command>" --allow "<paths>"`, described in
+  `pyto/LANDING.md`; every landing leaves a receipt under `pyto/experiments/landings/`, and a
+  hand-back that fails its own verifier gets a failed receipt and the findings, nothing else.
 - **One writer per directory at a time.** Packages are chosen so three teams never touch the same
   files. Do not touch `pyto/src`, `pyto/BOARD.md` or `pyto/questions.md`; send `{?}` entries in the
   report and I merge them at the root.

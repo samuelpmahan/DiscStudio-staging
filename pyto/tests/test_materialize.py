@@ -27,7 +27,14 @@ import unittest
 from dataclasses import asdict
 
 from pyto import Calculation, Part, PCR, PxC
-from pyto.materialize import SCHEMA, render_value, run_record, tick_sheets, write_record
+from pyto.materialize import (
+    SCHEMA,
+    _stable_repr,
+    render_value,
+    run_record,
+    tick_sheets,
+    write_record,
+)
 
 # Intra-repo sys.path insert (experiments/CAPTURE.md): the Day 1 program lives in
 # experiments/grouped-ablation/ and its modules import each other by top-level name.
@@ -41,6 +48,19 @@ if EXPERIMENT_DIR not in sys.path:
 from calculations import select_variants  # noqa: E402
 from features import GROUPS, make_data  # noqa: E402
 from program import GROUPS as GROUPS_PART, ROWS, build_program  # noqa: E402
+
+# The second reader of the shared format. viewer/test/record_schema.py is a Python
+# validator transcribed from RECORD.md independently of both adapters.js and
+# pyto.materialize, so running this producer's output through it is a check by
+# something other than the producer -- which is what the receipt-less document
+# lacked when it claimed a schema the reference reader refuses.
+VIEWER_TEST_DIR = os.path.join(PYTO_ROOT, "viewer", "test")
+if VIEWER_TEST_DIR not in sys.path:
+    print(f"[tests/test_materialize] sys.path.insert(0, {VIEWER_TEST_DIR!r})", file=sys.stderr)
+    sys.path.insert(0, VIEWER_TEST_DIR)
+
+from record_schema import RecordSchemaError  # noqa: E402
+from record_schema import validate as validate_record  # noqa: E402
 
 SEED, N = 7, 400  # run.py:main defaults; evidence/run-1/comparison.json records seed 7, n 400
 
@@ -86,6 +106,23 @@ def emit_image(args):
 
 def read_part(args):
     return args["seeded"]
+
+
+def emit_cycle(args):
+    node = {"name": "node"}
+    node["self"] = node
+    return node
+
+
+def bump_counter(args):
+    return {"n": args["counter"]["n"] + 1}
+
+
+def emit_undecodable_png_data_url(args):
+    # RECORD.md:60-61 fixes the prefix, not the payload; this exact string is the
+    # repo's own JS render fixture (viewer/test/render.test.mjs:218), where the
+    # viewer renders it as an <img> without complaint.
+    return "data:image/png;base64,iVBORw0KGgo="
 
 
 def _day_one_run():
@@ -213,27 +250,53 @@ class DayOneRecord(unittest.TestCase):
         total = sum(receipt.duration_ms for receipt in self.day_one.receipts.values())
         self.assertAlmostEqual(self.record["counters"]["wall_ms"], total, places=9)
 
-    def test_without_observe_the_observed_fields_are_null_not_guessed(self):
+    def test_without_observe_run_record_refuses_instead_of_emitting_nulls(self):
+        """A document is `pyto-run-record@1` or it is not tagged as one.
+
+        RECORD.md marks its nullable fields explicitly (`"<hex or null>"`,
+        `"<sha or null>"`) and marks none of `calculation.identity_scope`,
+        `actual_consumes`, `actual_produces`, `writes`, so RECORD.md:65 ("missing
+        fields are null, never invented") does not license nulling them: the
+        reference reader (adapters.js `validate`) refuses the result, and so does
+        the independent Python validator. Emitting it anyway was a document that
+        claimed the shared schema and no reader of that schema would take. The
+        only caller, experiments/grouped-ablation/materialize_run.py:107-112,
+        already passes observe=True, so nothing downstream changes.
+        """
         rows = make_data(SEED, N)
         pxc = PxC()
         pxc.set(ROWS, rows)
         pxc.set(GROUPS_PART, GROUPS)
         preexisting = set(pxc.addresses())
         pcr = build_program(select_variants({"groups": GROUPS}))
-        record = run_record(pcr.run(pxc), pxc, preexisting=preexisting)
-        split = record["ticks"][0]["invocations"][1]
-        self.assertIsNone(split["calculation"]["implementation_sha256"])
-        self.assertIsNone(split["calculation"]["identity_scope"])
-        self.assertIsNone(split["actual_consumes"])
-        self.assertIsNone(split["writes"])
-        self.assertIsNone(split["duration_ms"])
-        self.assertIsNone(split["result_sha256"])
-        self.assertIsNone(record["counters"]["wall_ms"])
-        # The authored half is still there: address, declared reads, hit, value.
-        self.assertEqual(split["calculation"]["address"], "fn.ablation.split")
-        self.assertEqual(split["declared_consumes"], ["px:input.ablation.rows"])
-        self.assertTrue(split["hit"])
-        self.assertEqual(split["value"]["kind"], "json")
+        run = pcr.run(pxc)  # no observe: PcrRun.receipts is empty (pcr.py:130-145)
+        self.assertEqual(run.receipts, {})
+        with self.assertRaises(ValueError) as caught:
+            run_record(run, pxc, preexisting=preexisting)
+        message = str(caught.exception)
+        self.assertIn("observe=True", message)
+        self.assertIn("15 of 15 invocation(s) have none", message)
+        self.assertIn("identity_scope", message)
+
+    def test_the_shape_it_refuses_to_emit_is_the_shape_a_reader_refuses(self):
+        """Why the refusal above is a refusal and not a null-filled document."""
+        record = json.loads(json.dumps(self.record))
+        validate_record(record)  # the observed document is readable
+        invocation = record["ticks"][0]["invocations"][0]
+        invocation["calculation"]["identity_scope"] = None
+        with self.assertRaises(RecordSchemaError) as caught:
+            validate_record(record)
+        self.assertEqual(caught.exception.path, "ticks[0].invocations[0].calculation.identity_scope")
+        invocation["calculation"]["identity_scope"] = "runtime-function-body"
+        for field in ("actual_consumes", "actual_produces", "writes"):
+            with self.subTest(field=field):
+                keep = invocation[field]
+                invocation[field] = None
+                with self.assertRaises(RecordSchemaError) as caught:
+                    validate_record(record)
+                self.assertEqual(caught.exception.path, f"ticks[0].invocations[0].{field}")
+                invocation[field] = keep
+        validate_record(record)
 
 
 class TestimonyBytesUnchangedByMaterializing(unittest.TestCase):
@@ -361,6 +424,63 @@ class ValueKinds(unittest.TestCase):
             with self.subTest(candidate=type(candidate).__name__):
                 self.assertEqual(render_value(candidate)["kind"], "omitted")
 
+    def test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error(self):
+        """RECORD.md:62 assigns "not serializable" to `omitted`, cycles included.
+
+        The JS reference does exactly that (adapters.js:281-295 materialize returns
+        `{kind: 'omitted', note: 'value is not JSON serializable: Converting
+        circular structure to JSON...'}`), so a cyclic Part value must not be the
+        one input on which the two runtimes' records differ -- and it must not take
+        the whole document down: json.dumps raises ValueError on a cycle, and a
+        rendering with no cycle memo then raised RecursionError straight out of
+        run_record.
+        """
+        node = {"name": "node"}
+        node["self"] = node
+        rendered = render_value(node)
+        self.assertEqual(rendered["kind"], "omitted")
+        self.assertIsNone(rendered["data"])
+        self.assertIn("not JSON-serializable (dict", rendered["note"])
+        self.assertIn("sha256", rendered["note"])
+        # The canonical rendering marks a repeated container the way repr() does.
+        self.assertEqual(_stable_repr(node), "{'name': 'node', 'self': {...}}")
+        self.assertEqual(_stable_repr(node), repr(node))
+
+        ring = [1]
+        ring.append(ring)
+        self.assertEqual(render_value(ring)["kind"], "omitted")
+        self.assertEqual(_stable_repr(ring), repr(ring))
+
+        # A container repeated but not cyclic is still rendered in full: the memo
+        # is the recursion stack, not a seen-set.
+        shared = {"k": 1}
+        self.assertEqual(_stable_repr([shared, shared]), "[{'k': 1}, {'k': 1}]")
+
+    def test_a_value_nested_past_the_recursion_limit_is_omitted_not_fatal(self):
+        """json.dumps raises RecursionError -- neither TypeError nor ValueError."""
+        deep: list = []
+        inner = deep
+        for _ in range(6000):
+            nested: list = []
+            inner.append(nested)
+            inner = nested
+        rendered = render_value(deep)
+        self.assertEqual(rendered["kind"], "omitted")
+        self.assertIsNone(rendered["data"])
+        self.assertIn("RecursionError", rendered["note"])
+
+    def test_a_cyclic_part_value_leaves_the_rest_of_the_record_intact(self):
+        """The failure this guards is not one value: it was the whole document."""
+        pxc = PxC()
+        pcr = PCR("materialize.cyclic")
+        pcr.calc("One", Calculation("fn.spec.cycle", emit_cycle), id="cyclic", into="scratch.spec.cycle")
+        pcr.calc("One", Calculation("fn.spec.text", emit_text), id="fine", into="scratch.spec.fine")
+        record = run_record(pcr.run(pxc, observe=True), pxc, preexisting=set())
+        cyclic, fine = record["ticks"][0]["invocations"]
+        self.assertEqual(cyclic["value"]["kind"], "omitted")
+        self.assertEqual(fine["value"], {"kind": "text", "data": "not an svg, just text", "note": None})
+        validate_record(record)
+
 
 class HitLedger(unittest.TestCase):
     """The owner's definition (ULTRACODE-WEEK.md:79-82): a Part being used is a hit."""
@@ -415,6 +535,56 @@ class HitLedger(unittest.TestCase):
         self.assertFalse(second["hit"])
         self.assertEqual(record["parts"]["scratch.spec.a"]["read_by"], ["second"])
         self.assertEqual(record["counters"]["hits"], 0)
+
+    def test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript(self):
+        """The one shape on which the two runtimes used to disagree.
+
+        RECORD.md:55-56 states the rule with its own exclusion -- "a `px:` binding
+        whose address was not produced by an earlier invocation of the same run" --
+        and adapters.js:244-249 `deriveHit` implements exactly that: it never
+        consults a preexisting set. `bump` reads a Part nothing had produced (a
+        hit) and refines it; `read` then binds the same address, which this run has
+        now written, so nothing is reused and it is not a hit. ORing in
+        `address in preexisting` reported it as a hit while the value it shows is
+        the freshly computed one, and validate() cannot catch that -- the counters
+        stay self-consistent either way. The JS side pins the same shape in
+        viewer/test/adapters.test.mjs.
+        """
+        pxc = PxC()
+        pxc.set(Part("shared.counter"), {"n": 1})
+        preexisting = set(pxc.addresses())
+        pcr = PCR("materialize.overwrite")
+        pcr.calc(
+            "One",
+            Calculation("fn.spec.bump", bump_counter),
+            id="bump",
+            counter=Part("shared.counter"),
+            into="shared.counter",
+        )
+        # Tick.calc (pcr.py:37-60), not PCR.calc: the Tick's own binder does not
+        # rewrite a Part binding into the writer's ResultRef, so `read` really does
+        # carry `px:shared.counter` after this run has overwritten that address.
+        pcr.tick("Two").calc(
+            Calculation("fn.spec.read", read_part),
+            id="read",
+            seeded=Part("shared.counter"),
+            into="scratch.spec.out",
+        )
+        run = pcr.run(pxc, observe=True)
+        record = run_record(run, pxc, preexisting=preexisting)
+        validate_record(record)
+
+        bump = record["ticks"][0]["invocations"][0]
+        read = record["ticks"][1]["invocations"][0]
+        self.assertEqual(bump["writes"], [{"address": "shared.counter", "kind": "refinement"}])
+        self.assertTrue(bump["hit"], "bump read a Part no invocation of this run had produced")
+        self.assertEqual(read["inputs"], {"seeded": "px:shared.counter"})
+        self.assertFalse(read["hit"], "this run wrote shared.counter; nothing was reused")
+        self.assertEqual(read["value"], {"kind": "json", "data": {"n": 2}, "note": None})
+        self.assertEqual(record["counters"]["hits"], 1)
+        self.assertEqual(record["counters"]["computed"], 1)
+        # preexisting is still reported, on the Part where it belongs.
+        self.assertTrue(record["parts"]["shared.counter"]["preexisting"])
 
 
 class Determinism(unittest.TestCase):
@@ -499,6 +669,41 @@ class TickSheets(unittest.TestCase):
             self.assertEqual(handle.read(), SVG_DOCUMENT)
         self.assertEqual(len([path for path in paths if path.endswith(".png")]), 1)
 
+    def test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel(self):
+        """Drawing degrades per panel; it never aborts mid-directory.
+
+        RECORD.md:60-61 fixes the `data:image/png;base64,` prefix, not the payload,
+        so a truncated or non-PNG payload is a legal record -- adapters.js accepts
+        it and the viewer renders it as an <img> without complaint
+        (viewer/test/render.test.mjs:218 uses this exact string). An unguarded
+        Image.open raised UnidentifiedImageError out of tick_sheets and left a
+        half-written ticks/ directory: Tick One's sheet on disk, Tick Two's and
+        Tick Three's missing.
+        """
+        pxc = PxC()
+        pcr = PCR("materialize.badpng")
+        pcr.calc("One", Calculation("fn.spec.text", emit_text), id="first", into="scratch.spec.a")
+        pcr.calc(
+            "Two",
+            Calculation("fn.spec.badpng", emit_undecodable_png_data_url),
+            id="broken",
+            into="scratch.spec.b",
+        )
+        pcr.calc("Three", Calculation("fn.spec.text", emit_text), id="last", into="scratch.spec.c")
+        record = run_record(pcr.run(pxc, observe=True), pxc, preexisting=set())
+        validate_record(record)
+        self.assertEqual(record["ticks"][1]["invocations"][0]["value"]["kind"], "png-data-url")
+
+        paths = tick_sheets(record, self.out_dir)
+        self.assertEqual(
+            sorted(os.path.basename(path) for path in paths),
+            ["tick-000-One.png", "tick-001-Two.png", "tick-002-Three.png"],
+        )
+        self.assertEqual(sorted(os.listdir(self.out_dir)), sorted(os.path.basename(p) for p in paths))
+        for path in paths:
+            with Image.open(path) as image:
+                self.assertEqual(image.format, "PNG")
+
     def test_an_image_value_is_drawn_into_the_sheet(self):
         run, pxc, preexisting = _one_calc_run(Calculation("fn.spec.image", emit_image))
         record = run_record(run, pxc, preexisting=preexisting)
@@ -509,6 +714,48 @@ class TickSheets(unittest.TestCase):
         )
         with Image.open(with_image[0]) as drawn, Image.open(text_only[0]) as plain:
             self.assertGreater(drawn.height, plain.height)
+
+
+class ReadableByTheOtherRuntimesValidator(unittest.TestCase):
+    """Every document this producer emits is read back by an independent reader.
+
+    viewer/test/record_schema.py is transcribed from RECORD.md clause by clause,
+    independently of both adapters.js and pyto.materialize; the JS reference
+    `validate` refuses the same shapes at the same paths (the viewer suite pins
+    that). A producer checked only by its own tests is not checked against the
+    contract at all -- which is how a receipt-less document went on claiming
+    `pyto-run-record@1` while neither reader would take it.
+    """
+
+    def test_the_day_one_record_validates(self):
+        run, pxc, preexisting = _day_one_run()
+        validate_record(run_record(run, pxc, preexisting=preexisting))
+
+    def test_a_record_of_every_value_kind_validates(self):
+        bodies = [
+            ("fn.spec.text", emit_text, "text"),
+            ("fn.spec.svg", emit_svg, "svg"),
+            ("fn.spec.set", emit_set, "omitted"),
+            ("fn.spec.big", emit_big_text, "omitted"),
+            ("fn.spec.long", emit_long_list, "json"),
+            ("fn.spec.badpng", emit_undecodable_png_data_url, "png-data-url"),
+            ("fn.spec.cycle", emit_cycle, "omitted"),
+        ]
+        if PILLOW:
+            bodies.append(("fn.spec.image", emit_image, "png-data-url"))
+        for address, body, kind in bodies:
+            with self.subTest(kind=kind, calculation=address):
+                run, pxc, preexisting = _one_calc_run(Calculation(address, body))
+                record = run_record(run, pxc, preexisting=preexisting)
+                self.assertEqual(record["ticks"][0]["invocations"][0]["value"]["kind"], kind)
+                validate_record(record)
+
+    def test_the_committed_evidence_record_still_validates(self):
+        path = os.path.join(EXPERIMENT_DIR, "evidence", "run-1", "record.json")
+        if not os.path.isfile(path):  # pragma: no cover - the evidence is committed
+            self.skipTest(f"{path} is not present")
+        with open(path, encoding="utf-8") as handle:
+            validate_record(json.load(handle))
 
 
 if __name__ == "__main__":

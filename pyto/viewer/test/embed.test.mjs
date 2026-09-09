@@ -156,3 +156,37 @@ test('the inlined bundle is valid module syntax with no duplicate top-level bind
   writeFileSync(file, bundle);
   execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' });
 });
+
+test("a record carrying $&, $` and $' is embedded literally, not expanded", () => {
+  // String.prototype.replace expands `$&`, "$`", `$'` and `$1` inside a
+  // replacement STRING. Every byte of the record block is record-derived, so a
+  // Part value, an address or a pcr name holding one of those sequences used to
+  // splice the page's own text into the JSON block at build time: the record no
+  // longer parsed, and in the `$'` case the module bootstrap was left un-inlined,
+  // so the standalone page could never mount. A realistic carrier is a shell
+  // snippet: printf $'%s\n'.
+  const hostile = "printf $'%s\\n' -- $& then $` and $1 done";
+  const record = fromPytoRecord(fixture('pyto-grouped-ablation.json'));
+  record.pcr = `grouped-ablation ${hostile}`;
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) {
+      invocation.value = { kind: 'text', data: hostile, note: hostile };
+    }
+  }
+  validate(record);
+
+  const page = buildPage(record);
+  assert.equal((page.match(/^<script/gm) || []).length, 2, 'exactly the record block and the inlined module');
+  assert.equal((page.match(/^<\/script>/gm) || []).length, 2);
+  assert.ok(!page.includes("import { mount } from './tick-viewer.js';"), 'the bootstrap was still inlined');
+  assert.equal(page.match(/^\s*(import|export)\s/gm), null, 'no module statement survives inlining');
+  assert.ok(page.includes('\nmount(document);\n'), 'the page still boots');
+
+  // The record block parses, and it is the record that went in.
+  const start = page.indexOf(RECORD_OPEN) + RECORD_OPEN.length;
+  const text = page.slice(start, page.indexOf('</script>', start));
+  const readBack = readEmbeddedRecord({ getElementById: (id) => (id === 'record' ? { textContent: text } : null) });
+  assert.deepEqual(readBack, record);
+  assert.equal(readBack.pcr, `grouped-ablation ${hostile}`);
+  assert.equal(readBack.ticks[0].invocations[0].value.data, hostile);
+});

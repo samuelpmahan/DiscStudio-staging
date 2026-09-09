@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T064428Z-landing-protocol",
+  "package": "landing-protocol",
+  "base_sha": "4641ea82ebe8ac3c3c0c0bf19a7b7eb2996f30bb",
+  "result": "failed",
+  "reason": "file outside allowed paths: pyto/src/pyto/materialize.py  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- pyto/src/pyto/materialize.py  then land, then git stash pop)",
+  "at": "2026-09-09T06:44:28.583593Z"
+}
