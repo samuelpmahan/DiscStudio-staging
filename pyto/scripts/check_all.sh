@@ -147,7 +147,7 @@ echo
 # research/ULTRACODE-WEEK.md Reframing 4), so its Node 22 tests are a suite here
 # and not an optional extra. A missing node fails loudly with a named reason
 # rather than passing silently.
-EXPECT_VIEWER="${EXPECT_VIEWER:-73}"
+EXPECT_VIEWER="${EXPECT_VIEWER:-77}"
 echo "== suite: viewer  (cwd $PYTO/viewer)"
 viewer_ok=FAIL
 viewer_count="?"
@@ -172,6 +172,16 @@ else
 fi
 SUMMARY+=("$(printf '%-28s %6s  %s' viewer "$viewer_count" "$viewer_ok")")
 echo
+
+# 8. the record round trip: RECORD.md is a contract between two runtimes, so it
+# is checked from both sides. viewer/test/record_schema.py is a Python
+# validator written from RECORD.md independently of adapters.js; the suite runs
+# every JavaScript adapter's output through it, and asserts the two validators
+# refuse the same mutations at the same paths. It needs node (it drives the
+# adapters), which the viewer suite above has already required.
+EXPECT_RECORD_SCHEMA="${EXPECT_RECORD_SCHEMA:-19}"
+run_suite viewer-record-schema "$PYTO/viewer" python3 -m unittest discover -s test -p 'test_*.py' -v
+expect_count viewer-record-schema "$EXPECT_RECORD_SCHEMA"
 
 echo "== per-suite counts"
 printf '%-28s %6s  %s\n' suite tests status

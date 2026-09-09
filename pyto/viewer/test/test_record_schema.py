@@ -268,9 +268,10 @@ class TheValidatorActuallyRejects(unittest.TestCase):
 
     def test_the_value_kind_rules_of_RECORD_md_59_to_63(self):
         base = "ticks.0.invocations.0.value"
+        # "omitted" has to say why (RECORD.md:63): a null note is not a reason.
         self.assertRejects(
-            set_at(self.record, base, {"kind": "omitted", "data": None, "note": None}), base.replace(".0.", "[0].", 1)
-            .replace("ticks[0].invocations.0.value", "ticks[0].invocations[0].value")
+            set_at(self.record, base, {"kind": "omitted", "data": None, "note": None}),
+            "ticks[0].invocations[0].value.note",
         )
         self.assertRejects(
             set_at(self.record, base, {"kind": "omitted", "data": "x", "note": "why"}),

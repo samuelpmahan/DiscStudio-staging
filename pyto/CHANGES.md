@@ -460,3 +460,73 @@ assertion, count or expectation of any existing test changed.
   order is salted per process, so the plain-`repr` digest would report two identical sets
   as different material — the process-dependent digest ULTRACODE-WEEK.md critic gap 10
   refuses.
+
+### Day 3 round trip: the record is checked from both sides
+
+Verification of the Day 3 seam, and the one place the two runtimes could have quietly
+disagreed. `RECORD.md` is a contract between a Python producer and a JavaScript one, and
+until now each side was checked only by itself: `pyto/tests/test_materialize.py` asserted
+what Python wrote, `viewer/test/adapters.test.mjs` asserted what JavaScript wrote, and
+the viewer's `pyto` fixture was hand-transcribed from `receipts.json` rather than being a
+record either runtime had produced. Two producers and no shared reader is not a contract.
+
+**The fixture is now the file, not a copy of the story it tells.**
+`viewer/fixtures/pyto-grouped-ablation.json` is
+`experiments/grouped-ablation/evidence/run-1/record.json` byte for byte, and
+`adapters.test.mjs` compares the two files, so it cannot drift — the same property the
+DiscStudio fixture already had by re-running `src/runtime.js`. The hand-written document
+survives as `viewer/fixtures/pyto-value-kinds.json`, renamed, re-`pcr`'d
+(`ablation.grouped.value-kinds`) and labelled synthetic in `viewer/README.md`: it is the
+only thing that carries `svg`, `png-data-url`, `text` and `omitted` values, because
+grouped-ablation run-1 materializes JSON and nothing else, and inventing four value kinds
+into a record of a real run would have been the lie the fixture swap was meant to end.
+
+The real record loads through `fromPytoRecord` unchanged, and renders: 4 Tick sections, 15
+invocation rows, 0 script nodes. The render, filter, header, part-index and counter
+assertions of `render.test.mjs` were re-pinned to run-1's actual numbers (15 / 2 / 13 over
+4 Ticks) rather than the fixture's invented 11 / 2 / 9 over 6.
+
+**The other direction now exists.** `viewer/test/record_schema.py` is a Python validator
+of `pyto-run-record@1` transcribed from RECORD.md clause by clause, sharing no code with
+`adapters.js` and importing nothing from `pyto`. `viewer/test/emit_adapter_records.mjs`
+writes out every JavaScript adapter's output — pyto pass-through, both DiscStudio runs,
+ChessLab, Wumpus — and `viewer/test/test_record_schema.py` (19 tests, the new
+`viewer-record-schema` suite) reads them all back through it. Its key sets are **exact**
+in both directions: RECORD.md:65 says missing fields are null and never invented, which
+reads both ways, so a field an adapter drops and a field an adapter adds both fail.
+
+All six adapter outputs pass. `parts` is re-derived a third time, in Python, from the
+invocations alone and agrees with what JavaScript wrote for all six; counters recompute
+from the Ticks for all six.
+
+**Two differences found, and pinned rather than smoothed over.**
+
+- `adapters.js` `validate` reads the fields it needs and accepts an unknown one: a record
+  carrying `counters.misses` passes in JavaScript and fails in Python
+  (`TheTwoValidatorsAgree::test_python_is_the_stricter_reader_only_where_RECORD_md_says_so`).
+  So an invented field is caught by the round trip and by nothing else, which is the
+  argument for the round trip. Not repaired in `adapters.js`: strictness there would
+  reject a future record written to a later schema by a runtime that has not been updated,
+  and RECORD.md gives no rule for that yet.
+- A record re-serialized by JavaScript is equal to Python's file as parsed JSON but not as
+  bytes. JSON has one number type, so an integral float inside a value payload is `0.0`
+  from Python and `0` from JavaScript — one line of run-1's record
+  (`delta_vs_baseline`). RECORD.md:67 fixes sorted keys and two-space indentation, not the
+  spelling of a number, so neither side is wrong; the consequence is that nothing may key
+  a digest on the record *file*, and
+  `AdapterOutputs::test_the_round_trip_is_equal_as_JSON_and_not_promised_as_bytes` says so
+  where it would otherwise be discovered by a broken digest.
+
+**One asymmetry left standing on purpose.** `compare` binds `fn:score.*` and its
+`actual_consumes` is empty, because a `fn:` result is served from the result cache and
+never touches the store. The `parts` index resolves the `fn:` ref and lists `compare` as a
+reader of `scratch.ablation.score.drop_g3`; the viewer's text filter, which matches what
+the invocation *spells*, does not find `compare` under that address. Both readings are
+correct and they differ; `render.test.mjs` now asserts both side by side rather than
+letting a reader assume the filter and the index answer the same question.
+
+**Counts.** `viewer` 73 → 77 (the byte-identity check, the four-Ticks-fifteen-rows render check, the value-kinds coverage check, and
+the four value-kind schema cases moved onto the synthetic record); new suite
+`viewer-record-schema` 19. `scripts/check_all.sh` pins both (`EXPECT_VIEWER`,
+`EXPECT_RECORD_SCHEMA`). No Python library file changed; `materialize.py`, `pcr.py`,
+`core.py`, `pql.py` and `graph.py` are untouched by this entry.

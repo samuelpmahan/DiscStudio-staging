@@ -22,7 +22,11 @@ No npm packages, no CDN, no build step. Tests run under Node 22 with `node --tes
 | `adapters.js` | `validate` plus the four `from*` adapters; no DOM |
 | `embed.mjs` | `node embed.mjs record.json > page.html` — one self-contained file |
 | `fixtures/*.json` | one document per runtime (see below) |
-| `test/*.test.mjs` | 73 tests: schema, hit derivation, render safety, filter, embed |
+| `test/*.test.mjs` | 77 tests: schema, hit derivation, render safety, filter, embed |
+| `test/record_schema.py` | a Python validator of RECORD.md, written independently of `adapters.js` |
+| `test/test_record_schema.py` | 19 tests: every JavaScript adapter's output read back by that validator |
+| `test/emit_adapter_records.mjs` | writes each adapter's output to a directory, for the Python suite |
+| `test/validate_cases.mjs` | reports `adapters.js` verdicts on candidate records, for the Python suite |
 
 ## Opening it
 
@@ -155,7 +159,8 @@ invocation with a `null` address rather than an invented one.
 
 | File | Produced by |
 |---|---|
-| `pyto-grouped-ablation.json` | hand-written to `RECORD.md`, with real calculation addresses, implementation hashes, durations and digests lifted from `../experiments/grouped-ablation/evidence/run-1/receipts.json`. Placeholder until the Python materializer's own file lands. Exercises all five value kinds. |
+| `pyto-grouped-ablation.json` | the file `pyto.materialize.run_record` wrote for grouped-ablation run-1, copied byte for byte from `../experiments/grouped-ablation/evidence/run-1/record.json`. `test/adapters.test.mjs` compares the two files, so the fixture cannot drift from the producer. 15 invocations over 4 Ticks; every value is `json`, because that is what the run materializes. |
+| `pyto-value-kinds.json` | synthetic, and named as one: the same PCR shape carrying all five value kinds (`svg`, `png-data-url`, `text`, `omitted`, `json`) so the render and schema rules for the four kinds run-1 never produces are still exercised. Never presented as a record of a real run — its `pcr` is `ablation.grouped.value-kinds`. |
 | `discstudio-display-card.json` | an actual node run of `../../src/runtime.js`: `createStudioRuntime(createSeed()).card('buzzz-mint','broadcast',ctx)` twice. `first` = everything computed, `second` = everything served from the memo ring. `test/adapters.test.mjs` re-runs the live runtime and asserts the adapter agrees with the fixture, so it cannot drift. |
 | `chesslab-s0-s1.json` | hand-written to `contract.ts` and `host.ts:28-36`, with the S0/S1 slots and the declared/actual divergence from `debugger.test.ts:135-147`. |
 | `wumpus-belief-tick.json` | an actual node run of `../reference/lab/wumpus-core/execute.js`: three `executeTick` calls (Sense, Believe, Render) on one board, the last producing an SVG belief grid. |
@@ -167,9 +172,34 @@ which is also what `embed.mjs` uses.
 ## Tests
 
 ```sh
-cd pyto/viewer && node --test test/*.test.mjs     # 73 tests
-bash ../scripts/check_all.sh                      # runs them as the "viewer" suite
+cd pyto/viewer && node --test test/*.test.mjs              # 77 tests, the "viewer" suite
+cd pyto/viewer && python3 -m unittest discover -s test     # 19 tests, "viewer-record-schema"
+bash ../scripts/check_all.sh                               # runs both as named suites
 ```
 
 `test/render.test.mjs` uses a ~20-line document shim (`createElement` returns plain objects) and
 walks the resulting tree. There is no jsdom and no dependency of any kind.
+
+### The record is checked from both sides
+
+RECORD.md is a contract between two runtimes, and a contract checked only by the side that wrote it
+is not checked at all. So the round trip runs in both directions:
+
+- **Python → JavaScript.** `test/adapters.test.mjs` loads the real `record.json` the Python
+  materializer wrote, validates it, re-derives its `parts` index and its `hit` flags with
+  `adapters.js`, and renders it through the document shim.
+- **JavaScript → Python.** `test/emit_adapter_records.mjs` writes every adapter's output;
+  `test/test_record_schema.py` reads them back through `record_schema.py`, a Python validator
+  transcribed from RECORD.md clause by clause and deliberately not sharing code with `adapters.js`.
+  Its key sets are *exact*: a field either side invents or omits fails there. The same suite feeds a
+  list of mutated records to both validators and asserts they refuse the same ones at the same
+  paths.
+
+Two known differences are pinned by that suite rather than left to be discovered:
+
+- `adapters.js` reads the fields it needs and lets an unknown one through; the Python validator
+  rejects it. An invented field is caught on the Python side, which is why the round trip exists.
+- A record re-serialized by JavaScript is equal to Python's file as parsed JSON but not always as
+  bytes: JSON has one number type, so an integral float inside a value payload is `0.0` from Python
+  and `0` from JavaScript. RECORD.md fixes sorted keys and two-space indentation, not the spelling
+  of a number — so nothing may key a digest on the record file itself.

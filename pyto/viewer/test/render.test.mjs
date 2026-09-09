@@ -71,6 +71,18 @@ const byIdIn = (rec, id) => rec.ticks.flatMap((tick) => tick.invocations).find((
 /* structure                                                         */
 /* ---------------------------------------------------------------- */
 
+test('the real record renders as four Tick sections and fifteen invocation rows', () => {
+  // Literal, not derived from the record: run-1 is 4 Ticks and 15 invocations
+  // (Prepare 2, Fit 6, Score 6, Compare 1), so a record that quietly shrank
+  // would fail here instead of agreeing with itself.
+  const root = renderRecord(record, { doc });
+  const ticks = withClass(root, 'tick');
+  assert.deepEqual(ticks.map((section) => withClass(section, 'tick-name')[0].textContent), ['Prepare', 'Fit', 'Score', 'Compare']);
+  assert.deepEqual(ticks.map((section) => withClass(section, 'inv').length), [2, 6, 6, 1]);
+  assert.equal(withClass(root, 'inv').length, 15);
+  assert.equal(all(root, 'script').length, 0, 'a rendered record never produces a script node');
+});
+
 test('one section per Tick, in order, with index, name and invocation count', () => {
   const root = renderRecord(record, { doc });
   const ticks = withClass(root, 'tick');
