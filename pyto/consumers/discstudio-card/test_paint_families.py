@@ -50,7 +50,7 @@ COOL = ("#4c9bc6", "#0d3558")
 PALETTES = {"cool": COOL, "warm": ("#f2c14e", "#1b1b1b"), "dark": ("#101318", "#ffd166")}
 SEEDS = (0, 3, 7, 42, 2024)
 LABEL = "warm mako"
-CHROMIUM = "/opt/pw-browsers/chromium"
+CHROMIUM = os.environ.get("PYTO_CHROMIUM", "/opt/pw-browsers/chromium")  # the session's browser; override elsewhere
 
 MAX_BYTES = 64 * 1024
 SVG_NS = "http://www.w3.org/2000/svg"

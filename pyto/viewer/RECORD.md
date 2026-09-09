@@ -70,7 +70,7 @@ inspection receipt is derived from a program and a run).
 
 | Source | Where the fields come from |
 |---|---|
-| pyto | `PcrRun.ticks` (ids, inputs, args, into), `PcrRun.receipts` when `observe=True` (calculation identity, declared and actual access, writes, duration, digest), `PcrRun.results` (values), the pre-run `PxC.addresses()` (preexisting Parts) |
+| pyto | `PcrRun.ticks` (ids, inputs, args, into), `PcrRun.receipts` — required, so `PCR.run(pxc, observe=True)` (calculation identity, declared and actual access, writes, duration, digest), `PcrRun.results` (values), the pre-run `PxC.addresses()` (preexisting Parts) |
 | DiscStudio | `px.pql.<name>` (Ticks, Calculations with `call`, `with`, `args`, `into`, resolved `inputs`, `output`) and `px.receipt.<name>` (`trace[].reused`, `material`, `revision`, `computed`, `reused`) from `src/runtime.js` |
 | ChessLab | `Receipt` from `src/lab/contract.ts`: `opId`, `frozenCalculations[]`, `declaredConsumes`, `declaredProduces`, `actualConsumes`, `actualProduces`, `writes`, `durationMs`; values are not retained, so `value.kind` is `omitted` |
 | Wumpus | `executeTick` records: `inputs[]`/`outputs[]` with values, `calculations[]`, `writes`, `durationMs` |

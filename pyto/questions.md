@@ -291,3 +291,90 @@ Wumpus rolls back a failed Tick; pyto leaves earlier writes. Status: open.
 Status: open; each is described where it was raised (`research/ULTRACODE-WEEK.md`, `CHANGES.md`,
 `experiments/*/questions.md`). They are listed here so the root is complete; move any the owner
 answers into the resolved section with the date.
+
+## From the ChainSpot branch mining (2026-09-09, `research/chainspot-branch-mining.md` §7)
+
+Each entry keeps the miner's question; the lean is this session's recommendation to the owner.
+
+### {?} AddressRootIsAMount
+ChainSpot keeps the world (course, game, repo) outside the address as a mount and has a test that
+`px.DashsTrack.s1.badges` is never created; round four put `disc`, `chess`, `wumpus`, `neat`,
+`tidy` inside the address. Status: open, lean adopt the mount. One address means one thing in every
+world, so a cross-project hit is an identity check, not a lookup. Bites: round five, Day 5.
+
+### {?} RootIdIsContent
+ChainSpot's mount id is a content digest of the image, with the human label in a side map. Status:
+open, lean adopt: same material implies same root, which is what `px add <address>` needs; labels
+stay readable in the side map. Bites: the materials store, `px add`.
+
+### {?} ScratchRootConflict
+ChainSpot's TS puts scratch inside `px.<stage>.exp.*`, its Python uses a `scratch.*` root, neither
+enforced. Status: open, lean: three roots only (`px`, `fn`, `oc`), enforced for Parts the way `fn`
+is for Calculations, with four reserved second segments (`scratch`, `view`, `proposal`, `run`).
+Bites: `Part` validation, PQL prefix queries.
+
+### {?} MaterialIsAKindNotARoot
+Round four had a `material.<sha>` root; ChainSpot carries `kind` as a declared field on a
+content-addressed reference and never chooses storage by string-matching an address. Status: open,
+lean adopt the declared kind and drop the root. Bites: `{?} StorageKinds`, Day 3 materials store.
+
+### {?} DuckDBIsAWorkshopBackend
+The archive measured 3.80 s Node and 5.79 s browser startup against 69 to 228 ms queries; the owner
+recorded 5.3 s. Status: open, lean: out of the runtime as decided; allowed in the Python workshop
+only if a comparison needs it, none does this week. Canonical figure: 5.79 s (browser). Bites: none
+this week.
+
+### {?} TickEqualsReceipt
+ChainSpot production declares a Tick's testimony and its receipt to be one type; pyto freezes the
+testimony byte-identical with `observe` on or off. Status: open, lean keep separate and join in
+the materializer; the byte-identity guarantee is what lets visibility be stripped. Bites: Day 3.
+
+### {?} StorybookAsVehicle
+ChainSpot's per-Tick viewer ships through Storybook and a staging build. Status: open, lean yes:
+copy the six-section layout and the fail-loud UNKNOWN discipline, discard the toolchain; Day 3
+already did. Bites: `viewer/tick-viewer.html`.
+
+### {?} SilentRewritePredatesPyto
+The declaration-time rewrite of a Part binding to its writer's ResultRef was already in ChainSpot's
+Python, and silent, two days before pyto raised `{?} SilentRules`. Status: open, lean: JS is first
+class and fails loud on the shadow case, so Python should too; a small kernel change with a test.
+Bites: `{?} SilentRules`, `{?} ShadowRule`.
+
+### {?} UnrunProofsCount
+The Mermaid PCR compiler's seven rejection rules are a design that was never run. Status: open,
+lean: port each rule with its own test in pyto; the port's tests are the proof, ChainSpot need not
+run first. Bites: `{?} KernelMerge`.
+
+### {?} S3DefectOwnership
+Three of eighteen accepted Tee objects on one course are iOS map-chrome false positives, reported
+with coordinates and not fixed. Status: open, lean: a ChainSpot ticket for neat's list; no pyto
+surface inherits it. Bites: a caveat on the neon-sheet port.
+
+### {?} MiningCoverage
+Four tips failed on output formatting (fa44a45, the parent of the two most important tips, among
+them) and three were mined after the synthesis. Status: open, being re-mined in plain text now.
+
+## Landing and communication (2026-09-09)
+
+### {?} ParkingIsManual
+Should the landing script move another writer's files aside itself? Status: provisional, no: it
+refuses, names the files and prints the parking command; a script that stashes a live writer's
+files mid-write destroys work. Bites: `LANDING.md` step 1.
+
+### {?} LandingBootstrap
+How do the protocol's own files land? Status: resolved 2026-09-09 by circumstance: the session's
+stop hook commits the tree at every turn end, so they entered as a labelled checkpoint; their
+receipt comes from `land.sh landing-protocol --base 4641ea8` once Day 3 stops writing. Checkpoints
+never claim; landings do. Bites: `LANDING.md`.
+
+### {?} MailboxInRepo
+The owner offered `D:\mailbox\` for messages to Astra; this session runs in a cloud container and
+cannot reach it. Status: provisional: `mailbox/to-gpt/` and `mailbox/from-gpt/` in the repository,
+the owner relays by pulling and pushing. Bites: `mailbox/`.
+
+### {?} TheTest
+The owner wrote "the test: we get AHI running on my local D:/ drive". Status: resolved 2026-09-09
+by owner: AHI is Augmented Human Intelligence, human centric, AI extends. The test is the whole
+loop (board, `{?}` root, landing with receipts, record viewer, mailbox) running from a clone on
+the owner's Windows D:/ drive. The owner also confirmed `{?}` is good: the human stays the root.
+Bites: everything; Windows-safety of scripts, suites and `px`.

@@ -95,11 +95,11 @@ def build_card_svgs() -> list[Path]:
 
 def rasterize(paths: list[Path], scale: float = 2.0) -> None:
     from playwright.sync_api import sync_playwright
-    from render_svg import render_one
+    from render_svg import launch, render_one
 
     PNG_DIR.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(executable_path="/opt/pw-browsers/chromium")
+        browser = launch(pw)
         page = browser.new_page(device_scale_factor=scale)
         for svg_path in paths:
             out = PNG_DIR / (svg_path.stem + ".png")

@@ -8,6 +8,7 @@
 #         candidate; the receipt lists every file changed since base, split into claimed (under
 #         the allowed paths) and unclaimed (present, verified with the mixture, not this package's).
 set -euo pipefail
+PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="$(cd "$HERE/.." && pwd)"
 ROOT="$(cd "$PY/.." && pwd)"
@@ -33,10 +34,25 @@ ID="${STAMP}-${PACKAGE//[^A-Za-z0-9._-]/_}"
 LAND_DIR="$PY/experiments/landings"
 WORK="$LAND_DIR/$ID"
 BASE_SHA="$(git rev-parse "${BASE:-HEAD}")"
+board() { # one plain line for the owner, newest first under "## Today" on pyto/BOARD.md
+  "$PYTHON" - "$PY/BOARD.md" "$1" <<'PYEOF'
+import sys, datetime
+path, line = sys.argv[1:3]
+stamp = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M')
+text = open(path).read()
+marker = '## Today\n'
+if marker not in text:
+    text = text.replace('\n## Lane 1', '\n' + marker + '\nOne line per landing attempt, newest first, written by the landing script.\n\n\n## Lane 1', 1)
+head, tail = text.split(marker, 1)
+intro, rest = tail.split('\n\n', 1)
+open(path, 'w').write(head + marker + intro + '\n\n- ' + stamp + ' ' + line + '\n' + rest)
+PYEOF
+}
 fail() { # reason
   if [ -n "$FROM" ] && git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then git merge --abort; fi
+  board "**refused** \`$PACKAGE\`: $1"
   mkdir -p "$LAND_DIR/failed"
-  python3 - "$LAND_DIR/failed/$ID.json" "$PACKAGE" "$BASE_SHA" "$1" <<'EOF'
+  "$PYTHON" - "$LAND_DIR/failed/$ID.json" "$PACKAGE" "$BASE_SHA" "$1" <<'EOF'
 import json, sys, datetime
 path, package, base, reason = sys.argv[1:5]
 json.dump({"schema": "pyto-landing-receipt@1", "id": path.split('/')[-1][:-5], "package": package, "base_sha": base, "result": "failed", "reason": reason, "at": datetime.datetime.utcnow().isoformat() + "Z"}, open(path, "w"), indent=2)
@@ -90,7 +106,7 @@ tail -12 "$WORK/check_all.txt"
 [ $CHECK_EXIT -eq 0 ] || fail "check_all exited $CHECK_EXIT (see $WORK/check_all.txt)"
 
 # 4. Record.
-python3 - "$WORK/receipt.json" "$ID" "$PACKAGE" "$BASE_SHA" "$VERIFY" "$WORK" "$DRY" "$ALLOW" "$CHANGED" <<'EOF'
+"$PYTHON" - "$WORK/receipt.json" "$ID" "$PACKAGE" "$BASE_SHA" "$VERIFY" "$WORK" "$DRY" "$ALLOW" "$CHANGED" <<'EOF'
 import json, sys, subprocess, hashlib, os, datetime
 path, lid, package, base, verify, work, dry, allow, changed_list = sys.argv[1:10]
 allowed = allow.split()
@@ -142,6 +158,8 @@ fi
 while IFS= read -r f; do [ -n "$f" ] && git add -A -- "$f"; done <<< "$DIRTY"
 git add -A -- "$LAND_DIR"
 LINE="${MESSAGE:-verified candidate}"
+board "**landed** \`$PACKAGE\`: $LINE ($(printf '%s\n' "$CHANGED" | grep -c . || true) files since ${BASE_SHA:0:7}, suites green, receipt $ID)"
+git add -A -- "$PY/BOARD.md"
 git commit -q -m "land($PACKAGE): $LINE
 
 Landing receipt: pyto/experiments/landings/$ID/receipt.json

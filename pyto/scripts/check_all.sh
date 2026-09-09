@@ -10,6 +10,8 @@
 #     suite, whitelisted as intra-directory (run_experiment.py names stats.py in cwd).
 # Zero-count assertions use `! grep -q` (critic gap 18a).
 set -euo pipefail
+# The interpreter: python3 where it exists (Linux, macOS), python on Windows (Git Bash); PYTHON overrides.
+PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 
 PYTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="${CHECK_ALL_LOG_DIR:-$(mktemp -d)}"
@@ -24,8 +26,8 @@ EXPECT_DISC_STATS="${EXPECT_DISC_STATS:-4}"
 echo "== check_all.sh v0"
 echo "pyto root:    $PYTO"
 echo "logs:         $LOG_DIR"
-echo "python3:      $(command -v python3) ($(python3 --version 2>&1))"
-echo "pyto module:  $(python3 -c 'import pyto; print(pyto.__file__)')"
+echo "python:       $PYTHON ($("$PYTHON" --version 2>&1))"
+echo "pyto module:  $("$PYTHON" -c 'import pyto; print(pyto.__file__)')"
 echo
 
 # Day 1 prerequisite: the consumer's tests write under data/ and the directory is gitignored.
@@ -73,35 +75,35 @@ expect_count() {
 }
 
 # 1. library tests
-run_suite library "$PYTO" python3 -m unittest discover -s tests -v
+run_suite library "$PYTO" "$PYTHON" -m unittest discover -s tests -v
 
 # 2. every experiments/<name>/ holding test_*.py (runs/ is a record, not a suite)
 for dir in "$PYTO"/experiments/*/; do
     name="$(basename "$dir")"
     [ "$name" = "runs" ] && continue
     ls "$dir"/test_*.py > /dev/null 2>&1 || continue
-    run_suite "experiments/$name" "$PYTO" python3 -m unittest discover -s "experiments/$name" -p 'test_*.py' -v
+    run_suite "experiments/$name" "$PYTO" "$PYTHON" -m unittest discover -s "experiments/$name" -p 'test_*.py' -v
 done
 
 # 3. consumer tests (18)
-run_suite consumer "$PYTO/consumers/discstudio-card" python3 -m unittest discover -s . -p 'test_*.py' -v
+run_suite consumer "$PYTO/consumers/discstudio-card" "$PYTHON" -m unittest discover -s . -p 'test_*.py' -v
 expect_count consumer "$EXPECT_CONSUMER"
 
 # 4. disc-stats (4). PYTHONPATH=. whitelisted: intra-directory, names stats.py in cwd.
 run_suite disc-stats "$PYTO/consumers/discstudio-card/experiments/disc-stats" \
-    env PYTHONPATH=. python3 -m unittest discover -s . -p 'test_*.py' -v
+    env PYTHONPATH=. "$PYTHON" -m unittest discover -s . -p 'test_*.py' -v
 expect_count disc-stats "$EXPECT_DISC_STATS"
 
 # 5. examples with plain python3 (no PYTHONPATH): basic.py must print exactly 42
 echo "== suite: examples  (cwd $PYTO)"
 example_rc=0
-basic_out="$(cd "$PYTO" && python3 examples/basic.py 2>&1)" || example_rc=$?
+basic_out="$(cd "$PYTO" && "$PYTHON" examples/basic.py 2>&1)" || example_rc=$?
 echo "   \$ python3 examples/basic.py -> ${basic_out}"
 if [ "$example_rc" -ne 0 ] || [ "$basic_out" != "42" ]; then
     echo "-- examples/basic.py: FAILED (expected '42', got '${basic_out}', exit $example_rc)"; FAILED=1
 fi
 fanout_rc=0
-fanout_out="$(cd "$PYTO" && python3 examples/shared_result_fanout.py 2>&1)" || fanout_rc=$?
+fanout_out="$(cd "$PYTO" && "$PYTHON" examples/shared_result_fanout.py 2>&1)" || fanout_rc=$?
 printf '   $ python3 examples/shared_result_fanout.py -> %s\n' "$(printf '%s' "$fanout_out" | tail -1)"
 if [ "$fanout_rc" -ne 0 ]; then
     echo "-- examples/shared_result_fanout.py: FAILED (exit $fanout_rc)"; echo "$fanout_out"; FAILED=1
@@ -109,7 +111,7 @@ elif ! printf '%s' "$fanout_out" | grep -q '"sharedResult": "fn:render-disc"'; t
     echo "-- examples/shared_result_fanout.py: FAILED (sharedResult fn:render-disc not printed)"; FAILED=1
 fi
 art_demo_rc=0
-art_demo_out="$(cd "$PYTO" && python3 examples/art_registry_demo.py 2>&1)" || art_demo_rc=$?
+art_demo_out="$(cd "$PYTO" && "$PYTHON" examples/art_registry_demo.py 2>&1)" || art_demo_rc=$?
 printf '   $ python3 examples/art_registry_demo.py -> %s\n' "$(printf '%s' "$art_demo_out" | tail -1)"
 if [ "$art_demo_rc" -ne 0 ]; then
     echo "-- examples/art_registry_demo.py: FAILED (exit $art_demo_rc)"; echo "$art_demo_out"; FAILED=1
@@ -128,7 +130,7 @@ echo
 ART_REGISTRY_MD="$PYTO/consumers/discstudio-card/ART-REGISTRY.md"
 echo "== suite: art-registry-md  (cwd $PYTO/consumers/discstudio-card)"
 gen_rc=0
-gen_out="$(cd "$PYTO/consumers/discstudio-card" && python3 scripts/generate_art_registry_md.py 2>&1)" || gen_rc=$?
+gen_out="$(cd "$PYTO/consumers/discstudio-card" && "$PYTHON" scripts/generate_art_registry_md.py 2>&1)" || gen_rc=$?
 echo "   \$ python3 scripts/generate_art_registry_md.py -> $gen_out"
 if [ "$gen_rc" -ne 0 ]; then
     echo "-- art-registry-md: FAILED (generator exited $gen_rc)"; FAILED=1; art_registry_ok=FAIL
@@ -188,7 +190,7 @@ echo
 # refuse the same mutations at the same paths. It needs node (it drives the
 # adapters), which the viewer suite above has already required.
 EXPECT_RECORD_SCHEMA="${EXPECT_RECORD_SCHEMA:-19}"
-run_suite viewer-record-schema "$PYTO/viewer" python3 -m unittest discover -s test -p 'test_*.py' -v
+run_suite viewer-record-schema "$PYTO/viewer" "$PYTHON" -m unittest discover -s test -p 'test_*.py' -v
 expect_count viewer-record-schema "$EXPECT_RECORD_SCHEMA"
 
 echo "== per-suite counts"

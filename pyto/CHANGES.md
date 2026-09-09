@@ -359,9 +359,10 @@ as `from pyto.materialize import run_record` (the same status `pyto.pcr.Receipt`
   value_cap_bytes=262144, array_cap=200) -> dict` — the `pyto-run-record@1` document of
   pyto/viewer/RECORD.md: ticks joined to receipts by invocation id (grouping and order
   from `PcrRun.ticks`, `index` from position), Calculation identity from the receipt's
-  `FrozenCalculation` when `observe=True` and `{address, implementation_sha256: None,
-  identity_scope: None}` otherwise, `hit` from the `px:` bindings, values from
-  `PcrRun.results`, plus the derived `parts` map and `counters`.
+  `FrozenCalculation`, `hit` from the `px:` bindings, values from `PcrRun.results`, plus
+  the derived `parts` map and `counters`. It requires `observe=True` and raises
+  `ValueError` on a receipt-less run (see fixer round 2 below: the null-filled document it
+  used to emit instead was one no reader of the shared schema would take).
 - `render_value(value, *, value_cap_bytes, array_cap) -> {kind, data, note}` — the value
   dispatch: `png-data-url` (a PIL image through an in-memory PNG), `svg` (a string
   opening an SVG document, carried verbatim), `text`, `json` (arrays over the cap cut to
@@ -403,11 +404,13 @@ silently truncates.
 
 - *Not a cache and not a replay seam.* It reads a completed run. Reuse decisions,
   content addressing and the materials store are still `{?}` and still experiment-local.
-- *Not a `hit` definition of its own.* It implements the owner's answer verbatim
-  (ULTRACODE-WEEK.md:79-82, RECORD.md:53-56): a `px:` binding whose address is in
-  `preexisting` or was not produced earlier in the same run. Reading `fn:<id>` is never a
+- *Not a `hit` definition of its own.* It implements the JS reference rule verbatim
+  (`viewer/adapters.js:244-249 deriveHit`, RECORD.md:55-56): a `px:` binding whose address
+  was not produced by an earlier invocation of the same run. Reading `fn:<id>` is never a
   hit, which is why all twelve Day 1 fit/score invocations are `computed`, not hits — the
   declaration-order rewrite (pcr.py:112-116) is what makes them share one `split`.
+  (`preexisting` was also ORed in until fixer round 2 below; it decides
+  `parts[...].preexisting` and nothing else.)
 - *Not a Part kind system.* `Part` still carries an address and nothing else
   (core.py:11-22, ledger gap 4); the dispatch is on the runtime type of the *value*, not
   on any new Part metadata, so no library type grew a field.
@@ -448,7 +451,9 @@ assertion, count or expectation of any existing test changed.
   run") fails
   `HitLedger::test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set`
   — **1**. Without that test the clause was invisible, because a caller passing the true
-  pre-run store gets the same answer either way.
+  pre-run store gets the same answer either way. (The converse mutation — ORing
+  `preexisting` back in, which is what the module actually shipped — is now caught by
+  `HitLedger::test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript`.)
 - Removing the `str` branch, so a string falls through to `json`, fails four tests
   (`text`, `svg`, the XML prologue, and the SVG written beside the sheet) — **4**.
 - Raising the array cap check from `> cap` to `> cap + 1000` fails **2** (the 1000-element
@@ -589,3 +594,93 @@ PNG prefix between the svg and text branches, in JavaScript's order.
 `viewer-record-schema` stays 19 with two new cases inside existing tests.
 `scripts/check_all.sh:150-153` pins the viewer count. `bash pyto/scripts/check_all.sh`:
 ALL SUITES PASSED.
+
+### Day 3 fixer round 2: a value, an address or a name is data, and data must not be fatal
+
+Five defects found by review. Round 1 was about record data reaching a *reader*; this
+round is about record data reaching a *producer* — the same rule one step earlier, and
+about one place where the two runtimes' records disagreed on the same input. Nothing in
+`pcr.py`, `core.py`, `pql.py` or `graph.py` moved; the only library file touched is
+`materialize.py`, and consumer testimony bytes are unchanged
+(`TestimonyBytesUnchangedByMaterializing` still passes).
+
+**A cyclic value took the whole record down, not one panel.** RECORD.md:62 assigns "not
+serializable" to `omitted`, and the JS reference does exactly that
+(`adapters.js:281-295`, `{kind:'omitted', note:'value is not JSON serializable:
+Converting circular structure to JSON…'}`). `render_value` caught only
+`(TypeError, ValueError)` and then digested the value through `_stable_repr`, which had
+no cycle memo — unlike builtin `repr()`, whose answer for a self-referential dict is
+`{'name': 'node', 'self': {...}}`. A cyclic Part value therefore raised `RecursionError`
+out of `run_record` and *every* invocation's row was lost, not the offending one. Two
+changes, both in `src/pyto/materialize.py`: `_stable_repr` carries an `id()` memo of the
+containers on its recursion stack and marks a repeat the way `repr()` does
+(`materialize.py:79-128`); the probe and the fallback are guarded by `except Exception`
+(`materialize.py:222-244`, `_unserializable_note` at :130-145), which is what a 6000-deep
+nesting needs too — `json.dumps` raises `RecursionError` there, which is neither
+`TypeError` nor `ValueError`.
+
+**`$&` in a Part value rewrote the standalone page.** `embed.mjs` inserted the record
+block and the inlined bundle with `String.prototype.replace` and a replacement *string*
+(`embed.mjs:63`), so `$&`, `` $` ``, `$'` and `$1` anywhere in a value, an address or a
+`pcr` name were expanded as replacement patterns. A text Part holding the shell snippet
+`printf $'%s\n' done` was enough: the record block no longer parsed, and in the `$'` case
+the module bootstrap was left un-inlined, so the emitted file could never mount and
+`readEmbeddedRecord` threw where `mount()` does not catch. The page's header comment
+promises the opposite ("an invalid record fails at build time instead of in the browser").
+Both replacements now pass a function, which is inserted literally
+(`viewer/embed.mjs:63-71`); the bundle gets it too, because a future `$&` in `adapters.js`
+would corrupt the inline module the same way. `embeddableJson`'s `<`/`>` escaping was
+correct and unchanged — this was integrity, not injection.
+
+**A `hit` was claimed where nothing was reused.** `materialize.py` ORed
+`address in preexisting` into the hit test, which the JS reference `deriveHit` never
+consults and which RECORD.md:55-56 excludes in its own parenthetical. An invocation that
+read a Part *this same run had already overwritten* was reported `hit: true` in Python and
+`hit: false` in JavaScript for the same program, while the value shown is the freshly
+computed one. `validate()` cannot catch it — the counters stay self-consistent — so it was
+silent. The rule is now `adapters.js:244-249` verbatim (`materialize.py:379-383`), pinned
+from both sides: `tests/test_materialize.py::HitLedger::`
+`test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript` and
+`viewer/test/adapters.test.mjs` ("deriveHit: an address this run overwrote is not a hit").
+`preexisting` still decides `parts[...].preexisting`, and the Day 1 evidence record is
+unchanged: `select` and `split` are still the two hits.
+
+**A `png-data-url` whose payload will not decode aborted the sheet run.** RECORD.md:60-61
+fixes the prefix, not the payload; `adapters.js` accepts such a value and the viewer
+renders it as an `<img>` without complaint — `viewer/test/render.test.mjs:218` uses
+`data:image/png;base64,iVBORw0KGgo=` as a fixture for exactly that. `_value_image` called
+`Image.open(b64decode(...))` unguarded (`materialize.py:586-592`), so
+`PIL.UnidentifiedImageError` (or `binascii.Error`) escaped `tick_sheets` and left a
+half-written `ticks/` directory — the earlier Ticks' sheets on disk, the later ones
+missing. The decode now degrades to `None` (`materialize.py:592-601`) and the invocation
+keeps its text panel, which already names the value's kind and note: the same
+degrade-don't-crash contract `render_value` honours.
+
+**A receipt-less run emitted a document tagged with a schema it did not satisfy.** With
+`observe=False`, `run_record` set `calculation.identity_scope`, `actual_consumes`,
+`actual_produces` and `writes` to `null` and still wrote `"schema":
+"pyto-run-record@1"`. RECORD.md marks its nullable fields explicitly (`"<hex or null>"`,
+`"<sha or null>"`) and marks none of those four, so RECORD.md:65 does not license nulling
+them — and both readers refuse the result at the same path
+(`viewer/adapters.js:145,155-158`; `viewer/test/record_schema.py:181,190-193`). The old
+test asserted the nulls without ever running the document through a reader, which is why
+the suite was green. `run_record` now raises `ValueError` naming `observe=True` when any
+invocation has no receipt (`materialize.py:322-337`); its one caller,
+`experiments/grouped-ablation/materialize_run.py:107-112`, already passes `observe=True`,
+so nothing downstream changes. The null-emitting branch is gone rather than dead. The
+refusal is paired with a test that shows *why* it is a refusal — the four fields nulled
+one at a time, each rejected by the independent Python validator at its own path — and a
+new class, `ReadableByTheOtherRuntimesValidator`, runs the Day 1 record, a record of every
+value kind (including the cyclic and undecodable-PNG cases above) and the committed
+evidence file through `viewer/test/record_schema.py`, so this producer is checked by a
+reader other than itself.
+
+**Counts.** `library` 94 → 103 (`tests/test_materialize.py` 30 → 39: the cycle, the
+repeated-but-not-cyclic container, the 6000-deep nesting, a cyclic value leaving the rest
+of the record intact, the overwrite-then-read hit, the undecodable PNG leaving no
+half-written directory, the receipt-less refusal, the shape it refuses, and the three
+validator cases); `viewer` 81 → 83 (the `$&`/`` $` ``/`$'` record, and `deriveHit` on an
+overwritten address). `scripts/check_all.sh:150-158` pins the viewer count and is updated;
+no other expected count moved. `bash pyto/scripts/check_all.sh`: ALL SUITES PASSED
+(library 103, experiments/grouped-ablation 230, experiments/s3-synthetic 5, consumer 61,
+disc-stats 4, examples 3, art-registry-md, viewer 83, viewer-record-schema 19).

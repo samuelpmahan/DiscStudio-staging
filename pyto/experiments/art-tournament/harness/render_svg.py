@@ -15,13 +15,21 @@ raster tiles hold up under judge zoom; override with --scale.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-CHROMIUM_PATH = "/opt/pw-browsers/chromium"
+CHROMIUM_PATH = os.environ.get("PYTO_CHROMIUM", "/opt/pw-browsers/chromium")
+
+
+def launch(pw):
+    """Playwright's chromium: the session's binary when it exists, otherwise the default install."""
+    if os.path.exists(CHROMIUM_PATH):
+        return pw.chromium.launch(executable_path=CHROMIUM_PATH)
+    return pw.chromium.launch()
 
 _DIM_RE = re.compile(r'width="([0-9.]+)"\s+height="([0-9.]+)"')
 _VIEWBOX_RE = re.compile(r'viewBox="[^"]*?\s([0-9.]+)\s+([0-9.]+)"')
@@ -83,7 +91,7 @@ def main() -> None:
             jobs.append((svg_path, svg_path.with_suffix(".png")))
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(executable_path=CHROMIUM_PATH)
+        browser = launch(pw)
         page = browser.new_page(device_scale_factor=args.scale)
         for svg_path, out_path in jobs:
             render_one(page, svg_path, out_path, args.width)

@@ -13,6 +13,32 @@ braindumps whenever they like, in any order, and the agent folds the dump into t
 statements; overlapping ideas collapse into one statement per lane; silence past a prompt's
 deadline means the default. The owner never has to keep track of more than this page.
 
+## The test
+
+"We get AHI running on my local D:/ drive." AHI is Augmented Human Intelligence: human centric,
+AI extends. The whole loop, on the owner's Windows machine from a clone on D:/: the owner reads
+this board and answers `{?}` questions (the human is the root of the tree); agents work in copies
+and land only verified work with a receipt; every landing writes one line here; the record viewer
+opens from disk; Astra is reached through the mailbox in the repository. Everything on this board
+is judged by whether it moves that.
+
+## Today
+
+One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
+the day so far, in plain words.
+
+- 2026-09-09 06:58 Branch mining done: 11 of 14 ChainSpot tips read, synthesis in `research/chainspot-branch-mining.md`; ChainSpot already decided worlds are mounts, not address segments. Round five below. Four tips being re-mined.
+- 2026-09-09 06:53 The landing script now writes this log. Owner: the happy path must keep me in the loop.
+- 2026-09-09 06:51 Owner: checks that cause friction get disabled. Protocol trimmed to one command on the happy path; special kernel rule dropped.
+- 2026-09-09 06:48 Mailbox for Astra in the repository (`mailbox/to-gpt/0001`), since this session runs in the cloud and cannot see `D:\mailbox`. Writers get a copy of the whole tree (`git worktree`), no lock; the landing script compiles a copy back.
+- 2026-09-09 06:47 **refused** `landing-protocol`: Day 3's workflow was still writing into `pyto/src`. The protocol caught the mixed-commit mistake on its first try.
+- 2026-09-09 06:44 Landing protocol written: `LANDING.md`, `scripts/land.sh`, one receipt per landing.
+- 2026-09-09 06:38 Astra answered: contract plus three bounded packages (painter port, studio record export, three formats), each with a verifier that exits 0 or 1.
+- 2026-09-09 06:35 Painter port package: 432 family cases and 8 card cases with expected bytes, and the verifier.
+- 2026-09-09 06:27 Owner: CV deferred; DiscShelf and OnTheCourse with many formats is the user demo.
+- 2026-09-09 06:18 This board created. Earlier today: Days 1 and 2 landed (receipts, retain, fresh-process replay, second experiment with zero program edits); art tournament and registry (16 families, 8 renderers); observability ledger; the `{?}` root; Reframings 1 to 6.
+- 2026-09-09 all day Day 3 running: the render page, the Python materializer, the materials store; in its second fix round.
+
 ## Lane 1: the kernel (this session owns it)
 
 **Statement.** A portable AI kernel: PxC (five verbs: get, set, has, register, call) plus PCR and
@@ -40,15 +66,22 @@ off, and equal digests between the two are the proof the compile changed nothing
 compiled-operation model (`planFingerprint`, `executeCompiledPlan` in the ChessLab contract
 header) is that idea already; the record is what makes it checkable.
 
-**Open prompt.** *Addressing.* Each segment must discriminate and the root must connect. The
-branch mining is reading `lab/pxc-root-mounts` and `review/pxc-root-alignment` for what was
-already decided; the proposal returns with it. Default if unanswered: namespace first (`px` for
-pixels, `disc`, `chess`, `wumpus`, `neat`, `tidy`), `fn.<namespace>` for Calculations, `?` for open
-questions, no registration.
+**Open prompt.** *Addressing, round five.* The mining found ChainSpot already decided the hard
+part: the world (a course, a game, a repo, a user's bag) is a mount outside the address, never a
+segment, with a test that `px.DashsTrack.s1.badges` is never created. So `px.badges.px` means the
+same thing in every world, and a cross-project hit is an identity check. Proposal: three roots
+only, `px` (values), `fn` (pure), `oc` (effects), enforced for Parts the way `fn` already is;
+second segment is the noun that outlives the stage that made it (`px.badges`, `px.shelf`,
+`px.board`), which is where connection lives; four reserved second segments, `scratch`, `view`,
+`proposal`, `run`; the mount id is content-derived (`imgid:<sha12>`, `disc:<bag>`,
+`chess:<game>`) with human labels in a side map; `material` goes, because kind is a declared field
+on the reference, not a prefix; `?` stays outside the address as the root of questions. Owner's
+turn: refine or give the final answer. Default if unanswered: this proposal.
 
 **Stands.** Days 1 and 2 landed (receipts, retain, fresh-process replay, second experiment with
-zero program edits). Day 3 running (render, materializer, materials store). Day 4 queued (the
-table and `px`). Day 5 planned (node reads the table, a JS skill verified, cross-project hit,
+zero program edits). Landing protocol in place (`LANDING.md`). Day 3 running (render,
+materializer, materials store), second fix round. Day 4 queued (the table and `px`), to run in a
+copy of the tree. Day 5 planned (node reads the table, a JS skill verified, cross-project hit,
 SUBDUE and WebShaper on recorded graphs).
 
 ## Lane 2: DiscStudio surfaces (Codex, briefed from lane 1)
