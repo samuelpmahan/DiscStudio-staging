@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+</defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="screen" fill="#0d3558">
+<circle cx="290.6" cy="14.0" r="27.7"/>
+<circle cx="325.1" cy="48.6" r="23.2"/>
+<circle cx="359.7" cy="83.2" r="19.0"/>
+<circle cx="394.3" cy="117.7" r="15.0"/>
+<circle cx="428.8" cy="152.3" r="11.4"/>
+<circle cx="463.4" cy="186.9" r="8.3"/>
+<circle cx="238.7" cy="31.3" r="31.1"/>
+<circle cx="273.3" cy="65.9" r="26.4"/>
+<circle cx="307.9" cy="100.4" r="21.9"/>
+<circle cx="342.4" cy="135.0" r="17.8"/>
+<circle cx="377.0" cy="169.6" r="13.9"/>
+<circle cx="411.6" cy="204.1" r="10.5"/>
+<circle cx="446.1" cy="238.7" r="7.5"/>
+<circle cx="186.9" cy="48.6" r="34.5"/>
+<circle cx="221.4" cy="83.2" r="29.7"/>
+<circle cx="256.0" cy="117.7" r="25.0"/>
+<circle cx="290.6" cy="152.3" r="20.7"/>
+<circle cx="325.1" cy="186.9" r="16.6"/>
+<circle cx="359.7" cy="221.4" r="12.9"/>
+<circle cx="394.3" cy="256.0" r="9.5"/>
+<circle cx="428.8" cy="290.6" r="6.7"/>
+<circle cx="463.4" cy="325.1" r="4.7"/>
+<circle cx="135.0" cy="65.9" r="38.1"/>
+<circle cx="169.6" cy="100.4" r="33.1"/>
+<circle cx="204.1" cy="135.0" r="28.3"/>
+<circle cx="238.7" cy="169.6" r="23.7"/>
+<circle cx="273.3" cy="204.1" r="19.5"/>
+<circle cx="307.9" cy="238.7" r="15.5"/>
+<circle cx="342.4" cy="273.3" r="11.8"/>
+<circle cx="377.0" cy="307.9" r="8.6"/>
+<circle cx="411.6" cy="342.4" r="6.0"/>
+<circle cx="83.2" cy="83.2" r="39.6"/>
+<circle cx="117.7" cy="117.7" r="36.6"/>
+<circle cx="152.3" cy="152.3" r="31.6"/>
+<circle cx="186.9" cy="186.9" r="26.9"/>
+<circle cx="221.4" cy="221.4" r="22.5"/>
+<circle cx="256.0" cy="256.0" r="18.3"/>
+<circle cx="290.6" cy="290.6" r="14.4"/>
+<circle cx="325.1" cy="325.1" r="10.9"/>
+<circle cx="359.7" cy="359.7" r="7.8"/>
+<circle cx="394.3" cy="394.3" r="5.4"/>
+<circle cx="65.9" cy="135.0" r="39.6"/>
+<circle cx="100.4" cy="169.6" r="35.1"/>
+<circle cx="135.0" cy="204.1" r="30.2"/>
+<circle cx="169.6" cy="238.7" r="25.6"/>
+<circle cx="204.1" cy="273.3" r="21.2"/>
+<circle cx="238.7" cy="307.9" r="17.1"/>
+<circle cx="273.3" cy="342.4" r="13.3"/>
+<circle cx="307.9" cy="377.0" r="9.9"/>
+<circle cx="342.4" cy="411.6" r="7.0"/>
+<circle cx="48.6" cy="186.9" r="38.7"/>
+<circle cx="83.2" cy="221.4" r="33.6"/>
+<circle cx="117.7" cy="256.0" r="28.8"/>
+<circle cx="152.3" cy="290.6" r="24.3"/>
+<circle cx="186.9" cy="325.1" r="20.0"/>
+<circle cx="221.4" cy="359.7" r="15.9"/>
+<circle cx="256.0" cy="394.3" r="12.3"/>
+<circle cx="290.6" cy="428.8" r="9.0"/>
+<circle cx="325.1" cy="463.4" r="6.3"/>
+<circle cx="31.3" cy="238.7" r="37.2"/>
+<circle cx="65.9" cy="273.3" r="32.2"/>
+<circle cx="100.4" cy="307.9" r="27.5"/>
+<circle cx="135.0" cy="342.4" r="23.0"/>
+<circle cx="169.6" cy="377.0" r="18.7"/>
+<circle cx="204.1" cy="411.6" r="14.8"/>
+<circle cx="238.7" cy="446.1" r="11.2"/>
+<circle cx="273.3" cy="480.7" r="8.1"/>
+<circle cx="14.0" cy="290.6" r="35.7"/>
+<circle cx="48.6" cy="325.1" r="30.8"/>
+<circle cx="83.2" cy="359.7" r="26.1"/>
+<circle cx="117.7" cy="394.3" r="21.7"/>
+<circle cx="152.3" cy="428.8" r="17.6"/>
+<circle cx="186.9" cy="463.4" r="13.7"/>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7.0" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="5.3" opacity=".30"/>
+</g>
+<g id="stamp" clip-path="url(#disc)">
+<g stroke="#4c9bc6" stroke-width="16.0" stroke-linecap="butt">
+<line x1="404.4" y1="277.7" x2="475.7" y2="288.1"/>
+<line x1="234.3" y1="404.4" x2="223.9" y2="475.7"/>
+<line x1="107.6" y1="234.3" x2="36.3" y2="223.9"/>
+<line x1="277.7" y1="107.6" x2="288.1" y2="36.3"/>
+</g>
+<g stroke="#0d3558" stroke-width="4.3" stroke-linecap="butt" opacity=".95">
+<line x1="410.4" y1="278.6" x2="475.7" y2="288.1"/>
+<line x1="233.4" y1="410.4" x2="223.9" y2="475.7"/>
+<line x1="101.6" y1="233.4" x2="36.3" y2="223.9"/>
+<line x1="278.6" y1="101.6" x2="288.1" y2="36.3"/>
+</g>
+</g>
+<title>MAKO</title>
+</svg>

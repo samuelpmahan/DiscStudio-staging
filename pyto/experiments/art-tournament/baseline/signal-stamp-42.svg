@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="12.2" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<path d="M160 300 Q256 150 352 300" fill="none" stroke="#0d3558" stroke-width="24" stroke-linecap="round"/>
+<path d="M172 206 l28 -20" stroke="#0d3558" stroke-width="18" stroke-linecap="round"/>
+</g>
+<g id="stamp">
+<circle cx="360.2" cy="200.6" r="16" fill="#0d3558"/>
+</g>
+<title>Warm Mako</title>
+</svg>

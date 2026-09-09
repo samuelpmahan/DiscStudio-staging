@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 512 512" role="img" aria-label="DiscBattle">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="3" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g transform="rotate(4.7 256 256)">
+<rect x="-60" y="116.2" width="632" height="279.6" fill="#0d3558" opacity=".16"/>
+<path d="M9.3 134.2 H441.5" stroke="#0d3558" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M9.3 377.8 H441.5" stroke="#0d3558" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M97.3 150.2 L181.3 256 L97.3 361.8" fill="none" stroke="#0d3558" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.42"/>
+<path d="M151.8 150.2 L235.8 256 L151.8 361.8" fill="none" stroke="#0d3558" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.56"/>
+<path d="M206.4 150.2 L290.4 256 L206.4 361.8" fill="none" stroke="#0d3558" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.71"/>
+<path d="M260.9 150.2 L344.9 256 L260.9 361.8" fill="none" stroke="#0d3558" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.85"/>
+<path d="M315.5 150.2 L399.5 256 L315.5 361.8" fill="none" stroke="#0d3558" stroke-width="30" stroke-linecap="butt" stroke-linejoin="miter" opacity="1.00"/>
+<path d="M315.5 150.2 L399.5 256 L315.5 361.8" fill="none" stroke="#ffffff" stroke-width="10.2" stroke-linecap="butt" stroke-linejoin="miter" opacity=".95"/>
+</g>
+</g>
+<g id="stamp">
+<rect x="282.2" y="113.2" width="26" height="26" rx="4" fill="#ffffff" transform="rotate(4.7 295.2 126.2)"/>
+<rect x="282.2" y="113.2" width="26" height="26" rx="4" fill="none" stroke="#0d3558" stroke-width="7" transform="rotate(4.7 295.2 126.2)"/>
+</g>
+<g id="text">
+<rect x="153.7" y="402" width="204.6" height="38" rx="7" fill="#0d3558"/>
+<rect x="164.7" y="410" width="7" height="22" rx="3.5" fill="#ffffff" opacity=".95"/>
+<text x="262" y="428" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" letter-spacing="2" fill="#ffffff">DiscBattle</text>
+</g>
+<title>DiscBattle</title>
+</svg>

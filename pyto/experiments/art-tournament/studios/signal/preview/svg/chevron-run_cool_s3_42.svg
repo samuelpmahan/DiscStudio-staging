@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="12.2" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g transform="rotate(-8.9 256 256)">
+<rect x="-60" y="99.4" width="632" height="313.1" fill="#0d3558" opacity=".16"/>
+<path d="M143.6 133.4 L227.6 256 L143.6 378.6" fill="none" stroke="#0d3558" stroke-width="40" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.42"/>
+<path d="M209.6 133.4 L293.6 256 L209.6 378.6" fill="none" stroke="#0d3558" stroke-width="40" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.71"/>
+<path d="M275.6 133.4 L359.6 256 L275.6 378.6" fill="none" stroke="#0d3558" stroke-width="40" stroke-linecap="butt" stroke-linejoin="miter" opacity="1.00"/>
+<path d="M275.6 133.4 L359.6 256 L275.6 378.6" fill="none" stroke="#ffffff" stroke-width="17.1" stroke-linecap="butt" stroke-linejoin="miter" opacity=".95"/>
+</g>
+</g>
+<g id="stamp">
+<rect x="261.8" y="94.4" width="30" height="30" rx="4" fill="#ffffff" transform="rotate(-8.9 276.8 109.4)"/>
+<rect x="261.8" y="94.4" width="30" height="30" rx="4" fill="none" stroke="#0d3558" stroke-width="12.2" transform="rotate(-8.9 276.8 109.4)"/>
+</g>
+<title>MAKO</title>
+</svg>

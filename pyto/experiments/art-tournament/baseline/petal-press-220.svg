@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="3" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<ellipse cx="333.8" cy="250.2" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(85.8 333.8 250.2)"/>
+<ellipse cx="322.3" cy="297.1" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(121.8 322.3 297.1)"/>
+<ellipse cx="285.5" cy="328.2" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(157.8 285.5 328.2)"/>
+<ellipse cx="237.4" cy="331.8" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(193.8 237.4 331.8)"/>
+<ellipse cx="196.4" cy="306.4" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(229.8 196.4 306.4)"/>
+<ellipse cx="178.2" cy="261.8" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(265.8 178.2 261.8)"/>
+<ellipse cx="189.7" cy="214.9" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(301.8 189.7 214.9)"/>
+<ellipse cx="226.5" cy="183.8" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(337.8 226.5 183.8)"/>
+<ellipse cx="274.6" cy="180.2" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(373.8 274.6 180.2)"/>
+<ellipse cx="315.6" cy="205.6" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(409.8 315.6 205.6)"/>
+</g>
+<g id="stamp">
+<circle cx="256" cy="256" r="62" fill="#4c9bc6" stroke="#0d3558" stroke-width="12"/>
+</g>
+<g id="text">
+<text x="256" y="420" text-anchor="middle" font-family="sans-serif" font-size="22" letter-spacing="3" fill="#0d3558" opacity=".82">Warm Mako</text>
+</g>
+<title>Warm Mako</title>
+</svg>

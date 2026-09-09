@@ -1,0 +1,112 @@
+{
+  "studio": "foundry",
+  "angle": "physical print-shop craft - screen-printed plastics, registration marks, halftone dots, foil rims, hot-stamp dies.",
+  "families": [
+    {
+      "slug": "halftone-screen",
+      "name": "Halftone Screen",
+      "concept": "Duotone halftone wedge: one ink, screened on a rotated grid, ramping from an open tint into solid coverage.",
+      "params": {
+        "seed": "picks the screen angle (15/45/75/105 deg), the direction the tint wedge ramps in, the minimum dot size (how open the light end stays) and the phase of the four rim register ticks.",
+        "base": "the plastic - fills the disc under the screen and knocks out the label plate at 220.",
+        "accent": "the single ink - every dot, the rim ring and the register ticks.",
+        "label": "hot-stamped into a knockout plate at the bottom of the face; drawn only at 220, uppercased, clipped to 10 characters.",
+        "targets": {
+          "42": "5 cells across, blobs only",
+          "96": "9 cells + register ticks",
+          "220": "15 cells + register ticks + label plate"
+        }
+      },
+      "calculation": "fn.discArt.halftone-screen"
+    },
+    {
+      "slug": "register-mark",
+      "name": "Register Mark",
+      "concept": "A press registration target laid over the whole face: crosshair to the rim, four quadrants inked at descending tint steps, crop marks, bullseye at centre.",
+      "params": {
+        "seed": "rotates the whole assembly, chooses which quadrant carries solid ink (the other three step down from it), sets the crosshair centre gap and nudges the crop mark inset.",
+        "base": "the plastic; also knocks out the bullseye core and the label plate.",
+        "accent": "the ink - quadrant tints, crosshair, bullseye rings, crop marks.",
+        "label": "knockout plate at the bottom of the face, 220 only, uppercased, clipped to 10 characters.",
+        "targets": {
+          "42": "quadrant tints + crosshair + bullseye",
+          "96": "adds crop marks",
+          "220": "adds finer bullseye ring + label plate"
+        }
+      },
+      "calculation": "fn.discArt.register-mark"
+    },
+    {
+      "slug": "hot-foil",
+      "name": "Hot Foil",
+      "concept": "A hot-stamp foil die: faceted badge, a sheen band raked across the facets, and the knurled tick ring the die leaves in the rim.",
+      "params": {
+        "seed": "chooses the die shape (hex or octagon), rotates the die, sets the rake angle of the foil sheen band and the phase of the knurl ring.",
+        "base": "the plastic; also the knockout keyline inside the badge and the label plate.",
+        "accent": "the foil - badge fill, knurl ticks and rim ring.",
+        "label": "knockout plate at the bottom of the face, 220 only, uppercased, clipped to 10 characters.",
+        "targets": {
+          "42": "12 long knurl teeth, solid badge, bevel split + specular band",
+          "96": "20 teeth + die keyline",
+          "220": "32 teeth + die keyline + label plate"
+        }
+      },
+      "calculation": "fn.discArt.hot-foil"
+    }
+  ],
+  "cards": {
+    "single": {
+      "layouts": [
+        "standard",
+        "gallery"
+      ],
+      "geometry": {
+        "standard": [
+          400,
+          176
+        ],
+        "gallery": [
+          320,
+          404
+        ]
+      },
+      "calculation": "fn.card.single.render"
+    },
+    "battle": {
+      "layouts": [
+        "standard",
+        "stacked"
+      ],
+      "geometry": {
+        "standard": [
+          700,
+          300
+        ],
+        "stacked": [
+          420,
+          452
+        ]
+      },
+      "calculation": "fn.card.battle.render"
+    }
+  },
+  "calculations": [
+    "fn.card.battle.render",
+    "fn.card.single.render",
+    "fn.discArt.halftone-screen",
+    "fn.discArt.hot-foil",
+    "fn.discArt.register-mark"
+  ],
+  "notes": "Every family draws all seeded identity parameters before it branches on target, so 42/96/220 consume identical RNG and only the level of detail changes; stroke widths are floored through _sw() so no line falls under a device pixel at 42. Cards are laid out in fixed natural units per layout (single standard 400x176, single gallery 320x404, battle standard 700x300, battle stacked 420x452) and `width` only scales the viewBox, so a 400px and a 700px render are the same drawing. Disc art is inlined into a <g transform> copy with every id namespaced per participant - not a nested <svg>, because a host stylesheet that sizes `svg` elements (the tournament rasteriser ships one) would otherwise resize the artwork. details=False drops the mold line and the flight cells and widens the battle score slot; a presentationId with no art falls back to a dashed 'NO PLATE' well rather than failing. Card ground is warm press paper with the participant's own colour used as the spot ink.",
+  "preview": {
+    "sheets": [
+      "preview/sheet-halftone-screen.png",
+      "preview/sheet-register-mark.png",
+      "preview/sheet-hot-foil.png",
+      "preview/sheet-42px.png",
+      "preview/sheet-cards.png"
+    ],
+    "rebuild": "python3 build_preview.py",
+    "verify": "python3 self_check.py"
+  }
+}

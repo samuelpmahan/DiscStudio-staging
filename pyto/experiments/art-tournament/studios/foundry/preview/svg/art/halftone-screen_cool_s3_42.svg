@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+</defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g id="screen" fill="#0d3558">
+<circle cx="256.0" cy="7.1" r="55.7"/>
+<circle cx="318.2" cy="69.3" r="40.9"/>
+<circle cx="380.5" cy="131.5" r="27.6"/>
+<circle cx="442.7" cy="193.8" r="16.4"/>
+<circle cx="162.7" cy="38.2" r="67.0"/>
+<circle cx="224.9" cy="100.4" r="51.2"/>
+<circle cx="287.1" cy="162.7" r="36.8"/>
+<circle cx="349.3" cy="224.9" r="24.1"/>
+<circle cx="411.6" cy="287.1" r="13.7"/>
+<circle cx="69.3" cy="69.3" r="71.3"/>
+<circle cx="131.5" cy="131.5" r="62.2"/>
+<circle cx="193.8" cy="193.8" r="46.8"/>
+<circle cx="256.0" cy="256.0" r="32.9"/>
+<circle cx="318.2" cy="318.2" r="20.7"/>
+<circle cx="380.5" cy="380.5" r="11.2"/>
+<circle cx="38.2" cy="162.7" r="71.3"/>
+<circle cx="100.4" cy="224.9" r="57.6"/>
+<circle cx="162.7" cy="287.1" r="42.6"/>
+<circle cx="224.9" cy="349.3" r="29.1"/>
+<circle cx="287.1" cy="411.6" r="17.6"/>
+<circle cx="7.1" cy="256.0" r="68.9"/>
+<circle cx="69.3" cy="318.2" r="53.0"/>
+<circle cx="131.5" cy="380.5" r="38.4"/>
+<circle cx="193.8" cy="442.7" r="25.5"/>
+<circle cx="38.2" cy="411.6" r="48.6"/>
+</g>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="12.2" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="12.2" opacity=".30"/>
+</g>
+<g id="stamp" clip-path="url(#disc)">
+</g>
+<title>MAKO</title>
+</svg>

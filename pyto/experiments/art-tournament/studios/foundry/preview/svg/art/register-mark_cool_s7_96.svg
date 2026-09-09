@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#000000" stop-opacity=".30"/></linearGradient>
+</defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g transform="rotate(-5.6 256 256)">
+<path d="M256 256 L556.0 256.0 A300 300 0 0 1 256.0 556.0 Z" fill="#0d3558" opacity="0.18"/>
+<path d="M256 256 L256.0 556.0 A300 300 0 0 1 -44.0 256.0 Z" fill="#0d3558" opacity="1.00"/>
+<path d="M256 256 L-44.0 256.0 A300 300 0 0 1 256.0 -44.0 Z" fill="#0d3558" opacity="0.66"/>
+<path d="M256 256 L256.0 -44.0 A300 300 0 0 1 556.0 256.0 Z" fill="#0d3558" opacity="0.40"/>
+<path d="M163.0 117.0 L117.0 117.0 L117.0 163.0" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<path d="M349.0 117.0 L395.0 117.0 L395.0 163.0" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<path d="M163.0 395.0 L117.0 395.0 L117.0 349.0" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<path d="M349.0 395.0 L395.0 395.0 L395.0 349.0" fill="none" stroke="#4c9bc6" stroke-width="9.0" opacity=".8"/>
+<g stroke="#4c9bc6" stroke-width="22.0" stroke-linecap="butt">
+<line x1="256.0" y1="188.5" x2="256.0" y2="24.0"/>
+<line x1="256.0" y1="323.5" x2="256.0" y2="488.0"/>
+<line x1="188.5" y1="256.0" x2="24.0" y2="256.0"/>
+<line x1="323.5" y1="256.0" x2="488.0" y2="256.0"/>
+</g>
+<g stroke="#0d3558" stroke-width="4.8" stroke-linecap="butt" opacity=".9">
+<line x1="256.0" y1="188.5" x2="256.0" y2="24.0"/>
+<line x1="256.0" y1="323.5" x2="256.0" y2="488.0"/>
+<line x1="188.5" y1="256.0" x2="24.0" y2="256.0"/>
+<line x1="323.5" y1="256.0" x2="488.0" y2="256.0"/>
+</g>
+</g>
+</g>
+<g id="stamp">
+<circle cx="256" cy="256" r="59.5" fill="#4c9bc6" stroke="#0d3558" stroke-width="12.0"/>
+<circle cx="256" cy="256" r="16.2" fill="#0d3558"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7.0" opacity=".92"/>
+<circle cx="256" cy="256" r="203" stroke="#ffffff" stroke-width="5.3" opacity=".30"/>
+</g>
+<title>Warm Mako</title>
+</svg>

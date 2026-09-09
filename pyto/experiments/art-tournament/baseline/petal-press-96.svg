@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="Warm Mako">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="5.3" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<ellipse cx="333.8" cy="250.2" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(85.8 333.8 250.2)"/>
+<ellipse cx="299.9" cy="320.5" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(145.8 299.9 320.5)"/>
+<ellipse cx="222.1" cy="326.2" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(205.8 222.1 326.2)"/>
+<ellipse cx="178.2" cy="261.8" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(265.8 178.2 261.8)"/>
+<ellipse cx="212.1" cy="191.5" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(325.8 212.1 191.5)"/>
+<ellipse cx="289.9" cy="185.8" rx="28" ry="72" fill="#0d3558" opacity=".72" transform="rotate(385.8 289.9 185.8)"/>
+</g>
+<g id="stamp">
+<circle cx="256" cy="256" r="54" fill="#4c9bc6" stroke="#0d3558" stroke-width="12"/>
+</g>
+<title>Warm Mako</title>
+</svg>

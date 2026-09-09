@@ -1,0 +1,105 @@
+{
+  "studio": "signal",
+  "angle": "broadcast graphics and scoreboards — lower thirds, chevrons, bold numerals, motion-implying stripes, high contrast at 42px, built around the DiscBattle score moment",
+  "families": [
+    {
+      "slug": "chevron-run",
+      "name": "Chevron Run",
+      "concept": "A broadcast transition wipe frozen on the disc: a run of fat chevrons over a wash band, the leading one carrying a bright inner nose.",
+      "params": {
+        "seed": {
+          "tilt": "-17..17 deg rotation of the whole run",
+          "pitch": "54..76 units between chevrons",
+          "phase": "-34..34 units of travel along the run axis",
+          "arm": "96..140 units of chevron half-height (how open the V is)",
+          "chip_deg": "-46..46, scaled to slide the cue chip along the top edge of the band"
+        },
+        "base": "disc body fill; its luminance sets the cue chip ink, and the accent's sets the lit nose ink, so both stay legible on any palette",
+        "accent": "chevron mass, wash band, speed rules, rim ring, cue-chip outline, label plate",
+        "label": "aria-label and <title> at every target; the first 10 characters are set in the name plate at 220 only",
+        "targets": {
+          "42": "3 chevrons, no speed rules, fattest strokes",
+          "96": "4 chevrons plus the two speed rules",
+          "220": "5 chevrons, finest strokes, name plate"
+        }
+      }
+    },
+    {
+      "slug": "score-bug",
+      "name": "Score Bug",
+      "concept": "The lower-third score bug laid across the disc: a hard accent band with a logo chip, a run of tally segments (some lit) and a clock colon.",
+      "params": {
+        "seed": {
+          "tilt": "-5..5 deg of the whole bug",
+          "y_off": "-26..36 units of band height on the face",
+          "lit": "1..4 of the segments read as lit",
+          "chip_right": "which end of the band carries the logo chip",
+          "tick_shift": "-18..18 units sliding the cue ticks above the band"
+        },
+        "base": "disc body fill; its luminance picks the colour of the hairline rule above the band",
+        "accent": "the band itself, the chevron inside the chip, the cue ticks, the rim, the unlit segments (as a darkened mix) and the label plate",
+        "label": "aria-label and <title> at every target; first 10 characters in the plate at 220",
+        "targets": {
+          "42": "3 wide segments, no cue ticks",
+          "96": "5 segments plus the cue ticks",
+          "220": "5 segments, cue ticks, name plate"
+        }
+      }
+    },
+    {
+      "slug": "sweep-clock",
+      "name": "Sweep Clock",
+      "concept": "The shot clock: a tick ring with heavier quarter ticks, a filled sweep wedge and one bright hand at the leading edge.",
+      "params": {
+        "seed": {
+          "start": "-118..-62 deg where the wedge opens (near twelve o'clock)",
+          "sweep": "105..300 deg of elapsed wedge",
+          "ring_shift": "0..14 deg rotation of the tick ring",
+          "hub": "46..62 units of hub radius",
+          "pip_r": "96..138 units -- how far out the lit pip sits inside the wedge"
+        },
+        "base": "disc body fill and hub fill; its luminance picks the hand, quarter-tick and pip colour",
+        "accent": "wedge fill and outline, minor ticks, ring, hub ring, rim, label plate",
+        "label": "aria-label and <title> at every target; first 10 characters in the plate at 220",
+        "targets": {
+          "42": "6 ticks, thickest hand",
+          "96": "12 ticks",
+          "220": "24 ticks, name plate"
+        }
+      }
+    }
+  ],
+  "cards": {
+    "single": {
+      "layouts": [
+        "standard",
+        "gallery"
+      ],
+      "design": {
+        "standard": "400x174 lower third",
+        "gallery": "320x402 showcase"
+      },
+      "details": "False drops the eyebrow, note and flight cells; the art grows and the name carries the card"
+    },
+    "battle": {
+      "layouts": [
+        "standard",
+        "stacked"
+      ],
+      "design": {
+        "standard": "660x300 two-up with a centre scoreboard block",
+        "stacked": "440x424 two lower thirds with a per-row score plate"
+      },
+      "score": "scores read from card['scores'] (dict by presentationId, dict by index, or list), then participant['score']; missing values render an en dash. The leading half of the scoreboard fills with that disc's colour and the trailing numeral dims. card['winner'] / ['manualWinner'] overrides the leader and tags the header; card['highlight'] rings a participant.",
+      "details": "False drops the eyebrows and flight cells; art, name and score remain"
+    }
+  },
+  "calculations": {
+    "fn.discArt.chevron-run": "families.chevron_run",
+    "fn.discArt.score-bug": "families.score_bug",
+    "fn.discArt.sweep-clock": "families.sweep_clock",
+    "fn.card.single.render": "cards.render_single",
+    "fn.card.battle.render": "cards.render_battle"
+  },
+  "notes": "Two colours in, four colours used: every family derives `edge` (contrasts with the base, carries the one bright live mark) and `knock` (contrasts with the accent, used only on top of an accent mass) by luminance, so nothing goes mushy on the pale warm palette or the dark one. Identity is five RNG draws taken before any target branching, so 42/96/220 are the same disc at three levels of detail rather than three different discs. Cards inline the art under a placed <g> with per-participant id namespacing instead of a nested <svg>: a host stylesheet that sizes `svg { width: … }` — the tournament's own rasterizer does exactly this — cannot resize the disc out of its slot. Previews and the self-check are reproducible: `python3 build_preview.py` then `python3 selfcheck.py` (300 checks, corpus digest printed)."
+}

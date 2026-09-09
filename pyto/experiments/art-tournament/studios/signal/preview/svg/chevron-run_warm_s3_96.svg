@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="5.3" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<g transform="rotate(-8.9 256 256)">
+<rect x="-60" y="99.4" width="632" height="313.1" fill="#7a3b1e" opacity=".16"/>
+<path d="M22.6 117.4 H434.5" stroke="#7a3b1e" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M22.6 394.6 H434.5" stroke="#7a3b1e" stroke-width="6" opacity=".3" stroke-linecap="round"/>
+<path d="M110.6 133.4 L194.6 256 L110.6 378.6" fill="none" stroke="#7a3b1e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.42"/>
+<path d="M176.6 133.4 L260.6 256 L176.6 378.6" fill="none" stroke="#7a3b1e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.61"/>
+<path d="M242.6 133.4 L326.6 256 L242.6 378.6" fill="none" stroke="#7a3b1e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.81"/>
+<path d="M308.5 133.4 L392.5 256 L308.5 378.6" fill="none" stroke="#7a3b1e" stroke-width="34" stroke-linecap="butt" stroke-linejoin="miter" opacity="1.00"/>
+<path d="M308.5 133.4 L392.5 256 L308.5 378.6" fill="none" stroke="#ffffff" stroke-width="11.6" stroke-linecap="butt" stroke-linejoin="miter" opacity=".95"/>
+</g>
+</g>
+<g id="stamp">
+<rect x="263.8" y="96.4" width="26" height="26" rx="4" fill="#111318" transform="rotate(-8.9 276.8 109.4)"/>
+<rect x="263.8" y="96.4" width="26" height="26" rx="4" fill="none" stroke="#7a3b1e" stroke-width="7" transform="rotate(-8.9 276.8 109.4)"/>
+</g>
+<title>MAKO</title>
+</svg>

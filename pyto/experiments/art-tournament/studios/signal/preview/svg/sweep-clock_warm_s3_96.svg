@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#e8d8b0"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#7a3b1e" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="5.3" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="184" fill="none" stroke="#7a3b1e" stroke-width="11" opacity=".3"/>
+<path d="M413.4 270.3 L451.2 273.7" stroke="#111318" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M393.3 352.8 L416.2 368.9" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M326.5 408.5 L338.3 433.9" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M241.7 413.4 L238.3 451.2" stroke="#111318" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M159.2 393.3 L143.1 416.2" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M103.5 326.5 L78.1 338.3" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M98.6 241.7 L60.8 238.3" stroke="#111318" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M118.7 159.2 L95.8 143.1" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M185.5 103.5 L173.7 78.1" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M270.3 98.6 L273.7 60.8" stroke="#111318" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M352.8 118.7 L368.9 95.8" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M408.5 185.5 L433.9 173.7" stroke="#7a3b1e" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M256 256 L217.5 109 A152 152 0 1 1 213 401.8 Z" fill="#7a3b1e" opacity=".62"/>
+<path d="M256 256 L217.5 109 A152 152 0 1 1 213 401.8 Z" fill="none" stroke="#7a3b1e" stroke-width="10" stroke-linejoin="round"/>
+<path d="M256 256 L205.6 426.7" stroke="#111318" stroke-width="18" stroke-linecap="round"/>
+<circle cx="378.3" cy="257.9" r="11" fill="#111318" opacity=".9"/>
+</g>
+<g id="stamp">
+<circle cx="256" cy="256" r="55.7" fill="#e8d8b0" stroke="#7a3b1e" stroke-width="14"/>
+<circle cx="256" cy="256" r="21.2" fill="#111318"/>
+</g>
+<title>MAKO</title>
+</svg>

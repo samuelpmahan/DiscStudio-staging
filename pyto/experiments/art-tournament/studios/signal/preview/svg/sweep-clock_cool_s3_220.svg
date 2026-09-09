@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 512 512" role="img" aria-label="MAKO">
+<defs><clipPath id="disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+<circle cx="256" cy="256" r="220" fill="url(#depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="7" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="3" opacity=".28"/>
+</g>
+<g id="art" clip-path="url(#disc)">
+<circle cx="256" cy="256" r="184" fill="none" stroke="#0d3558" stroke-width="11" opacity=".3"/>
+<path d="M413.4 270.3 L451.2 273.7" stroke="#ffffff" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M413.7 314 L440 323.6" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M393.3 352.8 L416.2 368.9" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M363.6 385 L381.5 406.5" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M326.5 408.5 L338.3 433.9" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M284.7 421.5 L289.4 449.1" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M241.7 413.4 L238.3 451.2" stroke="#ffffff" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M198 413.7 L188.4 440" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M159.2 393.3 L143.1 416.2" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M127 363.6 L105.5 381.5" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M103.5 326.5 L78.1 338.3" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M90.5 284.7 L62.9 289.4" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M98.6 241.7 L60.8 238.3" stroke="#ffffff" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M98.3 198 L72 188.4" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M118.7 159.2 L95.8 143.1" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M148.4 127 L130.5 105.5" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M185.5 103.5 L173.7 78.1" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M227.3 90.5 L222.6 62.9" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M270.3 98.6 L273.7 60.8" stroke="#ffffff" stroke-width="16" stroke-linecap="butt" opacity=".92"/>
+<path d="M314 98.3 L323.6 72" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M352.8 118.7 L368.9 95.8" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M385 148.4 L406.5 130.5" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M408.5 185.5 L433.9 173.7" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M421.5 227.3 L449.1 222.6" stroke="#0d3558" stroke-width="11" stroke-linecap="butt" opacity=".8"/>
+<path d="M256 256 L217.5 109 A152 152 0 1 1 213 401.8 Z" fill="#0d3558" opacity=".62"/>
+<path d="M256 256 L217.5 109 A152 152 0 1 1 213 401.8 Z" fill="none" stroke="#0d3558" stroke-width="10" stroke-linejoin="round"/>
+<path d="M256 256 L205.6 426.7" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+<circle cx="378.3" cy="257.9" r="11" fill="#ffffff" opacity=".9"/>
+</g>
+<g id="stamp">
+<circle cx="256" cy="256" r="55.7" fill="#4c9bc6" stroke="#0d3558" stroke-width="14"/>
+<circle cx="256" cy="256" r="21.2" fill="#ffffff"/>
+</g>
+<g id="text">
+<rect x="195" y="402" width="122" height="38" rx="7" fill="#0d3558"/>
+<rect x="206" y="410" width="7" height="22" rx="3.5" fill="#ffffff" opacity=".95"/>
+<text x="262" y="428" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" letter-spacing="2" fill="#ffffff">MAKO</text>
+</g>
+<title>MAKO</title>
+</svg>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 512 512" role="img" aria-label="DiscBattle — fairway plat course chart disc">
+<defs><clipPath id="fp-disc"><circle cx="256" cy="256" r="220"/></clipPath>
+<linearGradient id="fp-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+<g id="base" clip-path="url(#fp-disc)">
+<circle cx="256" cy="256" r="220" fill="#4c9bc6"/>
+</g>
+<g id="art" clip-path="url(#fp-disc)">
+<g transform="rotate(15.6 256 256)">
+<rect x="-40" y="-40" width="592" height="592" fill="#285774"/>
+<ellipse cx="366" cy="146" rx="56.2" ry="49.4" fill="#c2ddec" opacity=".95" stroke="#bedbea" stroke-width="12.2"/>
+<path d="M157.6 405.4L178 398.9L197.7 391.4L216.6 382.9L234.7 373.4L251.9 363L268.3 351.5L283.6 339L298 325.7L311.4 311.4L323.7 296.3L335 280.5L345.2 263.9L354.3 246.7L362.5 228.8L369.7 210.4L376 191.4L381.4 171.9L386 151.9L346 140.1L338.7 157.1L330.8 173.1L322.2 188.2L313.1 202.4L303.5 215.7L293.4 228.1L282.9 239.6L271.9 250.4L260.5 260.5L248.7 270L236.4 278.8L223.7 287.1L210.4 294.9L196.5 302.2L182.1 309L166.9 315.4L151 321.2L134.4 326.6Z" fill="#89bdd9"/>
+<g transform="translate(146 366) rotate(-16.4)"><rect x="-22.8" y="-31" width="45.7" height="62" rx="7" fill="#0d3558"/><rect x="-22.8" y="-31" width="45.7" height="62" rx="7" fill="none" stroke="#bedbea" stroke-width="12.2" opacity=".8"/></g>
+</g>
+<circle cx="256" cy="256" r="220" fill="url(#fp-depth)"/>
+</g>
+<g id="rim" fill="none">
+<circle cx="256" cy="256" r="216" stroke="#0d3558" stroke-width="12.2" opacity=".9"/>
+<circle cx="256" cy="256" r="201" stroke="#fff" stroke-width="12.2" opacity=".28"/>
+</g>
+<g id="stamp">
+<circle cx="391.6" cy="179.7" r="32" fill="#0d3558"/>
+<circle cx="391.6" cy="179.7" r="14" fill="#cde3ef"/>
+</g>
+<title>DiscBattle</title>
+</svg>

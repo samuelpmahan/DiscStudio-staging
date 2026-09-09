@@ -1,0 +1,75 @@
+{
+  "studio": "cartography",
+  "angle": "course cartography and flight — contour, corridor and bearing",
+  "families": [
+    {
+      "slug": "contour-basin",
+      "name": "Contour Basin",
+      "concept": "The ground under the basket, plated as filled contour bands: a seeded elevation bowl with index contours, hairline interstitials, a drainage line and a spot-elevation benchmark at the summit.",
+      "params": {
+        "seed": "Places the summit off-centre, sets the drift of the slope, the two harmonic frequencies and amplitudes that wobble every contour, the squash of the bowl, the plate rotation, the saddle bearing, and the spot-elevation figure.",
+        "base": "Fills the disc and is the low-ground band; every band is a base->accent blend.",
+        "accent": "The high ground, the hairline contours, the rim, the spot-elevation triangle and the label.",
+        "label": "Drawn once at 220 under the bands; the aria-label and <title> at every target.",
+        "target": "42 = 3 filled bands + a summit dot; 96 = 5 bands + 4 hairlines + benchmark triangle; 220 = 8 bands, 9 hairlines, the dashed saddle line, elevation figure and label."
+      }
+    },
+    {
+      "slug": "fairway-plat",
+      "name": "Fairway Plat",
+      "concept": "One hole seen from the air: rough, a mown corridor doglegging from tee pad to basket, a tree line crowding both shoulders, woodland beyond, a creek across the fairway and the hole number with its par.",
+      "params": {
+        "seed": "Rotates the hole on the plate, picks the dogleg side and how hard it bends, the tee and green corridor widths, the green radius, the tee-pad length, whether a water hazard is plotted, the tree-line phase, and the hole number and par.",
+        "base": "The mown corridor and green; the rough is a base->accent blend so contrast survives any palette.",
+        "accent": "Rough tint, tee pad, dashed flight line, basket, water hatch, rim and label.",
+        "label": "Drawn once at 220 beneath the hole number; the aria-label and <title> at every target.",
+        "target": "42 = rough, corridor, tee pad, solid basket; 96 = + corridor edging, dashed flight line, 16 trees; 220 = + 34 trees, water hazard with hatch, basket pole, hole number and par."
+      }
+    },
+    {
+      "slug": "wind-rose",
+      "name": "Wind Rose",
+      "concept": "The bearing compass from the corner of the map sheet: sixteen alternating kites whose reach leans into a seeded prevailing bearing, a folded north needle out to a ticked bearing ring, and the bearing printed in degrees.",
+      "params": {
+        "seed": "Sets the prevailing bearing, the rose tilt, how tightly the reach focuses on that bearing, the hub radius, the kite width, all sixteen spike reaches, the bearing-ring gap and the printed bearing in degrees.",
+        "base": "The chart field under the rose (a light base->accent wash) and the pale alternating kites.",
+        "accent": "The dark alternating kites, the prevailing needle and arrowhead, the bearing rings and ticks.",
+        "label": "Drawn once at 220 below the rose; the aria-label and <title> at every target.",
+        "target": "42 = 8 kites + needle + hub; 96 = 16 kites, two bearing rings, 16 ticks; 220 = + 72 degree ticks with majors, the N glyph, the bearing figure and label."
+      }
+    }
+  ],
+  "cards": {
+    "single": {
+      "layouts": [
+        "standard",
+        "gallery"
+      ],
+      "sizes": {
+        "standard": "420x190 (146 with details off)",
+        "gallery": "340x470 (408 with details off)"
+      },
+      "details": "details=True adds the note, the legend captions SPEED/GLIDE/TURN/FADE and the scale bar under the disc inset; details=False keeps the name, the maker/mold line and all four flight figures in a compact ruled row."
+    },
+    "battle": {
+      "layouts": [
+        "standard",
+        "stacked"
+      ],
+      "sizes": {
+        "standard": "700x224 (172 with details off)",
+        "stacked": "440x346 (286 with details off)"
+      },
+      "details": "Same rule as single. The score slot is always drawn: standard sets the pair either side of the centre rosette, stacked gives each row its own score cartouche. A winner marks its plate with a star and an accent frame.",
+      "scores": "card['scores'] is read as a presentationId->value map, an index map or a list; a missing score renders as an empty slot. card['winner'] / card['manualWinner'] / card['highlight'] mark the winning participant."
+    }
+  },
+  "calculations": {
+    "fn.discArt.contour-basin": "families.contour_basin",
+    "fn.discArt.fairway-plat": "families.fairway_plat",
+    "fn.discArt.wind-rose": "families.wind_rose",
+    "fn.card.single.render": "cards.render_single",
+    "fn.card.battle.render": "cards.render_battle"
+  },
+  "notes": "Every family shares the paint_components contract: a full SVG document, 512 viewBox, width=height=target, art clipped to the r=220 disc, a rim, text only at 220, aria-label and <title>. Identity is drawn from random.Random(seed) once at the top of each function and the target tier only decides how many components are emitted, so rendering 42, 96 and 220 consumes the identical RNG sequence (selfcheck.py proves this by recording draws). Palette robustness is structural rather than tuned: the fairway corridor is a white-lifted base over a rough pushed down from it, and the contour ramp runs light-base to accent, so the read survives a dark base with a bright accent. Card art is inlined as a <g> copy with per-participant id namespacing rather than a nested <svg>: a nested <svg> is resized by any host stylesheet that targets `svg`, which the tournament rasterizer does, and two discs on one battle plate would otherwise collide on clipPath and gradient ids. Run selfcheck.py for the contract proof and build_preview.py to regenerate preview/."
+}
