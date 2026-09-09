@@ -135,8 +135,17 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
 .scroll { overflow-x: auto; }
 .part-table tr.preexisting .addr { color: var(--accent); }
 
+#world-wrap select { font: inherit; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.unknown-panel { border-radius: 8px; margin: 16px 0; }
+.unknown-panel p { margin: 4px 0; }
+.unknown-panel .unknown-title { font-weight: 600; }
 #playback-toggle[aria-pressed="true"] { background: var(--accent); color: var(--panel); border-color: var(--accent); }
 .playback-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 8px 16px; background: var(--panel); border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+/* Pre-existing gap: an author `display` rule always beats the UA's `[hidden]{display:none}`
+   (author normal outranks UA normal in the cascade, regardless of specificity), so
+   `.playback-bar[hidden]` rendered anyway. A world-picker switch onto a record-less
+   slot calls forceOff(), which sets `hidden` and depends on it actually hiding the bar. */
+.playback-bar[hidden] { display: none; }
 .playback-bar button, .playback-bar select, #playback-toggle { font: inherit; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); cursor: pointer; }
 #playback-now { font-weight: 600; color: var(--ink); }
 #playback-clock { font-family: ui-monospace, monospace; }
@@ -147,6 +156,10 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
   <h1>Tick viewer</h1>
   <label for="file">record</label>
   <input id="file" type="file" accept=".json,application/json">
+  <span id="world-wrap" hidden>
+    <label for="world">world</label>
+    <select id="world"></select>
+  </span>
   <label for="filter">filter</label>
   <input id="filter" type="search" placeholder="address substring, or scratch.ablation.* for a prefix">
   <button id="playback-toggle" type="button" aria-pressed="false" title="Watch the Ticks and Calculations appear as they finished">Watch it think</button>
@@ -176,6 +189,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
   </p>
 </div>
 <script type="application/json" id="record"></script>
+<script type="application/json" id="records"></script>
 <script type="module">
   import { mount } from './tick-viewer.js';
   mount(document);

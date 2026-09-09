@@ -397,6 +397,34 @@ export function readEmbeddedRecord(doc) {
 }
 
 /**
+ * "Four worlds, one terminal": records baked by `embed.mjs --out worlds.html`
+ * (two-or-more inputs, or `--worlds`), as <script id="records">[{label,
+ * record, error, empty, note}]</script>. `record` is already a validated
+ * pyto-run-record@1; `error` names why a world's input never became one.
+ */
+export function readEmbeddedWorlds(doc) {
+  const node = doc.getElementById ? doc.getElementById('records') : null;
+  if (!node) return null;
+  const text = (node.textContent || '').trim();
+  if (!text) return null;
+  const parsed = JSON.parse(text);
+  return Array.isArray(parsed) && parsed.length ? parsed : null;
+}
+
+/** A world whose input failed validation: loud, naming the reason, never a blank panel. */
+export function renderUnknown(doc, label, reason) {
+  return el(doc, 'div', { className: 'status error unknown-panel' }, [
+    el(doc, 'p', { className: 'unknown-title', text: `UNKNOWN — ${label}` }),
+    el(doc, 'p', { className: 'unknown-reason', text: reason })
+  ]);
+}
+
+/** A world with no input at all (ChainSpot): a labelled empty slot, not a fake record. */
+export function renderEmptySlot(doc, label, note) {
+  return el(doc, 'p', { className: 'none', text: `${label}: ${note}` });
+}
+
+/**
  * Accept either a record or a raw runtime document and return a record.
  * The wrappers are the fixture shapes in ./fixtures: DiscStudio `{first,second}`
  * or `{pql, receipt}`, ChessLab `{receipts}`, Wumpus `{records}`.
@@ -415,7 +443,7 @@ export function coerceToRecord(parsed) {
 function createPlayback(doc, output, filterBox, getRecord) {
   const toggle = doc.getElementById('playback-toggle');
   const bar = doc.getElementById('playback-bar');
-  if (!toggle || !bar) return { isActive: () => false, render() {}, onRecordChanged() {}, autostart() {} };
+  if (!toggle || !bar) return { isActive: () => false, render() {}, onRecordChanged() {}, forceOff() {}, autostart() {} };
 
   const speedSel = doc.getElementById('speed');
   const nowEl = doc.getElementById('playback-now');
@@ -476,6 +504,13 @@ function createPlayback(doc, output, filterBox, getRecord) {
     isActive: () => active,
     render,
     onRecordChanged: () => { if (active) { reset(); render(); } },
+    // A world-picker switch onto a slot with no record: stop and rewind.
+    forceOff: () => {
+      clearTimer();
+      schedule = [];
+      shown = 0;
+      if (active) { active = false; toggle.setAttribute('aria-pressed', 'false'); bar.hidden = true; }
+    },
     autostart: () => {
       const params = new URLSearchParams(globalThis.location ? globalThis.location.search : '');
       const flagged = params.get('play') === '1' || (doc.body && doc.body.getAttribute && doc.body.getAttribute('data-play') === '1');
@@ -496,7 +531,10 @@ export function mount(doc = globalThis.document) {
   const status = doc.getElementById('status');
   const filterBox = doc.getElementById('filter');
   const picker = doc.getElementById('file');
+  const worldWrap = doc.getElementById('world-wrap');
+  const worldSelect = doc.getElementById('world');
   let current = null;
+  let currentEntry = null; // world-picker mode only: the selected {label, record, error, empty, note}
 
   const playback = createPlayback(doc, output, filterBox, () => current);
 
@@ -508,6 +546,12 @@ export function mount(doc = globalThis.document) {
   const draw = () => {
     if (playback.isActive()) { playback.render(); return; }
     while (output.firstChild) output.removeChild(output.firstChild);
+    if (currentEntry && !currentEntry.record) {
+      output.appendChild(currentEntry.error != null
+        ? renderUnknown(doc, currentEntry.label, currentEntry.error)
+        : renderEmptySlot(doc, currentEntry.label, currentEntry.note || 'no record on file yet'));
+      return;
+    }
     if (!current) return;
     output.appendChild(renderRecord(current, { doc, filter: filterBox ? filterBox.value : '' }));
   };
@@ -555,6 +599,32 @@ export function mount(doc = globalThis.document) {
     const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
     if (file) file.text().then((text) => loadText(text, file.name));
   });
+
+  // Four worlds, one terminal: a picker switch swaps current/currentEntry and
+  // redraws -- never a reload -- and always resets playback state.
+  const worlds = readEmbeddedWorlds(doc);
+  if (worlds && worldSelect) {
+    worlds.forEach((entry, index) => {
+      worldSelect.appendChild(el(doc, 'option', { text: entry.label, attrs: { value: String(index) } }));
+    });
+    const selectWorld = (index) => {
+      const entry = worlds[index];
+      currentEntry = entry;
+      current = entry.record || null;
+      if (current) {
+        playback.onRecordChanged();
+        say(`${entry.label}: ${current.pcr} · ${current.source.runtime} · ${current.counters.invocations} invocations`);
+      } else {
+        playback.forceOff();
+        say(`${entry.label}: ${entry.error || entry.note || 'no record'}`, entry.error != null);
+      }
+      draw();
+    };
+    worldSelect.addEventListener('change', () => selectWorld(Number(worldSelect.value)));
+    if (worldWrap) worldWrap.hidden = false;
+    selectWorld(0);
+    return;
+  }
 
   const embedded = readEmbeddedRecord(doc);
   if (embedded) {
