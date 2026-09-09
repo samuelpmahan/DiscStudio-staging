@@ -4,8 +4,34 @@ Intent: questions: one command that prints what is still open at the root with e
 Starting point: 76bc3d2a51c0e5442a0e4e8f519fe7d01484e9f5 (land(task-11): Mounts: a world (a course, a game, a bag) is mounted above an ordinary PxC by an id outside the address space, so one address means the same thing in every world; ported from ChainSpot's PxCRootMounts with its negative test)
 Verify: bash pyto/scripts/questions.sh --count
 Allow: pyto/scripts/questions.sh
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 1 files, see below
+Evidence: suite exit 1, see below
+
+## Candidate
+
+- A  pyto/scripts/questions.sh
+
+```
+pyto/scripts/questions.sh | 141 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 141 insertions(+)
+```
+
+## Evidence
+
+- verify: `bash pyto/scripts/questions.sh --count` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.XJbzjOH1oH) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         144  OK
+    experiments/grouped-ablation    240  FAIL
+    experiments/s3-synthetic          5  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
+    viewer                           87  OK
+    viewer-record-schema             19  OK
+    
+    SOME SUITES FAILED (logs in /tmp/tmp.XJbzjOH1oH)
 
 ## Uncertain
 
