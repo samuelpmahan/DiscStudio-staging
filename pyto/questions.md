@@ -689,3 +689,15 @@ ported painter draws the art inside the generic renderer (`kind: painted`). No r
 AGENTS.md. Their delivery already did this; the one gap, the generic renderer showing "Add image"
 for painted art, is fixed on their branch before landing. Bites: `src/presentation.js`,
 `port/painter/cards.mjs`.
+
+### {?} Students
+The owner: "due to hashing guarantees this could be an unusually good tool for students." Status:
+provisional, an audience, nothing built. What hashing gives a classroom: the per-Tick record is
+"show your work" made literal; a record that replays byte for byte on the grader's machine proves
+the student's claim about their own program; identical digests on every Tick are the same work,
+whoever typed it; a port across languages is judged by a verifier (the painter port is the
+demonstration). From tonight: the explicability gate is a rubric with no teacher in it, and the
+`{?}` habit is most of learning to program. The caveat to teach first: identical digests prove
+the same computation, not the right answer; a verifier still needs a reference. Default: after
+DiscStudio ships, one experiment: a homework-sized PCR with a hand-off page graded by a cold
+reader. Bites: `LANDING.md` (the gate), `HANDOFF.md` template, the viewer.
