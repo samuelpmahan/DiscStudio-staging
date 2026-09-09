@@ -1,0 +1,1 @@
+no CRLF text files under pyto (retained .patch/.txt evidence keeps its bytes by attribute)

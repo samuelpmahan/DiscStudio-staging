@@ -17,7 +17,9 @@ import copy
 import sys
 from pathlib import Path
 
-CARD_CONSUMER_DIR = Path("/home/user/DiscStudio-staging/pyto/consumers/discstudio-card")
+# pyto/experiments/art-tournament/harness/fixtures.py -> pyto/consumers/discstudio-card, from this
+# file's own location, so the harness works in any clone or copy of the tree.
+CARD_CONSUMER_DIR = Path(__file__).resolve().parents[3] / "consumers" / "discstudio-card"
 if str(CARD_CONSUMER_DIR) not in sys.path:
     sys.path.insert(0, str(CARD_CONSUMER_DIR))
 

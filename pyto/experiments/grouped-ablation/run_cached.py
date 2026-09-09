@@ -76,6 +76,9 @@ SEED, N = 7, 400  # identical across every resolution on purpose: the point is r
 SPLIT_ADDRESS = "fn.ablation.split"
 PYTHON = sys.executable
 STRIPPED_ENV_BASE = {"PATH": os.environ.get("PATH", "")}
+if os.name == "nt" and os.environ.get("SystemRoot"):
+    # Windows cannot start python.exe from an environment block without SystemRoot (see replay.py).
+    STRIPPED_ENV_BASE["SystemRoot"] = os.environ["SystemRoot"]
 
 CHILD_SNIPPET = textwrap.dedent(
     """\

@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T073146Z-windows-safety",
+  "package": "windows-safety",
+  "base_sha": "b2a284825708cd592bb0043eec59f1a88afb07b8",
+  "result": "failed",
+  "reason": "check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T073146Z-windows-safety/check_all.txt)",
+  "at": "2026-09-09T07:32:25.926970Z"
+}

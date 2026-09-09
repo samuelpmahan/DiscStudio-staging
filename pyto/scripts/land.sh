@@ -74,7 +74,7 @@ fi
 
 # 1. Clean start: the dirty files are what this landing will commit; files committed since --base are
 #    part of the candidate too (checkpoints never claim, landings do).
-DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //')"
+DIRTY="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
 SINCE="$(git diff --name-only "$BASE_SHA" HEAD)"
 CHANGED="$(printf '%s\n%s\n' "$SINCE" "$DIRTY" | grep -v '^$' | sort -u || true)"
 [ -n "$CHANGED" ] || fail "nothing to land: the tree is clean and nothing changed since $BASE_SHA"
@@ -153,7 +153,8 @@ fi
 # 5. Commit and push. Only the files that were dirty at the start; if the tree moved meanwhile, stop.
 NOW="$(git status --porcelain --untracked-files=all | cut -c4- | sed 's/.* -> //' | grep -v '^pyto/experiments/landings/' || true)"
 if [ "$(printf '%s\n' "$NOW" | grep -v '^$' | sort -u)" != "$(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u)" ]; then
-  fail "the tree changed while the suites ran (someone is writing); nothing committed"
+  delta="$(diff <(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u) <(printf '%s\n' "$NOW" | grep -v '^$' | sort -u) | grep '^[<>]' | sed 's/^</ gone:/; s/^>/ new:/' | tr '\n' ' ')"
+  fail "the tree changed while the suites ran (someone is writing); nothing committed. Changed:$delta"
 fi
 while IFS= read -r f; do [ -n "$f" ] && git add -A -- "$f"; done <<< "$DIRTY"
 git add -A -- "$LAND_DIR"

@@ -38,7 +38,7 @@ critic gap 3 on the PYTHONHASHSEED/`-I` interaction):
    across the five seeds, which is the only line that shows the seed took effect
    at all. No PYTHONPATH is set by any row. -> evidence/determinism.log
 5. LF source-drift probe, OUTSIDE the discovered suite: replay against an
-   LF-converted copy of the `pyto` package on PYTHONPATH (src/pyto/*.py are CRLF)
+   CRLF-converted copy of the `pyto` package on PYTHONPATH (src/pyto/*.py are LF)
    to show module-source digest drift "by construction" while replay result
    digests do not drift. It is the one check that needs a PYTHONPATH pointing at
    a scratch directory, which experiments/CAPTURE.md forbids for anything
@@ -147,6 +147,12 @@ def lane_c_log_path(label: str) -> str:
 
 PYTHON = sys.executable
 STRIPPED_ENV = {"PATH": os.environ.get("PATH", "")}
+if os.name == "nt" and os.environ.get("SystemRoot"):
+    # Windows hands the child exactly this block and nothing else, and python.exe
+    # will not start without SystemRoot in it (CPython skips its own
+    # test_subprocess.py::test_empty_env on win32 for this reason). It is the one
+    # variable the strip keeps, and only there.
+    STRIPPED_ENV["SystemRoot"] = os.environ["SystemRoot"]
 
 
 class SkippedCheck(RuntimeError):
@@ -292,7 +298,7 @@ CHILD_REPLAY_SNIPPET = textwrap.dedent(
     source_sha256 = {}
     for name in ("retain.py", "calculations.py", "features.py"):
         with open(os.path.join(experiment_dir, name), "rb") as handle:
-            source_sha256[name] = hashlib.sha256(handle.read()).hexdigest()
+            source_sha256[name] = hashlib.sha256(handle.read().replace(b"\\r\\n", b"\\n")).hexdigest()
     claimed_provider_sha = sorted({
         entry.get("source_sha256")
         for entry in (record.get("provider", {}).get("registry") or {}).values()
@@ -633,11 +639,11 @@ def cross_verify_lane_c_runs(log_dir: str | None = None) -> dict[str, dict]:
 
 
 def _source_sha256(names: tuple[str, ...]) -> dict[str, str]:
-    """sha256 of the named files in this experiment directory, read from disk now."""
+    """sha256 of the named files in this experiment directory, read from disk now (CRLF as LF, like retain)."""
     out = {}
     for name in names:
         with open(os.path.join(HERE, name), "rb") as handle:
-            out[name] = hashlib.sha256(handle.read()).hexdigest()
+            out[name] = hashlib.sha256(handle.read().replace(b"\r\n", b"\n")).hexdigest()
     return out
 
 
@@ -866,12 +872,16 @@ CHILD_LF_SNIPPET = textwrap.dedent(
     result_digests = {k: retain.digest_of(v) for k, v in run.results.items()}
     lib_dir = __import__("os").path.dirname(__import__("os").path.abspath(pyto.core.__file__))
     modules = {}
+    modules_normalized = {}
     for name in ("core.py", "pcr.py"):
-        with open(__import__("os").path.join(lib_dir, name), "rb") as fh:
+        path = __import__("os").path.join(lib_dir, name)
+        with open(path, "rb") as fh:
             modules[name] = hashlib.sha256(fh.read()).hexdigest()
+        modules_normalized[name] = retain._sha256_path(path)
     report = {
         "pyto_file": pyto.__file__,
         "modules": modules,
+        "modules_normalized": modules_normalized,
         "result_digests": result_digests,
     }
     sys.stdout.write(json.dumps(report, sort_keys=True))
@@ -880,7 +890,7 @@ CHILD_LF_SNIPPET = textwrap.dedent(
 
 
 def _run_hashseed_row(seed: int, record_path: str) -> dict:
-    env = {"PATH": os.environ.get("PATH", ""), "PYTHONHASHSEED": str(seed)}
+    env = dict(STRIPPED_ENV, PYTHONHASHSEED=str(seed))
     args = [PYTHON, "-s", "-P", "-c", CHILD_HASHSEED_SNIPPET, HERE, record_path]
     completed = subprocess.run(args, env=env, capture_output=True, text=True, timeout=60)
     if completed.returncode != 0:
@@ -892,7 +902,13 @@ def _run_hashseed_row(seed: int, record_path: str) -> dict:
 
 
 def _lf_copy_of_pyto_package(dest_root: str) -> str:
-    """Copy the `pyto` package into dest_root/pyto, converting CRLF -> LF.
+    """Copy the `pyto` package into dest_root/pyto, converting LF -> CRLF.
+
+    This is what a Windows checkout of the kernel looks like without
+    pyto/.gitattributes (core.autocrlf=true rewrites every LF file to CRLF). The
+    kernel's sources are LF in the repository since the Windows-safe renormalization;
+    the row proves that a CRLF copy still yields the record's provider digests
+    (retain._sha256_path normalizes line endings) and the same results.
 
     dest_root itself carries no directory literally named 'src' (CAPTURE.md forbids
     a PYTHONPATH containing 'src'; the library is reached through the editable
@@ -914,10 +930,11 @@ def _lf_copy_of_pyto_package(dest_root: str) -> str:
             continue
         path = os.path.join(dest_pkg_dir, name)
         with open(path, "rb") as handle:
-            data = handle.read()
-        if b"\r\n" in data:
+            raw = handle.read()
+        crlf = raw.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+        if crlf != raw:
             with open(path, "wb") as handle:
-                handle.write(data.replace(b"\r\n", b"\n"))
+                handle.write(crlf)
             converted.append(name)
     return dest_pkg_dir, converted
 
@@ -926,7 +943,7 @@ def _run_lf_copy_row(record_path: str) -> dict:
     tmp = tempfile.mkdtemp(prefix="determinism-lf-")
     try:
         dest_pkg_dir, converted = _lf_copy_of_pyto_package(tmp)
-        env = {"PATH": os.environ.get("PATH", ""), "PYTHONPATH": tmp}
+        env = dict(STRIPPED_ENV, PYTHONPATH=tmp)
         print(
             f"[grouped-ablation] PYTHONPATH={tmp} for the LF-source-drift probe only "
             f"(standalone `python3 replay.py`; not run by scripts/check_all.sh -- "
@@ -1019,7 +1036,7 @@ def run_determinism_matrix(record: dict, log_path: str | None = None) -> dict:
 
 
 def run_lf_source_drift_probe(record: dict, log_path: str | None = None) -> dict:
-    """Standalone probe: replay against an LF-converted copy of `pyto` on PYTHONPATH.
+    """Standalone probe: replay against a CRLF-converted copy of `pyto` on PYTHONPATH.
 
     Not called by any test_*.py and therefore not by scripts/check_all.sh: it is the
     one row that needs a PYTHONPATH pointing at a scratch directory, which
@@ -1040,7 +1057,7 @@ def run_lf_source_drift_probe(record: dict, log_path: str | None = None) -> dict
         json.dumps(baseline_digests, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
     lines = [
-        "# Day 2 Lane D: LF-converted pyto package on PYTHONPATH (src/pyto/*.py are CRLF)",
+        "# Day 2 Lane D: CRLF-converted pyto package on PYTHONPATH (src/pyto/*.py are LF; this is a Windows checkout without pyto/.gitattributes)",
         "",
         "Produced by `python3 experiments/grouped-ablation/replay.py` ONLY. This probe",
         "sets PYTHONPATH to a scratch directory to import a modified copy of the library,",
@@ -1055,9 +1072,15 @@ def run_lf_source_drift_probe(record: dict, log_path: str | None = None) -> dict
         f"child pyto.__file__: {lf_row['pyto_file']}  (used editable install instead of the LF copy: {lf_row['used_editable_install']})",
     ]
     for name, (before, after) in module_drift.items():
-        lines.append(f"{name} source sha256: editable-install(CRLF)={before} lf-copy(LF)={after} differs_by_construction={before != after}")
+        lines.append(f"{name} source sha256: editable-install(LF)={before} crlf-copy(raw bytes)={after} differs_by_construction={before != after}")
+    expected_normalized = {name: provider_modules.get(name) for name in ("core.py", "pcr.py")}
+    normalized_ok = lf_row.get("modules_normalized") == expected_normalized
+    lines.append(f"normalized sha256 equal to the record's provider digests: {normalized_ok}")
     lines.append(f"replay result digests identical to run-1 despite the source-hash drift: {digests_match_lf}")
     ok = True
+    if not normalized_ok:
+        ok = False
+        lines.append("  FAILURE: a CRLF checkout does not reproduce the record's provider digests (retain._sha256_path must normalize line endings)")
     if lf_row["used_editable_install"]:
         ok = False
         lines.append("  UNEXPECTED: the child imported the editable install, not the LF copy -- PYTHONPATH override failed")
@@ -1066,7 +1089,7 @@ def run_lf_source_drift_probe(record: dict, log_path: str | None = None) -> dict
         lines.append("  FAILURE: result digests drifted from an LF-only source change")
     if all(before == after for before, after in module_drift.values()):
         ok = False
-        lines.append("  UNEXPECTED: no module-source drift observed -- either the originals are not CRLF here, or the copy did not convert anything")
+        lines.append("  UNEXPECTED: no raw module-source drift observed -- the copy did not convert anything")
     lines.append("")
     lines.append(
         "This row is the reason retain.replay does NOT compare provider identity: it "

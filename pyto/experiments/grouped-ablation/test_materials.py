@@ -32,6 +32,12 @@ from run import run_experiment  # noqa: E402
 
 PYTHON = sys.executable
 STRIPPED_ENV = {"PATH": os.environ.get("PATH", "")}
+if os.name == "nt" and os.environ.get("SystemRoot"):
+    # See replay.py: Windows hands the child exactly this block and nothing else, and python.exe
+    # will not start without SystemRoot in it (CPython skips its own
+    # test_subprocess.py::test_empty_env on win32 for this reason). It is the one
+    # variable the strip keeps, and only there.
+    STRIPPED_ENV["SystemRoot"] = os.environ["SystemRoot"]
 
 
 def _fresh_store(root: str | None = None) -> materials.MaterialsStore:

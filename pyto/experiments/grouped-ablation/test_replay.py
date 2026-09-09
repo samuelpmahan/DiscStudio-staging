@@ -355,7 +355,10 @@ class FreshProcessReplay(ScratchCase):
 
     def test_env_was_stripped_to_path_only(self):
         env_line = next(line for line in self.text.splitlines() if line.startswith("env: "))
-        self.assertEqual(sorted(eval(env_line[len("env: "):])), ["PATH"])
+        # SystemRoot on Windows only: without it the child cannot start at all
+        # (replay.py's STRIPPED_ENV). Nothing else may leak through.
+        expected = sorted(["PATH"] + (["SystemRoot"] if os.name == "nt" else []))
+        self.assertEqual(sorted(eval(env_line[len("env: "):])), expected)
 
     def test_exactly_one_intra_repo_path_was_inserted_and_it_is_this_directory(self):
         added = [p for p in self.report["sys_path_after"] if p not in self.report["sys_path_before"]]
@@ -1127,6 +1130,7 @@ class LfSourceDriftProbe(unittest.TestCase):
     def test_module_sources_drifted_by_construction_while_digests_did_not(self):
         for name in ("core.py", "pcr.py"):
             self.assertRegex(self.text, rf"{name} source sha256: .*differs_by_construction=True")
+        self.assertIn("normalized sha256 equal to the record's provider digests: True", self.text)
         self.assertIn("replay result digests identical to run-1 despite the source-hash drift: True", self.text)
         self.assertIn("used editable install instead of the LF copy: False", self.text)
 

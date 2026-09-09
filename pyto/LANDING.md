@@ -106,6 +106,9 @@ it. The only fixed cost is the suite, once per landing.
   lands through the protocol like everything else, with the reason in the commit.
 - Checkpoints are labelled `checkpoint:`; landings are labelled `land(...)`. A reader can tell
   them apart from `git log --oneline` alone.
+- "Green" is a claim; it names a receipt or it is not made. (Learned the hard way on 2026-09-09:
+  a checkpoint shipped with the suite red after a line-ending renormalization, and the owner was
+  told "green" from a run that predated the change.)
 - The receipt is the record. If the receipt says a verifier ran, its output digest is in the
   receipt, and the output is retained under `pyto/experiments/landings/<id>/`.
 - Acceptance is not landing. The owner accepts or not, later, by reading; the landing receipt says

@@ -42,6 +42,12 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 07:38 **landed** `windows-safety`: digests ignore line endings, kernel LF, evidence regenerated, harness path from its own location, child processes keep SystemRoot on Windows (37 files since b2a2848, suites green, receipt 20260909T073723Z-windows-safety)
+- 2026-09-09 07:34 **refused** `windows-safety`: the tree changed while the suites ran (someone is writing); nothing committed
+- 2026-09-09 07:33 **refused** `windows-safety`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T073247Z-windows-safety/check_all.txt)
+- 2026-09-09 07:32 **refused** `windows-safety`: check_all exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T073146Z-windows-safety/check_all.txt)
+- 2026-09-09 07:31 **refused** `windows-safety`: verifier exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260909T073102Z-windows-safety/verifier.txt)
+- 2026-09-09 08:05 MAIN was red and I had said green: renormalizing the kernel's line endings changed the digests the experiment records carry for core.py and pcr.py, and my "green" came from a run before that change. Fix: digests ignore line endings everywhere, evidence for runs 1 to 4 regenerated, suite re-run before anything is claimed. The protocol now says a green claim names a receipt.
 - 2026-09-09 07:40 Owner: landing I can control and understand, the context carried forward automatically to a fresh agent. neat built as seven commands over MAIN and EXP/<id>; packets travel inside the experiment; the hand-off page includes the clone steps and why pyto is worth an agent's time. End-to-end test running. Also: AHI runs on D:/ now, not later (LF attribute, digest fix, fresh-clone fixes).
 - 2026-09-09 06:58 Branch mining done: 11 of 14 ChainSpot tips read, synthesis in `research/chainspot-branch-mining.md`; ChainSpot already decided worlds are mounts, not address segments. Round five below. Four tips being re-mined.
 - 2026-09-09 06:53 The landing script now writes this log. Owner: the happy path must keep me in the loop.

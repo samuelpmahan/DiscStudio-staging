@@ -22,9 +22,10 @@ EXP="$ROOT/EXP"
 TASKS="pyto/experiments/tasks"
 BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
 URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#https://#' || echo '<origin>')"
+cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '3,11p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,11p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: "
   grep -m1 "^$1: " "$2" | sed "s/^$1: //"
 }

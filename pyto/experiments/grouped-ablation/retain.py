@@ -394,8 +394,9 @@ def _safe_name(address: str) -> str:
 
 
 def _sha256_path(path: str) -> str:
+    """sha256 of a source file with CRLF normalized to LF, so a Windows checkout digests the same."""
     with open(path, "rb") as handle:
-        return hashlib.sha256(handle.read()).hexdigest()
+        return hashlib.sha256(handle.read().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _module_source_sha256(obj: Any) -> tuple[str | None, str | None]:
