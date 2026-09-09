@@ -1,0 +1,147 @@
+{
+  "day": 3,
+  "base_sha": "83422cf",
+  "commit_sha": "pending",
+  "date": "2026-09-09",
+  "day_scope_note": "Day 3 as originally planned (research/ULTRACODE-WEEK.md lines 228-250: kernel-ablation, conventional-comparison, promotion) is superseded for Day 3 itself by Reframing 4 ('Kibana for Ticks', plan lines 105-114); those three deliverables move to Day 4's second half. This record covers Reframing 4's restated Day 3: the Tick viewer (pyto/viewer/), the Tick materializer (pyto/src/pyto/materialize.py), and the content-addressed materials store (pyto/experiments/grouped-ablation/materials.py, hits.py, run_cached.py), per the task instructions.",
+  "agents": [
+    {
+      "lane": "record",
+      "role": "record stage only: this subagent did not author materialize.py, the viewer, or the materials store -- those were already present on the shared branch when this invocation began (evidenced by pyto/CHANGES.md's substantial Day 3 entry and the committed evidence/run-1/{record.json,receipts.json,ticks/}). This agent ran check_all.sh into tests.txt, diagnosed the grouped-ablation suite's 183-vs-230 failure to isolate it from Day 3's own work (see untested.md), wrote prompt.md (Reframing 4's Day 3 bullet + RECORD.md), transcribed the three final-round lens verdicts handed to it by the orchestrator into verdicts/*.json, generated diff.patch, built the embedded page via viewer/embed.mjs against the real evidence/run-1/record.json, added {?} ValueRetention and {?} MaterialsLocation to pyto/questions.md, and wrote this file and untested.md.",
+      "targets": [
+        "pyto/experiments/runs/day3/tests.txt",
+        "pyto/experiments/runs/day3/prompt.md",
+        "pyto/experiments/runs/day3/diff.patch",
+        "pyto/experiments/runs/day3/verdicts/",
+        "pyto/experiments/runs/day3/meta.json",
+        "pyto/experiments/runs/day3/untested.md",
+        "pyto/questions.md",
+        "pyto/experiments/grouped-ablation/evidence/run-1/tick-viewer.html"
+      ]
+    },
+    {
+      "lane": "schema-round-trip-lens",
+      "round": "final",
+      "role": "re-ran check_all.sh, drove validate/fromPytoRecord/renderRecord under node 22 against the real evidence/run-1/record.json independently of the committed test suites, round-tripped all six emitted adapter fixtures through the Python validator, and hand-verified RECORD.md's field rules and hard rules against the real record. Verdict: FAIL, one blocker (RECORD.md:52's declared_consumes rule does not match what pyto emits for fn: bindings) and one minor (the pyto-value-kinds fixture models a different, non-shipping convention).",
+      "targets": [
+        "pyto/experiments/runs/day3/verdicts/schema-round-trip.json"
+      ]
+    },
+    {
+      "lane": "adversarial-values-lens",
+      "round": "final",
+      "role": "fed hostile/oversized/pathological values through both the Python materializer and the JS adapters side by side, tampered a served record to check viewer freshness, and forced materials.py's disk-load path to fail to check the cached-run ledger's own honesty. Verdict: FAIL, one blocker (nested-array truncation diverges between the two runtimes, contradicting RECORD.md:64) and one major (run_cached.py asserts 'hit (disk)' as a literal instead of deriving it from the store's counters), plus three minor findings (SVG filename collision, ?src= fetch cache mode, a Wumpus over-cap value missing its digest).",
+      "targets": [
+        "pyto/experiments/runs/day3/verdicts/adversarial-values.json"
+      ]
+    },
+    {
+      "lane": "day3-verify-lens",
+      "round": "final",
+      "role": "checked the emitted record against every clause of RECORD.md, re-verified the hard rules (git diff against pcr.py/core.py/pql.py/graph.py, no lambdas, no pickled callables, viewer dependency-free, no eval/innerHTML, SVGs through <img> data URLs), and checked an earlier build report's own claims against the tree that actually exists on disk. Verdict: FAIL, the same declared_consumes blocker as the schema-round-trip lens (found independently), plus a major (an earlier report's observe=False finding stated the opposite of the shipped refusal behavior and its line anchors/suite counts were stale) and three minor findings (an out-of-scope test file's real diff extent was under-reported; run_record accepts an unknown source key; the neon sheets under-report reads for fn:-bound invocations).",
+      "targets": [
+        "pyto/experiments/runs/day3/verdicts/day3-verify.json"
+      ]
+    }
+  ],
+  "tokens": null,
+  "notes": "This subagent found the working tree already containing Day 3's materialize.py, the viewer, and the materials store when it began -- the FINAL VERDICTS array in its task instructions was supplied by the orchestrator as the completed final verify round, not produced by this agent; this agent transcribed it verbatim into verdicts/*.json (one file per lens, slug-named) rather than re-deriving it, per the 'Record stage' framing of its task. It DID independently re-run check_all.sh and diagnose the grouped-ablation failure from scratch (untested.md's 'check_all.sh: currently RED' section), since the task asked for per-suite counts and blockers as this agent's own output. The repository's HEAD moved during this agent's own turns (from 87ee2b0 to 5915f9e to b02565d across three git-log checks in one session) -- consistent with questions.md's LandingBootstrap note that 'the session's stop hook commits the tree at every turn end' -- so this agent treated the moving HEAD as its own session's auto-checkpointing, not a second concurrent writer, and worked against whatever HEAD was current at each check rather than pinning to one. This agent briefly overwrote pyto/src/pyto/{__init__,core,graph,neon,pcr,pql}.py and pyto/tests/test_{graph,receipts}.py with git show HEAD:<path> to test a hypothesis about the check_all.sh failure (whether it was caused by an uncommitted EOL change), confirmed the failure reproduces identically against the exact committed HEAD blobs, and restored the working tree to its pre-experiment bytes from a backup before writing anything else -- git status at the time this record was written shows no unexplained modification to any file this agent did not intend to add, per `untracked_at_record` below. materialize.py, pcr.py, core.py, pql.py, graph.py were not modified by this agent.",
+  "agent_count": {
+    "lanes": 1,
+    "lens_rounds": 3,
+    "record": 1,
+    "total": 4,
+    "note": "The three lens verdicts were produced upstream of this invocation and handed to this agent as FINAL VERDICTS; this agent's own work is the 'record' lane plus the independent check_all.sh re-run and root-cause isolation documented in untested.md."
+  },
+  "lens_rounds": 1,
+  "check_all": {
+    "exit": 1,
+    "date": "2026-09-09",
+    "counts": {
+      "library": 103,
+      "experiments/grouped-ablation": 183,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "art-registry-md": "OK (regenerated, matches committed ART-REGISTRY.md)",
+      "viewer": 83,
+      "viewer-record-schema": 19
+    },
+    "expected_counts": {
+      "library": 103,
+      "experiments/grouped-ablation": 230,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "viewer": 83,
+      "viewer-record-schema": 19
+    },
+    "tests_txt_last_line": "SOME SUITES FAILED (logs in /tmp/tmp.EgG93ANhl0)",
+    "grouped_ablation_failure_isolated_to": "test_replay.py's fresh-process/tamper/determinism/hidden-state classes, via replay.ensure_retained_record()'s byte-identity check against committed evidence/run-1/retained.json. Root cause: evidence/run-{1,2-regroup,3-reinput,4-from-retained}/retained.json and evidence/disc-stats-sidecar.json record provider.pyto.modules sha256 hashes for core.py/pcr.py computed before the already-committed CRLF->LF renormalization (commit 5915f9e); nobody has re-run `python3 experiments/grouped-ablation/replay.py --force` since. Reproduced identically against the exact committed HEAD blobs of core.py/pcr.py/graph.py/pql.py/neon.py/__init__.py (git show HEAD:<path>), so this is not a working-tree artifact of this session. NOT caused by materialize.py or the viewer, both of which pass at their pinned counts (library 103, viewer 83, viewer-record-schema 19). See untested.md for the full isolation.",
+    "counts_note": "This is this record's own check_all.sh run (tests.txt in this directory), not the 230-passing run described in pyto/CHANGES.md's Day 3 entry -- the grouped-ablation evidence tree's provider hashes went stale between that entry being written and this record stage running, per the isolation above."
+  },
+  "head_sha_at_record": "b02565df3a7cb4e120bfea00620821b48d8d416a",
+  "commits_since_base": [
+    "b02565d",
+    "5915f9e",
+    "87ee2b0",
+    "4db1fc8",
+    "eb75c2a",
+    "fd9c96e",
+    "4641ea8",
+    "6b2b7e1",
+    "c49b50a",
+    "3a0c1ae",
+    "951f9fe",
+    "62704b9",
+    "1ccb386",
+    "5f3e2ef",
+    "d1d45f9",
+    "a7ce8ae",
+    "2f9c47b",
+    "1be34ec",
+    "a0e23c4",
+    "824de26",
+    "70f810d",
+    "364a67e",
+    "e62cd85",
+    "dee7879",
+    "eff7f5a",
+    "42f4a66",
+    "187459c",
+    "b1bf54e",
+    "a08b082",
+    "6582f5b"
+  ],
+  "diff_patch": {
+    "command": "git diff 83422cf -- pyto ':(exclude)pyto/experiments/runs'",
+    "files": 105,
+    "insertions": 37924,
+    "deletions": 1629,
+    "src_diff_isolated": "git diff --stat 83422cf -- pyto/src shows 7 files (materialize.py new at 661 lines; __init__.py/core.py/graph.py/neon.py/pql.py/pcr.py all touched), but content-diffing each of the six pre-existing files with line endings normalized on both sides (git show <rev>:<path> | tr -d '\\r') shows core.py/graph.py/pql.py/neon.py/__init__.py at ZERO real content lines changed (pure CRLF->LF, from the already-committed 5915f9e, an EOL-safety line of work that is not this day's) and pcr.py at exactly 2 real lines changed (the _implementation_sha256 CRLF-normalization fix, also from 5915f9e). materialize.py -- new, 661 lines -- is the day's one real library change, matching the hard rule."
+  },
+  "untracked_at_record": {
+    "working_tree_status": "clean except this record stage's own new files at the time tests.txt was last written; git status --short shows no unexplained modification",
+    "new_files_written_by_record_stage": [
+      "pyto/experiments/runs/day3/prompt.md",
+      "pyto/experiments/runs/day3/diff.patch",
+      "pyto/experiments/runs/day3/meta.json",
+      "pyto/experiments/runs/day3/untested.md",
+      "pyto/experiments/runs/day3/verdicts/schema-round-trip.json",
+      "pyto/experiments/runs/day3/verdicts/adversarial-values.json",
+      "pyto/experiments/runs/day3/verdicts/day3-verify.json",
+      "pyto/experiments/grouped-ablation/evidence/run-1/tick-viewer.html"
+    ],
+    "modified_tracked_at_record": [
+      "pyto/experiments/runs/day3/tests.txt (regenerated by this agent's own check_all.sh run)",
+      "pyto/questions.md ({?} ValueRetention, {?} MaterialsLocation entries added per task instructions)"
+    ]
+  },
+  "open_findings": {
+    "blocker": 2,
+    "major": 2,
+    "minor": 6,
+    "detail": "schema-round-trip: 1 blocker (RECORD.md:52 declared_consumes rule false for fn: bindings) + 1 minor (pyto-value-kinds fixture models a different convention). adversarial-values: 1 blocker (nested-array truncation diverges cross-runtime, RECORD.md:64) + 1 major (run_cached.py's ledger asserts hit instead of deriving it) + 3 minor (SVG filename collision in tick_sheets; ?src= fetch cache mode; Wumpus over-cap value missing a digest). day3-verify: repeats the schema-round-trip blocker (not double-counted above) + 1 major (an earlier build report's own claims were stale against the tree, including one inverted finding) + 3 minor (test_grouped_ablation.py's real diff extent under-reported; run_record accepts an unvalidated source key; neon sheets under-report reads for fn:-bound invocations). check_all.sh's own red run (grouped-ablation 183/230) is a separate, fourth item -- not one of the three lenses' findings -- isolated in untested.md and counted as this record stage's principal blocker for committing."
+  }
+}

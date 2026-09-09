@@ -4,6 +4,28 @@ Landing is the only way a change becomes real. It is mechanical, it is one scrip
 to proceed at the first thing that is not true. Everything else that touches git is a checkpoint
 and is labelled as one.
 
+## The caveman version
+
+One MAIN (the clone). One EXP folder. A task is a number.
+
+```
+bash pyto/scripts/neat.sh new "what you want"   -> EXP/0, a copy of MAIN to work in (its own python)
+bash pyto/scripts/neat.sh pack 0                -> the packet: intent, starting point, candidate, evidence, uncertain
+bash pyto/scripts/neat.sh show 0                -> the hand-off a fresh agent explains from, after cloning
+bash pyto/scripts/neat.sh land 0                -> merge into MAIN, verify there, receipt, commit, push; EXP/0 gone
+bash pyto/scripts/neat.sh drop 0 <path> ...     -> "I like two of the three files": back to the start, repacked
+bash pyto/scripts/neat.sh kill 0                -> abandon, nothing lands
+bash pyto/scripts/neat.sh list
+```
+
+Every task carries a packet at `pyto/experiments/tasks/<id>/`: Intent (what you asked), Starting
+point (what MAIN was), Candidate (exactly what changed), Evidence (what was checked, exit codes,
+the suite table), Uncertain (the agent's `{?}` lines). The packet lives inside the experiment, so
+it travels with the branch to any machine and lands with the candidate; the hand-off page tells a
+fresh agent how to clone, why the repository is worth its time, and what to explain and do.
+`neat land` is `land.sh --from exp/<id>` with the packet's Verify and Allow, so everything below
+holds for it too. Underneath: EXP/<id> is a git worktree on branch `exp/<id>`, deleted at landing.
+
 ## The words
 
 - **Candidate**: a change that wants in, as the exact set of files it touches. It arrives as a

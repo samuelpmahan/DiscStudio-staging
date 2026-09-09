@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 07:40 Owner: landing I can control and understand, the context carried forward automatically to a fresh agent. neat built as seven commands over MAIN and EXP/<id>; packets travel inside the experiment; the hand-off page includes the clone steps and why pyto is worth an agent's time. End-to-end test running. Also: AHI runs on D:/ now, not later (LF attribute, digest fix, fresh-clone fixes).
 - 2026-09-09 06:58 Branch mining done: 11 of 14 ChainSpot tips read, synthesis in `research/chainspot-branch-mining.md`; ChainSpot already decided worlds are mounts, not address segments. Round five below. Four tips being re-mined.
 - 2026-09-09 06:53 The landing script now writes this log. Owner: the happy path must keep me in the loop.
 - 2026-09-09 06:51 Owner: checks that cause friction get disabled. Protocol trimmed to one command on the happy path; special kernel rule dropped.
@@ -125,8 +126,15 @@ a format's record.
 
 ## Lane 3: neat and tidy (the owner's neat expert)
 
-**Statement.** neat keeps work-item and git state as Parts in its own PxC so a change resolves
-against that memory deterministically; one tree, no branch sprawl; the computer manages git.
+**Statement.** neat is AI version control in one tree, caveman simple: one MAIN (the clone), one
+EXP folder, a task is a number from 0. `neat new` makes EXP/<id>, a copy of MAIN with its own
+python; `neat pack` writes the packet (intent, starting point, candidate, evidence, uncertain) and
+the hand-off a fresh agent can explain from after cloning; `neat land <id>` merges into MAIN,
+verifies there, writes the receipt and one line here, and EXP/<id> is gone; `neat drop` is "I like
+two of the three files". Underneath, EXP/<id> is a git worktree on `exp/<id>`, deleted at landing,
+so the tree the owner sees is one tree. A B+ tree can organize the records underneath later; it
+does not provide isolation or landing by itself. neat keeps work-item and git state as Parts in
+its own PxC so a change resolves against that memory deterministically; the computer manages git.
 Declared intent stays separate from produced facts; proposals never write into facts. neat's own
 semantics (persistent PxC, total-order telemetry, failed runs return a result) are the reference
 for neat. The neat agent runs this board: ingest dumps and research, resolve which questions got
@@ -135,8 +143,10 @@ answered and which lanes moved, propose the next prompts.
 **Open prompt.** none. The brief is at `research/briefs/neat-on-pxc-brief.md` with five `{?}`
 entries for the expert to bring back.
 
-**Stands.** Brief handed off. Ticket storage is a different mount from the board render and is
-not budget-bound.
+**Stands.** `pyto/scripts/neat.sh` written (new, pack, show, drop, land, kill, list), being
+tested end to end in a scratch clone with its own origin. Brief for the PxC-backed version handed
+off; it should keep these seven commands. Ticket storage is a different mount from the board
+render and is not budget-bound.
 
 ## Lane 4: the record and the room (observability)
 

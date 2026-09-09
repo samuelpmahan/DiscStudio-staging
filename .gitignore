@@ -2,3 +2,7 @@ dist/
 node_modules/
 test-results/
 __pycache__/
+
+# neat experiments: git worktrees on exp/<id>, each with its own .venv (pyto/scripts/neat.sh)
+EXP/
+.venv/

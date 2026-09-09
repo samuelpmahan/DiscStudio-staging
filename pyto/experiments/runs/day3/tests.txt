@@ -1,6 +1,6 @@
 == check_all.sh v0
 pyto root:    /home/user/DiscStudio-staging/pyto
-logs:         /tmp/tmp.CTcpZyb2NE
+logs:         /tmp/tmp.EgG93ANhl0
 python:       /usr/local/bin/python3 (Python 3.11.15)
 pyto module:  /home/user/DiscStudio-staging/pyto/src/pyto/__init__.py
 
@@ -163,7 +163,7 @@ test_pxc_set_kinds_new_address_then_replacement_without_versioning (test_semanti
 core.py:62-66: set returns PxWrite kind 'new-address' first, 'replacement' after; the old value ... ok
 
 ----------------------------------------------------------------------
-Ran 103 tests in 2.354s
+Ran 103 tests in 2.456s
 
 OK
 -- library: OK (ran 103)
@@ -424,7 +424,7 @@ Traceback (most recent call last):
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-g9msfqcm/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-v2vvok3j/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 ERROR: setUpClass (test_replay.DeterminismMatrix)
@@ -435,7 +435,7 @@ Traceback (most recent call last):
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-t7gvdxb4/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-dsdrgnuo/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 ERROR: setUpClass (test_replay.FreshProcessReplay)
@@ -446,7 +446,7 @@ Traceback (most recent call last):
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-dsjcepjc/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-rqawvc5j/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 ERROR: setUpClass (test_replay.LaneCCrossVerification)
@@ -460,7 +460,7 @@ Traceback (most recent call last):
                      ^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 585, in run_fresh_process_replay
     raise AssertionError(
-AssertionError: fresh-process replay refused /home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/run-2-regroup/retained.json: child failed checks ['provider_agrees']; child returncode 3 (see /tmp/lane-c-92q4q5de/fresh-process-run-2-regroup.log)
+AssertionError: fresh-process replay refused /home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/run-2-regroup/retained.json: child failed checks ['provider_agrees']; child returncode 3 (see /tmp/lane-c-kep42i6l/fresh-process-run-2-regroup.log)
 
 ======================================================================
 ERROR: setUpClass (test_replay.ParentSideRefusals)
@@ -471,7 +471,7 @@ Traceback (most recent call last):
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-83zs3gch/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-xdm2fa44/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 ERROR: setUpClass (test_replay.ReceiptDigestsFromTheChild)
@@ -482,7 +482,7 @@ Traceback (most recent call last):
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-tn5xu537/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-ctkwynmc/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 ERROR: setUpClass (test_replay.Tamper)
@@ -493,7 +493,7 @@ Traceback (most recent call last):
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-b9l7yezn/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-5a9yys9n/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_running_the_evidence_writing_suites_changes_no_committed_file (test_replay.CheckAllLeavesTheTreeClean.test_running_the_evidence_writing_suites_changes_no_committed_file)
@@ -508,7 +508,7 @@ _committed_stamp_names_a_commit_git_knows
                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-wecethmh/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-5xrnks0q/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_oracle_fails_when_the_record_really_differs (test_replay.RetainedRecordIsDeterministic.test_the_oracle_fails_when_the_record_really_differs)
@@ -520,7 +520,7 @@ Traceback (most recent call last):
                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-hpt9l_pk/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-tr62m659/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record)
@@ -531,7 +531,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-efc0c9ph/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-ou7nz256/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree)
@@ -542,10 +542,10 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-ibt55bly/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-1an8ira9/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ----------------------------------------------------------------------
-Ran 76 tests in 7.362s
+Ran 76 tests in 8.014s
 
 FAILED (failures=25, errors=7, skipped=1)
 
@@ -560,7 +560,7 @@ Traceback (most recent call last):
                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-1isk0i9m/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-9xu6r08q/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused (test_replay.HiddenStateAuditor.test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused)
@@ -572,7 +572,7 @@ Traceback (most recent call last):
                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-wvghoctm/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-apggmlsc/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it (test_replay.HiddenStateAuditor.test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it)
@@ -584,7 +584,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-abgtuhsy/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-jed8l7ud/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child (test_replay.HiddenStateAuditor.test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child)
@@ -595,7 +595,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-6bvky82u/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-44bjj3uo/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_honest_record_is_accepted_after_the_forgery_tests (test_replay.HiddenStateAuditor.test_the_honest_record_is_accepted_after_the_forgery_tests)
@@ -607,7 +607,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-m_gd_8e_/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-q4961q5v/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_log_was_produced_against_the_current_retained_record (test_replay.LfSourceDriftProbe.test_the_log_was_produced_against_the_current_retained_record)
@@ -619,7 +619,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-9vzd7gjf/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-v8v7ngwm/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider (test_replay.ProviderIdentityIsModuleGranular.test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider)
@@ -630,7 +630,7 @@ Traceback (most recent call last):
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-7w73_oaw/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-7pvo1kbq/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_corrupted_registry_produces_a_byte_identical_provider_block (test_replay.ProviderIdentityIsModuleGranular.test_the_corrupted_registry_produces_a_byte_identical_provider_block)
@@ -641,7 +641,7 @@ Traceback (most recent call last):
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-9gxqfl8x/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-jrgegtqv/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_impostor_is_a_different_function_of_the_declared_module (test_replay.ProviderIdentityIsModuleGranular.test_the_impostor_is_a_different_function_of_the_declared_module)
@@ -652,7 +652,7 @@ Traceback (most recent call last):
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-n85rq2bj/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-r3bfkzqx/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_limitation_is_stated_in_the_docstring (test_replay.ProviderIdentityIsModuleGranular.test_the_limitation_is_stated_in_the_docstring)
@@ -663,7 +663,7 @@ Traceback (most recent call last):
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-ywq7op03/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-dtqcbm8x/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_verify_provider_agrees_with_the_corrupted_registry (test_replay.ProviderIdentityIsModuleGranular.test_verify_provider_agrees_with_the_corrupted_registry)
@@ -674,7 +674,7 @@ Traceback (most recent call last):
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-u5m2jzk7/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-p22w2cz1/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_removing_a_used_address_raises_keyerror_naming_it_before_execution (test_replay.RegistryHole.test_removing_a_used_address_raises_keyerror_naming_it_before_execution)
@@ -685,7 +685,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-0h9vsqmk/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-te91bfxe/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone (test_replay.ReplayDoesNotMutateTheRecord.test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone)
@@ -697,7 +697,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-i1w4zc10/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-qxo0egif/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_seeded_value_is_not_the_records_own_object (test_replay.ReplayDoesNotMutateTheRecord.test_the_seeded_value_is_not_the_records_own_object)
@@ -708,7 +708,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-47vhvpq0/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-1yx_ulbh/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical (test_replay.ReplayDoesNotMutateTheRecord.test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical)
@@ -719,7 +719,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-r42bt4hq/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-150vz5p3/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation (test_replay.ReplayObserveSeam.test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation)
@@ -730,7 +730,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-juy59o2r/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-8kk0migw/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_receipt_digests_equal_the_records_result_digests (test_replay.ReplayObserveSeam.test_receipt_digests_equal_the_records_result_digests)
@@ -741,7 +741,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-614zxopc/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-nhhe5woy/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_testimony_bytes_are_identical_with_observe_on_and_off (test_replay.ReplayObserveSeam.test_testimony_bytes_are_identical_with_observe_on_and_off)
@@ -753,7 +753,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-m73n_3sb/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-x6je4zou/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf (test_replay.RetainedRecordIsDeterministic.test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf)
@@ -764,7 +764,7 @@ Traceback (most recent call last):
                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-h8fpgpyb/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-euxupkmz/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_result_digests_agree_with_the_committed_comparison (test_replay.RetainedRecordIsDeterministic.test_result_digests_agree_with_the_committed_comparison)
@@ -775,7 +775,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-tjlkdi1b/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-9m1zxhxh/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_retained_program_ticks_equal_the_committed_day1_testimony_ticks (test_replay.RetainedRecordIsDeterministic.test_retained_program_ticks_equal_the_committed_day1_testimony_ticks)
@@ -787,7 +787,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-m62cidhy/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-c4ur_k_d/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_committed_stamp_names_a_commit_git_knows (test_replay.RetainedRecordIsDeterministic.test_the_committed_stamp_names_a_commit_git_knows)
@@ -799,7 +799,7 @@ Traceback (most recent call last):
                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-3dfh_ytp/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-8lqate8e/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_oracle_fails_when_the_record_really_differs (test_replay.RetainedRecordIsDeterministic.test_the_oracle_fails_when_the_record_really_differs)
@@ -811,7 +811,7 @@ Traceback (most recent call last):
                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-ppegcoim/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-on_tn8my/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record)
@@ -822,7 +822,7 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-4bom4b83/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-jy1daifh/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ======================================================================
 FAIL: test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree)
@@ -833,10 +833,10 @@ Traceback (most recent call last):
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/user/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 239, in ensure_retained_record
     raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-sv918wm2/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-ik4ec95k/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
 
 ----------------------------------------------------------------------
-Ran 183 tests in 17.534s
+Ran 183 tests in 18.904s
 
 FAILED (failures=26, errors=7)
 -- experiments/grouped-ablation: FAILED (exit 1, ran 183)
@@ -940,7 +940,7 @@ test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejec
 test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
 
 ----------------------------------------------------------------------
-Ran 61 tests in 4.021s
+Ran 61 tests in 3.597s
 
 OK
 -- consumer: OK (ran 61)
@@ -974,499 +974,499 @@ TAP version 13
 # Subtest: the pyto fixture is the Python materializer output byte for byte
 ok 1 - the pyto fixture is the Python materializer output byte for byte
   ---
-  duration_ms: 3.119658
+  duration_ms: 2.814164
   type: 'test'
   ...
 # Subtest: every adapter output passes validate
 ok 2 - every adapter output passes validate
   ---
-  duration_ms: 8.618298
+  duration_ms: 7.940484
   type: 'test'
   ...
 # Subtest: fromPytoRecord is a validating pass-through, from an object or a string
 ok 3 - fromPytoRecord is a validating pass-through, from an object or a string
   ---
-  duration_ms: 4.322957
+  duration_ms: 4.415331
   type: 'test'
   ...
 # Subtest: deriveHit: a px: binding not produced earlier in the run is a hit
 ok 4 - deriveHit: a px: binding not produced earlier in the run is a hit
   ---
-  duration_ms: 0.230542
+  duration_ms: 0.25927
   type: 'test'
   ...
 # Subtest: deriveHit: an address this run overwrote is not a hit, however it started life
 ok 5 - deriveHit: an address this run overwrote is not a hit, however it started life
   ---
-  duration_ms: 0.179353
+  duration_ms: 0.271037
   type: 'test'
   ...
 # Subtest: pyto record: hits are exactly the invocations that read a preexisting Part
 ok 6 - pyto record: hits are exactly the invocations that read a preexisting Part
   ---
-  duration_ms: 0.444907
+  duration_ms: 0.42237
   type: 'test'
   ...
 # Subtest: DiscStudio: reused === true makes every invocation of the second run a hit
 ok 7 - DiscStudio: reused === true makes every invocation of the second run a hit
   ---
-  duration_ms: 1.026629
+  duration_ms: 1.106194
   type: 'test'
   ...
 # Subtest: DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
 ok 8 - DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
   ---
-  duration_ms: 0.710914
+  duration_ms: 0.760358
   type: 'test'
   ...
 # Subtest: DiscStudio adapter also accepts a live run of src/runtime.js
 ok 9 - DiscStudio adapter also accepts a live run of src/runtime.js
   ---
-  duration_ms: 26.74026
+  duration_ms: 19.661388
   type: 'test'
   ...
 # Subtest: ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
 ok 10 - ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
   ---
-  duration_ms: 1.063437
+  duration_ms: 0.966456
   type: 'test'
   ...
 # Subtest: Wumpus: values are present and the SVG Part is classified as svg
 ok 11 - Wumpus: values are present and the SVG Part is classified as svg
   ---
-  duration_ms: 0.755942
+  duration_ms: 0.60827
   type: 'test'
   ...
 # Subtest: materialize classifies text, svg, png data URLs and JSON
 ok 12 - materialize classifies text, svg, png data URLs and JSON
   ---
-  duration_ms: 0.304522
+  duration_ms: 0.187094
   type: 'test'
   ...
 # Subtest: materialize honours RECORD.md size and array caps
 ok 13 - materialize honours RECORD.md size and array caps
   ---
-  duration_ms: 0.772482
+  duration_ms: 0.76092
   type: 'test'
   ...
 # Subtest: materialize counts UTF-8 bytes, not characters
 ok 14 - materialize counts UTF-8 bytes, not characters
   ---
-  duration_ms: 2.208018
+  duration_ms: 2.11089
   type: 'test'
   ...
 # Subtest: derivePartIndex names the writer, the readers and what preexisted
 ok 15 - derivePartIndex names the writer, the readers and what preexisted
   ---
-  duration_ms: 0.548076
+  duration_ms: 0.470069
   type: 'test'
   ...
 # Subtest: bareAddress strips only the testimony marker
 ok 16 - bareAddress strips only the testimony marker
   ---
-  duration_ms: 0.116164
+  duration_ms: 0.11649
   type: 'test'
   ...
 # Subtest: validate rejects schema and names schema
 ok 17 - validate rejects schema and names schema
   ---
-  duration_ms: 1.05215
+  duration_ms: 0.946569
   type: 'test'
   ...
 # Subtest: validate rejects pcr and names pcr
 ok 18 - validate rejects pcr and names pcr
   ---
-  duration_ms: 0.66506
+  duration_ms: 0.669745
   type: 'test'
   ...
 # Subtest: validate rejects source.runtime and names source.runtime
 ok 19 - validate rejects source.runtime and names source.runtime
   ---
-  duration_ms: 0.726823
+  duration_ms: 0.579021
   type: 'test'
   ...
 # Subtest: validate rejects source.commit and names source.commit
 ok 20 - validate rejects source.commit and names source.commit
   ---
-  duration_ms: 0.599964
+  duration_ms: 0.605787
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.index and names ticks[0].index
 ok 21 - validate rejects ticks.0.index and names ticks[0].index
   ---
-  duration_ms: 0.670846
+  duration_ms: 0.561759
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.name and names ticks[0].name
 ok 22 - validate rejects ticks.0.name and names ticks[0].name
   ---
-  duration_ms: 0.622356
+  duration_ms: 0.682517
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
 ok 23 - validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
   ---
-  duration_ms: 1.668578
+  duration_ms: 2.34819
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
 ok 24 - validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
   ---
-  duration_ms: 0.636874
+  duration_ms: 0.616573
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
 ok 25 - validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
   ---
-  duration_ms: 0.662053
+  duration_ms: 0.684727
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
 ok 26 - validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
   ---
-  duration_ms: 0.587811
+  duration_ms: 0.582456
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
 ok 27 - validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
   ---
-  duration_ms: 0.619779
+  duration_ms: 0.629405
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
 ok 28 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
   ---
-  duration_ms: 0.630184
+  duration_ms: 0.676362
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
 ok 29 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
   ---
-  duration_ms: 0.573666
+  duration_ms: 0.557192
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
 ok 30 - validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
   ---
-  duration_ms: 0.62469
+  duration_ms: 0.639419
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
 ok 31 - validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
   ---
-  duration_ms: 0.658688
+  duration_ms: 0.718161
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
 ok 32 - validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
   ---
-  duration_ms: 1.03221
+  duration_ms: 1.228352
   type: 'test'
   ...
 # Subtest: validate rejects counters.invocations and names counters.invocations
 ok 33 - validate rejects counters.invocations and names counters.invocations
   ---
-  duration_ms: 2.247276
+  duration_ms: 2.288646
   type: 'test'
   ...
 # Subtest: validate rejects counters.hits and names counters.hits
 ok 34 - validate rejects counters.hits and names counters.hits
   ---
-  duration_ms: 0.765513
+  duration_ms: 0.749832
   type: 'test'
   ...
 # Subtest: validate rejects counters.computed and names counters.computed
 ok 35 - validate rejects counters.computed and names counters.computed
   ---
-  duration_ms: 0.716919
+  duration_ms: 0.837176
   type: 'test'
   ...
 # Subtest: validate rejects counters.wall_ms and names counters.wall_ms
 ok 36 - validate rejects counters.wall_ms and names counters.wall_ms
   ---
-  duration_ms: 0.643064
+  duration_ms: 0.749196
   type: 'test'
   ...
 # Subtest: validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
 ok 37 - validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
   ---
-  duration_ms: 0.498117
+  duration_ms: 0.520602
   type: 'test'
   ...
 # Subtest: validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
 ok 38 - validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
   ---
-  duration_ms: 0.925969
+  duration_ms: 1.878163
   type: 'test'
   ...
 # Subtest: validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
 ok 39 - validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
   ---
-  duration_ms: 0.33203
+  duration_ms: 0.374262
   type: 'test'
   ...
 # Subtest: validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
 ok 40 - validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
   ---
-  duration_ms: 0.334043
+  duration_ms: 0.278122
   type: 'test'
   ...
 # Subtest: the synthetic record carries the four value kinds the real run never produces
 ok 41 - the synthetic record carries the four value kinds the real run never produces
   ---
-  duration_ms: 0.480079
+  duration_ms: 0.371649
   type: 'test'
   ...
 # Subtest: validate rejects a duplicate invocation id, because ids anchor annotations
 ok 42 - validate rejects a duplicate invocation id, because ids anchor annotations
   ---
-  duration_ms: 0.693773
+  duration_ms: 0.688148
   type: 'test'
   ...
 # Subtest: validate rejects a malformed parts entry with the address in the path
 ok 43 - validate rejects a malformed parts entry with the address in the path
   ---
-  duration_ms: 1.101408
+  duration_ms: 1.158906
   type: 'test'
   ...
 # Subtest: validate rejects a non-object document
 ok 44 - validate rejects a non-object document
   ---
-  duration_ms: 0.163069
+  duration_ms: 0.245242
   type: 'test'
   ...
 # Subtest: the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
 ok 45 - the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
   ---
-  duration_ms: 2.138795
+  duration_ms: 2.069694
   type: 'test'
   ...
 # Subtest: a Part address named __proto__ or constructor is an ordinary row, not a prototype write
 ok 46 - a Part address named __proto__ or constructor is an ordinary row, not a prototype write
   ---
-  duration_ms: 0.504508
+  duration_ms: 0.462489
   type: 'test'
   ...
 # Subtest: validate rejects a png-data-url whose data is not a PNG data URL
 ok 47 - validate rejects a png-data-url whose data is not a PNG data URL
   ---
-  duration_ms: 2.673772
+  duration_ms: 2.792223
   type: 'test'
   ...
 # Subtest: materialize never classifies a string as png-data-url that validate would refuse
 ok 48 - materialize never classifies a string as png-data-url that validate would refuse
   ---
-  duration_ms: 4.24235
+  duration_ms: 4.479439
   type: 'test'
   ...
 # Subtest: coerceToRecord accepts a record and every raw runtime document
 ok 49 - coerceToRecord accepts a record and every raw runtime document
   ---
-  duration_ms: 16.08424
+  duration_ms: 13.804009
   type: 'test'
   ...
 # Subtest: readEmbeddedRecord reads the block, and returns null when it is empty
 ok 50 - readEmbeddedRecord reads the block, and returns null when it is empty
   ---
-  duration_ms: 7.919778
+  duration_ms: 7.592022
   type: 'test'
   ...
 # Subtest: embeddableJson escapes every character that could end the script element
 ok 51 - embeddableJson escapes every character that could end the script element
   ---
-  duration_ms: 0.304556
+  duration_ms: 0.353799
   type: 'test'
   ...
 # Subtest: buildPage inlines the viewer and embeds the record, with no module graph left
 ok 52 - buildPage inlines the viewer and embeds the record, with no module graph left
   ---
-  duration_ms: 12.959828
+  duration_ms: 12.032812
   type: 'test'
   ...
 # Subtest: embedFile converts a raw runtime document on the way in
 ok 53 - embedFile converts a raw runtime document on the way in
   ---
-  duration_ms: 7.562064
+  duration_ms: 6.456857
   type: 'test'
   ...
 # Subtest: embedFile refuses a document that is not a record and not a known runtime shape
 ok 54 - embedFile refuses a document that is not a record and not a known runtime shape
   ---
-  duration_ms: 0.758488
+  duration_ms: 0.589574
   type: 'test'
   ...
 # Subtest: buildPage fails loudly when the page and the embedder drift apart
 ok 55 - buildPage fails loudly when the page and the embedder drift apart
   ---
-  duration_ms: 11.803632
+  duration_ms: 8.343404
   type: 'test'
   ...
 # Subtest: node embed.mjs record.json > page.html writes the same page from the command line
 ok 56 - node embed.mjs record.json > page.html writes the same page from the command line
   ---
-  duration_ms: 190.317344
+  duration_ms: 159.015209
   type: 'test'
   ...
 # Subtest: the CLI exits 2 with a usage line when no record is named
 ok 57 - the CLI exits 2 with a usage line when no record is named
   ---
-  duration_ms: 67.984191
+  duration_ms: 69.321743
   type: 'test'
   ...
 # Subtest: the inlined bundle is valid module syntax with no duplicate top-level bindings
 ok 58 - the inlined bundle is valid module syntax with no duplicate top-level bindings
   ---
-  duration_ms: 48.569004
+  duration_ms: 50.861008
   type: 'test'
   ...
 # Subtest: a record carrying $&, $` and $' is embedded literally, not expanded
 ok 59 - a record carrying $&, $` and $' is embedded literally, not expanded
   ---
-  duration_ms: 3.951299
+  duration_ms: 4.089805
   type: 'test'
   ...
 # Subtest: the real record renders as four Tick sections and fifteen invocation rows
 ok 60 - the real record renders as four Tick sections and fifteen invocation rows
   ---
-  duration_ms: 15.246456
+  duration_ms: 14.545221
   type: 'test'
   ...
 # Subtest: one section per Tick, in order, with index, name and invocation count
 ok 61 - one section per Tick, in order, with index, name and invocation count
   ---
-  duration_ms: 9.746745
+  duration_ms: 8.159217
   type: 'test'
   ...
 # Subtest: an invocation row carries id, address, short implementation hash, pill, duration and digest
 ok 62 - an invocation row carries id, address, short implementation hash, pill, duration and digest
   ---
-  duration_ms: 2.219816
+  duration_ms: 2.116298
   type: 'test'
   ...
 # Subtest: hit and computed pills follow the record, never the renderer
 ok 63 - hit and computed pills follow the record, never the renderer
   ---
-  duration_ms: 4.870895
+  duration_ms: 4.069027
   type: 'test'
   ...
 # Subtest: reads show declared beside actual and highlight a divergence
 ok 64 - reads show declared beside actual and highlight a divergence
   ---
-  duration_ms: 1.828574
+  duration_ms: 1.779474
   type: 'test'
   ...
 # Subtest: a fn: binding is shown as an earlier invocation result, not as a store read
 ok 65 - a fn: binding is shown as an earlier invocation result, not as a store read
   ---
-  duration_ms: 0.33745
+  duration_ms: 0.32308
   type: 'test'
   ...
 # Subtest: writes carry their kind
 ok 66 - writes carry their kind
   ---
-  duration_ms: 0.30028
+  duration_ms: 1.477617
   type: 'test'
   ...
 # Subtest: an invocation that records no writes says so instead of rendering an empty list
 ok 67 - an invocation that records no writes says so instead of rendering an empty list
   ---
-  duration_ms: 0.331349
+  duration_ms: 2.59662
   type: 'test'
   ...
 # Subtest: an svg value containing <script> renders as an <img> data URL and creates no script node
 ok 68 - an svg value containing <script> renders as an <img> data URL and creates no script node
   ---
-  duration_ms: 0.67737
+  duration_ms: 0.818348
   type: 'test'
   ...
 # Subtest: a whole record whose Parts are hostile SVG still produces no script node
 ok 69 - a whole record whose Parts are hostile SVG still produces no script node
   ---
-  duration_ms: 9.813765
+  duration_ms: 9.322733
   type: 'test'
   ...
 # Subtest: json is collapsible, text is a pre, png-data-url is an img, omitted is the note
 ok 70 - json is collapsible, text is a pre, png-data-url is an img, omitted is the note
   ---
-  duration_ms: 0.521519
+  duration_ms: 0.52703
   type: 'test'
   ...
 # Subtest: a png-data-url that is not a PNG data URL never reaches an <img src>
 ok 71 - a png-data-url that is not a PNG data URL never reaches an <img src>
   ---
-  duration_ms: 1.659471
+  duration_ms: 1.482459
   type: 'test'
   ...
 # Subtest: a note is rendered beside the material it qualifies
 ok 72 - a note is rendered beside the material it qualifies
   ---
-  duration_ms: 0.203619
+  duration_ms: 0.236859
   type: 'test'
   ...
 # Subtest: toBase64 and svgDataUrl survive non-Latin1 text
 ok 73 - toBase64 and svgDataUrl survive non-Latin1 text
   ---
-  duration_ms: 0.26392
+  duration_ms: 0.226571
   type: 'test'
   ...
 # Subtest: an empty filter keeps every row
 ok 74 - an empty filter keeps every row
   ---
-  duration_ms: 0.851246
+  duration_ms: 0.194768
   type: 'test'
   ...
 # Subtest: a substring filter narrows rows to the matching addresses
 ok 75 - a substring filter narrows rows to the matching addresses
   ---
-  duration_ms: 0.828653
+  duration_ms: 0.824912
   type: 'test'
   ...
 # Subtest: a trailing * filters by address prefix, the way PQL.prefix describes itself
 ok 76 - a trailing * filters by address prefix, the way PQL.prefix describes itself
   ---
-  duration_ms: 0.454584
+  duration_ms: 0.394827
   type: 'test'
   ...
 # Subtest: the filter matches calculation addresses and tick names too, case-insensitively
 ok 77 - the filter matches calculation addresses and tick names too, case-insensitively
   ---
-  duration_ms: 1.536497
+  duration_ms: 2.205444
   type: 'test'
   ...
 # Subtest: matchesFilter and searchTerms agree on what an invocation can be found by
 ok 78 - matchesFilter and searchTerms agree on what an invocation can be found by
   ---
-  duration_ms: 0.21165
+  duration_ms: 0.209423
   type: 'test'
   ...
 # Subtest: renderRecord reports what the filter narrowed and says so when nothing matches
 ok 79 - renderRecord reports what the filter narrowed and says so when nothing matches
   ---
-  duration_ms: 1.514111
+  duration_ms: 1.458711
   type: 'test'
   ...
 # Subtest: the header shows pcr, source and counters
 ok 80 - the header shows pcr, source and counters
   ---
-  duration_ms: 3.760026
+  duration_ms: 3.88492
   type: 'test'
   ...
 # Subtest: the Part index lists every address with its writer, readers and preexisting flag
 ok 81 - the Part index lists every address with its writer, readers and preexisting flag
   ---
-  duration_ms: 0.427035
+  duration_ms: 0.546263
   type: 'test'
   ...
 # Subtest: an empty Part index says so
 ok 82 - an empty Part index says so
   ---
-  duration_ms: 0.148115
+  duration_ms: 0.434619
   type: 'test'
   ...
 # Subtest: renderRecord validates before it renders
 ok 83 - renderRecord validates before it renders
   ---
-  duration_ms: 0.865036
+  duration_ms: 0.851796
   type: 'test'
   ...
 1..83
@@ -1477,7 +1477,7 @@ ok 83 - renderRecord validates before it renders
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 498.297391
+# duration_ms 463.357678
 -- viewer: OK (ran 83)
 
 == suite: viewer-record-schema  (cwd /home/user/DiscStudio-staging/pyto/viewer)
@@ -1503,7 +1503,7 @@ test_the_unmutated_record_passes (test_record_schema.TheValidatorActuallyRejects
 test_the_value_kind_rules_of_RECORD_md_59_to_63 (test_record_schema.TheValidatorActuallyRejects.test_the_value_kind_rules_of_RECORD_md_59_to_63) ... ok
 
 ----------------------------------------------------------------------
-Ran 19 tests in 0.878s
+Ran 19 tests in 0.955s
 
 OK
 -- viewer-record-schema: OK (ran 19)
@@ -1520,4 +1520,4 @@ art-registry-md                   -  OK
 viewer                           83  OK
 viewer-record-schema             19  OK
 
-SOME SUITES FAILED (logs in /tmp/tmp.CTcpZyb2NE)
+SOME SUITES FAILED (logs in /tmp/tmp.EgG93ANhl0)

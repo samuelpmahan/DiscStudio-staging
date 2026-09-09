@@ -431,3 +431,66 @@ Status: open; described in the mining appendix. Lean: custody facts are ordinary
 feature-set envelope stays out of the kernel; fork isolation is tournament isolation, not
 rollback; keep the word receipt for the run record only; `scratch` was incidental and round five
 settles it; enforcement is the byte-identity test, not prose.
+
+## Added by the Day 3 record stage (2026-09-09)
+
+Both labels were already named, undetailed, in the mega-list above ("{?} ValueRetention,
+{?} MaterialsLocation, ..."); these two entries are where they are actually raised, per
+`viewer/RECORD.md` and `experiments/grouped-ablation/materials.py`.
+
+### {?} ValueRetention
+What happens to a Part's value when it is too large for the run record to carry whole?
+Status: open. Records carry values up to 256 KB; image Parts beyond that are digests + sidecars.
+`viewer/RECORD.md:63` ("Values over 256 KB are replaced by `omitted` with a note carrying the
+size and the digest") is the rule pinned on the pyto side by
+`pyto/src/pyto/materialize.py` (`VALUE_CAP_BYTES = 262144`, `ARRAY_CAP = 200`, materialize.py:49-50)
+and on the JS side by `viewer/adapters.js`'s `capped()`. The owner has not said whether 256 KB is the
+right budget for an image Part specifically (a rendered course crop is routinely larger), or
+whether a sidecar file next to the record (rather than a bare digest) should be the norm for
+every over-cap value, image or not. Bites: `viewer/RECORD.md` field rules, `materialize.py`
+`tick_sheets` (which never hits this cap because SVG panels are rendered to disk, not embedded),
+Day 4/5 if a corpus-sized image Part is retained.
+
+### {?} MaterialsLocation
+Where does the content-addressed materials store live, and is it shared or per checkout?
+Status: open. Default `~/.pyto/materials`, per user (`experiments/grouped-ablation/materials.py`
+`DEFAULT_MATERIALS_DIR`/`default_root()`, overridable by `PYTO_MATERIALS_DIR`). This is the
+Reframing 3 "durable, per-user engram table" answer as far as Day 3 goes: a plain-JSON-file
+store rooted outside any repository checkout, so a Part produced in one project's process can in
+principle be verified and reused in another (`{?} CrossProjectReuse`, not yet run). Not yet
+decided: whether the same root should be shared across a team (a workstation-level table) or
+stay strictly per-`$HOME`, and whether a repo-local override (as `run_cached.py`'s tests use, via
+`PYTO_MATERIALS_DIR`) should ever be the default for CI rather than only for isolation in tests.
+Bites: `experiments/grouped-ablation/materials.py`, `{?} CrossProjectReuse`, `{?} TableScope`,
+Day 5's cross-project hit.
+
+## neat, the caveman version (2026-09-09, from the owner's other chat)
+
+### {?} LandingScope
+Task 0 changes three files and the owner likes two. Status: resolved 2026-09-09 by design:
+`neat drop 0 <path>` puts a file back to the starting point and repacks; the owner lands what is
+left. Bites: `neat.sh`.
+
+### {?} TaskIds
+Base64 ids or plain numbers? Status: provisional: plain numbers from 0; base64 is an encoding and
+can come later without changing anything. Bites: `neat.sh` next_id.
+
+### {?} FoldersNotBranches
+The owner wants one tree, no branch sprawl. Status: provisional: EXP/<id> is a folder the owner
+opens; underneath it is a git worktree on `exp/<id>`, deleted at landing, pushed only so a fresh
+agent elsewhere can fetch the packet. The owner never types a branch name. Bites: `neat.sh`.
+
+### {?} PacketTravels
+Where does the packet live so a fresh agent on another machine gets it? Status: provisional:
+inside the experiment at `pyto/experiments/tasks/<id>/`, committed on `exp/<id>`, so it travels
+with the branch and lands with the candidate as the record of what landed. Bites: `neat pack`.
+
+### {?} ConvincingAFreshAgent
+Fresh agents often dismiss pyto. Status: provisional: the hand-off carries a short primer that
+makes no claim the agent cannot check in two minutes (the suite, the cache hit across processes,
+the viewer page), plus the `{?}` root. To be tested with cold readers. Bites: HANDOFF.md.
+
+### {?} BPlusTree
+Could neat be a B+ tree? Status: open, lean later: a B+ tree organizes stored records for lookup;
+it can sit under neat's PxC once tasks are Parts; it gives no isolation or landing by itself.
+

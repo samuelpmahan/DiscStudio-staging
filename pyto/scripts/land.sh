@@ -169,8 +169,10 @@ Claude-Session: https://claude.ai/code/session_014pqrhfQfjpSAYTvH8j3y93"
 git push -q -u origin "$(git rev-parse --abbrev-ref HEAD)"
 echo "LANDED $(git rev-parse --short HEAD) $PACKAGE"
 if [ -n "$FROM" ]; then
-  git branch -d "$FROM" >/dev/null 2>&1 && echo "deleted local branch $FROM" || true
-  case "$FROM" in origin/*) echo "remote branch stays until you run: git push origin --delete ${FROM#origin/}";; esac
   wt="$(git worktree list --porcelain | awk -v b="refs/heads/$FROM" '$1=="worktree"{w=$2} $1=="branch"&&$2==b{print w}')"
   [ -z "$wt" ] || { git worktree remove --force "$wt" && echo "removed copy $wt"; }
+  case "$FROM" in
+    origin/*) echo "remote branch stays until you run: git push origin --delete ${FROM#origin/}";;
+    *) git branch -d "$FROM" >/dev/null 2>&1 && echo "deleted local branch $FROM" || true;;
+  esac
 fi
