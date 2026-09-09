@@ -1,0 +1,36 @@
+{
+  "ablation_variants": 5,
+  "authoring_lines": {
+    "calculations.py": 126,
+    "features.py": 38,
+    "program.py": 75
+  },
+  "authoring_lines_total": 239,
+  "calculation_addresses": [
+    "fn.ablation.compare",
+    "fn.ablation.fit",
+    "fn.ablation.score",
+    "fn.ablation.selectVariants",
+    "fn.ablation.split"
+  ],
+  "calculations_authored": 5,
+  "fixture": "synthetic-fixture",
+  "inherited_calculations": 0,
+  "invocations_executed": 15,
+  "invocations_skipped": 0,
+  "ms_saved": 0.0,
+  "run": "run-1 baseline (nothing reused yet; later runs report work saved against this)",
+  "ticks": [
+    "Prepare",
+    "Fit",
+    "Score",
+    "Compare"
+  ],
+  "variants": 6,
+  "wall_ms": {
+    "build_program": 0.157,
+    "make_data": 4.454,
+    "pcr.run": 22.887
+  },
+  "wall_ms_total": 27.498
+}

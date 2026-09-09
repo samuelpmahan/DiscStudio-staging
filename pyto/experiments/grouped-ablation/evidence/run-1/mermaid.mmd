@@ -1,0 +1,86 @@
+flowchart TD
+    p0["input.ablation.groups"]
+    p1["scratch.ablation.variants"]
+    p2["input.ablation.rows"]
+    p3["scratch.ablation.split"]
+    p4["scratch.ablation.model.all"]
+    p5["scratch.ablation.model.drop_g0"]
+    p6["scratch.ablation.model.drop_g1"]
+    p7["scratch.ablation.model.drop_g2"]
+    p8["scratch.ablation.model.drop_g3"]
+    p9["scratch.ablation.model.drop_g4"]
+    p10["scratch.ablation.score.all"]
+    p11["scratch.ablation.score.drop_g0"]
+    p12["scratch.ablation.score.drop_g1"]
+    p13["scratch.ablation.score.drop_g2"]
+    p14["scratch.ablation.score.drop_g3"]
+    p15["scratch.ablation.score.drop_g4"]
+    p16["scratch.ablation.comparison"]
+
+    subgraph PCR["PCR: ablation.grouped"]
+        subgraph Tick_Prepare["Tick: Prepare"]
+            select["fn.ablation.selectVariants"]
+            split["fn.ablation.split"]
+        end
+        subgraph Tick_Fit["Tick: Fit"]
+            fit.all["fn.ablation.fit"]
+            fit.drop_g0["fn.ablation.fit"]
+            fit.drop_g1["fn.ablation.fit"]
+            fit.drop_g2["fn.ablation.fit"]
+            fit.drop_g3["fn.ablation.fit"]
+            fit.drop_g4["fn.ablation.fit"]
+        end
+        subgraph Tick_Score["Tick: Score"]
+            score.all["fn.ablation.score"]
+            score.drop_g0["fn.ablation.score"]
+            score.drop_g1["fn.ablation.score"]
+            score.drop_g2["fn.ablation.score"]
+            score.drop_g3["fn.ablation.score"]
+            score.drop_g4["fn.ablation.score"]
+        end
+        subgraph Tick_Compare["Tick: Compare"]
+            compare["fn.ablation.compare"]
+        end
+    end
+
+    p0 -->|groups| select
+    select --> p1
+    p2 -->|rows| split
+    split --> p3
+    split -->|split| fit.all
+    fit.all --> p4
+    split -->|split| fit.drop_g0
+    fit.drop_g0 --> p5
+    split -->|split| fit.drop_g1
+    fit.drop_g1 --> p6
+    split -->|split| fit.drop_g2
+    fit.drop_g2 --> p7
+    split -->|split| fit.drop_g3
+    fit.drop_g3 --> p8
+    split -->|split| fit.drop_g4
+    fit.drop_g4 --> p9
+    split -->|split| score.all
+    fit.all -->|model| score.all
+    score.all --> p10
+    split -->|split| score.drop_g0
+    fit.drop_g0 -->|model| score.drop_g0
+    score.drop_g0 --> p11
+    split -->|split| score.drop_g1
+    fit.drop_g1 -->|model| score.drop_g1
+    score.drop_g1 --> p12
+    split -->|split| score.drop_g2
+    fit.drop_g2 -->|model| score.drop_g2
+    score.drop_g2 --> p13
+    split -->|split| score.drop_g3
+    fit.drop_g3 -->|model| score.drop_g3
+    score.drop_g3 --> p14
+    split -->|split| score.drop_g4
+    fit.drop_g4 -->|model| score.drop_g4
+    score.drop_g4 --> p15
+    score.all -->|all| compare
+    score.drop_g0 -->|drop_g0| compare
+    score.drop_g1 -->|drop_g1| compare
+    score.drop_g2 -->|drop_g2| compare
+    score.drop_g3 -->|drop_g3| compare
+    score.drop_g4 -->|drop_g4| compare
+    compare --> p16

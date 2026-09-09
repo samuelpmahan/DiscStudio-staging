@@ -16,7 +16,7 @@ print(pcr.run(pxc).results["double"])  # 42
 
 Install locally with `python -m pip install .`. For development with the optional drawing helpers, use `python -m pip install -e '/mnt/d/pyto-worktrees/core[drawing]'`. A review install can use `python -m pip install /path/to/pyto_lab-0.1.0-py3-none-any.whl`. The core package has no runtime dependencies.
 
-Run the executable example with `python examples/basic.py` from the repository root. The adapted source checks can be run without pytest with `PYTHONPATH=src python -c "import sys; sys.path.insert(0, 'tests'); import test_first_class as t; t.test_pxc_is_fail_loud_and_pql_is_composable(); t.test_pcr_preserves_direct_result_and_publication_semantics(); t.test_duplicate_writer_rejected(); print('first-class tests: 3 passed')"`.
+Run the executable example with `python examples/basic.py` from the repository root. Run the library tests without pytest with `PYTHONPATH=src python3 -m unittest discover -s tests -v`.
 
 
 ## Extraction and integration

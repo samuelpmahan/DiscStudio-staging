@@ -1,0 +1,272 @@
+{
+  "pcr": "ablation.grouped",
+  "ticks": [
+    {
+      "calculations": [
+        {
+          "args": {},
+          "calculation": "fn.ablation.selectVariants",
+          "id": "select",
+          "inputs": {
+            "groups": "px:input.ablation.groups"
+          },
+          "into": "scratch.ablation.variants"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.split",
+          "id": "split",
+          "inputs": {
+            "rows": "px:input.ablation.rows"
+          },
+          "into": "scratch.ablation.split"
+        }
+      ],
+      "name": "Prepare"
+    },
+    {
+      "calculations": [
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f01",
+              "f02",
+              "f03",
+              "f04",
+              "f05",
+              "f06",
+              "f07",
+              "f08",
+              "f09",
+              "f10",
+              "f11",
+              "f12",
+              "f13",
+              "f14"
+            ],
+            "variant": "all"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.all",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.all"
+        },
+        {
+          "args": {
+            "columns": [
+              "f03",
+              "f04",
+              "f05",
+              "f06",
+              "f07",
+              "f08",
+              "f09",
+              "f10",
+              "f11",
+              "f12",
+              "f13",
+              "f14"
+            ],
+            "variant": "drop_g0"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_g0",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_g0"
+        },
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f01",
+              "f02",
+              "f06",
+              "f07",
+              "f08",
+              "f09",
+              "f10",
+              "f11",
+              "f12",
+              "f13",
+              "f14"
+            ],
+            "variant": "drop_g1"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_g1",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_g1"
+        },
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f01",
+              "f02",
+              "f03",
+              "f04",
+              "f05",
+              "f09",
+              "f10",
+              "f11",
+              "f12",
+              "f13",
+              "f14"
+            ],
+            "variant": "drop_g2"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_g2",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_g2"
+        },
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f01",
+              "f02",
+              "f03",
+              "f04",
+              "f05",
+              "f06",
+              "f07",
+              "f08",
+              "f12",
+              "f13",
+              "f14"
+            ],
+            "variant": "drop_g3"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_g3",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_g3"
+        },
+        {
+          "args": {
+            "columns": [
+              "f00",
+              "f01",
+              "f02",
+              "f03",
+              "f04",
+              "f05",
+              "f06",
+              "f07",
+              "f08",
+              "f09",
+              "f10",
+              "f11"
+            ],
+            "variant": "drop_g4"
+          },
+          "calculation": "fn.ablation.fit",
+          "id": "fit.drop_g4",
+          "inputs": {
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.model.drop_g4"
+        }
+      ],
+      "name": "Fit"
+    },
+    {
+      "calculations": [
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.all",
+          "inputs": {
+            "model": "fn:fit.all",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.all"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_g0",
+          "inputs": {
+            "model": "fn:fit.drop_g0",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_g0"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_g1",
+          "inputs": {
+            "model": "fn:fit.drop_g1",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_g1"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_g2",
+          "inputs": {
+            "model": "fn:fit.drop_g2",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_g2"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_g3",
+          "inputs": {
+            "model": "fn:fit.drop_g3",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_g3"
+        },
+        {
+          "args": {},
+          "calculation": "fn.ablation.score",
+          "id": "score.drop_g4",
+          "inputs": {
+            "model": "fn:fit.drop_g4",
+            "split": "fn:split"
+          },
+          "into": "scratch.ablation.score.drop_g4"
+        }
+      ],
+      "name": "Score"
+    },
+    {
+      "calculations": [
+        {
+          "args": {
+            "baseline": "all"
+          },
+          "calculation": "fn.ablation.compare",
+          "id": "compare",
+          "inputs": {
+            "all": "fn:score.all",
+            "drop_g0": "fn:score.drop_g0",
+            "drop_g1": "fn:score.drop_g1",
+            "drop_g2": "fn:score.drop_g2",
+            "drop_g3": "fn:score.drop_g3",
+            "drop_g4": "fn:score.drop_g4"
+          },
+          "into": "scratch.ablation.comparison"
+        }
+      ],
+      "name": "Compare"
+    }
+  ]
+}
