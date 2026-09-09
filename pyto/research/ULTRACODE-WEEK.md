@@ -80,6 +80,9 @@ The owner's answers to the open questions:
   reads and calls, so a hit ledger is: Parts read that existed before the run, and Calculations
   called that were already registered. No perceptual matching, no course identity, unless a later
   experiment needs it.
+- **PCRs in ChainSpot are Kibana** (owner, after the ELK answer): a PrincipleComponentRender is the
+  render definition, per Tick, of a computation's principal components. The viewer is therefore a
+  PCR renderer, not a new dashboard concept, and the run record is what it renders.
 - **The reference architecture is ELK.** Lego-like ingestion and semantic composition, like
   Logstash: Calculations composing meaning onto Parts through PCR pipelines. Store what you want
   how you want, like Elasticsearch: PxC, with content addressing as the document identity and
