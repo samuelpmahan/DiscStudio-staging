@@ -534,3 +534,22 @@ the viewer page), plus the `{?}` root. To be tested with cold readers. Bites: HA
 Could neat be a B+ tree? Status: open, lean later: a B+ tree organizes stored records for lookup;
 it can sit under neat's PxC once tasks are Parts; it gives no isolation or landing by itself.
 
+## Everything is a file (2026-09-09, the owner's line)
+
+### {?} EverythingIsAPart
+The owner: "The function stopped being the subject; the receipt became the subject. One of the
+few things I actually know about Linux is 'everything file'." The mapping: in Unix the file is
+not the interesting object either; one interface (a path, read, write) covers devices, pipes and
+processes, so a few tools compose over all of them. pyto's version: everything is a Part (an
+address and a value), and every use leaves a receipt, which is a Part too. The reference runtime
+already does this: `src/runtime.js:57` writes `px.receipt.<name>` beside `px.pql.<name>`. Python
+keeps receipts on the run object (`PcrRun.receipts`, `pcr.py:145`) instead of in the store, which
+is the one place the transfer breaks the rule. Status: provisional, lean adopt: receipts, landing
+receipts, packets, decisions and proposals are Parts under reserved second segments (`receipt`,
+`proposal`, ...), written only when visibility is on and never read by a Calculation (ChainSpot's
+`px.view.*` precedent), so the CV runtime with visibility off writes none and the byte-identity
+guarantee holds. This collapses `{?} ObservationSeam`, `{?} TickEqualsReceipt`,
+`{?} ReceiptSegmentReserved` and the "agent reads become oc receipts" half of `{?} GuardEnforcement`
+into one rule; PQL is then `ls` and `grep` over all of them, the viewer is `cat`. Bites: `pcr.py`
+(a `receipt` mount or segment written under `observe=True`), `materialize.py`, `neat`.
+

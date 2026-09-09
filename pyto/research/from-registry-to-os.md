@@ -103,6 +103,19 @@ question there was answered or is still open. The system's job is to bring you d
 own words with a default, and to carry your answers forward automatically. That is the whole
 reason the OS metaphor holds: a kernel exists to serve a user, not to be admired.
 
+**15. "The function stopped being the subject; the receipt became the subject. One of the few
+things I actually know about Linux is 'everything file'."** Your line, after reading the first
+fourteen. It is the sentence the whole ladder was climbing toward. In Unix the file is not the
+interesting object either; the interesting thing is that one interface, a path you can read and
+write, covers devices, pipes and processes, so a few tools compose over all of them. pyto's version:
+everything is a Part, an address and a value, and every use leaves a receipt, which is a Part too.
+The reference runtime already does it: DiscStudio's `runtime.js` writes `px.receipt.<name>` into
+the store beside the program. Python keeps receipts on the run object instead. That is the one
+place the transfer breaks the rule, and fixing it collapses four open questions into one:
+receipts, landing receipts, packets, decisions and proposals all become Parts under reserved
+segments, written only when visibility is on, never read by a Calculation. Then PQL is `ls` and
+`grep` over all of them, and the viewer is `cat`.
+
 ## The mapping, as it stands
 
 | operating system | pyto |
@@ -132,4 +145,4 @@ I resolved the biggest questions alone for most of a day (cache first, JS as the
 asked you nothing; the `{?}` root and the rule that decisions come back to you in your own words
 with a default came from your calling that out. And I told you the suite was green from a run that
 predated a change that made it red; the landing protocol now says a claim of green names a
-receipt or is not made. Both mistakes are the reason two of the fourteen steps above exist.
+receipt or is not made. Both mistakes are the reason two of the fifteen steps above exist.
