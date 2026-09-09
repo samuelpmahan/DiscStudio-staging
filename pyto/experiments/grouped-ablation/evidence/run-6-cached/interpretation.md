@@ -9,18 +9,18 @@ content-addressed key: `31e1e57286cf7682aa074cb16ad11bc4f41032f78f9af19a12d528e0
 
 requests=2 hits=1 misses=1 writes=1
 
-| resolution | where | outcome |
-|---|---|---|
-| 1 | in-process, fresh PxC, empty store | miss+write |
-| 2 | in-process, second fresh PxC, same store | hit (disk) |
-| 3 | fresh python3 -I process, PYTO_MATERIALS_DIR shared | hit (disk) |
+| resolution | where | outcome | counters delta |
+|---|---|---|---|
+| 1 | in-process, fresh PxC, empty store | miss+write | requests=+1 hits=+0 misses=+1 writes=+1 |
+| 2 | in-process, second fresh PxC, same store | hit (disk) | requests=+1 hits=+1 misses=+0 writes=+0 |
+| 3 | fresh python3 -I process, PYTO_MATERIALS_DIR shared | hit (disk) | requests=+1 hits=+1 misses=+0 writes=+0 |
 
 ## Milliseconds saved
 
-Read from the sibling full-program run's own receipts.json duration_ms for 'split' (the smaller of the two), never by re-running split to time the skipped call -- that would defeat the point of the cache hit. Synthetic-fixture wall time, labelled so (research/ULTRACODE-WEEK.md Reframing 2).
-split duration_ms, program run 1: 0.22174199693836272; program run 2: 0.06679200305370614.
-ms saved per cache hit (conservative, the smaller of the two): 0.06679200305370614.
-Two disk hits occurred (resolutions 2 and 3) -> ms saved this run: 0.134.
+Read from the sibling full-program run's own receipts.json duration_ms for 'split' (the smaller of the two), never by re-running split to time the skipped call -- that would defeat the point of the cache hit. Synthetic-fixture wall time, labelled so (research/ULTRACODE-WEEK.md Reframing 2). ms_saved_total is this figure times hits_observed -- the number of the three resolutions whose own counters recorded a hit -- never times a constant, so a run in which a disk load fails reports 0 saved rather than hits that did not happen.
+split duration_ms, program run 1: 0.06427000334952027; program run 2: 0.057220000599045306.
+ms saved per cache hit (conservative, the smaller of the two): 0.057220000599045306.
+Resolutions whose own counters recorded a hit (derived, never asserted): 2 of 3 -> ms saved this run: 0.114.
 
 ## Ordinary within-program reuse (hits.py, for comparison)
 

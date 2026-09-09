@@ -11,7 +11,7 @@ Two ledgers, both derived from receipts, nothing else:
 
 - **A Part hit** is a `px:` read whose address this run had not itself produced
   yet -- the same rule `pyto.materialize.run_record`'s `hit` field applies
-  (pyto/viewer/RECORD.md:53-56; pyto/src/pyto/materialize.py:238-240,286-288),
+  (pyto/viewer/RECORD.md:104-107; pyto/src/pyto/materialize.py:238-240,286-288),
   reported here as its own ledger of (invocation, address) pairs rather than
   folded into a run record. A `fn:` read (a same-run result) is never a Part
   hit -- that Part was computed by this run, not reused from before it.

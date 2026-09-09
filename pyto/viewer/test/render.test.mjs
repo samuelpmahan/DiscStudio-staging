@@ -223,7 +223,7 @@ test('json is collapsible, text is a pre, png-data-url is an img, omitted is the
 });
 
 test('a png-data-url that is not a PNG data URL never reaches an <img src>', () => {
-  // The record is data, and <img src> is a fetch. RECORD.md:60-61 fixes the
+  // The record is data, and <img src> is a fetch. RECORD.md:109-110 fixes the
   // shape; adapters.js refuses anything else, and the render site re-checks so
   // a record that reached the DOM by some other path still makes no request
   // from a page whose premise is that it makes none.

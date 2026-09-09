@@ -120,7 +120,7 @@ export function renderValue(doc, value) {
     if (typeof value.data !== 'string' || !value.data.startsWith(PNG_DATA_URL_PREFIX)) {
       box.appendChild(el(doc, 'p', {
         className: 'note omitted',
-        text: `value not rendered: kind "png-data-url" must be a ${PNG_DATA_URL_PREFIX}... string (RECORD.md:60-61)`
+        text: `value not rendered: kind "png-data-url" must be a ${PNG_DATA_URL_PREFIX}... string (RECORD.md:109-110)`
       }));
     } else {
       box.appendChild(el(doc, 'figure', { className: 'material' }, [

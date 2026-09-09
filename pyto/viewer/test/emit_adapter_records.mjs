@@ -6,7 +6,7 @@
  *
  * One file per case, named <case>.json, plus manifest.json listing them with
  * the runtime each claims. The records are written with sorted keys and
- * two-space indentation (RECORD.md:67), which is also how pyto.materialize
+ * two-space indentation (RECORD.md:116), which is also how pyto.materialize
  * writes them -- so the two runtimes' files are comparable as bytes and not
  * only as parsed JSON.
  */
@@ -21,7 +21,7 @@ import {
 const HERE = dirname(fileURLToPath(import.meta.url));
 const fixture = (name) => JSON.parse(readFileSync(resolve(HERE, '..', 'fixtures', name), 'utf8'));
 
-/** RECORD.md:67 -- sorted keys, two-space indentation. */
+/** RECORD.md:116 -- sorted keys, two-space indentation. */
 function sortedStringify(value) {
   const keys = [];
   JSON.stringify(value, (key, held) => {

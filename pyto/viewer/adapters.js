@@ -22,7 +22,7 @@ export const RUNTIMES = ['pyto', 'discstudio', 'chesslab', 'wumpus'];
 export const VALUE_KINDS = ['json', 'text', 'svg', 'png-data-url', 'omitted'];
 export const WRITE_KINDS = ['new-address', 'refinement', 'replacement'];
 
-/** RECORD.md:60-61: a `png-data-url` value's data is exactly this shape. */
+/** RECORD.md:109-110: a `png-data-url` value's data is exactly this shape. */
 export const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
 
 const encoder = new TextEncoder();
@@ -122,7 +122,7 @@ function validateValue(value, path) {
     if (typeof value.note !== 'string' || !value.note.length) fail(`${path}.note`, 'kind "omitted" must say why in note');
   } else if (kind !== 'json') {
     requireString(value.data, `${path}.data`, { nonEmpty: false });
-    // RECORD.md:60-61 states the shape; tick-viewer.js:118 puts this string
+    // RECORD.md:109-110 states the shape; tick-viewer.js:118 puts this string
     // straight into an <img src>, so an unchecked kind is an outbound request
     // the record chose. Enforce the clause here rather than trusting a producer.
     if (kind === 'png-data-url' && !value.data.startsWith(PNG_DATA_URL_PREFIX)) {
@@ -150,8 +150,22 @@ function validateInvocation(invocation, path, seenIds) {
   requireObject(invocation.args, `${path}.args`);
   requireNullableString(invocation.into, `${path}.into`);
 
+  // RECORD.md's declared_consumes rule is strict, so it is checked and not
+  // assumed: exactly the `px:` bindings of `inputs`, in binding order. An `fn:`
+  // entry or an address `inputs` does not carry would add a read edge no
+  // binding declares, because derivePartIndex below unions the two fields.
   requireArray(invocation.declared_consumes, `${path}.declared_consumes`);
-  invocation.declared_consumes.forEach((entry, i) => requireBindingSpelling(entry, `${path}.declared_consumes[${i}]`));
+  const boundValues = new Set(Object.values(inputs));
+  invocation.declared_consumes.forEach((entry, i) => {
+    const where = `${path}.declared_consumes[${i}]`;
+    requireBindingSpelling(entry, where);
+    if (!entry.startsWith('px:')) {
+      fail(where, `declared_consumes carries Part bindings only, spelled "px:<address>", got ${show(entry)}`);
+    }
+    if (!boundValues.has(entry)) {
+      fail(where, `declared_consumes is a subset of inputs.values(), which does not carry ${show(entry)}`);
+    }
+  });
   requireStringArray(invocation.actual_consumes, `${path}.actual_consumes`);
   requireStringArray(invocation.actual_produces, `${path}.actual_produces`);
 
@@ -264,20 +278,64 @@ export function materialize(raw, { digest = null, note = null } = {}) {
     else if (raw.startsWith(PNG_DATA_URL_PREFIX)) kind = 'png-data-url';
     return capped({ kind, data: raw, note }, utf8Length(raw), digest);
   }
-  let data = raw;
-  let arrayNote = note;
-  if (Array.isArray(raw) && raw.length > MAX_ARRAY_ENTRIES) {
-    data = raw.slice(0, MAX_ARRAY_ENTRIES);
-    arrayNote = `array truncated: showing the first ${MAX_ARRAY_ENTRIES} of ${raw.length} entries`;
-  }
-  let text;
+  // Serializability is decided on the whole value, before anything is cut, the
+  // way ../../src/pyto/materialize.py:229-234 decides it: a cycle or an
+  // unserializable entry past the cap must still reach `omitted`, not be sliced
+  // out of sight first.
   try {
-    text = JSON.stringify(data);
+    if (JSON.stringify(raw) === undefined) {
+      return { kind: 'omitted', data: null, note: 'value is not JSON serializable' };
+    }
   } catch (error) {
     return { kind: 'omitted', data: null, note: `value is not JSON serializable: ${error.message}` };
   }
-  if (text === undefined) return { kind: 'omitted', data: null, note: 'value is not JSON serializable' };
-  return capped({ kind: 'json', data, note: arrayNote ?? null }, utf8Length(text), digest);
+  const lengths = [];
+  const data = truncateArrays(raw, MAX_ARRAY_ENTRIES, lengths);
+  const arrayNote = lengths.length
+    ? `${lengths.length} array(s) truncated to the first ${MAX_ARRAY_ENTRIES} entries; `
+      + `original lengths: [${lengths.slice().sort((a, b) => b - a).join(', ')}]`
+    : note;
+  return capped({ kind: 'json', data, note: arrayNote ?? null }, utf8Length(JSON.stringify(data)), digest);
+}
+
+/**
+ * Copy `value` with every array longer than `cap` cut to its first `cap`
+ * entries, appending each original length to `lengths`.
+ *
+ * Recursive, and deliberately the same traversal as
+ * ../../src/pyto/materialize.py:151-164 `_truncate_arrays`: array first (cut,
+ * record the length, then recurse into the surviving entries), then dict in key
+ * order, then everything else untouched. RECORD.md states the cap without
+ * qualifying it by depth ("arrays longer than 200 entries carry the first 200
+ * and a note with the full length", RECORD.md:113 as it now stands), so
+ * `{"rows": [0..999]}` has to be a 200-row record in both runtimes; truncating only a top-level array made the browser keep all
+ * 1000 with note null.
+ *
+ * `isDictLike` stands in for Python's `isinstance(value, dict)`: a Date or
+ * any other object carrying `toJSON` is left whole rather than rebuilt as an
+ * empty plain object, so JSON.stringify still sees what it would have seen.
+ */
+function truncateArrays(value, cap, lengths) {
+  if (Array.isArray(value)) {
+    let items = value;
+    if (items.length > cap) {
+      lengths.push(items.length);
+      items = items.slice(0, cap);
+    }
+    return items.map((item) => truncateArrays(item, cap, lengths));
+  }
+  if (isDictLike(value)) {
+    const copy = {};
+    for (const key of Object.keys(value)) copy[key] = truncateArrays(value[key], cap, lengths);
+    return copy;
+  }
+  return value;
+}
+
+function isDictLike(value) {
+  if (value === null || typeof value !== 'object') return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
 }
 
 function capped(block, bytes, digest) {
@@ -324,10 +382,11 @@ export function derivePartIndex(ticks) {
   const intoById = new Map();
   for (const tick of ticks) {
     for (const invocation of tick.invocations) {
-      // `inputs` is the complete binding map; `declared_consumes` mirrors the
-      // producing runtime's own notion of a declared Part read, which in pyto
-      // omits `fn:` result refs (pcr.py:120 Receipt.declared_consumes). Read
-      // both so the index is the same whichever convention a producer follows.
+      // `inputs` is the complete binding map and is sufficient on its own:
+      // `declared_consumes` is a validated subset of it (validateInvocation
+      // above), so unioning the two adds nothing to a conformant record. The
+      // union is kept as a defence for a record that reached this reader
+      // without passing validate -- a duplicated edge, never a lost one.
       const bindings = [...Object.values(invocation.inputs), ...invocation.declared_consumes];
       for (const binding of bindings) {
         const address = binding.startsWith('fn:') ? intoById.get(bareAddress(binding)) : bareAddress(binding);

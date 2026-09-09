@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T090520Z-task-0",
+  "package": "task-0",
+  "base_sha": "9d5ba26dd027779403a9c8154a535c3d8520cb98",
+  "result": "failed",
+  "reason": "merge conflict with exp/0 in: pyto/experiments/grouped-ablation/evidence/run-6-cached/interpretation.md pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json ",
+  "at": "2026-09-09T09:05:21.672856Z"
+}
