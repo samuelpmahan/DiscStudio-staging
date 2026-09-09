@@ -46,6 +46,7 @@ One line per landing attempt, newest first, written by the landing script. Lines
 the day so far, in plain words.
 
 - 2026-09-09 09:48 **landed** `neat-reserve-id`: neat new pushes exp/<id> at once, so two clones can never pick the same task id (1 files since cf7ac33, suites green, receipt 20260909T094802Z-neat-reserve-id)
+- 2026-09-09 09:51 **proof** red: fresh clone of 4875210, 6 steps, step 5 failed, receipt 20260909T094944Z-proof
 - 2026-09-09 09:46 **landed** `task-12`: proof: the test as one script. proof.sh clones the branch fresh into a temp dir on this drive, runs the board's commands verbatim, writes one Today line with the result and a receipt under pyto/experiments/landings/proofs/ (16 files since 76bc3d2, suites green, receipt 20260909T094458Z-task-12)
 - 2026-09-09 09:44 **landed** `task-14`: determinism log oracle survives a different interpreter: the log keeps naming its Python, the comparison normalizes the version and skips by name when the hash algorithm differs (5 files since 76bc3d2, suites green, receipt 20260909T094315Z-task-14)
 - 2026-09-09 09:42 **refused** `task-14`: verifier exited 1 (see /d/pyto-socratic-20260909/pyto/experiments/landings/20260909T094234Z-task-14/verifier.txt)
