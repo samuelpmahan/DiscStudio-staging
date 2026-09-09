@@ -42,6 +42,8 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 09:44 **landed** `task-14`: determinism log oracle survives a different interpreter: the log keeps naming its Python, the comparison normalizes the version and skips by name when the hash algorithm differs (5 files since 76bc3d2, suites green, receipt 20260909T094315Z-task-14)
+- 2026-09-09 09:42 **refused** `task-14`: verifier exited 1 (see /d/pyto-socratic-20260909/pyto/experiments/landings/20260909T094234Z-task-14/verifier.txt)
 - 2026-09-09 09:23 **landed** `task-11`: Mounts: a world (a course, a game, a bag) is mounted above an ordinary PxC by an id outside the address space, so one address means the same thing in every world; ported from ChainSpot's PxCRootMounts with its negative test (49 files since f2e0b8e, suites green, receipt 20260909T092312Z-task-11)
 - 2026-09-09 09:23 **landed** `union-logs`: CHANGES.md, BOARD.md and questions.md merge by union: two writers appending never conflict (1 files since c2bd634, suites green, receipt 20260909T092226Z-union-logs)
 - 2026-09-09 09:22 **refused** `task-11`: merge conflict with exp/11 in: pyto/CHANGES.md 

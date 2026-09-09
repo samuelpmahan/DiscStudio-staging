@@ -1,0 +1,24 @@
+======================================================================
+ERROR: setUpClass (test_replay.DeterminismMatrix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\pyto-socratic-20260909\pyto\experiments\grouped-ablation\test_replay.py", line 1029, in setUpClass
+    cls.result = replay.run_determinism_matrix(cls.record, log_path=cls.log_path)
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pyto-socratic-20260909\pyto\experiments\grouped-ablation\replay.py", line 1028, in run_determinism_matrix
+    first = _run_hashseed_row(seed, RETAINED_PATH)
+  File "D:\pyto-socratic-20260909\pyto\experiments\grouped-ablation\replay.py", line 925, in _run_hashseed_row
+    raise RuntimeError(f"hashseed row {seed} failed: {completed.stderr}")
+RuntimeError: hashseed row 0 failed: [determinism-child] sys.path.insert(0, 'D:\\pyto-socratic-20260909\\pyto\\experiments\\grouped-ablation')
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    import retain
+  File "D:\pyto-socratic-20260909\pyto\experiments\grouped-ablation\retain.py", line 82, in <module>
+    import pyto
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.369s
+
+FAILED (errors=1)

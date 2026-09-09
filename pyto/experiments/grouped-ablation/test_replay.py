@@ -34,6 +34,7 @@ import json
 import os
 import shutil
 import subprocess
+import re
 import sys
 import tempfile
 import unittest
@@ -1041,8 +1042,13 @@ class DeterminismMatrix(unittest.TestCase):
             produced = handle.read()
         with open(replay.DETERMINISM_LOG, encoding="utf-8") as handle:
             committed = handle.read()
+        # The log names the interpreter that produced it (max telemetry); the oracle
+        # compares everything but that token, so a clone on Python 3.13 verifies a log
+        # written on 3.11. The hash values are seed-determined and agree across versions.
+        version = re.compile(r"Python \d+\.\d+\.\d+")
+        self.assertIn("Python " + sys.version.split()[0], produced)
         self.assertEqual(
-            produced, committed,
+            version.sub("Python X", produced), version.sub("Python X", committed),
             "evidence/determinism.log is stale; regenerate it with "
             "`python3 experiments/grouped-ablation/replay.py --force`",
         )

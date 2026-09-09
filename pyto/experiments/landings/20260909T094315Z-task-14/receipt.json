@@ -1,0 +1,58 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T094315Z-task-14",
+  "package": "task-14",
+  "base_sha": "76bc3d2a51c0e5442a0e4e8f519fe7d01484e9f5",
+  "result": "verified",
+  "verifier": {
+    "command": "P=.venv/bin/python; [ -x \"$P\" ] || P=.venv/Scripts/python.exe; (cd pyto/experiments/grouped-ablation && \"../../../$P\" -m unittest test_replay.DeterminismMatrix -q)",
+    "exit": 0,
+    "output_sha256": "0b0de488b3c7acfd04bc24766b24b6ac8a0cf3729917ff27042300134a76ef71"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "1de4597ed160c99c09dc7bda7b5dfc60df6dc91775621f45d19d493381c5d535",
+    "counts": {
+      "library": 144,
+      "experiments/grouped-ablation": 240,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 87,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/experiments/grouped-ablation/test_replay.py",
+      "bytes": 60561,
+      "sha256": "05545a51529cd8a7b54c45c01f44014d64f52c65cee5bf2f063f5735ae7bedf0"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/HANDOFF.md",
+      "bytes": 5313,
+      "sha256": "2c671c5f784191c5ae2c3bb8330258aa4c9b3b32a1ba2a6980f17b6713d47f63"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/evidence/check_all.txt",
+      "bytes": 109208,
+      "sha256": "c86da7bb92baa7f8caf9dec59486c4539e0f2b7c651eca9e6632e91d2848496d"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/evidence/verify.txt",
+      "bytes": 1425,
+      "sha256": "2266c06b3f0cab03a4f97192d63ee542537e3a7120ba0fe9a533ebadfb49c44f"
+    },
+    {
+      "path": "pyto/experiments/tasks/14/packet.md",
+      "bytes": 1930,
+      "sha256": "21a39b4aa01b283600c41388834b9a9f13b376a3d0aaf92082863f1945f82b44"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-09T09:44:33.415152Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
