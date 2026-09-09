@@ -165,11 +165,11 @@
       "disc-stats": 4,
       "examples": 3,
       "art-registry-md": "OK (regenerated, matches committed ART-REGISTRY.md)",
-      "viewer": 72
+      "viewer": 73
     },
     "unittest_total": 374,
     "tests_txt_last_line": "ALL SUITES PASSED",
-    "delta_note": "grouped-ablation 170 -> 211 is round 3's eight findings' tests; library 64 -> 93 is NOT Day 2's -- pyto/tests/test_materialize.py arrived with a concurrent Day 3 line of work (pyto/src/pyto/materialize.py). the viewer suite (72, Node 22) did not exist at this record and is not Day 2's either. consumer (61) and disc-stats (4) are unchanged, so the EXPECT_CONSUMER / EXPECT_DISC_STATS pins in scripts/check_all.sh did not need updating and no suite shrank; unittest_total counts the five Python suites only, as it did at this record."
+    "delta_note": "grouped-ablation 170 -> 211 is round 3's eight findings' tests; library 64 -> 93 is NOT Day 2's -- pyto/tests/test_materialize.py arrived with a concurrent Day 3 line of work (pyto/src/pyto/materialize.py). the viewer suite (73, Node 22) did not exist at this record and is not Day 2's either. consumer (61) and disc-stats (4) are unchanged, so the EXPECT_CONSUMER / EXPECT_DISC_STATS pins in scripts/check_all.sh did not need updating and no suite shrank; unittest_total counts the five Python suites only, as it did at this record."
   },
   "head_sha_at_record": "d8b0c5d98e7f2b81e470d48ae3585a564719390d",
   "commits_since_base": [
