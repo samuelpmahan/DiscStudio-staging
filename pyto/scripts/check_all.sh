@@ -15,8 +15,10 @@ PYTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="${CHECK_ALL_LOG_DIR:-$(mktemp -d)}"
 mkdir -p "$LOG_DIR"
 # 18 pre-tournament + 8 (test_paint_families) + 11 (test_card_render), added when
-# the art tournament promoted three families and two card renderers.
-EXPECT_CONSUMER="${EXPECT_CONSUMER:-37}"
+# the art tournament promoted three families and two card renderers, + 24
+# (test_art_registry) added when the owner directive registered every retained
+# family and card renderer as a Calculation too (37 -> 61).
+EXPECT_CONSUMER="${EXPECT_CONSUMER:-61}"
 EXPECT_DISC_STATS="${EXPECT_DISC_STATS:-4}"
 
 echo "== check_all.sh v0"
@@ -106,9 +108,39 @@ if [ "$fanout_rc" -ne 0 ]; then
 elif ! printf '%s' "$fanout_out" | grep -q '"sharedResult": "fn:render-disc"'; then
     echo "-- examples/shared_result_fanout.py: FAILED (sharedResult fn:render-disc not printed)"; FAILED=1
 fi
-examples_ok=$([ "$example_rc" -eq 0 ] && [ "$fanout_rc" -eq 0 ] && [ "$basic_out" = "42" ] && echo OK || echo FAIL)
-echo "-- examples: $examples_ok (2 scripts)"
-SUMMARY+=("$(printf '%-28s %6s  %s' examples 2 "$examples_ok")")
+art_demo_rc=0
+art_demo_out="$(cd "$PYTO" && python3 examples/art_registry_demo.py 2>&1)" || art_demo_rc=$?
+printf '   $ python3 examples/art_registry_demo.py -> %s\n' "$(printf '%s' "$art_demo_out" | tail -1)"
+if [ "$art_demo_rc" -ne 0 ]; then
+    echo "-- examples/art_registry_demo.py: FAILED (exit $art_demo_rc)"; echo "$art_demo_out"; FAILED=1
+elif ! printf '%s' "$art_demo_out" | grep -q '"sharedResult": "fn:render-art"'; then
+    echo "-- examples/art_registry_demo.py: FAILED (sharedResult fn:render-art not printed)"; FAILED=1
+fi
+examples_ok=$([ "$example_rc" -eq 0 ] && [ "$fanout_rc" -eq 0 ] && [ "$art_demo_rc" -eq 0 ] \
+    && [ "$basic_out" = "42" ] && echo OK || echo FAIL)
+echo "-- examples: $examples_ok (3 scripts)"
+SUMMARY+=("$(printf '%-28s %6s  %s' examples 3 "$examples_ok")")
+echo
+
+# 6. art registry index: regenerate ART-REGISTRY.md and require it to match
+# what is already committed -- a stale index (art_registry.py or RESULTS.md
+# changed and nobody regenerated the doc) fails the check.
+ART_REGISTRY_MD="$PYTO/consumers/discstudio-card/ART-REGISTRY.md"
+echo "== suite: art-registry-md  (cwd $PYTO/consumers/discstudio-card)"
+gen_rc=0
+gen_out="$(cd "$PYTO/consumers/discstudio-card" && python3 scripts/generate_art_registry_md.py 2>&1)" || gen_rc=$?
+echo "   \$ python3 scripts/generate_art_registry_md.py -> $gen_out"
+if [ "$gen_rc" -ne 0 ]; then
+    echo "-- art-registry-md: FAILED (generator exited $gen_rc)"; FAILED=1; art_registry_ok=FAIL
+elif ! (cd "$PYTO" && git diff --quiet -- "$ART_REGISTRY_MD"); then
+    echo "-- art-registry-md: FAILED (ART-REGISTRY.md is stale -- regenerate and commit it)"
+    (cd "$PYTO" && git diff --stat -- "$ART_REGISTRY_MD")
+    FAILED=1; art_registry_ok=FAIL
+else
+    echo "-- art-registry-md: OK (regenerated, matches committed ART-REGISTRY.md)"
+    art_registry_ok=OK
+fi
+SUMMARY+=("$(printf '%-28s %6s  %s' art-registry-md - "$art_registry_ok")")
 echo
 
 echo "== per-suite counts"
