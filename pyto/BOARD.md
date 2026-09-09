@@ -26,7 +26,14 @@ record in a fresh process. Verification is replay; there is no other kind. Sched
 is already the scheduler, and a Tick boundary is the yield point, the observation point and the
 budget checkpoint at once; Calculations inside a Tick with no dependency between them may run on
 workers with pixels transferred, the placement recorded in receipts so replay stays exact. The
-first version is one `await` between Ticks; nothing more until a Tick is measured too slow.
+first version is one `await` between Ticks; nothing more until a Tick is measured too slow. Two
+kinds of Calculation and no third: `fn` is pure; `oc` (OperationalCalculation) is the syscall
+table, the only place an effect happens (shell, file, git, network), and it records what it read
+and what it produced as Parts so replay plays the Part back instead of re-running the effect.
+Keep it simple and safe: an `oc` is allowed by name, never by pattern. Visibility is a flag, not a
+build: `observe` costs nothing when off, the CV runtime runs with it off to hit the budget, and the
+test that outputs are byte-identical with it on and off is the guarantee that stripping visibility
+changes nothing else.
 
 **Open prompt.** *Addressing.* Each segment must discriminate and the root must connect. The
 branch mining is reading `lab/pxc-root-mounts` and `review/pxc-root-alignment` for what was
