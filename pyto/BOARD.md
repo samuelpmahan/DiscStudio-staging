@@ -53,18 +53,27 @@ SUBDUE and WebShaper on recorded graphs).
 
 ## Lane 2: DiscStudio surfaces (Codex, briefed from lane 1)
 
-**Statement.** Seed pyto's Python coverage in a set of interesting DiscStudio surfaces, chosen by
-the propose-and-refine loop. Round four is on the table: addressing, PCR render, neat and tidy on
-PxC, competition Ticks with proposals written to `proposal.disc.*` and promoted by a person, the
-reducer in both runtimes, cards in the browser, review and comments on the (pcr, tick, invocation,
-part) anchor, shelf statistics and export receipts. The tournament's sixteen families and eight
-renderers are registered and waiting for the browser gate.
+**Statement.** CV is deferred, on purpose: the demo that gets users is DiscShelf plus OnTheCourse,
+with many formats supported easily because the pieces are right. A format is a Calculation over
+the same Parts (a shelf, a bag, a round, a card), producing SVG, PNG, a printable sheet, a share
+image, or a data export, through one fan-out PCR with receipts, so adding a format is adding one
+Calculation and its record, never a new pipeline. The tournament's sixteen families and eight
+renderers are the first formats. Users first; then CV lands on an audience. The surfaces, in
+order: DiscShelf, OnTheCourse, formats (export and import), the PCR render inside the studio, the
+reducer in both runtimes, competition Ticks with proposals written to `proposal.disc.*`, review
+and comments on the (pcr, tick, invocation, part) anchor.
 
-**Open prompt.** *Final surfaces list.* Reorder, cut, add. Default if unanswered: the round-four
-list in that order.
+**Open prompt.** *Where do the Python renderers run for users?* The studio is a static site
+(GitHub Pages, no backend by design), so the promoted Python card renderers cannot serve users as
+they are. Two roads: port them to JS with the record as the proof (the same inputs must give the
+same SVG bytes in both runtimes; the SVG builders are arithmetic and string formatting, so the
+port is mechanical and checkable), or add a backend. Default if unanswered: port with digest
+equality, keep the site static; Python stays the workshop where formats are designed, judged and
+verified before they ship.
 
-**Stands.** Briefs written: Day 2 (as a bake-off reference), neat and tidy. Next brief: the PCR
-render inside the studio, written once Day 3 returns the viewer's real API.
+**Stands.** Briefs written: Day 2 (as a bake-off reference), neat and tidy. Next brief: DiscShelf
+and OnTheCourse formats, written once Day 3 returns the viewer's real API so the studio can show
+a format's record.
 
 ## Lane 3: neat and tidy (the owner's neat expert)
 
