@@ -1,0 +1,18 @@
+families: 432/432 byte-identical in 895 ms
+  block-print           27/27
+  chevron-run           27/27
+  contour-basin         27/27
+  fairway-plat          27/27
+  halftone-screen       27/27
+  hot-foil              27/27
+  nodding-seedhead      27/27
+  orbit-foundry         27/27
+  petal-press           27/27
+  pressed-fern          27/27
+  register-mark         27/27
+  score-bug             27/27
+  signal-stamp          27/27
+  sweep-clock           27/27
+  tessellated-flight    27/27
+  wind-rose             27/27
+cards: 8/8 byte-identical

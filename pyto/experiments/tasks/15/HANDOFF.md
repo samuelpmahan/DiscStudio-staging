@@ -1,13 +1,54 @@
-# Task 15
+# Task 15: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
 
-Intent: Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
-Starting point: af0bf062f5bbcd891e5880808641efca8ba172dc (checkpoint: the test's cache step overwrites its own scratch, so a repeated proof cannot trip on the last one)
-Verify: cd pyto/consumers/discstudio-card/port/painter && node verify_port.mjs ./painter.mjs ./cards.mjs
-Allow: pyto/consumers/discstudio-card/port/painter pyto/experiments/tasks
-Candidate: 7 files, see below
-Evidence: suite exit 0, see below
+You are a fresh agent. Everything you need is on this page and in the files it names. The
+conversation that produced this task is not needed and you will not see it.
 
-## Candidate
+## Get the code (once)
+
+```
+git clone -b claude/python-ultracode-supercharge-st8hnu https://github.com/samuelpmahan/DiscStudio-staging DiscStudio-staging     # or: cd into the clone you have
+cd DiscStudio-staging
+git fetch origin exp/15
+python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
+git show origin/exp/15:pyto/experiments/tasks/15/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
+git diff af0bf06 origin/exp/15 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+```
+
+## Why this repository is worth twenty minutes
+
+pyto is a Python transfer of a design the owner proved three times in JavaScript and TypeScript
+(ChainSpot, ChessLab, EmbodiedWumpusWorld): a store of named values (PxC), pure functions over them
+(Calculations), and a program that names which functions run in which order (a PCR, made of Ticks).
+Every run leaves receipts: what each function read and wrote, how long it took, and a digest of its
+source. From receipts you get three things for free: a cache (same inputs and digest, skip the call,
+also across processes), a replay that verifies a shipped record in a fresh process, and a per-Tick
+view of what the algorithm used. The founding need is the last one: the owner's course-map parser
+had to fit five seconds on a phone, and nothing it used was visible. pyto is the workshop where that
+visibility is designed before it is stripped for speed. JavaScript is first class; Python is where
+the design is checked.
+
+Do not take that from this page. In two minutes:
+
+```
+bash pyto/scripts/check_all.sh                                        # nine suites, ~600 tests
+python pyto/experiments/grouped-ablation/run_cached.py --out /tmp/hit  # a miss, then two hits, one from a fresh process
+node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /tmp/hit/ticks.html
+```
+
+The tests were checked by mutation (each guards a specific line). The fixtures for the JavaScript
+port are 440 byte-exact cases. `pyto/questions.md` is where anyone unsure writes `{?} Label: ...`
+and the owner answers; read it before assuming. `pyto/BOARD.md` is the owner's one page.
+
+## What was asked
+
+Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases
+
+## Starting point
+
+af0bf062f5bbcd891e5880808641efca8ba172dc (checkpoint: the test's cache step overwrites its own scratch, so a repeated proof cannot trip on the last one). MAIN may have moved since: `git log --oneline af0bf06..origin/claude/python-ultracode-supercharge-st8hnu` shows how far.
+Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
+
+## What changed (the candidate)
 
 - A  pyto/consumers/discstudio-card/port/painter/cards.mjs
 - A  pyto/consumers/discstudio-card/port/painter/core.mjs
@@ -77,3 +118,15 @@ Evidence: suite exit 0, see below
 - {?} int-vs-float is unrecoverable from JSON on the JS side: `_flagged` and `_score_map` branch on `isinstance(value, int)`, and `flight`/`_number` on `isinstance(value, int)` vs `float`. A Python float 3.0 takes a different path from int 3 in `_flagged` (float falls through to None) but prints identically in `flight`. cards.mjs treats every integral JS number as an int, so a card whose `winner` arrived as 0.0 would resolve to participant 0 here and to no winner in Python. The fixtures carry no winner/highlight/scores at all.
 - {?} the four exported renderers, not two: cards.mjs also exports `renderBotanicalBattle` and `renderSignalSingle`, the halves each studio kept "only so the module still self-checks against its tournament renders". card_render.py does not re-export them and the verifier does not cover them, but I ported and checked them (32 layout x details x width combinations plus 6 hand-built edge cards, all sha256-identical to CPython) so the two modules stay whole. If the owner would rather ship only the promoted pair, dropping those two exports costs nothing else.
 - {?} error types are the one thing that does not match: where Python raises `ValueError` ("card object required", "width must be at least 80", "single card needs one participant", "art must be a full <svg> document") cards.mjs throws a plain `Error` with the same message. Confirmed as the sole divergence across the edge-case sweep — 44 of 48 renders identical, the other 4 being this raise on both sides.
+
+## What to do
+
+1. Explain this to the owner in plain words: what was asked, what changed file by file (one line
+   each), what the evidence shows, what is uncertain. Use no term this page does not define.
+2. Ask the owner: land it, drop some files, or send it back. To drop files, from the clone:
+   `bash pyto/scripts/neat.sh drop 15 <path> ...` (they go back to the starting point, the
+   packet is rewritten, the suite runs again).
+3. Land: `bash pyto/scripts/neat.sh land 15`. It merges the candidate into MAIN, runs the suite
+   again on the merged tree, writes a receipt under `pyto/experiments/landings/`, commits
+   `land(task-15): Painter port: the sixteen disc-art families and the two card renderers run in the browser as dependency-free JavaScript, byte-identical to the Python workshop across 432 family cases and 8 card cases`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
+   If it refuses, it says exactly why, and nothing has changed.
