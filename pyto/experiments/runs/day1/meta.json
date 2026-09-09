@@ -1,7 +1,7 @@
 {
   "day": 1,
   "base_sha": "3b91d83",
-  "commit_sha": "pending",
+  "commit_sha": "953fd5c",
   "date": "2026-09-09",
   "agents": [
     {
@@ -201,7 +201,7 @@
       "pyto/experiments/art-tournament/baseline/": 25,
       "pyto/experiments/art-tournament/harness/{contact_sheet,fixtures,lint_svg}.py": 3,
       "pyto/experiments/art-tournament/studios/": 513,
-      "command": "git ls-files --others --exclude-standard | sed -E 's#^(pyto/experiments/art-tournament/[^/]+)/.*#\\1/…#' | sort | uniq -c"
+      "command": "git ls-files --others --exclude-standard | sed -E 's#^(pyto/experiments/art-tournament/[^/]+)/.*#\\1/\u2026#' | sort | uniq -c"
     },
     "modified_tracked_out_of_lane": [
       "pyto/research/ULTRACODE-WEEK.md (1 insertion/1 deletion at line 51; accurate annotation of run.py's temp-dir default; orchestrator decides commit or revert)"
