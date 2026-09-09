@@ -6,7 +6,7 @@
 #   neat show <id>            print the hand-off (what a fresh agent gets)
 #   neat drop <id> <path>...  put those files back to the starting point, repack
 #   neat land <id>            merge into MAIN, verify, receipt, commit, push; EXP/<id> goes away
-#   neat kill <id>            abandon: EXP/<id> and its branch go away, nothing lands
+#   neat kill <id>            abandon: EXP/<id> goes away, nothing lands; exp/<id> is kept (nothing is deleted)
 #   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
 #   neat list                 every experiment and its state
 #
@@ -279,9 +279,7 @@ cmd_kill() {
   local id="${1:-}"; [ -n "$id" ] || usage
   git -C "$ROOT" worktree remove --force "$EXP/$id" 2>/dev/null || true
   rm -rf "$EXP/$id"
-  git -C "$ROOT" branch -D "exp/$id" >/dev/null 2>&1 || true
-  git -C "$ROOT" push -q origin --delete "exp/$id" 2>/dev/null || true
-  echo "task $id abandoned; nothing landed"
+  echo "task $id abandoned; nothing landed. exp/$id is kept (git branch -D exp/$id, and on origin: git push origin --delete exp/$id, when you're sure)"
 }
 
 cmd_undo() {
