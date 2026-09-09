@@ -1,0 +1,46 @@
+{
+  "external": {
+    "px.synthetic.disc_history": {
+      "digest": "b03edbbb181398af6131c130e938c80e575dee42a4e0179f612a83db1ac9c045",
+      "ref": "disc-stats-sidecar.external.px.synthetic.disc_history.json"
+    }
+  },
+  "program": {
+    "name": "synthetic-disc-statistics",
+    "ticks": [
+      {
+        "calculations": [
+          {
+            "args": {},
+            "calculation": "fn.discStats",
+            "id": "annotate",
+            "inputs": {
+              "value": "px:px.synthetic.disc_history"
+            },
+            "into": "px.synthetic.disc_stats"
+          }
+        ],
+        "name": "stats"
+      }
+    ]
+  },
+  "provider": {
+    "pyto": {
+      "modules": {
+        "core.py": "32a031830659b4fd31c6f1068e487cf4613e7ff4609dd01a2cb32b8510c1c120",
+        "pcr.py": "64cd374a0887d3f12c5c7167fbdf47d93556a403df47922f9de08f6926830acf"
+      },
+      "package": "pyto-lab",
+      "version": "0.1.0"
+    },
+    "registry": {
+      "fn.discStats": {
+        "module": "run_experiment",
+        "source_sha256": "767f4efd7db841a13ad9b97d127d5a8a7efffd8c8d52ea2d57a20e2999a20e35"
+      }
+    }
+  },
+  "results": {
+    "annotate": null
+  }
+}

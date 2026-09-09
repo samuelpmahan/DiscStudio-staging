@@ -31,7 +31,7 @@ digest. Nothing here asserts they *were* skipped.
 from __future__ import annotations
 
 import json
-from typing import Any, Iterable, Mapping
+from typing import Any, Mapping
 
 PX = "px:"
 FN = "fn:"

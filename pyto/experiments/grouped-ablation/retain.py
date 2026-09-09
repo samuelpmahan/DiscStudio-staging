@@ -134,7 +134,7 @@ def _check_args_jsonable(invocation_id: str, args: Mapping[str, Any]) -> None:
             raise RetainError(
                 f"retain: invocation '{invocation_id}' arg '{key}' is a "
                 f"{type(value).__name__}, which JSON cannot describe; retained data "
-                f"holds no executable code and no repr placeholders (stewardship:39)"
+                f"holds no executable code and no repr placeholders (docs/PYTHON-LAB-STEWARDSHIP.md:39)"
             )
 
 
