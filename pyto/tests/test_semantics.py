@@ -519,8 +519,13 @@ class PCRRunRulesTest(unittest.TestCase):
         self.assertFalse(pxc.has("px.third"))
 
     def test_results_keyed_by_id_not_tick_and_rerun_replaces(self):
-        """pcr.py:162,177: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun
-        has only pcr/ticks/results (no run id or timestamp); rerunning yields equal testimony.
+        """pcr.py: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun
+        carries no run id and no run-level timestamp; rerunning yields equal testimony.
+
+        Day 2 seam (CHANGES.md): PcrRun gained one trailing, defaulted field, `receipts`.
+        The first three fields and their order are unchanged, which is what keeps
+        json.dumps([asdict(t) for t in run.ticks]) byte-identical for consumers
+        (tests/test_receipts.py::TestimonyBytesUnchanged).
 
         Mutation: pcr.py:162 `results[invocation.id] = value` ->
         `results[f"{tick.name}/{invocation.id}"] = value`.
@@ -532,7 +537,10 @@ class PCRRunRulesTest(unittest.TestCase):
         pxc.set(SRC, [1])
         run = pcr.run(pxc)
         self.assertEqual(sorted(run.results), ["a", "b"])
-        self.assertEqual(tuple(f.name for f in dataclasses.fields(PcrRun)), ("pcr", "ticks", "results"))
+        fields = tuple(f.name for f in dataclasses.fields(PcrRun))
+        self.assertEqual(fields[:3], ("pcr", "ticks", "results"))
+        self.assertEqual(fields, ("pcr", "ticks", "results", "receipts"))
+        self.assertEqual(run.receipts, {})  # observe defaults to False
         self.assertEqual(pcr.run(pxc).ticks, run.ticks)
 
     def test_cross_pcr_consumer_records_px_not_fn(self):
