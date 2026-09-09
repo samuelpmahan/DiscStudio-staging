@@ -42,6 +42,7 @@ The last two lines are the hit and the room to look at it. Landing from there is
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 08:22 Fresh-clone proof on D:/ (owner: "I need proof im not one of them"): clone of 3b8b5e5, venv, install; one miss then one hit from a fresh process; the tick page rendered; the suite red on one test only: the record's `retained.commit` names a working-tree sha that no clone has. Lane 4's prompt, with evidence.
 - 2026-09-09 08:21 **landed** `task-1`: AHI runs on the owner's Windows D:/: neat new works (host path for pip, python checks the install), the ablation fixture is bit-portable (no libm), the card server drains a 413 body, stripped child environments keep SystemDrive (65 files since 8604a0c, suites green, receipt 20260909T081928Z-task-1)
 - 2026-09-09 08:16 **refused** `task-1`: MAIN is behind origin/HEAD by  commit(s) (someone landed elsewhere); run: git pull --rebase origin HEAD  then land again
 - 2026-09-09 08:13 **landed** `windows-venv`: the scripts find the repository's .venv on their own, so isolated child processes import pyto on Windows too; the D:/ commands make that venv (4 files since 291b7f7, suites green, receipt 20260909T081311Z-windows-venv)
