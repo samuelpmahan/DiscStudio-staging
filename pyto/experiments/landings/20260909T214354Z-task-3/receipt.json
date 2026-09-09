@@ -1,0 +1,101 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260909T214354Z-task-3",
+  "package": "task-3",
+  "base_sha": "e0720783d5ae672e88b3db33c742c6ed1be16850",
+  "result": "verified",
+  "verifier": {
+    "command": "bash pyto/scripts/neat.sh selftest",
+    "exit": 0,
+    "output_sha256": "09cbe9350c813f077ea743a805251a9fb5349a3142b9103d8689a63950820cbb"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "2193811827a041348411c4b35d98f127d2cf2e95480f13962828df9e00fc594f",
+    "counts": {
+      "library": 144,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 240,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 103,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/3/BRIEF.md",
+      "bytes": 7149,
+      "sha256": "4bad7a8779ddd6face7e204ab489186b7c3875bc166382911ce33536ae562423"
+    },
+    {
+      "path": "pyto/experiments/tasks/3/HANDOFF.md",
+      "bytes": 6509,
+      "sha256": "18142bc1e788ef6881eea8fddfa539a67e84b22c33b8c5b10044d31aea1680ab"
+    },
+    {
+      "path": "pyto/experiments/tasks/3/evidence/check_all.txt",
+      "bytes": 116522,
+      "sha256": "fb7fcd64c6705358141e29dd438acad09fb59a4d6e07359d846fc21a40bf7c97"
+    },
+    {
+      "path": "pyto/experiments/tasks/3/evidence/verify.txt",
+      "bytes": 281,
+      "sha256": "09cbe9350c813f077ea743a805251a9fb5349a3142b9103d8689a63950820cbb"
+    },
+    {
+      "path": "pyto/experiments/tasks/3/packet.md",
+      "bytes": 3016,
+      "sha256": "c2b328f92c62184c34d05e45893d1c9235e88f80bf915b81784a8fa001daef8b"
+    },
+    {
+      "path": "pyto/scripts/land.sh",
+      "bytes": 13404,
+      "sha256": "bfd4be8af9c890c1f5e67d2c9862a93352746042573bbbf78c7993ed90368ccb"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 23359,
+      "sha256": "3dbf1a8cc5d35679f61d1b2d5d1c6c8dc21254c89e9a83129f727d6e23df21ae"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 35679,
+      "sha256": "559eb3cf286e8357d5a20334b801e2051f4eab18a157c3891d12954d1b960c6e"
+    },
+    {
+      "path": "pyto/experiments/tasks/9/HANDOFF.md",
+      "bytes": 7199,
+      "sha256": "b23b15b80fca43c2abdd7dd01b578135e76c8abef34481654321000baca77130"
+    },
+    {
+      "path": "pyto/experiments/tasks/9/evidence/check_all.txt",
+      "bytes": 97190,
+      "sha256": "f2f73efd1972164be0231017023e7dbbc7341004358786513500f98098e5df25"
+    },
+    {
+      "path": "pyto/experiments/tasks/9/evidence/verify.txt",
+      "bytes": 231,
+      "sha256": "54eb2cf2cf28760aa071e2406e82e2e155d14f2ef36cc5a4f4d80a26d315590d"
+    },
+    {
+      "path": "pyto/experiments/tasks/9/packet.md",
+      "bytes": 3886,
+      "sha256": "ccdf6b3bf6505179efa7b7e1a03b8ab4ebbfb87d9bfc3c5304cebb6768a60275"
+    },
+    {
+      "path": "pyto/scripts/check_land_refusals.sh",
+      "bytes": 4720,
+      "sha256": "23afda996f9bf0175b181cf4fc8d9a93d887cb9d04729241b5ea059fb2d92f50"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-09T21:44:31.876634Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

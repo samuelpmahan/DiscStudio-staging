@@ -10,27 +10,39 @@
 #   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
 #   neat update <id>          bring MAIN's newer commits into EXP/<id> (a conflict names the files and stops)
 #   neat list                 every experiment and its state
+#   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
 #
-# MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN),
-# with its own .venv so the suite in EXP/<id> tests EXP/<id>'s kernel, not MAIN's. The packet lives
-# inside the experiment at pyto/experiments/tasks/<id>/ so it travels with the branch and lands with
-# the candidate. IDs are plain numbers from 0.
+# MAIN is the clone itself. EXP/<id> is a git worktree on branch exp/<id> (ignored by git in MAIN).
+# In a pyto repository (pyto/pyproject.toml is there) the copy gets its own .venv so the suite in
+# EXP/<id> tests EXP/<id>'s kernel, not MAIN's, and the packet lives at pyto/experiments/tasks/<id>/;
+# in any other repository there is no venv and the packet lives at .neat/tasks/<id>/. Either way the
+# packet travels with the branch and lands with the candidate. IDs are plain numbers from 0.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PY="$(cd "$HERE/.." && pwd)"
-ROOT="$(cd "$PY/.." && pwd)"
+ROOT="$(git -C "$HERE" rev-parse --show-toplevel)"
+PY="$ROOT/pyto"
 # The interpreter, in order: $PYTHON if set; the repository's own .venv (Linux or Windows layout);
 # then python3 or python on PATH. A venv is what lets an isolated child (-I) import pyto on Windows,
-# where a Store Python's editable install lands in the user site that -I ignores.
-_root_for_python="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# where a Store Python's editable install lands in the user site that -I ignores. The repository is
+# wherever git says it is, so this works when the scripts do not sit in pyto/scripts/.
 if [ -z "${PYTHON:-}" ]; then
-  for _c in "$_root_for_python/.venv/bin/python" "$_root_for_python/.venv/Scripts/python.exe"; do
+  for _c in "$ROOT/.venv/bin/python" "$ROOT/.venv/Scripts/python.exe"; do
     [ -x "$_c" ] && PYTHON="$_c" && break
   done
 fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 EXP="$ROOT/EXP"
-TASKS="pyto/experiments/tasks"
+if [ -f "$ROOT/pyto/pyproject.toml" ]; then
+  PYTO_MODE=1
+  TASKS="pyto/experiments/tasks"
+  LAND_REL="pyto/experiments/landings/"
+  BOARD_REL="pyto/BOARD.md"
+else
+  PYTO_MODE=0
+  TASKS=".neat/tasks"
+  LAND_REL=".neat/landings/"
+  BOARD_REL=".neat/BOARD.md"
+fi
 BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
 URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#https://#' || echo '<origin>')"
 cmd="${1:-}"; shift || true
@@ -61,11 +73,18 @@ venv_python() { # <id>
   else echo "$PYTHON"; fi
 }
 packet_of() { echo "$EXP/$1/$TASKS/$1/packet.md"; }
-hostpath() { # Git Bash on Windows: pip and python want D:/... not /d/...; elsewhere the path is unchanged
-  if command -v cygpath >/dev/null 2>&1; then cygpath -m "$1"; else printf '%s
-' "$1"; fi
+hostpath() { # Git Bash on Windows: pip and python want D:\... not /d/...; elsewhere the path is unchanged
+  if command -v cygpath >/dev/null 2>&1; then cygpath -w "$1"; else printf '%s\n' "$1"; fi
 }
 need_exp() { [ -d "$EXP/$1" ] || die "no experiment EXP/$1 (neat list)"; }
+status_without_bookkeeping() { # MAIN's status minus the landing script's own leavings: receipts and the board
+  local line path
+  while IFS= read -r line; do
+    path="${line:3}"; path="${path##* -> }"
+    case "$path" in "$LAND_REL"*|"$BOARD_REL") continue;; esac
+    printf '%s\n' "$line"
+  done < <(git -C "$ROOT" status --porcelain --untracked-files=all)
+}
 
 cmd_new() {
   local intent="${1:-}"; shift || true
@@ -95,12 +114,16 @@ Evidence: not packed yet
 \`{?} Label: description\`, and leaves the decision to the owner. Empty means nothing was unsure.)
 EOF
   echo "Task $id: EXP/$id is a copy of MAIN at ${base:0:7}. Work there."
-  echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
-  "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
-  "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$(hostpath "$EXP/$id/pyto")[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
-  if "$(venv_python "$id")" -c 'import os, sys, pyto; sys.exit(0 if os.path.realpath(pyto.__file__).startswith(os.path.realpath(sys.argv[1])) else 1)' "$(hostpath "$EXP/$id")" 2>/dev/null
-  then echo "  its python imports pyto from EXP/$id"
-  else die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working."
+  if [ "$PYTO_MODE" -eq 1 ]; then
+    echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
+    "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
+    "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$(hostpath "$EXP/$id/pyto")[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
+    if "$(venv_python "$id")" -c 'import os, sys, pyto; sys.exit(0 if os.path.realpath(pyto.__file__).startswith(os.path.realpath(sys.argv[1])) else 1)' "$(hostpath "$EXP/$id")" 2>/dev/null
+    then echo "  its python imports pyto from EXP/$id"
+    else die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working."
+    fi
+  else
+    echo "  plain repository: no venv or pip install"
   fi
   echo "  done. When the work is done: bash pyto/scripts/neat.sh pack $id"
 }
@@ -234,7 +257,14 @@ cmd_pack() {
     echo "   exit $vexit"
   fi
   echo "== suite in EXP/$id (python: $vpy)"
-  cexit=0; (cd "$wt" && PYTHON="$vpy" bash "$wt/pyto/scripts/check_all.sh") > "$wt/$TASKS/$id/evidence/check_all.txt" 2>&1 || cexit=$?
+  cexit=0
+  if [ "$PYTO_MODE" -eq 1 ]; then
+    (cd "$wt" && PYTHON="$vpy" bash "$wt/pyto/scripts/check_all.sh") > "$wt/$TASKS/$id/evidence/check_all.txt" 2>&1 || cexit=$?
+  elif [ "$verify" = "none" ]; then
+    echo "suite skipped (Verify: none)" > "$wt/$TASKS/$id/evidence/check_all.txt"
+  else
+    (cd "$wt" && PYTHON="$vpy" bash -c "$verify") > "$wt/$TASKS/$id/evidence/check_all.txt" 2>&1 || cexit=$?
+  fi
   tail -12 "$wt/$TASKS/$id/evidence/check_all.txt" | sed 's/^/   /'
   write_packet_and_handoff "$id" "$vexit" "$cexit"
   git -C "$wt" add -A
@@ -299,7 +329,7 @@ cmd_undo() {
   local sha intent parents
   sha="$(git -C "$ROOT" log --format=%H --grep="^land(task-$id): " -n 1)"
   [ -n "$sha" ] || die "no landing commit for task $id (git log --grep 'land(task-$id)')"
-  [ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all | cut -c4- | grep -v '^pyto/experiments/landings/' | grep -v '^pyto/BOARD.md$')" ] || die "MAIN is not clean; undo needs a clean tree"
+  [ -z "$(status_without_bookkeeping)" ] || die "MAIN is not clean; undo needs a clean tree"
   intent="$(git -C "$ROOT" log -1 --format=%s "$sha" | sed "s/^land(task-$id): //")"
   parents="$(git -C "$ROOT" rev-list --parents -n 1 "$sha" | wc -w)"
   echo "== undo task $id: $intent  (landing ${sha:0:7})"
@@ -309,7 +339,7 @@ cmd_undo() {
   if bash "$HERE/land.sh" "undo-task-$id" --message "undo task $id: $intent"; then
     echo "task $id is out of MAIN; its packet and landing stay in history (git log --grep 'task-$id')"
   else
-    git -C "$ROOT" checkout -q -- . && git -C "$ROOT" clean -fdq -e pyto/experiments/landings
+    git -C "$ROOT" checkout -q -- . && git -C "$ROOT" clean -fdq -e "$LAND_REL"
     echo "undo of task $id did not land (see the reason above); MAIN is as it was" >&2; exit 1
   fi
 }
@@ -327,6 +357,69 @@ cmd_update() {
     git -C "$wt" merge --abort
     die "MAIN conflicts with EXP/$id in: $files  (regenerated evidence conflicts are re-made on the merged code, not merged by hand: merge in EXP/$id, regenerate, commit, then pack)"
   fi
+}
+
+cmd_selftest() {
+  local tmp seed clone origin tools_dir out failures=0
+  tmp="$(mktemp -d "${TMPDIR:-/tmp}/neat-selftest.XXXXXX")"
+  origin="$tmp/origin.git"; seed="$tmp/seed"; clone="$tmp/clone"; tools_dir="$clone/tools"
+  git init -q --bare "$origin"
+  git init -q "$seed"
+  git -C "$seed" config user.email selftest@example.invalid
+  git -C "$seed" config user.name selftest
+  printf 'Verify: true\n' > "$seed/README.md"
+  git -C "$seed" add README.md
+  git -C "$seed" commit -q -m initial
+  git -C "$seed" remote add origin "$origin"
+  git -C "$seed" push -q -u origin HEAD
+  git clone -q "$origin" "$clone"
+  git -C "$clone" config user.email selftest@example.invalid
+  git -C "$clone" config user.name selftest
+  mkdir -p "$tools_dir"
+  cp "$HERE/neat.sh" "$tools_dir/neat.sh"
+  cp "$HERE/land.sh" "$tools_dir/land.sh"
+  chmod +x "$tools_dir/neat.sh" "$tools_dir/land.sh"
+  git -C "$clone" add tools
+  git -C "$clone" commit -q -m "selftest tools"
+  if bash "$tools_dir/neat.sh" new "selftest" --verify true >"$tmp/new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if [ -d "$clone/EXP/0" ] && [ -f "$clone/EXP/0/.neat/tasks/0/packet.md" ]; then
+    echo "selftest new: pass"
+  else
+    echo "selftest new: FAIL"; failures=$((failures + 1))
+  fi
+  printf 'edit\n' > "$clone/EXP/0/edit.txt"
+  if bash "$tools_dir/neat.sh" pack 0 >"$tmp/pack.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if grep -q '^## Candidate$' "$clone/EXP/0/.neat/tasks/0/packet.md" &&
+     grep -q '^## Evidence$' "$clone/EXP/0/.neat/tasks/0/packet.md" &&
+     grep -q '^## Uncertain$' "$clone/EXP/0/.neat/tasks/0/packet.md"; then
+    echo "selftest packet sections: pass"
+  else
+    echo "selftest packet sections: FAIL"; failures=$((failures + 1))
+  fi
+  if bash "$tools_dir/neat.sh" land 0 >"$tmp/land.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if git -C "$clone" log --format=%s -n 20 | grep -q '^land(task-0): '; then
+    echo "selftest landing commit: pass"
+  else
+    echo "selftest landing commit: FAIL"; failures=$((failures + 1))
+  fi
+  if ! git --git-dir="$origin" show-ref --verify --quiet refs/heads/exp/0; then
+    echo "selftest origin branch removal: pass"
+  else
+    echo "selftest origin branch removal: FAIL"; failures=$((failures + 1))
+  fi
+  if grep -q '^## Today$' "$clone/.neat/BOARD.md" && grep -q 'task-0' "$clone/.neat/BOARD.md"; then
+    echo "selftest board: pass"
+  else
+    echo "selftest board: FAIL"; failures=$((failures + 1))
+  fi
+  if bash "$tools_dir/neat.sh" undo 0 >"$tmp/undo.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if [ ! -e "$clone/edit.txt" ] && [ -z "$(git -C "$clone" status --porcelain --untracked-files=all)" ]; then
+    echo "selftest undo clean: pass"
+  else
+    echo "selftest undo clean: FAIL"; failures=$((failures + 1))
+  fi
+  rm -rf "$tmp"
+  [ "$failures" -eq 0 ]
 }
 
 cmd_list() {
@@ -347,5 +440,6 @@ cmd_list() {
 
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
-  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";; list) cmd_list "$@";; *) usage;;
+  land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
+  list) cmd_list "$@";; selftest) cmd_selftest "$@";; *) usage;;
 esac

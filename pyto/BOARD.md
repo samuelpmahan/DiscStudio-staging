@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-09 21:44 **landed** `task-3`: neat anywhere: the same seven commands in any git repo, no pyto assumptions, with a selftest that proves new, pack, land and undo in a scratch repo in under two minutes (18 files since e072078, suites green, receipt 20260909T214354Z-task-3)
 - 2026-09-09 21:42 **refused** `task-21`: merge conflict with exp/21 in: pyto/viewer/embed.mjs scripts/browser_test.py src/review-data.js src/runtime.js tests/core.test.js 
 - 2026-09-09 21:40 **landed** `task-9`: Add a fast, isolated check that land.sh's early refusal paths (bad package name, unknown branch, dirty file outside allowed paths) exit 1 and write a failed/*.json receipt without ever reaching check_all.sh, so the refusal contract is verified in under a second instead of only by hand-run scratch clones. (314 files since 1b38f28, suites green, receipt 20260909T213956Z-task-9)
 - 2026-09-09 21:45 **note**: your D:/ session took ids 12 (proof.sh) and 13 (questions), so my two copies were renumbered: studio run-record export is now `task-21` (EXP/21, exp/21) and receipts as Parts is `task-22` (EXP/22, exp/22). Both builders had stalled; fresh ones are running. Codex delivered `task-3` (neat anywhere, selftest green); merging MAIN's `update` into it before landing.
