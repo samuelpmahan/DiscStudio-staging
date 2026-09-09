@@ -100,6 +100,46 @@ ChessLab and Wumpus were built (`research/github-growth-review.md`), and it is t
 human-facing surfaces (record, render, `{?}`) come before more code. Bites: every brief must be
 executable cold by an agent and inspectable by a non-JS reader.
 
+### {?} Focus
+What is the focus right now?
+Status: resolved 2026-09-09 by owner. "DiscStudio is the focus rn". Bites: Lane 2 first; Lane 1
+addressing only as far as DiscStudio surfaces need it.
+
+### {?} HorizonDump
+Where does the owner brain-dump the horizon, and who manages the files and git?
+Status: resolved 2026-09-09 by owner. "set up a local neat that allows me to brain dump the
+horizon"; "I just dont want to have to slow down and debug shit"; "braindump is interactive";
+"notice how the tree is designed so I dont manage even git?". So: the dump is the conversation
+with the Socratic session; the owner talks, the session reads each decision back in the owner's
+words, writes it here, commits and pushes. The owner opens no file and types no git command. A
+horizon file in EXP/0 was made and removed for that reason. Bites: this file, `BOARD.md` lanes,
+the Socratic session's write rules.
+
+### {?} AddressRootIsAMount
+Do `disc`, `chess`, `wumpus`, `neat`, `tidy` leave the address and become mounts, three roots
+only (`px`, `fn`, `oc`), so `px.badges.px` means the same thing in every world?
+Status: resolved 2026-09-09 by owner, by default. Owner: "MDL is good but if u need to start
+with a wider footprint and refine over time thats fine the whole point is learning while moving
+safely"; asked the question itself: "idk any of this". So the board's proposal is the target; a
+wider footprint may ship first if it is named and can be narrowed without breaking records; the
+owner is not asked addressing questions again, agents stress-test instead. A Sonnet stress test
+(2026-09-09, read-only census of `pyto/`) found: no Part root is enforced today (`core.py:17-19`),
+which let in bare `scratch.` (526 hits) and `input.` (113) in grouped-ablation, `material.<sha>`
+in `materials.py:39,222`, and world names as second segments in two hand-written viewer
+fixtures (`chesslab-s0-s1.json`, the `buzzz-mint` card); Python has no mount type at all, so
+trimming addresses to bare nouns without building one makes two experiments collide; adopting
+the proposal regenerates 37 retained evidence files and needs a per-version record validator
+(`adapters.js:13,179` accepts one schema string); the viewer hard-codes two roots in four places
+(`adapters.js:105-112,234,247,336`), so `oc` needs those edits. Its own `{?}` lines, each with the
+default the agent takes: MaterialRootRename (default: exempt the experiment-scoped store until it
+is promoted to `pyto/src`); OcNoPrecedent (default: enforce `oc` only when the first `oc` exists);
+DiscProductSegment (default: `px.disc.*` and `px.card.*` are allowed, DiscStudio is the consumer,
+not a per-instance world); ReceiptSegmentReserved (default: `receipt` joins the reserved second
+segments); ScratchStoreShape (default: `px.scratch.<experiment>.*`); FixtureHonesty (default:
+relabel the two fixtures "pre-mount, illustrative", do not rewrite); PartyMountType (default:
+build the Python mount type in round five, since nothing else prevents collisions). Bites: round
+five, `core.py`, `adapters.js`, `materials.py`, Day 5.
+
 ## Questions I resolved alone and should have asked (recorded late, 2026-09-09)
 
 ### {?} PlanPrimacy
