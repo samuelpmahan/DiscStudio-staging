@@ -2,7 +2,7 @@
 
 Intent: watch it think: the tick page plays a record Tick by Tick with play, pause and step, each Calculation's reads, writes and value appearing when it finished, at recorded speed or slower
 Starting point: 12c65281bf9999f5d44ff5b1b883594ca9d5cdb0 (proof: fresh clone on D:/ after task 15)
-Verify: node --test pyto/viewer/test
+Verify: node --test pyto/viewer/test/*.test.mjs
 Allow: pyto/viewer/tick-viewer.html pyto/viewer/tick-viewer.js pyto/viewer/adapters.js pyto/viewer/embed.mjs pyto/viewer/test pyto/viewer/README.md
 Candidate: not packed yet
 Evidence: not packed yet
