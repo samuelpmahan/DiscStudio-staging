@@ -75,6 +75,8 @@ cmd_new() {
   id="$(next_id)"; base="$(git -C "$ROOT" rev-parse HEAD)"; subject="$(git -C "$ROOT" log -1 --format=%s)"
   mkdir -p "$EXP"
   git -C "$ROOT" worktree add -q "$EXP/$id" -b "exp/$id" HEAD
+  # Reserve the id everywhere at once: another clone computing its next id sees this branch on origin.
+  git -C "$ROOT" push -q -u origin "exp/$id" 2>/dev/null && echo "  reserved exp/$id on origin" || echo "  (origin not reachable; the id is reserved only here until the first push)"
   mkdir -p "$EXP/$id/$TASKS/$id"
   cat > "$(packet_of "$id")" <<EOF
 # Task $id
