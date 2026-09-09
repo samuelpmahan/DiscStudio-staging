@@ -203,11 +203,11 @@ you're saying. Idk any of this it just happened." Default taken: port to JS with
 the site stays static, Python is the workshop. The owner's contract, same night: "it needs to be
 stable and explainable. I know nothing. U explain it. That's why this works."
 
-**Stands.** The studio's run-record export is being built as task 12 in its own copy, under the
-studio contract (`AGENTS.md`), landing only if `npm test`, the viewer suite and the browser check
-pass. Astra's three packages stand as briefed (painter port, record export, formats); whichever
-arrives first for the export competes on the same verifier. Next brief: DiscShelf and
-OnTheCourse formats.
+**Stands.** The painter port landed (task 19): sixteen families and both card renderers run in
+the browser, byte-identical to the workshop across 440 cases. Next in this lane: wire the port
+into the studio's own art path under `AGENTS.md`, then the three formats (Astra's package three).
+The studio's run-record export is being built in its own copy, landing only if `npm test`, the
+viewer suite and the browser check pass.
 
 ## Lane 3: neat and tidy (the owner's neat expert)
 
