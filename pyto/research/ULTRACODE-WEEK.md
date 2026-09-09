@@ -144,6 +144,31 @@ read and wrote, on receipts produced by both the JS runtime and pyto.
   same receipts. The anti-Spring rule from the stewardship doc still applies: a backend lands when
   a consumer needs it, not before.
 
+## Reframing 6 (2026-09-09, owner): specialization, and the demo that justifies the week
+
+- **Split.** This session owns the kernel (the portable AI Linux: PxC, PCR and Ticks, receipts,
+  the run record, the PCR render, addressing, storage mounts) and uses what it learns to write
+  briefs that orchestrate Codex on the DiscStudio integration surfaces. Real progress toward the
+  real thing is the justification; the owner first sketched a portable AI kernel using Python for
+  determinism eighteen months ago.
+- **No budgets, no config.** Simple stays simple; extra effort earns its place. Drop the
+  per-namespace budget Part: the 5000 ms and 2.5 s figures are measured in receipts, never
+  declared in files. A package is its code plus its retained record and receipts; there is no
+  manifest a person edits.
+- **The demo: brew, npm, pip.** "I should be able to do this" becomes `px add <address>`, and
+  the skill is verified in 2.5 seconds: fetched from the table, mounted under its namespace, and
+  verified by replaying its own shipped record in a fresh process until every digest matches.
+  Verification is replay; there is no other kind. The first packages are the art registry's
+  Calculations (tally attached) and the grouped-ablation program; the first table is repo-local,
+  the same table readable from node.
+- **Days 4 and 5, kernel track.** Day 4: the table and the `px` command (add, ls, verify, show),
+  the first packages, the 2.5 s measurement in a fresh process, tamper tests (a changed record or
+  a changed function fails verification). Day 5: the same table read from node, one JS skill
+  verified by `exec.js` over a record, the cross-project hit, the SUBDUE and WebShaper comparison
+  on recorded graphs, returns generated from evidence. Codex track (briefs from this session): the
+  PCR render inside the studio, Python cards served to the browser, competition Ticks, the reducer
+  in both runtimes.
+
 ## Winner and thesis
 
 **Winner.** Experiment-reuse-first (aggregate 62.5/72 across three judges vs Kernel-first 61.5, Replay-first 54.5, Agent-workshop 53.5, JS-parity 37.5), with five grafts: Kernel-first's replay-gated composition promotion (PromotionRefused / provisional / demote+inline reversibility) and fn.pcr.select round trip; Replay-first's fresh-process boundary (`python3 -I`, scrubbed env) plus hidden-state, determinism (PYTHONHASHSEED x CRLF/LF) and false-unchanged auditors and the digest+ref sidecar for non-JSON values; JS-parity's mutation-kill discipline and 'skip with a named reason, never pass silently' rule; Agent-workshop's CAPTURE.md run record, CHANGES.md pairing and provenance lens (every number in the returns resolves to a retained file); and the environment corrections all three judges converged on (isolated `pip wheel` works here while `--no-build-isolation` fails; arxiv unreachable so SUBDUE cites pyto/research/primary-sources.md; disc-stats needs PYTHONPATH=.; consumer tests need data/).
