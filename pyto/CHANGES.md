@@ -904,3 +904,27 @@ pinned for `library` (`scripts/check_all.sh:86`), so that file is unchanged.
 `bash pyto/scripts/check_all.sh`: ALL SUITES PASSED (library 141,
 experiments/grouped-ablation 230, experiments/s3-synthetic 5, consumer 61, disc-stats 4,
 examples 3, art-registry-md, viewer 83, viewer-record-schema 19).
+
+## task 27 (base af0e30f): a Calculation can produce several Parts
+
+`calc(..., into=[a, b])` publishes one Part per address from one invocation -- the Calculation
+returns a mapping keyed by those addresses or a sequence in that order -- and one receipt lists
+every produce, one write per address, `result_sha256` of the whole returned value as before plus
+`produce_sha256` `{address: digest}` per published Part; a reference to such an invocation names
+which produce it reads (`ref[address]`, testified `fn:<id>#<address>`) and a bare one is refused
+at bind time and at resolve time; `into` may be an array in the record and both reference readers
+resolve the new spelling (`viewer/RECORD.md`, `viewer/adapters.js`, `viewer/test/record_schema.py`);
+one-address calls are byte for byte unchanged -- the record is identical and the receipt differs
+only by the added field, pinned against `tests/fixtures/single_into_pre_change.json` generated
+before the change -- and the grouped-ablation evidence was regenerated with the experiment's own
+scripts (`run.py --force`, `run_regrouped.py`, `run_reinput.py`, `run_from_retained.py`,
+`run_cached.py --force`, `replay.py --force`) because the receipts and pcr.py's pinned source
+digest moved; no test expectation was edited by hand.
+Then every other reader: `src/pyto/graph.py` (the authoring surface) and
+`experiments/grouped-ablation/retain.py` (retain/replay) walk `produce_addresses()` instead of one
+`into.address`, so `to_program`/`from_program` round-trip a multi-produce program and
+`check_record` unions the produces rather than putting a list in a set; one test per file guards it.
+`bash pyto/scripts/check_all.sh`: ALL SUITES PASSED (library 193,
+experiments/cross-project 9, experiments/grouped-ablation 244, experiments/hiding-primitives 6,
+experiments/s3-synthetic 5, experiments/students 10, consumer 61, disc-stats 4, examples 3,
+art-registry-md, viewer 107, viewer-record-schema 24).

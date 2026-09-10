@@ -22,6 +22,7 @@ import { dirname, resolve } from 'node:path';
 import {
   SCHEMA, MAX_ARRAY_ENTRIES, MAX_VALUE_BYTES, PNG_DATA_URL_PREFIX,
   validate, RecordSchemaError, materialize, deriveHit, derivePartIndex, bareAddress,
+  parseBinding, produceAddresses,
   fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords
 } from '../adapters.js';
 
@@ -544,6 +545,118 @@ test('a Part address named __proto__ or constructor is an ordinary row, not a pr
   ), null);
   assert.deepEqual(Object.entries(spelled.ticks[0].invocations[0].inputs), [['__proto__', 'px:input.rows']]);
   assert.equal({}.preexisting, undefined, 'still no prototype write after the second record');
+});
+
+/* ---------------------------------------------------------------- */
+/* multi-produce: RECORD.md, `into` may be an array                   */
+/* ---------------------------------------------------------------- */
+
+/**
+ * One invocation publishing two Parts from one pass, and a second reading one of
+ * them by name. Hand-written from RECORD.md, the same document
+ * `viewer/test/test_record_schema.py` builds for the Python reader, so the two
+ * references are shown answering the same about the same bytes.
+ */
+const multiProduceDoc = () => ({
+  schema: SCHEMA,
+  pcr: 'multi',
+  source: { runtime: 'pyto', version: '0.1.0', commit: null },
+  ticks: [
+    {
+      index: 0,
+      name: 'Prepare',
+      invocations: [{
+        id: 'stats',
+        calculation: { address: 'fn.multi.stats', implementation_sha256: null, identity_scope: 'runtime-function-body' },
+        inputs: { rows: 'px:in.rows' },
+        args: {},
+        into: ['out.mean', 'out.count'],
+        declared_consumes: ['px:in.rows'],
+        actual_consumes: ['in.rows'],
+        actual_produces: ['out.mean', 'out.count'],
+        writes: [{ address: 'out.mean', kind: 'new-address' }, { address: 'out.count', kind: 'new-address' }],
+        duration_ms: 1.5,
+        result_sha256: null,
+        hit: true,
+        value: { kind: 'json', data: { 'out.mean': 2.5, 'out.count': 4 }, note: null }
+      }]
+    },
+    {
+      index: 1,
+      name: 'Report',
+      invocations: [{
+        id: 'report',
+        calculation: { address: 'fn.multi.take', implementation_sha256: null, identity_scope: 'runtime-function-body' },
+        inputs: { value: 'fn:stats#out.count' },
+        args: {},
+        into: 'out.reported',
+        declared_consumes: [],
+        actual_consumes: [],
+        actual_produces: ['out.reported'],
+        writes: [{ address: 'out.reported', kind: 'new-address' }],
+        duration_ms: 0.5,
+        result_sha256: null,
+        hit: false,
+        value: { kind: 'json', data: 4, note: null }
+      }]
+    }
+  ],
+  parts: {
+    'in.rows': { written_by: null, read_by: ['stats'], preexisting: true },
+    'out.mean': { written_by: 'stats', read_by: [], preexisting: false },
+    'out.count': { written_by: 'stats', read_by: ['report'], preexisting: false },
+    'out.reported': { written_by: 'report', read_by: [], preexisting: false }
+  },
+  counters: { invocations: 2, hits: 1, computed: 1, wall_ms: 2.0 }
+});
+
+test('validate accepts an array `into` and the produce-qualified binding spelling', () => {
+  const record = multiProduceDoc();
+  assert.equal(validate(record), record);
+  assert.deepEqual(produceAddresses(['a', 'b']), ['a', 'b']);
+  assert.deepEqual(produceAddresses('a'), ['a']);
+  assert.deepEqual(produceAddresses(null), []);
+});
+
+test('derivePartIndex credits the produce an fn: binding names, and only that one', () => {
+  // The edge {?} ResultReadsAreReads turns on: a result read is a read of the
+  // Part the producer published, and when a producer published several, of the
+  // one the binding names -- not of all of them.
+  const record = multiProduceDoc();
+  const index = derivePartIndex(record.ticks);
+  assert.deepEqual(index, record.parts);
+  assert.deepEqual(index['out.count'].read_by, ['report']);
+  assert.deepEqual(index['out.mean'].read_by, []);
+});
+
+test('parseBinding reads both spellings and prefers a known invocation id', () => {
+  const producedBy = new Map([['stats', ['out.mean', 'out.count']], ['odd#name', ['out.odd']]]);
+  assert.deepEqual(parseBinding('px:in.rows', producedBy), ['in.rows']);
+  assert.deepEqual(parseBinding('fn:stats#out.count', producedBy), ['out.count']);
+  // a bare reference to a producer of several reads all of them; pyto's kernel
+  // refuses to write one, and a record that carries one is read, not repaired.
+  assert.deepEqual(parseBinding('fn:stats', producedBy), ['out.mean', 'out.count']);
+  // a known id wins over the `#` split, so an id carrying a `#` still resolves
+  assert.deepEqual(parseBinding('fn:odd#name', producedBy), ['out.odd']);
+  assert.deepEqual(parseBinding('fn:nobody#out.x', producedBy), []);
+});
+
+test('validate refuses the malformed shapes of the multi-produce clauses', () => {
+  const cases = [
+    [(r) => { r.ticks[0].invocations[0].into = []; }, 'ticks[0].invocations[0].into'],
+    [(r) => { r.ticks[0].invocations[0].into = ['out.mean', 'out.mean']; }, 'ticks[0].invocations[0].into[1]'],
+    [(r) => { r.ticks[0].invocations[0].into = ['out.mean', 7]; }, 'ticks[0].invocations[0].into[1]'],
+    [(r) => { r.ticks[0].invocations[0].into = { 0: 'out.mean' }; }, 'ticks[0].invocations[0].into'],
+    [(r) => { r.ticks[1].invocations[0].inputs.value = 'fn:stats#'; }, 'ticks[1].invocations[0].inputs.value'],
+    [(r) => { r.ticks[1].invocations[0].inputs.value = 'fn:#out.count'; }, 'ticks[1].invocations[0].inputs.value']
+  ];
+  for (const [mutate, path] of cases) {
+    const record = multiProduceDoc();
+    mutate(record);
+    const error = caught(() => validate(record));
+    assert.ok(error instanceof RecordSchemaError, `expected RecordSchemaError at ${path}, got ${error}`);
+    assert.equal(error.path, path);
+  }
 });
 
 test('validate rejects a png-data-url whose data is not a PNG data URL', () => {

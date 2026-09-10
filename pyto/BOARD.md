@@ -59,6 +59,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 01:06 **landed** `task-27`: a Calculation can produce several Parts: calc(... into=[a, b, ...]) publishes one Part per address from one invocation, the receipt lists every produce with its own digest, the record's produces and writes carry them all, and one-address calls are unchanged byte for byte (61 files since e2fbbd4, suites green, receipt 20260910T010544Z-task-27)
 - 2026-09-10 01:05 **refused** `task-27`: verifier exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260910T010513Z-task-27/verifier.txt)
 - 2026-09-10 01:04 **landed** `task-26`: Ticks as circuits: tick_laws.py checks any pyto-run-record@1 against the node law (inside a Tick no Calculation consumes a sibling's produce, no two siblings produce one Part) and the loop law (nothing consumes a Part produced later), and reports total work versus critical path per Tick; no kernel change (11 files since 71e2cbb, suites green, receipt 20260910T010331Z-task-26)
 - 2026-09-10 00:38 **started** `task-27`: a Calculation can produce several Parts: calc(... into=[a, b, ...]) publishes one Part per address from one invocation, the receipt lists every produce with its own digest, the record's produces and writes carry them all, and one-address calls are unchanged byte for byte (copy EXP/27; it lands only on green, with a receipt, or is killed)

@@ -134,11 +134,73 @@ def _str_array(value, path):
 
 
 def _binding(value, path):
-    """RECORD.md:80-82: inputs keep the testimony spelling, px: or fn:."""
+    """RECORD.md: inputs keep the testimony spelling, `px:` or `fn:`.
+
+    A result binding is `fn:<id>` or, when the producer published several Parts,
+    `fn:<id>#<address>`; both halves of the qualified form must be non-empty, so
+    a reader always has a producer to resolve and an address to resolve it to.
+    """
     _str(value, path)
     if not value.startswith("px:") and not value.startswith("fn:"):
-        _fail(path, f'expected a testimony binding spelled "px:<address>" or "fn:<id>", got {_show(value)}')
+        _fail(path, f'expected a testimony binding spelled "px:<address>", "fn:<id>" or "fn:<id>#<address>", got {_show(value)}')
+    if value.startswith("fn:") and "#" in value:
+        writer, _, produce = value[3:].rpartition("#")
+        if not writer or not produce:
+            _fail(path, f'expected a produce-qualified result binding "fn:<id>#<address>", got {_show(value)}')
     return value
+
+
+def _into(value, path):
+    """RECORD.md: `into` is one address, an array of addresses, or null.
+
+    The array is the multi-produce form: an invocation that published several
+    Parts from one pass. An empty array is refused -- an invocation that produced
+    nothing writes null, the way every other absent field does -- and so is a
+    repeated address, which would claim one Part was published twice by one
+    invocation.
+    """
+    if value is None or isinstance(value, str):
+        return _nullable_str(value, path)
+    if not isinstance(value, list):
+        _fail(path, f"expected an address, an array of addresses, or null, got {_show(value)}")
+    if not value:
+        _fail(path, "expected at least one address; an invocation that produces nothing writes null")
+    seen = set()
+    for index, entry in enumerate(value):
+        _str(entry, f"{path}[{index}]")
+        if entry in seen:
+            _fail(f"{path}[{index}]", f"duplicate produce address {json.dumps(entry)}; one invocation publishes each address once")
+        seen.add(entry)
+    return value
+
+
+def produce_addresses(into):
+    """The addresses an invocation's `into` names: none, one, or several."""
+    if into is None:
+        return ()
+    return (into,) if isinstance(into, str) else tuple(into)
+
+
+def resolve_binding(binding, produced_by):
+    """The Part addresses one testimony binding reads (RECORD.md, Field rules).
+
+    `px:<address>` is that address. `fn:<id>` is the whole result of that
+    invocation, which is the one Part it published; `fn:<id>#<address>` names one
+    produce of an invocation that published several. A known id wins over the `#`
+    split, so an invocation id carrying a `#` still resolves as the bare reference
+    it is. `produced_by` maps an invocation id to the addresses it published.
+    """
+    if binding.startswith("px:"):
+        return (binding[3:],)
+    if not binding.startswith("fn:"):
+        return ()
+    body = binding[3:]
+    if body in produced_by:
+        return tuple(produced_by[body])
+    writer, separator, address = body.rpartition("#")
+    if separator and address and address in produced_by.get(writer, ()):
+        return (address,)
+    return ()
 
 
 def _value(block, path):
@@ -183,7 +245,7 @@ def _invocation(inv, path, seen_ids):
     for name, binding in _obj(inv["inputs"], f"{path}.inputs").items():
         _binding(binding, f"{path}.inputs.{name}")
     _obj(inv["args"], f"{path}.args")
-    _nullable_str(inv["into"], f"{path}.into")
+    _into(inv["into"], f"{path}.into")
 
     # RECORD.md's declared_consumes rule is strict, so it is checked and not
     # assumed: exactly the `px:` bindings of `inputs`, in binding order. An
@@ -273,7 +335,8 @@ def derive_part_index(ticks):
 
     - a `px:` binding reads that address; a `fn:` binding reads the address the
       named invocation wrote (RECORD.md:80-82, and the example at :71 where the
-      readers of scratch.ablation.split are the fit/score invocations);
+      readers of scratch.ablation.split are the fit/score invocations), and
+      `fn:<id>#<address>` reads the one produce it names (`resolve_binding`);
     - `actual_consumes` are bare addresses already observed on the store;
     - an address read before anything in this run wrote it preexisted
       (RECORD.md:104-107, the same clause `hit` is built on).
@@ -288,10 +351,7 @@ def derive_part_index(ticks):
         for inv in tick["invocations"]:
             reads = []
             for binding in list(inv["inputs"].values()) + list(inv["declared_consumes"]):
-                if binding.startswith("px:"):
-                    reads.append(binding[3:])
-                elif binding.startswith("fn:") and binding[3:] in produced_by:
-                    reads.append(produced_by[binding[3:]])
+                reads.extend(resolve_binding(binding, produced_by))
             reads.extend(inv["actual_consumes"])
             for address in reads:
                 item = entry(address)
@@ -301,9 +361,10 @@ def derive_part_index(ticks):
                     item["read_by"].append(inv["id"])
 
             writes = list(inv["actual_produces"]) + [w["address"] for w in inv["writes"]]
-            if inv["into"]:
-                writes.append(inv["into"])
-                produced_by[inv["id"]] = inv["into"]
+            produces = produce_addresses(inv["into"])
+            if produces:
+                writes.extend(produces)
+                produced_by[inv["id"]] = produces
             for address in writes:
                 item = entry(address)
                 if item["written_by"] is None:

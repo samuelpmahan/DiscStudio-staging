@@ -13,9 +13,16 @@ program  {"name": str,
           "ticks": [{"name": str,
                      "calculations": [{"id": str,
                                        "calculation": "fn.<address>",
-                                       "inputs": {name: "px:<address>" | "fn:<id>"},
+                                       "inputs": {name: "px:<address>" | "fn:<id>"
+                                                        | "fn:<id>#<address>"},
                                        "args": {...},
-                                       "into": "<address>" | None}]}]}
+                                       "into": "<address>" | ["<address>", ...] | None}]}]}
+
+An invocation may publish several Parts from one pass ({?} WhatIsATick, owner
+2026-09-10), and then `into` is the list of every address it declared and a result
+binding on it names which produce it reads (`fn:<id>#<address>`, pyto/viewer/RECORD.md).
+One address is still spelled as the bare string it always was, so a one-address
+program's retained bytes are unchanged.
 
 The calculation entries are byte-identical to the entries of
 `dataclasses.asdict(TickTestimony)` (pcr.py:63-75), which is why the testimony
@@ -173,7 +180,9 @@ def _entry_from_invocation(invocation: Invocation) -> dict[str, Any]:
         if isinstance(source, Part):
             inputs[name] = f"{PX}{source.address}"
         elif isinstance(source, ResultRef):
-            inputs[name] = f"{FN}{source.calculation_id}"
+            inputs[name] = f"{FN}{source.calculation_id}" + (
+                "" if source.produce is None else f"#{source.produce}"
+            )
         else:
             raise RetainError(
                 f"retain: invocation '{invocation.id}' input '{name}' is bound to a "
@@ -188,12 +197,29 @@ def _entry_from_invocation(invocation: Invocation) -> dict[str, Any]:
         "calculation": invocation.calculation.address,
         "inputs": inputs,
         "args": dict(invocation.args),
-        "into": invocation.into.address if invocation.into is not None else None,
+        # `testimony_into()` is one address, a tuple of them, or None; the retained
+        # entry has to be JSON, and has to equal what the testimony asdict gives
+        # (`_entry_from_testimony` below normalizes the tuple the same way), so the
+        # multi-produce form is a list on both paths.
+        "into": _into_json(invocation.testimony_into()),
     }
+
+
+def _into_json(into: Any) -> Any:
+    """`into` as JSON: an address, a list of addresses, or None."""
+    return list(into) if isinstance(into, tuple) else into
+
+
+def _into_addresses(into: Any) -> tuple[str, ...]:
+    """Every address one entry's `into` names: none, one, or several."""
+    if not into:
+        return ()
+    return (into,) if isinstance(into, str) else tuple(into)
 
 
 def _entry_from_testimony(testimony: Any) -> dict[str, Any]:
     entry = dataclasses.asdict(testimony)
+    entry["into"] = _into_json(entry["into"])
     _check_reserved(entry["id"], entry["inputs"])
     _check_shadow(entry["id"], entry["inputs"], entry["args"])
     _check_args_jsonable(entry["id"], entry["args"])
@@ -289,6 +315,7 @@ def from_program(program: Mapping[str, Any], registry: Mapping[str, Any]) -> PCR
         )
 
     pcr = PCR(program["name"])
+    seen_ids: set[str] = set()  # the ids declared BEFORE the entry being rebuilt
     for tick_name, entry in entries:
         invocation_id = entry.get("id")
         if not isinstance(invocation_id, str) or not invocation_id:
@@ -304,7 +331,7 @@ def from_program(program: Mapping[str, Any], registry: Mapping[str, Any]) -> PCR
             if ref.startswith(PX):
                 inputs[name] = Part(ref[len(PX):])
             elif ref.startswith(FN):
-                inputs[name] = ResultRef(ref[len(FN):])
+                inputs[name] = _result_ref(ref[len(FN):], seen_ids)
             else:
                 raise NotAProgramError(
                     f"retain.from_program: '{invocation_id}' input '{name}' has ref '{ref}'; "
@@ -318,7 +345,24 @@ def from_program(program: Mapping[str, Any], registry: Mapping[str, Any]) -> PCR
             args=args,
             **inputs,
         )
+        seen_ids.add(invocation_id)
     return pcr
+
+
+def _result_ref(body: str, seen_ids: set[str]) -> ResultRef:
+    """`fn:<id>` or `fn:<id>#<address>` back into a ResultRef.
+
+    The resolution rule is RECORD.md's: the whole text wins when it names an
+    invocation already declared in this program, so an id that itself carries a
+    `#` stays readable; otherwise the text after the LAST `#` is the produce
+    address of an invocation that published several Parts.
+    """
+    if body in seen_ids:
+        return ResultRef(body)
+    writer, separator, produce = body.rpartition("#")
+    if separator and writer and produce:
+        return ResultRef(writer, produce)
+    return ResultRef(body)
 
 
 def registry_from_pcr(pcr: PCR) -> dict[str, Any]:
@@ -503,7 +547,14 @@ def check_record(record: Mapping[str, Any]) -> dict[str, Any]:
     """
     program = record.get("program")
     entries = [entry for _tick, entry in _walk_entries(program)]
-    into_addresses = {entry.get("into") for entry in entries if entry.get("into")}
+    # An invocation may publish several Parts, so `into` is one address or a list
+    # of them: the set of computed addresses is their union, not the field itself
+    # (a list is not even hashable).
+    into_addresses = {
+        address
+        for entry in entries
+        for address in _into_addresses(entry.get("into"))
+    }
     external_addresses = set(record.get("external") or {})
     preseeded = sorted(into_addresses & external_addresses)
     if preseeded:

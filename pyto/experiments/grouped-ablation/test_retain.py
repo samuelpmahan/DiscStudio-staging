@@ -780,5 +780,121 @@ class DiscStatsSidecar(unittest.TestCase):
         )
 
 
+def multi_stats(args: dict) -> dict:
+    """Two Parts from one pass: the shape the owner decided ({?} WhatIsATick)."""
+    rows = args["rows"]
+    return {"scratch.multi.mean": sum(rows) / len(rows), "scratch.multi.count": len(rows)}
+
+
+def multi_take(args: dict):
+    return args["value"]
+
+
+MULTI_REGISTRY = {
+    "fn.multi.stats": Calculation("fn.multi.stats", multi_stats),
+    "fn.multi.take": Calculation("fn.multi.take", multi_take),
+}
+MULTI_PRODUCES = ["scratch.multi.mean", "scratch.multi.count"]
+
+
+class RetainingAMultiProduceProgram(unittest.TestCase):
+    """A program whose invocation publishes several Parts retains and replays.
+
+    Before this, `_entry_from_invocation` read `invocation.into.address` and
+    `check_record` put `entry["into"]` in a set, so a multi-produce program
+    raised AttributeError on the first and TypeError on the second: the retain
+    path was the one reader the kernel change had left behind
+    (`{?} SingleIntoReaders`, now decided).
+    """
+
+    def build(self):
+        pxc = PxC()
+        pxc.set(Part("scratch.multi.rows"), [1, 2, 3, 4])
+        pcr = PCR("multi")
+        stats = pcr.calc(
+            "Prepare", MULTI_REGISTRY["fn.multi.stats"], id="stats",
+            rows=Part("scratch.multi.rows"), into=MULTI_PRODUCES,
+        )
+        pcr.calc(
+            "Report", MULTI_REGISTRY["fn.multi.take"], id="report",
+            value=stats["scratch.multi.count"], into="scratch.multi.reported",
+        )
+        return pcr, pxc
+
+    def test_the_program_retains_with_every_produce_and_the_qualified_binding(self):
+        """retain.py `_entry_from_invocation`: `into` is the list of addresses and a
+        result binding carries the produce it read.
+
+        Mutation: `invocation.into.address` as before -- AttributeError on a tuple;
+        `f"{FN}{source.calculation_id}"` without the produce -- the rebuilt program
+        below binds the whole mapping and PCR.calc refuses it as a bare reference.
+        """
+        pcr, _ = self.build()
+        program = retain.to_program(pcr)
+        stats, report = program["ticks"][0]["calculations"][0], program["ticks"][1]["calculations"][0]
+        self.assertEqual(stats["into"], MULTI_PRODUCES)
+        self.assertEqual(report["inputs"], {"value": "fn:stats#scratch.multi.count"})
+        self.assertEqual(report["into"], "scratch.multi.reported")
+        self.assertEqual(json.loads(json.dumps(program)), program)  # JSON, not tuples
+
+    def test_the_authoring_and_testimony_exports_agree(self):
+        """`to_program(run)["ticks"] == asdict(run.ticks)` still holds when `into` is a
+        list: both paths normalize the tuple to a JSON array.
+        """
+        pcr, pxc = self.build()
+        run = pcr.run(pxc)
+        self.assertEqual(retain.to_program(pcr)["ticks"], retain.to_program(run)["ticks"])
+
+    def test_the_retained_program_rebuilds_and_replays_to_the_same_values(self):
+        """retain.py `_result_ref`: `fn:<id>#<address>` parses back to the produce it
+        names, so the replay reads the same Part the original did.
+
+        Mutation: `ResultRef(body)` for every `fn:` ref -- the rebuilt program binds a
+        bare reference to a multi-produce invocation and PCR.calc refuses it.
+        """
+        pcr, pxc = self.build()
+        original = pcr.run(pxc)
+        rebuilt = retain.from_program(retain.to_program(pcr), MULTI_REGISTRY)
+        fresh = PxC()
+        fresh.set(Part("scratch.multi.rows"), [1, 2, 3, 4])
+        replayed = rebuilt.run(fresh)
+        self.assertEqual(replayed.results["report"], 4)
+        self.assertEqual(fresh.get(Part("scratch.multi.mean")), 2.5)
+        self.assertEqual(fresh.get(Part("scratch.multi.count")), 4)
+        self.assertEqual(
+            json.dumps(testimony_of(replayed), sort_keys=True),
+            json.dumps(testimony_of(original), sort_keys=True),
+        )
+
+    def test_the_record_round_trips_and_check_record_reads_every_produce(self):
+        """retain.py `check_record`: the computed addresses are the union of every
+        entry's produces, so a list `into` is neither unhashable nor half-read.
+
+        Mutation: `{entry.get("into") for entry in entries ...}` as before --
+        TypeError: unhashable type 'list'. Read as one address only, the second
+        refusal below (pre-seeding a Part the program computes) would not fire.
+        """
+        pcr, pxc = self.build()
+        run = pcr.run(pxc, observe=True)
+        with tempfile.TemporaryDirectory(prefix="retain-multi-") as tmp:
+            record = retain.retain_run(
+                pxc, run, ["scratch.multi.rows"],
+                registry=MULTI_REGISTRY,
+                record_path=os.path.join(tmp, "retained.json"),
+            )
+            checked = retain.check_record(record)
+            self.assertEqual(
+                checked["into_addresses"],
+                sorted(MULTI_PRODUCES + ["scratch.multi.reported"]),
+            )
+            for address in MULTI_PRODUCES:
+                with self.subTest(address=address):
+                    forged = copy.deepcopy(record)
+                    forged["external"][address] = 0
+                    with self.assertRaises(retain.ContradictoryRecordError) as caught:
+                        retain.check_record(forged)
+                    self.assertIn(address, str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -263,6 +263,38 @@ def _capped(rendered: dict[str, Any], value_cap_bytes: int) -> dict[str, Any]:
 # --- the record ----------------------------------------------------------------
 
 
+def _produce_addresses(into: Any) -> tuple[str, ...]:
+    """The addresses one invocation's `into` names: none, one, or several.
+
+    `CalculationTestimony.into` is an address, a tuple of addresses (an invocation
+    that publishes several Parts from one pass) or None; the record spells the
+    second as a JSON array (pyto/viewer/RECORD.md).
+    """
+    if into is None:
+        return ()
+    if isinstance(into, str):
+        return (into,)
+    return tuple(into)
+
+
+def _fn_read_addresses(spelling: str, produces_by_id: Mapping[str, tuple[str, ...]]) -> tuple[str, ...]:
+    """The Part addresses an `fn:` binding reads, resolved through the producer.
+
+    The two spellings RECORD.md fixes: `fn:<id>` is the producer's whole result --
+    legal only where that producer publishes at most one Part -- and
+    `fn:<id>#<address>` names one produce of a producer that published several. A
+    known id wins over the `#` split, so an invocation id that itself carries a `#`
+    still resolves as the bare reference it is.
+    """
+    body = spelling.removeprefix("fn:")
+    if body in produces_by_id:
+        return produces_by_id[body]
+    writer, separator, address = body.rpartition("#")
+    if separator and address and address in produces_by_id.get(writer, ()):
+        return (address,)
+    return ()
+
+
 def _runtime_version() -> str:
     try:
         from importlib.metadata import PackageNotFoundError, version
@@ -337,13 +369,15 @@ def run_record(
             "nullable and which the reference reader (viewer/adapters.js validate) "
             "refuses -- a document tagged pyto-run-record@1 that is not one."
         )
-    into_by_id: dict[str, str | None] = {}
+    produces_by_id: dict[str, tuple[str, ...]] = {}
     for tick in run.ticks:
         for testimony in tick.calculations:
-            into_by_id[testimony.id] = testimony.into
+            produces_by_id[testimony.id] = _produce_addresses(testimony.into)
 
     if preexisting is None:
-        produced_anywhere = {address for address in into_by_id.values() if address}
+        produced_anywhere = {
+            address for addresses in produces_by_id.values() for address in addresses
+        }
         # This run's own receipts are excluded exactly like the Parts it produced:
         # with observe=True the run wrote one Part per invocation under
         # `px.receipt.<pcr>.<tick>.<id>` (pcr.py:receipt_address), so calling them
@@ -405,13 +439,13 @@ def run_record(
                 touch(address)
                 if testimony.id not in read_by[address]:
                     read_by[address].append(testimony.id)
-            for writer in fn_reads:
-                # pcr.py:112-116 rewrote a binding on an already-declared Part into
-                # its writer's ResultRef, so `fn:<id>` is a read of that writer's
-                # `into` Part -- which is why RECORD.md:44 lists fit/score under the
-                # split Part's `read_by`.
-                address = into_by_id.get(writer)
-                if address:
+            for spelling in fn_reads:
+                # pcr.py rewrote a binding on an already-declared Part into its
+                # writer's ResultRef, so `fn:<id>` is a read of that writer's `into`
+                # Part -- which is why RECORD.md lists fit/score under the split
+                # Part's `read_by`. `fn:<id>#<address>` names one produce of a
+                # writer that published several.
+                for address in _fn_read_addresses(spelling, produces_by_id):
                     touch(address)
                     if testimony.id not in read_by[address]:
                         read_by[address].append(testimony.id)
@@ -446,7 +480,11 @@ def run_record(
                     "calculation": calculation,
                     "inputs": dict(testimony.inputs),
                     "args": dict(testimony.args),
-                    "into": testimony.into,
+                    "into": (
+                        list(testimony.into)
+                        if isinstance(testimony.into, tuple)
+                        else testimony.into
+                    ),
                     "declared_consumes": declared_consumes,
                     "actual_consumes": actual_consumes,
                     "actual_produces": actual_produces,
@@ -535,13 +573,15 @@ def _invocation_lines(record: Mapping[str, Any], tick: Mapping[str, Any], invoca
     if reads is None:
         reads = [spelling for spelling in invocation["inputs"].values()]
     writes = invocation["writes"]
+    into = invocation["into"]
+    into_text = ", ".join(into) if isinstance(into, list) else (into or "-")
     write_text = (
         ", ".join(f"{write['address']} ({write['kind']})" for write in writes)
         if writes
-        else (invocation["into"] or "-")
+        else into_text
     )
     lines = [
-        f"anchor  {record['pcr']} | {tick['name']} | {invocation['id']} | {invocation['into'] or '-'}",
+        f"anchor  {record['pcr']} | {tick['name']} | {invocation['id']} | {into_text}",
         f"calc    {calculation['address']}  sha256={(calculation['implementation_sha256'] or 'none')[:12]}",
         f"inputs  {json.dumps(invocation['inputs'], sort_keys=True)}",
         f"args    {json.dumps(invocation['args'], sort_keys=True)}",
