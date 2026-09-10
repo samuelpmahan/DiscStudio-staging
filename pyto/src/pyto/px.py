@@ -1,7 +1,7 @@
 """``px``: a small shell over run records.
 
-Seven commands -- ``ps``, ``ls``, ``cat``, ``diff``, ``laws``, ``receipts``,
-``effects`` -- over a
+Eight commands -- ``ps``, ``ls``, ``cat``, ``diff``, ``laws``, ``receipts``,
+``effects``, ``tick`` -- over a
 ``pyto-run-record@1`` document (``pyto/viewer/RECORD.md``).  The record is the one
 interface, exactly as a path is in the shell this borrows its verbs from
 (``pyto/questions.md`` ``{?} EverythingIsAPart``): every runtime that writes the
@@ -137,6 +137,118 @@ def reads_of(record: dict[str, Any]) -> dict[str, tuple[str, ...]]:
         if produces:
             produced_by[inv["id"]] = produces
     return out
+
+
+# --- the Tick projection --------------------------------------------------------
+#
+# research/chainspot-stages-ticks.md: "a Tick is when its Sequence of Calculations
+# becomes Inspectable. It is our MINIMAL COMPARATIVE UNIT" -- the LAB's own
+# `TickInspection.svelte` renders, per Tick, `actualConsumes`, `frozenCalculations`
+# (address plus the body's digest) and `writes`; `compare.ts` compares Tick by
+# Tick. `tick_projection` is that same shape read off a `pyto-run-record@1`
+# document: no kernel change, no record change, purely derived. `px tick` prints
+# it and `px diff` compares it, Tick by Tick, before its invocation-by-invocation
+# section.
+
+
+def frozen_identity(calc: dict[str, Any]) -> str:
+    """One frozen Calculation identity: ``address@<implementation_sha256[:12]>``.
+
+    ``NOTHING`` stands in for either half the record left null, so a Calculation
+    with no recorded body digest reads as ``address@-`` rather than crashing on a
+    slice of ``None``.
+    """
+    address = calc.get("address") or NOTHING
+    impl = calc.get("implementation_sha256")
+    short = impl[:12] if impl else NOTHING
+    return f"{address}@{short}"
+
+
+def tick_projection(
+    record: dict[str, Any], tick: dict[str, Any], tick_laws: Any, schema: Any
+) -> dict[str, Any]:
+    """One Tick's testimony, in the LAB's receipt shape.
+
+    ``consumes`` and ``internal`` are read exactly as ``tick_laws._reads`` and
+    ``tick_laws._writes`` read them (``pyto/experiments/tick-laws/tick_laws.py``):
+    every address any invocation of this Tick reads -- ``px:`` and ``fn:``
+    bindings resolved through the producer's ``into``, over the *whole* record so
+    a read of an earlier Tick's produce still resolves, unioned with
+    ``actual_consumes`` -- against every address any invocation of this Tick
+    writes (``actual_produces`` plus ``into``). An address both read and written
+    inside the Tick is ``internal``, the chain's own link; everything else this
+    Tick reads is ``consumes``, so the two partition the Tick's reads and never
+    overlap.
+
+    ``produces`` is the record's own ``writes`` (address and kind, when the
+    runtime recorded one) alongside the producing invocation's ``result_sha256``
+    -- the record carries one digest per invocation and no separate per-produce
+    digest (RECORD.md, ``{?} RecordProduceDigest``), so that digest is what a
+    multi-produce invocation's every write shares.
+
+    ``calculations`` is ``frozen_identity`` over the invocations in declared
+    order: the sequence, frozen. ``latency_ms`` and ``mode`` are the record's own
+    accounting (``record_schema.tick_latency_ms``, ``run_schedule``) -- the sum of
+    durations and "serial" when the record carries no schedule, deliberately not
+    ``tick_laws``' longest-branch-for-a-parallel-Tick number (RECORD.md,
+    ``{?} TwoLatencyFallbacks``).
+    """
+    into_by_id: dict[str, list[str]] = {}
+    for other in record["ticks"]:
+        for inv in other["invocations"]:
+            into_by_id[inv["id"]] = tick_laws._into_addresses(inv)
+
+    reads: set[str] = set()
+    produced: set[str] = set()
+    for inv in tick["invocations"]:
+        reads |= tick_laws._reads(inv, into_by_id)
+        produced |= tick_laws._writes(inv)
+
+    produces = []
+    for inv in tick["invocations"]:
+        digest = inv["result_sha256"]
+        for write in inv["writes"]:
+            produces.append({"address": write["address"], "kind": write["kind"], "digest": digest})
+    produces.sort(key=lambda row: row["address"])
+
+    return {
+        "index": tick["index"],
+        "name": tick["name"],
+        "consumes": sorted(reads - produced),
+        "internal": sorted(reads & produced),
+        "produces": produces,
+        "calculations": [frozen_identity(inv["calculation"]) for inv in tick["invocations"]],
+        "latency_ms": schema.tick_latency_ms(tick),
+        "mode": "parallel" if schema.run_schedule(record)["parallel"] else "serial",
+    }
+
+
+def format_produce_row(row: dict[str, Any]) -> str:
+    """One ``produces`` entry as ``address:kind:digest``, ``NOTHING`` for either
+    half the record left null."""
+    kind = row["kind"] if row["kind"] else NOTHING
+    digest = row["digest"] if row["digest"] else NOTHING
+    return f"{row['address']}:{kind}:{digest}"
+
+
+def select_tick(record: dict[str, Any], token: str, record_path: str) -> dict[str, Any]:
+    """The one Tick ``token`` names: its exact name first, else its index.
+
+    A Tick's name wins a collision with a numeral spelling some other Tick's
+    index, because the name is what the record itself calls it.
+    """
+    for tick in record["ticks"]:
+        if tick["name"] == token:
+            return tick
+    if token.lstrip("-").isdigit():
+        index = int(token)
+        for tick in record["ticks"]:
+            if tick["index"] == index:
+                return tick
+    raise PxError(
+        f"px: no Tick named or indexed {token!r} in {Path(record_path).name} "
+        f"(px ps {Path(record_path).name} lists the Ticks)"
+    )
 
 
 # --- rendering ----------------------------------------------------------------
@@ -290,16 +402,79 @@ def cmd_cat(args: argparse.Namespace) -> int:
 # --- px diff ------------------------------------------------------------------
 
 
-def cmd_diff(args: argparse.Namespace) -> int:
-    """The two records' differences by invocation; exit 1 when there are any.
+def tick_diff_rows(left: dict[str, Any], right: dict[str, Any]) -> tuple[list[list[str]], bool]:
+    """One row per Tick name present in either record: same, differs, or only in
+    one side; ``True`` when any row is not ``same``.
 
-    Four kinds, in this order: an invocation added, one removed, a result digest
-    changed, a read set changed.  Anything else two records may disagree about --
-    durations above all -- is not a difference in what was computed and is not
-    reported.
+    Ticks are matched by name, in the order each record declares them, left's
+    order first and then any name only ``right`` has -- the record's own order,
+    not an alphabetical one. A differing Tick's row names which of ``consumes``,
+    ``internal``, ``produces``, ``calculations`` changed, in that order; the two
+    fields ``tick_projection`` also carries, ``latency_ms`` and ``mode``, are the
+    schedule and not the program (RECORD.md), so a Tick that ran faster or slower
+    -- or was scheduled differently -- and computed the same thing is still
+    ``same`` here.
+    """
+    tick_laws, schema = _tick_laws(), _schema()
+    left_by_name = {tick["name"]: tick for tick in left["ticks"]}
+    right_by_name = {tick["name"]: tick for tick in right["ticks"]}
+    order: list[str] = []
+    for record in (left, right):
+        for tick in record["ticks"]:
+            if tick["name"] not in order:
+                order.append(tick["name"])
+
+    rows: list[list[str]] = []
+    changed = False
+    for name in order:
+        if name not in right_by_name:
+            rows.append([name, "only in a", NOTHING])
+            changed = True
+            continue
+        if name not in left_by_name:
+            rows.append([name, "only in b", NOTHING])
+            changed = True
+            continue
+        before = tick_projection(left, left_by_name[name], tick_laws, schema)
+        after = tick_projection(right, right_by_name[name], tick_laws, schema)
+        aspects = []
+        if before["consumes"] != after["consumes"]:
+            aspects.append("consumes")
+        if before["internal"] != after["internal"]:
+            aspects.append("internal")
+        before_produces = [(row["address"], row["kind"], row["digest"]) for row in before["produces"]]
+        after_produces = [(row["address"], row["kind"], row["digest"]) for row in after["produces"]]
+        if before_produces != after_produces:
+            aspects.append("produces")
+        if before["calculations"] != after["calculations"]:
+            aspects.append("calculations")
+        if aspects:
+            rows.append([name, "differs", ",".join(aspects)])
+            changed = True
+        else:
+            rows.append([name, "same", NOTHING])
+    return rows, changed
+
+
+def cmd_diff(args: argparse.Namespace) -> int:
+    """Tick by Tick first, then the two records' differences by invocation; exit
+    1 when either section holds any difference.
+
+    The Tick section (``tick_diff_rows``) says, per Tick name, same / differs /
+    only in a / only in b, and for a differing Tick which of its four projected
+    facts changed. The invocation section is unchanged: four kinds, in this
+    order -- an invocation added, one removed, a result digest changed, a read
+    set changed. Anything else two records may disagree about -- durations above
+    all -- is not a difference in what was computed and is not reported by
+    either section.
     """
     left = load_record(args.a)
     right = load_record(args.b)
+
+    tick_rows, tick_changed = tick_diff_rows(left, right)
+    for line in table(["TICK", "STATUS", "CHANGED"], tick_rows):
+        print(line)
+
     left_by_id = {inv["id"]: (index, name, inv) for index, name, inv in invocations(left)}
     right_by_id = {inv["id"]: (index, name, inv) for index, name, inv in invocations(right)}
     left_reads, right_reads = reads_of(left), reads_of(right)
@@ -322,12 +497,12 @@ def cmd_diff(args: argparse.Namespace) -> int:
             new = [f"+{address}" for address in right_reads[id_] if address not in left_reads[id_]]
             lines.append(f"reads    {id_}  {' '.join(gone + new)}")
 
-    if not lines:
+    if lines:
+        for line in lines:
+            print(line)
+    else:
         print("no differences")
-        return EXIT_OK
-    for line in lines:
-        print(line)
-    return EXIT_DIFFERENCE
+    return EXIT_DIFFERENCE if (tick_changed or lines) else EXIT_OK
 
 
 # --- px laws ------------------------------------------------------------------
@@ -465,13 +640,55 @@ def cmd_effects(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+# --- px tick --------------------------------------------------------------------
+
+
+def cmd_tick(args: argparse.Namespace) -> int:
+    """The Tick projection: one block per Tick, or the one Tick named.
+
+    Each block, in this order: the Tick's index and name; ``consumes``; ``internal``
+    (the chain's own links, and the reason ``consumes`` never repeats them);
+    ``produces`` (address, write kind when the record carries one, and the
+    producing invocation's digest); ``calculations`` (frozen identities, in
+    declared order); ``latency`` (the record's own accounting: ``latency_ms``
+    when it carries one, else the sum of durations, and ``mode`` from the run's
+    own ``parallel`` flag, "serial" when the record carries none). ``--json``
+    emits the same facts as one object per Tick (or the one object named), which
+    is what ``viewer/test`` compares against ``adapters.js`` ``tickProjection``.
+    """
+    record = load_record(args.record)
+    tick_laws, schema = _tick_laws(), _schema()
+    ticks = record["ticks"]
+    if args.tick_selector is not None:
+        ticks = [select_tick(record, args.tick_selector, args.record)]
+    projections = [tick_projection(record, tick, tick_laws, schema) for tick in ticks]
+
+    if args.json:
+        payload = projections[0] if args.tick_selector is not None else projections
+        print(canonical_json(payload))
+        return EXIT_OK
+
+    blocks = []
+    for projection in projections:
+        blocks.append("\n".join([
+            f"Tick {projection['index']} {projection['name']}",
+            f"  consumes: {joined(projection['consumes'])}",
+            f"  internal: {joined(projection['internal'])}",
+            f"  produces: {joined(format_produce_row(row) for row in projection['produces'])}",
+            f"  calculations: {joined(projection['calculations'])}",
+            f"  latency: latency_ms={milliseconds(projection['latency_ms'])} mode={projection['mode']}",
+        ]))
+    print("\n\n".join(blocks))
+    return EXIT_OK
+
+
 # --- the shell ----------------------------------------------------------------
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="px",
-        description="A shell over pyto run records: ps, ls, cat, diff, laws, receipts, effects.",
+        description="A shell over pyto run records: ps, ls, cat, diff, laws, receipts, effects, tick.",
     )
     sub = parser.add_subparsers(dest="command", metavar="COMMAND")
 
@@ -509,6 +726,13 @@ def build_parser() -> argparse.ArgumentParser:
     effects.add_argument("record")
     effects.add_argument("--tick", default=None, help="only effects from the Tick of this name")
     effects.set_defaults(run=cmd_effects)
+
+    tick = sub.add_parser("tick", help="the Tick projection: consumes, internal, produces, calculations")
+    tick.add_argument("record")
+    tick.add_argument("tick_selector", nargs="?", default=None, metavar="NAME-OR-INDEX",
+                       help="only the one Tick, by its name or its index")
+    tick.add_argument("--json", action="store_true", help="emit the projection as JSON")
+    tick.set_defaults(run=cmd_tick)
 
     return parser
 

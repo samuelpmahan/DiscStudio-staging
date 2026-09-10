@@ -1,1 +1,6 @@
+TICK       STATUS  CHANGED
+Parse      same    -
+Stats      same    -
+Letters    same    -
+Histogram  same    -
 no differences

@@ -1,1 +1,6 @@
+TICK       STATUS   CHANGED
+Parse      same     -
+Stats      differs  produces
+Letters    same     -
+Histogram  same     -
 digest   mean  a1a9f34b0711500b5d41ed1f553bf9d04af30672d5850e7496b44b51482fff3a -> ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff

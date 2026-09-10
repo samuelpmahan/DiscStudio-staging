@@ -11,7 +11,7 @@
  * run under a minimal document shim in `node --test` with no jsdom.
  */
 
-import { validate, bareAddress, produceAddresses, parseBinding, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex } from './adapters.js';
+import { validate, bareAddress, produceAddresses, parseBinding, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex, tickProjection } from './adapters.js';
 
 /* ------------------------------------------------------------------ */
 /* small DOM helpers (doc is always explicit)                          */
@@ -489,7 +489,31 @@ export function renderInvocation(doc, invocation) {
 /* ticks and part index                                                */
 /* ------------------------------------------------------------------ */
 
-export function renderTick(doc, tick) {
+/**
+ * The Tick's testimony, at the top of its card: the same four facts
+ * `pyto tick` prints and `px diff` compares -- `consumes`, `internal`,
+ * `produces` (address and write kind, when the record carries one) and
+ * `calculations` (frozen identities, in declared order) -- from
+ * `adapters.js` `tickProjection`, so the page and the shell agree because they
+ * read the same function.
+ */
+export function renderTickFacts(doc, projection) {
+  const line = (values) => (values.length ? values.join(', ') : '—');
+  const produceLine = projection.produces.map((row) => (row.kind ? `${row.address}:${row.kind}` : row.address));
+  const dl = el(doc, 'dl', { className: 'tick-facts' }, [
+    el(doc, 'dt', { text: 'consumes' }),
+    el(doc, 'dd', { className: 'facts-consumes', text: line(projection.consumes) }),
+    el(doc, 'dt', { text: 'internal' }),
+    el(doc, 'dd', { className: 'facts-internal', text: line(projection.internal) }),
+    el(doc, 'dt', { text: 'produces' }),
+    el(doc, 'dd', { className: 'facts-produces', text: line(produceLine) }),
+    el(doc, 'dt', { text: 'calculations' }),
+    el(doc, 'dd', { className: 'facts-calculations', text: line(projection.calculations) })
+  ]);
+  return dl;
+}
+
+export function renderTick(doc, tick, record) {
   const parallel = isParallelTick(tick);
   const chain = isChainTick(tick);
   // `data-chain` is set only on a chain, so a record with no chain renders byte
@@ -504,6 +528,10 @@ export function renderTick(doc, tick) {
   const work = tickWorkMs(tick);
   const latency = tickLatencyMs(tick);
   const timing = work === null && latency === null ? 'no durations recorded' : `work ${ms(work)} · latency ${ms(latency)}`;
+  // `record.ticks[tick.index]` -- not `tick` -- so a query-filtered card still
+  // reports the Tick's real facts rather than the subset of invocations a
+  // search happened to keep on screen.
+  const facts = renderTickFacts(doc, tickProjection(record, tick.index));
   section.appendChild(el(doc, 'header', { className: 'tick-head' }, [
     el(doc, 'h2', {}, [
       el(doc, 'span', { className: 'tick-index', text: String(tick.index) }),
@@ -511,7 +539,8 @@ export function renderTick(doc, tick) {
       parallel ? el(doc, 'span', { className: 'tick-mode', text: `parallel · ${count} branches` })
         : chain ? el(doc, 'span', { className: 'tick-mode', text: `chain · ${count} in order` }) : null
     ]),
-    el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${timing}` })
+    el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${timing}` }),
+    facts
   ]));
   if (parallel) {
     // A row of columns: one branch per Calculation, none of them reading another.
@@ -604,7 +633,7 @@ export function renderRecord(record, { doc = globalThis.document, filter = '' } 
   if (!ticks.length) {
     root.appendChild(el(doc, 'p', { className: 'none', text: `no invocation matches ${JSON.stringify((filter || '').trim())}` }));
   }
-  for (const tick of ticks) root.appendChild(renderTick(doc, tick));
+  for (const tick of ticks) root.appendChild(renderTick(doc, tick, record));
   root.appendChild(renderPartIndex(doc, record.parts));
   return root;
 }
