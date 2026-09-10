@@ -223,7 +223,8 @@ def _refuse_sibling_produce(
             if part.address in existing.produce_addresses():
                 raise ValueError(
                     f"{owner} produces '{part.address}', which its sibling "
-                    f"'{existing.id}' in Tick '{tick.name}' already produces: the "
+                    f"'{existing.id}' in Tick '{tick.name}' already produces: that is "
+                    f"multiple writers for '{part.address}' inside one Tick, and the "
                     "Calculations of one Tick are parallel branches, so no two of "
                     "them may write one Part (the node law, {?} TicksAsCircuits) "
                     "-- the Tick claims no order between them, so the surviving "

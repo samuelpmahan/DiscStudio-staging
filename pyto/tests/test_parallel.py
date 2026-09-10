@@ -17,12 +17,11 @@ in the record, `placement`, `latency_ms`, `parallel` and `budget`.
 Mutation-checked claims (one-line edits applied to a scratch copy of the tree,
 never to the repository; see pyto/experiments/tasks/39/packet.md):
 
-    pcr.py:_publish is called in declared order after the      -> publish from the
-        whole Tick, so the store never holds half a Tick          worker instead (call
-        `self._publish(...)` at the end of `_prepare_parallel.prepare_one`) and
-        Placement.test_a_parallel_tick_publishes_in_declared_order fails: the
-        writes land in completion order, so the last-declared branch is not the
-        last write: killed.
+    pcr.py:run publishes a parallel Tick in declared order,    -> publish
+        after the whole Tick                                       `reversed(prepared)`
+        and Placement.test_a_parallel_tick_publishes_in_declared_order_after_the_-
+        whole_tick fails at the store's own write order (branch.3 is written
+        first): killed.
     pcr.py:_refuse_sibling_bindings raises for a ResultRef     -> `continue` instead of
         naming a sibling in the same Tick                         raising and
         NodeLaw.test_a_sibling_result_ref_is_refused_at_bind_time fails (the bind
@@ -42,6 +41,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import threading
 import time
 import unittest
 from dataclasses import asdict
@@ -71,9 +71,30 @@ def make_seed(args):
     return {"base": args["base"]}
 
 
+#: What happened, in the order it happened: ("finished", <branch id>) from a
+#: Calculation body, ("wrote", <address>) from the store. The only oracle that can
+#: see "the store never held half a Tick", because nothing in the record does.
+EVENTS: list[tuple[str, str]] = []
+EVENTS_LOCK = threading.Lock()
+
+
+def note(kind: str, name: str) -> None:
+    with EVENTS_LOCK:
+        EVENTS.append((kind, name))
+
+
+class RecordingPxC(PxC):
+    """A PxC that remembers the order its Parts were written in, and nothing else."""
+
+    def set(self, part, value):
+        note("wrote", part if isinstance(part, str) else part.address)
+        return super().set(part, value)
+
+
 def slow_branch(args):
     """One independent branch: real work, measured in wall time."""
     time.sleep(BRANCH_SLEEP_MS / 1000.0)
+    note("finished", f"branch{args['index']}")
     return {"index": args["index"], "value": args["seed"]["base"] + args["index"]}
 
 
@@ -175,25 +196,31 @@ class Placement(unittest.TestCase):
         for started_ms in starts:
             self.assertLess(started_ms, BRANCH_SLEEP_MS)
 
-    def test_a_parallel_tick_publishes_in_declared_order(self):
-        """The store never holds half a Tick, and the order is the program's."""
-        fan = next(tick for tick in self.run.ticks if tick.name == "Fan")
-        declared = [testimony.id for testimony in fan.calculations]
-        self.assertEqual(declared, [f"branch{index}" for index in range(BRANCHES)])
-        # Each receipt's `writes` is the invocation's own; the Tick's writes in
-        # publication order are the concatenation, and they must be declared order.
-        published = [
-            write.address
-            for testimony in fan.calculations
-            for write in self.run.receipts[testimony.id].writes
+    def test_a_parallel_tick_publishes_in_declared_order_after_the_whole_tick(self):
+        """The store never holds half a Tick, and the order is the program's.
+
+        Watched at the store, because that is the only place it shows: every
+        branch finishes before the first branch Part is written, and the four
+        writes are in declared order however the pool ordered the work.
+        """
+        del EVENTS[:]
+        pxc = RecordingPxC()
+        build_program().run(pxc, observe=True, parallel=True)
+        fan = [
+            (kind, name)
+            for kind, name in EVENTS
+            if name.startswith("branch") or name.startswith("px.parallel.branch.")
         ]
+        writes = [name for kind, name in fan if kind == "wrote"]
         self.assertEqual(
-            published, [f"px.parallel.branch.{index}" for index in range(BRANCHES)]
+            writes, [f"px.parallel.branch.{index}" for index in range(BRANCHES)]
         )
-        # Not one branch saw another's Part: a half-Tick would show as a read.
-        for testimony in fan.calculations:
-            receipt = self.run.receipts[testimony.id]
-            self.assertEqual(receipt.actual_consumes, ())
+        first_write = next(index for index, (kind, _) in enumerate(fan) if kind == "wrote")
+        finished_first = sorted(name for kind, name in fan[:first_write] if kind == "finished")
+        self.assertEqual(finished_first, [f"branch{index}" for index in range(BRANCHES)])
+        # Not one branch saw another's Part either: a half-Tick would show as a read.
+        for index in range(BRANCHES):
+            self.assertEqual(self.run.receipts[f"branch{index}"].actual_consumes, ())
 
     def test_the_fanned_tick_takes_less_time_than_it_does_work(self):
         """Work adds; time is the longest branch ({?} TicksAsCircuits)."""

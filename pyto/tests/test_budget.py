@@ -16,10 +16,16 @@ reads it once per Tick boundary, which is what makes "stops after Tick 2 with a
 Mutation-checked claim (a one-line edit applied to a scratch copy of the tree,
 never to the repository; see pyto/experiments/tasks/39/packet.md):
 
-    pcr.py:run breaks out of the Tick loop when the budget is  -> `continue` instead of
-        spent, so no later Tick runs                              `break` and
-        Budget.test_the_published_parts_are_exactly_the_first_two_ticks fails: Tick
-        Three runs on the next reading and publishes px.budget.three: killed.
+    pcr.py:run reads the clock *before* each Tick, so the run   -> move the check to
+        stops before the next one and not after it                 the end of the loop
+        body and eight of this file's sixteen tests fail, starting with
+        Budget.test_the_run_stops_after_the_second_tick: Tick Three runs on the 300 ms
+        reading and `stopped_after_tick` names it: killed.
+
+    (`break` -> `continue` at the same seam is a **surviving** mutant and is
+    recorded as one: with a monotonic clock every later Tick fails the same check,
+    so the two spellings are the same program. The test that would tell them apart
+    is a clock that goes backwards, which is not a clock.)
 
 Every Calculation body is a named module-level function; no lambdas
 (experiments/CAPTURE.md, rule 2).
