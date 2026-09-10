@@ -193,6 +193,19 @@ Delete it when you have seen it: `rm -rf ~/class ~/tutor.html`.
 
 ## What the next session should know (the cloud session's hand-off)
 
+- Three-OS run 34435407943 (commit 55471ca, after task 55 fixed the first three platform failures):
+  ubuntu 3.11 and 3.12 fully green; macOS: every suite green, then `neat.sh selftest` fails its
+  `landing commit` check (the selftest's own `neat land 0` in the scratch clone; the land output
+  goes to a temp file and is not printed, so run `bash pyto/scripts/neat.sh selftest` on the Mac
+  and read `$tmp/land.txt`; suspect bash 3.2 in land.sh, since the same check passes on Linux and
+  the selftest had never run on macOS before); Windows (Git Bash): `library` fails one test,
+  `test_06_6_pql`, where the repr of U+FFFD prints as `\ufffd` instead of the character (a console
+  encoding difference in the child process, not a kernel fault), and `experiments/classroom`
+  fails because `make_class.sh --selftest` exits 1 right after the first refusal, with git's
+  "LF will be replaced by CRLF" warnings just before (autocrlf on the runner; the desk's hashes
+  or the refusal receipt are probably CRLF-rewritten). None of the three is the kernel's. The
+  Mac debugs the first; the two Windows ones wait for a Windows machine or a CI-only change.
+
 - A task that changes `land.sh` itself can fail silently at the commit step: the landing merges the
   candidate onto MAIN before verifying, so bash is executing a file that changed under it. Task 34
   hit this. Workaround used: run the landing from the script text read into memory

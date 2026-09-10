@@ -1,0 +1,64 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T042508Z-task-61",
+  "package": "task-61",
+  "base_sha": "94a2eeecf63549c24489c93dde5ab2eadd0068ae",
+  "result": "verified",
+  "verifier": {
+    "command": "grep -q 'landing commit' pyto/KT-MAC.md && grep -q 'ufffd' pyto/KT-MAC.md && grep -q 'make_class.sh' pyto/KT-MAC.md",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "5a97b7b5fa5fbdb6655da880e305421187dad4f6e6d553db2beccb9b1a3d5ffc",
+    "counts": {
+      "library": 330,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/KT-MAC.md",
+      "bytes": 12957,
+      "sha256": "cc0d809db0c1b9cfa499e390989e4de26755cd8abccc26976658929ab69a2e6a"
+    },
+    {
+      "path": "pyto/experiments/tasks/61/HANDOFF.md",
+      "bytes": 6336,
+      "sha256": "8a5a1f6df807fbb3e9fe8a2aa23c0049abff8faa923f7368ca3d7236c55d5c28"
+    },
+    {
+      "path": "pyto/experiments/tasks/61/evidence/check_all.txt",
+      "bytes": 173724,
+      "sha256": "4b0105567d54cf02a61fa290b8c8c50a4e561e051b4a22f3cbd73e500aa5e8c9"
+    },
+    {
+      "path": "pyto/experiments/tasks/61/evidence/verify.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/61/packet.md",
+      "bytes": 1905,
+      "sha256": "46360a6a2ca85b36be19ba9db2af034dfcd11aa053e1a4dec144b661fe3fa872"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T04:26:00.464616Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
