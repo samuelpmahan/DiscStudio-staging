@@ -1,0 +1,30 @@
+..........................................
+----------------------------------------------------------------------
+Ran 42 tests in 4.138s
+
+OK
+.....LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+/tmp/tmpdrx27fdw/invalid.json
+Summary: work_ms=None critical_path_ms=None
+no parallel execution exists yet
+VIOLATION: pyto-run-record@1 document: missing required field(s) counters, parts, pcr, source, ticks; RECORD.md: missing fields are null, never absent
+LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+/tmp/tmpdrx27fdw/clean.json
+Tick 0 Tick 0: work_ms=0.1 latency_ms=0.1 mode=parallel
+Summary: work_ms=0.1 critical_path_ms=0.1
+no parallel execution exists yet
+/tmp/tmpdrx27fdw/law.json
+Tick 0 Tick 0: work_ms=0.2 latency_ms=0.2 mode=chain
+Summary: work_ms=0.2 critical_path_ms=0.2
+no parallel execution exists yet
+VIOLATION: node law violation: consumer reads a sibling declared after it: px.bad from producer in Tick 0 producers=['producer']
+.........
+----------------------------------------------------------------------
+Ran 14 tests in 0.012s
+
+OK
+....................................
+----------------------------------------------------------------------
+Ran 36 tests in 0.939s
+
+OK

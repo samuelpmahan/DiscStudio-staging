@@ -4,8 +4,54 @@ Intent: the laws read chains: tick_laws.py, px laws and the two reference reader
 Starting point: dc62a1b08965a8f9d05ff23ac1b277ba2d616d69 (board: **started** `task-57`: chains inside a Tick: the owner, 2026-09-10: 'Cal)
 Verify: cd pyto && python -m unittest tests.test_px && python -m unittest discover -s experiments/tick-laws -p 'test_*.py' && python -m unittest discover -s viewer/test -p 'test_*.py'
 Allow: pyto/experiments/tick-laws pyto/src/pyto/px.py pyto/tests/test_px.py pyto/viewer pyto/experiments/students pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 11 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/students/HANDOFF.md
+- M  pyto/experiments/students/test_students.py
+- M  pyto/experiments/tick-laws/README.md
+- M  pyto/experiments/tick-laws/test_tick_laws.py
+- M  pyto/experiments/tick-laws/tick_laws.py
+- M  pyto/src/pyto/px.py
+- M  pyto/tests/test_px.py
+- M  pyto/viewer/adapters.js
+- M  pyto/viewer/test/parallel-view.test.mjs
+- M  pyto/viewer/test/playback.test.mjs
+- M  pyto/viewer/tick-viewer.js
+
+```
+pyto/experiments/students/HANDOFF.md         |   4 +-
+ pyto/experiments/students/test_students.py   |   5 +-
+ pyto/experiments/tick-laws/README.md         |  30 ++++--
+ pyto/experiments/tick-laws/test_tick_laws.py | 131 ++++++++++++++++++++++-----
+ pyto/experiments/tick-laws/tick_laws.py      |  59 +++++++++---
+ pyto/src/pyto/px.py                          |  15 ++-
+ pyto/tests/test_px.py                        |  47 ++++++++--
+ pyto/viewer/adapters.js                      |   3 +-
+ pyto/viewer/test/parallel-view.test.mjs      |  27 +++++-
+ pyto/viewer/test/playback.test.mjs           |   7 +-
+ pyto/viewer/tick-viewer.js                   |  45 +++++++--
+ 11 files changed, 301 insertions(+), 72 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_px && python -m unittest discover -s experiments/tick-laws -p 'test_*.py' && python -m unittest discover -s viewer/test -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.GAKtKsaFWd) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         328  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
 
 ## Uncertain
 
