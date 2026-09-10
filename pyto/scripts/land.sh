@@ -259,6 +259,40 @@ if prev and dry != '1':
 print(json.dumps({k: receipt[k] for k in ('id', 'package', 'base_sha', 'result')} | {"claimed": len(claimed), "unclaimed": len(unclaimed)}))
 EOF
 
+# 4b. The gate. The join asks once, and only a human can open it (task 67, pyto/src/pyto/neat/gate.py).
+#     Mode from .neat/gate or $NEAT_GATE: github (a pull request review by the owner's login on the
+#     candidate's exact head sha), stub:<event.json> (the selftest; recorded, never trusted), or none
+#     (the default: the receipt says so and the walk says "unapproved"). The subject is the package and
+#     the head sha of what is being joined; the receipt's gate field is the Part neat.blok.gate.<digest>.
+GATE_MODE="${NEAT_GATE:-$( [ -f "$ROOT/.neat/gate" ] && tr -d '[:space:]' < "$ROOT/.neat/gate" || true)}"
+GATE_HEAD="$(git rev-parse HEAD)"
+if [ -n "$FROM" ]; then GATE_HEAD="$(git rev-parse "$FROM" 2>/dev/null || git rev-parse "refs/neat/from/${PACKAGE#task-}" 2>/dev/null || echo "$GATE_HEAD")"; fi
+GATE_ARGS=(--package "$PACKAGE" --head "$GATE_HEAD" --receipt "$WORK/receipt.json" --record "$WORK/gate.json" --root "$ROOT")
+[ -z "$BASE_SHA" ] || GATE_ARGS+=(--base "$BASE_SHA")
+[ -z "$GATE_MODE" ] || GATE_ARGS+=(--mode "$GATE_MODE")
+[ -z "$FROM" ] || GATE_ARGS+=(--branch "${FROM#origin/}")
+GATE_EXIT=0
+GATE_LINE=""
+if [ -z "$GATE_MODE" ] || [ "$GATE_MODE" = "none" ]; then
+  # No mode: the receipt says so and nothing else runs, so a repository without pyto (a desk, a
+  # class) lands exactly as before; a gate mode needs pyto importable by $PYTHON.
+  GATE_OUT='{"mode":"none","allowed":false,"trusted":false,"reason":"awaiting human: no event"}'
+  "$PYTHON" - "$WORK/receipt.json" <<'GEOF'
+import json, sys
+p = sys.argv[1]; r = json.load(open(p)); r["gate"] = {"mode": "none", "allowed": False, "trusted": False, "reason": "awaiting human: no event"}
+json.dump(r, open(p, "w"), indent=2)
+GEOF
+else
+  GATE_OUT="$(cd "$ROOT" && "$PYTHON" -m pyto.neat.gate "${GATE_ARGS[@]}" 2>"$WORK/gate.err")" || GATE_EXIT=$?
+fi
+if [ $GATE_EXIT -eq 0 ] && [ -n "$GATE_MODE" ] && [ "$GATE_MODE" != "none" ]; then
+  GATE_LINE=", $(printf '%s' "$GATE_OUT" | "$PYTHON" -c 'import json,sys; r=json.load(sys.stdin); print(r["reason"] if r["allowed"] else "stub gate (never trusted)")')"
+elif [ $GATE_EXIT -ne 0 ]; then
+  fail "gate closed: $(printf '%s' "$GATE_OUT" | "$PYTHON" -c 'import json,sys
+try: print(json.load(sys.stdin)["reason"])
+except Exception: print("gate error, see gate.err")' ) (mode $GATE_MODE; $(head -c 200 "$WORK/gate.err" | tr '\n' ' '))"
+fi
+echo "== gate: ${GATE_MODE:-none}${GATE_LINE}"
 if [ $DRY -eq 1 ]; then
   echo "== dry run: would commit $(printf '%s\n' "$DIRTY" | grep -c . || true) dirty files and the receipt as land($PACKAGE)"; rm -rf "$WORK"
   if [ -n "$FROM" ]; then git merge --abort; fi
@@ -274,7 +308,7 @@ fi
 while IFS= read -r f; do [ -n "$f" ] && git add -A -- "$f"; done <<< "$DIRTY"
 git add -A -- "$LAND_DIR"
 LINE="${MESSAGE:-verified candidate}"
-board "**landed** \`$PACKAGE\`$SCORE_BOARD: $LINE ($(printf '%s\n' "$CHANGED" | grep -c . || true) files since ${BASE_SHA:0:7}, suites green, receipt $ID)"
+board "**landed** \`$PACKAGE\`$SCORE_BOARD: $LINE ($(printf '%s\n' "$CHANGED" | grep -c . || true) files since ${BASE_SHA:0:7}, suites green${GATE_LINE}, receipt $ID)"
 git add -A -- "$BOARD"
 if [ "$PYTO_MODE" -eq 1 ]; then
   RECEIPT_LABEL="pyto/experiments/landings/$ID/receipt.json"

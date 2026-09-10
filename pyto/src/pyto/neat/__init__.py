@@ -12,4 +12,8 @@ Deliberately no re-export here: `import pyto.neat.review` (as `walk.py` and the
 tests do) is the one way in, so `python -m pyto.neat.review` -- the CLI `neat
 ask`/`neat answer`/`neat answers` shell out to -- does not also find its own
 module pre-loaded under a second name.
+
+`pyto.neat.diff` (task 66) computes a candidate pair's difference before it is
+shown; `pyto.neat.gate` (task 67) is the join's gate: only a human's approval of an
+exact head sha opens a landing.
 """

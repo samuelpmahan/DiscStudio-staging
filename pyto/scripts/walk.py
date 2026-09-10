@@ -131,8 +131,12 @@ def landing_commits() -> dict[str, dict]:
     """One pass over every landing commit: subject, body, numstat and patch against the first parent.
     Keyed by receipt id (from the commit body) and by package (the newest wins)."""
     sep = "\x00\x00WALK\x00\x00"
-    raw = run_git("log", "--first-parent", "-m", "--numstat", "-p", "--no-color",
-                  "--format=%x00%x00WALK%x00%x00%H%x00%s%x00%b%x00", "--grep=^land(")
+    # Every landing commit reachable from here, whichever parent it sits behind (a copy that merged
+    # MAIN reaches MAIN's landings through the merge's second parent), each diffed against its own
+    # first parent, which is what the landing changed.
+    shas = [line for line in run_git("log", "--format=%H", "--grep=^land(").split("\n") if line]
+    raw = run_git("show", "--first-parent", "-m", "--numstat", "-p", "--no-color",
+                  "--format=%x00%x00WALK%x00%x00%H%x00%s%x00%b%x00", *shas) if shas else ""
     found: dict[str, dict] = {}
     for chunk in raw.split(sep)[1:]:
         sha, subject, body, rest = chunk.split("\x00", 3)
@@ -339,6 +343,13 @@ def receipt_line(s: dict) -> str:
         bits.append(f"score {s['score']}")
     bits.append(f"{s['tests']} tests across the suites")
     bits.append(f"base {s['base'] or '?'} to landing {s['sha'][:7] or '?'}")
+    gate = (s.get("receipt") or {}).get("gate") or {}
+    if gate.get("allowed") and gate.get("trusted"):
+        bits.append(gate.get("reason", "approved"))
+    elif gate.get("stub_allowed"):
+        bits.append("stub gate, never trusted")
+    else:
+        bits.append("unapproved")
     bits.append(f"receipt {s['receipt_id'] or '?'}")
     return "; ".join(bits)
 
