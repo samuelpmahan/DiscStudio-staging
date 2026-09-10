@@ -51,6 +51,7 @@ the desk with its own brief instead: `--verify "<cmd>"` and `--allow "<paths>"` 
 replace the incoming packet's Verify and Allow for that landing (a class's tests are the real
 grade, and a desk's own Verify may name files only that desk has), and the board line says `graded
 here`. Underneath: EXP/<id> is a git worktree on branch `exp/<id>`, deleted at landing.
+A task's number is never handed out again: the landing receipts keep it taken after an undo or a kill.
 Control is a way back, not a gate (owner, 2026-09-09: "minimal hard stops"): `neat undo <id>`
 reverts a landed task through the same protocol, so the owner never needs git to take something
 back, and nothing waits on the owner to go in.
