@@ -187,6 +187,32 @@ hugging face attack like OpenAI."
 
 Delete it when you have seen it: `rm -rf ~/class ~/tutor.html`.
 
+## Chunk 8: the walk (5 minutes)
+
+```
+cd ~/DiscStudio-staging
+bash pyto/scripts/neat.sh walk --page ~/walk.html && open ~/walk.html
+bash pyto/scripts/neat.sh walk 55
+```
+
+You see: Safari opens one page, "The walk", with every landing on the board as one step, oldest
+first; the right arrow (or `j`) goes forward, the left arrow (or `k`) back, and the `12 / 67` at
+the top right says where you are. The seven words stay pinned at the top of every step, each with
+its one-line meaning and where it lives (Part, PxC, Calculation, PCR and Tick, receipt, PQL, neat),
+so nothing on a step needs a term the strip does not define. A step is: the stamp and the task,
+the intent as it was written, the owner's own words when the intent quotes him, the receipt line
+(verified or failed, the score when there was one, how many tests ran across the suites, base to
+landing commit, the receipt's name), which of the seven words that landing touched with their
+meanings repeated, the files changed with counts, the whole diff folded under one click, the
+`{?}` lines its packet left open, and the one sentence that takes it back out: "undo task N".
+The URL carries the step (`#step-12`), so a link points at one landing. The second command prints
+step 55 of the walk (the number is the step, not the task; `neat walk` alone lists them) as plain text, 100 columns, diff left out, for an agent; its last line is
+the command for the next step. Both read only the board, the receipts and the landing commits:
+the same tree gives the same bytes, and `bash pyto/scripts/neat.sh walk --check` refuses drift or
+a landed line with no receipt.
+
+Delete it when you have seen it: `rm ~/walk.html`.
+
 ## Ran on
 
 (one line per machine, appended by chunk 6)

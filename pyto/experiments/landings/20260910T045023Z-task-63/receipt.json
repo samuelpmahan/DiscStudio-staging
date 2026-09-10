@@ -1,0 +1,80 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T045023Z-task-63",
+  "package": "task-63",
+  "base_sha": "351f56899167888bdfec006ff6e14c1d5de2d442",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest tests.test_walk && python scripts/walk.py --check",
+    "exit": 0,
+    "output_sha256": "973be13acedfc64b8b36f2e4316ed3a197a53c9c69172385a8991f9c634c9aee"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "daf832ae4585147589b800097157e321a69100b9eae74719cbe65bc2e6697cff",
+    "counts": {
+      "library": 336,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 5,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/KT-MAC.md",
+      "bytes": 14628,
+      "sha256": "30736cc8603b4e87d23ce1d0849621e7d49565502f181eecc6db2e596216092e"
+    },
+    {
+      "path": "pyto/experiments/tasks/63/HANDOFF.md",
+      "bytes": 9980,
+      "sha256": "45aaa9c4cc0e7f69e160ba540489419f0cdd54e96f576743d618e77875b790d8"
+    },
+    {
+      "path": "pyto/experiments/tasks/63/evidence/check_all.txt",
+      "bytes": 175281,
+      "sha256": "a2d5b2bbe1925762b16f97f0ee2e55dbd5312032090875bea1029587fb9af603"
+    },
+    {
+      "path": "pyto/experiments/tasks/63/evidence/verify.txt",
+      "bytes": 172,
+      "sha256": "3a02bc6916cc35c46ca85c4fbcee51d94f1d158855381fe2b8effb2a65412f75"
+    },
+    {
+      "path": "pyto/experiments/tasks/63/packet.md",
+      "bytes": 4953,
+      "sha256": "f760b91d700ccf72f20fbd3af360d67b3a15aeaa8a6aef2cacedba341d1a1382"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 35620,
+      "sha256": "ffc242d7b1d650a25101c2738d1bc97a80326708fc83fa4f7ce8809081f0982b"
+    },
+    {
+      "path": "pyto/scripts/walk.py",
+      "bytes": 23880,
+      "sha256": "c2fadabfaf656121bcdf624fa3092eb4e4cc8b5b392d968aeffe0a10be47f10e"
+    },
+    {
+      "path": "pyto/tests/test_walk.py",
+      "bytes": 3332,
+      "sha256": "3ab2886e32640223869ae411c47525b6bfbf91f4e85f025bb51f3b1fa1173a95"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T04:51:32.537246Z",
+  "result_sha": "2810f4efa75371153d5c2ba6e4517750c8346780",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
