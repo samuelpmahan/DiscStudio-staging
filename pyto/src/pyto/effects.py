@@ -322,6 +322,18 @@ class ReplayEffects:
                 f"{len(self._recorded)} effect(s) and this run asked for one more"
             )
         recorded = self._recorded[index]
+        if recorded.kind == kind and kind != "write_text":
+            # The record is the disk here, so it is checked against itself before
+            # anything is fed back: an entry whose result no longer digests to its
+            # own `result_sha256` was edited after the run, and a replay that
+            # returned it anyway would launder the edit into a fresh receipt.
+            digest = effect_digest(recorded.result)
+            if digest != recorded.result_sha256:
+                raise EffectRefused(
+                    f"replay refuses effect {index} ({kind}): the recorded result digests "
+                    f"{digest} and the ledger claims {recorded.result_sha256}; an entry that "
+                    "does not match its own digest was edited after the run that made it"
+                )
         if recorded.kind != kind:
             raise EffectRefused(
                 f"replay refuses effect {index} ({kind}): the recorded ledger has "

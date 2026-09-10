@@ -12,7 +12,7 @@ from time import perf_counter
 from typing import Any, Callable, Mapping
 
 from .core import EFFECTS_ARG, RECEIPT_PREFIX, Calculation, Part, PxC, PxWrite
-from .effects import Effect, Effects, ReplayEffects
+from .effects import Effect, EffectRefused, Effects, ReplayEffects
 
 
 @dataclass(frozen=True, slots=True)
@@ -929,7 +929,18 @@ class PCR:
         if invocation.calculation.is_operational:
             handle = self._effects_handle(invocation, effects_root, replay_effects)
             call_args[EFFECTS_ARG] = handle
-        value = board.call(invocation.calculation, call_args)
+        if handle is None:
+            value = board.call(invocation.calculation, call_args)
+        else:
+            try:
+                value = board.call(invocation.calculation, call_args)
+            except EffectRefused as refusal:
+                # The handle knows the kind and the index; only the run knows whose
+                # effect it was, so the invocation is named here and the refusal is
+                # otherwise passed through word for word.
+                raise EffectRefused(
+                    f"PCR '{self.name}' calculation '{invocation.id}': {refusal}"
+                ) from refusal
         performed: tuple[Effect, ...] = ()
         if handle is not None:
             performed = handle.ledger

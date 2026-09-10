@@ -174,6 +174,64 @@ The testimony itself is unchanged by any of this -- `ticks` in `PcrRun` carries 
 latency and no budget, so a run's testimony bytes are identical serial versus parallel, and a
 budgeted run's testimony is the byte-for-byte prefix of the unbudgeted run's.
 
+## Effects
+
+An **OperationalCalculation** -- a Calculation whose address starts with `oc.` -- is the only kind
+that may perform an effect, and it may perform it only through the `Effects` handle the run gives
+it (`pyto/src/pyto/effects.py`; `PCR.run(..., effects_root=...)` passes it as `args["effects"]`).
+Five verbs: `write_text`, `read_text`, `now_ms`, `random`, `env`. Every call appends one entry to
+that invocation's ledger, and the ledger is on the receipt and in this record, because the receipt
+is the subject: an effect that is not recorded did not happen as far as this format is concerned.
+
+Per invocation, `"effects": [<entry>, ...]`. **Optional, exactly like placement and budget**:
+absent means the run performed none -- what every runtime that never heard of an `oc.` writes --
+and a record that carries the field carries it on **every** invocation of the run, empty for every
+pure `fn.` one (`{?} EffectsFieldOptional`). `pyto.materialize.run_record` writes it when the run
+it describes ran an `oc.` Calculation or carries a ledger on any receipt, so a pure record is byte
+for byte the record it was before effects existed.
+
+Each entry is `{"kind", "args", "result", "result_sha256"}`:
+
+- `kind` is one of `write_text`, `read_text`, `now_ms`, `random_seed`, `random`, `env`.
+- `args` is the call as it was made: `{"path": "<relative path>"}` for `write_text` and
+  `read_text`, `{"n": <int>}` for `random`, `{"name": "<variable>"}` for `env`, `{}` for `now_ms`
+  and `random_seed`. **A path is always relative to the run's `effects_root` and never absolute**,
+  so a ledger recorded in one checkout replays in another (and in a test's temporary directory);
+  both validators refuse an absolute path and a `..` segment.
+- `result` is the value that came back, kept so a replay can feed it back: the text for
+  `read_text`, the milliseconds for `now_ms`, the integer seed for `random_seed`, the list of
+  draws for `random`, the string or null for `env`. It is **null for `write_text`**, whose text is
+  kept as a digest alone -- a ledger is not a copy of the file.
+- `result_sha256` is the sha256 of the canonical JSON of the recorded value, by the same rule as
+  `result_sha256` on the invocation (`pyto/src/pyto/pcr.py` `_result_sha256`), for every kind --
+  for `write_text` it is the digest of the text that was written. One rule, so two digests are
+  comparable without asking which kind wrote them.
+
+`random`'s draws come from a seeded generator **whose seed is itself an effect**: the first
+`random` of an invocation records a `random_seed` entry and then the draws, so the ledger carries
+everything a replay needs and nothing it has to guess.
+
+Replay reads this list back: `PCR.run(..., replay_effects={<invocation id>: <effects list>})`
+gives each `oc` invocation a `ReplayEffects` handle, which returns the recorded reads, clocks,
+seeds and draws **in order**, re-performs each `write_text` and refuses it when the text now
+digests differently, and refuses any call that is not the next recorded entry, naming the kind and
+the index. A replayed invocation's receipt therefore carries the same ledger the recorded one did,
+which is what makes a receipt comparable byte for byte across a fresh process
+(`pyto/tests/test_effects.py`).
+
+The effects ledger is not an observation: `PCR.run` records it with `observe` off as well as on
+(`PcrRun.effects`), and the testimony -- `ticks`, the bytes consumers embed -- carries none of it,
+so a run's testimony is byte-identical with observation on and off, exactly as it is serial versus
+parallel. An `oc.` inside a **parallel** Tick is refused unless the program passes
+`allow_parallel_effects=True` (`{?} ParallelEffectsOptIn`).
+
+`px effects <record> [--tick NAME]` prints one line per effect: tick, invocation, index, kind, the
+path or argument summary, and the digest (`pyto/src/pyto/px.py`).
+
+The JavaScript reader ignores keys it does not know, so a record carrying `effects` is read by
+`viewer/adapters.js` exactly as it was before; teaching the viewer to *draw* effects is another
+team's change to that file and is not made here.
+
 ## Receipts as Parts
 
 `PCR.run(pxc, observe=True)` writes each invocation's `Receipt` into the store as an ordinary Part at

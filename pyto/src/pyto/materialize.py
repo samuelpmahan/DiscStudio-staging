@@ -378,6 +378,19 @@ def run_record(
     # grade.py check 2 drops `duration_ms` and nothing else) keeps working, and a
     # per-Tick wall clock is not silently added to documents that are compared byte
     # for byte ({?} ScheduleFieldsOptional).
+    # Effects (RECORD.md, "Effects"). Same rule as the schedule fields, for the
+    # same reason: `effects` appears on every invocation of a record whose run had
+    # anything to do with effects -- it ran an `oc.` Calculation, or a receipt
+    # carries a ledger -- and on none of a record whose run did not, so a pure
+    # `fn.` record is byte for byte the record it was before effects existed
+    # ({?} EffectsFieldOptional). Inside such a record the field is present for
+    # every invocation and empty for every `fn.`, which is the honest reading of
+    # "this invocation performed no effect" versus "this runtime records none".
+    reports_effects = any(
+        getattr(receipt, "effects", ())
+        or getattr(receipt.calculation, "address", "").startswith("oc.")
+        for receipt in run.receipts.values()
+    )
     parallel = bool(getattr(run, "parallel", False))
     budget_ms = getattr(run, "budget_ms", None)
     completed = bool(getattr(run, "completed", True))
@@ -487,6 +500,7 @@ def run_record(
             ]
             duration_ms: float | None = receipt.duration_ms
             result_sha256: str | None = receipt.result_sha256
+            effects = [effect.as_entry() for effect in getattr(receipt, "effects", ())]
             wall_ms = receipt.duration_ms if wall_ms is None else wall_ms + receipt.duration_ms
             placement = getattr(receipt, "placement", None)
 
@@ -515,6 +529,7 @@ def run_record(
                     )
                     if testimony.id in run.results
                     else _omitted("the run retained no result for this invocation"),
+                    **({"effects": effects} if reports_effects else {}),
                     **(
                         {
                             "placement": (
