@@ -614,11 +614,11 @@ class PlacementAndBudget(unittest.TestCase):
                 json.dump(record, handle)
             snippet = (
                 "import {readFileSync} from 'node:fs';"
-                "import {runSchedule, tickLatencyMs, invocationPlacement} from './adapters.js';"
+                "import {runSchedule, tickLatencyMsFromRecord, invocationPlacement} from './adapters.js';"
                 f"const record = JSON.parse(readFileSync({json.dumps(path)}, 'utf8'));"
                 "process.stdout.write(JSON.stringify({"
                 "schedule: runSchedule(record),"
-                "latency: record.ticks.map(tickLatencyMs),"
+                "latency: record.ticks.map(tickLatencyMsFromRecord),"
                 "placement: record.ticks.map((t) => t.invocations.map(invocationPlacement))"
                 "}));"
             )
@@ -642,10 +642,10 @@ class PlacementAndBudget(unittest.TestCase):
                 json.dump(self.record, handle)
             snippet = (
                 "import {readFileSync} from 'node:fs';"
-                "import {runSchedule, tickLatencyMs} from './adapters.js';"
+                "import {runSchedule, tickLatencyMsFromRecord} from './adapters.js';"
                 f"const record = JSON.parse(readFileSync({json.dumps(path)}, 'utf8'));"
                 "process.stdout.write(JSON.stringify({"
-                "schedule: runSchedule(record), latency: record.ticks.map(tickLatencyMs)}));"
+                "schedule: runSchedule(record), latency: record.ticks.map(tickLatencyMsFromRecord)}));"
             )
             result = subprocess.run(
                 [NODE, "--input-type=module", "-e", snippet],

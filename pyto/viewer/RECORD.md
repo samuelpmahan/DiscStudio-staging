@@ -155,7 +155,11 @@ is therefore byte for byte the record it was before these existed
   its last finish. A parallel run measures it; a serial run's is the sum of its own durations,
   which for a series of Calculations is the same number. Null when any invocation's duration is
   null. Both reference readers derive it the same way and fall back to the sum when the field is
-  absent: `viewer/adapters.js tickLatencyMs`, `viewer/test/record_schema.py tick_latency_ms`.
+  absent: `viewer/adapters.js tickLatencyMsFromRecord`, `viewer/test/record_schema.py
+  tick_latency_ms`. `viewer/tick-viewer.js` exports a `tickLatencyMs` of its own whose
+  fallback is the **longest branch** rather than the sum, because that is the critical
+  path it draws; the two agree whenever the field is present, which is the only case a
+  record decides (`{?} TwoLatencyFallbacks`).
 - run level, `"parallel": <bool>`: true when the invocations of each Tick ran concurrently
   (`PCR.run(pxc, parallel=True)`).
 - run level, `"budget": {"limit_ms": <float or null>, "stopped_after_tick": <tick name or null>,

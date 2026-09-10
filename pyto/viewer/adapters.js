@@ -572,8 +572,16 @@ export function tickDurationMs(tick) {
  * One Tick's wall time: `latency_ms` when the record carries it, else the sum of
  * its durations -- the same arithmetic a serial run does, and null when any one
  * duration is null (RECORD.md, "Placement and budget").
+ *
+ * Qualified `FromRecord` because `tick-viewer.js` exports its own `tickLatencyMs`
+ * (task 40) and `embed.mjs` concatenates both files into one module, where two
+ * top-level bindings of one name is a SyntaxError. The two are not the same
+ * function: with `latency_ms` present they agree, and with it absent this one
+ * sums the durations (the serial reading RECORD.md specifies for the fallback)
+ * while the viewer's takes the longest branch (the critical path it draws).
+ * See `{?} TwoLatencyFallbacks` in experiments/tasks/39/packet.md.
  */
-export function tickLatencyMs(tick) {
+export function tickLatencyMsFromRecord(tick) {
   if (typeof tick.latency_ms === 'number') return tick.latency_ms;
   if (tick.invocations.length === 0) return null;
   let total = 0;
