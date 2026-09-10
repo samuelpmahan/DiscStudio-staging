@@ -1,11 +1,13 @@
 """Executable spec of parallel Ticks and the node law (task 39).
 
-A Tick is the parallel element of the circuit ({?} TicksAsCircuits, owner
-2026-09-10: "In electric circuits connections connect in serial or parallel"):
-the Calculations inside one Tick are independent branches, so they may run at
-the same time, and the two laws that make the drawing honest are checked at
-bind time -- no invocation consumes a sibling's produce, no two siblings
-produce the same Part.
+Inside a Tick the Calculations are a sequence in declared order, and the Tick
+boundary is where that sequence becomes inspectable ({?} ChainsInsideATick,
+owner 2026-09-10: "your existing ChainSpot program deliberately chains
+dependent Calculations inside a Tick. Your definition was the moment that
+sequence becomes inspectable"). A Tick in which no Calculation reads a sibling
+may run at once; a Tick with such a read is a chain and runs in order whatever
+the run's `parallel` says. Two things are refused at bind time: a read of a
+Part a *later* sibling produces, and two siblings producing one Part.
 
 The oracle every test here turns on: **scheduling is not the program**. The
 testimony (`PcrRun.ticks`, `json.dumps([asdict(t) for t in run.ticks])`, the
@@ -22,10 +24,10 @@ never to the repository; see pyto/experiments/tasks/39/packet.md):
         and Placement.test_a_parallel_tick_publishes_in_declared_order_after_the_-
         whole_tick fails at the store's own write order (branch.3 is written
         first): killed.
-    pcr.py:_refuse_sibling_bindings raises for a ResultRef     -> `continue` instead of
-        naming a sibling in the same Tick                         raising and
-        NodeLaw.test_a_sibling_result_ref_is_refused_at_bind_time fails (the bind
-        is accepted): killed.
+    pcr.py:run runs a chained Tick in declared order under   -> send it to the
+        parallel=True                                             pool and
+        NodeLaw.test_a_sibling_result_ref_is_a_chain fails (the later link binds a
+        result that is not there yet): killed.
     materialize.py:run_record writes `placement` only when     -> write it
         the run reports a schedule                                unconditionally and
         SerialRecordUnchanged.test_a_serial_record_carries_none_of_the_four_new_keys
@@ -280,34 +282,68 @@ class Placement(unittest.TestCase):
 
 
 class NodeLaw(unittest.TestCase):
-    """Both laws, refused at bind time, naming both ids."""
+    """A chain inside a Tick runs; the two refusals that remain name both ids."""
 
-    def test_a_sibling_result_ref_is_refused_at_bind_time(self):
-        pcr = PCR("short")
-        first = pcr.calc("t", SEED, id="first", into=Part("px.short.a"), args={"base": 1})
-        with self.assertRaises(ValueError) as caught:
-            pcr.calc("t", ECHO, id="second", into=Part("px.short.b"), value=first)
-        message = str(caught.exception)
-        self.assertIn("'first'", message)
-        self.assertIn("'second'", message)
-        self.assertIn("node law", message)
+    def test_a_sibling_result_ref_is_a_chain(self):
+        """The later link binds the earlier one's result and runs after it, serial or parallel."""
+        for parallel in (False, True):
+            with self.subTest(parallel=parallel):
+                pcr = PCR("chain")
+                first = pcr.calc("t", SEED, id="first", into=Part("px.chain.a"), args={"base": 1})
+                pcr.calc("t", ECHO, id="second", into=Part("px.chain.b"), value=first)
+                pxc = PxC()
+                run = pcr.run(pxc, observe=True, parallel=parallel)
+                self.assertEqual(run.results["second"], {"base": 1})
+                self.assertEqual(pxc.get(Part("px.chain.b")), {"base": 1})
 
-    def test_a_part_binding_on_a_siblings_produce_is_the_same_refusal(self):
-        """`Part('px.short.a')` is a read of the sibling's result (ResultReadsAreReads)."""
-        pcr = PCR("short-by-address")
-        pcr.calc("t", SEED, id="first", into=Part("px.short.a"), args={"base": 1})
-        with self.assertRaises(ValueError) as caught:
-            pcr.calc("t", ECHO, id="second", into=Part("px.short.b"), value=Part("px.short.a"))
-        message = str(caught.exception)
-        self.assertIn("'first'", message)
-        self.assertIn("'second'", message)
+    def test_a_part_binding_on_a_siblings_produce_is_the_same_chain(self):
+        """`Part('px.chain.a')` is a read of the sibling's result (ResultReadsAreReads)."""
+        pcr = PCR("chain-by-address")
+        pcr.calc("t", SEED, id="first", into=Part("px.chain.a"), args={"base": 1})
+        pcr.calc("t", ECHO, id="second", into=Part("px.chain.b"), value=Part("px.chain.a"))
+        self.assertTrue(pcr.tick("t").chained())
+        run = pcr.run(PxC(), observe=True, parallel=True)
+        self.assertEqual(run.results["second"], {"base": 1})
+
+    def test_a_chain_runs_in_order_on_one_worker_and_testifies_the_same(self):
+        """Under parallel=True a chained Tick is placed on worker 0, one after another,
+        and its testimony is the serial run's bytes."""
+        def program():
+            pcr = PCR("chain-placed")
+            a = pcr.calc("t", SEED, id="a", into=Part("px.cp.a"), args={"base": 2})
+            b = pcr.calc("t", ECHO, id="b", into=Part("px.cp.b"), value=a)
+            pcr.calc("t", ECHO, id="c", into=Part("px.cp.c"), value=b)
+            return pcr
+        serial_pxc, parallel_pxc = PxC(), PxC()
+        serial = program().run(serial_pxc, observe=True)
+        parallel = program().run(parallel_pxc, observe=True, parallel=True)
+        self.assertEqual(testimony_bytes(serial), testimony_bytes(parallel))
+        record = run_record(parallel, parallel_pxc)
+        validate_record(record)
+        tick = record["ticks"][0]
+        placements = [invocation_placement(inv) for inv in tick["invocations"]]
+        self.assertEqual([p["worker"] for p in placements], [0, 0, 0])
+        starts = [p["started_ms"] for p in placements]
+        self.assertEqual(starts, sorted(starts))
 
     def test_the_same_binding_in_a_later_tick_is_fine(self):
         pcr = PCR("series")
         first = pcr.calc("t1", SEED, id="first", into=Part("px.series.a"), args={"base": 1})
         pcr.calc("t2", ECHO, id="second", into=Part("px.series.b"), value=first)
+        self.assertFalse(pcr.tick("t1").chained())
         run = pcr.run(PxC(), observe=True)
         self.assertEqual(run.results["second"], {"base": 1})
+
+    def test_a_read_of_a_later_sibling_is_refused(self):
+        """The sequence runs in declared order, so a Part a later sibling produces is not there yet."""
+        pcr = PCR("backwards")
+        pcr.calc("t", ECHO, id="reader", into=Part("px.back.b"), value=Part("px.back.a"))
+        with self.assertRaises(ValueError) as caught:
+            pcr.calc("t", SEED, id="writer", into=Part("px.back.a"), args={"base": 1})
+        message = str(caught.exception)
+        self.assertIn("'reader'", message)
+        self.assertIn("'writer'", message)
+        self.assertIn("later", message)
 
     def test_two_siblings_producing_one_address_are_refused(self):
         pcr = PCR("two-writers")
@@ -328,15 +364,16 @@ class NodeLaw(unittest.TestCase):
         self.assertIn("'left'", str(caught.exception))
         self.assertIn("px.y", str(caught.exception))
 
-    def test_a_tick_built_without_a_pcr_is_held_to_the_law_too(self):
+    def test_a_tick_built_without_a_pcr_chains_too(self):
         from pyto.pcr import Tick
 
         tick = Tick("standalone")
         first = tick.calc(SEED, id="first", into=Part("px.t.a"), args={"base": 1})
+        tick.calc(ECHO, id="second", into=Part("px.t.b"), value=first)
+        self.assertTrue(tick.chained())
         with self.assertRaises(ValueError) as caught:
-            tick.calc(ECHO, id="second", into=Part("px.t.b"), value=first)
+            tick.calc(SEED, id="third", into=Part("px.t.a"), args={"base": 2})
         self.assertIn("'first'", str(caught.exception))
-        self.assertIn("'second'", str(caught.exception))
 
 
 class SerialRecordUnchanged(unittest.TestCase):

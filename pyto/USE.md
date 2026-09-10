@@ -511,15 +511,19 @@ try:
 except ValueError as refused:
     print("1:", refused)
 
-# 2. A sibling read: two Calculations in one Tick, the second reading the first.
+# 2. A backwards read: inside a Tick the Calculations run in the order written,
+# so `double` may read `sum`'s result only if `sum` is written first. Here it is
+# written second, and the kernel refuses it when `sum` claims the address.
 ADD_UP = Calculation("fn.order.add_up", add_up)
 DOUBLE = Calculation("fn.order.double", double)
 pcr = PCR("order")
-subtotal = pcr.calc(
-    "Sum", ADD_UP, id="sum", into=Part("px.order.subtotal"), prices=Part("px.order.prices")
+pcr.calc(
+    "Sum", DOUBLE, id="double", into=Part("px.order.double"), subtotal=Part("px.order.subtotal")
 )
 try:
-    pcr.calc("Sum", DOUBLE, id="double", into=Part("px.order.double"), subtotal=subtotal)
+    pcr.calc(
+        "Sum", ADD_UP, id="sum", into=Part("px.order.subtotal"), prices=Part("px.order.prices")
+    )
 except ValueError as refused:
     print("2:", refused)
 
@@ -533,12 +537,15 @@ except ValueError as refused:
 
 ```text
 1: Calculation address must start with 'fn.' (pure) or with 'oc.' (an OperationalCalculation: the syscall table, the only place an effect happens)
-2: PCR 'order' calculation 'double' binds 'subtotal' to the result of 'sum', a sibling in Tick 'Sum' (it produces px.order.subtotal): the Calculations of one Tick are parallel branches and none of them may consume another's produce (the node law, {?} TicksAsCircuits); move 'sum' to an earlier Tick, or 'double' to a later one
+2: PCR 'order' calculation 'sum' produces 'px.order.subtotal', which its sibling 'double' in Tick 'Sum' reads as 'subtotal': a Calculation may read what an earlier sibling produced, not a later one (the sequence runs in declared order, {?} ChainsInsideATick); declare 'sum' before 'double'
 3: PxC: 'px.receipt.order.Sum.sum' is under the reserved 'px.receipt.' segment, which only a run may write (pyto.pcr, or inside receipt_writes_allowed(), or set(..., _from_run=True))
 ```
 
-The fix for 2 is always the same question: which of the two moves to another
-Tick. The message names both ids so you do not have to go looking. And 3 is why a
+The fix for 2 is the order: write `sum` before `double` and the same two
+Calculations are a chain inside one Tick, which is allowed and ordinary (the
+owner's ChainSpot programs chain dependent Calculations inside a Tick; the Tick
+boundary is where the sequence becomes inspectable). The message names both ids
+so you do not have to go looking. And 3 is why a
 receipt is worth reading: nothing but a run can write one, so a receipt in the
 store is testimony and not a claim.
 
