@@ -325,6 +325,13 @@ def receipt_line(s: dict) -> str:
         bits.append(f"score {s['score']}")
     bits.append(f"{s['tests']} tests across the suites")
     bits.append(f"base {s['base'] or '?'} to landing {s['sha'][:7] or '?'}")
+    gate = (s.get("receipt") or {}).get("gate") or {}
+    if gate.get("allowed") and gate.get("trusted"):
+        bits.append(gate.get("reason", "approved"))
+    elif gate.get("stub_allowed"):
+        bits.append("stub gate, never trusted")
+    else:
+        bits.append("unapproved")
     bits.append(f"receipt {s['receipt_id'] or '?'}")
     return "; ".join(bits)
 
