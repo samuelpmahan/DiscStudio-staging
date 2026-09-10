@@ -1,0 +1,1369 @@
+Task 26 full-suite attempt
+Command: PYTHON=/workspace/scratch/f2ea76ad2141/DiscStudio-staging/.venv/bin/python bash pyto/scripts/check_all.sh
+Exit: 129
+
+
+===== /tmp/tmp.aGwfnUymc2/consumer.log =====
+[test_art_registry] sys.path.insert pyto/experiments/art-tournament/harness  (tournament lint checks and card fixtures)
+test_art_replay_receipt_and_no_mutation_on_invalid (test_art_backend.ArtBackendTest.test_art_replay_receipt_and_no_mutation_on_invalid) ... ok
+test_concurrent_events_are_complete_json_lines (test_art_backend.ArtBackendTest.test_concurrent_events_are_complete_json_lines) ... ok
+test_health_recipe_event_and_reload (test_art_backend.ArtBackendTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_art_backend.ArtBackendTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_art_backend.ArtBackendTest.test_root_only_serves_index) ... ok
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
+test_all_eight_renderers_draw_the_four_sample_cards_at_400 (test_art_registry.EveryCardRendererDrawsTest.test_all_eight_renderers_draw_the_four_sample_cards_at_400) ... ok
+test_every_renderer_draws_exactly_what_its_studio_source_draws (test_art_registry.EveryCardRendererDrawsTest.test_every_renderer_draws_exactly_what_its_studio_source_draws)
+The copies beside this module must not have forked from the studios. ... [test_art_registry] load_source pyto/experiments/art-tournament/studios/botanical/cards.py  (byte-equality check for studio botanical cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/botanical/families.py  (byte-equality check for studio botanical)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/cartography/cards.py  (byte-equality check for studio cartography cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/cartography/families.py  (byte-equality check for studio cartography)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/foundry/cards.py  (byte-equality check for studio foundry cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/foundry/families.py  (byte-equality check for studio foundry)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/signal/cards.py  (byte-equality check for studio signal cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/signal/families.py  (byte-equality check for studio signal)
+ok
+test_retained_renderers_are_registered_under_a_studio_suffixed_address (test_art_registry.EveryCardRendererDrawsTest.test_retained_renderers_are_registered_under_a_studio_suffixed_address) ... ok
+test_the_promoted_pair_is_card_render_itself_not_a_copy (test_art_registry.EveryCardRendererDrawsTest.test_the_promoted_pair_is_card_render_itself_not_a_copy) ... ok
+test_all_sixteen_families_render_at_every_target_and_are_deterministic (test_art_registry.EveryFamilyRendersTest.test_all_sixteen_families_render_at_every_target_and_are_deterministic) ... ok
+test_every_family_render_is_lint_clean_under_the_harness_checks (test_art_registry.EveryFamilyRendersTest.test_every_family_render_is_lint_clean_under_the_harness_checks) ... ok
+test_family_render_entry_point_agrees_with_every_entry (test_art_registry.EveryFamilyRendersTest.test_family_render_entry_point_agrees_with_every_entry) ... ok
+test_every_entry_carries_a_params_document (test_art_registry.ProvenanceTest.test_every_entry_carries_a_params_document) ... ok
+test_every_evidence_path_points_at_a_file_that_still_exists (test_art_registry.ProvenanceTest.test_every_evidence_path_points_at_a_file_that_still_exists) ... ok
+test_every_reach_outside_the_consumer_stays_inside_the_repository (test_art_registry.ProvenanceTest.test_every_reach_outside_the_consumer_stays_inside_the_repository) ... ok
+test_every_scored_entry_carries_its_tally_and_the_classic_four_do_not (test_art_registry.ProvenanceTest.test_every_scored_entry_carries_its_tally_and_the_classic_four_do_not) ... ok
+test_every_tally_matches_results_md_section_one (test_art_registry.ProvenanceTest.test_every_tally_matches_results_md_section_one) ... [test_art_registry] read pyto/experiments/art-tournament/RESULTS.md  (the judge tally attached to every entry)
+ok
+test_status_counts_are_four_classic_three_and_two_promoted_nine_and_six_retained (test_art_registry.ProvenanceTest.test_status_counts_are_four_classic_three_and_two_promoted_nine_and_six_retained) ... ok
+test_the_frozen_classic_bytes_are_untouched_by_this_registry (test_art_registry.ProvenanceTest.test_the_frozen_classic_bytes_are_untouched_by_this_registry)
+The registry must not have moved a byte of the four originals. ... ok
+test_the_promotion_policy_is_recorded_as_reversible (test_art_registry.ProvenanceTest.test_the_promotion_policy_is_recorded_as_reversible) ... ok
+test_classic_families_render_exactly_as_paint_components_does (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_classic_families_render_exactly_as_paint_components_does) ... ok
+test_every_paint_components_family_is_addressable_here (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_every_paint_components_family_is_addressable_here) ... ok
+test_promoted_families_are_the_promoted_function_not_a_second_copy (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_promoted_families_are_the_promoted_function_not_a_second_copy) ... ok
+test_promoted_families_render_exactly_as_paint_components_does (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_promoted_families_render_exactly_as_paint_components_does) ... ok
+test_retained_families_render_exactly_as_their_studio_source_does (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_retained_families_render_exactly_as_their_studio_source_does) ... ok
+test_no_anonymous_functions_in_the_registry_module (test_art_registry.RegistrationTest.test_no_anonymous_functions_in_the_registry_module) ... ok
+test_one_art_result_fans_out_to_each_studios_single_and_battle (test_art_registry.RegistrationTest.test_one_art_result_fans_out_to_each_studios_single_and_battle) ... ok
+test_pql_cannot_see_a_single_registered_calculation (test_art_registry.RegistrationTest.test_pql_cannot_see_a_single_registered_calculation) ... ok
+test_register_all_puts_all_twenty_six_addresses_on_a_fresh_pxc (test_art_registry.RegistrationTest.test_register_all_puts_all_twenty_six_addresses_on_a_fresh_pxc) ... ok
+test_card_owns_layout_and_manual_display_fields (test_card_composition.CardCompositionTest.test_card_owns_layout_and_manual_display_fields) ... ok
+test_layout_does_not_mutate_disc_input (test_card_composition.CardCompositionTest.test_layout_does_not_mutate_disc_input) ... ok
+test_legacy_adapter_has_no_physical_identity (test_card_composition.CardCompositionTest.test_legacy_adapter_has_no_physical_identity) ... ok
+test_malformed_reference_rejected (test_card_composition.CardCompositionTest.test_malformed_reference_rejected) ... ok
+test_non_string_reference_rejected_without_type_error (test_card_composition.CardCompositionTest.test_non_string_reference_rejected_without_type_error) ... ok
+test_result_hash_is_stable (test_card_composition.CardCompositionTest.test_result_hash_is_stable) ... ok
+test_shared_active_disc_and_independent_snapshot (test_card_composition.CardCompositionTest.test_shared_active_disc_and_independent_snapshot) ... ok
+test_an_unrecorded_mold_is_marked_not_papered_over_with_the_note (test_card_render.CardRenderTest.test_an_unrecorded_mold_is_marked_not_papered_over_with_the_note)
+The one defect the judges named by name in a runner-up renderer. ... ok
+test_art_is_inlined_with_no_external_or_data_reference (test_card_render.CardRenderTest.test_art_is_inlined_with_no_external_or_data_reference) ... ok
+test_battle_renders_both_layouts_with_a_score_slot (test_card_render.CardRenderTest.test_battle_renders_both_layouts_with_a_score_slot) ... ok
+test_calculations_surface_is_registrable (test_card_render.CardRenderTest.test_calculations_surface_is_registrable) ... ok
+test_details_flag_is_honoured_by_both_renderers (test_card_render.CardRenderTest.test_details_flag_is_honoured_by_both_renderers) ... ok
+test_missing_scores_still_render_a_slot (test_card_render.CardRenderTest.test_missing_scores_still_render_a_slot) ... ok
+test_one_art_result_fans_out_to_both_card_renderers (test_card_render.CardRenderTest.test_one_art_result_fans_out_to_both_card_renderers)
+fn.discArt.render runs once; both card calculations name it in testimony. ... ok
+test_render_does_not_mutate_the_card_or_the_art (test_card_render.CardRenderTest.test_render_does_not_mutate_the_card_or_the_art) ... ok
+test_render_is_deterministic_within_and_across_processes (test_card_render.CardRenderTest.test_render_is_deterministic_within_and_across_processes) ... ok
+test_single_renders_both_layouts_from_compose_output (test_card_render.CardRenderTest.test_single_renders_both_layouts_from_compose_output) ... ok
+test_two_discs_on_one_battle_plate_do_not_share_ids (test_card_render.CardRenderTest.test_two_discs_on_one_battle_plate_do_not_share_ids) ... ok
+test_every_original_family_and_target_matches_its_recorded_hash (test_paint_families.ClassicFamiliesAreFrozenTest.test_every_original_family_and_target_matches_its_recorded_hash) ... ok
+test_promotion_only_appended_to_the_family_list (test_paint_families.ClassicFamiliesAreFrozenTest.test_promotion_only_appended_to_the_family_list) ... ok
+test_no_two_families_rasterize_alike_at_42px (test_paint_families.FamiliesAreDistinctAt42Test.test_no_two_families_rasterize_alike_at_42px) ... skipped 'playwright is not installed'
+test_document_contract_holds_at_every_target (test_paint_families.PromotedFamiliesTest.test_document_contract_holds_at_every_target) ... ok
+test_every_family_and_target_is_lint_clean (test_paint_families.PromotedFamiliesTest.test_every_family_and_target_is_lint_clean) ... ok
+test_render_is_deterministic_within_and_across_processes (test_paint_families.PromotedFamiliesTest.test_render_is_deterministic_within_and_across_processes) ... ok
+test_reuse_surface_is_registrable (test_paint_families.PromotedFamiliesTest.test_reuse_surface_is_registrable) ... ok
+test_unknown_family_is_rejected (test_paint_families.PromotedFamiliesTest.test_unknown_family_is_rejected) ... ok
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
+
+----------------------------------------------------------------------
+Ran 61 tests in 1.587s
+
+OK (skipped=1)
+
+===== /tmp/tmp.aGwfnUymc2/disc-stats.log =====
+test_description_denominators_and_raw_phrases (test_stats.StatsTests.test_description_denominators_and_raw_phrases) ... ok
+test_later_shot_windows_and_empty_denominator (test_stats.StatsTests.test_later_shot_windows_and_empty_denominator) ... ok
+test_membership_gap_and_censoring (test_stats.StatsTests.test_membership_gap_and_censoring) ... ok
+test_mold_identity_dedupe_and_conflict (test_stats.StatsTests.test_mold_identity_dedupe_and_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+
+===== /tmp/tmp.aGwfnUymc2/experiments_cross-project.log =====
+test_committed_run1_evidence_has_no_absolute_checkout_paths (test_cross_project.CommittedEvidenceIsPortable.test_committed_run1_evidence_has_no_absolute_checkout_paths) ... ok
+test_shared_hit_digest_matches_ablation_committed_evidence (test_cross_project.DigestVerification.test_shared_hit_digest_matches_ablation_committed_evidence)
+Step C's whole point: the value read back through the shared store must ... ok
+test_second_run_in_fresh_child_process_hits_everything (test_cross_project.FreshChildProcess.test_second_run_in_fresh_child_process_hits_everything)
+A genuinely fresh `python3 -I` process, told only PYTO_MATERIALS_DIR (env ... ok
+test_no_ablation_files_duplicated_into_cross_project (test_cross_project.NoCodeCopied.test_no_ablation_files_duplicated_into_cross_project)
+This experiment must not carry its own calculations.py/features.py/ ... ok
+test_refuses_to_overwrite_existing_out_dir_without_force (test_cross_project.RefusesOverwrite.test_refuses_to_overwrite_existing_out_dir_without_force) ... ok
+test_changing_a_shelf_revision_string_is_a_miss_not_a_hit (test_cross_project.RevisionChangeIsAMiss.test_changing_a_shelf_revision_string_is_a_miss_not_a_hit)
+program.HISTOGRAM_REVISION, mutated, must produce a DIFFERENT key and ... ok
+test_empty_store_is_seeded_by_domain_a_then_hits (test_cross_project.SeedingAndHitting.test_empty_store_is_seeded_by_domain_a_then_hits)
+On a genuinely empty store, Step A must produce the ablation material ... ok
+test_prepopulated_store_gives_one_hit_and_misses_for_shelf_calcs_before_any_write (test_cross_project.SeedingAndHitting.test_prepopulated_store_gives_one_hit_and_misses_for_shelf_calcs_before_any_write)
+Pre-seed only the ablation material (as run_cached.py, or a prior domain-A ... ok
+test_shared_material_key_equals_ablation_committed_key (test_cross_project.SharedKeyMatchesAblation.test_shared_material_key_equals_ablation_committed_key)
+Kills a mutation to SHARED_SOURCE/SHARED_SEED/SHARED_N in program.py: the ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.279s
+
+OK
+
+===== /tmp/tmp.aGwfnUymc2/experiments_grouped-ablation.log =====
+[grouped-ablation] sys.path.insert(0, '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation')  # this experiment's own modules (retain, compare_local, pql_document, calculations)
+[grouped-ablation] sys.path.insert(0, '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/consumers/discstudio-card/experiments/disc-stats')  # run_experiment.py imports stats.py by top-level name (disc-stats/run_experiment.py:4)
+[grouped-ablation] sys.path.insert(0, '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation')  # this experiment's own modules
+test_change_outside_the_watch_list_leaves_the_sha_bare (test_grouped_ablation.CommitShaDirtyMarker.test_change_outside_the_watch_list_leaves_the_sha_bare) ... ok
+test_dirty_marker_follows_modified_and_untracked_files (test_grouped_ablation.CommitShaDirtyMarker.test_dirty_marker_follows_modified_and_untracked_files) ... ok
+test_outside_a_repository_reports_unavailable_instead_of_a_sha (test_grouped_ablation.CommitShaDirtyMarker.test_outside_a_repository_reports_unavailable_instead_of_a_sha) ... ok
+test_write_evidence_records_the_dirty_marker_in_commit_txt (test_grouped_ablation.CommitShaDirtyMarker.test_write_evidence_records_the_dirty_marker_in_commit_txt)
+The wiring: write_evidence's commit.txt is commit_sha(repo_dir, watch), so a dirty watched tree reaches the file. ... ok
+test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded (test_grouped_ablation.GroupedAblationEvidence.test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded)
+The half of the stamp that must NOT be relaxed: an uncommitted edit to code ... ERROR
+test_checked_in_run_1_matches_seed_7 (test_grouped_ablation.GroupedAblationEvidence.test_checked_in_run_1_matches_seed_7) ... ok
+test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed (test_grouped_ablation.GroupedAblationEvidence.test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed)
+commit.txt = `git rev-parse HEAD` plus `-dirty` exactly when this experiment dir or pyto/src differs ... FAIL
+test_comparison_md_lists_drop_g3_first (test_grouped_ablation.GroupedAblationEvidence.test_comparison_md_lists_drop_g3_first) ... ok
+test_evidence_contains_no_lambda_or_function_repr (test_grouped_ablation.GroupedAblationEvidence.test_evidence_contains_no_lambda_or_function_repr) ... ok
+test_evidence_excludes_names_the_evidence_tree_and_nothing_else (test_grouped_ablation.GroupedAblationEvidence.test_evidence_excludes_names_the_evidence_tree_and_nothing_else)
+Round 3, finding 7. The exclusion must be exactly the outputs. ... ok
+test_evidence_file_set (test_grouped_ablation.GroupedAblationEvidence.test_evidence_file_set) ... ok
+test_mermaid_names_every_invocation_and_split_edges (test_grouped_ablation.GroupedAblationEvidence.test_mermaid_names_every_invocation_and_split_edges) ... ok
+test_saved_work_binds_authoring_files_by_sha256 (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_binds_authoring_files_by_sha256)
+saved-work.json carries sha256 of features.py, calculations.py, program.py so the evidence binds ... ok
+test_saved_work_carries_no_literal_reuse_counts (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_carries_no_literal_reuse_counts)
+invocations_skipped and ms_saved need Day 2's result digests; run-1 must not write them as literal zeros. ... ok
+test_saved_work_counts_match_run (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_counts_match_run) ... ok
+test_saved_work_derives_inheritance_from_a_prior_ledger (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_derives_inheritance_from_a_prior_ledger)
+inherited_calculations = len(REGISTRY & prior addresses), not a literal; the prior's own name is recorded. ... ok
+test_saved_work_run_label_is_the_out_dir_basename_with_no_prior (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_run_label_is_the_out_dir_basename_with_no_prior)
+run.py saved_work: `run` is basename(out_dir) and Day 1 has no prior ledger (round 2, finding 2). ... ok
+test_testimony_file_is_pcr_and_ticks_only (test_grouped_ablation.GroupedAblationEvidence.test_testimony_file_is_pcr_and_ticks_only) ... ok
+test_default_out_is_a_fresh_empty_directory_outside_evidence (test_grouped_ablation.GroupedAblationOutDir.test_default_out_is_a_fresh_empty_directory_outside_evidence) ... ok
+test_existing_non_empty_out_is_refused_without_force (test_grouped_ablation.GroupedAblationOutDir.test_existing_non_empty_out_is_refused_without_force) ... ok
+test_force_overwrites_and_an_empty_existing_dir_is_accepted (test_grouped_ablation.GroupedAblationOutDir.test_force_overwrites_and_an_empty_existing_dir_is_accepted) ... ok
+test_main_without_out_leaves_tracked_run_1_untouched (test_grouped_ablation.GroupedAblationOutDir.test_main_without_out_leaves_tracked_run_1_untouched) ... ok
+test_failed_variants_are_retained_not_hidden (test_grouped_ablation.GroupedAblationRanking.test_failed_variants_are_retained_not_hidden) ... ok
+test_groups_without_planted_weight_are_uninformative (test_grouped_ablation.GroupedAblationRanking.test_groups_without_planted_weight_are_uninformative) ... ok
+test_ranking_drop_g3_then_g0_then_g1_across_seeds (test_grouped_ablation.GroupedAblationRanking.test_ranking_drop_g3_then_g0_then_g1_across_seeds) ... ok
+test_ranking_is_deterministic_for_same_seed (test_grouped_ablation.GroupedAblationRanking.test_ranking_is_deterministic_for_same_seed) ... ok
+test_all_twelve_fit_and_score_invocations_consume_fn_split (test_grouped_ablation.GroupedAblationTestimony.test_all_twelve_fit_and_score_invocations_consume_fn_split) ... ok
+test_no_args_key_collides_with_a_bound_input_name (test_grouped_ablation.GroupedAblationTestimony.test_no_args_key_collides_with_a_bound_input_name) ... ok
+test_score_consumes_fn_fit_and_compare_consumes_fn_scores (test_grouped_ablation.GroupedAblationTestimony.test_score_consumes_fn_fit_and_compare_consumes_fn_scores) ... ok
+test_testimony_json_round_trip_equals_asdict (test_grouped_ablation.GroupedAblationTestimony.test_testimony_json_round_trip_equals_asdict) ... ok
+test_ticks_are_prepare_fit_score_compare (test_grouped_ablation.GroupedAblationTestimony.test_ticks_are_prepare_fit_score_compare) ... ok
+test_exactly_five_ablation_variants_never_32768 (test_grouped_ablation.GroupedAblationVariants.test_exactly_five_ablation_variants_never_32768) ... ok
+test_registry_is_module_functions_without_lambdas (test_grouped_ablation.GroupedAblationVariants.test_registry_is_module_functions_without_lambdas) ... ok
+test_materials (unittest.loader._FailedTest.test_materials) ... ERROR
+test_running_the_evidence_writing_suites_changes_no_committed_file (test_replay.CheckAllLeavesTheTreeClean.test_running_the_evidence_writing_suites_changes_no_committed_file) ... ERROR
+test_every_startup_resident_top_level_name_is_stdlib_or_named (test_replay.ChildModuleTable.test_every_startup_resident_top_level_name_is_stdlib_or_named)
+Kills: an environment that grew a new startup resident nobody looked at. ... ok
+test_nothing_outside_the_allowed_set_is_in_the_full_module_table (test_replay.ChildModuleTable.test_nothing_outside_the_allowed_set_is_in_the_full_module_table) ... ok
+test_the_experiment_modules_are_absent_from_sys_modules_before (test_replay.ChildModuleTable.test_the_experiment_modules_are_absent_from_sys_modules_before)
+The child started clean: nothing it is about to import was already there. ... ok
+test_the_full_table_check_is_strictly_stronger_than_the_old_difference (test_replay.ChildModuleTable.test_the_full_table_check_is_strictly_stronger_than_the_old_difference)
+The old check subtracted `sys_modules_before` wholesale; this proves that ... skipped 'no non-stdlib startup resident in the stripped child'
+test_the_startup_resident_set_is_named_not_inferred (test_replay.ChildModuleTable.test_the_startup_resident_set_is_named_not_inferred) ... ok
+test_every_seed_is_reproducible_across_two_independent_processes (test_replay.DeterminismMatrix.test_every_seed_is_reproducible_across_two_independent_processes) ... ok
+test_log_was_written_as_lf (test_replay.DeterminismMatrix.test_log_was_written_as_lf) ... ok
+test_nonzero_seeds_do_not_report_hash_randomization_disabled (test_replay.DeterminismMatrix.test_nonzero_seeds_do_not_report_hash_randomization_disabled)
+Corrects the plan's 'confirmed not gaps' note for n != 0 (replay.py docstring). ... ok
+test_result_digests_are_identical_across_every_hashseed_row_and_the_baseline (test_replay.DeterminismMatrix.test_result_digests_are_identical_across_every_hashseed_row_and_the_baseline) ... ok
+test_seed_zero_reports_hash_randomization_disabled (test_replay.DeterminismMatrix.test_seed_zero_reports_hash_randomization_disabled) ... ok
+test_the_five_seeds_produce_five_distinct_hashes (test_replay.DeterminismMatrix.test_the_five_seeds_produce_five_distinct_hashes)
+Kills: a seed that stopped taking effect. ... ok
+test_the_matrix_sets_no_pythonpath (test_replay.DeterminismMatrix.test_the_matrix_sets_no_pythonpath)
+The LF-copy row, the only one needing a scratch PYTHONPATH, was moved out of ... ok
+test_the_produced_log_matches_the_committed_one (test_replay.DeterminismMatrix.test_the_produced_log_matches_the_committed_one)
+The hash values are seed-determined, so this log reproduces exactly. ... ERROR
+test_cwd_was_outside_the_repository (test_replay.FreshProcessReplay.test_cwd_was_outside_the_repository) ... ok
+test_env_was_stripped_to_path_only (test_replay.FreshProcessReplay.test_env_was_stripped_to_path_only) ... ok
+test_exactly_one_intra_repo_path_was_inserted_and_it_is_this_directory (test_replay.FreshProcessReplay.test_exactly_one_intra_repo_path_was_inserted_and_it_is_this_directory) ... ok
+test_log_carries_the_checks_the_child_makes_before_trusting_the_record (test_replay.FreshProcessReplay.test_log_carries_the_checks_the_child_makes_before_trusting_the_record)
+Kills: dropping any of the guards added in fixer rounds 1 and 3. ... ok
+test_log_was_written_with_the_command_line_and_module_dump (test_replay.FreshProcessReplay.test_log_was_written_with_the_command_line_and_module_dump) ... ok
+test_provider_identity_was_compared_and_agreed (test_replay.FreshProcessReplay.test_provider_identity_was_compared_and_agreed) ... ok
+test_the_child_neither_read_nor_wrote_bytecode (test_replay.FreshProcessReplay.test_the_child_neither_read_nor_wrote_bytecode)
+`python3 -B` plus the parent's __pycache__ purge: a stale .pyc whose ... ok
+test_the_child_read_the_same_module_sources_the_parent_sees_on_disk (test_replay.FreshProcessReplay.test_the_child_read_the_same_module_sources_the_parent_sees_on_disk) ... ok
+test_the_produced_log_matches_the_committed_one_line_for_line (test_replay.FreshProcessReplay.test_the_produced_log_matches_the_committed_one_line_for_line)
+The oracle (fixer round 3, finding 1): this run wrote into a temp dir, and ... ERROR
+test_the_terminal_line_is_the_verdict_and_it_accepted_this_record (test_replay.FreshProcessReplay.test_the_terminal_line_is_the_verdict_and_it_accepted_this_record)
+`child failed checks: []` is NOT the verdict (fixer round 2, finding 3). ... ok
+test_a_record_that_preseeds_an_address_the_program_computes_is_refused (test_replay.HiddenStateAuditor.test_a_record_that_preseeds_an_address_the_program_computes_is_refused)
+Kills: dropping the external-vs-into check in retain.check_record. ... ok
+test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused (test_replay.HiddenStateAuditor.test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused)
+Kills: dropping the results-keys check in retain.check_record. ... ok
+test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it (test_replay.HiddenStateAuditor.test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it)
+The whole point of the fresh-process boundary: a forged record that reproduces ... ERROR
+test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child (test_replay.HiddenStateAuditor.test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child) ... ok
+test_the_honest_record_is_accepted_after_the_forgery_tests (test_replay.HiddenStateAuditor.test_the_honest_record_is_accepted_after_the_forgery_tests)
+The forged records were written to temp paths and logged to temp files; ... ok
+test_each_child_reproduced_its_own_committed_comparison_and_digests (test_replay.LaneCCrossVerification.test_each_child_reproduced_its_own_committed_comparison_and_digests) ... ok
+test_each_childs_receipt_digests_match_that_runs_committed_receipts (test_replay.LaneCCrossVerification.test_each_childs_receipt_digests_match_that_runs_committed_receipts)
+Finding 2, over every retained record and not only run-1. ... ok
+test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) ... 
+  test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) (run='run-2-regroup') ... ERROR
+  test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) (run='run-3-reinput') ... ERROR
+  test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) (run='run-4-from-retained') ... ERROR
+test_each_run_has_its_own_log_ending_in_an_accepted_verdict (test_replay.LaneCCrossVerification.test_each_run_has_its_own_log_ending_in_an_accepted_verdict) ... ok
+test_every_lane_c_run_was_replayed (test_replay.LaneCCrossVerification.test_every_lane_c_run_was_replayed) ... ok
+test_run_4_declares_a_different_external_boundary_than_runs_1_to_3 (test_replay.LaneCCrossVerification.test_run_4_declares_a_different_external_boundary_than_runs_1_to_3)
+run-4 replays from a retained split, so its declared inputs are not ... ok
+setUpClass (test_replay.LfSourceDriftProbe) ... ERROR
+test_a_module_outside_the_allowed_set_is_refused (test_replay.ParentSideRefusals.test_a_module_outside_the_allowed_set_is_refused)
+Kills: dropping `if leaked`. ... ERROR
+test_a_parent_child_source_sha_mismatch_is_refused (test_replay.ParentSideRefusals.test_a_parent_child_source_sha_mismatch_is_refused)
+Kills: dropping the `parent_source_sha256 != report['source_sha256']` raise. ... ERROR
+test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests (test_replay.ParentSideRefusals.test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests)
+Kills: dropping `if not digests_equal`. Rows still match, so nothing else fires. ... ERROR
+test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows (test_replay.ParentSideRefusals.test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows)
+Kills: dropping `if not rows_equal`. The child accepts this record. ... ERROR
+test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) ... 
+  test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='value-forged-rows') ... FAIL
+  test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='digest-forged') ... FAIL
+  test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='module-leak') ... FAIL
+  test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='source-sha-mismatch') ... FAIL
+  test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='registry-forged') ... FAIL
+test_the_honest_record_is_still_accepted_after_all_of_the_above (test_replay.ParentSideRefusals.test_the_honest_record_is_still_accepted_after_all_of_the_above) ... ok
+test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider (test_replay.ProviderIdentityIsModuleGranular.test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider) ... ERROR
+test_the_corrupted_registry_produces_a_byte_identical_provider_block (test_replay.ProviderIdentityIsModuleGranular.test_the_corrupted_registry_produces_a_byte_identical_provider_block) ... ok
+test_the_impostor_is_a_different_function_of_the_declared_module (test_replay.ProviderIdentityIsModuleGranular.test_the_impostor_is_a_different_function_of_the_declared_module) ... ok
+test_the_limitation_is_stated_in_the_docstring (test_replay.ProviderIdentityIsModuleGranular.test_the_limitation_is_stated_in_the_docstring) ... ok
+test_verify_provider_agrees_with_the_corrupted_registry (test_replay.ProviderIdentityIsModuleGranular.test_verify_provider_agrees_with_the_corrupted_registry) ... ok
+test_a_receipt_digest_mismatch_is_refused (test_replay.ReceiptDigestsFromTheChild.test_a_receipt_digest_mismatch_is_refused)
+Kills: dropping either receipt raise. The record's results are forged in a ... ok
+test_a_stale_committed_receipts_file_is_refused (test_replay.ReceiptDigestsFromTheChild.test_a_stale_committed_receipts_file_is_refused)
+Kills: dropping the receipts.json comparison. The record is honest; only ... ok
+test_both_lines_are_in_the_log (test_replay.ReceiptDigestsFromTheChild.test_both_lines_are_in_the_log) ... ok
+test_receipt_digests_equal_the_committed_receipts_json (test_replay.ReceiptDigestsFromTheChild.test_receipt_digests_equal_the_committed_receipts_json) ... ok
+test_receipt_digests_equal_the_records_results (test_replay.ReceiptDigestsFromTheChild.test_receipt_digests_equal_the_records_results) ... ok
+test_the_child_reported_a_receipt_for_every_invocation (test_replay.ReceiptDigestsFromTheChild.test_the_child_reported_a_receipt_for_every_invocation) ... ok
+test_removing_a_used_address_raises_keyerror_naming_it_before_execution (test_replay.RegistryHole.test_removing_a_used_address_raises_keyerror_naming_it_before_execution) ... ERROR
+test_requested_address_from_the_brief_is_not_actually_in_the_registry (test_replay.RegistryHole.test_requested_address_from_the_brief_is_not_actually_in_the_registry)
+Documents why the log substitutes an address (see replay.py docstring). ... ok
+test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone (test_replay.ReplayDoesNotMutateTheRecord.test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone)
+Fixer round 2, finding 5: `args` were shallow-copied all the way down. ... ok
+test_the_seeded_value_is_not_the_records_own_object (test_replay.ReplayDoesNotMutateTheRecord.test_the_seeded_value_is_not_the_records_own_object) ... ok
+test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical (test_replay.ReplayDoesNotMutateTheRecord.test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical) ... ok
+test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation (test_replay.ReplayObserveSeam.test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation) ... ok
+test_receipt_digests_equal_the_records_result_digests (test_replay.ReplayObserveSeam.test_receipt_digests_equal_the_records_result_digests) ... ok
+test_testimony_bytes_are_identical_with_observe_on_and_off (test_replay.ReplayObserveSeam.test_testimony_bytes_are_identical_with_observe_on_and_off)
+The day's hard rule, re-asserted through the replay path. ... ok
+test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf (test_replay.RetainedRecordIsDeterministic.test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf) ... ok
+test_result_digests_agree_with_the_committed_comparison (test_replay.RetainedRecordIsDeterministic.test_result_digests_agree_with_the_committed_comparison) ... ok
+test_retained_program_ticks_equal_the_committed_day1_testimony_ticks (test_replay.RetainedRecordIsDeterministic.test_retained_program_ticks_equal_the_committed_day1_testimony_ticks)
+evidence/run-1/testimony.json needs no conversion to become the program (gap 18d). ... ok
+test_the_committed_stamp_names_a_commit_git_knows (test_replay.RetainedRecordIsDeterministic.test_the_committed_stamp_names_a_commit_git_knows)
+The one field the oracle blanks is checked on its own terms. ... fatal: not a git repository (or any of the parent directories): .git
+FAIL
+test_the_oracle_fails_when_the_record_really_differs (test_replay.RetainedRecordIsDeterministic.test_the_oracle_fails_when_the_record_really_differs)
+Kills: an `ensure_retained_record` that compares nothing. ... ok
+test_two_independent_builds_are_byte_identical (test_replay.RetainedRecordIsDeterministic.test_two_independent_builds_are_byte_identical) ... ok
+test_the_intra_repo_insert_is_inside_this_repository (test_replay.SysPathDiscipline.test_the_intra_repo_insert_is_inside_this_repository) ... ok
+test_only_the_tampered_variant_and_compare_changed (test_replay.Tamper.test_only_the_tampered_variant_and_compare_changed) ... ok
+test_record_holds_no_code (test_replay.Tamper.test_record_holds_no_code) ... ok
+test_report_was_written_as_lf_and_matches_the_committed_report (test_replay.Tamper.test_report_was_written_as_lf_and_matches_the_committed_report) ... ok
+test_the_baseline_replay_left_the_record_byte_identical (test_replay.Tamper.test_the_baseline_replay_left_the_record_byte_identical)
+Fixer round 1, finding 2: the two sides of this report must be independent. ... ok
+test_the_flag_is_false_when_the_baseline_replay_does_mutate (test_replay.Tamper.test_the_flag_is_false_when_the_baseline_replay_does_mutate)
+Fixer round 2, finding 4: the flag used to be unfalsifiable. ... ok
+test_untouched_variants_kept_their_digests (test_replay.Tamper.test_untouched_variants_kept_their_digests) ... ok
+test_a_bare_replay_py_refuses_to_overwrite_committed_evidence (test_replay.VerificationWritesNoEvidence.test_a_bare_replay_py_refuses_to_overwrite_committed_evidence)
+Only `--force` may write under evidence/ (mirrors run.py:316-329). ... ok
+test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record) ... ok
+test_owned_evidence_lists_every_committed_artifact_this_script_writes (test_replay.VerificationWritesNoEvidence.test_owned_evidence_lists_every_committed_artifact_this_script_writes)
+`replay.py --force` must be able to regenerate everything under its ownership; ... ok
+test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree) ... ok
+test_candidates_define_no_lambda (test_retain.CandidateRecord.test_candidates_define_no_lambda)
+CAPTURE.md rule 2: Calculations are named module-level functions. ... ok
+test_candidates_readme_matches_a_fresh_lens_run (test_retain.CandidateRecord.test_candidates_readme_matches_a_fresh_lens_run) ... ok
+test_describe_is_order_independent_for_dicts_and_sets (test_retain.Digests.test_describe_is_order_independent_for_dicts_and_sets) ... ok
+test_describe_refuses_a_callable_and_an_undescribable_object (test_retain.Digests.test_describe_refuses_a_callable_and_an_undescribable_object) ... ok
+test_non_json_value_digests_to_none_without_repr_fallback (test_retain.Digests.test_non_json_value_digests_to_none_without_repr_fallback) ... ok
+test_evidence_record_is_on_disk_and_names_its_sidecar (test_retain.DiscStatsSidecar.test_evidence_record_is_on_disk_and_names_its_sidecar) ... ok
+test_non_json_external_becomes_digest_and_ref (test_retain.DiscStatsSidecar.test_non_json_external_becomes_digest_and_ref) ... ok
+test_registry_comes_from_the_program_that_ran (test_retain.DiscStatsSidecar.test_registry_comes_from_the_program_that_ran) ... ok
+test_result_digest_is_none_because_json_cannot_hold_tuple_keys (test_retain.DiscStatsSidecar.test_result_digest_is_none_because_json_cannot_hold_tuple_keys) ... ok
+test_sidecar_file_exists_and_its_bytes_are_the_digest (test_retain.DiscStatsSidecar.test_sidecar_file_exists_and_its_bytes_are_the_digest) ... ok
+test_the_program_still_round_trips_through_the_registry (test_retain.DiscStatsSidecar.test_the_program_still_round_trips_through_the_registry) ... ok
+test_added_and_removed_ids_are_listed_separately (test_retain.ExplainChanges.test_added_and_removed_ids_are_listed_separately) ... ok
+test_changed_args_reports_args_and_the_downstream_closure (test_retain.ExplainChanges.test_changed_args_reports_args_and_the_downstream_closure) ... ok
+test_changed_binding_reports_input (test_retain.ExplainChanges.test_changed_binding_reports_input) ... ok
+test_changed_calculation_address_outranks_everything (test_retain.ExplainChanges.test_changed_calculation_address_outranks_everything) ... ok
+test_consumers_of_fn_and_px_refs (test_retain.ExplainChanges.test_consumers_of_fn_and_px_refs) ... ok
+test_false_unchanged_same_program_changed_external_digest (test_retain.ExplainChanges.test_false_unchanged_same_program_changed_external_digest)
+Identical program, identical result digests, different input data. ... ok
+test_false_unchanged_shadowing_arg_is_reported_as_args_not_missed (test_retain.ExplainChanges.test_false_unchanged_shadowing_arg_is_reported_as_args_not_missed)
+A shadowing args key changes the value while `inputs` is untouched. ... ok
+test_identical_records_change_nothing (test_retain.ExplainChanges.test_identical_records_change_nothing) ... ok
+test_render_counts_come_from_the_explanation (test_retain.ExplainChanges.test_render_counts_come_from_the_explanation) ... ok
+test_result_digest_alone_reports_digest (test_retain.ExplainChanges.test_result_digest_alone_reports_digest) ... ok
+test_callable_in_args_is_refused_naming_the_invocation (test_retain.ExportRefusals.test_callable_in_args_is_refused_naming_the_invocation) ... ok
+test_input_named_like_a_pcr_calc_parameter_is_refused (test_retain.ExportRefusals.test_input_named_like_a_pcr_calc_parameter_is_refused)
+An input called `args`/`into`/`id` cannot be rebuilt through PCR.calc. ... ok
+test_shadowing_arg_is_refused_at_export_naming_the_invocation (test_retain.ExportRefusals.test_shadowing_arg_is_refused_at_export_naming_the_invocation) ... ok
+test_bad_ref_prefix_is_rejected (test_retain.FromProgram.test_bad_ref_prefix_is_rejected) ... ok
+test_missing_registry_address_raises_keyerror_before_any_execution (test_retain.FromProgram.test_missing_registry_address_raises_keyerror_before_any_execution) ... ok
+test_pcr_projection_is_rejected_citing_stewardship (test_retain.FromProgram.test_pcr_projection_is_rejected_citing_stewardship) ... ok
+test_replaying_run_1_reproduces_its_committed_comparison (test_retain.FromProgram.test_replaying_run_1_reproduces_its_committed_comparison)
+The replayed comparison equals evidence/run-1/comparison.json's rows. ... ok
+test_round_trip_reproduces_testimony_and_result_digests (test_retain.FromProgram.test_round_trip_reproduces_testimony_and_result_digests) ... ok
+test_the_committed_run_1_testimony_is_itself_a_program (test_retain.FromProgram.test_the_committed_run_1_testimony_is_itself_a_program)
+Day 1's retained evidence needs no conversion to become a replayable program. ... ok
+test_writer_and_id_rules_re_apply_on_import (test_retain.FromProgram.test_writer_and_id_rules_re_apply_on_import) ... ok
+test_node_accepts_the_px_only_fanout_document (test_retain.NodeReadPql.test_node_accepts_the_px_only_fanout_document) ... ok
+test_node_reads_a_degraded_fn_binding_as_an_address_and_fails_at_invoke (test_retain.NodeReadPql.test_node_reads_a_degraded_fn_binding_as_an_address_and_fails_at_invoke) ... ok
+test_day1_program_is_refused_naming_the_first_offending_invocation (test_retain.PqlDocument.test_day1_program_is_refused_naming_the_first_offending_invocation) ... ok
+test_non_fn_call_address_is_refused (test_retain.PqlDocument.test_non_fn_call_address_is_refused) ... ok
+test_px_only_program_renders_the_readpql_shape (test_retain.PqlDocument.test_px_only_program_renders_the_readpql_shape) ... ok
+test_shadowing_arg_is_refused (test_retain.PqlDocument.test_shadowing_arg_is_refused) ... ok
+test_unpublished_invocation_is_refused (test_retain.PqlDocument.test_unpublished_invocation_is_refused) ... ok
+test_check_record_accepts_the_honest_record_and_reports_what_it_checked (test_retain.RetainRun.test_check_record_accepts_the_honest_record_and_reports_what_it_checked) ... ok
+test_check_record_refuses_an_external_the_program_claims_to_compute (test_retain.RetainRun.test_check_record_refuses_an_external_the_program_claims_to_compute)
+Fixer round 1, finding 1 (the milder form of the pre-seeding attack). ... ok
+test_check_record_refuses_results_that_are_not_the_programs_invocation_ids (test_retain.RetainRun.test_check_record_refuses_results_that_are_not_the_programs_invocation_ids) ... ok
+test_missing_external_address_fails_loud (test_retain.RetainRun.test_missing_external_address_fails_loud) ... ok
+test_provider_names_the_library_and_every_registry_module (test_retain.RetainRun.test_provider_names_the_library_and_every_registry_module) ... ok
+test_record_holds_no_code (test_retain.RetainRun.test_record_holds_no_code) ... ok
+test_record_keys_and_external_values (test_retain.RetainRun.test_record_keys_and_external_values) ... ok
+test_replay_from_the_record_reproduces_testimony (test_retain.RetainRun.test_replay_from_the_record_reproduces_testimony) ... ok
+test_result_digests_are_computed_from_the_values (test_retain.RetainRun.test_result_digests_are_computed_from_the_values) ... ok
+test_retained_block_separates_retained_at_from_ran_at (test_retain.RetainRun.test_retained_block_separates_retained_at_from_ran_at)
+Fixer round 1, finding 5: `provider` is the library that RETAINED the record. ... ok
+test_verify_provider_reports_agreement_and_names_every_disagreement (test_retain.RetainRun.test_verify_provider_reports_agreement_and_names_every_disagreement)
+Fixer round 1, finding 3: the comparison the provider docstring promises. ... ok
+test_write_record_is_lf_json (test_retain.RetainRun.test_write_record_is_lf_json) ... ok
+test_sys_path_inserts_are_intra_repo (test_retain.SysPathDiscipline.test_sys_path_inserts_are_intra_repo) ... ok
+test_authoring_pcr_and_run_export_the_same_program (test_retain.ToProgram.test_authoring_pcr_and_run_export_the_same_program) ... ok
+test_fn_and_px_refs_are_both_present (test_retain.ToProgram.test_fn_and_px_refs_are_both_present) ... ok
+test_program_entries_are_the_testimony_entries_after_json (test_retain.ToProgram.test_program_entries_are_the_testimony_entries_after_json) ... ok
+test_to_program_rejects_anything_else (test_retain.ToProgram.test_to_program_rejects_anything_else) ... ok
+test_a_failing_disk_load_makes_the_ledger_say_miss_for_resolutions_2_and_3 (test_run_cached.LedgerOutcomesAreDerivedNotAsserted.test_a_failing_disk_load_makes_the_ledger_say_miss_for_resolutions_2_and_3)
+Kills the mutation `"outcome": outcome_from_delta(delta_b)` -> ... ok
+test_interpretation_markdown_reports_the_derived_counts (test_run_cached.LedgerOutcomesAreDerivedNotAsserted.test_interpretation_markdown_reports_the_derived_counts)
+Kills the mutation `f"{ledger['hits_observed']} of ..."` -> a hard-coded ... ok
+test_ms_saved_scales_with_the_hits_that_actually_happened (test_run_cached.LedgerOutcomesAreDerivedNotAsserted.test_ms_saved_scales_with_the_hits_that_actually_happened)
+Kills the mutation `round(baseline_ms * hits_observed, 3)` -> ... ok
+test_a_counted_hit_is_the_only_thing_that_reads_as_a_hit (test_run_cached.OutcomeFromDelta.test_a_counted_hit_is_the_only_thing_that_reads_as_a_hit)
+Kills the mutation `if hits > 0:` -> `if misses > 0:` in ... ok
+test_counters_delta_subtracts_the_snapshot (test_run_cached.OutcomeFromDelta.test_counters_delta_subtracts_the_snapshot)
+Kills the mutation `after.get(name, 0) - before.get(name, 0)` -> ... ok
+test_a_path_inside_this_checkout_is_recorded_relative_to_the_root_that_contains_it (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_a_path_inside_this_checkout_is_recorded_relative_to_the_root_that_contains_it)
+Kills two one-line mutations in portable(). (1) `return name + "/" + ... ok
+test_a_path_outside_this_checkout_is_left_exactly_as_it_ran (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_a_path_outside_this_checkout_is_left_exactly_as_it_ran)
+Kills the mutation `if candidate == CHECKOUT_ROOT or CHECKOUT_ROOT in ... ok
+test_a_symlink_into_this_checkout_is_recorded_by_the_name_that_ran (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_a_symlink_into_this_checkout_is_recorded_by_the_name_that_ran)
+Kills the mutation of the two-candidate loop down to its second half ... ok
+test_the_committed_ledger_names_no_directory_that_landing_deletes (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_the_committed_ledger_names_no_directory_that_landing_deletes)
+The finding itself, over the file on disk: whatever regenerated ... ok
+test_the_fresh_process_report_records_the_command_it_will_be_asked_to_publish (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_the_fresh_process_report_records_the_command_it_will_be_asked_to_publish)
+Kills the mutation `report["command"] = [portable(arg) for arg in args]` ... ok
+test_every_committed_interpretation_quotes_its_own_ms_saved (test_second_experiment.CommittedEvidenceResolvesToCommittedRunOne.test_every_committed_interpretation_quotes_its_own_ms_saved)
+run_regrouped.py:123, run_reinput.py:54 and run_from_retained.py:92 print ... ok
+test_every_committed_ms_saved_entry_is_a_committed_run_1_duration (test_second_experiment.CommittedEvidenceResolvesToCommittedRunOne.test_every_committed_ms_saved_entry_is_a_committed_run_1_duration) ... ok
+test_the_committed_prior_run_is_the_one_this_pin_reads (test_second_experiment.CommittedEvidenceResolvesToCommittedRunOne.test_the_committed_prior_run_is_the_one_this_pin_reads) ... ok
+test_run_from_retained_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_from_retained_is_deterministic_except_timings) ... ERROR
+test_run_regrouped_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_regrouped_is_deterministic_except_timings) ... ERROR
+test_run_reinput_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_reinput_is_deterministic_except_timings) ... ERROR
+test_regenerating_all_three_runs_leaves_the_committed_evidence_alone (test_second_experiment.EvidenceIsNeverRewritten.test_regenerating_all_three_runs_leaves_the_committed_evidence_alone) ... ERROR
+setUpClass (test_second_experiment.InputPartsChangedIsComputed) ... ERROR
+setUpClass (test_second_experiment.InterpretationFiles) ... ERROR
+setUpClass (test_second_experiment.NoLambdaOrCode) ... ERROR
+setUpClass (test_second_experiment.NoReconstruction) ... ERROR
+test_existing_non_empty_out_is_refused_without_force (test_second_experiment.OutDirSafety.test_existing_non_empty_out_is_refused_without_force) ... ok
+setUpClass (test_second_experiment.Rankings) ... ERROR
+test_run_from_retained_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_from_retained_receipts_are_deterministic_apart_from_timings) ... ERROR
+test_run_regrouped_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_regrouped_receipts_are_deterministic_apart_from_timings) ... ERROR
+test_run_reinput_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_reinput_receipts_are_deterministic_apart_from_timings) ... ERROR
+test_the_committed_receipts_survive_the_same_comparison (test_second_experiment.ReceiptsDeterminism.test_the_committed_receipts_survive_the_same_comparison)
+A regeneration of run-2 must agree with the COMMITTED run-2 receipts too, ... ERROR
+test_every_committed_run_agrees_id_by_id (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_every_committed_run_agrees_id_by_id) ... ok
+test_run_4_has_no_split_in_either_file (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_run_4_has_no_split_in_either_file)
+The one run whose invocation set differs: split is an external Part there, ... ok
+test_the_aliasing_is_documented_where_the_digest_is_taken (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_the_aliasing_is_documented_where_the_digest_is_taken)
+The claim above must live in the code, not only in a test name. ... ok
+test_the_run_ids_are_the_programs_invocation_ids (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_the_run_ids_are_the_programs_invocation_ids)
+Neither file may quietly cover a different set of invocations than the program. ... ok
+setUpClass (test_second_experiment.SavedWorkFields) ... ERROR
+setUpClass (test_second_experiment.SplitDigestByGrouping) ... ERROR
+test_sys_path_insert_is_intra_repo (test_second_experiment.SysPathDiscipline.test_sys_path_insert_is_intra_repo) ... ok
+
+======================================================================
+ERROR: test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded (test_grouped_ablation.GroupedAblationEvidence.test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded)
+The half of the stamp that must NOT be relaxed: an uncommitted edit to code
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_grouped_ablation.py", line 292, in test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded
+    paths = dirty_paths(exclude=evidence_excludes())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run.py", line 284, in dirty_paths
+    raise RuntimeError(f"git status failed in {repo_dir}: {proc.stderr.strip()}")
+RuntimeError: git status failed in /workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation: fatal: not a git repository (or any of the parent directories): .git
+
+======================================================================
+ERROR: test_materials (unittest.loader._FailedTest.test_materials)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_materials
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_materials.py", line 355, in <module>
+    _SRC_STATUS_AT_IMPORT = _src_status()
+                            ^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_materials.py", line 347, in _src_status
+    assert completed.returncode == 0, completed.stderr
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: fatal: not a git repository (or any of the parent directories): .git
+
+
+
+======================================================================
+ERROR: test_running_the_evidence_writing_suites_changes_no_committed_file (test_replay.CheckAllLeavesTheTreeClean.test_running_the_evidence_writing_suites_changes_no_committed_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 1193, in test_running_the_evidence_writing_suites_changes_no_committed_file
+    before = self._status()
+             ^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 1186, in _status
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'status', '--porcelain', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_the_produced_log_matches_the_committed_one (test_replay.DeterminismMatrix.test_the_produced_log_matches_the_committed_one)
+The hash values are seed-determined, so this log reproduces exactly.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 1043, in test_the_produced_log_matches_the_committed_one
+    with open(replay.DETERMINISM_LOG, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/determinism.log'
+
+======================================================================
+ERROR: test_the_produced_log_matches_the_committed_one_line_for_line (test_replay.FreshProcessReplay.test_the_produced_log_matches_the_committed_one_line_for_line)
+The oracle (fixer round 3, finding 1): this run wrote into a temp dir, and
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 309, in test_the_produced_log_matches_the_committed_one_line_for_line
+    replay.oracle_lines_of(replay.FRESH_PROCESS_LOG),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/fresh-process.log'
+
+======================================================================
+ERROR: test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it (test_replay.HiddenStateAuditor.test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it)
+The whole point of the fresh-process boundary: a forged record that reproduces
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 616, in test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it
+    replay.oracle_lines_of(replay.FORGED_REPLAY_LOG),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/forged-record-refused.log'
+
+======================================================================
+ERROR: test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) (run='run-2-regroup')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 823, in test_each_produced_log_matches_the_committed_one
+    replay.oracle_lines_of(replay.lane_c_log_path(label)),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-2-regroup.log'
+
+======================================================================
+ERROR: test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) (run='run-3-reinput')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 823, in test_each_produced_log_matches_the_committed_one
+    replay.oracle_lines_of(replay.lane_c_log_path(label)),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-3-reinput.log'
+
+======================================================================
+ERROR: test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) (run='run-4-from-retained')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 823, in test_each_produced_log_matches_the_committed_one
+    replay.oracle_lines_of(replay.lane_c_log_path(label)),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-4-from-retained.log'
+
+======================================================================
+ERROR: setUpClass (test_replay.LfSourceDriftProbe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 1112, in setUpClass
+    with open(replay.LF_DRIFT_LOG, "rb") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/lf-source-drift.log'
+
+======================================================================
+ERROR: test_a_module_outside_the_allowed_set_is_refused (test_replay.ParentSideRefusals.test_a_module_outside_the_allowed_set_is_refused)
+Kills: dropping `if leaked`.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 698, in test_a_module_outside_the_allowed_set_is_refused
+    message, verdict, _text = self._refuse("module-leak")
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 657, in _refuse
+    replay.oracle_lines_of(os.path.join(replay.REFUSALS_DIR, f"{name}.log")),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/refusals/module-leak.log'
+
+======================================================================
+ERROR: test_a_parent_child_source_sha_mismatch_is_refused (test_replay.ParentSideRefusals.test_a_parent_child_source_sha_mismatch_is_refused)
+Kills: dropping the `parent_source_sha256 != report['source_sha256']` raise.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 706, in test_a_parent_child_source_sha_mismatch_is_refused
+    message, verdict, _text = self._refuse("source-sha-mismatch")
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 657, in _refuse
+    replay.oracle_lines_of(os.path.join(replay.REFUSALS_DIR, f"{name}.log")),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/refusals/source-sha-mismatch.log'
+
+======================================================================
+ERROR: test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests (test_replay.ParentSideRefusals.test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests)
+Kills: dropping `if not digests_equal`. Rows still match, so nothing else fires.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 684, in test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests
+    message, verdict, text = self._refuse("digest-forged")
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 657, in _refuse
+    replay.oracle_lines_of(os.path.join(replay.REFUSALS_DIR, f"{name}.log")),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/refusals/digest-forged.log'
+
+======================================================================
+ERROR: test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows (test_replay.ParentSideRefusals.test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows)
+Kills: dropping `if not rows_equal`. The child accepts this record.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 672, in test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows
+    message, verdict, text = self._refuse("value-forged-rows")
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 657, in _refuse
+    replay.oracle_lines_of(os.path.join(replay.REFUSALS_DIR, f"{name}.log")),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/refusals/value-forged-rows.log'
+
+======================================================================
+ERROR: test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider (test_replay.ProviderIdentityIsModuleGranular.test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 776, in test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider
+    replay.oracle_lines_of(os.path.join(replay.REFUSALS_DIR, "registry-forged.log")),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/replay.py", line 1362, in oracle_lines_of
+    with open(path, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/replay/refusals/registry-forged.log'
+
+======================================================================
+ERROR: test_removing_a_used_address_raises_keyerror_naming_it_before_execution (test_replay.RegistryHole.test_removing_a_used_address_raises_keyerror_naming_it_before_execution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 1012, in test_removing_a_used_address_raises_keyerror_naming_it_before_execution
+    with open(replay.REGISTRY_HOLE_LOG, encoding="utf-8") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/evidence/registry-hole.log'
+
+======================================================================
+ERROR: test_run_from_retained_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_from_retained_is_deterministic_except_timings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 668, in test_run_from_retained_is_deterministic_except_timings
+    self._check(run_from_retained.main, "run-4-from-retained")
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 646, in _check
+    self.assertEqual(_run_into(main, tmp_a), 0)
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_from_retained.py", line 151, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: test_run_regrouped_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_regrouped_is_deterministic_except_timings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 660, in test_run_regrouped_is_deterministic_except_timings
+    self._check(run_regrouped.main, "run-2-regroup")
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 646, in _check
+    self.assertEqual(_run_into(main, tmp_a), 0)
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: test_run_reinput_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_reinput_is_deterministic_except_timings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 664, in test_run_reinput_is_deterministic_except_timings
+    self._check(run_reinput.main, "run-3-reinput")
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 646, in _check
+    self.assertEqual(_run_into(main, tmp_a), 0)
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_reinput.py", line 86, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: test_regenerating_all_three_runs_leaves_the_committed_evidence_alone (test_second_experiment.EvidenceIsNeverRewritten.test_regenerating_all_three_runs_leaves_the_committed_evidence_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 625, in test_regenerating_all_three_runs_leaves_the_committed_evidence_alone
+    self.assertEqual(_run_into(main, os.path.join(tmp, label)), 0)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: setUpClass (test_second_experiment.InputPartsChangedIsComputed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 109, in setUpClass
+    rc = _run_into(main, out)
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: setUpClass (test_second_experiment.InterpretationFiles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 109, in setUpClass
+    rc = _run_into(main, out)
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: setUpClass (test_second_experiment.NoLambdaOrCode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 109, in setUpClass
+    rc = _run_into(main, out)
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: setUpClass (test_second_experiment.NoReconstruction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 109, in setUpClass
+    rc = _run_into(main, out)
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: setUpClass (test_second_experiment.Rankings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 109, in setUpClass
+    rc = _run_into(main, out)
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: test_run_from_retained_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_from_retained_receipts_are_deterministic_apart_from_timings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 582, in test_run_from_retained_receipts_are_deterministic_apart_from_timings
+    self._check(run_from_retained.main, "run-4-from-retained")
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 548, in _check
+    first, second = self._two_regenerations(main, run_label)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 543, in _two_regenerations
+    self.assertEqual(_run_into(main, a), 0)
+                     ^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_from_retained.py", line 151, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: test_run_regrouped_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_regrouped_receipts_are_deterministic_apart_from_timings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 574, in test_run_regrouped_receipts_are_deterministic_apart_from_timings
+    self._check(run_regrouped.main, "run-2-regroup")
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 548, in _check
+    first, second = self._two_regenerations(main, run_label)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 543, in _two_regenerations
+    self.assertEqual(_run_into(main, a), 0)
+                     ^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: test_run_reinput_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_reinput_receipts_are_deterministic_apart_from_timings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 578, in test_run_reinput_receipts_are_deterministic_apart_from_timings
+    self._check(run_reinput.main, "run-3-reinput")
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 548, in _check
+    first, second = self._two_regenerations(main, run_label)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 543, in _two_regenerations
+    self.assertEqual(_run_into(main, a), 0)
+                     ^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_reinput.py", line 86, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: test_the_committed_receipts_survive_the_same_comparison (test_second_experiment.ReceiptsDeterminism.test_the_committed_receipts_survive_the_same_comparison)
+A regeneration of run-2 must agree with the COMMITTED run-2 receipts too,
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 589, in test_the_committed_receipts_survive_the_same_comparison
+    first, _second = self._two_regenerations(run_regrouped.main, "run-2-regroup")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 543, in _two_regenerations
+    self.assertEqual(_run_into(main, a), 0)
+                     ^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: setUpClass (test_second_experiment.SavedWorkFields)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 109, in setUpClass
+    rc = _run_into(main, out)
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+ERROR: setUpClass (test_second_experiment.SplitDigestByGrouping)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 109, in setUpClass
+    rc = _run_into(main, out)
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_second_experiment.py", line 73, in _run_into
+    rc = main(args)
+         ^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/run_regrouped.py", line 165, in main
+    program_lines = se.changed_lines(
+                    ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/second_experiment.py", line 174, in changed_lines
+    proc = subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', 'd9dded6', '--', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/program.py', '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/calculations.py']' returned non-zero exit status 129.
+
+======================================================================
+FAIL: test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed (test_grouped_ablation.GroupedAblationEvidence.test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed)
+commit.txt = `git rev-parse HEAD` plus `-dirty` exactly when this experiment dir or pyto/src differs
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_grouped_ablation.py", line 258, in test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed
+    self.assertRegex(text, COMMIT_LINE)
+AssertionError: Regex didn't match: '^[0-9a-f]{40}(-dirty)?\\n$' not found in 'unavailable: fatal: not a git repository (or any of the parent directories): .git\n'
+
+======================================================================
+FAIL: test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='value-forged-rows')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 666, in test_every_named_scenario_has_a_committed_log
+    self.assertTrue(os.path.isfile(os.path.join(replay.REFUSALS_DIR, f"{name}.log")))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='digest-forged')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 666, in test_every_named_scenario_has_a_committed_log
+    self.assertTrue(os.path.isfile(os.path.join(replay.REFUSALS_DIR, f"{name}.log")))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='module-leak')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 666, in test_every_named_scenario_has_a_committed_log
+    self.assertTrue(os.path.isfile(os.path.join(replay.REFUSALS_DIR, f"{name}.log")))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='source-sha-mismatch')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 666, in test_every_named_scenario_has_a_committed_log
+    self.assertTrue(os.path.isfile(os.path.join(replay.REFUSALS_DIR, f"{name}.log")))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) (scenario='registry-forged')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 666, in test_every_named_scenario_has_a_committed_log
+    self.assertTrue(os.path.isfile(os.path.join(replay.REFUSALS_DIR, f"{name}.log")))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_the_committed_stamp_names_a_commit_git_knows (test_replay.RetainedRecordIsDeterministic.test_the_committed_stamp_names_a_commit_git_knows)
+The one field the oracle blanks is checked on its own terms.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation/test_replay.py", line 220, in test_the_committed_stamp_names_a_commit_git_knows
+    self.assertEqual(proc.returncode, 0, f"retained.commit names an unknown commit: {stamp}")
+AssertionError: 128 != 0 : retained.commit names an unknown commit: ceba8224f61ddc120f31ded3555c009de8a988a8
+
+----------------------------------------------------------------------
+Ran 193 tests in 8.211s
+
+FAILED (failures=7, errors=31, skipped=1)
+
+===== /tmp/tmp.aGwfnUymc2/experiments_hiding-primitives.log =====
+test_instances_survive_relabelling_of_unrelated_nodes (test_mine.Miner.test_instances_survive_relabelling_of_unrelated_nodes) ... ok
+test_planted_motif_is_the_top_result (test_mine.Miner.test_planted_motif_is_the_top_result) ... ok
+test_reads_stay_inside_the_studio (test_mine.Miner.test_reads_stay_inside_the_studio) ... ok
+test_the_report_is_deterministic (test_mine.Miner.test_the_report_is_deterministic) ... ok
+test_two_instances_pay_and_one_does_not (test_mine.Miner.test_two_instances_pay_and_one_does_not) ... ok
+test_every_mutation_is_killed (test_mine.Mutations.test_every_mutation_is_killed) ... /workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/hiding-primitives/graphs.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/hiding-primitives/subdue.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 4.846s
+
+OK
+
+===== /tmp/tmp.aGwfnUymc2/experiments_s3-synthetic.log =====
+[s3-synthetic] sys.path.insert(0, /workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/reference/chainspot-quick-anno) intra-repo reference dir
+test_account_rings_records_only_px_edges (test_s3_synthetic.S3SyntheticSnapshot.test_account_rings_records_only_px_edges)
+accountRings binds two unwritten Parts, so both inputs are px: (pcr.py:147-149). ... ok
+test_build_investigation_runs_without_corpus (test_s3_synthetic.S3SyntheticSnapshot.test_build_investigation_runs_without_corpus)
+s3.build_investigation (s3.py:23-91) needs only the snapshot dict; no corpus, no Node bridge. ... ok
+test_check_balance_records_ledger_as_fn_edge (test_s3_synthetic.S3SyntheticSnapshot.test_check_balance_records_ledger_as_fn_edge)
+checkBalance testimony inputs == observed mapping; gap 12's {'ledger': 'fn:accountRings'} is its subset. ... ok
+test_rerun_matches_retained_testimony (test_s3_synthetic.S3SyntheticSnapshot.test_rerun_matches_retained_testimony)
+A fresh run's {pcr, ticks} equals testimony.json byte-for-byte after canonical dumps. ... ok
+test_sys_path_insert_is_intra_repo (test_s3_synthetic.S3SyntheticSnapshot.test_sys_path_insert_is_intra_repo)
+The only sys.path insert points inside this repository (CAPTURE.md sys.path rule). ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK
+
+===== /tmp/tmp.aGwfnUymc2/experiments_students.log =====
+[students/test] sys.path.insert(0, '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+test_grade_exits_zero_on_the_committed_evidence (test_students.CommittedEvidence.test_grade_exits_zero_on_the_committed_evidence)
+grade.py:main -- the four checks all pass on evidence/run-1 and HANDOFF.md. ... ok
+test_the_report_says_the_plain_words_half_is_not_automated (test_students.CommittedEvidence.test_the_report_says_the_plain_words_half_is_not_automated)
+grade.py:grade -- the report refuses to imply it graded the explanation. ... ok
+test_a_record_missing_a_required_field_fails_check_one (test_students.ContractRefusal.test_a_record_missing_a_required_field_fails_check_one)
+grade.py:check_contract -- the independent validator, not the producer. ... ok
+test_a_missing_file_fails_check_four (test_students.Handoff.test_a_missing_file_fails_check_four)
+grade.py:homework_files -- every file in the directory must be named. ... ok
+test_a_missing_tick_line_fails_check_four (test_students.Handoff.test_a_missing_tick_line_fails_check_four)
+grade.py:check_handoff -- a hand-off that leaves a Tick out is refused. ... ok
+test_the_testimony_is_byte_identical_with_observation_on_and_off (test_students.ObserveOnOff.test_the_testimony_is_byte_identical_with_observation_on_and_off)
+pyto/src/pyto/pcr.py:PcrRun -- observation is additive and trailing. ... ok
+test_a_fresh_run_produces_a_record_that_validates (test_students.RecordShape.test_a_fresh_run_produces_a_record_that_validates)
+homework.py:run -- the record it returns is a `pyto-run-record@1` document. ... ok
+test_the_run_writes_a_record_receipts_and_a_viewer_page (test_students.RecordShape.test_the_run_writes_a_record_receipts_and_a_viewer_page)
+homework.py:write_evidence -- the three files `--out` is documented to write. ... ok
+test_a_receipt_source_digest_that_is_not_todays_source_fails_check_three (test_students.TamperedRecord.test_a_receipt_source_digest_that_is_not_todays_source_fails_check_three)
+grade.py:check_receipts -- a receipt that describes code no longer on disk. ... ok
+test_flipping_one_result_digest_fails_the_replay_check (test_students.TamperedRecord.test_flipping_one_result_digest_fails_the_replay_check)
+grade.py:check_replay -- an edited record no longer matches a fresh run. ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.681s
+
+OK
+
+===== /tmp/tmp.aGwfnUymc2/experiments_tick-laws.log =====
+test_check_cli_exit_matrix_and_text_receipt (test_tick_laws.TickLawTests.test_check_cli_exit_matrix_and_text_receipt)
+Brief: --check reports clean, law, schema, and mixed outcomes exactly. ... ok
+test_committed_students_records_are_clean (test_tick_laws.TickLawTests.test_committed_students_records_are_clean)
+Brief: both committed student records are valid reference witnesses. ... ok
+test_declared_dependency_without_actual_consume_is_a_limitation (test_tick_laws.TickLawTests.test_declared_dependency_without_actual_consume_is_a_limitation)
+Brief: declared-only dependencies are a limitation, not a certificate. ... ok
+test_duplicate_actual_produces_names_calculation_and_part (test_tick_laws.TickLawTests.test_duplicate_actual_produces_names_calculation_and_part)
+Brief: one Tick cannot have two actual producers for the same Part. ... ok
+test_empty_and_invalid_durations_have_explicit_metrics (test_tick_laws.TickLawTests.test_empty_and_invalid_durations_have_explicit_metrics)
+Brief: empty Ticks cost zero; missing durations produce null metrics. ... ok
+test_late_actual_producer_loop_is_reported (test_tick_laws.TickLawTests.test_late_actual_producer_loop_is_reported)
+Brief: an actual consumer cannot precede the producer across Ticks. ... ok
+test_mutation_actual_consume_is_killed (test_tick_laws.TickLawTests.test_mutation_actual_consume_is_killed)
+Mutation: adding actual_consumes to a sibling kills the clean result. ... ok
+test_mutation_duplicate_producer_is_killed (test_tick_laws.TickLawTests.test_mutation_duplicate_producer_is_killed)
+Mutation: adding a second actual producer kills the clean result. ... ok
+test_sibling_actual_consume_names_calculation_and_part (test_tick_laws.TickLawTests.test_sibling_actual_consume_names_calculation_and_part)
+Brief: a calculation may not consume a Part produced by a sibling in its Tick. ... ok
+test_tiny_durations_are_valid (test_tick_laws.TickLawTests.test_tiny_durations_are_valid)
+Brief: duration checks must work for very small positive runtimes. ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.006s
+
+OK
+LIMITATION: actual_consumes and actual_produces are often empty, so this is not a complete dependency or parallel-safety certificate; fn declaration edges are intentionally not inferred; no parallel execution exists yet.
+/tmp/tmp6r5o7mw1/invalid.json
+Summary: work_ms=None critical_path_ms=None
+no parallel execution exists yet
+VIOLATION: pyto-run-record@1 document: missing required field(s) counters, parts, pcr, source, ticks; RECORD.md: missing fields are null, never absent
+LIMITATION: actual_consumes and actual_produces are often empty, so this is not a complete dependency or parallel-safety certificate; fn declaration edges are intentionally not inferred; no parallel execution exists yet.
+/tmp/tmp6r5o7mw1/clean.json
+Tick 0: work_ms=0.1 latency_ms=0.1
+Summary: work_ms=0.1 critical_path_ms=0.1
+no parallel execution exists yet
+/tmp/tmp6r5o7mw1/law.json
+Tick 0: work_ms=0.2 latency_ms=0.1
+Summary: work_ms=0.2 critical_path_ms=0.1
+no parallel execution exists yet
+VIOLATION: node law violation: consumer consumes sibling-produced px.bad in Tick 0 producers=['producer']
+
+===== /tmp/tmp.aGwfnUymc2/library.log =====
+[tests/test_materialize] sys.path.insert(0, '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/experiments/grouped-ablation')
+[tests/test_materialize] sys.path.insert(0, '/workspace/scratch/f2ea76ad2141/DiscStudio-staging/pyto/viewer/test')
+test_address_is_a_frozen_dataclass (test_address.TestDescribesAndDoesNotEnforce.test_address_is_a_frozen_dataclass)
+Kills: ``@dataclass`` in place of ``@dataclass(frozen=True)``. ... ok
+test_kernel_does_not_import_address (test_address.TestDescribesAndDoesNotEnforce.test_kernel_does_not_import_address)
+Kills: adding ``from pyto.address import check`` to core.py. ... ok
+test_module_imports_nothing_from_pyto (test_address.TestDescribesAndDoesNotEnforce.test_module_imports_nothing_from_pyto)
+Kills: adding ``from pyto.core import Part`` to address.py. ... ok
+test_parse_rejects_non_strings (test_address.TestDescribesAndDoesNotEnforce.test_parse_rejects_non_strings)
+Kills: deleting the ``isinstance(address, str)`` guard in parse. ... ok
+test_a_world_used_as_a_segment_is_not_detected (test_address.TestOutsideTheAddressSpace.test_a_world_used_as_a_segment_is_not_detected)
+Kills: adding a world blocklist (``if parsed.second in WORLDS``). ... ok
+test_question_root_is_not_an_address (test_address.TestOutsideTheAddressSpace.test_question_root_is_not_an_address)
+Kills: deleting the ``if parsed.root == QUESTION_ROOT:`` branch. ... ok
+test_reserved_second_segments_are_the_six (test_address.TestReservedSecond.test_reserved_second_segments_are_the_six)
+Kills: dropping ``"pql"`` from ``RESERVED_SECOND``. ... ok
+test_reserved_second_under_another_root_is_reported (test_address.TestReservedSecond.test_reserved_second_under_another_root_is_reported)
+Kills: deleting the ``elif parsed.second in RESERVED_SECOND`` branch. ... ok
+test_reserved_second_under_px_is_accepted (test_address.TestReservedSecond.test_reserved_second_under_px_is_accepted)
+Kills: dropping ``and parsed.root != "px"`` from the reserved branch. ... ok
+test_known_roots_with_a_domain_noun_are_accepted (test_address.TestRoots.test_known_roots_with_a_domain_noun_are_accepted)
+Kills: ``ROOTS = ()`` -- refusing everything. ... ok
+test_roots_are_exactly_px_fn_oc (test_address.TestRoots.test_roots_are_exactly_px_fn_oc)
+Kills: ``ROOTS = ("px", "fn")`` -- dropping ``oc``. ... ok
+test_unknown_root_is_rejected (test_address.TestRoots.test_unknown_root_is_rejected)
+Kills: ``elif False:`` in place of ``elif parsed.root not in ROOTS:``. ... ok
+test_bare_root_has_no_domain_noun (test_address.TestSegments.test_bare_root_has_no_domain_noun)
+Kills: deleting the ``if parsed.second is None:`` branch from check. ... ok
+test_empty_address_is_rejected (test_address.TestSegments.test_empty_address_is_rejected)
+Kills: ``return ()`` in place of ``return ("the address is empty",)``. ... ok
+test_empty_segment_is_rejected (test_address.TestSegments.test_empty_segment_is_rejected)
+Kills: deleting the ``any(segment == "" ...)`` branch from check. ... ok
+test_leading_dot_is_rejected (test_address.TestSegments.test_leading_dot_is_rejected)
+Kills: ``segments = tuple(address.strip(".").split("."))`` in parse. ... ok
+test_parse_splits_root_second_and_rest (test_address.TestSegments.test_parse_splits_root_second_and_rest)
+Kills: ``rest = segments[1:]`` in place of ``segments[2:]``. ... ok
+test_duplicate_writer_rejected (test_first_class.FirstClassTest.test_duplicate_writer_rejected)
+Multiple-writer rejection at declaration (pcr.py:118-123). ... ok
+test_pcr_preserves_direct_result_and_publication_semantics (test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics)
+Part-to-ResultRef rewrite (pcr.py:112-116); into publication (pcr.py:163-164). ... ok
+test_pxc_is_fail_loud_and_pql_is_composable (test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable)
+PxC.set/get (core.py:56-66); PQL.part/prefix/where (pql.py:27-58). ... ok
+test_card_testimonies_consume_render_disc_as_fn_ref (test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref)
+Both cards record inputs {'art': 'fn:render-disc'} (pcr.py:112-116, 156-157). ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Gap 16: PCR.mermaid() (pcr.py:179-219) == Pcr.to_mermaid() (graph.py:116-151). ... ok
+test_published_part_is_the_direct_result_object (test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object)
+Publication (pcr.py:161-164) stores the very object held in results[id]: ... ok
+test_results_keyed_by_invocation_id (test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id)
+PcrRun.results holds one entry per invocation id (pcr.py:162, pcr.py:177). ... ok
+test_shared_mutable_result_is_not_copied_between_consumers (test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers)
+The fn: binding passes results[id] itself, not a copy (pcr.py:156, 161). ... ok
+test_testimony_into_values_are_published_addresses (test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses)
+CalculationTestimony.into is the into Part's address (pcr.py:172). ... ok
+test_direct_result_and_publication_shape (test_graph.PcrGraphTest.test_direct_result_and_publication_shape) ... ok
+test_mermaid_is_a_view_of_same_graph (test_graph.PcrGraphTest.test_mermaid_is_a_view_of_same_graph) ... ok
+test_rejects_duplicate_writer (test_graph.PcrGraphTest.test_rejects_duplicate_writer) ... ok
+test_every_fit_and_score_reads_fn_split_and_is_not_a_hit (test_materialize.DayOneRecord.test_every_fit_and_score_reads_fn_split_and_is_not_a_hit) ... ok
+test_four_ticks_and_fifteen_invocations (test_materialize.DayOneRecord.test_four_ticks_and_fifteen_invocations) ... ok
+test_parts_map_lists_the_twelve_fn_readers_of_the_split_part (test_materialize.DayOneRecord.test_parts_map_lists_the_twelve_fn_readers_of_the_split_part) ... ok
+test_pcr_name_can_be_overridden_for_the_viewer (test_materialize.DayOneRecord.test_pcr_name_can_be_overridden_for_the_viewer) ... ok
+test_receipt_fields_are_joined_by_invocation_id (test_materialize.DayOneRecord.test_receipt_fields_are_joined_by_invocation_id) ... ok
+test_schema_and_pcr_name (test_materialize.DayOneRecord.test_schema_and_pcr_name) ... ok
+test_the_shape_it_refuses_to_emit_is_the_shape_a_reader_refuses (test_materialize.DayOneRecord.test_the_shape_it_refuses_to_emit_is_the_shape_a_reader_refuses)
+Why the refusal above is a refusal and not a null-filled document. ... ok
+test_the_two_invocations_reading_a_preseeded_part_are_the_hits (test_materialize.DayOneRecord.test_the_two_invocations_reading_a_preseeded_part_are_the_hits) ... ok
+test_wall_ms_is_the_sum_of_the_receipt_durations (test_materialize.DayOneRecord.test_wall_ms_is_the_sum_of_the_receipt_durations) ... ok
+test_without_observe_run_record_refuses_instead_of_emitting_nulls (test_materialize.DayOneRecord.test_without_observe_run_record_refuses_instead_of_emitting_nulls)
+A document is `pyto-run-record@1` or it is not tagged as one. ... ok
+test_a_freshly_materialized_day_one_record_obeys_the_same_rule (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_a_freshly_materialized_day_one_record_obeys_the_same_rule) ... ok
+test_the_committed_evidence_record_carries_only_the_px_bindings (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_the_committed_evidence_record_carries_only_the_px_bindings) ... ok
+test_two_part_bindings_keep_binding_order_not_alphabetical_order (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_two_part_bindings_keep_binding_order_not_alphabetical_order) ... ok
+test_materializing_the_same_run_twice_is_byte_identical (test_materialize.Determinism.test_materializing_the_same_run_twice_is_byte_identical) ... ok
+test_two_records_of_two_runs_differ_only_in_durations (test_materialize.Determinism.test_two_records_of_two_runs_differ_only_in_durations) ... ok
+test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set (test_materialize.HitLedger.test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set)
+The second half of the rule: `preexisting` is not the only evidence. ... ok
+test_an_address_produced_earlier_in_the_run_is_not_a_hit (test_materialize.HitLedger.test_an_address_produced_earlier_in_the_run_is_not_a_hit) ... ok
+test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript (test_materialize.HitLedger.test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript)
+The one shape on which the two runtimes used to disagree. ... ok
+test_reading_a_preseeded_part_is_a_hit (test_materialize.HitLedger.test_reading_a_preseeded_part_is_a_hit) ... ok
+test_a_record_of_every_value_kind_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_a_record_of_every_value_kind_validates) ... ok
+test_the_committed_evidence_record_still_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_the_committed_evidence_record_still_validates) ... ok
+test_the_day_one_record_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_the_day_one_record_validates) ... ok
+test_asdict_bytes_are_identical_before_and_after (test_materialize.TestimonyBytesUnchangedByMaterializing.test_asdict_bytes_are_identical_before_and_after) ... ok
+test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel (test_materialize.TickSheets.test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel)
+Drawing degrades per panel; it never aborts mid-directory. ... skipped 'Pillow is not installed'
+test_an_image_value_is_drawn_into_the_sheet (test_materialize.TickSheets.test_an_image_value_is_drawn_into_the_sheet) ... skipped 'Pillow is not installed'
+test_an_svg_value_is_written_beside_the_sheet_unmodified (test_materialize.TickSheets.test_an_svg_value_is_written_beside_the_sheet_unmodified) ... skipped 'Pillow is not installed'
+test_one_png_per_tick_of_the_day_one_program (test_materialize.TickSheets.test_one_png_per_tick_of_the_day_one_program) ... skipped 'Pillow is not installed'
+test_a_cyclic_part_value_leaves_the_rest_of_the_record_intact (test_materialize.ValueKinds.test_a_cyclic_part_value_leaves_the_rest_of_the_record_intact)
+The failure this guards is not one value: it was the whole document. ... ok
+test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error (test_materialize.ValueKinds.test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error)
+RECORD.md:111 assigns "not serializable" to `omitted`, cycles included. ... ok
+test_a_non_serializable_value_never_gets_a_json_kind (test_materialize.ValueKinds.test_a_non_serializable_value_never_gets_a_json_kind) ... ok
+test_a_pil_image_becomes_a_png_data_url (test_materialize.ValueKinds.test_a_pil_image_becomes_a_png_data_url) ... skipped 'Pillow is not installed'
+test_a_plain_string_is_text (test_materialize.ValueKinds.test_a_plain_string_is_text) ... ok
+test_a_set_is_omitted_with_a_note_and_a_digest (test_materialize.ValueKinds.test_a_set_is_omitted_with_a_note_and_a_digest) ... ok
+test_a_string_that_is_already_a_png_data_url_is_png_data_url_as_in_javascript (test_materialize.ValueKinds.test_a_string_that_is_already_a_png_data_url_is_png_data_url_as_in_javascript) ... ok
+test_a_thousand_element_list_keeps_two_hundred_entries_and_says_so (test_materialize.ValueKinds.test_a_thousand_element_list_keeps_two_hundred_entries_and_says_so) ... ok
+test_a_value_nested_past_the_recursion_limit_is_omitted_not_fatal (test_materialize.ValueKinds.test_a_value_nested_past_the_recursion_limit_is_omitted_not_fatal)
+json.dumps raises RecursionError -- neither TypeError nor ValueError. ... ok
+test_a_value_over_the_cap_is_omitted_with_size_and_digest (test_materialize.ValueKinds.test_a_value_over_the_cap_is_omitted_with_size_and_digest) ... ok
+test_svg_is_kind_svg_and_the_document_is_not_modified (test_materialize.ValueKinds.test_svg_is_kind_svg_and_the_document_is_not_modified) ... ok
+test_the_array_cap_is_a_parameter_and_applies_inside_a_dict (test_materialize.ValueKinds.test_the_array_cap_is_a_parameter_and_applies_inside_a_dict) ... ok
+test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed (test_materialize.ValueKinds.test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed)
+PYTHONHASHSEED salts str hashing, so set iteration order differs per process. ... ok
+test_xml_prologue_before_the_svg_root_is_still_svg (test_materialize.ValueKinds.test_xml_prologue_before_the_svg_root_is_still_svg) ... ok
+test_round_trips_through_json_load_with_sorted_keys_and_lf (test_materialize.WriteRecord.test_round_trips_through_json_load_with_sorted_keys_and_lf) ... ok
+test_a_label_never_appears_in_any_address (test_mounts.TestLabelsStayOutOfAddresses.test_a_label_never_appears_in_any_address)
+Kills: ``self._mounted[root].set("px.view.label", text)`` inserted ... ok
+test_a_slice_carries_the_labels_of_the_roots_it_takes (test_mounts.TestLabelsStayOutOfAddresses.test_a_slice_carries_the_labels_of_the_roots_it_takes)
+Kills: deleting the ``if root in self._labels: sliced.set_label(...)`` ... ok
+test_an_unlabelled_mounted_root_has_no_label (test_mounts.TestLabelsStayOutOfAddresses.test_an_unlabelled_mounted_root_has_no_label)
+Kills: ``return self._labels.get(root, root)`` in ``label``. ... ok
+test_get_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_get_of_a_missing_root_raises)
+Kills: ``return self._mounted.get(root)`` in ``get``. ... ok
+test_has_reports_without_raising (test_mounts.TestMissingRootIsLoud.test_has_reports_without_raising)
+Kills: ``return True`` in ``has``. ... ok
+test_labels_of_a_missing_root_raise (test_mounts.TestMissingRootIsLoud.test_labels_of_a_missing_root_raise)
+Kills: deleting the ``if root not in self._mounted`` guard from ... ok
+test_slice_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_slice_of_a_missing_root_raises)
+Kills: ``if not self.has(root): continue`` at the top of ``slice``'s ... ok
+test_kernel_does_not_import_mounts (test_mounts.TestModuleStatus.test_kernel_does_not_import_mounts)
+Kills: adding ``from pyto.mounts import Mounts`` to core.py. ... ok
+test_mounts_does_not_compute_the_root_id (test_mounts.TestModuleStatus.test_mounts_does_not_compute_the_root_id)
+Kills: ``import hashlib`` plus ``root = hashlib.sha256(root.encode()) ... ok
+test_mounts_is_not_re_exported_from_the_package (test_mounts.TestModuleStatus.test_mounts_is_not_re_exported_from_the_package)
+Kills: adding ``from .mounts import Mounts`` to ``__init__.py``. ... ok
+test_a_different_object_for_a_mounted_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_a_different_object_for_a_mounted_root_is_refused)
+Kills: deleting the ``raise ValueError(... already mounted)`` branch. ... ok
+test_an_empty_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_an_empty_root_is_refused)
+Kills: deleting the ``if not isinstance(root, str) or not root:`` guard. ... ok
+test_remounting_the_same_object_is_fine (test_mounts.TestMountingIsIdempotentOrLoud.test_remounting_the_same_object_is_fine)
+Kills: ``if current is not None:`` (dropping ``and current is not pxc``). ... ok
+test_get_returns_the_exact_object_mounted (test_mounts.TestRootStaysOutsideTheAddressSpace.test_get_returns_the_exact_object_mounted)
+Kills: ``return copy.deepcopy(self._mounted[root])`` in ``get``. ... ok
+test_keeps_the_world_id_outside_the_pxc_address_space (test_mounts.TestRootStaysOutsideTheAddressSpace.test_keeps_the_world_id_outside_the_pxc_address_space)
+Kills: a prefix rewrite in ``mount`` -- ``for address in pxc.addresses(): ... ok
+test_mounting_adds_no_address_at_all (test_mounts.TestRootStaysOutsideTheAddressSpace.test_mounting_adds_no_address_at_all)
+Kills: ``pxc.set("px.mount.root", root)`` inserted before ... ok
+test_entries_pair_each_root_with_its_own_pxc_in_order (test_mounts.TestRootsAndEntries.test_entries_pair_each_root_with_its_own_pxc_in_order)
+Kills: ``for root in sorted(self._mounted)`` in ``entries``. ... ok
+test_roots_keep_insertion_order (test_mounts.TestRootsAndEntries.test_roots_keep_insertion_order)
+Kills: ``return tuple(sorted(self._mounted))`` in ``roots``. ... ok
+test_a_write_through_a_slice_is_visible_through_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_a_write_through_a_slice_is_visible_through_the_original)
+Kills: ``sliced.mount(root, copy.deepcopy(self.get(root)))`` in ``slice``. ... ok
+test_slice_is_a_new_mounts_that_does_not_disturb_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_slice_is_a_new_mounts_that_does_not_disturb_the_original)
+Kills: ``sliced = self`` in place of ``sliced = Mounts()``. ... ok
+test_slice_keeps_insertion_order_of_the_requested_roots (test_mounts.TestSliceSharesTheMountedObjects.test_slice_keeps_insertion_order_of_the_requested_roots)
+Kills: ``for root in sorted(roots)`` in ``slice``. ... ok
+test_identity_scope_and_limitation_are_the_chesslab_honesty_fields (test_receipts.FrozenCalculationIdentity.test_identity_scope_and_limitation_are_the_chesslab_honesty_fields) ... ok
+test_implementation_sha256_is_none_for_a_builtin (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_none_for_a_builtin) ... ok
+test_implementation_sha256_is_the_source_digest_and_is_stable (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_the_source_digest_and_is_stable) ... ok
+test_an_ordinary_address_that_merely_mentions_receipt_still_binds (test_receipts.ReceiptSegmentIsNotBindable.test_an_ordinary_address_that_merely_mentions_receipt_still_binds)
+The rule is the reserved second segment, not the word: `px.receipts.` and ... ok
+test_pcr_calc_refuses_a_receipt_into (test_receipts.ReceiptSegmentIsNotBindable.test_pcr_calc_refuses_a_receipt_into)
+pcr.py `_refuse_receipt_into`, called from PCR.calc before the writer is recorded. ... ok
+test_tick_calc_refuses_a_receipt_into (test_receipts.ReceiptSegmentIsNotBindable.test_tick_calc_refuses_a_receipt_into)
+pcr.py `_refuse_receipt_into`, called from Tick.calc as well: the Tick's own ... ok
+test_receipt_is_frozen_and_json_serializable_after_asdict (test_receipts.ReceiptShape.test_receipt_is_frozen_and_json_serializable_after_asdict) ... ok
+test_registry_calculations_are_named_functions_not_lambdas (test_receipts.ReceiptShape.test_registry_calculations_are_named_functions_not_lambdas) ... ok
+test_day_1_program_gets_one_receipt_per_invocation (test_receipts.ReceiptsAreOptional.test_day_1_program_gets_one_receipt_per_invocation) ... ok
+test_receipts_empty_when_observe_is_false (test_receipts.ReceiptsAreOptional.test_receipts_empty_when_observe_is_false) ... ok
+test_receipts_keyed_by_invocation_id_when_observe_is_true (test_receipts.ReceiptsAreOptional.test_receipts_keyed_by_invocation_id_when_observe_is_true) ... ok
+test_a_receipt_part_can_be_read_back_by_a_later_invocation (test_receipts.ReceiptsAreParts.test_a_receipt_part_can_be_read_back_by_a_later_invocation)
+Everything is a Part, in both directions: reading `px.receipt.` is ordinary ... ok
+test_observe_off_leaves_the_store_untouched (test_receipts.ReceiptsAreParts.test_observe_off_leaves_the_store_untouched)
+The intent's second half: with observe off nothing is written, asserted by ... ok
+test_receipt_address_is_pcr_tick_and_invocation_id (test_receipts.ReceiptsAreParts.test_receipt_address_is_pcr_tick_and_invocation_id)
+pcr.py `receipt_address`: f"{RECEIPT_PREFIX}{pcr}.{tick}.{invocation_id}". ... ok
+test_run_record_names_no_receipt_of_its_own (test_receipts.ReceiptsAreParts.test_run_record_names_no_receipt_of_its_own)
+The same invariant one layer up: the run record's part index is built from the ... ok
+test_same_calculation_twice_in_one_tick_gets_two_addresses (test_receipts.ReceiptsAreParts.test_same_calculation_twice_in_one_tick_gets_two_addresses)
+The scheme keys on the invocation id, which PCR.calc keeps unique, not on the ... ok
+test_the_day_1_program_writes_one_receipt_part_per_invocation (test_receipts.ReceiptsAreParts.test_the_day_1_program_writes_one_receipt_part_per_invocation) ... ok
+test_the_receipt_write_is_invisible_to_the_receipts_themselves (test_receipts.ReceiptsAreParts.test_the_receipt_write_is_invisible_to_the_receipts_themselves)
+Observation must not leak into the testimony it observes: no receipt address ... ok
+test_the_stored_part_is_the_receipt_object_pql_reads (test_receipts.ReceiptsAreParts.test_the_stored_part_is_the_receipt_object_pql_reads)
+pcr.py: `pxc.set(receipt_address(...), receipt)` stores the Receipt itself, so ... ok
+test_json_value_digest_is_canonical_json (test_receipts.ResultDigest.test_json_value_digest_is_canonical_json) ... ok
+test_non_json_value_yields_none (test_receipts.ResultDigest.test_non_json_value_yields_none) ... ok
+test_tuple_keys_yield_none (test_receipts.ResultDigest.test_tuple_keys_yield_none) ... ok
+test_args_key_colliding_with_a_bound_input_is_recorded_not_raised (test_receipts.ShadowedInputs.test_args_key_colliding_with_a_bound_input_is_recorded_not_raised) ... ok
+test_no_collision_leaves_shadowed_inputs_empty (test_receipts.ShadowedInputs.test_no_collision_leaves_shadowed_inputs_empty) ... ok
+test_experiment_path_is_inside_this_repository (test_receipts.TestimonyBytesUnchanged.test_experiment_path_is_inside_this_repository) ... ok
+test_observe_on_and_off_produce_identical_tick_bytes (test_receipts.TestimonyBytesUnchanged.test_observe_on_and_off_produce_identical_tick_bytes) ... ok
+test_tick_bytes_equal_the_retained_day_1_testimony (test_receipts.TestimonyBytesUnchanged.test_tick_bytes_equal_the_retained_day_1_testimony)
+Both legs: the retained Day 1 bytes are pinned against an observe=False run ... ok
+test_duration_is_non_negative_and_started_is_monotonic (test_receipts.Timing.test_duration_is_non_negative_and_started_is_monotonic) ... ok
+test_a_result_ref_input_is_not_a_declared_consume (test_receipts.WriteKinds.test_a_result_ref_input_is_not_a_declared_consume) ... ok
+test_an_invocation_without_into_produces_nothing (test_receipts.WriteKinds.test_an_invocation_without_into_produces_nothing) ... ok
+test_declared_and_actual_addresses (test_receipts.WriteKinds.test_declared_and_actual_addresses) ... ok
+test_kinds (test_receipts.WriteKinds.test_kinds) ... ok
+test_constructor_rules_calculation_fn_prefix (test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix)
+core.py:33-34: Calculation address must start with 'fn.'; the callable is not inspected. ... ok
+test_constructor_rules_part_address_non_empty (test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty)
+core.py:18-19: Part('') raises ValueError; any non-empty prefix is accepted (no 'px.' rule). ... ok
+test_non_part_binding_source_fails_at_run (test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run)
+Silent rule (critic gap 13): PCR.calc (pcr.py:112-116) and Tick.calc (pcr.py:46) accept any ... ok
+test_part_binding_not_rewritten_when_writer_declared_after_consumer (test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer)
+Silent rule, pcr.py:112-116: the rewrite happens only at the consumer's declaration, so a ... ok
+test_part_binding_rewritten_to_result_ref_when_writer_declared_first (test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first)
+pcr.py:112-116: consuming a Part that already has a writer in this PCR rewrites the binding to ... ok
+test_pcr_duplicate_id_rejected_across_ticks (test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks)
+pcr.py:109-110: PCR.calc rejects an id already used in any tick of the same PCR. ... ok
+test_pcr_multiple_writers_rejected (test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected)
+pcr.py:118-123: a second invocation declaring the same `into` address raises ValueError. ... ok
+test_tick_calc_bypasses_pcr_duplicate_id_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule)
+Silent rule, pcr.py:33-56 vs 109-110,132: pcr.tick(name).calc skips PCR._ids, so an id used in ... ok
+test_tick_calc_bypasses_pcr_multiple_writer_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule)
+Silent rule, pcr.py:33-56 vs 118-123: pcr.tick(name).calc skips PCR._writers, so a second ... ok
+test_tick_calc_rejects_duplicate_id_within_tick (test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick)
+pcr.py:43-44: Tick.calc rejects an id already present in that same tick. ... ok
+test_args_silently_override_same_named_bound_inputs (test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs)
+Silent rule, pcr.py:159-160: call_args.update(invocation.args) lets an args key shadow a bound ... ok
+test_cross_pcr_consumer_records_px_not_fn (test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn)
+Critic gap 12, pcr.py:88,118-123: the writers map is per PCR, so a second PCR reading a Part ... ok
+test_failure_mid_run_leaves_prior_writes (test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes)
+Critic gap 13, pcr.py:161-164: a Calculation raising mid-run propagates its own exception, no ... ok
+test_missing_part_fails_only_at_run (test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run)
+pcr.py:147-148 -> core.py:58-59: a Part binding with no PxC value is accepted at declaration and ... ok
+test_result_ref_to_unavailable_id_fails_only_at_run (test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run)
+pcr.py:151-155: a ResultRef to an id not yet in results is accepted at declaration and raises ... ok
+test_results_keyed_by_id_not_tick_and_rerun_replaces (test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces)
+pcr.py: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun ... ok
+test_run_registers_calculations_and_rejects_conflicting_address (test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address)
+pcr.py:142 registers every invocation's Calculation on the PxC (core.py:68-72), so two ... ok
+test_tick_order_is_first_mention_not_producer_declaration (test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration)
+pcr.py:91-96,139: ticks execute in the order they were first named, so a consumer in tick B ... ok
+test_pql_cannot_see_calculations (test_semantics.PQLRulesTest.test_pql_cannot_see_calculations)
+pql.py:42-45 read only PxC.items() (core.py:88-89, the _values dict); registration goes to ... ok
+test_pql_one_and_optional_reject_multiple_matches (test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches)
+pql.py:63-67,69-73: with two matches both one() and optional() raise ValueError; values() ... ok
+test_pql_part_missing_is_silent_until_one (test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one)
+pql.py:31-33,63-67,69-73: PQL.part of an unproduced address matches nothing (silent); ... ok
+test_pql_prefix_must_be_non_empty (test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty)
+pql.py:39-40: PQL.prefix('') raises ValueError at construction. ... ok
+test_pql_where_refines_and_matches_are_sorted_by_address (test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address)
+pql.py:42-45,49-55 and core.py:88-89: prefix selection iterates PxC.items(), which is sorted by ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Critic gap 16, pcr.py:179-219 vs graph.py:116-151: the fan-out example authored as executable ... ok
+test_table_projection_drops_provenance (test_semantics.ProjectionTest.test_table_projection_drops_provenance)
+Critic gap 13, core.py:85-89: PxC.items() projects to (address, value) rows only; re-inserting ... ok
+test_pxc_call_autoregisters_object_but_not_string (test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string)
+core.py:77-80: PxC.call with an unregistered Calculation object registers it as a side effect, ... ok
+test_pxc_call_unregistered_string_raises (test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises)
+core.py:81-82: PxC.call by address string with nothing registered raises KeyError. ... ok
+test_pxc_get_missing_raises_keyerror (test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror)
+core.py:58-59: PxC.get of an unproduced address raises KeyError (fail-loud); has() stays False. ... ok
+test_pxc_register_conflict_on_different_callable (test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable)
+core.py:70-71: registering a different callable under an already-registered address raises ... ok
+test_pxc_register_same_callable_is_idempotent (test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent)
+core.py:68-72: re-registering the same object, or a new Calculation wrapping the same callable, ... ok
+test_pxc_set_kinds_new_address_then_replacement_without_versioning (test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning)
+core.py:62-66: set returns PxWrite kind 'new-address' first, 'replacement' after; the old value ... ok
+
+----------------------------------------------------------------------
+Ran 155 tests in 0.939s
+
+OK (skipped=5)
