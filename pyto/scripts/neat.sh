@@ -12,6 +12,7 @@
 #   neat update <id>          bring MAIN's newer commits into EXP/<id> (a conflict names the files and stops)
 #   neat list                 every experiment and its state
 #   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
+#   neat walk [N | --page [out]]   the walk: the index of landings, one step as text, or the page (default ./walk.html)
 #
 # The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
 # owner sees what is coming; those lines go through land.sh --note (commit and push, no receipt).
@@ -54,7 +55,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,14p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,15p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -590,6 +591,20 @@ cmd_selftest() {
   [ "$failures" -eq 0 ]
 }
 
+cmd_walk() {
+  # neat walk          -> the index, one line per landing on the board (walk.py --list)
+  # neat walk N        -> step N as text, for an agent (walk.py --text N)
+  # neat walk --page [out] -> the page, at out or ./walk.html in the current directory
+  local walk="$ROOT/pyto/scripts/walk.py" out
+  case "${1:-}" in
+    "") "$PYTHON" "$walk" --list;;
+    --page) out="${2:-walk.html}"; "$PYTHON" "$walk" --out "$out"; echo "the walk is at $out (open it; arrows step)";;
+    --check) "$PYTHON" "$walk" --check;;
+    *) case "$1" in *[!0-9]*) die "neat walk takes a step number, --page [out], or nothing: neat walk 55";; esac
+       "$PYTHON" "$walk" --text "$1";;
+  esac
+}
+
 cmd_list() {
   # A landed task's score is whatever its own landing receipt kept; an experiment that has not
   # landed has no receipt and so no score yet, which is the same "-" as a verifier that printed none.
@@ -611,5 +626,5 @@ cmd_list() {
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
-  list) cmd_list "$@";; selftest) cmd_selftest "$@";; *) usage;;
+  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; *) usage;;
 esac
