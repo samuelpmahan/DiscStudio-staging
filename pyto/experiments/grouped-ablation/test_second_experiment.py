@@ -40,7 +40,11 @@ import run_regrouped  # noqa: E402
 import run_reinput  # noqa: E402
 import run_from_retained  # noqa: E402
 import second_experiment as se  # noqa: E402
+import compare_local  # noqa: E402
+import pql_document  # noqa: E402
+import retain  # noqa: E402
 from calculations import REGISTRY  # noqa: E402
+from pyto import PCR, Calculation, Part, PxC  # noqa: E402
 
 RUN_1 = os.path.join(EVIDENCE, "run-1")
 COMMITTED_RUNS = ("run-1", "run-2-regroup", "run-3-reinput", "run-4-from-retained")
@@ -688,3 +692,173 @@ class OutDirSafety(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---------------------------------------------------------------- multi-produce
+# A Calculation may publish several Parts from one invocation (task 27): `into` is
+# then an array of addresses and a result binding on it is spelled
+# `fn:<id>#<address>` (RECORD.md, Field rules). The two readers below are the ones
+# task 27 left behind.
+MULTI_PRODUCES = ["scratch.multi.mean", "scratch.multi.count"]
+
+
+def multi_stats(args: dict) -> dict:
+    rows = args["rows"]
+    return {"scratch.multi.mean": sum(rows) / len(rows), "scratch.multi.count": len(rows)}
+
+
+def multi_take(args: dict):
+    return args["value"]
+
+
+MULTI_REGISTRY = {
+    "fn.multi.stats": Calculation("fn.multi.stats", multi_stats),
+    "fn.multi.take": Calculation("fn.multi.take", multi_take),
+}
+
+
+def multi_program() -> dict:
+    """A retained program whose first invocation publishes both of MULTI_PRODUCES.
+
+    `report` binds one produce by the qualified spelling `fn:stats#<address>` --
+    that is what PCR writes for a result binding on a multi-produce invocation --
+    and a third entry is appended by hand to bind the *other* produce as a Part
+    (`px:scratch.multi.count`, the *second* declared address). Within one PCR a
+    Part with a writer in the graph is
+    rebound to that writer's result, so the px: edge only exists in a program
+    assembled across PCRs, which is exactly the shape `consumers_of` documents and
+    which `compare_local` accepts as a bare program dict.
+    """
+    pxc = PxC()
+    pxc.set(Part("scratch.multi.rows"), [1, 2, 3, 4])
+    pcr = PCR("multi")
+    stats = pcr.calc(
+        "Prepare", MULTI_REGISTRY["fn.multi.stats"], id="stats",
+        rows=Part("scratch.multi.rows"), into=MULTI_PRODUCES,
+    )
+    pcr.calc(
+        "Report", MULTI_REGISTRY["fn.multi.take"], id="report",
+        value=stats["scratch.multi.count"], into="scratch.multi.reported",
+    )
+    program = retain.to_program(pcr)
+    program["ticks"].append({
+        "name": "Downstream",
+        "calculations": [{
+            "id": "downstream",
+            "calculation": "fn.multi.take",
+            "inputs": {"value": "px:scratch.multi.count"},
+            "args": {},
+            "into": "scratch.multi.downstream",
+        }],
+    })
+    return program
+
+
+def multi_record(program: dict) -> dict:
+    return {
+        "program": program,
+        "results": {
+            entry["id"]: f"sha-{entry['id']}"
+            for tick in program["ticks"]
+            for entry in tick["calculations"]
+        },
+        "external": {"scratch.multi.rows": {"sha256": "sha-rows"}},
+    }
+
+
+class CompareLocalReadsEveryProduce(unittest.TestCase):
+    """compare_local traverses a program whose invocation publishes several Parts."""
+
+    def setUp(self):
+        self.program = multi_program()
+        self.record = multi_record(self.program)
+
+    def _with_changed_stats_args(self) -> dict:
+        other = copy.deepcopy(self.record)
+        other["program"]["ticks"][0]["calculations"][0]["args"] = {"scale": 2}
+        return other
+
+    def test_every_produce_address_maps_to_its_writer_and_both_edges_are_followed(self):
+        """Guards `compare_local._writer_of` and the `_edges` fn: branch (the line that
+        was `writer_of = {entry["into"]: entry["id"] ...}`, compare_local.py:83).
+
+        `stats` publishes two addresses, so the writer map needs one entry per
+        address and the qualified ref `fn:stats#scratch.multi.count` has to resolve
+        to `stats`. Both consumers are downstream of the one changed invocation.
+
+        Mutation: restore `{entry["into"]: entry["id"] for entry ...}` -- TypeError,
+        unhashable type 'list', before any edge is built. Key the map by the first
+        declared address only -- `downstream` reads the second one, so its edge
+        disappears. Keep `producer = ref[len(FN):]` in `_edges` instead of
+        `_fn_writer` -- the producer is the text 'stats#scratch.multi.count', which
+        is no invocation id, so `report` drops out of downstream_affected.
+        """
+        out = compare_local.explain_changes(self.record, self._with_changed_stats_args())
+        self.assertEqual(out["changed"], ["stats"])
+        self.assertEqual(out["reason"]["stats"], "args")
+        self.assertEqual(sorted(out["downstream_affected"]), ["downstream", "report"])
+        self.assertEqual(out["unchanged_upstream"], [])
+        self.assertEqual(compare_local.skippable_by_digest(self.record, self._with_changed_stats_args()), [])
+
+    def test_consumers_of_resolves_bare_and_produce_qualified_result_refs(self):
+        """Guards `compare_local._fn_addresses`/`_fn_writer` in `consumers_of`.
+
+        A bare `fn:stats` reads every Part `stats` published, so it lists the id
+        that binds one of them by the qualified spelling; the qualified ref lists
+        only the consumer of that one produce, and the other produce has no result
+        consumer at all (`downstream` reads it as a Part).
+
+        Mutation: drop the `_fn_addresses` overlap and compare ref strings only, as
+        before -- `consumers_of(program, "fn:stats")` is [] because no entry binds
+        that literal string.
+        """
+        self.assertEqual(compare_local.consumers_of(self.program, "fn:stats"), ["report"])
+        self.assertEqual(
+            compare_local.consumers_of(self.program, "fn:stats#scratch.multi.count"), ["report"]
+        )
+        self.assertEqual(compare_local.consumers_of(self.program, "fn:stats#scratch.multi.mean"), [])
+        self.assertEqual(compare_local.consumers_of(self.program, "px:scratch.multi.count"), ["downstream"])
+        self.assertEqual(compare_local.consumers_of(self.program, "px:scratch.multi.mean"), [])
+        self.assertEqual(compare_local.consumers_of(self.program, "fn:report"), [])
+
+
+class PqlDocumentRefusesSeveralProduces(unittest.TestCase):
+    """The readPql grammar has one `into` string per Calculation, so it must refuse."""
+
+    def test_a_multi_produce_invocation_is_refused_naming_it_and_its_addresses(self):
+        """Guards the `isinstance(into, (list, tuple))` refusal in
+        `pql_document.to_pql_document` (the check that was
+        `if not isinstance(into, str) or not into`, pql_document.py:86).
+
+        src/core/exec.js:46 reads `into` with `text(...)` -- a nonempty string --
+        and invokePql writes exactly that one address (`pxc.set(calculation.into,
+        output)`, exec.js:58), so several produces have no representation in the
+        document and are refused here rather than emitted.
+
+        Mutation: delete the list branch -- the old `isinstance(into, str)` check
+        refuses too, but the message says "has no 'into'" of an invocation that
+        declares two, and a `tuple` `into` would slip through a check written as
+        `isinstance(into, list)` only. Emit `into=addresses[0]` instead -- the
+        document claims `stats` publishes one Part and the second is lost silently.
+        """
+        program = multi_program()
+        program["ticks"] = program["ticks"][:1]  # the multi-produce invocation alone, px: bound
+        with self.assertRaises(pql_document.PqlDocumentError) as caught:
+            pql_document.to_pql_document(program)
+        message = str(caught.exception)
+        self.assertIn("Prepare.stats", message)
+        for address in MULTI_PRODUCES:
+            self.assertIn(address, message)
+        self.assertIn("exec.js:46", message)
+        self.assertNotIn("has no 'into'", message)
+        accepted, why = pql_document.can_render(program)
+        self.assertFalse(accepted)
+        self.assertEqual(why, message)
+
+    def test_a_one_address_invocation_still_renders(self):
+        """The refusal is by the SHAPE of `into`, so a plain string is untouched."""
+        program = multi_program()
+        program["ticks"][0]["calculations"][0]["into"] = "scratch.multi.mean"
+        program["ticks"] = program["ticks"][:1]
+        document = pql_document.to_pql_document(program)
+        self.assertEqual(document["Ticks"][0]["Calculations"][0]["into"], "scratch.multi.mean")

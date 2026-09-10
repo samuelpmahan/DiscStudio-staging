@@ -24,6 +24,15 @@ What it cannot hold, and why `to_pql_document` refuses rather than degrades:
   that is refused now, so the fn: refusal happens here, in Python.
 * an invocation without `into`: exec.js:46 requires a nonempty string, so the
   optional `into` that PCR allows (pcr.py:29, :112-116) has no representation.
+* an invocation that publishes several Parts. `into` in a retained program is one
+  address, an array of addresses, or null (RECORD.md, Field rules), but the
+  grammar has one `into` per Calculation and it must be a nonempty *string*
+  (exec.js:46, `text(calculation.into, ...)`); `invokePql` then writes exactly one
+  address per Calculation (`pxc.set(calculation.into, output)`, exec.js:58). There
+  is no place in the document for the second address and no way for the reader to
+  split one result across two, so a multi-produce invocation is refused here,
+  naming the invocation and every address it declared, rather than emitted with
+  one address chosen and the rest silently dropped.
 * an args key shadowing a `with` key: exec.js:45 rejects the document outright.
   retain.to_program refuses the same thing at export, so a program that reached
   this module has already passed that rule; it is re-checked here because a
@@ -84,6 +93,17 @@ def to_pql_document(program: Mapping[str, Any]) -> dict[str, Any]:
                     f"as the literal address '{ref}'"
                 )
             into = entry.get("into")
+            if isinstance(into, (list, tuple)) and into:
+                addresses = list(into)
+                raise PqlDocumentError(
+                    f"to_pql_document: {where} declares 'into' as an array of "
+                    f"addresses {addresses}, so it publishes several Parts from one "
+                    f"invocation; exec.js:46 takes one nonempty 'into' string per "
+                    f"Calculation and invokePql writes that one address "
+                    f"(exec.js:58), so a multi-produce invocation cannot be "
+                    f"expressed and is refused rather than written with one of its "
+                    f"addresses"
+                )
             if not isinstance(into, str) or not into:
                 raise PqlDocumentError(
                     f"to_pql_document: {where} has no 'into'; exec.js:46 requires a nonempty "
