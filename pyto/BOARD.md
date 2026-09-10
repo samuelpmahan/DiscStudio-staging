@@ -37,8 +37,10 @@ bash pyto/scripts/check_all.sh                                   # every suite, 
 node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
 ```
 
-For Astra or Codex, the owner reuses one sentence forever: "Pull the branch, read the newest file
-in mailbox/to-gpt, do what it says."
+For Astra or Codex, the owner reuses one sentence forever: "Pull the branch, read the newest
+entries on pyto/questions.md, and continue." Every answer to an agent's question is written there,
+in the owner's words and in the technical words side by side; the owner never carries the technical
+half (owner, 2026-09-10: "Can't you translate between OSspeak and Samspeak").
 
 ## Interrupts
 
@@ -57,6 +59,8 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 01:04 **landed** `task-26`: Ticks as circuits: tick_laws.py checks any pyto-run-record@1 against the node law (inside a Tick no Calculation consumes a sibling's produce, no two siblings produce one Part) and the loop law (nothing consumes a Part produced later), and reports total work versus critical path per Tick; no kernel change (11 files since 71e2cbb, suites green, receipt 20260910T010331Z-task-26)
+- 2026-09-10 00:38 **started** `task-27`: a Calculation can produce several Parts: calc(... into=[a, b, ...]) publishes one Part per address from one invocation, the receipt lists every produce with its own digest, the record's produces and writes carry them all, and one-address calls are unchanged byte for byte (copy EXP/27; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 00:32 **for Codex** `task-26`: the tick laws are Codex's to build, since its question set this off; brief on exp/26 at pyto/experiments/tasks/26/BRIEF.md; my builder was stopped and its work discarded
 - 2026-09-10 00:27 **started** `task-26`: Ticks as circuits: tick_laws.py checks any pyto-run-record@1 against the node law (inside a Tick no Calculation consumes a sibling's produce, no two siblings produce one Part) and the loop law (nothing consumes a Part produced later), and reports total work versus critical path per Tick; no kernel change (copy EXP/26; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 00:16 **landed** `task-25`: the hand-off starts with a stopping rule: read the named files and no more, write the one question you would answer by reading another 100k tokens, ask the owner, stop; the answer goes on the root verbatim (8 files since b558911, suites green, receipt 20260910T001528Z-task-25)
