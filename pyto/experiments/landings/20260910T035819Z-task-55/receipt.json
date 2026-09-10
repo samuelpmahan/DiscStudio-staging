@@ -1,0 +1,74 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T035819Z-task-55",
+  "package": "task-55",
+  "base_sha": "4026304d20aa9dcddad73432b6015c3d4093230c",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest tests.test_use tests.test_parallel && python -m unittest discover -s experiments/classroom -p 'test_*.py'",
+    "exit": 0,
+    "output_sha256": "bbeca5ea90b7ab179d591333ac2f39125f409d82adbdec72f177fa402a37f9cb"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "d0495fe3d2c64d88a5d22e145a8b26f5d818eaab05c0cd68062425740bfc07e2",
+    "counts": {
+      "library": 327,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 12,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/classroom/test_classroom.py",
+      "bytes": 14007,
+      "sha256": "b97c3b16935009802171ed0bc19e30fc1163398403e4211844df80aca5bc3c61"
+    },
+    {
+      "path": "pyto/experiments/tasks/55/HANDOFF.md",
+      "bytes": 7528,
+      "sha256": "ef24cf3dc382054abcd8403fd510033000e811d74e9707c6e313153ab7321689"
+    },
+    {
+      "path": "pyto/experiments/tasks/55/evidence/check_all.txt",
+      "bytes": 172464,
+      "sha256": "5f692f5ebb7e4a1ac1933456089e4ef268e4dc27e7c9aea26410a66bd0059a51"
+    },
+    {
+      "path": "pyto/experiments/tasks/55/evidence/verify.txt",
+      "bytes": 503,
+      "sha256": "96f157e8e476eca029c444aa69f22cea9613f4f4a7e3e0f82b89c8c82c3f661d"
+    },
+    {
+      "path": "pyto/experiments/tasks/55/packet.md",
+      "bytes": 3148,
+      "sha256": "4e3ca67dfba7deff09cfa5667b4c4d4aa805ec94beda6d8a6df1762d2658dc9b"
+    },
+    {
+      "path": "pyto/tests/test_parallel.py",
+      "bytes": 19558,
+      "sha256": "1c5faea967d9a1722627619c0c3b56beed877328dc3eae9425bab179f1f489ab"
+    },
+    {
+      "path": "pyto/tests/test_use.py",
+      "bytes": 9804,
+      "sha256": "2f554294f529d915127a88ebe0caba839635e6b5fee61fdaf0ff6e7a7b432779"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T03:59:20.024799Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

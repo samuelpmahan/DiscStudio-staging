@@ -194,12 +194,30 @@ class Placement(unittest.TestCase):
                 self.assertGreaterEqual(placement["started_ms"], 0.0)
 
     def test_the_four_branches_really_overlapped(self):
-        """Every branch starts before the first one could have finished."""
+        """As many branches as there are workers start before the first one finishes.
+
+        Measured against the branches themselves, not a wall-clock budget: a
+        slow runner starts its threads late (a macOS runner took 114 ms to start
+        four, against a 50 ms sleep), and a runner with fewer cores than branches
+        cannot overlap all of them (the pool is `min(len(tick), cpu_count)`
+        workers). What parallel means is that the pool was full while the first
+        branch was still running, and that is what is asserted.
+        """
         fan = next(tick for tick in self.record["ticks"] if tick["name"] == "Fan")
-        starts = [invocation_placement(inv)["started_ms"] for inv in fan["invocations"]]
-        self.assertEqual(len(starts), BRANCHES)
-        for started_ms in starts:
-            self.assertLess(started_ms, BRANCH_SLEEP_MS)
+        spans = [
+            (invocation_placement(inv)["started_ms"], inv["duration_ms"])
+            for inv in fan["invocations"]
+        ]
+        self.assertEqual(len(spans), BRANCHES)
+        first_finish = min(started + duration for started, duration in spans)
+        overlapping = sum(1 for started, _ in spans if started < first_finish)
+        workers = max(1, min(BRANCHES, os.cpu_count() or 1))
+        self.assertGreaterEqual(
+            overlapping,
+            min(BRANCHES, workers),
+            f"only {overlapping} of {BRANCHES} branches had started when the first "
+            f"finished at {first_finish:.1f} ms, on a pool of {workers}: {spans}",
+        )
 
     def test_a_parallel_tick_publishes_in_declared_order_after_the_whole_tick(self):
         """The store never holds half a Tick, and the order is the program's.

@@ -59,6 +59,12 @@ STUDENT_HANDOFF = os.path.join(STUDENTS, "HANDOFF.md")
 # happens to be.
 ENV = dict(os.environ, PYTHON=sys.executable)
 
+#: bash by its full path. A bare "bash" is enough on Linux and macOS, but on Windows
+#: CreateProcess looks in System32 before PATH and finds WSL's bash.exe there, which
+#: has no distribution on a CI runner ("Windows Subsystem for Linux has no installed
+#: distributions"); shutil.which walks PATH, where Git's bash is.
+BASH = shutil.which("bash") or "bash"
+
 
 def run(command: list[str], **kwargs) -> subprocess.CompletedProcess:
     return subprocess.run(
@@ -73,7 +79,7 @@ class ClassroomTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.tmp = tempfile.mkdtemp(prefix="classroom-suite-")
         cls.dir = os.path.join(cls.tmp, "class-and-desk")
-        cls.built = run(["bash", MAKE_CLASS, "--selftest", cls.dir])
+        cls.built = run([BASH, MAKE_CLASS, "--selftest", cls.dir])
         cls.desk = os.path.join(cls.dir, "desk")
         cls.klass = os.path.join(cls.dir, "class")
 
