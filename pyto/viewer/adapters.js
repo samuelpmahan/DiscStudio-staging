@@ -22,6 +22,10 @@ export const RUNTIMES = ['pyto', 'discstudio', 'chesslab', 'wumpus'];
 export const VALUE_KINDS = ['json', 'text', 'svg', 'png-data-url', 'omitted'];
 export const WRITE_KINDS = ['new-address', 'refinement', 'replacement'];
 
+/** RECORD.md, "Placement and budget": the optional fields, and their key sets. */
+export const PLACEMENT_KEYS = ['worker', 'started_ms'];
+export const BUDGET_KEYS = ['limit_ms', 'stopped_after_tick', 'completed'];
+
 /** RECORD.md:109-110: a `png-data-url` value's data is exactly this shape. */
 export const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
 
@@ -212,7 +216,29 @@ function validateInvocation(invocation, path, seenIds) {
   requireNullableString(invocation.result_sha256, `${path}.result_sha256`);
   requireBoolean(invocation.hit, `${path}.hit`);
   validateValue(invocation.value, `${path}.value`);
+  validatePlacement(invocation, path);
   return invocation;
+}
+
+/**
+ * RECORD.md, "Placement and budget": `placement` is optional and null for a
+ * serial run -- a Tick that ran on one thread has no placement to report.
+ * `worker` is a 0-based index inside its Tick, `started_ms` the offset from the
+ * moment that Tick began, so a reader draws the overlap without a wall clock.
+ */
+function validatePlacement(invocation, path) {
+  if (!('placement' in invocation) || invocation.placement === null) return null;
+  const where = `${path}.placement`;
+  const placement = requireObject(invocation.placement, where);
+  const extra = Object.keys(placement).filter((key) => !PLACEMENT_KEYS.includes(key));
+  if (extra.length > 0) fail(where, `unknown field(s) ${extra.sort().join(', ')} not in RECORD.md`);
+  if (!Number.isInteger(placement.worker) || placement.worker < 0) {
+    fail(`${where}.worker`, `expected a non-negative integer, got ${show(placement.worker)}`);
+  }
+  if (typeof placement.started_ms !== 'number' || !Number.isFinite(placement.started_ms)) {
+    fail(`${where}.started_ms`, `expected a finite number, got ${show(placement.started_ms)}`);
+  }
+  return placement;
 }
 
 /**
@@ -265,6 +291,30 @@ export function validate(record) {
   if (counters.hits !== hitCount) fail('counters.hits', `expected ${hitCount} (invocations with hit=true), got ${counters.hits}`);
   if (counters.hits + counters.computed !== counters.invocations) {
     fail('counters.computed', `expected ${counters.invocations - counters.hits} so hits + computed === invocations, got ${counters.computed}`);
+  }
+
+  // Placement and budget: optional, so absent is a serial unbudgeted run and not
+  // a violation; present, they are held to the same rules as everything else.
+  ticks.forEach((tick, index) => {
+    if ('latency_ms' in tick) requireNullableNumber(tick.latency_ms, `ticks[${index}].latency_ms`);
+  });
+  if ('parallel' in record) requireBoolean(record.parallel, 'parallel');
+  if ('budget' in record) {
+    const budget = requireObject(record.budget, 'budget');
+    const missing = BUDGET_KEYS.filter((key) => !(key in budget));
+    if (missing.length > 0) fail('budget', `missing required field(s) ${missing.join(', ')}; RECORD.md: missing fields are null, never absent`);
+    const extra = Object.keys(budget).filter((key) => !BUDGET_KEYS.includes(key));
+    if (extra.length > 0) fail('budget', `unknown field(s) ${extra.sort().join(', ')} not in RECORD.md`);
+    requireNullableNumber(budget.limit_ms, 'budget.limit_ms');
+    requireNullableString(budget.stopped_after_tick, 'budget.stopped_after_tick');
+    requireBoolean(budget.completed, 'budget.completed');
+    if (budget.completed && budget.stopped_after_tick !== null) {
+      fail('budget.stopped_after_tick', `a completed run stopped after no Tick; stopped_after_tick names the last Tick a budget cut the run after, got ${show(budget.stopped_after_tick)}`);
+    }
+    const names = new Set(ticks.map((tick) => tick.name));
+    if (budget.stopped_after_tick !== null && !names.has(budget.stopped_after_tick)) {
+      fail('budget.stopped_after_tick', `names no Tick in this record (${[...names].sort().join(', ') || 'none'}), got ${show(budget.stopped_after_tick)}`);
+    }
   }
   return record;
 }
@@ -518,7 +568,53 @@ export function tickDurationMs(tick) {
   return saw ? round3(total) : null;
 }
 
-function assemble({ pcr, source, ticks, wallMs = null }) {
+/**
+ * One Tick's wall time: `latency_ms` when the record carries it, else the sum of
+ * its durations -- the same arithmetic a serial run does, and null when any one
+ * duration is null (RECORD.md, "Placement and budget").
+ *
+ * Qualified `FromRecord` because `tick-viewer.js` exports its own `tickLatencyMs`
+ * (task 40) and `embed.mjs` concatenates both files into one module, where two
+ * top-level bindings of one name is a SyntaxError. The two are not the same
+ * function: with `latency_ms` present they agree, and with it absent this one
+ * sums the durations (the serial reading RECORD.md specifies for the fallback)
+ * while the viewer's takes the longest branch (the critical path it draws).
+ * See `{?} TwoLatencyFallbacks` in experiments/tasks/39/packet.md.
+ */
+export function tickLatencyMsFromRecord(tick) {
+  if (typeof tick.latency_ms === 'number') return tick.latency_ms;
+  if (tick.invocations.length === 0) return null;
+  let total = 0;
+  for (const invocation of tick.invocations) {
+    if (typeof invocation.duration_ms !== 'number') return null;
+    total += invocation.duration_ms;
+  }
+  return round3(total);
+}
+
+/** This invocation's placement, or null -- absent and null read the same. */
+export function invocationPlacement(invocation) {
+  return invocation.placement ?? null;
+}
+
+/**
+ * How the run was scheduled, with the defaults an absent field means: a record
+ * carrying neither `parallel` nor `budget` is a serial, unbudgeted run that ran
+ * to the end.
+ */
+export function runSchedule(record) {
+  const budget = record.budget ?? {};
+  return {
+    parallel: record.parallel === true,
+    budget: {
+      limit_ms: budget.limit_ms ?? null,
+      stopped_after_tick: budget.stopped_after_tick ?? null,
+      completed: budget.completed ?? true
+    }
+  };
+}
+
+function assemble({ pcr, source, ticks, wallMs = null, schedule = null }) {
   const record = {
     schema: SCHEMA,
     pcr,
@@ -527,6 +623,17 @@ function assemble({ pcr, source, ticks, wallMs = null }) {
     parts: derivePartIndex(ticks),
     counters: deriveCounters(ticks, wallMs)
   };
+  // RECORD.md, "Placement and budget": the four fields go in together and only
+  // when the run was parallel, was given a budget, or was stopped by one, and
+  // they go in last, in the order pyto.materialize.run_record writes them.
+  if (schedule) {
+    record.parallel = schedule.parallel === true;
+    record.budget = {
+      limit_ms: schedule.budget?.limit_ms ?? null,
+      stopped_after_tick: schedule.budget?.stopped_after_tick ?? null,
+      completed: schedule.budget?.completed !== false
+    };
+  }
   return validate(record);
 }
 
@@ -576,6 +683,11 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
   const name = requireString(pqlRun.PrincipleComponentRender, 'discstudio.pqlRun.PrincipleComponentRender');
   const pqlTicks = requireArray(pqlRun.Ticks, 'discstudio.pqlRun.Ticks');
   const trace = receipt ? requireArray(receipt.trace, 'discstudio.receipt.trace') : [];
+  // The schedule exec.js reported for this run (src/core/exec.js `schedule`),
+  // filed on the receipt by runtime.js and on the composition Part by the run
+  // itself. Absent on both is a serial, unbudgeted run and stays absent here.
+  const scheduled = (receipt && receipt.schedule) || pqlRun.schedule || null;
+  const scheduledTick = (index) => (scheduled ? scheduled.ticks?.[index] ?? null : null);
 
   const produced = new Set();
   const seen = new Set();
@@ -583,7 +695,7 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
   let flat = 0;
 
   pqlTicks.forEach((tick, index) => {
-    const invocations = requireArray(tick.Calculations, `discstudio.pqlRun.Ticks[${index}].Calculations`).map((calculation) => {
+    const invocations = requireArray(tick.Calculations, `discstudio.pqlRun.Ticks[${index}].Calculations`).map((calculation, order) => {
       const step = trace[flat] ?? null;
       flat += 1;
       const bindings = calculation.with ?? {};
@@ -597,14 +709,20 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
         declared.push(`px:${address}`);
         actual.push(address);
       }
+      // `into` is one address or, since task 42, a list of them: one pass, several
+      // Parts, one invocation listing all of them ({?} RecordAdapterHasOneIntoPerInvocation).
       const into = calculation.into ?? null;
-      const kind = into === null ? null : actual.includes(into) ? 'refinement' : produced.has(into) ? 'replacement' : 'new-address';
+      const addresses = into === null ? [] : Array.isArray(into) ? [...into] : [into];
+      const writes = addresses.map((address) => ({
+        address,
+        kind: actual.includes(address) ? 'refinement' : produced.has(address) ? 'replacement' : 'new-address'
+      }));
       const reused = step ? step.reused === true : false;
       const hit = deriveHit(declared, produced, reused);
       const material = step && typeof step.material === 'string' ? step.material : null;
       const revision = step && step.revision !== undefined ? step.revision : null;
       const invocation = {
-        id: uniqueId(into ?? `${tick.name}:${calculation.call}`, seen),
+        id: uniqueId(addresses[0] ?? `${tick.name}:${calculation.call}`, seen),
         calculation: {
           address: calculation.actualCall ?? calculation.call ?? null,
           // runtime.js keys memo identity on { revision, inputs } (runtime.js:15),
@@ -617,21 +735,27 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
         into,
         declared_consumes: declared,
         actual_consumes: actual,
-        actual_produces: into === null ? [] : [into],
-        writes: into === null ? [] : [{ address: into, kind }],
+        actual_produces: addresses,
+        writes,
         // runtime.js records reuse and material identity, never a duration.
         duration_ms: null,
         result_sha256: material,
         hit,
         value: discStudioValue(calculation.output, material, reused)
       };
-      if (into !== null) produced.add(into);
+      // Placement is written for every invocation of a run that reports a
+      // schedule and for no invocation of one that does not: a serial Tick has
+      // none to report and says so with null.
+      if (scheduled) invocation.placement = scheduledTick(index)?.placements?.[order] ?? null;
+      for (const address of addresses) produced.add(address);
       return invocation;
     });
-    ticks.push({ index, name: requireString(tick.name, `discstudio.pqlRun.Ticks[${index}].name`), invocations });
+    const entry = { index, name: requireString(tick.name, `discstudio.pqlRun.Ticks[${index}].name`), invocations };
+    if (scheduled) entry.latency_ms = scheduledTick(index)?.latency_ms ?? null;
+    ticks.push(entry);
   });
 
-  return assemble({ pcr: name, source: { runtime: 'discstudio', version, commit }, ticks });
+  return assemble({ pcr: name, source: { runtime: 'discstudio', version, commit }, ticks, schedule: scheduled });
 }
 
 function discStudioValue(output, material, reused) {
