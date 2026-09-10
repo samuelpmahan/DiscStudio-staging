@@ -218,10 +218,15 @@ that invocation published several Parts, say which: `split[TOTAL]` (or
 `split.part(TOTAL)`). Binding a Part this same PCR already writes is the same
 thing as binding the writer's result, and `PCR` rewrites it for you.
 
-**The node law: the Calculations of one Tick are parallel branches, so none of
-them may read another's produce and no two of them may write the same Part.**
-That is what makes a Tick safe to run on a pool, and it is refused when you
-author it, not when you run it.
+**Inside a Tick the Calculations are a sequence in declared order, and the Tick
+boundary is where that sequence becomes inspectable.** A later Calculation may
+bind an earlier sibling's result -- that is a chain -- and the owner's own words
+for it are on `questions.md` (ChainsInsideATick: "your existing ChainSpot program
+deliberately chains dependent Calculations inside a Tick. Your definition was the
+moment that sequence becomes inspectable"). A Tick in which no Calculation reads
+a sibling may run its Calculations at once. Two things are refused when you
+author the program, not when you run it: a read of a Part a *later* sibling
+produces, and two siblings producing one Part.
 
 ```python
 from pyto import Calculation, PCR, Part, PxC
@@ -257,11 +262,12 @@ SPLIT = Calculation("fn.order.split", split_bill)
 LINE_OF = Calculation("fn.order.line", one_line)
 
 pcr = PCR("order")
-# One Tick, two Calculations: neither reads the other, so they are parallel branches.
+# One Tick, three Calculations. `sum` and `count` read no sibling, so they may run
+# at once; `split` binds `sum`'s result, so this Tick is a chain and runs in order.
 totals = pcr.calc("Sum", ADD_UP, id="sum", into=SUBTOTAL, prices=PRICES)
 counted = pcr.calc("Sum", COUNT_OF, id="count", into=COUNT, prices=PRICES)
-# Bound to a result, and publishing two Parts from one pass.
-split = pcr.calc("Split", SPLIT, id="split", into=[TAX, TOTAL], subtotal=totals, args={"rate": 0.08})
+# Bound to a sibling's result, and publishing two Parts from one pass.
+split = pcr.calc("Sum", SPLIT, id="split", into=[TAX, TOTAL], subtotal=totals, args={"rate": 0.08})
 # `split` published two Parts, so this binding names the one it means.
 pcr.calc("Say", LINE_OF, id="line", into=LINE, count=counted, total=split[TOTAL])
 
@@ -270,15 +276,17 @@ pxc.set(PRICES, [250, 175, 90])
 run = pcr.run(pxc)
 
 print("ticks:  ", [tick.name for tick in pcr.ticks])
+print("chained:", [tick.chained() for tick in pcr.ticks])
 print("ids:    ", [inv.id for tick in pcr.ticks for inv in tick.calculations])
 print("results:", run.results["sum"], run.results["count"], run.results["split"])
 print("line:   ", pxc.get(LINE))
 print("store:  ", pxc.addresses())
-print("testimony:", run.ticks[2].calculations[0])
+print("testimony:", run.ticks[1].calculations[0])
 ```
 
 ```text
-ticks:   ['Sum', 'Split', 'Say']
+ticks:   ['Sum', 'Say']
+chained: [True, False]
 ids:     ['sum', 'count', 'split', 'line']
 results: 515 3 {'px.order.tax': 41.2, 'px.order.total': 556.2}
 line:    3 items, total 556.2
@@ -291,9 +299,10 @@ that last line is the whole program written down, `fn:count` for a result and
 `fn:split#px.order.total` for one of several — and, with `observe=True`, one
 `Receipt` per id. The store is left holding every published Part.
 
-`run` also takes `parallel=True` (the invocations of a Tick run side by side —
-the node law is what makes that safe) and `budget_ms=...` (stop at a Tick
-boundary). Neither changes `ticks`: scheduling is not the program.
+`run` also takes `parallel=True` (a Tick with no sibling reads runs its
+invocations side by side; a chained Tick runs in order on one worker either
+way) and `budget_ms=...` (stop at a Tick boundary). Neither changes `ticks`:
+scheduling is not the program.
 
 `pyto.Pcr` — lowercase — is a different thing and is not on this path: it is the
 authoring graph that *emits* a PCR document (JSON, Mermaid) without executing
