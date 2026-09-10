@@ -61,17 +61,39 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 
 - A  pyto/experiments/cards/CONTRACT.md
 - A  pyto/experiments/cards/FINDINGS.md
+- M  scripts/browser_test.py
+- M  src/app.js
+- A  src/cards-findings.js
+- A  src/cards.js
+- M  src/domain.js
+- M  src/runtime.js
+- M  src/seed.js
+- M  src/style.css
+- A  tests/cards.test.js
+- M  tests/core.test.js
+- M  tests/fixtures/serial-run-record.json
 
 ```
-pyto/experiments/cards/CONTRACT.md | 174 +++++++++++++++++++++++++++++++++++++
- pyto/experiments/cards/FINDINGS.md |  34 ++++++++
- 2 files changed, 208 insertions(+)
+pyto/experiments/cards/CONTRACT.md    |  174 ++++
+ pyto/experiments/cards/FINDINGS.md    |   82 ++
+ scripts/browser_test.py               |   33 +
+ src/app.js                            |  104 ++-
+ src/cards-findings.js                 |   86 ++
+ src/cards.js                          |  188 ++++
+ src/domain.js                         |   10 +-
+ src/runtime.js                        |  112 ++-
+ src/seed.js                           |    8 +-
+ src/style.css                         |   33 +
+ tests/cards.test.js                   |  204 +++++
+ tests/core.test.js                    |    4 +-
+ tests/fixtures/serial-run-record.json | 1523 ++++++++++++++++++++++++++++++++-
+ 13 files changed, 2500 insertions(+), 61 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.fkZJwSMgLn) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.oYShZ5XMqY) (evidence/check_all.txt)
     suite                         tests  status
     library                         435  OK
     experiments/classroom            16  OK

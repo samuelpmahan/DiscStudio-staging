@@ -140,7 +140,12 @@ with sync_playwright() as p:
     assert [len(t['invocations']) for t in run_record['ticks']]==[len(t['Calculations']) for t in pql]
     assert run_record['counters']['invocations']==sum(len(t['invocations']) for t in run_record['ticks'])
     # Kept as a Part at the reserved `run` second segment; never written into a fact.
-    assert studio.evaluate('discStudio.runtime.pxc.get("px.run.on-the-course")')==run_record
+    # JSON round-trip inside the page, matching downloadJson's own serialization: an
+    # `undefined` node.field (e.g. the cascade's static sponsor lockup text node, which
+    # has no bound domain field) is dropped by JSON.stringify but would otherwise come
+    # back from evaluate() as an explicit null, which is a Playwright serialization
+    # artifact, not a difference in what was actually recorded.
+    assert studio.evaluate('JSON.parse(JSON.stringify(discStudio.runtime.pxc.get("px.run.on-the-course")))')==run_record
     assert studio.evaluate('discStudio.runtime.parts().some(p=>p.address==="px.run.on-the-course")')
     assert not studio.evaluate('discStudio.runtime.parts().some(p=>p.address.startsWith("px.domain.")&&p.value&&p.value.schema)')
     with studio.expect_download() as d: studio.locator('[data-action="record-render"]').click()
