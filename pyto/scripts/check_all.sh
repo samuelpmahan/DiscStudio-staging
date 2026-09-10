@@ -22,7 +22,11 @@ fi
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 
 PYTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LOG_DIR="${CHECK_ALL_LOG_DIR:-$(mktemp -d)}"
+# Where the per-suite logs go. CHECK_ALL_LOGS is the name CI passes so it can collect
+# them afterwards (.github/workflows/check_all.yml, "Every suite"): without it the
+# directory is a fresh mktemp -d whose name only ever appears in the run log, which
+# is no use to an upload step. CHECK_ALL_LOG_DIR is the older name, still honoured.
+LOG_DIR="${CHECK_ALL_LOGS:-${CHECK_ALL_LOG_DIR:-$(mktemp -d)}}"
 mkdir -p "$LOG_DIR"
 # Counts are printed, never pinned: a suite fails only when a test fails (owner, 2026-09-09:
 # checks that cause friction get disabled, so this one is not a check).
@@ -78,7 +82,11 @@ run_suite library "$PYTO" "$PYTHON" -m unittest discover -s tests -v
 # This loop is how an experiment suite is registered: dropping test_*.py into
 # experiments/<name>/ is the whole registration, and no count is pinned anywhere.
 # So experiments/students (the homework, its committed evidence/run-1 and grade.py's
-# four mechanical checks) runs here for the same reason grouped-ablation does.
+# four mechanical checks) runs here for the same reason grouped-ablation does, and so
+# does experiments/classroom (make_class.sh --selftest builds a class repository and a
+# private desk under a temp directory and lands one graded by the class's own verifier;
+# tutor.py renders that desk's record twice and the two runs are compared byte for
+# byte). Neither pins a count, and neither writes anywhere but its own temp directory.
 for dir in "$PYTO"/experiments/*/; do
     name="$(basename "$dir")"
     [ "$name" = "runs" ] && continue
@@ -195,4 +203,4 @@ if [ "$FAILED" -ne 0 ]; then
     echo "SOME SUITES FAILED (logs in $LOG_DIR)"
     exit 1
 fi
-echo "ALL SUITES PASSED"
+echo "ALL SUITES PASSED (logs in $LOG_DIR)"

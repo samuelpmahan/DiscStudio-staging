@@ -1,0 +1,136 @@
+{
+  "counters": {
+    "computed": 2,
+    "hits": 0,
+    "invocations": 2,
+    "wall_ms": 2.5
+  },
+  "parts": {
+    "px.demo.count": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "count"
+    },
+    "px.demo.roster": {
+      "preexisting": false,
+      "read_by": [
+        "count"
+      ],
+      "written_by": "read.roster"
+    }
+  },
+  "pcr": "effects-demo",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.demo.roster"
+          ],
+          "args": {
+            "path": "roster.csv"
+          },
+          "calculation": {
+            "address": "oc.demo.read_roster",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "b9a1841826e313ebe6af6e0fe7faf77b2d691292a1e563f18d1c17cb663ee42c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 2.0,
+          "effects": [
+            {
+              "args": {
+                "path": "/tmp/effects-demo/roster.csv"
+              },
+              "kind": "read_text",
+              "result_sha256": "069143d7f45d81c7fd29fdcc5777366779e2a5d9403575f16ee65063435cc3a2"
+            },
+            {
+              "args": {
+                "name": "PYTO_SEED"
+              },
+              "kind": "env",
+              "result_sha256": "4562a72620a999d815f31febd64e8efd33d0a92eb408480bbf751ba6922447f2"
+            },
+            {
+              "args": {
+                "bytes": 96,
+                "path": "/tmp/effects-demo/roster.copy.csv"
+              },
+              "kind": "write_text",
+              "result_sha256": "3fe4c579c8a10ceda57a1dfe0ca74bcaa2c0322b16b77a9042a23850a86e2809"
+            }
+          ],
+          "hit": false,
+          "id": "read.roster",
+          "inputs": {},
+          "into": "px.demo.roster",
+          "result_sha256": "c6836f7ad1c4da8a997c009a4b4b120c237b1993693239e194d6307d9d0b8c3a",
+          "value": {
+            "data": {
+              "rows": 3
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.demo.roster",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Read"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.demo.count"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.demo.count",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "027fd304d17b3cabf1ec4b64a804b59988e151e3a9feac959f3052d45dbafb7c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.5,
+          "effects": [],
+          "hit": false,
+          "id": "count",
+          "inputs": {
+            "roster": "fn:read.roster"
+          },
+          "into": "px.demo.count",
+          "result_sha256": "6c35493a2b937829c9815c39e23af964bc84e5430a7dc104c700bbc0de2b59e3",
+          "value": {
+            "data": {
+              "rows": 3
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.demo.count",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Count"
+    }
+  ]
+}

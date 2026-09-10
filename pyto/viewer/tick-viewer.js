@@ -342,16 +342,93 @@ export function renderWrites(doc, invocation) {
   return wrap;
 }
 
+/* ------------------------------------------------------------------ */
+/* effects: what an OperationalCalculation did outside the store       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The contract this section renders when a record carries it, and never
+ * requires (a record written before effects existed carries no `effects` key
+ * at all and renders exactly as it did before -- no heading, no rows, no
+ * chip): per invocation
+ * `effects: [{kind, args, result_sha256, ...}]`, one entry per effect in the
+ * order they happened, `kind` one of write_text, read_text, now_ms, random,
+ * env, and an empty list for a pure `fn.` Calculation. An invocation whose
+ * calculation address starts with `oc.` is an OperationalCalculation -- the
+ * only kind that may perform an effect at all -- and its card is drawn
+ * distinctly whether or not it performed one.
+ */
+
+/** The effect kinds the contract names; anything else is shown unstyled. */
+export const EFFECT_KINDS = ['write_text', 'read_text', 'now_ms', 'random', 'env'];
+
+/** True when this invocation's calculation address names an OperationalCalculation. */
+export function isOperationalCalculation(invocation) {
+  const address = invocation.calculation ? invocation.calculation.address : null;
+  return typeof address === 'string' && address.startsWith('oc.');
+}
+
+/** The recorded effects, and [] for a record that carries none. */
+export function invocationEffects(invocation) {
+  const effects = invocation.effects;
+  if (!Array.isArray(effects)) return [];
+  return effects.filter((effect) => effect && typeof effect === 'object');
+}
+
+/**
+ * The row's middle column, always one line: the path when the effect names one
+ * (`read_text`, `write_text`), otherwise `name=value` over the args with the
+ * value spelled as JSON, so a string is quoted and a newline inside one can
+ * never break the row. Long summaries are cut, never wrapped.
+ */
+export function effectSummary(effect) {
+  const args = effect.args;
+  if (!args || typeof args !== 'object') return '\u2014';
+  if (typeof args.path === 'string' && args.path.length) return args.path;
+  const entries = Object.entries(args);
+  if (!entries.length) return '\u2014';
+  const line = entries.map(([name, value]) => `${name}=${JSON.stringify(value)}`).join(' \u00b7 ');
+  return line.length <= 80 ? line : `${line.slice(0, 80)}\u2026`;
+}
+
+/** One row per effect -- index, kind, path or arg summary, digest -- or null for none. */
+export function renderEffects(doc, invocation) {
+  const effects = invocationEffects(invocation);
+  if (!effects.length) return null;
+  const wrap = el(doc, 'div', { className: 'effects' });
+  wrap.appendChild(el(doc, 'h4', { className: 'effects-head', text: 'effects' }));
+  const list = el(doc, 'ol', { className: 'effect-list', attrs: { 'data-effects': String(effects.length) } });
+  effects.forEach((effect, index) => {
+    const kind = typeof effect.kind === 'string' && effect.kind.length ? effect.kind : 'kind not recorded';
+    const known = EFFECT_KINDS.includes(kind) ? ` kind-${kind}` : '';
+    const digest = typeof effect.result_sha256 === 'string' && effect.result_sha256.length ? effect.result_sha256 : null;
+    list.appendChild(el(doc, 'li', { className: 'effect', attrs: { 'data-effect': String(index) } }, [
+      el(doc, 'span', { className: 'effect-index', text: String(index) }),
+      el(doc, 'span', { className: `kind effect-kind${known}`, text: kind }),
+      el(doc, 'span', { className: 'effect-arg', text: effectSummary(effect) }),
+      el(doc, 'span', {
+        className: 'digest effect-digest',
+        attrs: digest ? { title: digest } : {},
+        text: shortHash(digest, 12) || '\u2014'
+      })
+    ]));
+  });
+  wrap.appendChild(list);
+  return wrap;
+}
+
 export function renderInvocation(doc, invocation) {
   const address = invocation.calculation.address || '(no calculation address recorded)';
   const impl = shortHash(invocation.calculation.implementation_sha256);
   const worker = placementWorker(invocation);
   const started = worker !== null && typeof invocation.placement.started_ms === 'number' ? invocation.placement.started_ms : null;
-  const row = el(doc, 'article', { className: 'inv', attrs: { 'data-invocation': invocation.id } });
+  const operational = isOperationalCalculation(invocation);
+  const row = el(doc, 'article', { className: operational ? 'inv oc' : 'inv', attrs: { 'data-invocation': invocation.id } });
 
   const head = el(doc, 'header', { className: 'inv-head' }, [
     el(doc, 'span', { className: 'inv-id', text: invocation.id }),
     el(doc, 'span', { className: 'inv-call', text: address }),
+    operational ? el(doc, 'span', { className: 'pill oc', text: 'oc' }) : null,
     impl ? el(doc, 'span', { className: 'impl', attrs: { title: invocation.calculation.implementation_sha256 }, text: `impl ${impl}` }) : null,
     el(doc, 'span', { className: `pill ${invocation.hit ? 'hit' : 'computed'}`, text: invocation.hit ? 'hit' : 'computed' }),
     el(doc, 'span', { className: 'dur', text: ms(invocation.duration_ms) }),
@@ -375,6 +452,9 @@ export function renderInvocation(doc, invocation) {
 
   row.appendChild(renderReads(doc, invocation));
   row.appendChild(renderWrites(doc, invocation));
+
+  const effects = renderEffects(doc, invocation);
+  if (effects) row.appendChild(effects);
 
   if (Object.keys(invocation.args).length) {
     const details = el(doc, 'details', { className: 'args' });

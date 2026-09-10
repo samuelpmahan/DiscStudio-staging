@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSeed } from '../src/seed.js';
 import { createStudioRuntime } from '../src/runtime.js';
+import { createExecBoard, invokePql, pxFn, queryPrefix, readPql } from '../src/core/exec.js';
 import { discoverFields, materialFor, currentBattle, clone, validateWorld } from '../src/domain.js';
 import { fieldNode } from '../src/presentation.js';
 import { readFileSync } from 'node:fs';
@@ -219,4 +220,145 @@ test('a disc without a photo shows painted art inside the generic card, never th
   assert.doesNotMatch(svg, /Add image/);
   assert.match(svg, /viewBox="0 0 512 512"/);
   assert.ok(svg.includes(painterRender(...art.inputs).split('\n')[1].slice(0, 40)), 'the card embeds the painter markup');
+});
+
+/* ------------------------------------------------------------------ */
+/* several `into` per Calculation, the px.receipt.* prefix query,      */
+/* the Inspect receipts list and the UndoStack                         */
+/* ------------------------------------------------------------------ */
+
+const board = () => { const pxc = createExecBoard(); pxc.set('px.rows', [1, 2, 3, 4]); return pxc; };
+const because = (pattern) => (error) => { let text = ''; for (let e = error; e; e = e.cause) text += `${e.message} | `; assert.match(text, pattern); return true; };
+const document = (into, calculate, call = 'fn.multi.stats') => {
+  const pxc = board(); pxc.register(pxFn(call), calculate);
+  const composition = readPql(JSON.stringify({ PrincipleComponentRender: 'multi', Ticks: [{ name: 'Prepare', Calculations: [{ call, with: { rows: 'px.rows' }, into }] }] }), JSON.parse);
+  return { pxc, composition };
+};
+
+// Kills: keeping `text(calculation.into, ...)` in readPql (an array `into` is
+// refused outright), and `pxc.set(calculation.into, output)` in invokePql (one
+// Part addressed by the array, and the second produce silently dropped).
+test('a Calculation may declare several into: one pass, several Parts, one receipt listing all of them', () => {
+  const produces = ['px.multi.mean', 'px.multi.count'];
+  const { pxc, composition } = document(produces, ({ rows }) => ({ 'px.multi.mean': rows.reduce((a, b) => a + b, 0) / rows.length, 'px.multi.count': rows.length }));
+  assert.deepEqual(composition.Ticks[0].Calculations[0].into, produces);
+  const run = invokePql(composition, { pxc });
+  assert.equal(pxc.get('px.multi.mean'), 2.5);
+  assert.equal(pxc.get('px.multi.count'), 4);
+  assert.deepEqual(run.Ticks[0].Calculations[0].produces, produces);
+  // The array is positional too: the same declaration accepts an array of values.
+  const array = document(produces, ({ rows }) => [rows.length, rows.length * 2]);
+  invokePql(array.composition, { pxc: array.pxc });
+  assert.equal(array.pxc.get('px.multi.mean'), 4);
+  assert.equal(array.pxc.get('px.multi.count'), 8);
+});
+
+// Kills: publishing what the output happens to have (a missing produce written as
+// undefined), and publishing the first address before the shape is checked.
+test('a multi-produce output that does not carry every declared address publishes nothing', () => {
+  const produces = ['px.multi.mean', 'px.multi.count'];
+  const { pxc, composition } = document(produces, ({ rows }) => ({ 'px.multi.mean': rows.length }));
+  assert.throws(() => invokePql(composition, { pxc }), because(/has no key 'px.multi.count'/));
+  assert.equal(pxc.has('px.multi.mean'), false);
+  assert.equal(pxc.has('px.multi.count'), false);
+  const short = document(produces, () => [1]);
+  assert.throws(() => invokePql(short.composition, { pxc: short.pxc }), because(/declares 2 addresses and the Calculation returned 1 values/));
+  const scalar = document(produces, () => 7);
+  assert.throws(() => invokePql(scalar.composition, { pxc: scalar.pxc }), because(/must return an object keyed by them or an array of 2 values; got number/));
+});
+
+test('the grammar refuses an empty into, a repeated produce address and a misplaced prefix star', () => {
+  const read = (calculation) => readPql(JSON.stringify({ PrincipleComponentRender: 'p', Ticks: [{ name: 'T', Calculations: [{ call: 'fn.x', with: {}, ...calculation }] }] }), JSON.parse);
+  assert.throws(() => read({ into: [] }), /expected at least one address/);
+  assert.throws(() => read({ into: ['px.a', 'px.a'] }), /'px.a' is declared twice/);
+  assert.throws(() => read({ into: ['px.a', 3] }), /expected a nonempty string/);
+  assert.throws(() => read({ into: 'px.a', with: { r: 'px.*.tail' } }), /only the last segment of a prefix query/);
+  assert.equal(read({ into: 'px.a', with: { r: 'px.receipt.*' } }).Ticks[0].Calculations[0].with.r, 'px.receipt.*');
+});
+
+// Kills: resolving 'px.receipt.*' with pxc.get (the address does not exist), and
+// answering the query in address order instead of sorted order.
+test('a with binding ending in .* is a prefix query over the board, sorted and read as one value', () => {
+  const pxc = createExecBoard();
+  for (const address of ['px.receipt.z', 'px.receipt.a', 'px.other.b']) pxc.set(address, { at: address });
+  assert.deepEqual(Object.keys(queryPrefix(pxc, 'px.receipt.*')), ['px.receipt.a', 'px.receipt.z']);
+  pxc.register(pxFn('fn.count'), ({ seen }) => Object.keys(seen));
+  const composition = readPql(JSON.stringify({ PrincipleComponentRender: 'q', Ticks: [{ name: 'Q', Calculations: [{ call: 'fn.count', with: { seen: 'px.receipt.*' }, into: 'px.seen' }] }] }), JSON.parse);
+  invokePql(composition, { pxc });
+  assert.deepEqual(pxc.get('px.seen'), ['px.receipt.a', 'px.receipt.z']);
+  assert.deepEqual(queryPrefix(pxc, 'px.nothing.*'), {});
+});
+
+// Kills: building the Receipts list from runtime.parts() or another index instead
+// of a PQL Calculation, and writing one Part where the Calculation declares two.
+test('the Inspect receipts list is a PQL query over px.receipt.* publishing two Parts', () => {
+  const r = seededScene();
+  const first = r.receipts();
+  assert.deepEqual(first.rows.map(row => row.name), ['on-the-course']);
+  assert.deepEqual(first.summary, { receipts: 1, invocations: 14, produces: 14, digest: first.summary.digest });
+  assert.match(first.summary.digest, /^[0-9a-f]{8}$/);
+  assert.deepEqual(r.pxc.get('px.studio.receipts'), first.rows);
+  assert.deepEqual(r.pxc.get('px.studio.receipts.summary'), first.summary);
+  const scene = first.rows[0];
+  assert.equal(scene.address, 'px.receipt.on-the-course');
+  assert.equal(scene.invocations, 14);
+  assert.ok(scene.consumes.includes('px.domain.Disc.buzzz-mint') && scene.consumes.includes('px.course.scene'));
+  assert.ok(scene.produces.includes('px.course.svg') && scene.produces.includes('px.render.course.entry-1.card'));
+  assert.deepEqual(scene.consumes, [...scene.consumes].sort());
+  // The query is over the record, so the second reading sees the first one's own receipt.
+  const second = r.receipts(), listed = second.rows.find(row => row.name === 'studio-receipts');
+  assert.deepEqual(second.rows.map(row => row.name), ['on-the-course', 'studio-receipts']);
+  assert.deepEqual(listed.consumes, ['px.receipt.*']);
+  assert.deepEqual(listed.produces, ['px.studio.receipts', 'px.studio.receipts.summary']);
+  assert.equal(listed.invocations, 1);
+  assert.equal(seededScene().receipts().rows[0].digest, scene.digest, 'the same workspace and composition label the same materials');
+});
+
+// Kills: an undo that keeps its own history outside the store, and a pop that
+// hands back a rebuilt value instead of the one push recorded.
+test('push then pop restores the exact previous value and the stack depth follows', () => {
+  const r = make(), before = r.world();
+  assert.equal(r.undo.depth(), 0);
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'nickname', value: 'Edited once' });
+  assert.equal(r.world().objects.Disc['buzzz-mint'].nickname, 'Edited once');
+  assert.equal(r.undo.depth(), 1);
+  assert.deepEqual(r.undo.stack().entries.map(entry => [entry.address, entry.depth]), [['px.studio.world', 1]]);
+  r.undo.pop('px.studio.world');
+  assert.deepEqual(r.world(), before);
+  assert.equal(r.pxc.get('px.domain.Disc.buzzz-mint').nickname, before.objects.Disc['buzzz-mint'].nickname);
+  assert.equal(r.undo.depth(), 0);
+  assert.equal(r.card('buzzz-mint', 'broadcast', context).svg, make().card('buzzz-mint', 'broadcast', context).svg);
+});
+
+// Kills: a pop that throws, silently returns, or drops an entry when the stack is
+// empty -- the attempt is an ordinary invocation and leaves a receipt either way.
+test('pop on an empty stack changes nothing and is still on the record', () => {
+  const r = make(), world = r.world();
+  const run = r.undo.pop('px.studio.world');
+  assert.equal(r.world(), world);
+  assert.equal(r.undo.depth(), 0);
+  assert.deepEqual(run.trace.map(step => step.call), ['fn.undo.pop', 'fn.undo.settle']);
+  assert.deepEqual(run.trace.map(step => step.output), ['px.studio.world', 'px.undo.studio']);
+  assert.equal(r.pxc.get('px.receipt.studio-undo'), run);
+  assert.deepEqual(r.pxc.get('px.undo.studio'), { scope: 'studio', depth: 0, entries: [] });
+});
+
+// Kills: undo written as a runtime side effect instead of Calculations -- a run
+// record built from px.pql.studio-undo would then have nothing to carry.
+test('the run record lists the undo invocations, push and pop alike', () => {
+  const r = make();
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'nickname', value: 'Edited once' });
+  const pushed = r.runRecord('studio-undo-push').record;
+  assert.deepEqual(pushed.ticks.map(tick => tick.name), ['Push']);
+  assert.deepEqual(pushed.ticks[0].invocations.map(i => i.calculation.address), ['fn.undo.push']);
+  assert.deepEqual(pushed.ticks[0].invocations[0].actual_consumes, ['px.undo.studio', 'px.studio.world']);
+  assert.deepEqual(pushed.ticks[0].invocations[0].into, 'px.undo.studio');
+  r.undo.pop('px.studio.world');
+  const undone = r.runRecord('studio-undo').record;
+  assert.equal(validate(undone), undone);
+  assert.deepEqual(undone.ticks.map(tick => tick.name), ['Restore', 'Settle']);
+  assert.deepEqual(undone.ticks.flatMap(tick => tick.invocations).map(i => i.calculation.address), ['fn.undo.pop', 'fn.undo.settle']);
+  assert.deepEqual(undone.ticks.flatMap(tick => tick.invocations).map(i => i.into), ['px.studio.world', 'px.undo.studio']);
+  assert.equal(undone.counters.invocations, 2);
+  assert.equal(r.receipts().rows.map(row => row.name).filter(name => name.startsWith('studio-undo')).length, 2);
 });

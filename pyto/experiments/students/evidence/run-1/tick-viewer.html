@@ -92,6 +92,24 @@ code, pre, .addr, .digest, .impl, .inv-id, .inv-call {
   font-size: 12px; padding: 1px 5px;
 }
 .tick-meta { margin: 0; color: var(--muted); font-size: 12.5px; }
+.tick-mode {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--computed); background: var(--computed-bg); border-radius: 999px; padding: 2px 8px;
+}
+/* Parallel branches: a row of columns, one per Calculation, wrapping on a narrow
+   screen. `min-width: 0` is load-bearing -- a flex item defaults to min-width:auto
+   and a long address would push the row wider than the page. */
+.branches { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+.branch { flex: 1 1 280px; min-width: 0; display: flex; }
+.branch > .inv { flex: 1 1 auto; margin: 10px 0; }
+.tick.parallel > .branches { border-left: 3px solid var(--accent); padding-left: 8px; }
+.placement { font-size: 11px; border-radius: 4px; padding: 1px 6px; background: var(--code); color: var(--muted); }
+.record-head .run-timing { margin: 8px 0 0; font-size: 12.5px; color: var(--ink); }
+.record-head .run-mode { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
+.budget-banner {
+  margin: 10px 0 0; padding: 8px 10px; border-radius: 6px;
+  color: var(--warn); background: var(--warn-bg); font-size: 12.5px; font-weight: 600;
+}
 
 .inv { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin: 10px 0; padding: 10px 12px; }
 .inv-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -120,6 +138,22 @@ tr.resultref .addr { color: var(--muted); }
 .kind-new-address { color: var(--hit); background: var(--hit-bg); }
 .kind-replacement { color: var(--warn); background: var(--warn-bg); }
 .kind-refinement { color: var(--computed); background: var(--computed-bg); }
+
+/* effects: an OperationalCalculation's own rows, and the oc card it sits on */
+.inv.oc { border-color: var(--computed); border-left: 3px solid var(--computed); }
+.pill.oc { color: var(--computed); background: var(--computed-bg); }
+.effects { margin: 8px 0; }
+.effects-head {
+  margin: 0 0 4px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+}
+.effect-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3px; }
+.effect-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 12.5px; }
+.effect-index { color: var(--muted); font-size: 11px; min-width: 1.2em; text-align: right; }
+.effect-arg { word-break: break-all; }
+.effect-digest { color: var(--muted); font-size: 12px; }
+.kind-read_text, .kind-now_ms, .kind-random, .kind-env { color: var(--hit); background: var(--hit-bg); }
+.kind-write_text { color: var(--warn); background: var(--warn-bg); }
 
 details { margin: 8px 0; }
 summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
@@ -1419,6 +1453,134 @@ function ms(value) {
 }
 
 /* ------------------------------------------------------------------ */
+/* parallel branches: work, latency, placement, budget                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The contract this section renders when a record carries it, and never
+ * requires (a record without any of it renders exactly as it did before):
+ * per invocation `placement: {worker, started_ms} | null`, per tick
+ * `latency_ms: number | null`, and at run level `parallel: bool` and
+ * `budget: {limit_ms, stopped_after_tick, completed}`.
+ */
+
+/** Every Part address one invocation publishes: `into` (one or several) and actual_produces. */
+function invocationProduces(invocation) {
+  const produced = new Set(produceAddresses(invocation.into));
+  for (const address of invocation.actual_produces || []) produced.add(address);
+  return produced;
+}
+
+/**
+ * Every Part address one invocation reads, resolved the way
+ * experiments/tick-laws/tick_laws.py resolves it: `px:` bindings are store
+ * reads, `fn:` bindings are result reads resolved through the producer's
+ * `into` (one address or a list), unioned with actual_consumes.
+ */
+function invocationReads(invocation, producedBy) {
+  const reads = new Set(invocation.actual_consumes || []);
+  for (const binding of Object.values(invocation.inputs || {})) {
+    for (const address of parseBinding(binding, producedBy)) reads.add(address);
+  }
+  return reads;
+}
+
+/**
+ * A Tick is parallel when it holds more than one Calculation and no Calculation
+ * reads what a sibling produced -- the node law's first clause
+ * (`pyto/questions.md`, `{?} TicksAsCircuits`). Siblings are the only producers
+ * that matter here, so the resolver map is built from this Tick alone: an
+ * `fn:` reference to an earlier Tick resolves to nothing and is not a branch
+ * dependency.
+ */
+function isParallelTick(tick) {
+  const invocations = tick.invocations || [];
+  if (invocations.length < 2) return false;
+  const produces = new Map();
+  const producedBy = new Map();
+  for (const invocation of invocations) {
+    const addresses = invocationProduces(invocation);
+    produces.set(invocation.id, addresses);
+    producedBy.set(invocation.id, [...addresses]);
+  }
+  for (const invocation of invocations) {
+    const reads = invocationReads(invocation, producedBy);
+    for (const sibling of invocations) {
+      if (sibling.id === invocation.id) continue;
+      for (const address of produces.get(sibling.id)) if (reads.has(address)) return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * A Tick's work: the sum of its branches' durations, or null when the runtime
+ * recorded none. Unrounded, unlike adapters.js `tickDurationMs`, so that adding
+ * Ticks up gives the run total tick_laws.py reports and not a rounded-per-Tick one.
+ */
+function tickWorkMs(tick) {
+  let total = 0;
+  let saw = false;
+  for (const invocation of tick.invocations) {
+    if (typeof invocation.duration_ms === 'number' && Number.isFinite(invocation.duration_ms)) {
+      total += invocation.duration_ms;
+      saw = true;
+    }
+  }
+  return saw ? total : null;
+}
+
+/**
+ * A Tick's latency: `latency_ms` when the record carries it, else the longest
+ * branch -- the time the Tick takes when its branches run at once, which is
+ * what tick_laws.py reports and what the run's critical path adds up.
+ */
+function tickLatencyMs(tick) {
+  if (typeof tick.latency_ms === 'number' && Number.isFinite(tick.latency_ms)) return tick.latency_ms;
+  let longest = null;
+  for (const invocation of tick.invocations) {
+    if (typeof invocation.duration_ms === 'number' && Number.isFinite(invocation.duration_ms)) {
+      longest = longest === null ? invocation.duration_ms : Math.max(longest, invocation.duration_ms);
+    }
+  }
+  return longest;
+}
+
+/**
+ * Add one number per Tick over the whole run, rounding only at the end -- the
+ * run total then agrees to the microsecond with the one tick_laws.py prints,
+ * instead of carrying a rounding error per Tick. A Tick with no Calculations
+ * costs nothing; a Tick whose number is unknown makes the run's unknown.
+ */
+function sumOverTicks(record, per) {
+  let total = 0;
+  for (const tick of record.ticks) {
+    if (!tick.invocations.length) continue;
+    const value = per(tick);
+    if (value === null) return null;
+    total += value;
+  }
+  return scheduleRound3(total);
+}
+
+/** The run's total work: every branch's duration added up. */
+function runWorkMs(record) {
+  return sumOverTicks(record, tickWorkMs);
+}
+
+/** The run's critical path: the Tick latencies added up, Ticks being in series. */
+function runCriticalPathMs(record) {
+  return sumOverTicks(record, tickLatencyMs);
+}
+
+/** `placement.worker` when the record carries it, else null. */
+function placementWorker(invocation) {
+  const placement = invocation.placement;
+  if (!placement || typeof placement !== 'object') return null;
+  return typeof placement.worker === 'number' && Number.isFinite(placement.worker) ? placement.worker : null;
+}
+
+/* ------------------------------------------------------------------ */
 /* filter: PQL-like, address substring or prefix                       */
 /* ------------------------------------------------------------------ */
 
@@ -1580,17 +1742,101 @@ function renderWrites(doc, invocation) {
   return wrap;
 }
 
+/* ------------------------------------------------------------------ */
+/* effects: what an OperationalCalculation did outside the store       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The contract this section renders when a record carries it, and never
+ * requires (a record written before effects existed carries no `effects` key
+ * at all and renders exactly as it did before -- no heading, no rows, no
+ * chip): per invocation
+ * `effects: [{kind, args, result_sha256, ...}]`, one entry per effect in the
+ * order they happened, `kind` one of write_text, read_text, now_ms, random,
+ * env, and an empty list for a pure `fn.` Calculation. An invocation whose
+ * calculation address starts with `oc.` is an OperationalCalculation -- the
+ * only kind that may perform an effect at all -- and its card is drawn
+ * distinctly whether or not it performed one.
+ */
+
+/** The effect kinds the contract names; anything else is shown unstyled. */
+const EFFECT_KINDS = ['write_text', 'read_text', 'now_ms', 'random', 'env'];
+
+/** True when this invocation's calculation address names an OperationalCalculation. */
+function isOperationalCalculation(invocation) {
+  const address = invocation.calculation ? invocation.calculation.address : null;
+  return typeof address === 'string' && address.startsWith('oc.');
+}
+
+/** The recorded effects, and [] for a record that carries none. */
+function invocationEffects(invocation) {
+  const effects = invocation.effects;
+  if (!Array.isArray(effects)) return [];
+  return effects.filter((effect) => effect && typeof effect === 'object');
+}
+
+/**
+ * The row's middle column, always one line: the path when the effect names one
+ * (`read_text`, `write_text`), otherwise `name=value` over the args with the
+ * value spelled as JSON, so a string is quoted and a newline inside one can
+ * never break the row. Long summaries are cut, never wrapped.
+ */
+function effectSummary(effect) {
+  const args = effect.args;
+  if (!args || typeof args !== 'object') return '\u2014';
+  if (typeof args.path === 'string' && args.path.length) return args.path;
+  const entries = Object.entries(args);
+  if (!entries.length) return '\u2014';
+  const line = entries.map(([name, value]) => `${name}=${JSON.stringify(value)}`).join(' \u00b7 ');
+  return line.length <= 80 ? line : `${line.slice(0, 80)}\u2026`;
+}
+
+/** One row per effect -- index, kind, path or arg summary, digest -- or null for none. */
+function renderEffects(doc, invocation) {
+  const effects = invocationEffects(invocation);
+  if (!effects.length) return null;
+  const wrap = el(doc, 'div', { className: 'effects' });
+  wrap.appendChild(el(doc, 'h4', { className: 'effects-head', text: 'effects' }));
+  const list = el(doc, 'ol', { className: 'effect-list', attrs: { 'data-effects': String(effects.length) } });
+  effects.forEach((effect, index) => {
+    const kind = typeof effect.kind === 'string' && effect.kind.length ? effect.kind : 'kind not recorded';
+    const known = EFFECT_KINDS.includes(kind) ? ` kind-${kind}` : '';
+    const digest = typeof effect.result_sha256 === 'string' && effect.result_sha256.length ? effect.result_sha256 : null;
+    list.appendChild(el(doc, 'li', { className: 'effect', attrs: { 'data-effect': String(index) } }, [
+      el(doc, 'span', { className: 'effect-index', text: String(index) }),
+      el(doc, 'span', { className: `kind effect-kind${known}`, text: kind }),
+      el(doc, 'span', { className: 'effect-arg', text: effectSummary(effect) }),
+      el(doc, 'span', {
+        className: 'digest effect-digest',
+        attrs: digest ? { title: digest } : {},
+        text: shortHash(digest, 12) || '\u2014'
+      })
+    ]));
+  });
+  wrap.appendChild(list);
+  return wrap;
+}
+
 function renderInvocation(doc, invocation) {
   const address = invocation.calculation.address || '(no calculation address recorded)';
   const impl = shortHash(invocation.calculation.implementation_sha256);
-  const row = el(doc, 'article', { className: 'inv', attrs: { 'data-invocation': invocation.id } });
+  const worker = placementWorker(invocation);
+  const started = worker !== null && typeof invocation.placement.started_ms === 'number' ? invocation.placement.started_ms : null;
+  const operational = isOperationalCalculation(invocation);
+  const row = el(doc, 'article', { className: operational ? 'inv oc' : 'inv', attrs: { 'data-invocation': invocation.id } });
 
   const head = el(doc, 'header', { className: 'inv-head' }, [
     el(doc, 'span', { className: 'inv-id', text: invocation.id }),
     el(doc, 'span', { className: 'inv-call', text: address }),
+    operational ? el(doc, 'span', { className: 'pill oc', text: 'oc' }) : null,
     impl ? el(doc, 'span', { className: 'impl', attrs: { title: invocation.calculation.implementation_sha256 }, text: `impl ${impl}` }) : null,
     el(doc, 'span', { className: `pill ${invocation.hit ? 'hit' : 'computed'}`, text: invocation.hit ? 'hit' : 'computed' }),
-    el(doc, 'span', { className: 'dur', text: ms(invocation.duration_ms) })
+    el(doc, 'span', { className: 'dur', text: ms(invocation.duration_ms) }),
+    worker === null ? null : el(doc, 'span', {
+      className: 'placement',
+      text: `worker ${worker}`,
+      attrs: started === null ? {} : { title: `started ${ms(started)}` }
+    })
   ]);
   row.appendChild(head);
 
@@ -1606,6 +1852,9 @@ function renderInvocation(doc, invocation) {
 
   row.appendChild(renderReads(doc, invocation));
   row.appendChild(renderWrites(doc, invocation));
+
+  const effects = renderEffects(doc, invocation);
+  if (effects) row.appendChild(effects);
 
   if (Object.keys(invocation.args).length) {
     const details = el(doc, 'details', { className: 'args' });
@@ -1623,17 +1872,33 @@ function renderInvocation(doc, invocation) {
 /* ------------------------------------------------------------------ */
 
 function renderTick(doc, tick) {
-  const section = el(doc, 'section', { className: 'tick', attrs: { 'data-tick': String(tick.index) } });
+  const parallel = isParallelTick(tick);
+  const section = el(doc, 'section', {
+    className: parallel ? 'tick parallel' : 'tick',
+    attrs: { 'data-tick': String(tick.index), 'data-parallel': parallel ? 'yes' : 'no' }
+  });
   const count = tick.invocations.length;
-  const duration = tickDurationMs(tick);
+  const work = tickWorkMs(tick);
+  const latency = tickLatencyMs(tick);
+  const timing = work === null && latency === null ? 'no durations recorded' : `work ${ms(work)} · latency ${ms(latency)}`;
   section.appendChild(el(doc, 'header', { className: 'tick-head' }, [
     el(doc, 'h2', {}, [
       el(doc, 'span', { className: 'tick-index', text: String(tick.index) }),
-      el(doc, 'span', { className: 'tick-name', text: tick.name })
+      el(doc, 'span', { className: 'tick-name', text: tick.name }),
+      parallel ? el(doc, 'span', { className: 'tick-mode', text: `parallel · ${count} branches` }) : null
     ]),
-    el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${duration === null ? 'no durations recorded' : ms(duration)}` })
+    el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${timing}` })
   ]));
-  for (const invocation of tick.invocations) section.appendChild(renderInvocation(doc, invocation));
+  if (parallel) {
+    // A row of columns: one branch per Calculation, none of them reading another.
+    const branches = el(doc, 'div', { className: 'branches', attrs: { 'data-branches': String(count) } });
+    for (const invocation of tick.invocations) {
+      branches.appendChild(el(doc, 'div', { className: 'branch' }, [renderInvocation(doc, invocation)]));
+    }
+    section.appendChild(branches);
+  } else {
+    for (const invocation of tick.invocations) section.appendChild(renderInvocation(doc, invocation));
+  }
   return section;
 }
 
@@ -1689,6 +1954,23 @@ function renderRecord(record, { doc = globalThis.document, filter = '' } = {}) {
       el(doc, 'li', {}, [el(doc, 'span', { className: 'n', text: String(record.ticks.length) }), el(doc, 'span', { className: 'k', text: 'ticks' })])
     ])
   ]);
+  header.appendChild(el(doc, 'p', {
+    className: 'run-timing',
+    text: `work ${ms(runWorkMs(record))} · critical path ${ms(runCriticalPathMs(record))}`
+  }));
+  if (record.parallel === true) {
+    header.appendChild(el(doc, 'p', { className: 'run-mode', text: 'parallel: the branches inside a Tick ran at once' }));
+  } else if (record.parallel === false) {
+    header.appendChild(el(doc, 'p', { className: 'run-mode', text: 'serial: the branches inside a Tick ran one after another; the critical path is what parallel would buy' }));
+  }
+  const budget = record.budget;
+  if (budget && typeof budget === 'object' && budget.completed === false) {
+    const limit = typeof budget.limit_ms === 'number' ? `limit ${ms(budget.limit_ms)}` : 'no limit recorded';
+    const where = typeof budget.stopped_after_tick === 'string' && budget.stopped_after_tick.length
+      ? `stopped after tick ${JSON.stringify(budget.stopped_after_tick)}`
+      : 'stopped before the run completed';
+    header.appendChild(el(doc, 'p', { className: 'budget-banner', text: `budget: ${where} · ${limit}` }));
+  }
   if (filter && filter.trim()) {
     header.appendChild(el(doc, 'p', { className: 'filtered', text: `filter ${JSON.stringify(filter.trim())}: ${shown} of ${total} invocations, ${ticks.length} of ${record.ticks.length} ticks` }));
   }
@@ -1714,15 +1996,26 @@ function scheduleRound3(value) {
 }
 
 /**
- * Ordered {tick, invocation, at_ms} events: each Calculation "finishes" at
+ * Ordered {tick, invocation, at_ms} events: a serial Calculation "finishes" at
  * the cumulative sum of the durations recorded before it, in record order,
  * scaled by speedFactor (1 = real time, 10/100 = that many times slower).
+ *
+ * A parallel Tick's branches share one timestamp -- the Tick's latency, not the
+ * sum of its branches -- so the page shows that row of cards at once instead of
+ * one after another, and the last event lands on the run's critical path.
  */
 function computeSchedule(record, speedFactor = 1) {
   const hasDurations = record.ticks.some((tick) => tick.invocations.some((invocation) => typeof invocation.duration_ms === 'number'));
   const events = [];
   let cumulative = 0;
   for (const tick of record.ticks) {
+    if (isParallelTick(tick)) {
+      const latency = hasDurations ? tickLatencyMs(tick) : FIXED_STEP_MS;
+      cumulative += typeof latency === 'number' ? latency : 0;
+      const at = hasDurations ? scheduleRound3(cumulative * speedFactor) : cumulative;
+      for (const invocation of tick.invocations) events.push({ tick: tick.index, invocation: invocation.id, at_ms: at });
+      continue;
+    }
     for (const invocation of tick.invocations) {
       if (hasDurations) cumulative += typeof invocation.duration_ms === 'number' ? invocation.duration_ms : 0;
       else cumulative += FIXED_STEP_MS;
@@ -1837,7 +2130,9 @@ function createPlayback(doc, output, filterBox, getRecord) {
 
   const revealOne = () => {
     if (shown >= schedule.length) return;
-    shown += 1;
+    // A parallel Tick's branches share one timestamp: Step reveals the row, not one card of it.
+    const at = schedule[shown].at_ms;
+    do { shown += 1; } while (shown < schedule.length && schedule[shown].at_ms === at);
     render();
   };
   const scheduleNext = () => {

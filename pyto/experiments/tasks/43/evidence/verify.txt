@@ -1,0 +1,58 @@
+.............[students/grade] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/43/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+...
+----------------------------------------------------------------------
+Ran 16 tests in 4.363s
+
+OK
+
+=== the seed: what the class and every desk are cut from
+  seed be3aded; class-origin.git and desk-origin.git carry it
+
+=== the class repository: the assignment package
+  class/ at ca1b98f: assignments/scores/ is the package
+
+=== the desk: the student's own private repository
+  desk/ at be3aded: the starter kit, and nothing of the class's
+
+=== the student, task 0: the homework itself
+  packed task 0: score: 6 of 6
+
+=== the student, task 1: a page of my own questions (refused once, then landed)
+  refused, as it should be: score 1/2
+  landed task 1: score 2/2
+
+=== the student, task 2: started and killed
+  killed task 2; nothing landed, exp/2 is kept
+
+=== the student, task 3: landed, then taken straight back out
+  landed task 3 and took it straight back out: 1 board line
+
+=== the teacher: one command from the class repository
+  neat land 0 --from <desk-origin> exp/0 --verify "bash assignments/scores/grader.sh" --allow "submissions/ada"
+  land task 0: class scores: four Ticks over a roster of twelve
+  verifier: bash assignments/scores/grader.sh
+  cold reader: 13 of 13 named
+  score: 4 of 4
+  score: 4 of 4
+  check_all
+  plain mode: packet verifier is the suite
+
+=== the class board, Today
+- 2026-09-10 02:54 **landed** `task-0` score 4/4: class scores: four Ticks over a roster of twelve (from /tmp/make-class.ypnXMp/desk-origin.git exp/0, graded here) (20 files since be3aded, suites green, receipt 20260910T025425Z-task-0)
+
+class:  /tmp/make-class.ypnXMp/class
+desk:   /tmp/make-class.ypnXMp/desk   (bash /home/user/DiscStudio-staging/EXP/43/pyto/experiments/classroom/tutor.py /tmp/make-class.ypnXMp/desk > tutor.html)
+
+=== selftest
+selftest the landing receipt scores the four checks ("passed": 4): pass
+selftest the landing receipt keeps the total ("total": 4): pass
+selftest the class board line says score 4/4: pass
+selftest the class board line says graded here: pass
+selftest the class board line names the desk's branch: pass
+selftest the landing keeps the cold reader's score line: pass
+selftest the landing keeps the combined count: pass
+selftest the desk is untouched (clean, no class files, exp/0 still there): pass
+selftest the class holds submissions/ada/ and it is committed: pass
+selftest the desk's record holds a refusal, a retry, an undo and a kill: pass
+
+selftest: all checks passed

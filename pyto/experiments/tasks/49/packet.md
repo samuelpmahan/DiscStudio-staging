@@ -4,8 +4,8 @@ Intent: oc, effects with receipts: an OperationalCalculation (oc. prefix) may pe
 Starting point: 46303dd6deb50b05be812d8a07c20e49d68e6205 (board: **started** `task-48`: the JavaScript runtime speaks the same schedule:)
 Verify: cd pyto && python3 -m unittest tests.test_receipts tests.test_materialize tests.test_semantics tests.test_first_class tests.test_parallel tests.test_budget tests.test_effects tests.test_px
 Allow: pyto/src/pyto/pcr.py pyto/src/pyto/core.py pyto/src/pyto/effects.py pyto/src/pyto/materialize.py pyto/src/pyto/px.py pyto/src/pyto/__init__.py pyto/tests pyto/viewer/RECORD.md pyto/viewer/test/record_schema.py pyto/viewer/test/test_record_schema.py pyto/viewer/fixtures pyto/experiments/grouped-ablation/evidence pyto/CHANGES.md pyto/experiments/tasks
-Candidate: 61 files, see below
-Evidence: verify exit 0, suite exit 1 (one pre-existing viewer failure), see below
+Candidate: 61 files of this task's own, plus MAIN merged in (see Merge below)
+Evidence: verify exit 0, suite exit 0 (ALL SUITES PASSED after merging MAIN), see below
 
 ## What landed
 
@@ -30,6 +30,38 @@ Evidence: verify exit 0, suite exit 1 (one pre-existing viewer failure), see bel
 `pyto/viewer/adapters.js` was **not** touched: another team is editing it. The JavaScript reader
 ignores keys it does not know, so a record carrying `effects` reads there exactly as it did before,
 and teaching the viewer to draw effects is that team's change, not this one.
+
+## Merge with MAIN (claude/os-sprint-st8hnu @ 20cee0f)
+
+`git merge claude/os-sprint-st8hnu` -- tasks 39 (landed), 40, 42, 43, 46, 47, 50, 51 -- reported
+**no conflicted file**; the three-way merge resolved every overlap on its own, and each was checked
+by hand afterwards:
+
+- `pyto/experiments/grouped-ablation/evidence` (39 files both sides had regenerated): the merge kept
+  this side's, and all of it was regenerated again from the merged tree by the six commands below,
+  so the question is moot in the committed bytes.
+- `pyto/src/pyto/pcr.py`, `materialize.py`, `core.py`, `px.py`: everything MAIN has added there
+  since `46303dd` is task 39, which is already in this branch's base (`c087bd7`), so there was
+  nothing of MAIN's to re-apply and this side's files stand unchanged. `git diff MERGE_HEAD --
+  pyto/src` is this task's diff and nothing else.
+- `pyto/viewer/RECORD.md`: took MAIN's rename of `tickLatencyMs` to `tickLatencyMsFromRecord` and
+  its `{?} TwoLatencyFallbacks` paragraph, kept this task's "Effects" section.
+- `pyto/viewer/test/test_record_schema.py`: took MAIN's four `tickLatencyMsFromRecord` call sites,
+  kept this task's `EffectsLedger` class.
+- `pyto/CHANGES.md`: kept both sides' entries; the merge left `## exp/39` twice (MAIN reordered the
+  file), so the second copy -- byte-identical to the first -- was deleted, leaving MAIN's order with
+  this task's `## exp/49` line on top.
+- everything outside the allow list (`viewer/adapters.js`, `viewer/tick-viewer.js`,
+  `viewer/fixtures/effects-demo.json`, `viewer/test/effects-view.test.mjs`, BOARD, FRONTIER, KT-MAC,
+  the landings, `experiments/classroom`, the workflow) is MAIN's, untouched.
+
+The viewer failure this task reported before the merge is gone: MAIN's rename removed the duplicate
+export, and the `viewer` suite is green (130 tests).
+
+**The two readers, checked against each other after the merge.** MAIN's `adapters.js` `validate`
+accepts a record this task's `materialize.run_record` wrote and `fromPytoRecord` reads all five of
+its ledger entries (`write_text, now_ms, random_seed, random, random`), so the JS reader refuses
+nothing this side produces. The other direction does not hold; see `{?} EffectsDemoFixtureShape`.
 
 ## Candidate
 
@@ -98,28 +130,29 @@ and teaching the viewer to draw effects is that team's change, not this one.
 ## Evidence
 
 - verify: `cd pyto && python3 -m unittest tests.test_receipts tests.test_materialize tests.test_semantics tests.test_first_class tests.test_parallel tests.test_budget tests.test_effects tests.test_px` exit 0, 215 tests, OK (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED -- every suite OK but `viewer`, which fails two Node tests on a duplicate `tickLatencyMs` export that predates this task (`{?} ViewerBundleDuplicateBeforeThisTask`; evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt), after merging MAIN
 
     == per-suite counts
     suite                         tests  status
     library                         314  OK
+    experiments/classroom            16  OK
     experiments/cross-project         9  OK
-    experiments/grouped-ablation    248  OK
+    experiments/grouped-ablation    250  OK
     experiments/hiding-primitives      6  OK
     experiments/s3-synthetic          5  OK
-    experiments/students             14  OK
+    experiments/students             17  OK
     experiments/tick-laws            12  OK
     consumer                         61  OK
     disc-stats                        4  OK
     examples                          3  OK
     art-registry-md                   -  OK
-    viewer                          121  FAIL
+    viewer                          130  OK
     viewer-record-schema             36  OK
     
-    SOME SUITES FAILED (logs in /tmp/tmp.V53NYvVVNx)
-    exit=1
+    ALL SUITES PASSED (logs in /tmp/tmp.XXSIoG2bN3)
+    exit=0
 
-- grouped-ablation evidence regenerated (pinned `pcr.py`/`core.py` digests moved): `run.py --out evidence/run-1 --force`, `run_regrouped.py --force`, `run_reinput.py --force`, `run_from_retained.py --force`, `run_cached.py --force`, `replay.py --force`, in that order. `evidence/run-1/record.json` is **unchanged** -- the Day 1 program is pure, so its record carries no `effects` field -- while `receipts.json` gained `"effects": []` per receipt.
+- grouped-ablation evidence regenerated twice, before the merge and again from the merged tree (pinned `pcr.py`/`core.py` digests moved): `run.py --out evidence/run-1 --force`, `run_regrouped.py --force`, `run_reinput.py --force`, `run_from_retained.py --force`, `run_cached.py --force`, `replay.py --force`, in that order. `evidence/run-1/record.json` is **unchanged** -- the Day 1 program is pure, so its record carries no `effects` field -- while `receipts.json` gained `"effects": []` per receipt.
 - the effects ledger of the test run, as `px effects tests/fixtures/px/effects-record.json` prints it:
 
     TICK  ID     INDEX  KIND         ARGS          DIGEST
@@ -140,4 +173,6 @@ and teaching the viewer to draw effects is that team's change, not this one.
 {?} RandomSeedIsAnEffect: `random(n)` draws from a seeded generator whose seed is drawn once per handle and recorded as its own ledger entry (`random_seed`), so the demo's "a write, a clock and two draws" is five entries and not four, and a kind was added that the intent's five verbs do not name.
 {?} EffectDigestIsCanonicalJson: `result_sha256` is sha256 of the canonical JSON of the recorded value for every kind, including `write_text`, so a written file's ledger digest is the digest of the JSON string, not `sha256sum` of the file's bytes; one rule makes any two entries comparable, but a reader who wants to check a file on disk has to digest it the same way.
 {?} OcNeedsEffectsRoot: reaching an `oc.` with no `effects_root` refuses the run rather than defaulting to the cwd, and when `replay_effects` is given every `oc.` invocation must have a ledger in it (an id it does not name would perform a real effect in the middle of a replay).
-{?} ViewerBundleDuplicateBeforeThisTask: `bash pyto/scripts/check_all.sh` ends in SOME SUITES FAILED because the `viewer` Node suite fails two tests (`the inlined bundle is valid module syntax...`, `the standalone page keeps the contract fields...`) on `SyntaxError: Identifier 'tickLatencyMs' has already been declared` -- `viewer/adapters.js:576` and `viewer/tick-viewer.js:138` both export it, at the branch's starting commit `c087bd7`, before this task's first edit. Both files are outside this task's allow list (adapters.js is being edited by another team right now), so nothing here touches them; every other suite passes.
+{?} ViewerBundleDuplicateBeforeThisTask: **resolved by the merge.** Before merging MAIN, `check_all.sh` ended in SOME SUITES FAILED because `viewer/adapters.js:576` and `viewer/tick-viewer.js:138` both exported `tickLatencyMs` and the inlined bundle would not parse -- at the branch's starting commit `c087bd7`, before this task's first edit, and in two files outside this allow list. MAIN's rename to `tickLatencyMsFromRecord` (task 39's landing) fixes it; after the merge every suite passes.
+{?} EffectsDemoFixtureShape: `viewer/fixtures/effects-demo.json` (task 50's hand-made witness, another team's file) is **not** a record this task's validator accepts: its ledger entries carry no `result` key and their paths are absolute (`/tmp/effects-demo/roster.csv`), where RECORD.md's "Effects" says an entry is exactly `{kind, args, result, result_sha256}` and a path is relative to the run's `effects_root` and never absolute. Nothing in Python reads that fixture, so no suite fails; the JS side accepts what pyto writes, and the disagreement is only about what a *hand-made* record may claim. Either the fixture is regenerated from a real run or the shape is loosened -- both are the owner's call, and this task changed neither.
+{?} JsEffectKindsMissRandomSeed: `viewer/tick-viewer.js` `EFFECT_KINDS` lists five kinds (`write_text, read_text, now_ms, random, env`) and not `random_seed`, which this kernel records because the seed is an effect; the viewer draws an unknown kind unstyled rather than refusing it, so a real record renders, with its seed row plainer than its neighbours.

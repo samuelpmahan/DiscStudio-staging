@@ -8266,7 +8266,7 @@
     "split": "cefbd6bdda24c1770b8dd863559305b4b4ebc60ccc179fab0a1499297963f4f0"
   },
   "retained": {
-    "commit": "b21cabbccfb7b7d90070e11255d1bf69e79ba77a",
+    "commit": "937d37969a48f80fb116682324e43119e9639f55-dirty",
     "provider_is": "the pyto modules and calculation-provider sources present when this record was retained, which are not necessarily the ones that produced the evidence beside it; retain.verify_provider(record, registry) performs the comparison, replay does not"
   }
 }

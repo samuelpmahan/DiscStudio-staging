@@ -1,0 +1,61 @@
+# Task 46
+
+Intent: the suite is green on three OSes and two Python versions: the grouped-ablation suite fails on CI under Python 3.12 (ubuntu and windows) and the students grader fails on windows; find the cause from the CI logs and a local Python 3.10 run, fix it in the tests or the scripts without regenerating evidence, and make check_all.yml upload the per-suite logs as the receipt
+Starting point: 0f9f6d32e8213e9dee91f7ef54b6cc9ef6603b6c (land(task-45): KT answers: five questions from the local session (what moved registry to OS and what is unproved; which corrections overturned the most and where the old assumptions survive; glue that holds real methods; what a successor would follow and miss; when a question advanced the project) answered from the record at pyto/research/kt-answers.md)
+Verify: python3 -c "import yaml; yaml.safe_load(open('.github/workflows/check_all.yml'))" && cd pyto && python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py' && cd experiments/students && python3 -m unittest discover -s . -p 'test_*.py'
+Allow: pyto/experiments/grouped-ablation/replay.py pyto/experiments/grouped-ablation/retain.py pyto/experiments/grouped-ablation/test_replay.py pyto/experiments/grouped-ablation/test_retain.py pyto/experiments/grouped-ablation/test_materials.py pyto/experiments/grouped-ablation/test_run_cached.py pyto/experiments/grouped-ablation/run_cached.py pyto/experiments/grouped-ablation/materials.py pyto/experiments/students/grade.py pyto/experiments/students/homework.py pyto/experiments/students/test_students.py pyto/scripts/check_all.sh .github/workflows/check_all.yml pyto/CHANGES.md pyto/experiments/tasks
+Candidate: 7 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  .github/workflows/check_all.yml
+- M  pyto/CHANGES.md
+- M  pyto/experiments/grouped-ablation/test_replay.py
+- M  pyto/experiments/students/grade.py
+- M  pyto/experiments/students/homework.py
+- M  pyto/experiments/students/test_students.py
+- M  pyto/scripts/check_all.sh
+
+```
+.github/workflows/check_all.yml                  | 39 +++++++++++++--
+ pyto/CHANGES.md                                  |  1 +
+ pyto/experiments/grouped-ablation/test_replay.py | 61 +++++++++++++++++++++++-
+ pyto/experiments/students/grade.py               | 19 +++++++-
+ pyto/experiments/students/homework.py            |  8 +++-
+ pyto/experiments/students/test_students.py       | 36 ++++++++++++++
+ pyto/scripts/check_all.sh                        |  8 +++-
+ 7 files changed, 163 insertions(+), 9 deletions(-)
+```
+
+## Evidence
+
+- verify: `python3 -c "import yaml; yaml.safe_load(open('.github/workflows/check_all.yml'))" && cd pyto && python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py' && cd experiments/students && python3 -m unittest discover -s . -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.EdFOAFo2cL) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         248  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            12  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+
+## Uncertain
+
+(The agent working on this writes one line per thing it was unsure about, as
+`{?} Label: description`, and leaves the decision to the owner. Empty means nothing was unsure.)
+
+{?} NotAVersionDrift: the task and the board both start from "digests drift between Python 3.11 and 3.14", and that is not what these two suites were failing on. Both suites are green here under 3.11 (the worktree .venv), 3.12 and 3.13, byte for byte, and both CI failures reproduce with no interpreter change at all. Nothing was loosened and no pinned digest was touched, so there is no version to record in a receipt for this fix. The 3.11 ubuntu matrix entry is still added, because the drift claim itself is still unproved and now at least two versions are watched on every push.
+
+{?} ShallowCloneSkip: `test_the_committed_stamp_names_a_commit_git_knows` now skips, rather than fails, when `git cat-file -e` cannot resolve the stamped sha AND `git rev-parse --is-shallow-repository` says the checkout is truncated. That is a real weakening of one claim in one situation, and the honest reading is "the history was not checked here". Two things hold it: the sha-shape assertion is never skipped, and `test_the_shallow_escape_hatch_is_shut_in_this_checkout` fails if the helper ever says "shallow" where git says "not shallow". The primary fix is the workflow's `fetch-depth: 0`, so CI checks the claim for real; the owner may prefer to drop the skip entirely and let a shallow clone go red.
+
+{?} DirtyStamp: `evidence/run-1/retained.json` records `retained.commit` as `af0e30f21c2e64cdf66a01932d6c558ab18d509f-dirty`, i.e. the evidence was regenerated from a tree with uncommitted edits and the record says so. The test strips the suffix and always has. Not touched here (regenerating evidence is out of scope), but the `-dirty` says that what was measured is not exactly any commit, which is worth a decision.
+
+{?} UnverifiedOnWindows: the `grade.py` fix is for a `ValueError` that only arises when two paths are on different Windows drive letters, which cannot happen on this Linux machine. What is verified here is the premise and the fallback: `ntpath.relpath` is asserted to raise on the exact `C:` / `D:` pair the runner produces, and `display_path` is asserted to return the absolute path when `os.path.relpath` raises. The end-to-end claim -- that the four windows tests now pass -- is inferred from the log (returncode 1 with an empty stdout, from the first line of the report) and is unproved until a windows job runs.
+
+{?} LogsInTheWorkspace: `CHECK_ALL_LOGS` points CI at `$PWD/test-results/check-all-logs`, inside the checkout. `test-results/` is gitignored, so the suites that compare `git status --porcelain` see nothing new, but it is still the repository rather than a temp dir; `${{ runner.temp }}` was not used because its value is a backslash path that bash on windows-latest mangles.

@@ -33,9 +33,9 @@
   ],
   "variants": 6,
   "wall_ms": {
-    "build_program": 0.294,
-    "make_data": 7.579,
-    "pcr.run": 34.594
+    "build_program": 0.26,
+    "make_data": 7.034,
+    "pcr.run": 33.577
   },
-  "wall_ms_total": 42.467
+  "wall_ms_total": 40.871
 }

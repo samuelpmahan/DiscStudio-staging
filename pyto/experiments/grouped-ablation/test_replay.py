@@ -167,6 +167,21 @@ class VerificationWritesNoEvidence(ScratchCase):
         self.assertIn("--force", proc.stderr)
 
 
+def repository_is_shallow() -> bool:
+    """True when this checkout has a truncated history (`git clone --depth N`).
+
+    A shallow clone holds no object for any commit but the fetched tip, so a
+    question about an older commit gets "unknown object" (exit 128) rather than
+    "no such commit". The two answers look identical to `git cat-file -e`, and
+    only this tells them apart.
+    """
+    proc = subprocess.run(
+        ["git", "rev-parse", "--is-shallow-repository"],
+        cwd=HERE, capture_output=True, text=True,
+    )
+    return proc.returncode == 0 and proc.stdout.strip() == "true"
+
+
 class RetainedRecordIsDeterministic(ScratchCase):
     """Two independent builds of the Day 1 record are byte-identical, and they match
     the committed evidence/run-1/retained.json.
@@ -211,13 +226,57 @@ class RetainedRecordIsDeterministic(ScratchCase):
         self.assertIn("replay.py --force", str(caught.exception))
 
     def test_the_committed_stamp_names_a_commit_git_knows(self):
-        """The one field the oracle blanks is checked on its own terms."""
+        """The one field the oracle blanks is checked on its own terms.
+
+        Two claims, and only the first is about this repository's history:
+
+          1. the stamp is a 40-hex sha (with the optional `-dirty` suffix that says
+             the tree had uncommitted edits when the evidence was regenerated), and
+          2. git can resolve that sha to a commit.
+
+        Claim 2 needs the commit to be IN the object store. A shallow checkout has
+        only the tip -- `actions/checkout` fetches depth 1 unless asked otherwise --
+        so `git cat-file -e` answers 128 for a stamp that is perfectly good in a
+        full clone. That is what failed on ubuntu-latest and windows-latest in run
+        34429580002: the stamp names a commit 90 behind the branch tip. The
+        workflow now asks for `fetch-depth: 0`, so CI checks claim 2 for real; this
+        skip is for anyone else running from a truncated clone, and it says so
+        rather than reporting the history as wrong. Claim 1 is never skipped.
+        """
         committed = replay.ensure_retained_record()
         stamp = committed["retained"]["commit"]
         sha = stamp[: -len("-dirty")] if stamp.endswith("-dirty") else stamp
         self.assertRegex(sha, r"^[0-9a-f]{40}$")
         proc = subprocess.run(["git", "cat-file", "-e", f"{sha}^{{commit}}"], cwd=HERE)
+        if proc.returncode != 0 and repository_is_shallow():
+            self.skipTest(
+                f"this checkout is shallow, so git holds no object for {sha}; "
+                "re-run in a full clone (CI uses actions/checkout fetch-depth: 0)"
+            )
         self.assertEqual(proc.returncode, 0, f"retained.commit names an unknown commit: {stamp}")
+
+    def test_the_shallow_escape_hatch_is_shut_in_this_checkout(self):
+        """Kills a `repository_is_shallow` that always says yes.
+
+        The skip above is only honest while it is unreachable in a full clone, so
+        this asks git the same question directly and refuses any answer but "no".
+        In a checkout that really is truncated there is nothing left to assert and
+        this skips as well: the pair then reads "the history was not checked",
+        which is the truth, instead of a green that was never earned.
+        """
+        proc = subprocess.run(
+            ["git", "rev-parse", "--is-shallow-repository"],
+            cwd=HERE, capture_output=True, text=True,
+        )
+        if proc.returncode != 0:
+            self.skipTest("git cannot say whether this checkout is shallow")
+        if proc.stdout.strip() == "true":
+            self.skipTest("this checkout really is shallow, so the stamp check above is a skip")
+        self.assertFalse(
+            repository_is_shallow(),
+            "repository_is_shallow() says yes where git says no: the stamp check "
+            "above would skip in a full clone and stop checking anything",
+        )
 
     def test_retained_program_ticks_equal_the_committed_day1_testimony_ticks(self):
         """evidence/run-1/testimony.json needs no conversion to become the program (gap 18d)."""

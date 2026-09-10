@@ -23,7 +23,7 @@ import {
   SCHEMA, MAX_ARRAY_ENTRIES, MAX_VALUE_BYTES, PNG_DATA_URL_PREFIX,
   validate, RecordSchemaError, materialize, deriveHit, derivePartIndex, bareAddress,
   parseBinding, produceAddresses,
-  tickLatencyMs, invocationPlacement, runSchedule,
+  tickLatencyMsFromRecord, invocationPlacement, runSchedule,
   fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords
 } from '../adapters.js';
 
@@ -728,16 +728,16 @@ test('every committed fixture reads as a serial, unbudgeted run', () => {
   }
 });
 
-test('tickLatencyMs falls back to the sum of the Tick durations, and to null', () => {
+test('tickLatencyMsFromRecord falls back to the sum of the Tick durations, and to null', () => {
   for (const tick of pytoDoc.ticks) {
     const sum = tick.invocations.reduce((total, invocation) => total + invocation.duration_ms, 0);
-    assert.equal(tickLatencyMs(tick), Math.round(sum * 1000) / 1000);
+    assert.equal(tickLatencyMsFromRecord(tick), Math.round(sum * 1000) / 1000);
   }
   // A null duration makes the Tick's latency unknown, never a partial sum.
   const unknown = JSON.parse(JSON.stringify(pytoDoc.ticks[0]));
   unknown.invocations[0].duration_ms = null;
-  assert.equal(tickLatencyMs(unknown), null);
-  assert.equal(tickLatencyMs({ name: 'empty', invocations: [] }), null);
+  assert.equal(tickLatencyMsFromRecord(unknown), null);
+  assert.equal(tickLatencyMsFromRecord({ name: 'empty', invocations: [] }), null);
 });
 
 test('a scheduled record validates and reads back through both accessors', () => {
@@ -747,10 +747,10 @@ test('a scheduled record validates and reads back through both accessors', () =>
     parallel: true,
     budget: { limit_ms: 250, stopped_after_tick: doc.ticks[doc.ticks.length - 1].name, completed: false }
   });
-  assert.equal(tickLatencyMs(doc.ticks[0]), 1.5);
+  assert.equal(tickLatencyMsFromRecord(doc.ticks[0]), 1.5);
   assert.deepEqual(invocationPlacement(doc.ticks[0].invocations[0]), { worker: 0, started_ms: 0 });
   // An explicit latency wins over the sum: it is measured, the sum is derived.
-  assert.notEqual(tickLatencyMs(doc.ticks[0]), tickLatencyMs(pytoDoc.ticks[0]));
+  assert.notEqual(tickLatencyMsFromRecord(doc.ticks[0]), tickLatencyMsFromRecord(pytoDoc.ticks[0]));
 });
 
 test('a null placement is a serial invocation, not a violation', () => {

@@ -4,6 +4,8 @@ import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverla
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
 import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
 import { shelfSheet } from './formats/shelf-sheet.js';
+import { receiptList } from './formats/receipt-list.js';
+import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
 export function createStudioRuntime(initial) {
@@ -37,6 +39,10 @@ export function createStudioRuntime(initial) {
   register('fn.constraint.teamThrows', teamThrows);
   register('fn.constraint.combine', ({ combine, ...results }) => combineConstraints({ results, combine }));
   register('fn.disc.format.shelfSheet', shelfSheet);
+  register('fn.studio.receipts', receiptList, { memo: false });
+  register('fn.undo.push', undoPush, { memo: false });
+  register('fn.undo.pop', undoPop, { memo: false });
+  register('fn.undo.settle', undoSettle, { memo: false });
   function publishWorld(world) {
     validateWorld(world); pxc.set('px.studio.world', world);
     const present = new Set();
@@ -48,6 +54,7 @@ export function createStudioRuntime(initial) {
     source('px.comparison.layout', world.layout); source('px.comparison.states', world.battle);
   }
   publishWorld(freeze(validateWorld(initial)));
+  pxc.set('px.undo.studio', emptyStack('studio'));
   const world = () => pxc.get('px.studio.world');
   const step = (name, call, bindings, into, args = {}) => ({ name, Calculations: [{ call, with: bindings, args, into }] });
   function execute(name, ticks) {
@@ -55,7 +62,7 @@ export function createStudioRuntime(initial) {
     const composition = readPql(JSON.stringify({ PrincipleComponentRender: name, Ticks: ticks }), JSON.parse);
     const run = invokePql(composition, { pxc });
     const invoked = calls.slice(mark); if (calls.length > 1000) calls.splice(0, calls.length - 1000);
-    const trace = run.Ticks.flatMap(t => t.Calculations.map(c => ({ tick: t.name, call: c.actualCall, inputs: c.with, output: c.into }))).map((r, i) => ({ ...r, ...invoked[i] }));
+    const trace = run.Ticks.flatMap(t => t.Calculations.map(c => ({ tick: t.name, call: c.actualCall, inputs: c.with, output: c.into, produces: c.produces }))).map((r, i) => ({ ...r, ...invoked[i] }));
     const receipt = freeze({ composition, trace, computed: trace.filter(r => !r.reused).length, reused: trace.filter(r => r.reused).length });
     pxc.set(`px.receipt.${name}`, receipt);
     return receipt;
@@ -77,6 +84,7 @@ export function createStudioRuntime(initial) {
     return { address, record };
   }
   function dispatch(command) {
+    push('px.studio.world');
     source('px.input.command', { ...command, eventId: id('event'), time: new Date().toISOString() });
     const run = execute('studio-command', [step('ApplyCommand', 'fn.studio.applyCommand', { world: 'px.studio.world', command: 'px.input.command' }, 'px.studio.nextWorld')]);
     publishWorld(pxc.get('px.studio.nextWorld')); listener(world(), command, run); return run;
@@ -138,8 +146,34 @@ export function createStudioRuntime(initial) {
     const run = execute('competition', ticks);
     return { ...pxc.get('px.competition.validation'), run, part: 'px.competition.validation' };
   }
+  /**
+   * UndoStack: `fn.undo.push` records the value an address holds now; `fn.undo.pop`
+   * writes the recorded value back and `fn.undo.settle` takes it off the stack.
+   * Each is an ordinary Calculation invocation, so runRecord() carries all of them.
+   */
+  const stackAddress = scope => `px.undo.${scope}`;
+  function undoStack(scope = 'studio') { const address = stackAddress(scope); if (!pxc.has(address)) pxc.set(address, emptyStack(scope)); return pxc.get(address); }
+  function push(address, scope = 'studio') {
+    undoStack(scope);
+    return execute('studio-undo-push', [step('Push', 'fn.undo.push', { stack: stackAddress(scope), value: address }, stackAddress(scope), { address, scope })]);
+  }
+  function pop(address, scope = 'studio') {
+    undoStack(scope);
+    const run = execute('studio-undo', [
+      step('Restore', 'fn.undo.pop', { stack: stackAddress(scope), current: address }, address, { address, scope }),
+      step('Settle', 'fn.undo.settle', { stack: stackAddress(scope) }, stackAddress(scope), { address, scope })
+    ]);
+    if (address === 'px.studio.world') { publishWorld(freeze(validateWorld(pxc.get(address)))); listener(world(), { type: 'undo.pop', address, scope }, run); }
+    return run;
+  }
+  /** The studio's own receipts, read back through the PQL prefix query px.receipt.*. */
+  function receipts() {
+    const run = execute('studio-receipts', [step('Receipts', 'fn.studio.receipts', { receipts: 'px.receipt.*' }, ['px.studio.receipts', 'px.studio.receipts.summary'])]);
+    return { rows: pxc.get('px.studio.receipts'), summary: pxc.get('px.studio.receipts.summary'), run };
+  }
   return {
-    pxc, world, dispatch, card, scene, constraints, counters, runRecord,
+    pxc, world, dispatch, card, scene, constraints, counters, runRecord, execute, receipts,
+    undo: { push, pop, stack: undoStack, depth: (scope = 'studio') => undoStack(scope).depth },
     onChange(fn) { listener = fn; },
     replace(next) { publishWorld(freeze(validateWorld(next))); listener(world(), { type: 'draft.import' }, null); },
     parts() { return [...addresses].sort().map(address => ({ address, value: pxc.get(address) })); },
