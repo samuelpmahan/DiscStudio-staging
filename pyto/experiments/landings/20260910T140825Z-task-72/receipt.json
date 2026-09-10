@@ -1,0 +1,71 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T140825Z-task-72",
+  "package": "task-72",
+  "base_sha": "a76ae6ab1ddfb82f9c40276dc4961093dfa27daf",
+  "result": "verified",
+  "verifier": {
+    "command": "test -s pyto/research/chainspot-stages-ticks.md && grep -q 'tidy.manifest.yaml' pyto/research/chainspot-stages-ticks.md && grep -q '43e6ea3' pyto/research/chainspot-stages-ticks.md",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "6a40a0120cdcc263a20e02aaf14f98300dcbf848d41fdbd8dbe42ae9fb1ab044",
+    "counts": {
+      "library": 368,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/72/HANDOFF.md",
+      "bytes": 7766,
+      "sha256": "7b8da6ed5ef8001b8a74e39a43ba67f76704843ccd2cb6922669cf05b26da7e2"
+    },
+    {
+      "path": "pyto/experiments/tasks/72/evidence/check_all.txt",
+      "bytes": 182875,
+      "sha256": "ebe067c55370f6bb7fbd15205a6ea7a254f022673da6c814d58206f729745155"
+    },
+    {
+      "path": "pyto/experiments/tasks/72/evidence/verify.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/72/packet.md",
+      "bytes": 2829,
+      "sha256": "bd5799dd40c1d66aa6b90370497ef3f1c5001a7d37a90fa03726d2d38a0c198b"
+    },
+    {
+      "path": "pyto/research/chainspot-stages-ticks.md",
+      "bytes": 7596,
+      "sha256": "1388df114a0b81023998669025a50c88419b489218ea5f7a273242625d95f926"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T14:09:42.649864Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
