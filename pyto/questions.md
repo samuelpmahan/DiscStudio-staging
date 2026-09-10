@@ -728,6 +728,34 @@ note addressed to the owner must carry which of the three reasons it is (broke a
 you; a decision with no safe default; something you asked to be told), and land.sh --note refuses an
 "**owner**" line without one; everything else is a note, not an interrupt.
 
+### {?} SuperGoogle
+The owner, 2026-09-10 05:20, after the sprint, on what pyto is for, verbatim: "note that u understand the
+molecules are the importance part, YOUR PROJECTION OF MY REASONING IS A MOLECULE. I AM NOT IN ANY WAY
+D*ST*LL*NG ANYTHING. I AM USING AI AS SUPER GOOGLE AND PYTHON CREATOR POWERS THAT I CAN CONCEIVE BUT NOT
+IMPLEMENT AKA EXACTLY HOW ANYONE SHOULD BE ABLE TO USE AI. THUS A FUCKIN PYTHON LIB ANYONE CAN USE TO
+FIGURE STUFF OUT SO LONG AS THEY DO SOMETHING REAL AND MEANINGFUL." Plain: the product is a Python
+library anyone can use to figure something out, on the condition that they do something real (the
+receipts say so) and meaningful (the questions say so); the owner conceives, the AI implements, and
+nothing of the owner is being distilled into a model. Technical: what the session builds from the
+owner's answers is a molecule in the task 60 sense, a repeated structure assembled from his atoms of
+reasoning, so the record of answered questions is the material that matters and the run records are
+its evidence; molecules over run records (task 60) are the first instance, molecules over the record
+of his answers are the open one. No default taken: which record the next miner reads is his to say.
+
+### {?} TinyQuestions
+The owner, 2026-09-10 05:20, on the frontier method (Frontier, above), verbatim: "What was that frontier
+workflow I talked about earlier? That should be tailored for subagent throughput THROUGH ME. As many lil
+tiny questions as possible." Read against the sentence he quoted back ("You say a preference, the
+session files a law"): the frontier is refined by his answers, not by the session's defaults. Plain:
+agents ask many small questions; the owner answers them in a word or a number; the answers go here in
+his words with the technical half written beside them; the agents continue. A default is taken only
+for things that carry no meaning (a file name, a column width), never for what a Tick, a Part, a
+Calculation, a receipt, a molecule or a question means. Technical: every {?} line an agent writes under
+"## Uncertain" in a packet is a tiny question; the session collates the unanswered ones each round into
+one numbered list in chat, the owner answers by number, and each answer is filed under the label it
+came from with the default it replaces. Open (his to say, asked in the first batch): how many per
+round; whether the walk carries them; whether `neat` gets a verb for filing an answer.
+
 ### {?} ChainsInsideATick
 The owner, 2026-09-10, on the node law the sprint put in the kernel (task 39) and the studio (task 48):
 "'Calculations inside a Tick must be independent' was added as a rule, while your existing ChainSpot
