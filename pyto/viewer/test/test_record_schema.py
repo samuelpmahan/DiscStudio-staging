@@ -27,11 +27,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 VIEWER = os.path.dirname(HERE)
 PYTO = os.path.dirname(VIEWER)
 REAL_RECORD = os.path.join(PYTO, "experiments", "grouped-ablation", "evidence", "run-1", "record.json")
+# The one committed record of a run that performed effects (task 49): one `oc.`
+# invocation with a five-entry ledger and one pure `fn.` with an empty one.
+EFFECTS_RECORD = os.path.join(PYTO, "tests", "fixtures", "px", "effects-record.json")
 
 sys.path.insert(0, HERE)
 from record_schema import (  # noqa: E402
-    SCHEMA, RecordSchemaError, derive_part_index, invocation_placement, resolve_binding,
-    run_schedule, tick_latency_ms, validate,
+    SCHEMA, RecordSchemaError, derive_part_index, invocation_effects, invocation_placement,
+    resolve_binding, run_schedule, tick_latency_ms, validate,
 )
 
 NODE = shutil.which("node")
@@ -737,3 +740,79 @@ class TheTwoValidatorsAgree(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EffectsLedger(unittest.TestCase):
+    """RECORD.md, "Effects": optional like placement, and exact once it is there.
+
+    The record read here is what `pyto.materialize.run_record` actually wrote for
+    a run with an `oc.` Calculation in it, so this is the independent reader
+    checking the producer, which is the whole reason this file is not
+    `from pyto.materialize import ...`.
+    """
+
+    def setUp(self):
+        self.record = load(EFFECTS_RECORD)
+
+    def assertRejects(self, record, expected_path):
+        with self.assertRaises(RecordSchemaError) as caught:
+            validate(record)
+        self.assertEqual(caught.exception.path, expected_path, str(caught.exception))
+        return caught.exception
+
+    def test_the_producers_record_validates_and_carries_one_ledger_per_invocation(self):
+        self.assertIs(validate(self.record), self.record)
+        stamp, summary = (
+            self.record["ticks"][0]["invocations"][0],
+            self.record["ticks"][1]["invocations"][0],
+        )
+        self.assertEqual(
+            [entry["kind"] for entry in invocation_effects(stamp)],
+            ["write_text", "now_ms", "random_seed", "random", "random"],
+        )
+        # Present for every invocation of a record that carries the field, and
+        # empty for the pure one: "this invocation performed no effect" is a
+        # different claim from "this runtime records none".
+        self.assertEqual(invocation_effects(summary), [])
+        self.assertEqual(summary["effects"], [])
+
+    def test_a_record_that_carries_no_effects_reads_as_a_run_that_performed_none(self):
+        """The optional half: the committed Day 1 record never heard of an `oc.`."""
+        record = load(REAL_RECORD)
+        for tick in record["ticks"]:
+            for invocation in tick["invocations"]:
+                self.assertNotIn("effects", invocation)
+                self.assertEqual(invocation_effects(invocation), [])
+        self.assertIs(validate(record), record)
+
+    def test_the_shape_of_an_entry_is_exact(self):
+        base = "ticks.0.invocations.0.effects.0"
+        where = "ticks[0].invocations[0].effects[0]"
+        for path, value, expected in [
+            (base + ".kind", "spawn", where + ".kind"),
+            (base + ".args", "out/note.txt", where + ".args"),
+            (base + ".result_sha256", None, where + ".result_sha256"),
+            (base, {"kind": "now_ms", "args": {}, "result": 1.0,
+                    "result_sha256": "a" * 64, "actor": "root"}, where),
+            (base, {"kind": "now_ms", "args": {}, "result": 1.0}, where),
+            # A write keeps its text as a digest alone: `result` is null.
+            (base + ".result", "the text", where + ".result"),
+            # Paths are relative to the run's effects_root and never absolute.
+            (base + ".args.path", "/etc/passwd", where + ".args.path"),
+            (base + ".args.path", "../../etc/passwd", where + ".args.path"),
+            (base + ".args", {}, where + ".args"),
+            ("ticks.0.invocations.0.effects", {"0": "write_text"},
+             "ticks[0].invocations[0].effects"),
+        ]:
+            with self.subTest(path=path):
+                self.assertRejects(set_at(self.record, path, value), expected)
+
+    def test_every_kind_the_format_declares_is_accepted(self):
+        record = json.loads(json.dumps(self.record))
+        record["ticks"][0]["invocations"][0]["effects"] = [
+            {"kind": "read_text", "args": {"path": "in/a.txt"}, "result": "a",
+             "result_sha256": "0" * 64},
+            {"kind": "env", "args": {"name": "PATH"}, "result": None, "result_sha256": "1" * 64},
+            {"kind": "random_seed", "args": {}, "result": 7, "result_sha256": "2" * 64},
+        ]
+        self.assertIs(validate(record), record)
