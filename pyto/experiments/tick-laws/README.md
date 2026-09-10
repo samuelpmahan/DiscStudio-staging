@@ -8,11 +8,13 @@ python pyto/experiments/tick-laws/tick_laws.py --check record.json
 python pyto/experiments/tick-laws/tick_laws.py --json record.json
 ```
 
-The node law reports a calculation consuming a Part that a sibling actually
-produced, and duplicate actual producers in one Tick. The loop law reports an
-actual consumer whose only actual producers occur in later Ticks. Only
-`actual_consumes` and `actual_produces` create edges. Declaration edges,
-`fn:` references, `parts`, and `writes` are not inferred.
+The node law reports a Calculation that reads a Part a sibling in the same Tick
+produced, and two siblings producing one Part. The loop law reports a read whose
+only producers come in later Ticks. A read is every input binding: `px:` bindings
+are store reads, `fn:` bindings are result reads resolved through the producer's
+`into` (a result read is a read; see `pyto/questions.md`, ResultReadsAreReads),
+unioned with `actual_consumes`. A write is `actual_produces` plus the declared
+`into`, which may be one address or several.
 
 The report always has `ok`, `valid`, `limitation`, `violations`, `laws`,
 `ticks`, and `summary`. Text mode prints each Tick, a summary, and the explicit

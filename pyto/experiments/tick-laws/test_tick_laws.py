@@ -196,20 +196,24 @@ class TickLawTests(unittest.TestCase):
         self.assertEqual(report["summary"]["work_ms"], 10.0)
         self.assertEqual(report["summary"]["critical_path_ms"], 8.0)
 
-    def test_declared_dependency_without_actual_consume_is_a_limitation(self):
-        """Brief: declared-only dependencies are a limitation, not a certificate."""
+    def test_a_result_read_of_a_sibling_is_a_node_law_violation(self):
+        """A result read is a read (pyto/questions.md, ResultReadsAreReads): binding a sibling's
+        result with `fn:<id>` inside one Tick breaks the node law even though actual_consumes is
+        empty. Guards tick_laws._reads: the fn: branch that resolves through into_by_id."""
         record = _record(
             [
                 _invocation("producer", produces=("px.input",)),
-                _invocation("declared-only", produces=("px.out",), inputs={"roster": "fn:producer"}),
+                _invocation("by-result", produces=("px.out",), inputs={"roster": "fn:producer"}),
             ]
         )
         report = analyze_record(record)
         self.assertTrue(report["valid"], _violation_text(report))
-        text = _finding_text(report)
-        self.assertFalse(_has_violation(report), text)
-        self.assertIn("limitation", report)
-        self.assertIn("not a", report["limitation"])
+        self.assertTrue(_has_violation(report), _finding_text(report))
+        finding = report["laws"]["node"]["violations"][0]
+        self.assertEqual(finding["consumer_id"], "by-result")
+        self.assertEqual(finding["producer_ids"], ["producer"])
+        self.assertEqual(finding["part"], "px.input")
+        self.assertIn("result read", report["limitation"])
 
     def test_check_cli_exit_matrix_and_text_receipt(self):
         """Brief: --check reports clean, law, schema, and mixed outcomes exactly."""
