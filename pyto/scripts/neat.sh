@@ -6,6 +6,7 @@
 #   neat show <id>            print the hand-off (what a fresh agent gets)
 #   neat drop <id> <path>...  put those files back to the starting point, repack
 #   neat land <id>            merge into MAIN, verify, receipt, commit, push; EXP/<id> goes away
+#   neat land <id> --from <url-or-remote-name> <branch>   the same landing for a desk that lives in another repository
 #   neat kill <id>            abandon: EXP/<id> goes away, nothing lands; exp/<id> is kept (nothing is deleted)
 #   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
 #   neat update <id>          bring MAIN's newer commits into EXP/<id> (a conflict names the files and stops)
@@ -46,11 +47,14 @@ else
   BOARD_REL=".neat/BOARD.md"
 fi
 BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
-URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | sed 's#https://[^@]*@#https://#' || echo '<origin>')"
+# A remote spelling can carry a password (https://user:token@host/...); it is stripped everywhere it
+# is printed: the hand-off page, and the board line of a landing that came from another repository.
+strip_creds() { sed 's#https://[^@]*@#https://#'; }
+URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<origin>')"
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,13p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,14p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -307,27 +311,66 @@ cmd_drop() {
   cmd_pack "$id"
 }
 
+drop_from_ref() { # the temporary ref a --from landing fetched into, on success and on refusal
+  [ -n "${1:-}" ] || return 0
+  git -C "$ROOT" update-ref -d "$1" 2>/dev/null || true
+}
+
 cmd_land() {
-  local id="${1:-}"; [ -n "$id" ] || usage
+  local id="${1:-}"; [ -n "$id" ] || usage; shift || true
   local ref="exp/$id" packet base verify allow intent moved
-  if ! git -C "$ROOT" rev-parse -q --verify "refs/heads/exp/$id" >/dev/null; then
+  # `neat land <id> --from <url-or-remote-name> <branch>`: the desk lives in another repository (a
+  # student's own repo; sharing is a landing into the class repo). Fetch that branch, land it from a
+  # ref named by id, and touch nothing else there: the desk's branch is its owner's.
+  local remote="" rbranch="" shown="" tmpref=""
+  if [ "${1:-}" = "--from" ]; then
+    remote="${2:-}"; rbranch="${3:-}"
+    { [ -n "$remote" ] && [ -n "$rbranch" ]; } || die "land --from needs both a remote and a branch: neat land $id --from <url-or-remote-name> <branch>"
+    shift 3
+  fi
+  [ $# -eq 0 ] || die "unknown option $1  (neat land <id> [--from <url-or-remote-name> <branch>])"
+  if [ -n "$remote" ]; then
+    shown="$(printf '%s' "$remote" | strip_creds)"
+    # refs/neat/from/<id>, never exp/<id>: task 0 here and task 0 on the desk are different tasks.
+    tmpref="refs/neat/from/$id"
+    git -C "$ROOT" fetch -q "$remote" "$rbranch" || die "cannot fetch $rbranch from $shown (a URL, a path, or a configured remote name; a path is read from $ROOT)"
+    git -C "$ROOT" update-ref "$tmpref" "$(git -C "$ROOT" rev-parse FETCH_HEAD)"
+    ref="$tmpref"
+  elif ! git -C "$ROOT" rev-parse -q --verify "refs/heads/exp/$id" >/dev/null; then
     git -C "$ROOT" fetch -q origin "exp/$id" 2>/dev/null || die "no branch exp/$id here or on origin"
     ref="origin/exp/$id"
   fi
-  packet="$(mktemp)"; git -C "$ROOT" show "$ref:$TASKS/$id/packet.md" > "$packet" || die "exp/$id carries no packet; run: neat pack $id"
+  packet="$(mktemp)"
+  if ! git -C "$ROOT" show "$ref:$TASKS/$id/packet.md" > "$packet"; then
+    drop_from_ref "$tmpref"
+    [ -z "$remote" ] || die "$shown $rbranch was never packed: it carries no packet at $TASKS/$id/packet.md, and a shared desk must be packed first (on that desk: neat pack $id, which writes the packet and pushes the branch)"
+    die "exp/$id carries no packet; run: neat pack $id"
+  fi
   intent="$(field Intent "$packet")"; verify="$(field Verify "$packet")"; allow="$(field Allow "$packet")"
   base="$(field 'Starting point' "$packet" | cut -d' ' -f1)"
-  moved="$(git -C "$ROOT" rev-list --count "$base..HEAD")"
   echo "== land task $id: $intent"
-  echo "   MAIN moved $moved commit(s) since the task started; the candidate is merged onto MAIN as it is now and verified there"
+  if [ -n "$remote" ]; then
+    echo "   from $shown $rbranch (it started at ${base:0:7}, which may be a commit only that desk has); the candidate is merged onto MAIN as it is now and verified there"
+  else
+    moved="$(git -C "$ROOT" rev-list --count "$base..HEAD")"
+    echo "   MAIN moved $moved commit(s) since the task started; the candidate is merged onto MAIN as it is now and verified there"
+  fi
   local args=("task-$id" --from "$ref" --message "$intent")
+  [ -z "$remote" ] || args=("task-$id" --from "$ref" --message "$intent (from $shown $rbranch)")
   [ "$verify" = "none" ] || args+=(--verify "$verify")
   [ "$allow" = "any" ] || args+=(--allow "$allow $TASKS/$id")
   if bash "$HERE/land.sh" "${args[@]}"; then
-    rm -rf "$EXP/$id"
-    git -C "$ROOT" push -q origin --delete "exp/$id" 2>/dev/null && echo "deleted origin/exp/$id" || true
-    echo "task $id landed; its packet is at $TASKS/$id/ in MAIN"
+    drop_from_ref "$tmpref"
+    if [ -n "$remote" ]; then
+      echo "task $id landed from $shown $rbranch; its packet is at $TASKS/$id/ in MAIN. Nothing on that desk was deleted (unshare it here with: neat undo $id)"
+    else
+      rm -rf "$EXP/$id"
+      git -C "$ROOT" push -q origin --delete "exp/$id" 2>/dev/null && echo "deleted origin/exp/$id" || true
+      echo "task $id landed; its packet is at $TASKS/$id/ in MAIN"
+    fi
   else
+    drop_from_ref "$tmpref"
+    [ -z "$remote" ] || { echo "task $id did not land (see the reason above); nothing was taken from $shown" >&2; exit 1; }
     echo "task $id did not land (see the reason above); EXP/$id is untouched" >&2; exit 1
   fi
 }
@@ -377,8 +420,10 @@ cmd_update() {
 
 cmd_selftest() {
   local tmp seed clone origin tools_dir out failures=0
+  local desk_origin desk desk_tools
   tmp="$(mktemp -d "${TMPDIR:-/tmp}/neat-selftest.XXXXXX")"
   origin="$tmp/origin.git"; seed="$tmp/seed"; clone="$tmp/clone"; tools_dir="$clone/tools"
+  desk_origin="$tmp/desk-origin.git"; desk="$tmp/desk"; desk_tools="$desk/tools"
   git init -q --bare "$origin"
   git init -q "$seed"
   git -C "$seed" config user.email selftest@example.invalid
@@ -433,6 +478,36 @@ cmd_selftest() {
     echo "selftest undo clean: pass"
   else
     echo "selftest undo clean: FAIL"; failures=$((failures + 1))
+  fi
+  # A second repository: the student's desk, its own origin and clone, made from the same seed
+  # commit so the two histories meet (a desk is normally a fork of the class repo). It packs its own
+  # task 0 -- ids in two repos collide, that is the point -- and the class repo lands it with one
+  # command: neat land 0 --from <the desk's origin> exp/0.
+  git clone -q --bare "$seed" "$desk_origin"
+  git clone -q "$desk_origin" "$desk"
+  git -C "$desk" config user.email selftest@example.invalid
+  git -C "$desk" config user.name selftest
+  mkdir -p "$desk_tools"
+  cp "$HERE/neat.sh" "$desk_tools/neat.sh"
+  cp "$HERE/land.sh" "$desk_tools/land.sh"
+  chmod +x "$desk_tools/neat.sh" "$desk_tools/land.sh"
+  git -C "$desk" add tools
+  git -C "$desk" commit -q -m "selftest tools"
+  if bash "$desk_tools/neat.sh" new "shared desk" --verify true --allow desk.txt >"$tmp/desk-new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  printf 'desk\n' > "$desk/EXP/0/desk.txt"
+  if bash "$desk_tools/neat.sh" pack 0 >"$tmp/desk-pack.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if bash "$tools_dir/neat.sh" land 0 --from "$desk_origin" exp/0 >"$tmp/land-from.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if [ -f "$clone/desk.txt" ] && [ -f "$clone/.neat/tasks/0/packet.md" ] &&
+     grep -q '"path": "desk.txt"' "$clone"/.neat/landings/*/receipt.json; then
+    echo "selftest land from a remote: pass"
+  else
+    echo "selftest land from a remote: FAIL"; failures=$((failures + 1))
+  fi
+  if grep -qF "(from $desk_origin exp/0)" "$clone/.neat/BOARD.md" &&
+     ! git -C "$clone" show-ref --verify --quiet refs/neat/from/0; then
+    echo "selftest remote board line and temporary ref: pass"
+  else
+    echo "selftest remote board line and temporary ref: FAIL"; failures=$((failures + 1))
   fi
   rm -rf "$tmp"
   [ "$failures" -eq 0 ]

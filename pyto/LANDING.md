@@ -13,6 +13,7 @@ bash pyto/scripts/neat.sh new "what you want"   -> EXP/0, a copy of MAIN to work
 bash pyto/scripts/neat.sh pack 0                -> the packet: intent, starting point, candidate, evidence, uncertain
 bash pyto/scripts/neat.sh show 0                -> the hand-off a fresh agent explains from, after cloning
 bash pyto/scripts/neat.sh land 0                -> merge into MAIN, verify there, receipt, commit, push; EXP/0 gone
+bash pyto/scripts/neat.sh land 0 --from <url-or-remote> exp/0  -> the same landing for a desk that lives in another repo
 bash pyto/scripts/neat.sh drop 0 <path> ...     -> "I like two of the three files": back to the start, repacked
 bash pyto/scripts/neat.sh kill 0                -> abandon, nothing lands
 bash pyto/scripts/neat.sh undo 0                -> a landed task back out of MAIN: revert, verify, receipt, push
@@ -37,7 +38,11 @@ the suite table), Uncertain (the agent's `{?}` lines). The packet lives inside t
 it travels with the branch to any machine and lands with the candidate; the hand-off page tells a
 fresh agent how to clone, why the repository is worth its time, and what to explain and do.
 `neat land` is `land.sh --from exp/<id>` with the packet's Verify and Allow, so everything below
-holds for it too. Underneath: EXP/<id> is a git worktree on branch `exp/<id>`, deleted at landing.
+holds for it too. Sharing a desk is a landing into another repository: `neat land <id> --from
+<url-or-remote> <branch>` fetches that desk's packed branch, reads its packet, and lands it here
+with that packet's verifier and allowed paths, so shared work gets the same receipt as anything
+else (the desk keeps its branch; unsharing is `neat undo <id>`). Underneath: EXP/<id> is a git
+worktree on branch `exp/<id>`, deleted at landing.
 Control is a way back, not a gate (owner, 2026-09-09: "minimal hard stops"): `neat undo <id>`
 reverts a landed task through the same protocol, so the owner never needs git to take something
 back, and nothing waits on the owner to go in.
