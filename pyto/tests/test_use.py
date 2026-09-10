@@ -118,6 +118,35 @@ def run_block(source: str) -> tuple[int, bytes, bytes]:
 
 BLOCKS = parse_blocks(read_use_md())
 
+#: The one file on disk USE.md reads. It is the record section 5's own block produces.
+FIXTURE = "tests/fixtures/use/order-record.json"
+#: Where section 5's block stops building the record and starts reading the fixture back.
+FIXTURE_SEAM = "# What a process that never saw the program above"
+
+
+def write_fixture() -> str:
+    """Regenerate FIXTURE from section 5's own block: ``python tests/test_use.py --write-fixture``.
+
+    The fixture carries ``calculation.implementation_sha256``, the digest of the
+    block's function bodies, so editing that block in USE.md is meant to turn this
+    suite red until the fixture is written again -- and this is the one line that
+    writes it, from the document itself rather than from a copy of the program.
+
+    The block is cut at FIXTURE_SEAM (everything above it builds ``record``; below
+    it the block reads the fixture that does not exist yet) and an epilogue is
+    appended. Appending lines cannot change any function's source text, so the
+    digests in the fixture are the digests of the block as written.
+    """
+    block = next((one for one in BLOCKS if one.section.startswith("5.")), None)
+    if block is None or FIXTURE_SEAM not in block.source:
+        raise SystemExit(f"USE.md has no record section with the seam {FIXTURE_SEAM!r}")
+    head, _, _ = block.source.partition(FIXTURE_SEAM)
+    epilogue = f'from pyto.materialize import write_record\nwrite_record(record, "{FIXTURE}")\n'
+    code, out, err = run_block(head + epilogue)
+    if code != 0:
+        raise SystemExit(err.decode("utf-8", "replace"))
+    return os.path.join(PYTO_ROOT, FIXTURE)
+
 
 class UseMarkdownIsExecuted(unittest.TestCase):
     """Generated below: one test method per ```python block in USE.md."""
@@ -196,7 +225,9 @@ class UseMarkdownIsPortable(unittest.TestCase):
 
 
 if __name__ == "__main__":  # pragma: no cover - `python tests/test_use.py --show`
-    if "--show" in sys.argv:
+    if "--write-fixture" in sys.argv:
+        print("wrote", write_fixture())
+    elif "--show" in sys.argv:
         for block in BLOCKS:
             code, out, err = run_block(block.source)
             print(f"===== block {block.index} [{block.section}] exit {code}")

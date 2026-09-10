@@ -3,7 +3,7 @@
     "computed": 1,
     "hits": 1,
     "invocations": 2,
-    "wall_ms": 0.07899100000940962
+    "wall_ms": 0.11156199980177917
   },
   "parts": {
     "px.order.prices": {
@@ -58,7 +58,7 @@
           "declared_consumes": [
             "px:px.order.prices"
           ],
-          "duration_ms": 0.0229560000661877,
+          "duration_ms": 0.02067500008706702,
           "hit": true,
           "id": "sum",
           "inputs": {
@@ -99,7 +99,7 @@
             "implementation_sha256": "7b9724a4d0553f7a92478a4f684978173ff512e01dce9abede6bd08703f23a8b"
           },
           "declared_consumes": [],
-          "duration_ms": 0.05603499994322192,
+          "duration_ms": 0.09088699971471215,
           "hit": false,
           "id": "split",
           "inputs": {

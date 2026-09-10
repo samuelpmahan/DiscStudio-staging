@@ -1,5 +1,8 @@
 # pyto-lab
 
+**Start with [USE.md](USE.md)** -- a ten-minute quickstart for the surface you write against: `PxC`, Parts, Calculations, `PCR` and PQL.
+Every block in it is executed by `tests/test_use.py` and its printed output compared byte for byte, so the page is true or the suite is red.
+
 `pyto` is a small, dependency-free Python package for composing semantic Parts, calculations, queries, and PCR graphs. It preserves the distinction between executable `PCR` and graph-authoring `Pcr`.
 
 ```python
