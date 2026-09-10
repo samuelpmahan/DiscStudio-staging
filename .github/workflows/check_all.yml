@@ -16,15 +16,31 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.12"]
+        # The board's standing worry is that digests drift between Python versions, so the
+        # oldest version the package supports is checked beside the newest on the OS where a
+        # difference is cheapest to read. One extra job, not three: the OS axis is what the
+        # other two entries are for.
+        include:
+          - os: ubuntu-latest
+            python-version: "3.11"
     runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The full history, not the tip. evidence/run-1/retained.json stamps the commit it
+          # was regenerated at, and test_replay.RetainedRecordIsDeterministic asks git to
+          # resolve that commit. actions/checkout fetches depth 1 by default, so every commit
+          # but the tip is absent from the object store and `git cat-file -e` answers 128 for
+          # a stamp that is perfectly good -- which is how run 34429580002 failed
+          # grouped-ablation on ubuntu and windows while the same suite was green locally.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -36,7 +52,20 @@ jobs:
           "$PY" -m pip install -q -e "./pyto[drawing]"
           "$PY" -c "import pyto, sys; print(sys.platform, sys.version.split()[0], pyto.__file__)"
       - name: Every suite
-        run: bash pyto/scripts/check_all.sh
+        run: |
+          # check_all.sh writes one log per suite. Left to itself it picks a fresh mktemp -d
+          # whose name is only ever printed, so a failing run's per-suite logs died with the
+          # runner. CHECK_ALL_LOGS names the directory instead, and the next step keeps it.
+          # test-results/ is gitignored, so the suites that compare `git status` see nothing new.
+          export CHECK_ALL_LOGS="$PWD/test-results/check-all-logs"
+          mkdir -p "$CHECK_ALL_LOGS"
+          bash pyto/scripts/check_all.sh
+      - name: The per-suite logs are part of the receipt
+        if: always()
+        run: |
+          mkdir -p ci-receipt/suite-logs
+          cp -R "$PWD/test-results/check-all-logs/." ci-receipt/suite-logs/ || true
+          ls -l ci-receipt/suite-logs
       - name: neat proves itself here
         run: |
           git config user.email ci@example.invalid
@@ -51,9 +80,11 @@ jobs:
         if: always()
         run: |
           mkdir -p ci-receipt
-          printf 'os=%s\ncommit=%s\nrun=%s\n' "${{ matrix.os }}" "$GITHUB_SHA" "$GITHUB_RUN_ID" > ci-receipt/receipt.txt
+          printf 'os=%s\npython=%s\ncommit=%s\nrun=%s\n' \
+            "${{ matrix.os }}" "${{ matrix.python-version }}" "$GITHUB_SHA" "$GITHUB_RUN_ID" \
+            > ci-receipt/receipt.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: check-all-${{ matrix.os }}-${{ github.sha }}
+          name: check-all-${{ matrix.os }}-py${{ matrix.python-version }}-${{ github.sha }}
           path: ci-receipt
