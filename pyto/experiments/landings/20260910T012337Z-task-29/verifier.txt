@@ -1,3 +1,33 @@
+[students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+[students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/experiments/tick-laws')  # intra-repo: the Tick node/loop law checker (tick_laws.py)
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.867s
+
+OK
+[students/grade] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+grade.py: evidence/run-1 against HANDOFF.md
+
+PASS  1 contract
+        validates as pyto-run-record@1 (5 invocations)
+PASS  2 replay
+        a fresh process (python3 -I -B, env=['PATH'], cwd outside the repository)
+        reproduced 9793 bytes of compared record, byte for byte
+        not compared: source -- names the runtime version and the commit, which move without the program moving
+        not compared: counters.wall_ms -- a wall clock
+        not compared: ticks[].invocations[].duration_ms -- a wall clock
+PASS  3 receipts
+        5 invocation(s) across 4 Tick(s): receipt present, source digest is today's source
+PASS  4 hand-off
+        names all 4 Tick(s): Parse, Stats, Letters, Histogram
+        names all 8 file(s)
+
+mechanical: 4 of 4 checks passed
+not mechanical, and the actual grade: whether a cold reader can say what this program does from the hand-off alone. That is not automated here.
+caveat: identical digests prove the same computation, not the right answer. A verifier still needs a reference.
+
+--- for the cold reader ---
+
 # Hand-off: class scores
 
 **Written by the student. This is the only page the cold reader gets.**
@@ -80,3 +110,18 @@ run side by side.
   am not sure the timings should be in the record at all if nothing may compare
   them -- and the Stats Tick's "work is more than latency" claim is read off exactly
   those dropped numbers.
+
+--- the question ---
+
+You have read the hand-off above and nothing else -- not the code, not the record.
+In plain words, and in no more than a paragraph: what does this program do?
+Name what goes in, what comes out, and what each step contributes. Then say
+which one sentence of the hand-off you were least sure of.
+LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+../students/evidence/run-1/record.json
+Tick 0: work_ms=0.030250000236264896 latency_ms=0.030250000236264896
+Tick 1: work_ms=0.040953000279841945 latency_ms=0.025237000045308378
+Tick 2: work_ms=0.016751999282860197 latency_ms=0.016751999282860197
+Tick 3: work_ms=0.022342999727698043 latency_ms=0.022342999727698043
+Summary: work_ms=0.11029799952666508 critical_path_ms=0.09458199929213151
+no parallel execution exists yet

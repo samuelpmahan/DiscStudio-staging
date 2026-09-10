@@ -3,7 +3,7 @@
     "computed": 4,
     "hits": 1,
     "invocations": 5,
-    "wall_ms": 0.13221100061855395
+    "wall_ms": 0.11029799952666508
   },
   "parts": {
     "px.students.histogram": {
@@ -48,7 +48,7 @@
   "pcr": "students-homework",
   "schema": "pyto-run-record@1",
   "source": {
-    "commit": "d13fcd1c38eab147d1a9d01b2c6c4e4ebf7abf90",
+    "commit": "42c5c7b0b8f7503ad351cefc09c2cdbbaa8850ef",
     "runtime": "pyto",
     "version": "0.1.0"
   },
@@ -72,7 +72,7 @@
           "declared_consumes": [
             "px:px.students.scores_csv"
           ],
-          "duration_ms": 0.03286900027887896,
+          "duration_ms": 0.030250000236264896,
           "hit": true,
           "id": "parse",
           "inputs": {
@@ -159,7 +159,7 @@
             "implementation_sha256": "52c2348bf909078bdf32e7b55a95140e366884feb69c89a94cd07c4da464bc6d"
           },
           "declared_consumes": [],
-          "duration_ms": 0.03024099987669615,
+          "duration_ms": 0.025237000045308378,
           "hit": false,
           "id": "mean",
           "inputs": {
@@ -182,13 +182,7 @@
               "kind": "new-address"
             }
           ]
-        }
-      ],
-      "name": "Mean"
-    },
-    {
-      "index": 2,
-      "invocations": [
+        },
         {
           "actual_consumes": [],
           "actual_produces": [
@@ -201,7 +195,7 @@
             "implementation_sha256": "e40b65bbc48b2a45c76bb9800ed9c5b8240a7192c2d07d0ff89b02c5c19dc312"
           },
           "declared_consumes": [],
-          "duration_ms": 0.0192300003618584,
+          "duration_ms": 0.015716000234533567,
           "hit": false,
           "id": "median",
           "inputs": {
@@ -225,10 +219,10 @@
           ]
         }
       ],
-      "name": "Median"
+      "name": "Stats"
     },
     {
-      "index": 3,
+      "index": 2,
       "invocations": [
         {
           "actual_consumes": [],
@@ -265,7 +259,7 @@
             "implementation_sha256": "bdb6828b307fcb2522327e41429c5db7c433ec73388dba8c29e04a072dec51eb"
           },
           "declared_consumes": [],
-          "duration_ms": 0.028363000183162512,
+          "duration_ms": 0.016751999282860197,
           "hit": false,
           "id": "letters",
           "inputs": {
@@ -350,7 +344,7 @@
       "name": "Letters"
     },
     {
-      "index": 4,
+      "index": 3,
       "invocations": [
         {
           "actual_consumes": [],
@@ -388,7 +382,7 @@
             "implementation_sha256": "6618353f306c11b17d0e037e91d044df4f6ee22712bcca7578d731be9f0ed7ce"
           },
           "declared_consumes": [],
-          "duration_ms": 0.021507999917957932,
+          "duration_ms": 0.022342999727698043,
           "hit": false,
           "id": "histogram",
           "inputs": {
