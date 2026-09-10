@@ -69,6 +69,11 @@ function execute(command) { runtime.dispatch(command); }
  * `changed` signal the receipt and the preview grid depend on.
  */
 function cascadeSet(layer, token, value, projection, discId) {
+  // The value the layer holds now (undefined = inherits). A repeated change
+  // event carrying the same value is not an edit: nothing is dispatched and the
+  // last edit keeps its measured recompose.
+  const cards = w().cards, current = layer === 'global' ? cards.global[token] : layer === 'projection' ? cards.projections[projection]?.[token] : cards.instances[projection]?.[discId]?.[token];
+  if ((value === null && current === undefined) || (value !== null && current === value)) return;
   execute({ type: 'cards.set', layer, token, value, ...(projection ? { projection } : {}), ...(discId ? { discId } : {}) });
   ui.lastCascade = { edit: { layer, token, value, projection, discId }, result: null };
 }
@@ -184,8 +189,10 @@ function cardsSidebar() {
 }
 function cardPreviewTile(p, card) {
   const preset = runtime.cards.presetFor(p), selected = ui.cardsProjection === p, provenance = runtime.cards.query('provenance', { projection: p, discId: ui.discId });
+  // "recomposed" is the last edit's measured recompose (the one render took right after it), not this render's: a later render reuses everything and would erase the story.
+  const changed = !!ui.lastCascade?.result?.cards?.[p]?.changed;
   const chips = provenance ? `<div class="provenance-chips">${CARD_TOKENS.map(token => `<span class="chip chip-${esc(provenance[token])}">${esc(token)} · ${esc(provenance[token])}</span>`).join('')}</div>` : '';
-  return `<button class="card-preview-tile ${selected ? 'selected' : ''}" data-action="cascade-tab" data-value="${esc(p)}" data-projection-preview="${esc(p)}" data-changed="${card.changed ? 'true' : 'false'}"><div class="card-preview-head"><span class="eyebrow">${esc(p.toUpperCase())}</span>${card.changed ? '<span class="changed-marker">recomposed</span>' : ''}</div><div class="card-preview-art">${card.svg}</div><div class="card-preview-foot"><span class="tiny muted mono">${esc(preset)}</span></div>${chips}</button>`;
+  return `<button class="card-preview-tile ${selected ? 'selected' : ''}" data-action="cascade-tab" data-value="${esc(p)}" data-projection-preview="${esc(p)}" data-changed="${changed ? 'true' : 'false'}"><div class="card-preview-head"><span class="eyebrow">${esc(p.toUpperCase())}</span>${changed ? '<span class="changed-marker">recomposed</span>' : ''}</div><div class="card-preview-art">${card.svg}</div><div class="card-preview-foot"><span class="tiny muted mono">${esc(preset)}</span></div>${chips}</button>`;
 }
 function cardsProjectionEditor() {
   const p = ui.cardsProjection, proj = w().cards.projections[p] || {}, global = w().cards.global;

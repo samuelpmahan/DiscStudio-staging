@@ -168,7 +168,13 @@ with sync_playwright() as p:
     assert prec['budget']=={'limit_ms':None,'stopped_after_tick':None,'completed':True},prec['budget']
     assert parallel['address']=='px.run.on-the-course-parallel'
     assert all(t['latency_ms'] is not None for t in prec['ticks'])
-    fan=next(t for t in prec['ticks'] if len(t['invocations'])>1)
+    # A Tick is a true fan (independent branches, drawn "parallel") only when every
+    # invocation shares one calculation address; the cascade's own "Cascade" Tick now
+    # merges N entries' two-Calculation chains (fn.cards.effective -> fn.cards.apply)
+    # into one Tick with >1 invocations across two addresses, which is genuinely a
+    # chain, not a fan, and the viewer marks it .chain accordingly.
+    is_fan=lambda t:len(t['invocations'])>1 and len({i['calculation']['address'] for i in t['invocations']})==1
+    fan=next(t for t in prec['ticks'] if is_fan(t))
     assert [i['placement']['worker'] for i in fan['invocations']]==list(range(len(fan['invocations']))),fan
     assert all(i['placement']['started_ms']>=0 for t in prec['ticks'] for i in t['invocations'])
     html=studio.evaluate("record=>discStudio.renderRecordPage(record)",prec)
@@ -177,7 +183,7 @@ with sync_playwright() as p:
     branches.on('pageerror',lambda e:errors.append(str(e)))
     branches.goto((out/'parallel-tick-render.html').resolve().as_uri())
     branches.wait_for_selector('section.tick.parallel')
-    assert branches.locator('section.tick.parallel').count()==sum(1 for t in prec['ticks'] if len(t['invocations'])>1)
+    assert branches.locator('section.tick.parallel').count()==sum(1 for t in prec['ticks'] if is_fan(t))
     assert branches.locator('section.tick.parallel[data-tick="%d"] .branches .branch'%fan['index']).count()==len(fan['invocations'])
     box=[branches.locator('section.tick.parallel[data-tick="%d"] .branches .branch'%fan['index']).nth(i).bounding_box() for i in range(len(fan['invocations']))]
     assert len({round(b['y']) for b in box})==1,'the branches of a parallel Tick are drawn side by side, on one row'
@@ -228,15 +234,25 @@ with sync_playwright() as p:
     # Card cascade editor (#/cards): global -> projection -> instance, retrofitted onto
     # the existing card surface. `runtime.cards.recompose` is the acceptance test itself:
     # a global edit changes all four projections, a projection edit changes exactly one.
-    route(page,'cards')
+    route(page,'cards');page.screenshot(path=str(out/'cards.png'))
     projections=['shelf','bag','single','competition']
     assert page.locator('[data-projection-preview]').count()==4
+    background_global='[data-control="cascade-token"][data-layer="global"][data-token="background"]'
+    change(page,background_global,'#0b1f1a')
+    assert_world(page,'discStudio.world.cards.global.background==="#0b1f1a"')
+    changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
+    assert all(v=='true' for v in changed.values()),changed
+    assert all('#0b1f1a' in page.locator(f'[data-projection-preview="{p}"] svg').first.evaluate('e=>e.outerHTML') for p in projections)
+    record('Editing a global card token recomposes all four projections; the preview grid marks every one "recomposed" and every composed SVG carries the new value')
+    # The seed gives buzzz-mint an instance override on shelf.accent, so a global accent edit
+    # reaches three projections and the shelf card keeps its own: the cascade, not a broadcast.
     accent_global='[data-control="cascade-token"][data-layer="global"][data-token="accent"]'
     change(page,accent_global,'#112233')
     assert_world(page,'discStudio.world.cards.global.accent==="#112233"')
     changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
-    assert all(v=='true' for v in changed.values()),changed
-    record('Editing a global card token recomposes all four projections; the preview grid marks every one "recomposed"')
+    assert changed=={'shelf':'false','bag':'true','single':'true','competition':'true'},changed
+    assert 'shelf' not in page.locator('.cascade-receipt').inner_text() and 'competition' in page.locator('.cascade-receipt').inner_text()
+    record('A global edit stops at an instance override: shelf keeps buzzz-mint\'s own accent and the recomposition line names only the three cards that recomposed')
     accent_single='[data-control="cascade-token"][data-layer="projection"][data-projection="single"][data-token="accent"]'
     assert page.locator(accent_single).input_value()=='#112233'
     change(page,accent_single,'#654321')

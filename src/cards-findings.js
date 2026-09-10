@@ -42,6 +42,13 @@ export const findings = [
     proposal: 'The studio receipt row carries a label hash of each produced value, as the Python receipt does; changed is then a produce label that differs from the previous run of the same address.'
   },
   {
+    address: 'proposal.cards.changeIsOneShot', kind: 'friction',
+    for: 'The page showing "recomposed" on the cards an edit reached, for as long as the reader looks.',
+    text: 'The memo answers "what changed" only in the first run after an edit: the next run of the same composition reuses everything, so a page that recomposes on every render erases its own story one render later.',
+    workaround: 'The page recomposes once per render and keeps the run measured right after the edit as the story; a repeated change event with the same value is not an edit.',
+    proposal: 'The same as changedIsComputed: a produce label on the receipt row makes "changed" a comparison of two records, not a property of the run that happened to come first.'
+  },
+  {
     address: 'proposal.cards.reachWithoutComposing', kind: 'friction',
     for: 'The All-cards pane saying which cards inherit a token before those cards have ever been composed.',
     text: 'query(inherits) answers the projections from the projection Parts alone, but its instances come from px.discstudio.cards.effective.*, which only holds cards composed so far; a disc never rendered in a projection is invisible to the query. The reach IS expressible without composing: every disc under px.domain.Disc.* times four projections, minus the instance Parts that override the token.',

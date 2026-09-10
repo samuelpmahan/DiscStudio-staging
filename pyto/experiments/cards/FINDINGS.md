@@ -62,6 +62,7 @@ stays lowercase: a proposal is a part until the owner promotes it.
 | part | for | workaround shipped | proposal |
 |---|---|---|---|
 | `changedIsComputed` | receipts saying exactly which edit recomposed which cards | `changed = not reused`, the page says "recomposed" never "differs" | the studio receipt row carries a label hash of each produced value, as the Python receipt's `produce_sha256` does |
+| `changeIsOneShot` | the page showing "recomposed" for as long as the reader looks | one recompose per render, the run measured right after the edit is kept as the story | the same produce label as `changedIsComputed` |
 | `reachWithoutComposing` | "inherited by N cards" before those cards were ever composed | projections are counted (always known), instances are labelled "among composed cards" | `fn.cards.query` binds `px.domain.Disc.*` too and a reach query answers from the layers and the domain without composing |
 | `threeNamesForOneCall` | readable Tick names when one disc is composed four ways in one run | a `label` parameter on `cardSteps` | a Tick name derived from what the Tick produces |
 | `memoRingEviction` | `changed` staying trustworthy past 24 projection-by-disc pairs | the smoke test stays under the ring | memo keyed per produce address, one slot per address |
