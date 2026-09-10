@@ -7508,8 +7508,8 @@
   "provider": {
     "pyto": {
       "modules": {
-        "core.py": "f62689e276478730b093976d15650743eb026ae2f6f8d59746a8dd3cccc07f78",
-        "pcr.py": "66fcbf559cc110482562da3d7bd8ef3526829f2236e1f0db3c34fce19e83d70d"
+        "core.py": "877e0218b19f54685b7580618c8cfec23e5dcc28acb119efb33e98d7de05598d",
+        "pcr.py": "2dda66e57131d33067b4cc3dfbc3e6eb4629df1d61e6472bcb3f9d3dfa40b427"
       },
       "package": "pyto-lab",
       "version": "0.1.0"
@@ -7554,7 +7554,7 @@
     "select": "543f82368703f91864818dd4f57614824feb4e4407f41feac7d43d6e8e07c1f7"
   },
   "retained": {
-    "commit": "c1ddf45150b9c8f2643354dd441d570e0b47a169-dirty",
+    "commit": "b21cabbccfb7b7d90070e11255d1bf69e79ba77a",
     "provider_is": "the pyto modules and calculation-provider sources present when this record was retained, which are not necessarily the ones that produced the evidence beside it; retain.verify_provider(record, registry) performs the comparison, replay does not"
   }
 }
