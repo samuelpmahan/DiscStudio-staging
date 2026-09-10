@@ -1,3 +1,4 @@
+import { defaultCards, validateCards, applyCardsSet } from './cards.js';
 /** Runtime domain definitions drive both fact editing and presentation discovery. */
 export const schema = {
   BattleEntry: { label: 'Current comparison entry', fields: { score: { type: 'number', label: 'Score', optional: true }, highlighted: { type: 'boolean', label: 'Highlighted' }, winner: { type: 'boolean', label: 'Authored winner' } } },
@@ -110,7 +111,13 @@ export function validateWorld(world) {
     for (const rule of comp.constraints) if (!['bagLimit', 'oneMold', 'teamThrows'].includes(rule.kind) || !safeKey(rule.id) || typeof rule.enabled !== 'boolean' || !Number.isInteger(rule.value) || rule.value < 1 || rule.value > 100) throw new Error('Constraint values must be whole numbers from 1 to 100.');
   }
   for (const preset of Object.values(world.presets)) validatePreset(preset);
-  return world;
+  // Old drafts saved before the card cascade existed carry no `cards` at all;
+  // fill the defaults here rather than mutate (world may already be frozen --
+  // `pop` validates an already-frozen Part) by returning a new object only
+  // when one is needed.
+  const result = world.cards ? world : { ...world, cards: defaultCards() };
+  validateCards(result.cards);
+  return result;
 }
 export function validatePreset(p) {
   if (!p || !safeKey(p.id) || typeof p.name !== 'string' || !['DisplayCard', 'DiscImage'].includes(p.kind)) throw new Error('Invalid presentation preset.');
@@ -174,6 +181,7 @@ export function applyCommand({ world: previous, command }) {
     case 'preset.node.remove': w.presets[c.id].nodes = w.presets[c.id].nodes.filter(n => n.id !== c.nodeId); break;
     case 'preset.node.move': { const nodes = w.presets[c.id].nodes, i = nodes.findIndex(n => n.id === c.nodeId), j = i + c.offset; if (i >= 0 && j >= 0 && j < nodes.length) [nodes[i], nodes[j]] = [nodes[j], nodes[i]]; break; }
     case 'layout.set': Object.assign(w.layout, c.patch); break;
+    case 'cards.set': w.cards = applyCardsSet(w.cards, c); break;
     case 'competition.rule.set': { const comp = required('Competition', c.id); const rule = comp.constraints.find(r => r.id === c.ruleId); if (!rule) throw new Error('Constraint is missing.'); Object.assign(rule, c.patch); break; }
     case 'competition.rule.add': required('Competition', c.id).constraints.push(clone(c.rule)); break;
     case 'competition.rule.remove': { const comp = required('Competition', c.id); comp.constraints = comp.constraints.filter(r => r.id !== c.ruleId); break; }

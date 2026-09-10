@@ -21,3 +21,36 @@
 .part-links{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
 .undo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
 .undo-row [data-undo-stack]{flex:1;min-width:0}
+
+/* Card cascade editor (#/cards): three panes, Figma/devtools mental model over the same PxC chain. */
+.cascade-token-row{border-top:1px solid var(--line);padding:13px 0}
+.cascade-token-row:first-child{border-top:0;padding-top:0}
+.cascade-token-row .control{margin:0}
+.cascade-token-row>p.tiny{margin-top:6px}
+.token-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;flex-wrap:wrap}
+.token-meta .quiet{padding:4px 8px;font-size:10px}
+.provenance-here{color:#5c7b42;font-weight:600}
+.cards-tabs{margin-bottom:18px}
+.cards-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.card-preview-tile{display:flex;flex-direction:column;gap:9px;border:1px solid var(--line);border-radius:11px;padding:13px;background:var(--white);text-align:left;cursor:pointer;width:100%}
+.card-preview-tile.selected{border-color:#96ae7a;box-shadow:0 0 0 2px #b7ca9c55}
+.card-preview-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.changed-marker{font-size:9px;letter-spacing:.4px;color:#4b6f35;background:#dfead5;padding:3px 7px;border-radius:4px}
+.card-preview-art{width:100%;background:#eef1e7;border-radius:6px;overflow:hidden}
+.card-preview-art svg{display:block;width:100%;height:auto;max-width:100%}
+.card-preview-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.provenance-chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-family:'Courier New',monospace;font-size:8px;padding:2px 6px;border-radius:4px;letter-spacing:.2px;white-space:nowrap}
+.chip-global{background:#e9ede2;color:#5d6b53}
+.chip-projection{background:#eaf0df;color:#4c6b3a}
+.chip-instance{background:#f4ecd6;color:#8a6d2c}
+.cascade-receipt{background:#edf2e5;border-radius:6px;padding:10px 12px;margin:16px 0 4px;line-height:1.6;overflow-wrap:anywhere}
+.findings-strip{border-top:1px solid var(--line);margin-top:22px;padding-top:16px}
+.findings-strip>h3{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:#7a8a6c;margin-bottom:10px;font-weight:500}
+.findings-group{margin-bottom:14px}
+.findings-group>.caps{display:block;margin-bottom:8px;font-size:9px}
+.finding-row{margin:9px 0;line-height:1.6}
+.finding-row .mono{font-size:9px;color:#6d7f63;display:block;margin-bottom:2px}
+.finding-for{color:var(--muted)}
+.finding-workaround{color:var(--muted)}
+@media(max-width:560px){.cards-preview-grid{gap:10px}.card-preview-tile{padding:10px}}

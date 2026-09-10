@@ -6,6 +6,8 @@ import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
 import { shelfSheet } from './formats/shelf-sheet.js';
 import { receiptList } from './formats/receipt-list.js';
 import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
+import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
+import { findings as cardsFindings } from './cards-findings.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
 export function createStudioRuntime(initial) {
@@ -43,8 +45,12 @@ export function createStudioRuntime(initial) {
   register('fn.undo.push', undoPush, { memo: false });
   register('fn.undo.pop', undoPop, { memo: false });
   register('fn.undo.settle', undoSettle, { memo: false });
+  register('fn.cards.effective', cardsEffective);
+  register('fn.cards.apply', cardsApply);
+  register('fn.cards.query', cardsQuery);
+  let previousCardInstances = new Set();
   function publishWorld(world) {
-    validateWorld(world); pxc.set('px.studio.world', world);
+    world = validateWorld(world); pxc.set('px.studio.world', world);
     const present = new Set();
     for (const [type, records] of Object.entries(world.objects)) for (const [key, record] of Object.entries(records)) { const a = partAddress(type, key); present.add(a); source(a, record); }
     for (const a of previousObjects) if (!present.has(a)) pxc.set(a, null); // Tombstones cannot masquerade as live objects.
@@ -52,11 +58,23 @@ export function createStudioRuntime(initial) {
     source('px.domain.schemas', world.schemas);
     for (const preset of Object.values(world.presets)) source(`px.presentation.${preset.id}`, preset);
     source('px.comparison.layout', world.layout); source('px.comparison.states', world.battle);
+    source('px.discstudio.cards.tokens', CARD_TOKENS);
+    source('px.discstudio.cards.global', world.cards.global);
+    for (const p of PROJECTIONS) source(`px.discstudio.cards.projection.${p}`, world.cards.projections[p] ?? {});
+    const presentInstances = new Set();
+    for (const p of PROJECTIONS) for (const [discId, override] of Object.entries(world.cards.instances[p] ?? {})) {
+      const a = `px.discstudio.cards.instance.${p}.${discId}`; presentInstances.add(a); source(a, override);
+    }
+    for (const a of previousCardInstances) if (!presentInstances.has(a)) pxc.set(a, null); // A cleared override tombstones its Part.
+    previousCardInstances = presentInstances;
   }
   publishWorld(freeze(validateWorld(initial)));
+  for (const finding of cardsFindings) source(finding.address, finding);
   pxc.set('px.undo.studio', emptyStack('studio'));
   const world = () => pxc.get('px.studio.world');
-  const step = (name, call, bindings, into, args = {}) => ({ name, Calculations: [{ call, with: bindings, args, into }] });
+  const calc = (call, bindings, into, args = {}) => ({ call, with: bindings, args, into });
+  const tick = (name, calcs) => ({ name, Calculations: calcs });
+  const step = (name, call, bindings, into, args = {}) => tick(name, [calc(call, bindings, into, args)]);
   const compose = (name, ticks) => readPql(JSON.stringify({ PrincipleComponentRender: name, Ticks: ticks }), JSON.parse);
   /**
    * One receipt for one run. `run.schedule` is filed on it only when exec.js
@@ -102,7 +120,17 @@ export function createStudioRuntime(initial) {
     const run = execute('studio-command', [step('ApplyCommand', 'fn.studio.applyCommand', { world: 'px.studio.world', command: 'px.input.command' }, 'px.studio.nextWorld')]);
     publishWorld(pxc.get('px.studio.nextWorld')); listener(world(), command, run); return run;
   }
-  function cardSteps(discId, presetId, context, entry, suffix) {
+  /**
+   * The shared card chain, now with the cascade Tick task 78 asks for:
+   * `Cascade:<label>` computes the effective tokens then applies them to the
+   * chosen preset (task 57: two Calculations in declared order, one Tick,
+   * the second reading the first's produce -- classifyTick calls this a
+   * chain), and `Card:<label>` composes from the resulting preset instead of
+   * the raw one. `label` names the Ticks (discId ordinarily; recompose()
+   * below uses the projection name instead, since it renders one disc four
+   * ways in a single composition and needs four distinct Tick names).
+   */
+  function cardSteps(discId, presetId, context, entry, suffix, projection = 'single', label = discId) {
     const w = world(), disc = get(w, 'Disc', discId), preset = w.presets[presetId];
     if (!disc) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
     if (!preset) throw new Error(`Missing presentation '${presetId}'.`);
@@ -112,18 +140,23 @@ export function createStudioRuntime(initial) {
     if (context.extraType && w.schemas[context.extraType]) roots[context.extraType.toLowerCase()] = { type: context.extraType, id: context.extraId };
     const prefix = `px.render.${suffix}`, mat = source(`${prefix}.inputs`, materialFor(w, roots));
     const ea = source(`${prefix}.entry`, entry);
+    const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`, presetAddress = `px.discstudio.cards.preset.${projection}.${discId}`;
     return {
       prefix,
       ticks: [
-        step(`Fields:${discId}`, 'fn.domain.fields', { material: mat }, `${prefix}.fields`),
-        step(`Art:${discId}`, 'fn.disc.art', { disc: partAddress('Disc', discId), mold: partAddress('Mold', mold.id), maker: partAddress('Manufacturer', maker.id) }, `${prefix}.art`),
-        step(`Card:${discId}`, 'fn.card.compose', { fields: `${prefix}.fields`, art: `${prefix}.art`, preset: `px.presentation.${presetId}`, entry: ea }, `${prefix}.card`),
-        step(`CardSvg:${discId}`, 'fn.card.svg', { card: `${prefix}.card` }, `${prefix}.svg`)
+        step(`Fields:${label}`, 'fn.domain.fields', { material: mat }, `${prefix}.fields`),
+        step(`Art:${label}`, 'fn.disc.art', { disc: partAddress('Disc', discId), mold: partAddress('Mold', mold.id), maker: partAddress('Manufacturer', maker.id) }, `${prefix}.art`),
+        tick(`Cascade:${label}`, [
+          calc('fn.cards.effective', { global: 'px.discstudio.cards.global', projection: `px.discstudio.cards.projection.${projection}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
+          calc('fn.cards.apply', { preset: `px.presentation.${presetId}`, effective: effectiveAddress }, presetAddress)
+        ]),
+        step(`Card:${label}`, 'fn.card.compose', { fields: `${prefix}.fields`, art: `${prefix}.art`, preset: presetAddress, entry: ea }, `${prefix}.card`),
+        step(`CardSvg:${label}`, 'fn.card.svg', { card: `${prefix}.card` }, `${prefix}.svg`)
       ]
     };
   }
-  function card(discId, presetId, context = {}, entry = null) {
-    const { prefix, ticks } = cardSteps(discId, presetId, context, entry, `single.${discId}`);
+  function card(discId, presetId, context = {}, entry = null, projection = 'single') {
+    const { prefix, ticks } = cardSteps(discId, presetId, context, entry, `single.${discId}`, projection);
     const run = execute('display-card', ticks);
     return { ...pxc.get(`${prefix}.svg`), card: pxc.get(`${prefix}.card`), fields: pxc.get(`${prefix}.fields`), part: `${prefix}.svg`, run };
   }
@@ -134,7 +167,7 @@ export function createStudioRuntime(initial) {
     const ticks = [], inputs = { layout: 'px.comparison.layout' };
     entries.forEach((entry, i) => {
       const info = mode === 'card' ? null : { ...entry, score: state.scores[entry.id] ?? null, highlighted: state.highlight === entry.id, winner: state.winners.includes(entry.id) };
-      const built = cardSteps(entry.discId, presetId || w.layout.presetId, { bagId, competitionId, roundId }, info, `course.${entry.id}`);
+      const built = cardSteps(entry.discId, presetId || w.layout.presetId, { bagId, competitionId, roundId }, info, `course.${entry.id}`, 'competition');
       ticks.push(...built.ticks); inputs[`card${i}`] = `${built.prefix}.card`;
     });
     ticks.push(step('ArrangeComparison', 'fn.comparison.layout', inputs, 'px.course.scene'));
@@ -209,9 +242,68 @@ export function createStudioRuntime(initial) {
     const run = execute('studio-receipts', [step('Receipts', 'fn.studio.receipts', { receipts: 'px.receipt.*' }, ['px.studio.receipts', 'px.studio.receipts.summary'])]);
     return { rows: pxc.get('px.studio.receipts'), summary: pxc.get('px.studio.receipts.summary'), run };
   }
+  /**
+   * The card cascade editor's API (task 78). `presetFor` names the preset
+   * each projection composes with today (shelf/bag always show the disc
+   * itself; single/competition follow the shared comparison design), and is
+   * the only place that mapping lives.
+   */
+  function presetFor(projection) {
+    if (projection === 'shelf' || projection === 'bag') return 'discImage';
+    if (projection === 'single' || projection === 'competition') return world().layout.presetId;
+    throw new Error(`Unknown card projection '${projection}'.`);
+  }
+  const cardsCascadeTick = (label, projection, discId, presetId) => {
+    const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`, presetAddress = `px.discstudio.cards.preset.${projection}.${discId}`;
+    return tick(`Cascade:${label}`, [
+      calc('fn.cards.effective', { global: 'px.discstudio.cards.global', projection: `px.discstudio.cards.projection.${projection}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
+      calc('fn.cards.apply', { preset: `px.presentation.${presetId}`, effective: effectiveAddress }, presetAddress)
+    ]);
+  };
+  /** Runs the Cascade Tick alone -- the effective tokens for one projection/disc pair, on the record. */
+  function cardsEffectiveRun(projection, discId, context = {}) {
+    if (!PROJECTIONS.includes(projection)) throw new Error(`Unknown card projection '${projection}'.`);
+    if (!get(world(), 'Disc', discId)) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
+    const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`;
+    const run = execute('cards-effective', [cardsCascadeTick(discId, projection, discId, presetFor(projection))]);
+    return { ...pxc.get(effectiveAddress), part: effectiveAddress, run };
+  }
+  /**
+   * One composition, `cards-recompose`, that renders one disc through all
+   * four projections' chains -- each Tick named by projection (`Cascade:shelf`,
+   * `Card:shelf`, ...) rather than by discId, and each addressed under its own
+   * `px.render.recompose.<projection>.<discId>` prefix, since the four chains
+   * share one discId in one run. `changed` reads the settled receipt: the
+   * `fn.card.compose` step for a projection is `!reused` exactly when that
+   * projection's effective tokens (and so its applied preset) actually moved.
+   */
+  function recompose(discId, context = {}) {
+    if (!get(world(), 'Disc', discId)) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
+    const prefixes = {}, ticks = [];
+    for (const projection of PROJECTIONS) {
+      const { prefix, ticks: built } = cardSteps(discId, presetFor(projection), context, null, `recompose.${projection}.${discId}`, projection, projection);
+      prefixes[projection] = prefix; ticks.push(...built);
+    }
+    const receipt = execute('cards-recompose', ticks);
+    const cards = {};
+    for (const projection of PROJECTIONS) {
+      const prefix = prefixes[projection], svg = pxc.get(`${prefix}.svg`);
+      const row = receipt.trace.find(r => r.tick === `Card:${projection}` && r.call === 'fn.card.compose');
+      cards[projection] = { svg: svg.svg, width: svg.width, height: svg.height, part: `${prefix}.svg`, changed: !!row && row.reused === false };
+    }
+    return { receipt, cards };
+  }
+  /** Every PQL read the editor needs over the cascade, one Calculation, one Part per name. */
+  function cardsQueryRun(name, args = {}) {
+    const into = `px.discstudio.cards.query.${name}`;
+    const bindings = { global: 'px.discstudio.cards.global', projections: 'px.discstudio.cards.projection.*', instances: 'px.discstudio.cards.instance.*', effective: 'px.discstudio.cards.effective.*' };
+    execute('cards-query', [step('Query', 'fn.cards.query', bindings, into, { name, ...args })]);
+    return pxc.get(into);
+  }
   return {
     pxc, world, dispatch, card, scene, sceneParallel, constraints, counters, runRecord, execute, executeAsync,
     receipts,
+    cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
     undo: { push, pop, stack: undoStack, depth: (scope = 'studio') => undoStack(scope).depth },
     onChange(fn) { listener = fn; },
     replace(next) { publishWorld(freeze(validateWorld(next))); listener(world(), { type: 'draft.import' }, null); },

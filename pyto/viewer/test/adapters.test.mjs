@@ -127,9 +127,11 @@ test('pyto record: hits are exactly the invocations that read a preexisting Part
 test('DiscStudio: reused === true makes every invocation of the second run a hit', () => {
   const first = fromDiscStudioReceipt(dsDoc.first.pql, dsDoc.first.receipt);
   const second = fromDiscStudioReceipt(dsDoc.second.pql, dsDoc.second.receipt);
-  assert.equal(dsDoc.first.receipt.computed, 4);
-  assert.equal(dsDoc.second.receipt.reused, 4);
-  assert.equal(second.counters.hits, 4);
+  // Task 78: the card chain carries the Cascade Tick (fn.cards.effective then
+  // fn.cards.apply), so a display-card run is six invocations, not four.
+  assert.equal(dsDoc.first.receipt.computed, 6);
+  assert.equal(dsDoc.second.receipt.reused, 6);
+  assert.equal(second.counters.hits, 6);
   assert.equal(second.counters.computed, 0);
   assert.ok(invocations(second).every((invocation) => invocation.hit));
   // First run: nothing is reused, so only the reads of Parts seeded before the
@@ -137,7 +139,7 @@ test('DiscStudio: reused === true makes every invocation of the second run a hit
   const cardSvg = byId(first, 'px.render.single.buzzz-mint.svg');
   assert.equal(cardSvg.hit, false);
   assert.deepEqual(cardSvg.declared_consumes, ['px:px.render.single.buzzz-mint.card']);
-  assert.equal(first.counters.hits, 3);
+  assert.equal(first.counters.hits, 5, 'Fields, Art, Card and both Cascade steps read a Part seeded before the run');
 });
 
 test('DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping', () => {

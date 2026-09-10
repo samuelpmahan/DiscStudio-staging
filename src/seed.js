@@ -1,5 +1,6 @@
 import { schema, clone } from './domain.js';
 import { defaultPresets } from './presentation.js';
+import { defaultCards } from './cards.js';
 export function createSeed() {
   const objects = Object.fromEntries(Object.keys(schema).map(type => [type, {}]));
   const add = (type, value) => (objects[type][value.id] = { ...value, type });
@@ -30,8 +31,13 @@ export function createSeed() {
   add('Competition', { id: 'putterwarz', name: 'PutterWarz', teamIds: ['team-luna', 'team-zone'], roundIds: ['hole-1'], combine: 'all', constraints: [
     { id: 'bag-size', kind: 'bagLimit', value: 5, enabled: true }, { id: 'single-mold', kind: 'oneMold', value: 1, enabled: true }, { id: 'round-throws', kind: 'teamThrows', value: 3, enabled: true }
   ] });
+  // One projection override and one instance override, so the cards editor
+  // opens with something inherited AND something overridden to look at.
+  const cards = defaultCards();
+  cards.projections.competition = { ...cards.projections.competition, sponsor: 'CHAINSPOT' };
+  cards.instances.shelf = { ...cards.instances.shelf, 'buzzz-mint': { accent: '#d47d54' } };
   return {
-    version: 2, schemas: clone(schema), objects, presets: defaultPresets(),
+    version: 2, schemas: clone(schema), objects, presets: defaultPresets(), cards,
     layout: { presetId: 'broadcast', arrangement: 'row', anchor: 'bottom-left', scale: 1.25, gap: 16 },
     battle: { id: 'comparison', name: 'My disc comparison', entries: [ { id: 'entry-1', discId: 'buzzz-mint' }, { id: 'entry-2', discId: 'zone-peach' }, { id: 'entry-3', discId: 'destroyer-lilac' } ], currentStateId: 'state-1', states: [{ id: 'state-1', name: 'Opening', scores: { 'entry-1': null, 'entry-2': null, 'entry-3': null }, highlight: null, winners: [] }] },
     events: [], exports: [], seedDisclosure: 'Sample collection and PutterWarz setup; no throws, measured results, usage or export events are pre-recorded.'

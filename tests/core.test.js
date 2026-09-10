@@ -295,13 +295,13 @@ test('the Inspect receipts list is a PQL query over px.receipt.* publishing two 
   const r = seededScene();
   const first = r.receipts();
   assert.deepEqual(first.rows.map(row => row.name), ['on-the-course']);
-  assert.deepEqual(first.summary, { receipts: 1, invocations: 14, produces: 14, digest: first.summary.digest });
+  assert.deepEqual(first.summary, { receipts: 1, invocations: 20, produces: 20, digest: first.summary.digest });
   assert.match(first.summary.digest, /^[0-9a-f]{8}$/);
   assert.deepEqual(r.pxc.get('px.studio.receipts'), first.rows);
   assert.deepEqual(r.pxc.get('px.studio.receipts.summary'), first.summary);
   const scene = first.rows[0];
   assert.equal(scene.address, 'px.receipt.on-the-course');
-  assert.equal(scene.invocations, 14);
+  assert.equal(scene.invocations, 20); // task 78: each of the 3 lineup entries now gains a Cascade Tick of 2 Calculations (14 + 3*2)
   assert.ok(scene.consumes.includes('px.domain.Disc.buzzz-mint') && scene.consumes.includes('px.course.scene'));
   assert.ok(scene.produces.includes('px.course.svg') && scene.produces.includes('px.render.course.entry-1.card'));
   assert.deepEqual(scene.consumes, [...scene.consumes].sort());

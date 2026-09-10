@@ -140,7 +140,12 @@ with sync_playwright() as p:
     assert [len(t['invocations']) for t in run_record['ticks']]==[len(t['Calculations']) for t in pql]
     assert run_record['counters']['invocations']==sum(len(t['invocations']) for t in run_record['ticks'])
     # Kept as a Part at the reserved `run` second segment; never written into a fact.
-    assert studio.evaluate('discStudio.runtime.pxc.get("px.run.on-the-course")')==run_record
+    # JSON round-trip inside the page, matching downloadJson's own serialization: an
+    # `undefined` node.field (e.g. the cascade's static sponsor lockup text node, which
+    # has no bound domain field) is dropped by JSON.stringify but would otherwise come
+    # back from evaluate() as an explicit null, which is a Playwright serialization
+    # artifact, not a difference in what was actually recorded.
+    assert studio.evaluate('JSON.parse(JSON.stringify(discStudio.runtime.pxc.get("px.run.on-the-course")))')==run_record
     assert studio.evaluate('discStudio.runtime.parts().some(p=>p.address==="px.run.on-the-course")')
     assert not studio.evaluate('discStudio.runtime.parts().some(p=>p.address.startsWith("px.domain.")&&p.value&&p.value.schema)')
     with studio.expect_download() as d: studio.locator('[data-action="record-render"]').click()
@@ -163,7 +168,13 @@ with sync_playwright() as p:
     assert prec['budget']=={'limit_ms':None,'stopped_after_tick':None,'completed':True},prec['budget']
     assert parallel['address']=='px.run.on-the-course-parallel'
     assert all(t['latency_ms'] is not None for t in prec['ticks'])
-    fan=next(t for t in prec['ticks'] if len(t['invocations'])>1)
+    # A Tick is a true fan (independent branches, drawn "parallel") only when every
+    # invocation shares one calculation address; the cascade's own "Cascade" Tick now
+    # merges N entries' two-Calculation chains (fn.cards.effective -> fn.cards.apply)
+    # into one Tick with >1 invocations across two addresses, which is genuinely a
+    # chain, not a fan, and the viewer marks it .chain accordingly.
+    is_fan=lambda t:len(t['invocations'])>1 and len({i['calculation']['address'] for i in t['invocations']})==1
+    fan=next(t for t in prec['ticks'] if is_fan(t))
     assert [i['placement']['worker'] for i in fan['invocations']]==list(range(len(fan['invocations']))),fan
     assert all(i['placement']['started_ms']>=0 for t in prec['ticks'] for i in t['invocations'])
     html=studio.evaluate("record=>discStudio.renderRecordPage(record)",prec)
@@ -172,7 +183,7 @@ with sync_playwright() as p:
     branches.on('pageerror',lambda e:errors.append(str(e)))
     branches.goto((out/'parallel-tick-render.html').resolve().as_uri())
     branches.wait_for_selector('section.tick.parallel')
-    assert branches.locator('section.tick.parallel').count()==sum(1 for t in prec['ticks'] if len(t['invocations'])>1)
+    assert branches.locator('section.tick.parallel').count()==sum(1 for t in prec['ticks'] if is_fan(t))
     assert branches.locator('section.tick.parallel[data-tick="%d"] .branches .branch'%fan['index']).count()==len(fan['invocations'])
     box=[branches.locator('section.tick.parallel[data-tick="%d"] .branches .branch'%fan['index']).nth(i).bounding_box() for i in range(len(fan['invocations']))]
     assert len({round(b['y']) for b in box})==1,'the branches of a parallel Tick are drawn side by side, on one row'
@@ -219,6 +230,49 @@ with sync_playwright() as p:
         route(page,name);assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),name+' mobile overflow'
     page.screenshot(path=str(out/'mobile.png'))
     record('Four routes render at desktop and mobile widths without horizontal page overflow')
+    page.set_viewport_size({'width':1536,'height':960})
+    # Card cascade editor (#/cards): global -> projection -> instance, retrofitted onto
+    # the existing card surface. `runtime.cards.recompose` is the acceptance test itself:
+    # a global edit changes all four projections, a projection edit changes exactly one.
+    route(page,'cards');page.screenshot(path=str(out/'cards.png'))
+    projections=['shelf','bag','single','competition']
+    assert page.locator('[data-projection-preview]').count()==4
+    background_global='[data-control="cascade-token"][data-layer="global"][data-token="background"]'
+    change(page,background_global,'#0b1f1a')
+    assert_world(page,'discStudio.world.cards.global.background==="#0b1f1a"')
+    changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
+    assert all(v=='true' for v in changed.values()),changed
+    assert all('#0b1f1a' in page.locator(f'[data-projection-preview="{p}"] svg').first.evaluate('e=>e.outerHTML') for p in projections)
+    record('Editing a global card token recomposes all four projections; the preview grid marks every one "recomposed" and every composed SVG carries the new value')
+    # The seed gives buzzz-mint an instance override on shelf.accent, so a global accent edit
+    # reaches three projections and the shelf card keeps its own: the cascade, not a broadcast.
+    accent_global='[data-control="cascade-token"][data-layer="global"][data-token="accent"]'
+    change(page,accent_global,'#112233')
+    assert_world(page,'discStudio.world.cards.global.accent==="#112233"')
+    changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
+    assert changed=={'shelf':'false','bag':'true','single':'true','competition':'true'},changed
+    assert 'shelf' not in page.locator('.cascade-receipt').inner_text() and 'competition' in page.locator('.cascade-receipt').inner_text()
+    record('A global edit stops at an instance override: shelf keeps buzzz-mint\'s own accent and the recomposition line names only the three cards that recomposed')
+    accent_single='[data-control="cascade-token"][data-layer="projection"][data-projection="single"][data-token="accent"]'
+    assert page.locator(accent_single).input_value()=='#112233'
+    change(page,accent_single,'#654321')
+    assert_world(page,'discStudio.world.cards.projections.single.accent==="#654321"')
+    changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
+    assert [p for p,v in changed.items() if v=='true']==['single'],changed
+    receipt=page.evaluate('discStudio.cards().edit')
+    assert receipt['layer']=='projection' and receipt['token']=='accent' and receipt['value']=='#654321' and receipt['projection']=='single',receipt
+    record('Editing the single projection layer recomposes exactly that projection, and window.discStudio.cards() carries the edit')
+    reset_single='[data-action="cascade-reset"][data-layer="projection"][data-projection="single"][data-token="accent"]'
+    page.locator(reset_single).click()
+    assert_world(page,'!("accent" in discStudio.world.cards.projections.single)')
+    assert page.locator(accent_single).input_value()=='#112233','cleared override did not fall back to the inherited global value'
+    record('Resetting a projection override clears it; the token inherits from global again')
+    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'cards route overflow'
+    page.set_viewport_size({'width':390,'height':844})
+    route(page,'cards')
+    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'cards route mobile overflow'
+    page.set_viewport_size({'width':1536,'height':960})
+    record('Cards route renders at desktop and mobile widths without horizontal page overflow')
     assert not errors,errors
     record('No browser JavaScript errors')
     report={'mode':'embedded DOM; memory storage double; run-record block on a real local origin and file://' if a.embedded else 'HTTP; real origin storage','checks':checks,'count':len(checks),'errors':errors}

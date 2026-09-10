@@ -1,0 +1,145 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T235029Z-task-78",
+  "package": "task-78",
+  "base_sha": "afb918f8226fa7b454b39642594c023185454eb1",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test",
+    "exit": 0,
+    "output_sha256": "f6ab1b80a46d69d651b4fe1331bb5f21d26b3d8c950ea8fc0d511146728175e8"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "63bde84e4078b231c9ee3f4827f0c404c3b7b4f03085c4982b2f462331098fb6",
+    "counts": {
+      "library": 435,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/cards/CONTRACT.md",
+      "bytes": 9974,
+      "sha256": "e339e9365ca792d2446637927ea2d0b38e6e15afabe5bcced14befe3172908b6"
+    },
+    {
+      "path": "pyto/experiments/cards/FINDINGS.md",
+      "bytes": 5994,
+      "sha256": "5a99e34b26b7e33f3ffac4193065434df8c19a0a8b020ce7f7c0f64420246416"
+    },
+    {
+      "path": "pyto/experiments/tasks/78/HANDOFF.md",
+      "bytes": 8809,
+      "sha256": "0b802ec10e4b008212fb2bb8cb839d3aca88e3a55d09095c76b4732975883aec"
+    },
+    {
+      "path": "pyto/experiments/tasks/78/evidence/check_all.txt",
+      "bytes": 194026,
+      "sha256": "51bb8a7f01fb6b7e1dcb113865d071aa7846b27abf52b650b1fb808055cf5e27"
+    },
+    {
+      "path": "pyto/experiments/tasks/78/evidence/verify.txt",
+      "bytes": 13959,
+      "sha256": "13a3e158507719b8ae97932bc5b2ec3270be32be0af1316c47e5e17eda993e56"
+    },
+    {
+      "path": "pyto/experiments/tasks/78/packet.md",
+      "bytes": 3849,
+      "sha256": "426cd39fc13487f6b852f05ce3f574f475933274efef706d3aeda144b191ab31"
+    },
+    {
+      "path": "pyto/viewer/fixtures/discstudio-display-card.json",
+      "bytes": 286941,
+      "sha256": "6b1994e1924fa69b4eea28dea9f1d33ab4bd22dacdaaf4225d4aa0d8a2ed1f56"
+    },
+    {
+      "path": "pyto/viewer/test/adapters.test.mjs",
+      "bytes": 51040,
+      "sha256": "5b516c35b649bd24f23d2ea876c7ef46950bf3a435931e088c5efe9150f4be73"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 22911,
+      "sha256": "d92e8fd30c463f14175248d646fbffc7dcc4d6f763396f9722ed125f84d458e6"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 86844,
+      "sha256": "9a46f23664ba6ce95e46df7176736a8a33a4773bc414738050ad825c48cb1042"
+    },
+    {
+      "path": "src/cards-findings.js",
+      "bytes": 7801,
+      "sha256": "42455d37d261dd25891d238290b055bfee08dd94dce1f57bf29d27288862d676"
+    },
+    {
+      "path": "src/cards.js",
+      "bytes": 10210,
+      "sha256": "d9defe06d2882dd77a925c37a7ac61a729030912f5e8b4a9681a577ef78aa915"
+    },
+    {
+      "path": "src/domain.js",
+      "bytes": 19283,
+      "sha256": "2da5c58544e93a0a14231d5970cec486a69fc58500354614ef5d51c6fc4c77de"
+    },
+    {
+      "path": "src/runtime.js",
+      "bytes": 22218,
+      "sha256": "b5f803a66acfe556d1fa207eb341be892a3b1aefce366cad0725f6ee71d3b75e"
+    },
+    {
+      "path": "src/seed.js",
+      "bytes": 4264,
+      "sha256": "b16b203ef4b9ca2d87a11a02b7d275f83e01ff937d75067d4aea47deff7b8130"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 29370,
+      "sha256": "a7e47ea397ef9ee2fe6aabff40f1b314bcd6556a62d5c21580ded3bdb5370c64"
+    },
+    {
+      "path": "tests/cards.test.js",
+      "bytes": 12244,
+      "sha256": "9fed6b44933a1977165c2c95c1cec7099b514fd109e3660d2d80e190935489f0"
+    },
+    {
+      "path": "tests/core.test.js",
+      "bytes": 41455,
+      "sha256": "8a0fefc0ac4a5e20f3209685e72554a7bb1419846af94896380ca830b1b4fece"
+    },
+    {
+      "path": "tests/fixtures/serial-run-record.json",
+      "bytes": 404451,
+      "sha256": "391b0e7edcfcec226ad433d038fddc50b85772ae6744c94113a7db0d6b054f34"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-10T23:51:48.186197Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
