@@ -11,9 +11,19 @@ repository; see pyto/experiments/tasks/23/packet.md):
     grade.py:compared drops duration_ms and nothing else   -> also drop
         `result_sha256` and TamperedRecord.test_flipping_one_result_digest_fails_the_replay
         stops failing: killed.
-    grade.py:check_handoff tests the Tick names             -> compare against an
-        empty list of Ticks and Handoff.test_a_missing_tick_line_fails_check_four
-        stops failing: killed.
+    grade.py:check_handoff looks for a Tick's own list      -> loosen `missing_ticks`
+        line, not the Tick's name anywhere on the page          in `def check_handoff`
+        back to the task-29 rule (`name not in handoff_text`) and Handoff.test_a_-
+        missing_stats_line_fails_check_four_even_though_the_prose_says_stats stops
+        failing -- the Stats bullet is gone, but "Stats" is still in the prose below
+        it: killed.
+    grade.py:names_tick wants the bullet to *start* with    -> loosen the `return` of
+        the Tick's name, not merely contain it                  `def names_tick` to a
+        substring test (`return name in bullet`) and Handoff.test_the_three_accepted_-
+        bullet_forms_and_nothing_else fails on "*Mean* and *Median* live in Stats":
+        killed.
+    grade.py:check_handoff tests the Tick names at all       -> compare against an
+        empty list of Ticks and both Handoff missing-Tick tests stop failing: killed.
     homework.py:parse_scores sorts the roster by name       -> return the rows
         unsorted and CommittedEvidence.test_grade_exits_zero_on_the_committed_evidence
         fails on check 2 (the fresh process no longer reproduces the record): killed.
@@ -213,21 +223,41 @@ class TamperedRecord(unittest.TestCase):
             self.assertIn("the source changed since the run", completed.stdout)
 
 
-class Handoff(unittest.TestCase):
-    def test_a_missing_tick_line_fails_check_four(self):
-        """grade.py:check_handoff -- a hand-off that leaves a Tick out is refused.
+def handoff_without_bullet(name: str) -> str:
+    """HANDOFF.md with the `- **<name>**` bullet, and only it, taken out.
 
-        Guards `def check_handoff` in grade.py. The defect is the whole `Histogram`
-        bullet removed from HANDOFF.md and nothing else, which is the shape of a
-        student quietly omitting the step they did not understand.
+    The bullet runs from its `- ` line to the next bullet or the next blank line,
+    whichever comes first, so the indented lines it wraps onto go with it.
+    """
+    with open(HANDOFF, encoding="utf-8") as handle:
+        lines = handle.read().splitlines()
+    start = next(index for index, line in enumerate(lines) if line.startswith(f"- **{name}**"))
+    end = next(
+        index
+        for index in range(start + 1, len(lines))
+        if lines[index].startswith("- ") or not lines[index].strip()
+    )
+    return "\n".join(lines[:start] + lines[end:])
+
+
+class Handoff(unittest.TestCase):
+    def test_a_missing_stats_line_fails_check_four_even_though_the_prose_says_stats(self):
+        """grade.py:names_tick -- the Tick needs a line of its own, not a mention.
+
+        Guards `def tick_list_lines` and `def names_tick` in grade.py, and through
+        them the Tick half of `def check_handoff`. The defect is the whole `Stats`
+        bullet removed from the "One line per Tick" list and nothing else -- the
+        shape of a student quietly omitting the step they did not understand. Stats
+        is the interesting one: the name still appears further down the page (the
+        honest-reason paragraph, twice, and a `{?}` line), so a check that only
+        asked whether "Stats" appears anywhere on the page would pass on a hand-off
+        with no Stats step in its list. That is the task 29 gap, and this test is
+        what keeps it closed.
         """
-        with open(HANDOFF, encoding="utf-8") as handle:
-            lines = handle.read().splitlines()
-        start = next(index for index, line in enumerate(lines) if line.startswith("- **Histogram**"))
-        end = next(index for index in range(start + 1, len(lines)) if not lines[index].strip())
-        trimmed = "\n".join(lines[:start] + lines[end:])
-        self.assertNotIn("Histogram", trimmed)
-        self.assertIn("Stats", trimmed)  # only the one Tick went missing
+        trimmed = handoff_without_bullet("Stats")
+        self.assertNotIn("- **Stats**", trimmed)
+        self.assertIn("Stats", trimmed)  # still all over the prose: that is the point
+        self.assertIn("- **Histogram**", trimmed)  # only the one Tick line went missing
 
         with tempfile.TemporaryDirectory() as scratch:
             path = os.path.join(scratch, "HANDOFF.md")
@@ -236,9 +266,59 @@ class Handoff(unittest.TestCase):
             completed = run_grade(RUN_1, path)
             self.assertEqual(completed.returncode, 1, completed.stdout)
             self.assertIn("FAIL  4 hand-off", completed.stdout)
-            self.assertIn("the hand-off never names Tick 'Histogram'", completed.stdout)
+            self.assertIn("no line of its own for Tick 'Stats'", completed.stdout)
             for still_passing in ("PASS  1 contract", "PASS  2 replay", "PASS  3 receipts"):
                 self.assertIn(still_passing, completed.stdout)
+
+    def test_a_missing_histogram_line_fails_check_four(self):
+        """grade.py:check_handoff -- a hand-off that leaves a Tick out is refused.
+
+        The same defect on the Tick whose name appears exactly once on the page, so
+        the failure does not depend on where else the name turns up. Kept beside the
+        Stats case because a substring check would also catch this one: the pair is
+        what says the new rule is strictly stronger and not merely different.
+        """
+        trimmed = handoff_without_bullet("Histogram")
+        self.assertNotIn("Histogram", trimmed)
+
+        with tempfile.TemporaryDirectory() as scratch:
+            path = os.path.join(scratch, "HANDOFF.md")
+            with open(path, "w", encoding="utf-8", newline="\n") as handle:
+                handle.write(trimmed + "\n")
+            completed = run_grade(RUN_1, path)
+            self.assertEqual(completed.returncode, 1, completed.stdout)
+            self.assertIn("FAIL  4 hand-off", completed.stdout)
+            self.assertIn("no line of its own for Tick 'Histogram'", completed.stdout)
+
+    def test_the_three_accepted_bullet_forms_and_nothing_else(self):
+        """grade.py:names_tick -- which list lines count as a Tick's own line.
+
+        Guards the three forms the README promises -- `- **Name**`, `- Name:` and
+        `- Name ` -- and the refusals that make the rule worth having: a bullet that
+        names the Tick somewhere in the middle, and a name that is only the start of
+        a longer word.
+        """
+        for accepted in ("**Stats** -- one step", "Stats: one step", "Stats holds two", "Stats"):
+            self.assertTrue(grade.names_tick(accepted, "Stats"), accepted)
+        for refused in ("*Mean* and *Median* live in Stats", "Statsville -- not a Tick", ""):
+            self.assertFalse(grade.names_tick(refused, "Stats"), refused)
+
+    def test_only_the_tick_section_bullets_are_read(self):
+        """grade.py:tick_list_lines -- the list, not the whole page.
+
+        Guards `def tick_list_lines`: bullets under other headings (the files list,
+        the `{?}` list) are not Tick lines, and the indented continuations of a
+        bullet are not lines of their own.
+        """
+        with open(HANDOFF, encoding="utf-8") as handle:
+            bullets = grade.tick_list_lines(handle.read())
+        self.assertEqual(len(bullets), 4)
+        self.assertEqual(
+            [bullet.split("**")[1] for bullet in bullets],
+            ["Parse", "Stats", "Letters", "Histogram"],
+        )
+        for bullet in bullets:
+            self.assertNotIn("homework.py", bullet)  # the files list is a different section
 
     def test_a_missing_file_fails_check_four(self):
         """grade.py:homework_files -- every file in the directory must be named.
