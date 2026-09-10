@@ -18,8 +18,10 @@ Four checks, each of which a machine can settle on its own, and nothing else:
                  it, and each receipt's `implementation_sha256` is the digest of
                  that Calculation's source *as it is on disk right now*. Editing
                  homework.py without re-running it fails here.
-  4. Hand-off.   HANDOFF.md names every Tick in the record and every file this
-                 homework is made of.
+  4. Hand-off.   HANDOFF.md gives every Tick in the record a list line of its own
+                 under its "One line per Tick" heading, and names every file this
+                 homework is made of. A Tick name that only turns up in prose does
+                 not count: the step has to have its own line.
 
 What is NOT checked here, and is the actual point of the assignment: whether the
 hand-off explains the program in plain words well enough that a cold reader --
@@ -253,17 +255,68 @@ def check_receipts(record: dict, receipts: dict) -> tuple[bool, list[str]]:
     return True, [f"{checked} invocation(s) across {len(record['ticks'])} Tick(s): receipt present, source digest is today's source"]
 
 
+TICK_SECTION = "One line per Tick"
+
+
+def tick_list_lines(handoff_text: str) -> list[str]:
+    """The bullets under the hand-off's "One line per Tick" heading, text only.
+
+    A bullet is a line that starts at column zero with `- ` or `* `; the indented
+    lines a bullet wraps onto belong to the bullet above them and are not lines of
+    their own. The section runs from its heading to the next heading of any level.
+    """
+    bullets: list[str] = []
+    inside = False
+    for line in handoff_text.splitlines():
+        if line.startswith("#"):
+            inside = TICK_SECTION.lower() in line.lower()
+            continue
+        if inside and line.startswith(("- ", "* ")):
+            bullets.append(line[2:].strip())
+    return bullets
+
+
+def names_tick(bullet: str, name: str) -> bool:
+    """Does this bullet's text start by naming `name`?
+
+    Three forms, and only these three: `**Name**` (any punctuation after it),
+    `Name:` and `Name ` -- plus a bullet that is the bare name and nothing else.
+    The name has to open the line: a bullet that merely mentions the Tick
+    somewhere in its prose is a mention, not that Tick's own line.
+    """
+    return bullet == name or bullet.startswith((f"**{name}**", f"{name}:", f"{name} "))
+
+
 def check_handoff(record: dict, handoff_text: str) -> tuple[bool, list[str]]:
-    """4. The hand-off names every Tick and every file."""
+    """4. The hand-off gives every Tick a list line of its own, and names every file.
+
+    The Tick half is deliberately not a substring search of the page. A step's name
+    turns up in prose all over a good hand-off, so "the name appears somewhere"
+    passes even when the student deleted that step's entry from the list -- which is
+    exactly the omission this check exists to catch. What is required is a bullet
+    under the "One line per Tick" heading whose text *starts* with the Tick's name.
+
+    The file half stays a substring search: a file name is written in backticks and
+    a hand-off may mention it anywhere it likes, so there is no line to look for.
+    """
     ticks = [tick["name"] for tick in record["ticks"]]
     files = homework_files()
-    missing_ticks = [name for name in ticks if name not in handoff_text]
+    bullets = tick_list_lines(handoff_text)
+    missing_ticks = [name for name in ticks if not any(names_tick(b, name) for b in bullets)]
     missing_files = [name for name in files if name not in handoff_text]
     if missing_ticks or missing_files:
-        problems = [f"the hand-off never names Tick {name!r}" for name in missing_ticks]
+        problems = [
+            f"the hand-off's {TICK_SECTION!r} list has no line of its own for Tick {name!r}"
+            for name in missing_ticks
+        ]
+        if missing_ticks and not bullets:
+            problems.append(f"(the hand-off has no {TICK_SECTION!r} section, or it holds no list lines)")
         problems += [f"the hand-off never names the file {name!r}" for name in missing_files]
         return False, problems
-    return True, [f"names all {len(ticks)} Tick(s): {', '.join(ticks)}", f"names all {len(files)} file(s)"]
+    return True, [
+        f"one list line each for all {len(ticks)} Tick(s): {', '.join(ticks)}",
+        f"names all {len(files)} file(s)",
+    ]
 
 
 # --- the report ----------------------------------------------------------------
