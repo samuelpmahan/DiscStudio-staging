@@ -10,7 +10,9 @@
 Everything is derived from git and the files under pyto/: the board's "## Today" landed lines
 give the order, each landing's receipt gives the verdict, the landing commit gives the change.
 No clock is read, no absolute path is written, the output is LF only; same tree, same bytes.
-Standard library only.
+Standard library only, apart from this repository's own `pyto` package (`pyto.neat.review`, for
+the question loop's answered state -- one parser, one answers directory, read here and by `neat
+ask`, never two).
 """
 from __future__ import annotations
 
@@ -22,10 +24,22 @@ import subprocess
 import sys
 import textwrap
 
+import pyto.neat.review as neat_review
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))  # the repository (pyto/ is one level down)
+PYTO_DIR = os.path.join(ROOT, "pyto")
 sys.path.insert(0, HERE)
 from board_page import inline  # noqa: E402  (the board's renderer: same inline markup, same tokens)
+
+
+def question_status(line: str) -> str:
+    """"open", or "answered <digest first 12>" -- the label of one raw `{?}` line, looked up in
+    `pyto/experiments/review/answers/` the same way `neat answers` does (`pyto.neat.review.
+    answer_for`), so a step and the CLI never disagree about what counts as answered."""
+    label, _ = neat_review.split_question_line(line)
+    answer = neat_review.answer_for(PYTO_DIR, label)
+    return "open" if answer is None else f"answered {answer['sha256'][:12]}"
 
 DIFF_CAP = 60 * 1024
 WIDTH = 100
@@ -117,8 +131,12 @@ def landing_commits() -> dict[str, dict]:
     """One pass over every landing commit: subject, body, numstat and patch against the first parent.
     Keyed by receipt id (from the commit body) and by package (the newest wins)."""
     sep = "\x00\x00WALK\x00\x00"
-    raw = run_git("log", "--first-parent", "-m", "--numstat", "-p", "--no-color",
-                  "--format=%x00%x00WALK%x00%x00%H%x00%s%x00%b%x00", "--grep=^land(")
+    # Every landing commit reachable from here, whichever parent it sits behind (a copy that merged
+    # MAIN reaches MAIN's landings through the merge's second parent), each diffed against its own
+    # first parent, which is what the landing changed.
+    shas = [line for line in run_git("log", "--format=%H", "--grep=^land(").split("\n") if line]
+    raw = run_git("show", "--first-parent", "-m", "--numstat", "-p", "--no-color",
+                  "--format=%x00%x00WALK%x00%x00%H%x00%s%x00%b%x00", *shas) if shas else ""
     found: dict[str, dict] = {}
     for chunk in raw.split(sep)[1:]:
         sha, subject, body, rest = chunk.split("\x00", 3)
@@ -375,7 +393,7 @@ def step_html(s: dict, total: int) -> str:
                    f'<pre><code>{html.escape(patch)}{html.escape(cut)}</code></pre></details>')
     if s["questions"]:
         out.append('<p class="eyebrow">the packet left open</p><ul>')
-        out.extend(f"<li>{inline(q)}</li>" for q in s["questions"])
+        out.extend(f"<li>{inline(q)} — {html.escape(question_status(q))}</li>" for q in s["questions"])
         out.append("</ul>")
     if s["handoff"]:
         m = re.match(r"^task-(\d+)$", s["package"])
@@ -427,7 +445,7 @@ def step_text(s: dict, total: int) -> str:
         out.append(f"diff: git show {s['sha']}")
     if s["questions"]:
         out.append("the packet left open:")
-        out.extend(wrap(q, "  ") for q in s["questions"])
+        out.extend(wrap(f"{q} — {question_status(q)}", "  ") for q in s["questions"])
     if s["handoff"]:
         out.append(f"hand-off: pyto/experiments/tasks/{s['package'].split('-', 1)[1]}/HANDOFF.md")
     m = re.match(r"^task-(\d+)$", s["package"])

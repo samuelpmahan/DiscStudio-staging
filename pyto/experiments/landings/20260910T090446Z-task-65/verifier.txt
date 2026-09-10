@@ -1,0 +1,9 @@
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+........walk: 71 steps, 4860290 bytes, ok
+......
+----------------------------------------------------------------------
+Ran 14 tests in 7.362s
+
+OK
+walk: 71 steps, 4860290 bytes, ok
