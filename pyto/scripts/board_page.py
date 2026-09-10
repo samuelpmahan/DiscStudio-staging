@@ -7,6 +7,8 @@ No dependencies. Headings, paragraphs, bullet lists, fenced code, inline code an
 rendered; a "## Today" bullet of the form `- YYYY-MM-DD HH:MM **kind** `task-N`: text` becomes a
 timeline row with its stamp, kind and task. Everything else is passed through as prose.
 """
+from __future__ import annotations
+
 import html
 import re
 import sys

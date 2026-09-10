@@ -1,0 +1,79 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T015135Z-task-36",
+  "package": "task-36",
+  "base_sha": "90d3a93f3898ace1227415c9f93ebaae78a1d644",
+  "result": "verified",
+  "verifier": {
+    "command": "python3 pyto/scripts/board_page.py pyto/BOARD.md > /tmp/kt-board.html && grep -q 'class=\"row' /tmp/kt-board.html && test -f pyto/KT-MAC.md && grep -q '^## Chunk 6' pyto/KT-MAC.md",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "1e9bd39eec626d9810a3ab8f89acaa68435c07d5a258629e832ffbe1c65a1719",
+    "counts": {
+      "library": 193,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 248,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 14,
+      "experiments/tick-laws": 10,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 107,
+      "viewer-record-schema": 24
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/KT-MAC.md",
+      "bytes": 7872,
+      "sha256": "09d7c6a75fb9e72bfe061bd3cfe39361302fcaf8701dca66a6ef6243aaaf335a"
+    },
+    {
+      "path": "pyto/LANDING.md",
+      "bytes": 11257,
+      "sha256": "c6b24a562e780ee4303a49c4e4c6798ea63364153ed1c98a9ba9a263f7b4c168"
+    },
+    {
+      "path": "pyto/experiments/tasks/36/HANDOFF.md",
+      "bytes": 6565,
+      "sha256": "81826f0595d58ff80420913280a92d140e9911a29b585eae965ad4d32265aa41"
+    },
+    {
+      "path": "pyto/experiments/tasks/36/evidence/check_all.txt",
+      "bytes": 138011,
+      "sha256": "9e3c7aec10b0eaeae11caba8a6c72ecc0b507bb72a5dc42f7ea34d3def4602b6"
+    },
+    {
+      "path": "pyto/experiments/tasks/36/evidence/verify.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/36/packet.md",
+      "bytes": 2390,
+      "sha256": "62b17a9de32e4c1e585450749b482069a45c6a33152ffb7265e2274f0ca9b628"
+    },
+    {
+      "path": "pyto/scripts/board_page.py",
+      "bytes": 11247,
+      "sha256": "e926bcc122a079fde196fb14c28ca8222f42d95f3799a3537ffbf25536ca998b"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 47506,
+      "sha256": "f86275b9d005182f97bd5e24b624d06a3f307003618a2dafcc949d3ab69cacb1"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-10T01:52:14.234305Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
