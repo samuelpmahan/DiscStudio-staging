@@ -68,6 +68,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 02:11 **landed** `task-38`: KT-MAC: chunk 3 notes that questions.sh prints a harmless BrokenPipe traceback after head; chunks 2 and 3 were dry-run as written (6 files since c805dea, suites green, receipt 20260910T021122Z-task-38)
 - 2026-09-10 02:10 **started** `task-38`: KT-MAC: chunk 3 notes that questions.sh prints a harmless BrokenPipe traceback after head; chunks 2 and 3 were dry-run as written (copy EXP/38; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 02:09 **landed** `task-37`: the frontier: pyto/FRONTIER.md holds every candidate on the record merged into nine adds, each one OS piece plus the feature that shows it, in the order that reads best; the board points at it; tasks open from adds (7 files since aec5160, suites green, receipt 20260910T020908Z-task-37)
 - 2026-09-10 02:08 **started** `task-37`: the frontier: pyto/FRONTIER.md holds every candidate on the record merged into nine adds, each one OS piece plus the feature that shows it, in the order that reads best; the board points at it; tasks open from adds (copy EXP/37; it lands only on green, with a receipt, or is killed)
