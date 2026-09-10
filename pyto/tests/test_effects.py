@@ -22,17 +22,21 @@ not happen**. Concretely --
 Mutation-checked claims (one-line edits applied to a scratch copy of the tree,
 never to the repository; see pyto/experiments/tasks/49/packet.md):
 
-    core.py:Calculation.__post_init__ refuses any root but      -> accept anything
-        `fn.`/`oc.`                                                (`startswith("")`)
+    core.py:Calculation.__post_init__ refuses any root but      -> `startswith("")`
+        `fn.`/`oc.` (`startswith(CALCULATION_ROOTS)`)
         and PurityIsAMissingHandle.test_the_two_roots_and_no_third fails: killed.
-    pcr.py:_prepare passes the handle only to an `oc.`          -> pass it to every
-        Calculation                                                Calculation
+    pcr.py:_prepare passes the handle only to an `oc.`          -> `if True:`
+        Calculation (`if invocation.calculation.is_operational`)
         and PurityIsAMissingHandle.test_a_pure_calculation_gets_no_handle fails
         (the fn reads args["effects"] and no KeyError is raised): killed.
-    effects.py:ReplayEffects._next checks the recorded result   -> skip the check
-        against its own digest                                     (`pass`)
-        and Tampering.test_a_tampered_effect_digest_is_refused fails (the replay
-        happily returns the tampered entry): killed.
+    effects.py:ReplayEffects._next checks the recorded result   -> `if False:`
+        against its own digest before feeding it back
+        and Tampering.test_a_tampered_effect_digest_is_refused_naming_the_-
+        invocation_and_index fails (the child replays the tampered ledger and
+        exits 0): killed.
+
+All three were run against a scratch copy of the tree on 2026-09-10 and each
+killed the named test and no other.
 """
 
 from __future__ import annotations
