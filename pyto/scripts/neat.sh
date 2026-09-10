@@ -13,6 +13,9 @@
 #   neat list                 every experiment and its state
 #   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
 #   neat walk [N | --page [out]]   the walk: the index of landings, one step as text, or the page (default ./walk.html)
+#   neat diff <a.json> <b.json> --store <seed.json> --registry <module:attr> [--label-a T] [--label-b T]
+#                             two PQL documents' difference, computed before it is shown: px.exp.blok.diff.<a>.<b>
+#                             under pyto/experiments/review/diffs, with both documents' run records beside it
 #   neat ask                  the tiny-question batch: every unanswered {?}, collated and numbered
 #   neat answer <n> <k> "<words>" [--technical "<text>"]   file the owner's reply to one batch item
 #   neat answers               every filed answer: label, digest, n, k
@@ -59,7 +62,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,19p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,22p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -641,6 +644,13 @@ cmd_walk() {
   esac
 }
 
+cmd_diff() {
+  # neat diff <a.json> <b.json> --store <seed.json> --registry <module:attr> [--label-a T] [--label-b T]
+  # A thin forward to the Calculation itself (pyto/src/pyto/neat/diff.py); $PYTHON already has
+  # pyto importable (this copy's own .venv, or PYTHONPATH), so no cwd or sys.path trick is needed here.
+  "$PYTHON" -m pyto.neat.diff "$@"
+}
+
 cmd_ask() {
   # Collate every unanswered {?} on the tree into one numbered batch (pyto.neat.review), print it,
   # leave the batch Part and the run record under pyto/experiments/review/. cd's into pyto/ first
@@ -687,5 +697,6 @@ case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
-  ask) cmd_ask "$@";; answer) cmd_answer "$@";; answers) cmd_answers "$@";; *) usage;;
+  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
+  ask) cmd_ask "$@";; answer) cmd_answer "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; *) usage;;
 esac

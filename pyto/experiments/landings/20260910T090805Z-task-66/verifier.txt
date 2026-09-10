@@ -1,0 +1,13 @@
+[tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/tests')
+[tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.287s
+
+OK
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 2.816s
+
+OK
+experiments/molecules/report.md matches a fresh mine

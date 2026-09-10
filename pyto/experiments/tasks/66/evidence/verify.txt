@@ -1,0 +1,25 @@
+[tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/66/pyto/tests')
+[tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/66/pyto/viewer/test')
+FF........
+======================================================================
+FAIL: test_cli_writes_the_part_and_both_run_records (tests.test_neat_diff.TestCLI.test_cli_writes_the_part_and_both_run_records)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/66/pyto/tests/test_neat_diff.py", line 179, in test_cli_writes_the_part_and_both_run_records
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : /home/user/DiscStudio-staging/.venv/bin/python: No module named pyto.neat.diff
+
+
+======================================================================
+FAIL: test_two_runs_of_the_cli_give_identical_part_bytes (tests.test_neat_diff.TestCLI.test_two_runs_of_the_cli_give_identical_part_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/66/pyto/tests/test_neat_diff.py", line 206, in test_two_runs_of_the_cli_give_identical_part_bytes
+    self.assertEqual(first.returncode, 0, first.stderr)
+AssertionError: 1 != 0 : /home/user/DiscStudio-staging/.venv/bin/python: No module named pyto.neat.diff
+
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.125s
+
+FAILED (failures=2)

@@ -1,0 +1,121 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T090805Z-task-66",
+  "package": "task-66",
+  "base_sha": "73b36d84638ec70b3a8bb20734ba3239a09a0c51",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest tests.test_neat_diff && python -m unittest discover -s experiments/molecules -p 'test_*.py' && python experiments/molecules/mine.py --check",
+    "exit": 0,
+    "output_sha256": "e7a70662a88303d50212bf4659f0ec261121491011f88eae0fe8f60ac8136a4e"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "5562e7a52e309ac0e3839227bb669f6d832e2fd83f901e977f7a01660074bbee",
+    "counts": {
+      "library": 366,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/molecules/mine.py",
+      "bytes": 7316,
+      "sha256": "83f435159f9c18ad6536f6ae5b5018b324328696bb645a70fc188abd96059307"
+    },
+    {
+      "path": "pyto/experiments/molecules/molecules.py",
+      "bytes": 12378,
+      "sha256": "2251e22b565ee325aa82efca777caedd220dc8cf5a324df977f62fe53519bf08"
+    },
+    {
+      "path": "pyto/experiments/molecules/report.md",
+      "bytes": 28432,
+      "sha256": "ea87813507860ea08f894b2f5fc83667846e834995e4a48ed839868c4617e244"
+    },
+    {
+      "path": "pyto/experiments/molecules/test_molecules.py",
+      "bytes": 5254,
+      "sha256": "b63b450bec076e6c83e39a46d011cdabe9f146410d7b8611e7f48fbf8905d4b4"
+    },
+    {
+      "path": "pyto/experiments/molecules/transitions.py",
+      "bytes": 3893,
+      "sha256": "113fd1f110d632616e377546fc01f31cdcc04ebc2b818ec0f03db583b57bcb2e"
+    },
+    {
+      "path": "pyto/experiments/review/diffs/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/66/HANDOFF.md",
+      "bytes": 10590,
+      "sha256": "3e01d3336857d54c9994778ab056da35538b267c991b2212e3bd30506b93ff2f"
+    },
+    {
+      "path": "pyto/experiments/tasks/66/evidence/check_all.txt",
+      "bytes": 181869,
+      "sha256": "0da3011869cb31425e3e156be0eac7e365b47cdb4af856731f4a23eea89df4f2"
+    },
+    {
+      "path": "pyto/experiments/tasks/66/evidence/verify.txt",
+      "bytes": 1541,
+      "sha256": "425874e96dc330ec4c71511f9719a1ea193abad6bac7f25c3175b8c690adc8d1"
+    },
+    {
+      "path": "pyto/experiments/tasks/66/packet.md",
+      "bytes": 5679,
+      "sha256": "8470fa0b9ebe27448dcf5b92799836a2bebb3aed10ba45077fdbc2e812349946"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 40453,
+      "sha256": "80b4ae3bb7497c251777d18731c4b6131411eca201800ea0fde486d763ac8d7c"
+    },
+    {
+      "path": "pyto/src/pyto/neat/diff.py",
+      "bytes": 14467,
+      "sha256": "5c7f0e4afd73eb0446d298e5a6806870ebf6719032b7067b4afac3ff848228c0"
+    },
+    {
+      "path": "pyto/tests/fixtures/blok/cards.json",
+      "bytes": 865,
+      "sha256": "344bc4e2c6fa0a6b758ed39818ec03954337b1d3506d3f2b836dd68b481c4302"
+    },
+    {
+      "path": "pyto/tests/fixtures/blok/registry.py",
+      "bytes": 1407,
+      "sha256": "ec2f1a47352e745e910de351091530efa8be8a20d7a3a6a512f2b92ede4e4e3e"
+    },
+    {
+      "path": "pyto/tests/test_neat_diff.py",
+      "bytes": 9187,
+      "sha256": "392345820858f118d23143ebe35be05e68468f93e018fc3059b507d1fb4e4155"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T09:09:08.776701Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

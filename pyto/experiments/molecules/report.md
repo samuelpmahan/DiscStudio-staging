@@ -2,6 +2,43 @@
 
 A molecule is a repeated chain of Calculations over Parts: a substructure of the run graph (invocations, the Parts they read and write, and the declared order inside a Tick) that occurs at least twice, vertex-disjoint, and pays for itself under minimum description length -- the graph plus the substructure is fewer bits than the graph alone.  It is what "molecular synthesis" names ({?} ChainsInsideATick): the unit a program keeps re-composing, mined rather than declared.  Each is spelled as SUBDUE's canonical form, as a PQL document that runs the first instance as one Tick of chained Calculations in declared order (the chain rule of task 57 is checked on every emission), and as a PQL query that finds its Parts in a store.  Miner: `experiments/hiding-primitives/subdue.py` with `beam=4, iterations=8, max_size=5, min_instances=2`.  Rebuild with `python mine.py`; `--check` fails if this file drifts.
 
+## Transitions
+
+Counting before mining ({?} ChainsInsideATick): every (from, kind, to) edge the exact scheme draws over every record below, tallied once by `fn.molecules.transitions` before any SUBDUE search looks for one repeated -- published as `px.exp.molecules.transitions`.  165 edges, 78 distinct, top 30 shown.
+
+| from | kind | to | count |
+| --- | --- | --- | ---: |
+| `scratch.ablation.split` | reads | `fn.ablation.fit` | 14 |
+| `scratch.ablation.split` | reads | `fn.ablation.score` | 14 |
+| `fn.ablation.fit` | next | `fn.ablation.fit` | 10 |
+| `fn.ablation.score` | next | `fn.ablation.score` | 10 |
+| `fn.ablation.compare` | writes | `scratch.ablation.comparison` | 3 |
+| `fn.ablation.fit` | writes | `scratch.ablation.model.all` | 3 |
+| `fn.ablation.fit` | writes | `scratch.ablation.model.drop_g3` | 3 |
+| `fn.ablation.score` | writes | `scratch.ablation.score.all` | 3 |
+| `fn.ablation.score` | writes | `scratch.ablation.score.drop_g3` | 3 |
+| `fn.ablation.selectVariants` | next | `fn.ablation.split` | 3 |
+| `fn.ablation.selectVariants` | writes | `scratch.ablation.variants` | 3 |
+| `fn.ablation.split` | writes | `scratch.ablation.split` | 3 |
+| `input.ablation.groups` | reads | `fn.ablation.selectVariants` | 3 |
+| `input.ablation.rows` | reads | `fn.ablation.split` | 3 |
+| `scratch.ablation.model.all` | reads | `fn.ablation.score` | 3 |
+| `scratch.ablation.model.drop_g3` | reads | `fn.ablation.score` | 3 |
+| `fn.ablation.fit` | next | `fn.ablation.score` | 2 |
+| `fn.ablation.fit` | writes | `scratch.ablation.model.drop_g0` | 2 |
+| `fn.ablation.fit` | writes | `scratch.ablation.model.drop_g1` | 2 |
+| `fn.ablation.fit` | writes | `scratch.ablation.model.drop_g2` | 2 |
+| `fn.ablation.fit` | writes | `scratch.ablation.model.drop_g4` | 2 |
+| `fn.ablation.score` | writes | `scratch.ablation.score.drop_g0` | 2 |
+| `fn.ablation.score` | writes | `scratch.ablation.score.drop_g1` | 2 |
+| `fn.ablation.score` | writes | `scratch.ablation.score.drop_g2` | 2 |
+| `fn.ablation.score` | writes | `scratch.ablation.score.drop_g4` | 2 |
+| `scratch.ablation.model.drop_g0` | reads | `fn.ablation.score` | 2 |
+| `scratch.ablation.model.drop_g1` | reads | `fn.ablation.score` | 2 |
+| `scratch.ablation.model.drop_g2` | reads | `fn.ablation.score` | 2 |
+| `scratch.ablation.model.drop_g4` | reads | `fn.ablation.score` | 2 |
+| `scratch.ablation.score.all` | reads | `fn.ablation.compare` | 2 |
+
 ## Records
 
 | record | nodes | edges | note |
@@ -17,16 +54,16 @@ A molecule is a repeated chain of Calculations over Parts: a substructure of the
 
 ## Scheme `exact` (122 nodes, 165 edges)
 
-| rank | substructure | instances | records | bits | ratio |
-| ---: | --- | ---: | --- | ---: | ---: |
-| 1 | `v0=fn.ablation.fit, v1=fn.ablation.fit, v2=fn.ablation.score, v3=scratch.ablation.model.all, v4=scratch.ablation.split ; v0-writes->v3, v3-reads->v2, v4-reads->v0, v4-reads->v1` | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 160.9 | 0.9512 |
-| 2 | `v0=SUB1, v1=fn.ablation.score, v2=fn.ablation.selectVariants, v3=fn.ablation.split, v4=input.ablation.groups ; v0-next->v1, v2-next->v3, v3-writes->v0, v4-reads->v2` | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 160.8 | 0.9451 |
-| 3 | `v0=SUB2, v1=input.ablation.rows, v2=scratch.ablation.score.all, v3=scratch.ablation.variants ; v0-writes->v2, v0-writes->v3, v1-reads->v0` | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 118.1 | 0.9548 |
-| 4 | `v0=SUB3, v1=fn.ablation.compare, v2=fn.ablation.fit, v3=fn.ablation.fit, v4=fn.ablation.fit ; v0-reads->v1, v0-next->v2, v0-reads->v3, v0-reads->v4` | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.6 | 0.9691 |
-| 5 | `v0=SUB4, v1=fn.ablation.fit, v2=fn.ablation.score, v3=fn.ablation.score, v4=fn.ablation.score ; v0-next->v1, v0-next->v2, v0-reads->v3, v0-reads->v4` | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.7 | 0.9653 |
-| 6 | `v0=SUB5, v1=fn.ablation.score, v2=scratch.ablation.comparison, v3=scratch.ablation.model.drop_g0, v4=scratch.ablation.model.drop_g1 ; v0-next->v1, v0-writes->v2, v0-writes->v3, v0-writes->v4` | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.7 | 0.9598 |
-| 7 | `v0=SUB6, v1=scratch.ablation.model.drop_g2, v2=scratch.ablation.model.drop_g3, v3=scratch.ablation.model.drop_g4, v4=scratch.ablation.score.drop_g0 ; v0-writes->v1, v0-writes->v2, v0-writes->v3, v0-writes->v4` | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.5 | 0.9532 |
-| 8 | `v0=SUB7, v1=scratch.ablation.score.drop_g1, v2=scratch.ablation.score.drop_g2, v3=scratch.ablation.score.drop_g3, v4=scratch.ablation.score.drop_g4 ; v0-writes->v1, v0-writes->v2, v0-writes->v3, v0-writes->v4` | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.3 | 0.9425 |
+| rank | substructure | instances | rarest transition | records | bits | ratio |
+| ---: | --- | ---: | ---: | --- | ---: | ---: |
+| 1 | `v0=fn.ablation.fit, v1=fn.ablation.fit, v2=fn.ablation.score, v3=scratch.ablation.model.all, v4=scratch.ablation.split ; v0-writes->v3, v3-reads->v2, v4-reads->v0, v4-reads->v1` | 3 | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 160.9 | 0.9512 |
+| 2 | `v0=SUB1, v1=fn.ablation.score, v2=fn.ablation.selectVariants, v3=fn.ablation.split, v4=input.ablation.groups ; v0-next->v1, v2-next->v3, v3-writes->v0, v4-reads->v2` | 3 | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 160.8 | 0.9451 |
+| 3 | `v0=SUB2, v1=input.ablation.rows, v2=scratch.ablation.score.all, v3=scratch.ablation.variants ; v0-writes->v2, v0-writes->v3, v1-reads->v0` | 3 | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 118.1 | 0.9548 |
+| 4 | `v0=SUB3, v1=fn.ablation.compare, v2=fn.ablation.fit, v3=fn.ablation.fit, v4=fn.ablation.fit ; v0-reads->v1, v0-next->v2, v0-reads->v3, v0-reads->v4` | 2 | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.6 | 0.9691 |
+| 5 | `v0=SUB4, v1=fn.ablation.fit, v2=fn.ablation.score, v3=fn.ablation.score, v4=fn.ablation.score ; v0-next->v1, v0-next->v2, v0-reads->v3, v0-reads->v4` | 2 | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.7 | 0.9653 |
+| 6 | `v0=SUB5, v1=fn.ablation.score, v2=scratch.ablation.comparison, v3=scratch.ablation.model.drop_g0, v4=scratch.ablation.model.drop_g1 ; v0-next->v1, v0-writes->v2, v0-writes->v3, v0-writes->v4` | 2 | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.7 | 0.9598 |
+| 7 | `v0=SUB6, v1=scratch.ablation.model.drop_g2, v2=scratch.ablation.model.drop_g3, v3=scratch.ablation.model.drop_g4, v4=scratch.ablation.score.drop_g0 ; v0-writes->v1, v0-writes->v2, v0-writes->v3, v0-writes->v4` | 2 | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.5 | 0.9532 |
+| 8 | `v0=SUB7, v1=scratch.ablation.score.drop_g1, v2=scratch.ablation.score.drop_g2, v3=scratch.ablation.score.drop_g3, v4=scratch.ablation.score.drop_g4 ; v0-writes->v1, v0-writes->v2, v0-writes->v3, v0-writes->v4` | 2 | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 74.3 | 0.9425 |
 
 ### exact rank 1
 
@@ -123,16 +160,16 @@ compound: built on an earlier rank's SUB node; no document emitted
 
 ## Scheme `shape` (122 nodes, 165 edges)
 
-| rank | substructure | instances | records | bits | ratio |
-| ---: | --- | ---: | --- | ---: | ---: |
-| 1 | `v0=fn/1->1, v1=fn/2->1, v2=part, v3=part ; v0-writes->v2, v1-writes->v3, v2-reads->v1` | 16 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 815.5 | 0.7193 |
-| 2 | `v0=fn/1->1, v1=part, v2=part ; v0-writes->v1, v2-reads->v0` | 10 | `experiments/grouped-ablation/evidence/run-1/record.json`, `experiments/students/evidence/run-1/record.json`, `tests/fixtures/px/effects-record.json`, `tests/fixtures/use/order-record.json`, `viewer/fixtures/effects-demo.json`, `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 323.0 | 0.8104 |
-| 3 | `v0=SUB1, v1=SUB1, v2=SUB2, v3=fn/1->1, v4=part ; v0-next->v1, v0-reads->v3, v2-next->v0, v3-writes->v4` | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 140.3 | 0.8959 |
-| 4 | `v0=SUB1, v1=SUB1, v2=SUB1, v3=SUB1, v4=SUB3 ; v0-next->v1, v1-next->v2, v2-next->v3, v4-next->v0` | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 66.9 | 0.9305 |
-| 5 | `v0=fn/1->1, v1=part ; v0-writes->v1` | 4 | `experiments/students/evidence/run-1/record.json`, `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-value-kinds.json` | 50.8 | 0.9111 |
-| 6 | `v0=SUB1, v1=SUB2, v2=SUB5 ; v0-next->v2, v1-reads->v0` | 2 | `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-value-kinds.json` | 31.2 | 0.9375 |
-| 7 | `v0=SUB4, v1=fn/6->1, v2=part, v3=part ; v0-reads->v1, v1-writes->v2, v3-reads->v0` | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 49.8 | 0.8678 |
-| 8 | `v0=SUB2, v1=oc/0->1 ; v1-writes->v0` | 2 | `tests/fixtures/px/effects-record.json`, `viewer/fixtures/effects-demo.json` | 13.2 | 0.9490 |
+| rank | substructure | instances | rarest transition | records | bits | ratio |
+| ---: | --- | ---: | ---: | --- | ---: | ---: |
+| 1 | `v0=fn/1->1, v1=fn/2->1, v2=part, v3=part ; v0-writes->v2, v1-writes->v3, v2-reads->v1` | 16 | 16 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 815.5 | 0.7193 |
+| 2 | `v0=fn/1->1, v1=part, v2=part ; v0-writes->v1, v2-reads->v0` | 10 | 14 | `experiments/grouped-ablation/evidence/run-1/record.json`, `experiments/students/evidence/run-1/record.json`, `tests/fixtures/px/effects-record.json`, `tests/fixtures/use/order-record.json`, `viewer/fixtures/effects-demo.json`, `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 323.0 | 0.8104 |
+| 3 | `v0=SUB1, v1=SUB1, v2=SUB2, v3=fn/1->1, v4=part ; v0-next->v1, v0-reads->v3, v2-next->v0, v3-writes->v4` | 3 | 3 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json`, `viewer/fixtures/pyto-value-kinds.json` | 140.3 | 0.8959 |
+| 4 | `v0=SUB1, v1=SUB1, v2=SUB1, v3=SUB1, v4=SUB3 ; v0-next->v1, v1-next->v2, v2-next->v3, v4-next->v0` | 2 | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 66.9 | 0.9305 |
+| 5 | `v0=fn/1->1, v1=part ; v0-writes->v1` | 4 | 4 | `experiments/students/evidence/run-1/record.json`, `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-value-kinds.json` | 50.8 | 0.9111 |
+| 6 | `v0=SUB1, v1=SUB2, v2=SUB5 ; v0-next->v2, v1-reads->v0` | 2 | 2 | `viewer/fixtures/parallel-demo.json`, `viewer/fixtures/pyto-value-kinds.json` | 31.2 | 0.9375 |
+| 7 | `v0=SUB4, v1=fn/6->1, v2=part, v3=part ; v0-reads->v1, v1-writes->v2, v3-reads->v0` | 2 | 2 | `experiments/grouped-ablation/evidence/run-1/record.json`, `viewer/fixtures/pyto-grouped-ablation.json` | 49.8 | 0.8678 |
+| 8 | `v0=SUB2, v1=oc/0->1 ; v1-writes->v0` | 2 | 2 | `tests/fixtures/px/effects-record.json`, `viewer/fixtures/effects-demo.json` | 13.2 | 0.9490 |
 
 ### shape rank 1
 
