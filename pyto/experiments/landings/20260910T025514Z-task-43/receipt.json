@@ -1,0 +1,99 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T025514Z-task-43",
+  "package": "task-43",
+  "base_sha": "2a91d15ab6104a2d38bf4e213299e6c807077723",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto/experiments/classroom && python3 -m unittest discover -s . -p 'test_*.py' && bash make_class.sh --selftest",
+    "exit": 0,
+    "output_sha256": "6bee9fdac2e61ad694d7ef7ff576aa812a96c71a563fd8a014afaf4d40560325"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "78d146d68bd964ec859c8715301fbba5a2b8b9b40f5265c40a88750cade8accd",
+    "counts": {
+      "library": 248,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 249,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 14,
+      "experiments/tick-laws": 12,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 116,
+      "viewer-record-schema": 24
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/CHANGES.md",
+      "bytes": 72108,
+      "sha256": "0e32fb89c35004b251abc10cdd03c6997638fedca6d6feed54ffe7c09b388629"
+    },
+    {
+      "path": "pyto/experiments/classroom/README.md",
+      "bytes": 2908,
+      "sha256": "1e7b5d069f1e7bed4eb6ceaa0941114ad5d9a300cad926394e594f7772deaeff"
+    },
+    {
+      "path": "pyto/experiments/classroom/cold-reader.txt",
+      "bytes": 2401,
+      "sha256": "427d77c82b5ba6f4430f97ad32bb420856e67f8374c46f97bebae7224cb021a3"
+    },
+    {
+      "path": "pyto/experiments/classroom/cold_reader.py",
+      "bytes": 6294,
+      "sha256": "10be9ad2a06bbdfa89aca80c2e53a95aaf9dbfe20779dd57205c2eb0ebf57232"
+    },
+    {
+      "path": "pyto/experiments/classroom/make_class.sh",
+      "bytes": 26019,
+      "sha256": "4dab4cf16de4af4c7e675d57456daf8d8ad2b734bf1f33438e6ee9415495dc07"
+    },
+    {
+      "path": "pyto/experiments/classroom/test_classroom.py",
+      "bytes": 13649,
+      "sha256": "def98a6681a8fa7b6d540aa8d3c08a2be0d5fb9e4ab180ec00720f9c9988d32e"
+    },
+    {
+      "path": "pyto/experiments/classroom/tutor.py",
+      "bytes": 22585,
+      "sha256": "623a1b861861f49b6bc29df650fc251411a8a23519228a6b5354625003da0aeb"
+    },
+    {
+      "path": "pyto/experiments/tasks/43/HANDOFF.md",
+      "bytes": 10144,
+      "sha256": "43c040ba17bdb678960739397c0f3779d947989b5ae343e3fb969077e952b5d2"
+    },
+    {
+      "path": "pyto/experiments/tasks/43/evidence/check_all.txt",
+      "bytes": 152312,
+      "sha256": "d4dcae19efb9f5e9189271d21a396cdd3a8a7349b8b2fcd1e419ea7834784895"
+    },
+    {
+      "path": "pyto/experiments/tasks/43/evidence/verify.txt",
+      "bytes": 2594,
+      "sha256": "0ea945435595d2a842ce8a1d28a2b35d0bf333a5e13ae5f65b32bacfa15962e6"
+    },
+    {
+      "path": "pyto/experiments/tasks/43/packet.md",
+      "bytes": 5754,
+      "sha256": "24a75166c719aca4ad061e37a69877137c0b0088eb3477b74b035a800b10348a"
+    },
+    {
+      "path": "pyto/scripts/check_all.sh",
+      "bytes": 10223,
+      "sha256": "1ed67a60a7ff22842e25e1a051e33c76360542616f2562e5cab041c4d9c9c9c4"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T02:56:10.326441Z",
+  "result_sha": "170fc96be612b680a9480b78c584eff8dfde485d",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

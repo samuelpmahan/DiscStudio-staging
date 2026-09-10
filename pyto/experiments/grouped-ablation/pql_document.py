@@ -1,42 +1,46 @@
 """Render a retained program as the browser readPql document, or refuse it.
 
-Experiment-local. The grammar is src/core/exec.js:37-49 (`readPql`), reached from
+Experiment-local. The grammar is src/core/exec.js:75-89 (`readPql`), reached from
 Python only as data: this module writes JSON that node's reader accepts, it never
 executes JavaScript. candidates/readpql_check.mjs runs the real reader over the
 output.
 
-What the grammar can hold (exec.js:39-46):
+What the grammar can hold (exec.js:76-88):
 
     {"PrincipleComponentRender": <nonempty string>,
      "Ticks": [{"name": <nonempty string>,
                 "Calculations": [{"call": "fn.<...>",
                                   "with": {name: <nonempty address string>},
                                   "args": {...},
-                                  "into": <nonempty string>}]}]}
+                                  "into": <nonempty string, or a non-empty
+                                           array of distinct addresses>}]}]}
 
 What it cannot hold, and why `to_pql_document` refuses rather than degrades:
 
 * a `fn:` binding. `with` values are Part addresses; the reader would happily
-  accept the *string* "fn:split" (exec.js:45 only checks it is a nonempty
-  string) and `invokePql` would then call `pxc.get("fn:split")` and die at run
-  time with "slot 'fn:split' not produced yet" (exec.js:15, :56). A retained
-  program that silently becomes a document that fails later is worse than one
-  that is refused now, so the fn: refusal happens here, in Python.
-* an invocation without `into`: exec.js:46 requires a nonempty string, so the
-  optional `into` that PCR allows (pcr.py:29, :112-116) has no representation.
-* an invocation that publishes several Parts. `into` in a retained program is one
-  address, an array of addresses, or null (RECORD.md, Field rules), but the
-  grammar has one `into` per Calculation and it must be a nonempty *string*
-  (exec.js:46, `text(calculation.into, ...)`); `invokePql` then writes exactly one
-  address per Calculation (`pxc.set(calculation.into, output)`, exec.js:58). There
-  is no place in the document for the second address and no way for the reader to
-  split one result across two, so a multi-produce invocation is refused here,
-  naming the invocation and every address it declared, rather than emitted with
-  one address chosen and the rest silently dropped.
-* an args key shadowing a `with` key: exec.js:45 rejects the document outright.
+  accept the *string* "fn:split" (exec.js:83 only checks it is a nonempty
+  string, and only rejects a misplaced prefix star) and `invokePql` would then
+  call `pxc.get("fn:split")` and die at run time with "slot 'fn:split' not
+  produced yet" (exec.js:15, :94). A retained program that silently becomes a
+  document that fails later is worse than one that is refused now, so the fn:
+  refusal happens here, in Python.
+* an invocation without `into`: exec.js:84 requires a nonempty string or a
+  non-empty array, so the optional `into` that PCR allows (pcr.py:29, :112-116)
+  has no representation.
+* an args key shadowing a `with` key: exec.js:83 rejects the document outright.
   retain.to_program refuses the same thing at export, so a program that reached
   this module has already passed that rule; it is re-checked here because a
   document may be built from a hand-written program dict.
+
+An invocation that publishes several Parts is no longer on that list. `into` in a
+retained program is one address, an array of addresses, or null (RECORD.md, Field
+rules), and the grammar now takes the same two shapes: `readPql` reads `into` with
+`produces(...)` -- a nonempty string, or a non-empty array of distinct addresses
+(exec.js:50-57, :84) -- and `invokePql` publishes one Part per declared address
+from one pass, the output being an object keyed by them or an array of the same
+length (exec.js:60-70, :98-100). So a multi-produce invocation is emitted here,
+carrying every address it declared in declared order; only a malformed array --
+empty, or with a repeated or non-string address -- is refused.
 
 Invocation ids have no place in the grammar either. They are dropped, which is
 the third reason this shape loses the candidates/ comparison: `fn:` refs are
@@ -53,7 +57,7 @@ FN = "fn:"
 
 
 class PqlDocumentError(ValueError):
-    """The program cannot be expressed in the readPql grammar (src/core/exec.js:37-49)."""
+    """The program cannot be expressed in the readPql grammar (src/core/exec.js:75-89)."""
 
 
 def _where(tick_name: str, entry: Mapping[str, Any]) -> str:
@@ -61,7 +65,11 @@ def _where(tick_name: str, entry: Mapping[str, Any]) -> str:
 
 
 def to_pql_document(program: Mapping[str, Any]) -> dict[str, Any]:
-    """The readPql document for a px-only, fully-published program. Raises otherwise."""
+    """The readPql document for a px-only, fully-published program. Raises otherwise.
+
+    An invocation may declare one `into` address or several; several are emitted as
+    the array the grammar now reads (exec.js:50-57), never collapsed to one.
+    """
     if not isinstance(program, Mapping):
         raise PqlDocumentError(f"to_pql_document: expected a program mapping, got {type(program).__name__}")
     name = program.get("name")
@@ -93,21 +101,36 @@ def to_pql_document(program: Mapping[str, Any]) -> dict[str, Any]:
                     f"as the literal address '{ref}'"
                 )
             into = entry.get("into")
-            if isinstance(into, (list, tuple)) and into:
+            if isinstance(into, (list, tuple)):
+                # Several produces from one pass: the grammar carries every address in
+                # declared order (exec.js:50-57), so nothing is chosen and nothing dropped.
                 addresses = list(into)
+                if not addresses:
+                    raise PqlDocumentError(
+                        f"to_pql_document: {where} declares an empty 'into'; exec.js:50-52 "
+                        f"requires at least one address, so an unpublished result cannot be "
+                        f"expressed"
+                    )
+                seen: set[str] = set()
+                for index, address in enumerate(addresses):
+                    if not isinstance(address, str) or not address:
+                        raise PqlDocumentError(
+                            f"to_pql_document: {where} declares 'into'[{index}] as {address!r}; "
+                            f"every produce address is a nonempty string (exec.js:53)"
+                        )
+                    if address in seen:
+                        raise PqlDocumentError(
+                            f"to_pql_document: {where} declares '{address}' twice in 'into'; one "
+                            f"Calculation publishes each address once (exec.js:54)"
+                        )
+                    seen.add(address)
+                into = addresses
+            elif not isinstance(into, str) or not into:
                 raise PqlDocumentError(
-                    f"to_pql_document: {where} declares 'into' as an array of "
-                    f"addresses {addresses}, so it publishes several Parts from one "
-                    f"invocation; exec.js:46 takes one nonempty 'into' string per "
-                    f"Calculation and invokePql writes that one address "
-                    f"(exec.js:58), so a multi-produce invocation cannot be "
-                    f"expressed and is refused rather than written with one of its "
-                    f"addresses"
-                )
-            if not isinstance(into, str) or not into:
-                raise PqlDocumentError(
-                    f"to_pql_document: {where} has no 'into'; exec.js:46 requires a nonempty "
-                    f"string, so an unpublished result cannot be expressed"
+                    f"to_pql_document: {where} has no 'into'; readPql requires a nonempty string "
+                    f"or a non-empty array of addresses (exec.js:46 when this refusal was "
+                    f"written, `produces` at exec.js:50-57 now that a Calculation may publish "
+                    f"several Parts), so an unpublished result cannot be expressed"
                 )
             args = dict(entry.get("args") or {})
             shadowed = sorted(set(args) & set(bindings))

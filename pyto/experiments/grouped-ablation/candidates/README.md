@@ -75,7 +75,7 @@ invent ids, and the replayed testimony differs from the original on the `id` fie
 
 | case | kind | pass | what node reported |
 |---|---|---|---|
-| px_only_fanout_accepted | accept | True | read 1 tick(s), 2 calculation(s) |
+| px_only_fanout_accepted | accept | True | read 1 tick(s), 2 calculation(s), 2 produce(s) |
 | missing_into_refused | reject | True | PQL T.Calculations[0].into: expected a nonempty string. |
 | shadowed_arg_refused | reject | True | PQL T.Calculations[0]: 'v' appears in both with and args. |
 | fn_ref_written_as_address_is_read_then_fails_at_invoke | invoke_fails | True | PQL Fit: fn.ablation.fit -> scratch.ablation.model.all failed. \| exec board: slot 'fn:split' not produced yet. |

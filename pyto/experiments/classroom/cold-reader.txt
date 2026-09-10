@@ -1,0 +1,36 @@
+What a cold reader wrote after being given the hand-off page and nothing else.
+This is the answer the class keeps beside the submission; cold_reader.py checks
+mechanically that it accounts for the whole page, and the teacher reads it.
+
+The program takes one CSV table of student names and whole-number scores -- the
+table is a constant inside the program, not a file it opens -- and turns it into
+a small report: the class average, the middle score, a letter grade for each of
+the twelve students, and a bar chart of how many students got each letter. It
+runs as four steps over a store of named values. Parse turns the CSV text into a
+roster of name-and-score rows sorted by name, and refuses a table whose header
+line is not the expected one. Stats is a single step holding two independent
+calculations: Mean gives the average (80.5, reported with the total and the head
+count so the division can be redone by hand) and Median gives the middle score
+(82.5, the average of the two middle rows because there is an even number of
+students); neither reads the other's answer. Letters applies cutoffs that are
+passed in as arguments -- A from 90, B from 80, C from 70, D from 60, else F --
+to every row, keeping the roster's order. Histogram turns those letters into a
+text bar chart in A-to-F order, one hash per student with the count at the end:
+3 A, 4 B, 3 C, 1 D, 1 F.
+
+Every calculation leaves a receipt of what it read, what it wrote, how long it
+took and a fingerprint of its own source, so the run can be replayed and compared.
+
+The files the page accounts for: homework.py is the program itself; grade.py is
+the mechanical rubric of four checks; test_students.py tests both; README.md
+explains the idea to a non-programmer; HANDOFF.md is the page I read;
+evidence/run-1/record.json is the shipped run; evidence/run-1/receipts.json is
+one receipt per calculation of that run; evidence/run-1/tick-viewer.html is the
+same run as a page you can step through; and tick_laws.py is named as the check
+that reads the record and reports the Stats step doing more work than it takes
+time.
+
+Least sure of: the sentence saying the Stats step "does more work than it takes
+time". I can see it is meant as the arithmetic way of saying two calculations
+could have run side by side, but from the page alone I cannot tell whether that
+is a measurement of this run or a property the program claims about itself.

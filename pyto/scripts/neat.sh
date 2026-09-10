@@ -72,6 +72,11 @@ next_id() { # the highest id seen anywhere: local copies, landed packets, and ex
     case "$n" in ''|*[!0-9]*) continue;; esac
     [ "$n" -gt "$max" ] && max="$n"
   done
+  # landing receipts are never deleted, so an undone or killed task's number stays taken:
+  # <stamp>-task-N/ and failed/<stamp>-task-N.json, and undo-task-N likewise
+  for n in $(ls "$ROOT/$LAND_REL" "$ROOT/$LAND_REL/failed" 2>/dev/null | sed -n 's/.*-task-\([0-9][0-9]*\)\(\.json\)\{0,1\}$/\1/p'); do
+    [ "$n" -gt "$max" ] && max="$n"
+  done
   echo $((max + 1))
 }
 venv_python() { # <id>
@@ -516,6 +521,13 @@ cmd_selftest() {
     echo "selftest undo clean: pass"
   else
     echo "selftest undo clean: FAIL"; failures=$((failures + 1))
+  fi
+  # An undone task's number is never handed out again: the landing receipts keep it taken.
+  bash "$tools_dir/neat.sh" new "again" --verify "true" --allow "again.txt" >"$tmp/again.txt" 2>&1 || failures=$((failures + 1))
+  if [ -d "$clone/EXP/1" ] && [ ! -d "$clone/EXP/0" ]; then
+    echo "selftest an undone id is not reused: pass"
+  else
+    echo "selftest an undone id is not reused: FAIL"; cat "$tmp/again.txt" | tail -3; failures=$((failures + 1))
   fi
   # A note addressed to the owner is an interrupt, and the board allows three reasons for one: an
   # untagged "**owner**" line is refused with exit 2 and writes nothing; a tagged one is an ordinary note.
