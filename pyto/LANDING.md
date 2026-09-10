@@ -21,6 +21,7 @@ bash pyto/scripts/neat.sh update 0              -> MAIN's newer commits into EXP
 bash pyto/scripts/neat.sh list
 bash pyto/scripts/land.sh --note "one plain line"  -> onto the board under Today, committed, pushed; no receipt
 python3 pyto/scripts/board_page.py > board.html    -> the board as one page for a phone (no dependencies)
+pyto/KT-MAC.md                                     -> the workshop on a Mac, six chunks, each ends with something to see
 ```
 
 A hand-off starts with a stopping rule (owner, 2026-09-10): read the hand-off, the board and the
