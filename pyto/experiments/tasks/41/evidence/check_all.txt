@@ -1,0 +1,1731 @@
+== check_all.sh v0
+pyto root:    /home/user/DiscStudio-staging/EXP/41/pyto
+logs:         /tmp/tmp.RXU0SiuPnn
+python:       /home/user/DiscStudio-staging/EXP/41/.venv/bin/python (Python 3.11.15)
+pyto module:  /home/user/DiscStudio-staging/EXP/41/pyto/src/pyto/__init__.py
+
+== suite: library  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s tests -v
+[tests/test_materialize] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/41/pyto/experiments/grouped-ablation')
+[tests/test_materialize] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/41/pyto/viewer/test')
+test_address_is_a_frozen_dataclass (test_address.TestDescribesAndDoesNotEnforce.test_address_is_a_frozen_dataclass)
+Kills: ``@dataclass`` in place of ``@dataclass(frozen=True)``. ... ok
+test_kernel_does_not_import_address (test_address.TestDescribesAndDoesNotEnforce.test_kernel_does_not_import_address)
+Kills: adding ``from pyto.address import check`` to core.py. ... ok
+test_module_imports_nothing_from_pyto (test_address.TestDescribesAndDoesNotEnforce.test_module_imports_nothing_from_pyto)
+Kills: adding ``from pyto.core import Part`` to address.py. ... ok
+test_parse_rejects_non_strings (test_address.TestDescribesAndDoesNotEnforce.test_parse_rejects_non_strings)
+Kills: deleting the ``isinstance(address, str)`` guard in parse. ... ok
+test_a_world_used_as_a_segment_is_not_detected (test_address.TestOutsideTheAddressSpace.test_a_world_used_as_a_segment_is_not_detected)
+Kills: adding a world blocklist (``if parsed.second in WORLDS``). ... ok
+test_question_root_is_not_an_address (test_address.TestOutsideTheAddressSpace.test_question_root_is_not_an_address)
+Kills: deleting the ``if parsed.root == QUESTION_ROOT:`` branch. ... ok
+test_reserved_second_segments_are_the_six (test_address.TestReservedSecond.test_reserved_second_segments_are_the_six)
+Kills: dropping ``"pql"`` from ``RESERVED_SECOND``. ... ok
+test_reserved_second_under_another_root_is_reported (test_address.TestReservedSecond.test_reserved_second_under_another_root_is_reported)
+Kills: deleting the ``elif parsed.second in RESERVED_SECOND`` branch. ... ok
+test_reserved_second_under_px_is_accepted (test_address.TestReservedSecond.test_reserved_second_under_px_is_accepted)
+Kills: dropping ``and parsed.root != "px"`` from the reserved branch. ... ok
+test_known_roots_with_a_domain_noun_are_accepted (test_address.TestRoots.test_known_roots_with_a_domain_noun_are_accepted)
+Kills: ``ROOTS = ()`` -- refusing everything. ... ok
+test_roots_are_exactly_px_fn_oc (test_address.TestRoots.test_roots_are_exactly_px_fn_oc)
+Kills: ``ROOTS = ("px", "fn")`` -- dropping ``oc``. ... ok
+test_unknown_root_is_rejected (test_address.TestRoots.test_unknown_root_is_rejected)
+Kills: ``elif False:`` in place of ``elif parsed.root not in ROOTS:``. ... ok
+test_bare_root_has_no_domain_noun (test_address.TestSegments.test_bare_root_has_no_domain_noun)
+Kills: deleting the ``if parsed.second is None:`` branch from check. ... ok
+test_empty_address_is_rejected (test_address.TestSegments.test_empty_address_is_rejected)
+Kills: ``return ()`` in place of ``return ("the address is empty",)``. ... ok
+test_empty_segment_is_rejected (test_address.TestSegments.test_empty_segment_is_rejected)
+Kills: deleting the ``any(segment == "" ...)`` branch from check. ... ok
+test_leading_dot_is_rejected (test_address.TestSegments.test_leading_dot_is_rejected)
+Kills: ``segments = tuple(address.strip(".").split("."))`` in parse. ... ok
+test_parse_splits_root_second_and_rest (test_address.TestSegments.test_parse_splits_root_second_and_rest)
+Kills: ``rest = segments[1:]`` in place of ``segments[2:]``. ... ok
+test_duplicate_writer_rejected (test_first_class.FirstClassTest.test_duplicate_writer_rejected)
+Multiple-writer rejection at declaration (pcr.py:118-123). ... ok
+test_pcr_preserves_direct_result_and_publication_semantics (test_first_class.FirstClassTest.test_pcr_preserves_direct_result_and_publication_semantics)
+Part-to-ResultRef rewrite (pcr.py:112-116); into publication (pcr.py:163-164). ... ok
+test_pxc_is_fail_loud_and_pql_is_composable (test_first_class.FirstClassTest.test_pxc_is_fail_loud_and_pql_is_composable)
+PxC.set/get (core.py:56-66); PQL.part/prefix/where (pql.py:27-58). ... ok
+test_card_testimonies_consume_render_disc_as_fn_ref (test_first_class.SharedResultFanoutTest.test_card_testimonies_consume_render_disc_as_fn_ref)
+Both cards record inputs {'art': 'fn:render-disc'} (pcr.py:112-116, 156-157). ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_first_class.SharedResultFanoutTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Gap 16: PCR.mermaid() (pcr.py:179-219) == Pcr.to_mermaid() (graph.py:116-151). ... ok
+test_published_part_is_the_direct_result_object (test_first_class.SharedResultFanoutTest.test_published_part_is_the_direct_result_object)
+Publication (pcr.py:161-164) stores the very object held in results[id]: ... ok
+test_results_keyed_by_invocation_id (test_first_class.SharedResultFanoutTest.test_results_keyed_by_invocation_id)
+PcrRun.results holds one entry per invocation id (pcr.py:162, pcr.py:177). ... ok
+test_shared_mutable_result_is_not_copied_between_consumers (test_first_class.SharedResultFanoutTest.test_shared_mutable_result_is_not_copied_between_consumers)
+The fn: binding passes results[id] itself, not a copy (pcr.py:156, 161). ... ok
+test_testimony_into_values_are_published_addresses (test_first_class.SharedResultFanoutTest.test_testimony_into_values_are_published_addresses)
+CalculationTestimony.into is the into Part's address (pcr.py:172). ... ok
+test_a_calculation_that_publishes_several_parts (test_graph.PcrGraphTest.test_a_calculation_that_publishes_several_parts)
+graph.py reads every produce address, not one `into.address`. ... ok
+test_direct_result_and_publication_shape (test_graph.PcrGraphTest.test_direct_result_and_publication_shape) ... ok
+test_mermaid_is_a_view_of_same_graph (test_graph.PcrGraphTest.test_mermaid_is_a_view_of_same_graph) ... ok
+test_one_address_calls_are_unchanged_by_multi_produce (test_graph.PcrGraphTest.test_one_address_calls_are_unchanged_by_multi_produce)
+The compatibility half: one address is still a bare string in the emitted ... ok
+test_rejects_duplicate_writer (test_graph.PcrGraphTest.test_rejects_duplicate_writer) ... ok
+test_every_fit_and_score_reads_fn_split_and_is_not_a_hit (test_materialize.DayOneRecord.test_every_fit_and_score_reads_fn_split_and_is_not_a_hit) ... ok
+test_four_ticks_and_fifteen_invocations (test_materialize.DayOneRecord.test_four_ticks_and_fifteen_invocations) ... ok
+test_parts_map_lists_the_twelve_fn_readers_of_the_split_part (test_materialize.DayOneRecord.test_parts_map_lists_the_twelve_fn_readers_of_the_split_part) ... ok
+test_pcr_name_can_be_overridden_for_the_viewer (test_materialize.DayOneRecord.test_pcr_name_can_be_overridden_for_the_viewer) ... ok
+test_receipt_fields_are_joined_by_invocation_id (test_materialize.DayOneRecord.test_receipt_fields_are_joined_by_invocation_id) ... ok
+test_schema_and_pcr_name (test_materialize.DayOneRecord.test_schema_and_pcr_name) ... ok
+test_the_shape_it_refuses_to_emit_is_the_shape_a_reader_refuses (test_materialize.DayOneRecord.test_the_shape_it_refuses_to_emit_is_the_shape_a_reader_refuses)
+Why the refusal above is a refusal and not a null-filled document. ... ok
+test_the_two_invocations_reading_a_preseeded_part_are_the_hits (test_materialize.DayOneRecord.test_the_two_invocations_reading_a_preseeded_part_are_the_hits) ... ok
+test_wall_ms_is_the_sum_of_the_receipt_durations (test_materialize.DayOneRecord.test_wall_ms_is_the_sum_of_the_receipt_durations) ... ok
+test_without_observe_run_record_refuses_instead_of_emitting_nulls (test_materialize.DayOneRecord.test_without_observe_run_record_refuses_instead_of_emitting_nulls)
+A document is `pyto-run-record@1` or it is not tagged as one. ... ok
+test_a_freshly_materialized_day_one_record_obeys_the_same_rule (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_a_freshly_materialized_day_one_record_obeys_the_same_rule) ... ok
+test_the_committed_evidence_record_carries_only_the_px_bindings (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_the_committed_evidence_record_carries_only_the_px_bindings) ... ok
+test_two_part_bindings_keep_binding_order_not_alphabetical_order (test_materialize.DeclaredConsumesIsThePartSubsetOfInputs.test_two_part_bindings_keep_binding_order_not_alphabetical_order) ... ok
+test_materializing_the_same_run_twice_is_byte_identical (test_materialize.Determinism.test_materializing_the_same_run_twice_is_byte_identical) ... ok
+test_two_records_of_two_runs_differ_only_in_durations (test_materialize.Determinism.test_two_records_of_two_runs_differ_only_in_durations) ... ok
+test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set (test_materialize.HitLedger.test_a_part_no_invocation_produced_is_a_hit_even_with_an_empty_preexisting_set)
+The second half of the rule: `preexisting` is not the only evidence. ... ok
+test_an_address_produced_earlier_in_the_run_is_not_a_hit (test_materialize.HitLedger.test_an_address_produced_earlier_in_the_run_is_not_a_hit) ... ok
+test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript (test_materialize.HitLedger.test_re_reading_a_part_this_run_overwrote_is_not_a_hit_as_in_javascript)
+The one shape on which the two runtimes used to disagree. ... ok
+test_reading_a_preseeded_part_is_a_hit (test_materialize.HitLedger.test_reading_a_preseeded_part_is_a_hit) ... ok
+test_a_record_of_every_value_kind_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_a_record_of_every_value_kind_validates) ... ok
+test_the_committed_evidence_record_still_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_the_committed_evidence_record_still_validates) ... ok
+test_the_day_one_record_validates (test_materialize.ReadableByTheOtherRuntimesValidator.test_the_day_one_record_validates) ... ok
+test_asdict_bytes_are_identical_before_and_after (test_materialize.TestimonyBytesUnchangedByMaterializing.test_asdict_bytes_are_identical_before_and_after) ... ok
+test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel (test_materialize.TickSheets.test_a_png_data_url_that_will_not_decode_degrades_to_its_text_panel)
+Drawing degrades per panel; it never aborts mid-directory. ... ok
+test_an_image_value_is_drawn_into_the_sheet (test_materialize.TickSheets.test_an_image_value_is_drawn_into_the_sheet) ... ok
+test_an_svg_value_is_written_beside_the_sheet_unmodified (test_materialize.TickSheets.test_an_svg_value_is_written_beside_the_sheet_unmodified) ... ok
+test_one_png_per_tick_of_the_day_one_program (test_materialize.TickSheets.test_one_png_per_tick_of_the_day_one_program) ... ok
+test_a_cyclic_part_value_leaves_the_rest_of_the_record_intact (test_materialize.ValueKinds.test_a_cyclic_part_value_leaves_the_rest_of_the_record_intact)
+The failure this guards is not one value: it was the whole document. ... ok
+test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error (test_materialize.ValueKinds.test_a_cyclic_value_is_omitted_with_a_note_not_a_recursion_error)
+RECORD.md:111 assigns "not serializable" to `omitted`, cycles included. ... ok
+test_a_non_serializable_value_never_gets_a_json_kind (test_materialize.ValueKinds.test_a_non_serializable_value_never_gets_a_json_kind) ... ok
+test_a_pil_image_becomes_a_png_data_url (test_materialize.ValueKinds.test_a_pil_image_becomes_a_png_data_url) ... ok
+test_a_plain_string_is_text (test_materialize.ValueKinds.test_a_plain_string_is_text) ... ok
+test_a_set_is_omitted_with_a_note_and_a_digest (test_materialize.ValueKinds.test_a_set_is_omitted_with_a_note_and_a_digest) ... ok
+test_a_string_that_is_already_a_png_data_url_is_png_data_url_as_in_javascript (test_materialize.ValueKinds.test_a_string_that_is_already_a_png_data_url_is_png_data_url_as_in_javascript) ... ok
+test_a_thousand_element_list_keeps_two_hundred_entries_and_says_so (test_materialize.ValueKinds.test_a_thousand_element_list_keeps_two_hundred_entries_and_says_so) ... ok
+test_a_value_nested_past_the_recursion_limit_is_omitted_not_fatal (test_materialize.ValueKinds.test_a_value_nested_past_the_recursion_limit_is_omitted_not_fatal)
+json.dumps raises RecursionError -- neither TypeError nor ValueError. ... ok
+test_a_value_over_the_cap_is_omitted_with_size_and_digest (test_materialize.ValueKinds.test_a_value_over_the_cap_is_omitted_with_size_and_digest) ... ok
+test_svg_is_kind_svg_and_the_document_is_not_modified (test_materialize.ValueKinds.test_svg_is_kind_svg_and_the_document_is_not_modified) ... ok
+test_the_array_cap_is_a_parameter_and_applies_inside_a_dict (test_materialize.ValueKinds.test_the_array_cap_is_a_parameter_and_applies_inside_a_dict) ... ok
+test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed (test_materialize.ValueKinds.test_the_omitted_digest_is_the_same_in_a_process_with_a_different_hash_seed)
+PYTHONHASHSEED salts str hashing, so set iteration order differs per process. ... ok
+test_xml_prologue_before_the_svg_root_is_still_svg (test_materialize.ValueKinds.test_xml_prologue_before_the_svg_root_is_still_svg) ... ok
+test_round_trips_through_json_load_with_sorted_keys_and_lf (test_materialize.WriteRecord.test_round_trips_through_json_load_with_sorted_keys_and_lf) ... ok
+test_a_label_never_appears_in_any_address (test_mounts.TestLabelsStayOutOfAddresses.test_a_label_never_appears_in_any_address)
+Kills: ``self._mounted[root].set("px.view.label", text)`` inserted ... ok
+test_a_slice_carries_the_labels_of_the_roots_it_takes (test_mounts.TestLabelsStayOutOfAddresses.test_a_slice_carries_the_labels_of_the_roots_it_takes)
+Kills: deleting the ``if root in self._labels: sliced.set_label(...)`` ... ok
+test_an_unlabelled_mounted_root_has_no_label (test_mounts.TestLabelsStayOutOfAddresses.test_an_unlabelled_mounted_root_has_no_label)
+Kills: ``return self._labels.get(root, root)`` in ``label``. ... ok
+test_get_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_get_of_a_missing_root_raises)
+Kills: ``return self._mounted.get(root)`` in ``get``. ... ok
+test_has_reports_without_raising (test_mounts.TestMissingRootIsLoud.test_has_reports_without_raising)
+Kills: ``return True`` in ``has``. ... ok
+test_labels_of_a_missing_root_raise (test_mounts.TestMissingRootIsLoud.test_labels_of_a_missing_root_raise)
+Kills: deleting the ``if root not in self._mounted`` guard from ... ok
+test_slice_of_a_missing_root_raises (test_mounts.TestMissingRootIsLoud.test_slice_of_a_missing_root_raises)
+Kills: ``if not self.has(root): continue`` at the top of ``slice``'s ... ok
+test_kernel_does_not_import_mounts (test_mounts.TestModuleStatus.test_kernel_does_not_import_mounts)
+Kills: adding ``from pyto.mounts import Mounts`` to core.py. ... ok
+test_mounts_does_not_compute_the_root_id (test_mounts.TestModuleStatus.test_mounts_does_not_compute_the_root_id)
+Kills: ``import hashlib`` plus ``root = hashlib.sha256(root.encode()) ... ok
+test_mounts_is_not_re_exported_from_the_package (test_mounts.TestModuleStatus.test_mounts_is_not_re_exported_from_the_package)
+Kills: adding ``from .mounts import Mounts`` to ``__init__.py``. ... ok
+test_a_different_object_for_a_mounted_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_a_different_object_for_a_mounted_root_is_refused)
+Kills: deleting the ``raise ValueError(... already mounted)`` branch. ... ok
+test_an_empty_root_is_refused (test_mounts.TestMountingIsIdempotentOrLoud.test_an_empty_root_is_refused)
+Kills: deleting the ``if not isinstance(root, str) or not root:`` guard. ... ok
+test_remounting_the_same_object_is_fine (test_mounts.TestMountingIsIdempotentOrLoud.test_remounting_the_same_object_is_fine)
+Kills: ``if current is not None:`` (dropping ``and current is not pxc``). ... ok
+test_get_returns_the_exact_object_mounted (test_mounts.TestRootStaysOutsideTheAddressSpace.test_get_returns_the_exact_object_mounted)
+Kills: ``return copy.deepcopy(self._mounted[root])`` in ``get``. ... ok
+test_keeps_the_world_id_outside_the_pxc_address_space (test_mounts.TestRootStaysOutsideTheAddressSpace.test_keeps_the_world_id_outside_the_pxc_address_space)
+Kills: a prefix rewrite in ``mount`` -- ``for address in pxc.addresses(): ... ok
+test_mounting_adds_no_address_at_all (test_mounts.TestRootStaysOutsideTheAddressSpace.test_mounting_adds_no_address_at_all)
+Kills: ``pxc.set("px.mount.root", root)`` inserted before ... ok
+test_entries_pair_each_root_with_its_own_pxc_in_order (test_mounts.TestRootsAndEntries.test_entries_pair_each_root_with_its_own_pxc_in_order)
+Kills: ``for root in sorted(self._mounted)`` in ``entries``. ... ok
+test_roots_keep_insertion_order (test_mounts.TestRootsAndEntries.test_roots_keep_insertion_order)
+Kills: ``return tuple(sorted(self._mounted))`` in ``roots``. ... ok
+test_a_write_through_a_slice_is_visible_through_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_a_write_through_a_slice_is_visible_through_the_original)
+Kills: ``sliced.mount(root, copy.deepcopy(self.get(root)))`` in ``slice``. ... ok
+test_slice_is_a_new_mounts_that_does_not_disturb_the_original (test_mounts.TestSliceSharesTheMountedObjects.test_slice_is_a_new_mounts_that_does_not_disturb_the_original)
+Kills: ``sliced = self`` in place of ``sliced = Mounts()``. ... ok
+test_slice_keeps_insertion_order_of_the_requested_roots (test_mounts.TestSliceSharesTheMountedObjects.test_slice_keeps_insertion_order_of_the_requested_roots)
+Kills: ``for root in sorted(roots)`` in ``slice``. ... ok
+test_a_one_entry_list_is_the_multi_produce_form (test_multi_into.DeclaringTheAddresses.test_a_one_entry_list_is_the_multi_produce_form)
+The shape decides, not the count ({?} OneElementList): `into=[a]` asks for a ... ok
+test_addresses_may_be_strings_or_parts_mixed (test_multi_into.DeclaringTheAddresses.test_addresses_may_be_strings_or_parts_mixed) ... ok
+test_an_empty_list_is_refused (test_multi_into.DeclaringTheAddresses.test_an_empty_list_is_refused) ... ok
+test_the_receipt_segment_is_refused_inside_a_list (test_multi_into.DeclaringTheAddresses.test_the_receipt_segment_is_refused_inside_a_list)
+`_refuse_receipt_into` is applied to every address, not just to the first: ... ok
+test_the_same_address_twice_is_refused (test_multi_into.DeclaringTheAddresses.test_the_same_address_twice_is_refused)
+pcr.py `_normalize_into`: one invocation publishes each address once. ... ok
+test_two_invocations_may_not_both_write_one_address (test_multi_into.DeclaringTheAddresses.test_two_invocations_may_not_both_write_one_address)
+The multiple-writers rule is per address, so it holds across the list. ... ok
+test_the_fixture_pins_the_shape_this_change_had_to_preserve (test_multi_into.OneAddressCallsAreUnchanged.test_the_fixture_pins_the_shape_this_change_had_to_preserve)
+The fixture is only a guard if it carries both binding spellings and a ... ok
+test_the_receipt_differs_only_by_the_added_produce_digest (test_multi_into.OneAddressCallsAreUnchanged.test_the_receipt_differs_only_by_the_added_produce_digest)
+pcr.py: every other Receipt field is what it was, and the one added field ... ok
+test_the_record_is_byte_identical (test_multi_into.OneAddressCallsAreUnchanged.test_the_record_is_byte_identical)
+materialize.py: the record document gained no field. `into` is still a bare ... ok
+test_a_one_address_invocation_digests_its_one_produce (test_multi_into.OneReceiptEveryProduce.test_a_one_address_invocation_digests_its_one_produce)
+The compatibility half of the digest decision: `result_sha256` unchanged, ... ok
+test_a_produce_without_a_canonical_json_form_has_no_digest (test_multi_into.OneReceiptEveryProduce.test_a_produce_without_a_canonical_json_form_has_no_digest)
+`_result_sha256` per produce, so gap 10 holds per Part: a set has no digest ... ok
+test_an_invocation_without_into_has_no_produce_digests (test_multi_into.OneReceiptEveryProduce.test_an_invocation_without_into_has_no_produce_digests) ... ok
+test_declared_and_actual_produces_list_every_address (test_multi_into.OneReceiptEveryProduce.test_declared_and_actual_produces_list_every_address)
+pcr.py: `declared_produces=produce_addresses` (was `(into.address,)`). ... ok
+test_one_digest_per_produce_beside_the_whole_result_digest (test_multi_into.OneReceiptEveryProduce.test_one_digest_per_produce_beside_the_whole_result_digest)
+pcr.py: `produce_sha256={address: _result_sha256(part_value)}`. ... ok
+test_writes_carry_one_entry_per_address_with_its_kind (test_multi_into.OneReceiptEveryProduce.test_writes_carry_one_entry_per_address_with_its_kind)
+_TrackedPxC.set is called once per address, so `writes` is per Part and ... ok
+test_a_bare_ref_is_refused_at_resolve_time_too (test_multi_into.ReferencesNameTheProduce.test_a_bare_ref_is_refused_at_resolve_time_too)
+The same refusal from PCR.run, for a program built through `Tick.calc`, ... ok
+test_a_bare_ref_to_a_multi_produce_invocation_is_refused_at_bind_time (test_multi_into.ReferencesNameTheProduce.test_a_bare_ref_to_a_multi_produce_invocation_is_refused_at_bind_time)
+pcr.py `_refuse_bare_multi_ref`, called from PCR.calc. ... ok
+test_a_bare_ref_to_a_one_address_invocation_is_still_the_whole_result (test_multi_into.ReferencesNameTheProduce.test_a_bare_ref_to_a_one_address_invocation_is_still_the_whole_result)
+The compatibility half: nothing changes for a one-address producer, and its ... ok
+test_a_part_binding_on_a_produced_address_resolves_to_that_produce (test_multi_into.ReferencesNameTheProduce.test_a_part_binding_on_a_produced_address_resolves_to_that_produce)
+PCR.calc rewrites a Part already written by this PCR into its writer's ... ok
+test_a_ref_to_an_address_that_invocation_does_not_publish_is_refused (test_multi_into.ReferencesNameTheProduce.test_a_ref_to_an_address_that_invocation_does_not_publish_is_refused) ... ok
+test_ref_by_address_reads_that_part (test_multi_into.ReferencesNameTheProduce.test_ref_by_address_reads_that_part)
+pcr.py PCR.run: `resolved_inputs[name] = available[source.produce]`. ... ok
+test_ref_part_is_the_same_reference_as_item_access (test_multi_into.ReferencesNameTheProduce.test_ref_part_is_the_same_reference_as_item_access) ... ok
+test_the_record_carries_every_produce (test_multi_into.ReferencesNameTheProduce.test_the_record_carries_every_produce)
+materialize.py: `into` is a list for a multi-produce invocation, and ... ok
+test_the_testimony_and_the_record_show_the_resolved_read (test_multi_into.ReferencesNameTheProduce.test_the_testimony_and_the_record_show_the_resolved_read)
+`_ref_spelling`: a produce-qualified binding is `fn:<id>#<address>`, and ... ok
+test_a_multi_produce_into_serializes_as_a_json_array (test_multi_into.TestimonyBytesUnchanged.test_a_multi_produce_into_serializes_as_a_json_array) ... ok
+test_observe_on_and_off_produce_identical_tick_bytes (test_multi_into.TestimonyBytesUnchanged.test_observe_on_and_off_produce_identical_tick_bytes) ... ok
+test_a_mapping_keyed_by_the_wrong_addresses_is_refused (test_multi_into.TheReturnMustAnswerForEveryAddress.test_a_mapping_keyed_by_the_wrong_addresses_is_refused)
+A mapping that answers for `out.elsewhere` instead of `out.count` fails on ... ok
+test_a_mapping_missing_an_address_is_refused (test_multi_into.TheReturnMustAnswerForEveryAddress.test_a_mapping_missing_an_address_is_refused) ... ok
+test_a_mapping_with_a_spare_entry_is_refused (test_multi_into.TheReturnMustAnswerForEveryAddress.test_a_mapping_with_a_spare_entry_is_refused)
+Strict the other way too: an extra key is a produce the program did not ... ok
+test_a_sequence_of_the_wrong_length_is_refused (test_multi_into.TheReturnMustAnswerForEveryAddress.test_a_sequence_of_the_wrong_length_is_refused) ... ok
+test_a_value_that_is_neither_a_mapping_nor_a_sequence_is_refused (test_multi_into.TheReturnMustAnswerForEveryAddress.test_a_value_that_is_neither_a_mapping_nor_a_sequence_is_refused) ... ok
+test_a_mapping_return_is_read_by_address_not_by_position (test_multi_into.TwoPartsFromOnePass.test_a_mapping_return_is_read_by_address_not_by_position)
+pcr.py `_split_produces`: `value[address]`, so a mapping in another order ... ok
+test_a_sequence_return_is_read_in_the_declared_order (test_multi_into.TwoPartsFromOnePass.test_a_sequence_return_is_read_in_the_declared_order)
+pcr.py `_split_produces`: a sequence is positional, in `into` order. ... ok
+test_both_parts_are_published_with_their_own_values (test_multi_into.TwoPartsFromOnePass.test_both_parts_are_published_with_their_own_values)
+pcr.py PCR.run: `for part, part_value in zip(produce_parts, produced_values)`. ... ok
+test_one_invocation_files_one_receipt (test_multi_into.TwoPartsFromOnePass.test_one_invocation_files_one_receipt)
+Several Parts, one pass, one receipt: the point of the decision. ... ok
+test_the_whole_returned_value_is_still_the_invocation_result (test_multi_into.TwoPartsFromOnePass.test_the_whole_returned_value_is_still_the_invocation_result)
+`results[id]` is what the Calculation returned, so the record's `value` ... ok
+test_an_empty_segment_is_refused_rather_than_matching_everything (test_pql.PqlReceipts.test_an_empty_segment_is_refused_rather_than_matching_everything) ... ok
+test_every_receipt_of_a_real_run_address_sorted (test_pql.PqlReceipts.test_every_receipt_of_a_real_run_address_sorted) ... ok
+test_it_is_prefix_with_a_name_and_reads_only_the_reserved_segment (test_pql.PqlReceipts.test_it_is_prefix_with_a_name_and_reads_only_the_reserved_segment)
+The docstring's claim: a thin layer, so an ordinary address that merely ... ok
+test_observe_off_leaves_nothing_for_it_to_read (test_pql.PqlReceipts.test_observe_off_leaves_nothing_for_it_to_read) ... ok
+test_pcr_narrows_by_segment_not_by_string_prefix (test_pql.PqlReceipts.test_pcr_narrows_by_segment_not_by_string_prefix)
+`pcr='count'` must not match the PCR named `counted`. ... ok
+test_the_values_are_the_run_s_own_receipt_objects (test_pql.PqlReceipts.test_the_values_are_the_run_s_own_receipt_objects)
+Not a projection of them: the Part *is* the Receipt (`pcr.py:647`). ... ok
+test_tick_narrows_on_the_second_segment_with_or_without_a_pcr (test_pql.PqlReceipts.test_tick_narrows_on_the_second_segment_with_or_without_a_pcr)
+`tick` alone cannot narrow the walk to a prefix -- the PCR name is in ... ok
+test_part_selects_one_and_a_missing_part_selects_none (test_pql.PqlSelection.test_part_selects_one_and_a_missing_part_selects_none) ... ok
+test_prefix_refuses_an_empty_prefix (test_pql.PqlSelection.test_prefix_refuses_an_empty_prefix) ... ok
+test_prefix_selects_in_address_order (test_pql.PqlSelection.test_prefix_selects_in_address_order)
+`pxc.items()` is sorted, so every PQL walk is deterministic; the whole ... ok
+test_where_refines_and_one_and_optional_are_strict (test_pql.PqlSelection.test_where_refines_and_one_and_optional_are_strict) ... ok
+test_an_ordinary_address_is_untouched_by_the_guard (test_pql.ReceiptWritesAreTheRunS.test_an_ordinary_address_is_untouched_by_the_guard) ... ok
+test_the_context_manager_closes_again_even_after_a_raise (test_pql.ReceiptWritesAreTheRunS.test_the_context_manager_closes_again_even_after_a_raise) ... ok
+test_the_context_manager_nests (test_pql.ReceiptWritesAreTheRunS.test_the_context_manager_nests) ... ok
+test_the_marker_and_the_context_manager_are_the_two_explicit_ways_in (test_pql.ReceiptWritesAreTheRunS.test_the_marker_and_the_context_manager_are_the_two_explicit_ways_in) ... ok
+test_the_run_files_its_receipts_through_the_same_set (test_pql.ReceiptWritesAreTheRunS.test_the_run_files_its_receipts_through_the_same_set)
+`pcr.py` is another team's file and is not edited: the guard recognises ... ok
+test_user_code_cannot_forge_a_receipt (test_pql.ReceiptWritesAreTheRunS.test_user_code_cannot_forge_a_receipt)
+The refusal the `{?}` asked for. ... ok
+test_a_receipt_may_be_bound_as_an_input (test_pql.ReceiptsAsInputsAndOnRerun.test_a_receipt_may_be_bound_as_an_input)
+Decided as it already stands: only *producing* into `px.receipt.` is ... ok
+test_a_rerun_replaces_the_receipt_part_in_place (test_pql.ReceiptsAsInputsAndOnRerun.test_a_rerun_replaces_the_receipt_part_in_place)
+Decided as it stands: the scheme has no run identity, so one address ... ok
+test_cat_ablation_comparison (test_px.PxFixtures.test_cat_ablation_comparison) ... ok
+test_cat_is_canonical_json_the_record_carries (test_px.PxFixtures.test_cat_is_canonical_json_the_record_carries)
+`px cat` reads the record's `value` field and re-spells it canonically. ... ok
+test_cat_of_a_multi_produce_invocation_names_the_one_part (test_px.PxFixtures.test_cat_of_a_multi_produce_invocation_names_the_one_part)
+A Calculation may publish several Parts (`{?} WhatIsATick`, owner ... ok
+test_cat_refuses_an_address_no_invocation_produced (test_px.PxFixtures.test_cat_refuses_an_address_no_invocation_produced) ... ok
+test_cat_says_not_carried_when_the_record_omits_the_value (test_px.PxFixtures.test_cat_says_not_carried_when_the_record_omits_the_value)
+The `omitted` kind is a real record state (RECORD.md `value.kind`). ... ok
+test_cat_students_mean (test_px.PxFixtures.test_cat_students_mean) ... ok
+test_diff_ignores_durations (test_px.PxFixtures.test_diff_ignores_durations)
+Two records that differ only in how long they took are not different. ... ok
+test_diff_names_the_invocation_whose_digest_flipped (test_px.PxFixtures.test_diff_names_the_invocation_whose_digest_flipped)
+The task's own check: one digest changed, exit 1, the id named. ... ok
+test_diff_of_a_record_with_itself (test_px.PxFixtures.test_diff_of_a_record_with_itself) ... ok
+test_diff_reports_added_removed_and_changed_reads (test_px.PxFixtures.test_diff_reports_added_removed_and_changed_reads)
+The other three kinds of difference, in one record pair. ... ok
+test_laws_ablation (test_px.PxFixtures.test_laws_ablation) ... ok
+test_laws_exits_one_on_a_violated_node_law (test_px.PxFixtures.test_laws_exits_one_on_a_violated_node_law)
+A sibling read inside one Tick: the node law's own example. ... ok
+test_laws_prints_no_path (test_px.PxFixtures.test_laws_prints_no_path)
+`tick_laws` echoes the path it was handed; `px` names the pcr instead. ... ok
+test_laws_students (test_px.PxFixtures.test_laws_students) ... ok
+test_laws_times_students (test_px.PxFixtures.test_laws_times_students) ... ok
+test_ls_ablation (test_px.PxFixtures.test_ls_ablation) ... ok
+test_ls_is_sorted_and_carries_every_address_the_record_knows (test_px.PxFixtures.test_ls_is_sorted_and_carries_every_address_the_record_knows)
+Sorted, and a superset of the record's own `parts` block. ... ok
+test_ls_prefix_ablation (test_px.PxFixtures.test_ls_prefix_ablation) ... ok
+test_ls_prefix_is_a_filter_over_the_same_index (test_px.PxFixtures.test_ls_prefix_is_a_filter_over_the_same_index)
+The prefix narrows which rows print; column widths follow the rows that ... ok
+test_ls_shows_a_receipt_address_the_record_lists (test_px.PxFixtures.test_ls_shows_a_receipt_address_the_record_lists)
+"every address the record knows" includes receipt addresses. ... ok
+test_ls_students (test_px.PxFixtures.test_ls_students) ... ok
+test_ps_ablation (test_px.PxFixtures.test_ps_ablation) ... ok
+test_ps_students (test_px.PxFixtures.test_ps_students) ... ok
+test_ps_times_students (test_px.PxFixtures.test_ps_times_students)
+`--times` is the only way a duration reaches stdout. ... ok
+test_ps_without_times_names_no_duration (test_px.PxFixtures.test_ps_without_times_names_no_duration)
+The claim behind the fixture, stated so a reader need not diff two files. ... ok
+test_receipts_ablation (test_px.PxFixtures.test_receipts_ablation) ... ok
+test_receipts_show_declared_beside_actual (test_px.PxFixtures.test_receipts_show_declared_beside_actual)
+The pair the format exists for: a result read declares nothing and ... ok
+test_receipts_students (test_px.PxFixtures.test_receipts_students) ... ok
+test_receipts_tick_students (test_px.PxFixtures.test_receipts_tick_students) ... ok
+test_a_file_that_is_not_a_record_is_refused_by_the_shared_validator (test_px.PxShell.test_a_file_that_is_not_a_record_is_refused_by_the_shared_validator) ... ok
+test_a_missing_file_names_the_file_and_not_its_path (test_px.PxShell.test_a_missing_file_names_the_file_and_not_its_path) ... ok
+test_every_command_is_a_pure_function_of_its_inputs (test_px.PxShell.test_every_command_is_a_pure_function_of_its_inputs)
+Run each command twice and compare: the point of the whole file. ... ok
+test_help_lists_the_six_commands (test_px.PxShell.test_help_lists_the_six_commands) ... ok
+test_no_command_prints_help_and_exits_two (test_px.PxShell.test_no_command_prints_help_and_exits_two) ... ok
+test_px_imports_no_kernel_runtime (test_px.PxShell.test_px_imports_no_kernel_runtime)
+The design constraint: `px` reads JSON, and the only pyto modules it ... ok
+test_the_console_script_is_registered (test_px.PxShell.test_the_console_script_is_registered) ... ok
+test_identity_scope_and_limitation_are_the_chesslab_honesty_fields (test_receipts.FrozenCalculationIdentity.test_identity_scope_and_limitation_are_the_chesslab_honesty_fields) ... ok
+test_implementation_sha256_is_none_for_a_builtin (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_none_for_a_builtin) ... ok
+test_implementation_sha256_is_the_source_digest_and_is_stable (test_receipts.FrozenCalculationIdentity.test_implementation_sha256_is_the_source_digest_and_is_stable) ... ok
+test_an_ordinary_address_that_merely_mentions_receipt_still_binds (test_receipts.ReceiptSegmentIsNotBindable.test_an_ordinary_address_that_merely_mentions_receipt_still_binds)
+The rule is the reserved second segment, not the word: `px.receipts.` and ... ok
+test_pcr_calc_refuses_a_receipt_into (test_receipts.ReceiptSegmentIsNotBindable.test_pcr_calc_refuses_a_receipt_into)
+pcr.py `_refuse_receipt_into`, called from PCR.calc before the writer is recorded. ... ok
+test_tick_calc_refuses_a_receipt_into (test_receipts.ReceiptSegmentIsNotBindable.test_tick_calc_refuses_a_receipt_into)
+pcr.py `_refuse_receipt_into`, called from Tick.calc as well: the Tick's own ... ok
+test_receipt_is_frozen_and_json_serializable_after_asdict (test_receipts.ReceiptShape.test_receipt_is_frozen_and_json_serializable_after_asdict) ... ok
+test_registry_calculations_are_named_functions_not_lambdas (test_receipts.ReceiptShape.test_registry_calculations_are_named_functions_not_lambdas) ... ok
+test_day_1_program_gets_one_receipt_per_invocation (test_receipts.ReceiptsAreOptional.test_day_1_program_gets_one_receipt_per_invocation) ... ok
+test_receipts_empty_when_observe_is_false (test_receipts.ReceiptsAreOptional.test_receipts_empty_when_observe_is_false) ... ok
+test_receipts_keyed_by_invocation_id_when_observe_is_true (test_receipts.ReceiptsAreOptional.test_receipts_keyed_by_invocation_id_when_observe_is_true) ... ok
+test_a_receipt_part_can_be_read_back_by_a_later_invocation (test_receipts.ReceiptsAreParts.test_a_receipt_part_can_be_read_back_by_a_later_invocation)
+Everything is a Part, in both directions: reading `px.receipt.` is ordinary ... ok
+test_observe_off_leaves_the_store_untouched (test_receipts.ReceiptsAreParts.test_observe_off_leaves_the_store_untouched)
+The intent's second half: with observe off nothing is written, asserted by ... ok
+test_receipt_address_is_pcr_tick_and_invocation_id (test_receipts.ReceiptsAreParts.test_receipt_address_is_pcr_tick_and_invocation_id)
+pcr.py `receipt_address`: f"{RECEIPT_PREFIX}{pcr}.{tick}.{invocation_id}". ... ok
+test_run_record_names_no_receipt_of_its_own (test_receipts.ReceiptsAreParts.test_run_record_names_no_receipt_of_its_own)
+The same invariant one layer up: the run record's part index is built from the ... ok
+test_same_calculation_twice_in_one_tick_gets_two_addresses (test_receipts.ReceiptsAreParts.test_same_calculation_twice_in_one_tick_gets_two_addresses)
+The scheme keys on the invocation id, which PCR.calc keeps unique, not on the ... ok
+test_the_day_1_program_writes_one_receipt_part_per_invocation (test_receipts.ReceiptsAreParts.test_the_day_1_program_writes_one_receipt_part_per_invocation) ... ok
+test_the_receipt_write_is_invisible_to_the_receipts_themselves (test_receipts.ReceiptsAreParts.test_the_receipt_write_is_invisible_to_the_receipts_themselves)
+Observation must not leak into the testimony it observes: no receipt address ... ok
+test_the_stored_part_is_the_receipt_object_pql_reads (test_receipts.ReceiptsAreParts.test_the_stored_part_is_the_receipt_object_pql_reads)
+pcr.py: `pxc.set(receipt_address(...), receipt)` stores the Receipt itself, so ... ok
+test_json_value_digest_is_canonical_json (test_receipts.ResultDigest.test_json_value_digest_is_canonical_json) ... ok
+test_non_json_value_yields_none (test_receipts.ResultDigest.test_non_json_value_yields_none) ... ok
+test_tuple_keys_yield_none (test_receipts.ResultDigest.test_tuple_keys_yield_none) ... ok
+test_args_key_colliding_with_a_bound_input_is_recorded_not_raised (test_receipts.ShadowedInputs.test_args_key_colliding_with_a_bound_input_is_recorded_not_raised) ... ok
+test_no_collision_leaves_shadowed_inputs_empty (test_receipts.ShadowedInputs.test_no_collision_leaves_shadowed_inputs_empty) ... ok
+test_experiment_path_is_inside_this_repository (test_receipts.TestimonyBytesUnchanged.test_experiment_path_is_inside_this_repository) ... ok
+test_observe_on_and_off_produce_identical_tick_bytes (test_receipts.TestimonyBytesUnchanged.test_observe_on_and_off_produce_identical_tick_bytes) ... ok
+test_tick_bytes_equal_the_retained_day_1_testimony (test_receipts.TestimonyBytesUnchanged.test_tick_bytes_equal_the_retained_day_1_testimony)
+Both legs: the retained Day 1 bytes are pinned against an observe=False run ... ok
+test_duration_is_non_negative_and_started_is_monotonic (test_receipts.Timing.test_duration_is_non_negative_and_started_is_monotonic) ... ok
+test_a_result_ref_input_is_not_a_declared_consume (test_receipts.WriteKinds.test_a_result_ref_input_is_not_a_declared_consume) ... ok
+test_an_invocation_without_into_produces_nothing (test_receipts.WriteKinds.test_an_invocation_without_into_produces_nothing) ... ok
+test_declared_and_actual_addresses (test_receipts.WriteKinds.test_declared_and_actual_addresses) ... ok
+test_kinds (test_receipts.WriteKinds.test_kinds) ... ok
+test_constructor_rules_calculation_fn_prefix (test_semantics.ConstructorRulesTest.test_constructor_rules_calculation_fn_prefix)
+core.py:33-34: Calculation address must start with 'fn.'; the callable is not inspected. ... ok
+test_constructor_rules_part_address_non_empty (test_semantics.ConstructorRulesTest.test_constructor_rules_part_address_non_empty)
+core.py:18-19: Part('') raises ValueError; any non-empty prefix is accepted (no 'px.' rule). ... ok
+test_non_part_binding_source_fails_at_run (test_semantics.PCRDeclarationRulesTest.test_non_part_binding_source_fails_at_run)
+Silent rule (critic gap 13): PCR.calc (pcr.py:112-116) and Tick.calc (pcr.py:46) accept any ... ok
+test_part_binding_not_rewritten_when_writer_declared_after_consumer (test_semantics.PCRDeclarationRulesTest.test_part_binding_not_rewritten_when_writer_declared_after_consumer)
+Silent rule, pcr.py:112-116: the rewrite happens only at the consumer's declaration, so a ... ok
+test_part_binding_rewritten_to_result_ref_when_writer_declared_first (test_semantics.PCRDeclarationRulesTest.test_part_binding_rewritten_to_result_ref_when_writer_declared_first)
+pcr.py:112-116: consuming a Part that already has a writer in this PCR rewrites the binding to ... ok
+test_pcr_duplicate_id_rejected_across_ticks (test_semantics.PCRDeclarationRulesTest.test_pcr_duplicate_id_rejected_across_ticks)
+pcr.py:109-110: PCR.calc rejects an id already used in any tick of the same PCR. ... ok
+test_pcr_multiple_writers_rejected (test_semantics.PCRDeclarationRulesTest.test_pcr_multiple_writers_rejected)
+pcr.py:118-123: a second invocation declaring the same `into` address raises ValueError. ... ok
+test_tick_calc_bypasses_pcr_duplicate_id_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_duplicate_id_rule)
+Silent rule, pcr.py:33-56 vs 109-110,132: pcr.tick(name).calc skips PCR._ids, so an id used in ... ok
+test_tick_calc_bypasses_pcr_multiple_writer_rule (test_semantics.PCRDeclarationRulesTest.test_tick_calc_bypasses_pcr_multiple_writer_rule)
+Silent rule, pcr.py:33-56 vs 118-123: pcr.tick(name).calc skips PCR._writers, so a second ... ok
+test_tick_calc_rejects_duplicate_id_within_tick (test_semantics.PCRDeclarationRulesTest.test_tick_calc_rejects_duplicate_id_within_tick)
+pcr.py:43-44: Tick.calc rejects an id already present in that same tick. ... ok
+test_args_silently_override_same_named_bound_inputs (test_semantics.PCRRunRulesTest.test_args_silently_override_same_named_bound_inputs)
+Silent rule, pcr.py:159-160: call_args.update(invocation.args) lets an args key shadow a bound ... ok
+test_cross_pcr_consumer_records_px_not_fn (test_semantics.PCRRunRulesTest.test_cross_pcr_consumer_records_px_not_fn)
+Critic gap 12, pcr.py:88,118-123: the writers map is per PCR, so a second PCR reading a Part ... ok
+test_failure_mid_run_leaves_prior_writes (test_semantics.PCRRunRulesTest.test_failure_mid_run_leaves_prior_writes)
+Critic gap 13, pcr.py:161-164: a Calculation raising mid-run propagates its own exception, no ... ok
+test_missing_part_fails_only_at_run (test_semantics.PCRRunRulesTest.test_missing_part_fails_only_at_run)
+pcr.py:147-148 -> core.py:58-59: a Part binding with no PxC value is accepted at declaration and ... ok
+test_result_ref_to_unavailable_id_fails_only_at_run (test_semantics.PCRRunRulesTest.test_result_ref_to_unavailable_id_fails_only_at_run)
+pcr.py:151-155: a ResultRef to an id not yet in results is accepted at declaration and raises ... ok
+test_results_keyed_by_id_not_tick_and_rerun_replaces (test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces)
+pcr.py: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun ... ok
+test_run_registers_calculations_and_rejects_conflicting_address (test_semantics.PCRRunRulesTest.test_run_registers_calculations_and_rejects_conflicting_address)
+pcr.py:142 registers every invocation's Calculation on the PxC (core.py:68-72), so two ... ok
+test_tick_order_is_first_mention_not_producer_declaration (test_semantics.PCRRunRulesTest.test_tick_order_is_first_mention_not_producer_declaration)
+pcr.py:91-96,139: ticks execute in the order they were first named, so a consumer in tick B ... ok
+test_pql_cannot_see_calculations (test_semantics.PQLRulesTest.test_pql_cannot_see_calculations)
+pql.py:42-45 read only PxC.items() (core.py:88-89, the _values dict); registration goes to ... ok
+test_pql_one_and_optional_reject_multiple_matches (test_semantics.PQLRulesTest.test_pql_one_and_optional_reject_multiple_matches)
+pql.py:63-67,69-73: with two matches both one() and optional() raise ValueError; values() ... ok
+test_pql_part_missing_is_silent_until_one (test_semantics.PQLRulesTest.test_pql_part_missing_is_silent_until_one)
+pql.py:31-33,63-67,69-73: PQL.part of an unproduced address matches nothing (silent); ... ok
+test_pql_prefix_must_be_non_empty (test_semantics.PQLRulesTest.test_pql_prefix_must_be_non_empty)
+pql.py:39-40: PQL.prefix('') raises ValueError at construction. ... ok
+test_pql_where_refines_and_matches_are_sorted_by_address (test_semantics.PQLRulesTest.test_pql_where_refines_and_matches_are_sorted_by_address)
+pql.py:42-45,49-55 and core.py:88-89: prefix selection iterates PxC.items(), which is sorted by ... ok
+test_pcr_and_pcr_graph_emit_identical_mermaid (test_semantics.ProjectionTest.test_pcr_and_pcr_graph_emit_identical_mermaid)
+Critic gap 16, pcr.py:179-219 vs graph.py:116-151: the fan-out example authored as executable ... ok
+test_table_projection_drops_provenance (test_semantics.ProjectionTest.test_table_projection_drops_provenance)
+Critic gap 13, core.py:85-89: PxC.items() projects to (address, value) rows only; re-inserting ... ok
+test_pxc_call_autoregisters_object_but_not_string (test_semantics.PxCRulesTest.test_pxc_call_autoregisters_object_but_not_string)
+core.py:77-80: PxC.call with an unregistered Calculation object registers it as a side effect, ... ok
+test_pxc_call_unregistered_string_raises (test_semantics.PxCRulesTest.test_pxc_call_unregistered_string_raises)
+core.py:81-82: PxC.call by address string with nothing registered raises KeyError. ... ok
+test_pxc_get_missing_raises_keyerror (test_semantics.PxCRulesTest.test_pxc_get_missing_raises_keyerror)
+core.py:58-59: PxC.get of an unproduced address raises KeyError (fail-loud); has() stays False. ... ok
+test_pxc_register_conflict_on_different_callable (test_semantics.PxCRulesTest.test_pxc_register_conflict_on_different_callable)
+core.py:70-71: registering a different callable under an already-registered address raises ... ok
+test_pxc_register_same_callable_is_idempotent (test_semantics.PxCRulesTest.test_pxc_register_same_callable_is_idempotent)
+core.py:68-72: re-registering the same object, or a new Calculation wrapping the same callable, ... ok
+test_pxc_set_kinds_new_address_then_replacement_without_versioning (test_semantics.PxCRulesTest.test_pxc_set_kinds_new_address_then_replacement_without_versioning)
+core.py:62-66: set returns PxWrite kind 'new-address' first, 'replacement' after; the old value ... ok
+
+----------------------------------------------------------------------
+Ran 248 tests in 5.179s
+
+OK
+-- library: OK (ran 248)
+
+== suite: experiments/cross-project  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s experiments/cross-project -p test_*.py -v
+test_committed_run1_evidence_has_no_absolute_checkout_paths (test_cross_project.CommittedEvidenceIsPortable.test_committed_run1_evidence_has_no_absolute_checkout_paths) ... ok
+test_shared_hit_digest_matches_ablation_committed_evidence (test_cross_project.DigestVerification.test_shared_hit_digest_matches_ablation_committed_evidence)
+Step C's whole point: the value read back through the shared store must ... ok
+test_second_run_in_fresh_child_process_hits_everything (test_cross_project.FreshChildProcess.test_second_run_in_fresh_child_process_hits_everything)
+A genuinely fresh `python3 -I` process, told only PYTO_MATERIALS_DIR (env ... ok
+test_no_ablation_files_duplicated_into_cross_project (test_cross_project.NoCodeCopied.test_no_ablation_files_duplicated_into_cross_project)
+This experiment must not carry its own calculations.py/features.py/ ... ok
+test_refuses_to_overwrite_existing_out_dir_without_force (test_cross_project.RefusesOverwrite.test_refuses_to_overwrite_existing_out_dir_without_force) ... ok
+test_changing_a_shelf_revision_string_is_a_miss_not_a_hit (test_cross_project.RevisionChangeIsAMiss.test_changing_a_shelf_revision_string_is_a_miss_not_a_hit)
+program.HISTOGRAM_REVISION, mutated, must produce a DIFFERENT key and ... ok
+test_empty_store_is_seeded_by_domain_a_then_hits (test_cross_project.SeedingAndHitting.test_empty_store_is_seeded_by_domain_a_then_hits)
+On a genuinely empty store, Step A must produce the ablation material ... ok
+test_prepopulated_store_gives_one_hit_and_misses_for_shelf_calcs_before_any_write (test_cross_project.SeedingAndHitting.test_prepopulated_store_gives_one_hit_and_misses_for_shelf_calcs_before_any_write)
+Pre-seed only the ablation material (as run_cached.py, or a prior domain-A ... ok
+test_shared_material_key_equals_ablation_committed_key (test_cross_project.SharedKeyMatchesAblation.test_shared_material_key_equals_ablation_committed_key)
+Kills a mutation to SHARED_SOURCE/SHARED_SEED/SHARED_N in program.py: the ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.327s
+
+OK
+-- experiments/cross-project: OK (ran 9)
+
+== suite: experiments/grouped-ablation  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s experiments/grouped-ablation -p test_*.py -v
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/41/pyto/experiments/grouped-ablation')  # this experiment's own modules (retain, compare_local, pql_document, calculations)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/41/pyto/consumers/discstudio-card/experiments/disc-stats')  # run_experiment.py imports stats.py by top-level name (disc-stats/run_experiment.py:4)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/41/pyto/experiments/grouped-ablation')  # this experiment's own modules
+test_change_outside_the_watch_list_leaves_the_sha_bare (test_grouped_ablation.CommitShaDirtyMarker.test_change_outside_the_watch_list_leaves_the_sha_bare) ... ok
+test_dirty_marker_follows_modified_and_untracked_files (test_grouped_ablation.CommitShaDirtyMarker.test_dirty_marker_follows_modified_and_untracked_files) ... ok
+test_outside_a_repository_reports_unavailable_instead_of_a_sha (test_grouped_ablation.CommitShaDirtyMarker.test_outside_a_repository_reports_unavailable_instead_of_a_sha) ... ok
+test_write_evidence_records_the_dirty_marker_in_commit_txt (test_grouped_ablation.CommitShaDirtyMarker.test_write_evidence_records_the_dirty_marker_in_commit_txt)
+The wiring: write_evidence's commit.txt is commit_sha(repo_dir, watch), so a dirty watched tree reaches the file. ... ok
+test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded (test_grouped_ablation.GroupedAblationEvidence.test_a_dirty_producing_file_still_stamps_dirty_with_the_evidence_excluded)
+The half of the stamp that must NOT be relaxed: an uncommitted edit to code ... ok
+test_checked_in_run_1_matches_seed_7 (test_grouped_ablation.GroupedAblationEvidence.test_checked_in_run_1_matches_seed_7) ... ok
+test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed (test_grouped_ablation.GroupedAblationEvidence.test_commit_txt_is_head_sha_with_dirty_marker_iff_watched_code_changed)
+commit.txt = `git rev-parse HEAD` plus `-dirty` exactly when this experiment dir or pyto/src differs ... ok
+test_comparison_md_lists_drop_g3_first (test_grouped_ablation.GroupedAblationEvidence.test_comparison_md_lists_drop_g3_first) ... ok
+test_evidence_contains_no_lambda_or_function_repr (test_grouped_ablation.GroupedAblationEvidence.test_evidence_contains_no_lambda_or_function_repr) ... ok
+test_evidence_excludes_names_the_evidence_tree_and_nothing_else (test_grouped_ablation.GroupedAblationEvidence.test_evidence_excludes_names_the_evidence_tree_and_nothing_else)
+Round 3, finding 7. The exclusion must be exactly the outputs. ... ok
+test_evidence_file_set (test_grouped_ablation.GroupedAblationEvidence.test_evidence_file_set) ... ok
+test_mermaid_names_every_invocation_and_split_edges (test_grouped_ablation.GroupedAblationEvidence.test_mermaid_names_every_invocation_and_split_edges) ... ok
+test_saved_work_binds_authoring_files_by_sha256 (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_binds_authoring_files_by_sha256)
+saved-work.json carries sha256 of features.py, calculations.py, program.py so the evidence binds ... ok
+test_saved_work_carries_no_literal_reuse_counts (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_carries_no_literal_reuse_counts)
+invocations_skipped and ms_saved need Day 2's result digests; run-1 must not write them as literal zeros. ... ok
+test_saved_work_counts_match_run (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_counts_match_run) ... ok
+test_saved_work_derives_inheritance_from_a_prior_ledger (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_derives_inheritance_from_a_prior_ledger)
+inherited_calculations = len(REGISTRY & prior addresses), not a literal; the prior's own name is recorded. ... ok
+test_saved_work_run_label_is_the_out_dir_basename_with_no_prior (test_grouped_ablation.GroupedAblationEvidence.test_saved_work_run_label_is_the_out_dir_basename_with_no_prior)
+run.py saved_work: `run` is basename(out_dir) and Day 1 has no prior ledger (round 2, finding 2). ... ok
+test_testimony_file_is_pcr_and_ticks_only (test_grouped_ablation.GroupedAblationEvidence.test_testimony_file_is_pcr_and_ticks_only) ... ok
+test_default_out_is_a_fresh_empty_directory_outside_evidence (test_grouped_ablation.GroupedAblationOutDir.test_default_out_is_a_fresh_empty_directory_outside_evidence) ... ok
+test_existing_non_empty_out_is_refused_without_force (test_grouped_ablation.GroupedAblationOutDir.test_existing_non_empty_out_is_refused_without_force) ... ok
+test_force_overwrites_and_an_empty_existing_dir_is_accepted (test_grouped_ablation.GroupedAblationOutDir.test_force_overwrites_and_an_empty_existing_dir_is_accepted) ... ok
+test_main_without_out_leaves_tracked_run_1_untouched (test_grouped_ablation.GroupedAblationOutDir.test_main_without_out_leaves_tracked_run_1_untouched) ... ok
+test_failed_variants_are_retained_not_hidden (test_grouped_ablation.GroupedAblationRanking.test_failed_variants_are_retained_not_hidden) ... ok
+test_groups_without_planted_weight_are_uninformative (test_grouped_ablation.GroupedAblationRanking.test_groups_without_planted_weight_are_uninformative) ... ok
+test_ranking_drop_g3_then_g0_then_g1_across_seeds (test_grouped_ablation.GroupedAblationRanking.test_ranking_drop_g3_then_g0_then_g1_across_seeds) ... ok
+test_ranking_is_deterministic_for_same_seed (test_grouped_ablation.GroupedAblationRanking.test_ranking_is_deterministic_for_same_seed) ... ok
+test_all_twelve_fit_and_score_invocations_consume_fn_split (test_grouped_ablation.GroupedAblationTestimony.test_all_twelve_fit_and_score_invocations_consume_fn_split) ... ok
+test_no_args_key_collides_with_a_bound_input_name (test_grouped_ablation.GroupedAblationTestimony.test_no_args_key_collides_with_a_bound_input_name) ... ok
+test_score_consumes_fn_fit_and_compare_consumes_fn_scores (test_grouped_ablation.GroupedAblationTestimony.test_score_consumes_fn_fit_and_compare_consumes_fn_scores) ... ok
+test_testimony_json_round_trip_equals_asdict (test_grouped_ablation.GroupedAblationTestimony.test_testimony_json_round_trip_equals_asdict) ... ok
+test_ticks_are_prepare_fit_score_compare (test_grouped_ablation.GroupedAblationTestimony.test_ticks_are_prepare_fit_score_compare) ... ok
+test_exactly_five_ablation_variants_never_32768 (test_grouped_ablation.GroupedAblationVariants.test_exactly_five_ablation_variants_never_32768) ... ok
+test_registry_is_module_functions_without_lambdas (test_grouped_ablation.GroupedAblationVariants.test_registry_is_module_functions_without_lambdas) ... ok
+test_canonical_is_independent_of_dict_insertion_order (test_materials.CanonicalAndKeyStability.test_canonical_is_independent_of_dict_insertion_order) ... ok
+test_different_args_gives_a_different_key_even_with_same_revision_and_source (test_materials.CanonicalAndKeyStability.test_different_args_gives_a_different_key_even_with_same_revision_and_source) ... ok
+test_different_revision_gives_a_different_key (test_materials.CanonicalAndKeyStability.test_different_revision_gives_a_different_key) ... ok
+test_key_is_independent_of_nested_dict_order (test_materials.CanonicalAndKeyStability.test_key_is_independent_of_nested_dict_order) ... ok
+test_key_is_stable_across_a_fresh_process (test_materials.CanonicalAndKeyStability.test_key_is_stable_across_a_fresh_process)
+The same canonical()/sha() computed in this process and in a genuinely fresh ... ok
+test_a_stored_null_is_still_a_hit (test_materials.CorruptValueFileIsNotAHit.test_a_stored_null_is_still_a_hit)
+The sentinel for a failed load is not None: `null` is a legal cached value. ... ok
+test_a_truncated_value_file_recomputes_and_counts_a_miss (test_materials.CorruptValueFileIsNotAHit.test_a_truncated_value_file_recomputes_and_counts_a_miss) ... ok
+test_disk_hit_survives_a_fresh_python_dash_i_process (test_materials.DiskHitAcrossAFreshProcess.test_disk_hit_survives_a_fresh_python_dash_i_process)
+Write a value from THIS process; a genuinely fresh `python3 -I` process, ... ok
+test_calculation_hits_and_part_hits_on_the_day1_program (test_materials.HitLedger.test_calculation_hits_and_part_hits_on_the_day1_program)
+15 invocations: select, split, 6x(fit,score), compare. `select` and `split` ... ok
+test_empty_receipts_gives_zero_counts_rather_than_guessing (test_materials.HitLedger.test_empty_receipts_gives_zero_counts_rather_than_guessing) ... ok
+test_hit_ledger_on_a_run_record_dict_matches_the_pcrrun_form (test_materials.HitLedger.test_hit_ledger_on_a_run_record_dict_matches_the_pcrrun_form)
+RECORD.md's px:-prefixed declared_consumes spelling round-trips to the same ... ok
+test_rejects_an_unrecognized_input_type (test_materials.HitLedger.test_rejects_an_unrecognized_input_type) ... ok
+test_no_new_module_under_pyto_src (test_materials.LibraryUntouched.test_no_new_module_under_pyto_src) ... ok
+test_this_suite_changes_nothing_under_pyto_src (test_materials.LibraryUntouched.test_this_suite_changes_nothing_under_pyto_src) ... ok
+test_a_calculation_that_would_raise_is_never_called_on_a_hit (test_materials.MaterialHitsAndMisses.test_a_calculation_that_would_raise_is_never_called_on_a_hit)
+Proof that a hit really skips the Calculation: the second resolution's ... ok
+test_first_run_misses_second_run_hits_with_a_fresh_pxc (test_materials.MaterialHitsAndMisses.test_first_run_misses_second_run_hits_with_a_fresh_pxc) ... ok
+test_pxc_hit_does_not_touch_the_store_counters_beyond_requests_and_hits (test_materials.MaterialHitsAndMisses.test_pxc_hit_does_not_touch_the_store_counters_beyond_requests_and_hits)
+Asking the SAME pxc twice: the second ask is a PxC hit, never a disk read. ... ok
+test_non_json_value_is_not_treated_as_a_hit_on_reload (test_materials.NonJSONValueSidecar.test_non_json_value_is_not_treated_as_a_hit_on_reload) ... ok
+test_non_json_value_is_written_to_a_sidecar_not_a_value_file (test_materials.NonJSONValueSidecar.test_non_json_value_is_written_to_a_sidecar_not_a_value_file) ... ok
+test_running_the_evidence_writing_suites_changes_no_committed_file (test_replay.CheckAllLeavesTheTreeClean.test_running_the_evidence_writing_suites_changes_no_committed_file) ... ok
+test_every_startup_resident_top_level_name_is_stdlib_or_named (test_replay.ChildModuleTable.test_every_startup_resident_top_level_name_is_stdlib_or_named)
+Kills: an environment that grew a new startup resident nobody looked at. ... ok
+test_nothing_outside_the_allowed_set_is_in_the_full_module_table (test_replay.ChildModuleTable.test_nothing_outside_the_allowed_set_is_in_the_full_module_table) ... ok
+test_the_experiment_modules_are_absent_from_sys_modules_before (test_replay.ChildModuleTable.test_the_experiment_modules_are_absent_from_sys_modules_before)
+The child started clean: nothing it is about to import was already there. ... ok
+test_the_full_table_check_is_strictly_stronger_than_the_old_difference (test_replay.ChildModuleTable.test_the_full_table_check_is_strictly_stronger_than_the_old_difference)
+The old check subtracted `sys_modules_before` wholesale; this proves that ... ok
+test_the_startup_resident_set_is_named_not_inferred (test_replay.ChildModuleTable.test_the_startup_resident_set_is_named_not_inferred) ... ok
+test_every_seed_is_reproducible_across_two_independent_processes (test_replay.DeterminismMatrix.test_every_seed_is_reproducible_across_two_independent_processes) ... ok
+test_log_was_written_as_lf (test_replay.DeterminismMatrix.test_log_was_written_as_lf) ... ok
+test_nonzero_seeds_do_not_report_hash_randomization_disabled (test_replay.DeterminismMatrix.test_nonzero_seeds_do_not_report_hash_randomization_disabled)
+Corrects the plan's 'confirmed not gaps' note for n != 0 (replay.py docstring). ... ok
+test_result_digests_are_identical_across_every_hashseed_row_and_the_baseline (test_replay.DeterminismMatrix.test_result_digests_are_identical_across_every_hashseed_row_and_the_baseline) ... ok
+test_seed_zero_reports_hash_randomization_disabled (test_replay.DeterminismMatrix.test_seed_zero_reports_hash_randomization_disabled) ... ok
+test_the_five_seeds_produce_five_distinct_hashes (test_replay.DeterminismMatrix.test_the_five_seeds_produce_five_distinct_hashes)
+Kills: a seed that stopped taking effect. ... ok
+test_the_matrix_sets_no_pythonpath (test_replay.DeterminismMatrix.test_the_matrix_sets_no_pythonpath)
+The LF-copy row, the only one needing a scratch PYTHONPATH, was moved out of ... ok
+test_the_produced_log_matches_the_committed_one (test_replay.DeterminismMatrix.test_the_produced_log_matches_the_committed_one)
+The hash values are seed-determined, so this log reproduces exactly. ... ok
+test_cwd_was_outside_the_repository (test_replay.FreshProcessReplay.test_cwd_was_outside_the_repository) ... ok
+test_env_was_stripped_to_path_only (test_replay.FreshProcessReplay.test_env_was_stripped_to_path_only) ... ok
+test_exactly_one_intra_repo_path_was_inserted_and_it_is_this_directory (test_replay.FreshProcessReplay.test_exactly_one_intra_repo_path_was_inserted_and_it_is_this_directory) ... ok
+test_log_carries_the_checks_the_child_makes_before_trusting_the_record (test_replay.FreshProcessReplay.test_log_carries_the_checks_the_child_makes_before_trusting_the_record)
+Kills: dropping any of the guards added in fixer rounds 1 and 3. ... ok
+test_log_was_written_with_the_command_line_and_module_dump (test_replay.FreshProcessReplay.test_log_was_written_with_the_command_line_and_module_dump) ... ok
+test_provider_identity_was_compared_and_agreed (test_replay.FreshProcessReplay.test_provider_identity_was_compared_and_agreed) ... ok
+test_the_child_neither_read_nor_wrote_bytecode (test_replay.FreshProcessReplay.test_the_child_neither_read_nor_wrote_bytecode)
+`python3 -B` plus the parent's __pycache__ purge: a stale .pyc whose ... ok
+test_the_child_read_the_same_module_sources_the_parent_sees_on_disk (test_replay.FreshProcessReplay.test_the_child_read_the_same_module_sources_the_parent_sees_on_disk) ... ok
+test_the_produced_log_matches_the_committed_one_line_for_line (test_replay.FreshProcessReplay.test_the_produced_log_matches_the_committed_one_line_for_line)
+The oracle (fixer round 3, finding 1): this run wrote into a temp dir, and ... ok
+test_the_terminal_line_is_the_verdict_and_it_accepted_this_record (test_replay.FreshProcessReplay.test_the_terminal_line_is_the_verdict_and_it_accepted_this_record)
+`child failed checks: []` is NOT the verdict (fixer round 2, finding 3). ... ok
+test_a_record_that_preseeds_an_address_the_program_computes_is_refused (test_replay.HiddenStateAuditor.test_a_record_that_preseeds_an_address_the_program_computes_is_refused)
+Kills: dropping the external-vs-into check in retain.check_record. ... ok
+test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused (test_replay.HiddenStateAuditor.test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused)
+Kills: dropping the results-keys check in retain.check_record. ... ok
+test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it (test_replay.HiddenStateAuditor.test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it)
+The whole point of the fresh-process boundary: a forged record that reproduces ... ok
+test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child (test_replay.HiddenStateAuditor.test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child) ... ok
+test_the_honest_record_is_accepted_after_the_forgery_tests (test_replay.HiddenStateAuditor.test_the_honest_record_is_accepted_after_the_forgery_tests)
+The forged records were written to temp paths and logged to temp files; ... ok
+test_each_child_reproduced_its_own_committed_comparison_and_digests (test_replay.LaneCCrossVerification.test_each_child_reproduced_its_own_committed_comparison_and_digests) ... ok
+test_each_childs_receipt_digests_match_that_runs_committed_receipts (test_replay.LaneCCrossVerification.test_each_childs_receipt_digests_match_that_runs_committed_receipts)
+Finding 2, over every retained record and not only run-1. ... ok
+test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) ... ok
+test_each_run_has_its_own_log_ending_in_an_accepted_verdict (test_replay.LaneCCrossVerification.test_each_run_has_its_own_log_ending_in_an_accepted_verdict) ... ok
+test_every_lane_c_run_was_replayed (test_replay.LaneCCrossVerification.test_every_lane_c_run_was_replayed) ... ok
+test_run_4_declares_a_different_external_boundary_than_runs_1_to_3 (test_replay.LaneCCrossVerification.test_run_4_declares_a_different_external_boundary_than_runs_1_to_3)
+run-4 replays from a retained split, so its declared inputs are not ... ok
+test_log_is_lf_and_names_the_pythonpath_it_used (test_replay.LfSourceDriftProbe.test_log_is_lf_and_names_the_pythonpath_it_used) ... ok
+test_module_sources_drifted_by_construction_while_digests_did_not (test_replay.LfSourceDriftProbe.test_module_sources_drifted_by_construction_while_digests_did_not) ... ok
+test_no_test_module_in_this_directory_calls_the_probe (test_replay.LfSourceDriftProbe.test_no_test_module_in_this_directory_calls_the_probe)
+The needles are assembled at run time so this file does not match itself. ... ok
+test_the_log_was_produced_against_the_current_retained_record (test_replay.LfSourceDriftProbe.test_the_log_was_produced_against_the_current_retained_record)
+A stale log (someone regenerated retained.json without re-running the probe) ... ok
+test_a_module_outside_the_allowed_set_is_refused (test_replay.ParentSideRefusals.test_a_module_outside_the_allowed_set_is_refused)
+Kills: dropping `if leaked`. ... ok
+test_a_parent_child_source_sha_mismatch_is_refused (test_replay.ParentSideRefusals.test_a_parent_child_source_sha_mismatch_is_refused)
+Kills: dropping the `parent_source_sha256 != report['source_sha256']` raise. ... ok
+test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests (test_replay.ParentSideRefusals.test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests)
+Kills: dropping `if not digests_equal`. Rows still match, so nothing else fires. ... ok
+test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows (test_replay.ParentSideRefusals.test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows)
+Kills: dropping `if not rows_equal`. The child accepts this record. ... ok
+test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) ... ok
+test_the_honest_record_is_still_accepted_after_all_of_the_above (test_replay.ParentSideRefusals.test_the_honest_record_is_still_accepted_after_all_of_the_above) ... ok
+test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider (test_replay.ProviderIdentityIsModuleGranular.test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider) ... ok
+test_the_corrupted_registry_produces_a_byte_identical_provider_block (test_replay.ProviderIdentityIsModuleGranular.test_the_corrupted_registry_produces_a_byte_identical_provider_block) ... ok
+test_the_impostor_is_a_different_function_of_the_declared_module (test_replay.ProviderIdentityIsModuleGranular.test_the_impostor_is_a_different_function_of_the_declared_module) ... ok
+test_the_limitation_is_stated_in_the_docstring (test_replay.ProviderIdentityIsModuleGranular.test_the_limitation_is_stated_in_the_docstring) ... ok
+test_verify_provider_agrees_with_the_corrupted_registry (test_replay.ProviderIdentityIsModuleGranular.test_verify_provider_agrees_with_the_corrupted_registry) ... ok
+test_a_receipt_digest_mismatch_is_refused (test_replay.ReceiptDigestsFromTheChild.test_a_receipt_digest_mismatch_is_refused)
+Kills: dropping either receipt raise. The record's results are forged in a ... ok
+test_a_stale_committed_receipts_file_is_refused (test_replay.ReceiptDigestsFromTheChild.test_a_stale_committed_receipts_file_is_refused)
+Kills: dropping the receipts.json comparison. The record is honest; only ... ok
+test_both_lines_are_in_the_log (test_replay.ReceiptDigestsFromTheChild.test_both_lines_are_in_the_log) ... ok
+test_receipt_digests_equal_the_committed_receipts_json (test_replay.ReceiptDigestsFromTheChild.test_receipt_digests_equal_the_committed_receipts_json) ... ok
+test_receipt_digests_equal_the_records_results (test_replay.ReceiptDigestsFromTheChild.test_receipt_digests_equal_the_records_results) ... ok
+test_the_child_reported_a_receipt_for_every_invocation (test_replay.ReceiptDigestsFromTheChild.test_the_child_reported_a_receipt_for_every_invocation) ... ok
+test_removing_a_used_address_raises_keyerror_naming_it_before_execution (test_replay.RegistryHole.test_removing_a_used_address_raises_keyerror_naming_it_before_execution) ... ok
+test_requested_address_from_the_brief_is_not_actually_in_the_registry (test_replay.RegistryHole.test_requested_address_from_the_brief_is_not_actually_in_the_registry)
+Documents why the log substitutes an address (see replay.py docstring). ... ok
+test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone (test_replay.ReplayDoesNotMutateTheRecord.test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone)
+Fixer round 2, finding 5: `args` were shallow-copied all the way down. ... ok
+test_the_seeded_value_is_not_the_records_own_object (test_replay.ReplayDoesNotMutateTheRecord.test_the_seeded_value_is_not_the_records_own_object) ... ok
+test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical (test_replay.ReplayDoesNotMutateTheRecord.test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical) ... ok
+test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation (test_replay.ReplayObserveSeam.test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation) ... ok
+test_receipt_digests_equal_the_records_result_digests (test_replay.ReplayObserveSeam.test_receipt_digests_equal_the_records_result_digests) ... ok
+test_testimony_bytes_are_identical_with_observe_on_and_off (test_replay.ReplayObserveSeam.test_testimony_bytes_are_identical_with_observe_on_and_off)
+The day's hard rule, re-asserted through the replay path. ... ok
+test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf (test_replay.RetainedRecordIsDeterministic.test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf) ... ok
+test_result_digests_agree_with_the_committed_comparison (test_replay.RetainedRecordIsDeterministic.test_result_digests_agree_with_the_committed_comparison) ... ok
+test_retained_program_ticks_equal_the_committed_day1_testimony_ticks (test_replay.RetainedRecordIsDeterministic.test_retained_program_ticks_equal_the_committed_day1_testimony_ticks)
+evidence/run-1/testimony.json needs no conversion to become the program (gap 18d). ... ok
+test_the_committed_stamp_names_a_commit_git_knows (test_replay.RetainedRecordIsDeterministic.test_the_committed_stamp_names_a_commit_git_knows)
+The one field the oracle blanks is checked on its own terms. ... ok
+test_the_oracle_fails_when_the_record_really_differs (test_replay.RetainedRecordIsDeterministic.test_the_oracle_fails_when_the_record_really_differs)
+Kills: an `ensure_retained_record` that compares nothing. ... ok
+test_two_independent_builds_are_byte_identical (test_replay.RetainedRecordIsDeterministic.test_two_independent_builds_are_byte_identical) ... ok
+test_the_intra_repo_insert_is_inside_this_repository (test_replay.SysPathDiscipline.test_the_intra_repo_insert_is_inside_this_repository) ... ok
+test_only_the_tampered_variant_and_compare_changed (test_replay.Tamper.test_only_the_tampered_variant_and_compare_changed) ... ok
+test_record_holds_no_code (test_replay.Tamper.test_record_holds_no_code) ... ok
+test_report_was_written_as_lf_and_matches_the_committed_report (test_replay.Tamper.test_report_was_written_as_lf_and_matches_the_committed_report) ... ok
+test_the_baseline_replay_left_the_record_byte_identical (test_replay.Tamper.test_the_baseline_replay_left_the_record_byte_identical)
+Fixer round 1, finding 2: the two sides of this report must be independent. ... ok
+test_the_flag_is_false_when_the_baseline_replay_does_mutate (test_replay.Tamper.test_the_flag_is_false_when_the_baseline_replay_does_mutate)
+Fixer round 2, finding 4: the flag used to be unfalsifiable. ... ok
+test_untouched_variants_kept_their_digests (test_replay.Tamper.test_untouched_variants_kept_their_digests) ... ok
+test_a_bare_replay_py_refuses_to_overwrite_committed_evidence (test_replay.VerificationWritesNoEvidence.test_a_bare_replay_py_refuses_to_overwrite_committed_evidence)
+Only `--force` may write under evidence/ (mirrors run.py:316-329). ... ok
+test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record) ... ok
+test_owned_evidence_lists_every_committed_artifact_this_script_writes (test_replay.VerificationWritesNoEvidence.test_owned_evidence_lists_every_committed_artifact_this_script_writes)
+`replay.py --force` must be able to regenerate everything under its ownership; ... ok
+test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree) ... ok
+test_candidates_define_no_lambda (test_retain.CandidateRecord.test_candidates_define_no_lambda)
+CAPTURE.md rule 2: Calculations are named module-level functions. ... ok
+test_candidates_readme_matches_a_fresh_lens_run (test_retain.CandidateRecord.test_candidates_readme_matches_a_fresh_lens_run) ... ok
+test_describe_is_order_independent_for_dicts_and_sets (test_retain.Digests.test_describe_is_order_independent_for_dicts_and_sets) ... ok
+test_describe_refuses_a_callable_and_an_undescribable_object (test_retain.Digests.test_describe_refuses_a_callable_and_an_undescribable_object) ... ok
+test_non_json_value_digests_to_none_without_repr_fallback (test_retain.Digests.test_non_json_value_digests_to_none_without_repr_fallback) ... ok
+test_evidence_record_is_on_disk_and_names_its_sidecar (test_retain.DiscStatsSidecar.test_evidence_record_is_on_disk_and_names_its_sidecar) ... ok
+test_non_json_external_becomes_digest_and_ref (test_retain.DiscStatsSidecar.test_non_json_external_becomes_digest_and_ref) ... ok
+test_registry_comes_from_the_program_that_ran (test_retain.DiscStatsSidecar.test_registry_comes_from_the_program_that_ran) ... ok
+test_result_digest_is_none_because_json_cannot_hold_tuple_keys (test_retain.DiscStatsSidecar.test_result_digest_is_none_because_json_cannot_hold_tuple_keys) ... ok
+test_sidecar_file_exists_and_its_bytes_are_the_digest (test_retain.DiscStatsSidecar.test_sidecar_file_exists_and_its_bytes_are_the_digest) ... ok
+test_the_program_still_round_trips_through_the_registry (test_retain.DiscStatsSidecar.test_the_program_still_round_trips_through_the_registry) ... ok
+test_added_and_removed_ids_are_listed_separately (test_retain.ExplainChanges.test_added_and_removed_ids_are_listed_separately) ... ok
+test_changed_args_reports_args_and_the_downstream_closure (test_retain.ExplainChanges.test_changed_args_reports_args_and_the_downstream_closure) ... ok
+test_changed_binding_reports_input (test_retain.ExplainChanges.test_changed_binding_reports_input) ... ok
+test_changed_calculation_address_outranks_everything (test_retain.ExplainChanges.test_changed_calculation_address_outranks_everything) ... ok
+test_consumers_of_fn_and_px_refs (test_retain.ExplainChanges.test_consumers_of_fn_and_px_refs) ... ok
+test_false_unchanged_same_program_changed_external_digest (test_retain.ExplainChanges.test_false_unchanged_same_program_changed_external_digest)
+Identical program, identical result digests, different input data. ... ok
+test_false_unchanged_shadowing_arg_is_reported_as_args_not_missed (test_retain.ExplainChanges.test_false_unchanged_shadowing_arg_is_reported_as_args_not_missed)
+A shadowing args key changes the value while `inputs` is untouched. ... ok
+test_identical_records_change_nothing (test_retain.ExplainChanges.test_identical_records_change_nothing) ... ok
+test_render_counts_come_from_the_explanation (test_retain.ExplainChanges.test_render_counts_come_from_the_explanation) ... ok
+test_result_digest_alone_reports_digest (test_retain.ExplainChanges.test_result_digest_alone_reports_digest) ... ok
+test_callable_in_args_is_refused_naming_the_invocation (test_retain.ExportRefusals.test_callable_in_args_is_refused_naming_the_invocation) ... ok
+test_input_named_like_a_pcr_calc_parameter_is_refused (test_retain.ExportRefusals.test_input_named_like_a_pcr_calc_parameter_is_refused)
+An input called `args`/`into`/`id` cannot be rebuilt through PCR.calc. ... ok
+test_shadowing_arg_is_refused_at_export_naming_the_invocation (test_retain.ExportRefusals.test_shadowing_arg_is_refused_at_export_naming_the_invocation) ... ok
+test_bad_ref_prefix_is_rejected (test_retain.FromProgram.test_bad_ref_prefix_is_rejected) ... ok
+test_missing_registry_address_raises_keyerror_before_any_execution (test_retain.FromProgram.test_missing_registry_address_raises_keyerror_before_any_execution) ... ok
+test_pcr_projection_is_rejected_citing_stewardship (test_retain.FromProgram.test_pcr_projection_is_rejected_citing_stewardship) ... ok
+test_replaying_run_1_reproduces_its_committed_comparison (test_retain.FromProgram.test_replaying_run_1_reproduces_its_committed_comparison)
+The replayed comparison equals evidence/run-1/comparison.json's rows. ... ok
+test_round_trip_reproduces_testimony_and_result_digests (test_retain.FromProgram.test_round_trip_reproduces_testimony_and_result_digests) ... ok
+test_the_committed_run_1_testimony_is_itself_a_program (test_retain.FromProgram.test_the_committed_run_1_testimony_is_itself_a_program)
+Day 1's retained evidence needs no conversion to become a replayable program. ... ok
+test_writer_and_id_rules_re_apply_on_import (test_retain.FromProgram.test_writer_and_id_rules_re_apply_on_import) ... ok
+test_node_accepts_the_px_only_fanout_document (test_retain.NodeReadPql.test_node_accepts_the_px_only_fanout_document) ... ok
+test_node_reads_a_degraded_fn_binding_as_an_address_and_fails_at_invoke (test_retain.NodeReadPql.test_node_reads_a_degraded_fn_binding_as_an_address_and_fails_at_invoke) ... ok
+test_day1_program_is_refused_naming_the_first_offending_invocation (test_retain.PqlDocument.test_day1_program_is_refused_naming_the_first_offending_invocation) ... ok
+test_non_fn_call_address_is_refused (test_retain.PqlDocument.test_non_fn_call_address_is_refused) ... ok
+test_px_only_program_renders_the_readpql_shape (test_retain.PqlDocument.test_px_only_program_renders_the_readpql_shape) ... ok
+test_shadowing_arg_is_refused (test_retain.PqlDocument.test_shadowing_arg_is_refused) ... ok
+test_unpublished_invocation_is_refused (test_retain.PqlDocument.test_unpublished_invocation_is_refused) ... ok
+test_check_record_accepts_the_honest_record_and_reports_what_it_checked (test_retain.RetainRun.test_check_record_accepts_the_honest_record_and_reports_what_it_checked) ... ok
+test_check_record_refuses_an_external_the_program_claims_to_compute (test_retain.RetainRun.test_check_record_refuses_an_external_the_program_claims_to_compute)
+Fixer round 1, finding 1 (the milder form of the pre-seeding attack). ... ok
+test_check_record_refuses_results_that_are_not_the_programs_invocation_ids (test_retain.RetainRun.test_check_record_refuses_results_that_are_not_the_programs_invocation_ids) ... ok
+test_missing_external_address_fails_loud (test_retain.RetainRun.test_missing_external_address_fails_loud) ... ok
+test_provider_names_the_library_and_every_registry_module (test_retain.RetainRun.test_provider_names_the_library_and_every_registry_module) ... ok
+test_record_holds_no_code (test_retain.RetainRun.test_record_holds_no_code) ... ok
+test_record_keys_and_external_values (test_retain.RetainRun.test_record_keys_and_external_values) ... ok
+test_replay_from_the_record_reproduces_testimony (test_retain.RetainRun.test_replay_from_the_record_reproduces_testimony) ... ok
+test_result_digests_are_computed_from_the_values (test_retain.RetainRun.test_result_digests_are_computed_from_the_values) ... ok
+test_retained_block_separates_retained_at_from_ran_at (test_retain.RetainRun.test_retained_block_separates_retained_at_from_ran_at)
+Fixer round 1, finding 5: `provider` is the library that RETAINED the record. ... ok
+test_verify_provider_reports_agreement_and_names_every_disagreement (test_retain.RetainRun.test_verify_provider_reports_agreement_and_names_every_disagreement)
+Fixer round 1, finding 3: the comparison the provider docstring promises. ... ok
+test_write_record_is_lf_json (test_retain.RetainRun.test_write_record_is_lf_json) ... ok
+test_the_authoring_and_testimony_exports_agree (test_retain.RetainingAMultiProduceProgram.test_the_authoring_and_testimony_exports_agree)
+`to_program(run)["ticks"] == asdict(run.ticks)` still holds when `into` is a ... ok
+test_the_program_retains_with_every_produce_and_the_qualified_binding (test_retain.RetainingAMultiProduceProgram.test_the_program_retains_with_every_produce_and_the_qualified_binding)
+retain.py `_entry_from_invocation`: `into` is the list of addresses and a ... ok
+test_the_record_round_trips_and_check_record_reads_every_produce (test_retain.RetainingAMultiProduceProgram.test_the_record_round_trips_and_check_record_reads_every_produce)
+retain.py `check_record`: the computed addresses are the union of every ... ok
+test_the_retained_program_rebuilds_and_replays_to_the_same_values (test_retain.RetainingAMultiProduceProgram.test_the_retained_program_rebuilds_and_replays_to_the_same_values)
+retain.py `_result_ref`: `fn:<id>#<address>` parses back to the produce it ... ok
+test_sys_path_inserts_are_intra_repo (test_retain.SysPathDiscipline.test_sys_path_inserts_are_intra_repo) ... ok
+test_authoring_pcr_and_run_export_the_same_program (test_retain.ToProgram.test_authoring_pcr_and_run_export_the_same_program) ... ok
+test_fn_and_px_refs_are_both_present (test_retain.ToProgram.test_fn_and_px_refs_are_both_present) ... ok
+test_program_entries_are_the_testimony_entries_after_json (test_retain.ToProgram.test_program_entries_are_the_testimony_entries_after_json) ... ok
+test_to_program_rejects_anything_else (test_retain.ToProgram.test_to_program_rejects_anything_else) ... ok
+test_a_failing_disk_load_makes_the_ledger_say_miss_for_resolutions_2_and_3 (test_run_cached.LedgerOutcomesAreDerivedNotAsserted.test_a_failing_disk_load_makes_the_ledger_say_miss_for_resolutions_2_and_3)
+Kills the mutation `"outcome": outcome_from_delta(delta_b)` -> ... ok
+test_interpretation_markdown_reports_the_derived_counts (test_run_cached.LedgerOutcomesAreDerivedNotAsserted.test_interpretation_markdown_reports_the_derived_counts)
+Kills the mutation `f"{ledger['hits_observed']} of ..."` -> a hard-coded ... ok
+test_ms_saved_scales_with_the_hits_that_actually_happened (test_run_cached.LedgerOutcomesAreDerivedNotAsserted.test_ms_saved_scales_with_the_hits_that_actually_happened)
+Kills the mutation `round(baseline_ms * hits_observed, 3)` -> ... ok
+test_a_counted_hit_is_the_only_thing_that_reads_as_a_hit (test_run_cached.OutcomeFromDelta.test_a_counted_hit_is_the_only_thing_that_reads_as_a_hit)
+Kills the mutation `if hits > 0:` -> `if misses > 0:` in ... ok
+test_counters_delta_subtracts_the_snapshot (test_run_cached.OutcomeFromDelta.test_counters_delta_subtracts_the_snapshot)
+Kills the mutation `after.get(name, 0) - before.get(name, 0)` -> ... ok
+test_a_path_inside_this_checkout_is_recorded_relative_to_the_root_that_contains_it (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_a_path_inside_this_checkout_is_recorded_relative_to_the_root_that_contains_it)
+Kills two one-line mutations in portable(). (1) `return name + "/" + ... ok
+test_a_path_outside_this_checkout_is_left_exactly_as_it_ran (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_a_path_outside_this_checkout_is_left_exactly_as_it_ran)
+Kills the mutation `if candidate == CHECKOUT_ROOT or CHECKOUT_ROOT in ... ok
+test_a_symlink_into_this_checkout_is_recorded_by_the_name_that_ran (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_a_symlink_into_this_checkout_is_recorded_by_the_name_that_ran)
+Kills the mutation of the two-candidate loop down to its second half ... ok
+test_the_committed_ledger_names_no_directory_that_landing_deletes (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_the_committed_ledger_names_no_directory_that_landing_deletes)
+The finding itself, over the file on disk: whatever regenerated ... ok
+test_the_fresh_process_report_records_the_command_it_will_be_asked_to_publish (test_run_cached.TheLedgerRecordsNoPathThatLandingWouldBreak.test_the_fresh_process_report_records_the_command_it_will_be_asked_to_publish)
+Kills the mutation `report["command"] = [portable(arg) for arg in args]` ... ok
+test_every_committed_interpretation_quotes_its_own_ms_saved (test_second_experiment.CommittedEvidenceResolvesToCommittedRunOne.test_every_committed_interpretation_quotes_its_own_ms_saved)
+run_regrouped.py:123, run_reinput.py:54 and run_from_retained.py:92 print ... ok
+test_every_committed_ms_saved_entry_is_a_committed_run_1_duration (test_second_experiment.CommittedEvidenceResolvesToCommittedRunOne.test_every_committed_ms_saved_entry_is_a_committed_run_1_duration) ... ok
+test_the_committed_prior_run_is_the_one_this_pin_reads (test_second_experiment.CommittedEvidenceResolvesToCommittedRunOne.test_the_committed_prior_run_is_the_one_this_pin_reads) ... ok
+test_consumers_of_resolves_bare_and_produce_qualified_result_refs (test_second_experiment.CompareLocalReadsEveryProduce.test_consumers_of_resolves_bare_and_produce_qualified_result_refs)
+Guards `compare_local._fn_addresses`/`_fn_writer` in `consumers_of`. ... ok
+test_every_produce_address_maps_to_its_writer_and_both_edges_are_followed (test_second_experiment.CompareLocalReadsEveryProduce.test_every_produce_address_maps_to_its_writer_and_both_edges_are_followed)
+Guards `compare_local._writer_of` and the `_edges` fn: branch (the line that ... ok
+test_run_from_retained_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_from_retained_is_deterministic_except_timings) ... ok
+test_run_regrouped_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_regrouped_is_deterministic_except_timings) ... ok
+test_run_reinput_is_deterministic_except_timings (test_second_experiment.Determinism.test_run_reinput_is_deterministic_except_timings) ... ok
+test_regenerating_all_three_runs_leaves_the_committed_evidence_alone (test_second_experiment.EvidenceIsNeverRewritten.test_regenerating_all_three_runs_leaves_the_committed_evidence_alone) ... ok
+test_a_changed_value_at_an_unchanged_address_is_detected (test_second_experiment.InputPartsChangedIsComputed.test_a_changed_value_at_an_unchanged_address_is_detected)
+Kills: comparing address SETS instead of digests. Both records here declare ... ok
+test_a_sidecar_external_is_compared_by_its_recorded_digest (test_second_experiment.InputPartsChangedIsComputed.test_a_sidecar_external_is_compared_by_its_recorded_digest)
+A value JSON cannot inline is referenced as {"digest", "ref"}; the digest is ... ok
+test_an_unchanged_input_part_is_not_listed (test_second_experiment.InputPartsChangedIsComputed.test_an_unchanged_input_part_is_not_listed)
+A record compared with itself changes nothing. ... ok
+test_each_run_reports_exactly_what_the_two_records_disagree_on (test_second_experiment.InputPartsChangedIsComputed.test_each_run_reports_exactly_what_the_two_records_disagree_on) ... ok
+test_external_digests_are_the_same_measurement_as_the_records_results (test_second_experiment.InputPartsChangedIsComputed.test_external_digests_are_the_same_measurement_as_the_records_results)
+The digest an external carries is `retain.digest_of` over canonical JSON, ... ok
+test_no_run_script_names_the_field (test_second_experiment.InputPartsChangedIsComputed.test_no_run_script_names_the_field) ... ok
+test_saved_work_has_no_input_parts_changed_parameter (test_second_experiment.InputPartsChangedIsComputed.test_saved_work_has_no_input_parts_changed_parameter)
+Kills: re-adding the parameter. A keyword nobody may pass cannot be a literal. ... ok
+test_each_run_has_an_interpretation_md (test_second_experiment.InterpretationFiles.test_each_run_has_an_interpretation_md) ... ok
+test_regroup_interpretation_records_the_refuted_prediction_with_both_numbers (test_second_experiment.InterpretationFiles.test_regroup_interpretation_records_the_refuted_prediction_with_both_numbers)
+Fixer round 1, finding 10: the +0.9 sentence used to glue a computed False to a ... ok
+test_regroup_interpretation_reports_shared_changed_ids_from_explain_changes (test_second_experiment.InterpretationFiles.test_regroup_interpretation_reports_shared_changed_ids_from_explain_changes)
+Fixer round 1, finding 9: it used to assert 'added/removed ids, not a digest ... ok
+test_regroup_interpretation_states_whether_any_drop_exceeds_point_nine (test_second_experiment.InterpretationFiles.test_regroup_interpretation_states_whether_any_drop_exceeds_point_nine) ... ok
+test_reinput_interpretation_names_n_from_the_fixture_not_a_literal (test_second_experiment.InterpretationFiles.test_reinput_interpretation_names_n_from_the_fixture_not_a_literal) ... ok
+test_evidence_holds_no_lambda_or_function_repr (test_second_experiment.NoLambdaOrCode.test_evidence_holds_no_lambda_or_function_repr) ... ok
+test_no_reconstruction_required_files_were_written (test_second_experiment.NoReconstruction.test_no_reconstruction_required_files_were_written) ... ok
+test_program_lines_changed_is_zero_for_all_three_runs (test_second_experiment.NoReconstruction.test_program_lines_changed_is_zero_for_all_three_runs) ... ok
+test_the_diff_base_is_recorded_and_is_an_ancestor_of_head (test_second_experiment.NoReconstruction.test_the_diff_base_is_recorded_and_is_an_ancestor_of_head)
+Fixer round 1, finding 11: the zero must be measured against the DAY's base. ... ok
+test_existing_non_empty_out_is_refused_without_force (test_second_experiment.OutDirSafety.test_existing_non_empty_out_is_refused_without_force) ... ok
+test_a_multi_produce_invocation_is_refused_naming_it_and_its_addresses (test_second_experiment.PqlDocumentRefusesSeveralProduces.test_a_multi_produce_invocation_is_refused_naming_it_and_its_addresses)
+Guards the `isinstance(into, (list, tuple))` refusal in ... ok
+test_a_one_address_invocation_still_renders (test_second_experiment.PqlDocumentRefusesSeveralProduces.test_a_one_address_invocation_still_renders)
+The refusal is by the SHAPE of `into`, so a plain string is untouched. ... ok
+test_from_retained_ranking_equals_run_1s_committed_ranking (test_second_experiment.Rankings.test_from_retained_ranking_equals_run_1s_committed_ranking) ... ok
+test_regroup_ranking_has_three_cross_cutting_variants (test_second_experiment.Rankings.test_regroup_ranking_has_three_cross_cutting_variants) ... ok
+test_reinput_ranking_still_recovers_the_planted_order (test_second_experiment.Rankings.test_reinput_ranking_still_recovers_the_planted_order) ... ok
+test_run_from_retained_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_from_retained_receipts_are_deterministic_apart_from_timings) ... ok
+test_run_regrouped_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_regrouped_receipts_are_deterministic_apart_from_timings) ... ok
+test_run_reinput_receipts_are_deterministic_apart_from_timings (test_second_experiment.ReceiptsDeterminism.test_run_reinput_receipts_are_deterministic_apart_from_timings) ... ok
+test_the_committed_receipts_survive_the_same_comparison (test_second_experiment.ReceiptsDeterminism.test_the_committed_receipts_survive_the_same_comparison)
+A regeneration of run-2 must agree with the COMMITTED run-2 receipts too, ... ok
+test_every_committed_run_agrees_id_by_id (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_every_committed_run_agrees_id_by_id) ... ok
+test_run_4_has_no_split_in_either_file (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_run_4_has_no_split_in_either_file)
+The one run whose invocation set differs: split is an external Part there, ... ok
+test_the_aliasing_is_documented_where_the_digest_is_taken (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_the_aliasing_is_documented_where_the_digest_is_taken)
+The claim above must live in the code, not only in a test name. ... ok
+test_the_run_ids_are_the_programs_invocation_ids (test_second_experiment.RetainedDigestsEqualReceiptDigests.test_the_run_ids_are_the_programs_invocation_ids)
+Neither file may quietly cover a different set of invocations than the program. ... ok
+test_from_retained_saved_work (test_second_experiment.SavedWorkFields.test_from_retained_saved_work) ... ok
+test_regroup_saved_work (test_second_experiment.SavedWorkFields.test_regroup_saved_work) ... ok
+test_reinput_saved_work (test_second_experiment.SavedWorkFields.test_reinput_saved_work) ... ok
+test_run_4_from_retained_has_no_split_invocation_but_joins_it_by_digest (test_second_experiment.SplitDigestByGrouping.test_run_4_from_retained_has_no_split_invocation_but_joins_it_by_digest) ... ok
+test_split_digest_different_for_run_3_reinput (test_second_experiment.SplitDigestByGrouping.test_split_digest_different_for_run_3_reinput) ... ok
+test_split_digest_equal_between_run_1_and_run_2_regroup (test_second_experiment.SplitDigestByGrouping.test_split_digest_equal_between_run_1_and_run_2_regroup) ... ok
+test_sys_path_insert_is_intra_repo (test_second_experiment.SysPathDiscipline.test_sys_path_insert_is_intra_repo) ... ok
+
+----------------------------------------------------------------------
+Ran 248 tests in 24.009s
+
+OK
+-- experiments/grouped-ablation: OK (ran 248)
+
+== suite: experiments/hiding-primitives  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s experiments/hiding-primitives -p test_*.py -v
+test_instances_survive_relabelling_of_unrelated_nodes (test_mine.Miner.test_instances_survive_relabelling_of_unrelated_nodes) ... ok
+test_planted_motif_is_the_top_result (test_mine.Miner.test_planted_motif_is_the_top_result) ... ok
+test_reads_stay_inside_the_studio (test_mine.Miner.test_reads_stay_inside_the_studio) ... ok
+test_the_report_is_deterministic (test_mine.Miner.test_the_report_is_deterministic) ... ok
+test_two_instances_pay_and_one_does_not (test_mine.Miner.test_two_instances_pay_and_one_does_not) ... ok
+test_every_mutation_is_killed (test_mine.Mutations.test_every_mutation_is_killed) ... /home/user/DiscStudio-staging/EXP/41/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/EXP/41/pyto/experiments/hiding-primitives/graphs.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/41/pyto/experiments/hiding-primitives/test_mine.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/DiscStudio-staging/EXP/41/pyto/experiments/hiding-primitives/subdue.py' mode='r' encoding='utf-8'>
+  source = open(path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 5.940s
+
+OK
+-- experiments/hiding-primitives: OK (ran 6)
+
+== suite: experiments/s3-synthetic  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s experiments/s3-synthetic -p test_*.py -v
+[s3-synthetic] sys.path.insert(0, /home/user/DiscStudio-staging/EXP/41/pyto/reference/chainspot-quick-anno) intra-repo reference dir
+test_account_rings_records_only_px_edges (test_s3_synthetic.S3SyntheticSnapshot.test_account_rings_records_only_px_edges)
+accountRings binds two unwritten Parts, so both inputs are px: (pcr.py:147-149). ... ok
+test_build_investigation_runs_without_corpus (test_s3_synthetic.S3SyntheticSnapshot.test_build_investigation_runs_without_corpus)
+s3.build_investigation (s3.py:23-91) needs only the snapshot dict; no corpus, no Node bridge. ... ok
+test_check_balance_records_ledger_as_fn_edge (test_s3_synthetic.S3SyntheticSnapshot.test_check_balance_records_ledger_as_fn_edge)
+checkBalance testimony inputs == observed mapping; gap 12's {'ledger': 'fn:accountRings'} is its subset. ... ok
+test_rerun_matches_retained_testimony (test_s3_synthetic.S3SyntheticSnapshot.test_rerun_matches_retained_testimony)
+A fresh run's {pcr, ticks} equals testimony.json byte-for-byte after canonical dumps. ... ok
+test_sys_path_insert_is_intra_repo (test_s3_synthetic.S3SyntheticSnapshot.test_sys_path_insert_is_intra_repo)
+The only sys.path insert points inside this repository (CAPTURE.md sys.path rule). ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.002s
+
+OK
+-- experiments/s3-synthetic: OK (ran 5)
+
+== suite: experiments/students  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s experiments/students -p test_*.py -v
+[students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/41/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+[students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/41/pyto/experiments/tick-laws')  # intra-repo: the Tick node/loop law checker (tick_laws.py)
+test_grade_exits_zero_on_the_committed_evidence (test_students.CommittedEvidence.test_grade_exits_zero_on_the_committed_evidence)
+grade.py:main -- the four checks all pass on evidence/run-1 and HANDOFF.md. ... ok
+test_the_report_says_the_plain_words_half_is_not_automated (test_students.CommittedEvidence.test_the_report_says_the_plain_words_half_is_not_automated)
+grade.py:grade -- the report refuses to imply it graded the explanation. ... ok
+test_a_record_missing_a_required_field_fails_check_one (test_students.ContractRefusal.test_a_record_missing_a_required_field_fails_check_one)
+grade.py:check_contract -- the independent validator, not the producer. ... ok
+test_a_missing_file_fails_check_four (test_students.Handoff.test_a_missing_file_fails_check_four)
+grade.py:homework_files -- every file in the directory must be named. ... ok
+test_a_missing_histogram_line_fails_check_four (test_students.Handoff.test_a_missing_histogram_line_fails_check_four)
+grade.py:check_handoff -- a hand-off that leaves a Tick out is refused. ... ok
+test_a_missing_stats_line_fails_check_four_even_though_the_prose_says_stats (test_students.Handoff.test_a_missing_stats_line_fails_check_four_even_though_the_prose_says_stats)
+grade.py:names_tick -- the Tick needs a line of its own, not a mention. ... ok
+test_only_the_tick_section_bullets_are_read (test_students.Handoff.test_only_the_tick_section_bullets_are_read)
+grade.py:tick_list_lines -- the list, not the whole page. ... ok
+test_the_three_accepted_bullet_forms_and_nothing_else (test_students.Handoff.test_the_three_accepted_bullet_forms_and_nothing_else)
+grade.py:names_tick -- which list lines count as a Tick's own line. ... ok
+test_the_testimony_is_byte_identical_with_observation_on_and_off (test_students.ObserveOnOff.test_the_testimony_is_byte_identical_with_observation_on_and_off)
+pyto/src/pyto/pcr.py:PcrRun -- observation is additive and trailing. ... ok
+test_a_fresh_run_produces_a_record_that_validates (test_students.RecordShape.test_a_fresh_run_produces_a_record_that_validates)
+homework.py:run -- the record it returns is a `pyto-run-record@1` document. ... ok
+test_the_run_writes_a_record_receipts_and_a_viewer_page (test_students.RecordShape.test_the_run_writes_a_record_receipts_and_a_viewer_page)
+homework.py:write_evidence -- the three files `--out` is documented to write. ... ok
+test_a_receipt_source_digest_that_is_not_todays_source_fails_check_three (test_students.TamperedRecord.test_a_receipt_source_digest_that_is_not_todays_source_fails_check_three)
+grade.py:check_receipts -- a receipt that describes code no longer on disk. ... ok
+test_flipping_one_result_digest_fails_the_replay_check (test_students.TamperedRecord.test_flipping_one_result_digest_fails_the_replay_check)
+grade.py:check_replay -- an edited record no longer matches a fresh run. ... ok
+test_the_stats_tick_does_more_work_than_it_takes_time (test_students.TickLaws.test_the_stats_tick_does_more_work_than_it_takes_time)
+tick-laws/tick_laws.py:analyze_record -- the claim HANDOFF.md makes about Stats. ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.054s
+
+OK
+-- experiments/students: OK (ran 14)
+
+== suite: experiments/tick-laws  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s experiments/tick-laws -p test_*.py -v
+test_a_result_read_of_a_sibling_is_a_node_law_violation (test_tick_laws.TickLawTests.test_a_result_read_of_a_sibling_is_a_node_law_violation)
+A result read is a read (pyto/questions.md, ResultReadsAreReads): binding a sibling's ... ok
+test_check_cli_exit_matrix_and_text_receipt (test_tick_laws.TickLawTests.test_check_cli_exit_matrix_and_text_receipt)
+Brief: --check reports clean, law, schema, and mixed outcomes exactly. ... LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+/tmp/tmpwpa4cocf/invalid.json
+Summary: work_ms=None critical_path_ms=None
+no parallel execution exists yet
+VIOLATION: pyto-run-record@1 document: missing required field(s) counters, parts, pcr, source, ticks; RECORD.md: missing fields are null, never absent
+LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+/tmp/tmpwpa4cocf/clean.json
+Tick 0: work_ms=0.1 latency_ms=0.1
+Summary: work_ms=0.1 critical_path_ms=0.1
+no parallel execution exists yet
+/tmp/tmpwpa4cocf/law.json
+Tick 0: work_ms=0.2 latency_ms=0.1
+Summary: work_ms=0.2 critical_path_ms=0.1
+no parallel execution exists yet
+VIOLATION: node law violation: consumer reads sibling-produced px.bad in Tick 0 producers=['producer']
+ok
+test_committed_students_records_are_clean (test_tick_laws.TickLawTests.test_committed_students_records_are_clean)
+Brief: both committed student records are valid reference witnesses. ... ok
+test_duplicate_actual_produces_names_calculation_and_part (test_tick_laws.TickLawTests.test_duplicate_actual_produces_names_calculation_and_part)
+Brief: one Tick cannot have two actual producers for the same Part. ... ok
+test_empty_and_invalid_durations_have_explicit_metrics (test_tick_laws.TickLawTests.test_empty_and_invalid_durations_have_explicit_metrics)
+Brief: empty Ticks cost zero; missing durations produce null metrics. ... ok
+test_late_actual_producer_loop_is_reported (test_tick_laws.TickLawTests.test_late_actual_producer_loop_is_reported)
+Brief: an actual consumer cannot precede the producer across Ticks. ... ok
+test_mutation_actual_consume_is_killed (test_tick_laws.TickLawTests.test_mutation_actual_consume_is_killed)
+Mutation: adding actual_consumes to a sibling kills the clean result. ... ok
+test_mutation_duplicate_producer_is_killed (test_tick_laws.TickLawTests.test_mutation_duplicate_producer_is_killed)
+Mutation: adding a second actual producer kills the clean result. ... ok
+test_sibling_actual_consume_names_calculation_and_part (test_tick_laws.TickLawTests.test_sibling_actual_consume_names_calculation_and_part)
+Brief: a calculation may not consume a Part produced by a sibling in its Tick. ... ok
+test_tiny_durations_are_valid (test_tick_laws.TickLawTests.test_tiny_durations_are_valid)
+Brief: duration checks must work for very small positive runtimes. ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.009s
+
+OK
+-- experiments/tick-laws: OK (ran 10)
+
+== suite: consumer  (cwd /home/user/DiscStudio-staging/EXP/41/pyto/consumers/discstudio-card)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s . -p test_*.py -v
+[test_art_registry] sys.path.insert pyto/experiments/art-tournament/harness  (tournament lint checks and card fixtures)
+test_art_replay_receipt_and_no_mutation_on_invalid (test_art_backend.ArtBackendTest.test_art_replay_receipt_and_no_mutation_on_invalid) ... ok
+test_concurrent_events_are_complete_json_lines (test_art_backend.ArtBackendTest.test_concurrent_events_are_complete_json_lines) ... ok
+test_health_recipe_event_and_reload (test_art_backend.ArtBackendTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_art_backend.ArtBackendTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_art_backend.ArtBackendTest.test_root_only_serves_index) ... ok
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
+test_all_eight_renderers_draw_the_four_sample_cards_at_400 (test_art_registry.EveryCardRendererDrawsTest.test_all_eight_renderers_draw_the_four_sample_cards_at_400) ... ok
+test_every_renderer_draws_exactly_what_its_studio_source_draws (test_art_registry.EveryCardRendererDrawsTest.test_every_renderer_draws_exactly_what_its_studio_source_draws)
+The copies beside this module must not have forked from the studios. ... [test_art_registry] load_source pyto/experiments/art-tournament/studios/botanical/cards.py  (byte-equality check for studio botanical cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/botanical/families.py  (byte-equality check for studio botanical)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/cartography/cards.py  (byte-equality check for studio cartography cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/cartography/families.py  (byte-equality check for studio cartography)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/foundry/cards.py  (byte-equality check for studio foundry cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/foundry/families.py  (byte-equality check for studio foundry)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/signal/cards.py  (byte-equality check for studio signal cards)
+[test_art_registry] load_source pyto/experiments/art-tournament/studios/signal/families.py  (byte-equality check for studio signal)
+ok
+test_retained_renderers_are_registered_under_a_studio_suffixed_address (test_art_registry.EveryCardRendererDrawsTest.test_retained_renderers_are_registered_under_a_studio_suffixed_address) ... ok
+test_the_promoted_pair_is_card_render_itself_not_a_copy (test_art_registry.EveryCardRendererDrawsTest.test_the_promoted_pair_is_card_render_itself_not_a_copy) ... ok
+test_all_sixteen_families_render_at_every_target_and_are_deterministic (test_art_registry.EveryFamilyRendersTest.test_all_sixteen_families_render_at_every_target_and_are_deterministic) ... ok
+test_every_family_render_is_lint_clean_under_the_harness_checks (test_art_registry.EveryFamilyRendersTest.test_every_family_render_is_lint_clean_under_the_harness_checks) ... ok
+test_family_render_entry_point_agrees_with_every_entry (test_art_registry.EveryFamilyRendersTest.test_family_render_entry_point_agrees_with_every_entry) ... ok
+test_every_entry_carries_a_params_document (test_art_registry.ProvenanceTest.test_every_entry_carries_a_params_document) ... ok
+test_every_evidence_path_points_at_a_file_that_still_exists (test_art_registry.ProvenanceTest.test_every_evidence_path_points_at_a_file_that_still_exists) ... ok
+test_every_reach_outside_the_consumer_stays_inside_the_repository (test_art_registry.ProvenanceTest.test_every_reach_outside_the_consumer_stays_inside_the_repository) ... ok
+test_every_scored_entry_carries_its_tally_and_the_classic_four_do_not (test_art_registry.ProvenanceTest.test_every_scored_entry_carries_its_tally_and_the_classic_four_do_not) ... ok
+test_every_tally_matches_results_md_section_one (test_art_registry.ProvenanceTest.test_every_tally_matches_results_md_section_one) ... [test_art_registry] read pyto/experiments/art-tournament/RESULTS.md  (the judge tally attached to every entry)
+ok
+test_status_counts_are_four_classic_three_and_two_promoted_nine_and_six_retained (test_art_registry.ProvenanceTest.test_status_counts_are_four_classic_three_and_two_promoted_nine_and_six_retained) ... ok
+test_the_frozen_classic_bytes_are_untouched_by_this_registry (test_art_registry.ProvenanceTest.test_the_frozen_classic_bytes_are_untouched_by_this_registry)
+The registry must not have moved a byte of the four originals. ... ok
+test_the_promotion_policy_is_recorded_as_reversible (test_art_registry.ProvenanceTest.test_the_promotion_policy_is_recorded_as_reversible) ... ok
+test_classic_families_render_exactly_as_paint_components_does (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_classic_families_render_exactly_as_paint_components_does) ... ok
+test_every_paint_components_family_is_addressable_here (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_every_paint_components_family_is_addressable_here) ... ok
+test_promoted_families_are_the_promoted_function_not_a_second_copy (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_promoted_families_are_the_promoted_function_not_a_second_copy) ... ok
+test_promoted_families_render_exactly_as_paint_components_does (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_promoted_families_render_exactly_as_paint_components_does) ... ok
+test_retained_families_render_exactly_as_their_studio_source_does (test_art_registry.RegisteredCodeIsTheSourceCodeTest.test_retained_families_render_exactly_as_their_studio_source_does) ... ok
+test_no_anonymous_functions_in_the_registry_module (test_art_registry.RegistrationTest.test_no_anonymous_functions_in_the_registry_module) ... ok
+test_one_art_result_fans_out_to_each_studios_single_and_battle (test_art_registry.RegistrationTest.test_one_art_result_fans_out_to_each_studios_single_and_battle) ... ok
+test_pql_cannot_see_a_single_registered_calculation (test_art_registry.RegistrationTest.test_pql_cannot_see_a_single_registered_calculation) ... ok
+test_register_all_puts_all_twenty_six_addresses_on_a_fresh_pxc (test_art_registry.RegistrationTest.test_register_all_puts_all_twenty_six_addresses_on_a_fresh_pxc) ... ok
+test_card_owns_layout_and_manual_display_fields (test_card_composition.CardCompositionTest.test_card_owns_layout_and_manual_display_fields) ... ok
+test_layout_does_not_mutate_disc_input (test_card_composition.CardCompositionTest.test_layout_does_not_mutate_disc_input) ... ok
+test_legacy_adapter_has_no_physical_identity (test_card_composition.CardCompositionTest.test_legacy_adapter_has_no_physical_identity) ... ok
+test_malformed_reference_rejected (test_card_composition.CardCompositionTest.test_malformed_reference_rejected) ... ok
+test_non_string_reference_rejected_without_type_error (test_card_composition.CardCompositionTest.test_non_string_reference_rejected_without_type_error) ... ok
+test_result_hash_is_stable (test_card_composition.CardCompositionTest.test_result_hash_is_stable) ... ok
+test_shared_active_disc_and_independent_snapshot (test_card_composition.CardCompositionTest.test_shared_active_disc_and_independent_snapshot) ... ok
+test_an_unrecorded_mold_is_marked_not_papered_over_with_the_note (test_card_render.CardRenderTest.test_an_unrecorded_mold_is_marked_not_papered_over_with_the_note)
+The one defect the judges named by name in a runner-up renderer. ... ok
+test_art_is_inlined_with_no_external_or_data_reference (test_card_render.CardRenderTest.test_art_is_inlined_with_no_external_or_data_reference) ... ok
+test_battle_renders_both_layouts_with_a_score_slot (test_card_render.CardRenderTest.test_battle_renders_both_layouts_with_a_score_slot) ... ok
+test_calculations_surface_is_registrable (test_card_render.CardRenderTest.test_calculations_surface_is_registrable) ... ok
+test_details_flag_is_honoured_by_both_renderers (test_card_render.CardRenderTest.test_details_flag_is_honoured_by_both_renderers) ... ok
+test_missing_scores_still_render_a_slot (test_card_render.CardRenderTest.test_missing_scores_still_render_a_slot) ... ok
+test_one_art_result_fans_out_to_both_card_renderers (test_card_render.CardRenderTest.test_one_art_result_fans_out_to_both_card_renderers)
+fn.discArt.render runs once; both card calculations name it in testimony. ... ok
+test_render_does_not_mutate_the_card_or_the_art (test_card_render.CardRenderTest.test_render_does_not_mutate_the_card_or_the_art) ... ok
+test_render_is_deterministic_within_and_across_processes (test_card_render.CardRenderTest.test_render_is_deterministic_within_and_across_processes) ... ok
+test_single_renders_both_layouts_from_compose_output (test_card_render.CardRenderTest.test_single_renders_both_layouts_from_compose_output) ... ok
+test_two_discs_on_one_battle_plate_do_not_share_ids (test_card_render.CardRenderTest.test_two_discs_on_one_battle_plate_do_not_share_ids) ... ok
+test_every_original_family_and_target_matches_its_recorded_hash (test_paint_families.ClassicFamiliesAreFrozenTest.test_every_original_family_and_target_matches_its_recorded_hash) ... ok
+test_promotion_only_appended_to_the_family_list (test_paint_families.ClassicFamiliesAreFrozenTest.test_promotion_only_appended_to_the_family_list) ... ok
+test_no_two_families_rasterize_alike_at_42px (test_paint_families.FamiliesAreDistinctAt42Test.test_no_two_families_rasterize_alike_at_42px) ... ok
+test_document_contract_holds_at_every_target (test_paint_families.PromotedFamiliesTest.test_document_contract_holds_at_every_target) ... ok
+test_every_family_and_target_is_lint_clean (test_paint_families.PromotedFamiliesTest.test_every_family_and_target_is_lint_clean) ... ok
+test_render_is_deterministic_within_and_across_processes (test_paint_families.PromotedFamiliesTest.test_render_is_deterministic_within_and_across_processes) ... ok
+test_reuse_surface_is_registrable (test_paint_families.PromotedFamiliesTest.test_reuse_surface_is_registrable) ... ok
+test_unknown_family_is_rejected (test_paint_families.PromotedFamiliesTest.test_unknown_family_is_rejected) ... ok
+test_health_recipe_event_and_reload (test_sandbox.SandboxTest.test_health_recipe_event_and_reload) ... ok
+test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejects_bad_input_origin_and_traversal) ... ok
+test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
+
+----------------------------------------------------------------------
+Ran 61 tests in 3.108s
+
+OK
+-- consumer: OK (ran 61)
+
+== suite: disc-stats  (cwd /home/user/DiscStudio-staging/EXP/41/pyto/consumers/discstudio-card/experiments/disc-stats)
+   $ env PYTHONPATH=. /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s . -p test_*.py -v
+test_description_denominators_and_raw_phrases (test_stats.StatsTests.test_description_denominators_and_raw_phrases) ... ok
+test_later_shot_windows_and_empty_denominator (test_stats.StatsTests.test_later_shot_windows_and_empty_denominator) ... ok
+test_membership_gap_and_censoring (test_stats.StatsTests.test_membership_gap_and_censoring) ... ok
+test_mold_identity_dedupe_and_conflict (test_stats.StatsTests.test_mold_identity_dedupe_and_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+-- disc-stats: OK (ran 4)
+
+== suite: examples  (cwd /home/user/DiscStudio-staging/EXP/41/pyto)
+   $ python3 examples/basic.py -> 42
+   $ python3 examples/shared_result_fanout.py -> {"consumers": ["single-card", "battle-card"], "producedParts": ["px.card.battle", "px.card.single"], "sharedResult": "fn:render-disc"}
+   $ python3 examples/art_registry_demo.py -> {"consumers": ["single-card", "battle-card"], "discArtAddresses": ["fn.discArt.block-print", "fn.discArt.chevron-run", "fn.discArt.contour-basin", "fn.discArt.fairway-plat", "fn.discArt.halftone-screen", "fn.discArt.hot-foil", "fn.discArt.nodding-seedhead", "fn.discArt.orbit-foundry", "fn.discArt.petal-press", "fn.discArt.pressed-fern", "fn.discArt.register-mark", "fn.discArt.score-bug", "fn.discArt.signal-stamp", "fn.discArt.sweep-clock", "fn.discArt.tessellated-flight", "fn.discArt.wind-rose"], "pqlVisibleCalculations": [], "registeredCalculations": 26, "sharedResult": "fn:render-art"}
+-- examples: OK (3 scripts)
+
+== suite: art-registry-md  (cwd /home/user/DiscStudio-staging/EXP/41/pyto/consumers/discstudio-card)
+   $ python3 scripts/generate_art_registry_md.py -> wrote /home/user/DiscStudio-staging/EXP/41/pyto/consumers/discstudio-card/ART-REGISTRY.md (22859 bytes)
+-- art-registry-md: OK (regenerated, matches committed ART-REGISTRY.md)
+
+== suite: viewer  (cwd /home/user/DiscStudio-staging/EXP/41/pyto/viewer)
+   $ node --test test/*.test.mjs   (v22.22.2)
+TAP version 13
+# Subtest: the pyto fixture is the Python materializer output byte for byte
+ok 1 - the pyto fixture is the Python materializer output byte for byte
+  ---
+  duration_ms: 2.388255
+  type: 'test'
+  ...
+# Subtest: every adapter output passes validate
+ok 2 - every adapter output passes validate
+  ---
+  duration_ms: 7.596985
+  type: 'test'
+  ...
+# Subtest: fromPytoRecord is a validating pass-through, from an object or a string
+ok 3 - fromPytoRecord is a validating pass-through, from an object or a string
+  ---
+  duration_ms: 3.440113
+  type: 'test'
+  ...
+# Subtest: deriveHit: a px: binding not produced earlier in the run is a hit
+ok 4 - deriveHit: a px: binding not produced earlier in the run is a hit
+  ---
+  duration_ms: 0.215348
+  type: 'test'
+  ...
+# Subtest: deriveHit: an address this run overwrote is not a hit, however it started life
+ok 5 - deriveHit: an address this run overwrote is not a hit, however it started life
+  ---
+  duration_ms: 0.1211
+  type: 'test'
+  ...
+# Subtest: pyto record: hits are exactly the invocations that read a preexisting Part
+ok 6 - pyto record: hits are exactly the invocations that read a preexisting Part
+  ---
+  duration_ms: 0.32235
+  type: 'test'
+  ...
+# Subtest: DiscStudio: reused === true makes every invocation of the second run a hit
+ok 7 - DiscStudio: reused === true makes every invocation of the second run a hit
+  ---
+  duration_ms: 2.276269
+  type: 'test'
+  ...
+# Subtest: DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
+ok 8 - DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
+  ---
+  duration_ms: 0.673049
+  type: 'test'
+  ...
+# Subtest: DiscStudio adapter also accepts a live run of src/runtime.js
+ok 9 - DiscStudio adapter also accepts a live run of src/runtime.js
+  ---
+  duration_ms: 30.049463
+  type: 'test'
+  ...
+# Subtest: ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
+ok 10 - ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
+  ---
+  duration_ms: 0.68386
+  type: 'test'
+  ...
+# Subtest: Wumpus: values are present and the SVG Part is classified as svg
+ok 11 - Wumpus: values are present and the SVG Part is classified as svg
+  ---
+  duration_ms: 0.469655
+  type: 'test'
+  ...
+# Subtest: materialize classifies text, svg, png data URLs and JSON
+ok 12 - materialize classifies text, svg, png data URLs and JSON
+  ---
+  duration_ms: 0.143563
+  type: 'test'
+  ...
+# Subtest: materialize honours RECORD.md size and array caps
+ok 13 - materialize honours RECORD.md size and array caps
+  ---
+  duration_ms: 0.571004
+  type: 'test'
+  ...
+# Subtest: materialize truncates nested arrays exactly as the Python materializer does
+ok 14 - materialize truncates nested arrays exactly as the Python materializer does
+  ---
+  duration_ms: 0.716657
+  type: 'test'
+  ...
+# Subtest: materialize still reaches omitted for a cycle hidden past the array cap
+ok 15 - materialize still reaches omitted for a cycle hidden past the array cap
+  ---
+  duration_ms: 0.322911
+  type: 'test'
+  ...
+# Subtest: materialize counts UTF-8 bytes, not characters
+ok 16 - materialize counts UTF-8 bytes, not characters
+  ---
+  duration_ms: 1.461957
+  type: 'test'
+  ...
+# Subtest: derivePartIndex names the writer, the readers and what preexisted
+ok 17 - derivePartIndex names the writer, the readers and what preexisted
+  ---
+  duration_ms: 0.423441
+  type: 'test'
+  ...
+# Subtest: bareAddress strips only the testimony marker
+ok 18 - bareAddress strips only the testimony marker
+  ---
+  duration_ms: 0.132553
+  type: 'test'
+  ...
+# Subtest: validate rejects schema and names schema
+ok 19 - validate rejects schema and names schema
+  ---
+  duration_ms: 0.631208
+  type: 'test'
+  ...
+# Subtest: validate rejects pcr and names pcr
+ok 20 - validate rejects pcr and names pcr
+  ---
+  duration_ms: 0.526679
+  type: 'test'
+  ...
+# Subtest: validate rejects source.runtime and names source.runtime
+ok 21 - validate rejects source.runtime and names source.runtime
+  ---
+  duration_ms: 0.443201
+  type: 'test'
+  ...
+# Subtest: validate rejects source.commit and names source.commit
+ok 22 - validate rejects source.commit and names source.commit
+  ---
+  duration_ms: 0.564928
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.index and names ticks[0].index
+ok 23 - validate rejects ticks.0.index and names ticks[0].index
+  ---
+  duration_ms: 0.537983
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.name and names ticks[0].name
+ok 24 - validate rejects ticks.0.name and names ticks[0].name
+  ---
+  duration_ms: 0.545063
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
+ok 25 - validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
+  ---
+  duration_ms: 0.646154
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
+ok 26 - validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
+  ---
+  duration_ms: 0.461984
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
+ok 27 - validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
+  ---
+  duration_ms: 0.346735
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
+ok 28 - validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
+  ---
+  duration_ms: 0.38475
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
+ok 29 - validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
+  ---
+  duration_ms: 0.332688
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+ok 30 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+  ---
+  duration_ms: 0.405596
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+ok 31 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
+  ---
+  duration_ms: 0.386029
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
+ok 32 - validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
+  ---
+  duration_ms: 1.357256
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
+ok 33 - validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
+  ---
+  duration_ms: 0.48441
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
+ok 34 - validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
+  ---
+  duration_ms: 0.362489
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.invocations and names counters.invocations
+ok 35 - validate rejects counters.invocations and names counters.invocations
+  ---
+  duration_ms: 1.101599
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.hits and names counters.hits
+ok 36 - validate rejects counters.hits and names counters.hits
+  ---
+  duration_ms: 0.714425
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.computed and names counters.computed
+ok 37 - validate rejects counters.computed and names counters.computed
+  ---
+  duration_ms: 0.486823
+  type: 'test'
+  ...
+# Subtest: validate rejects counters.wall_ms and names counters.wall_ms
+ok 38 - validate rejects counters.wall_ms and names counters.wall_ms
+  ---
+  duration_ms: 0.418271
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
+ok 39 - validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
+  ---
+  duration_ms: 0.574354
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
+ok 40 - validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
+  ---
+  duration_ms: 0.181311
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
+ok 41 - validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
+  ---
+  duration_ms: 1.371506
+  type: 'test'
+  ...
+# Subtest: validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
+ok 42 - validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
+  ---
+  duration_ms: 0.273433
+  type: 'test'
+  ...
+# Subtest: the synthetic record carries the four value kinds the real run never produces
+ok 43 - the synthetic record carries the four value kinds the real run never produces
+  ---
+  duration_ms: 0.292058
+  type: 'test'
+  ...
+# Subtest: validate rejects a declared_consumes entry spelled fn:, naming the path
+ok 44 - validate rejects a declared_consumes entry spelled fn:, naming the path
+  ---
+  duration_ms: 0.768156
+  type: 'test'
+  ...
+# Subtest: validate rejects a declared_consumes entry that inputs does not carry, naming the path
+ok 45 - validate rejects a declared_consumes entry that inputs does not carry, naming the path
+  ---
+  duration_ms: 0.530944
+  type: 'test'
+  ...
+# Subtest: validate rejects a duplicate invocation id, because ids anchor annotations
+ok 46 - validate rejects a duplicate invocation id, because ids anchor annotations
+  ---
+  duration_ms: 0.72161
+  type: 'test'
+  ...
+# Subtest: validate rejects a malformed parts entry with the address in the path
+ok 47 - validate rejects a malformed parts entry with the address in the path
+  ---
+  duration_ms: 0.434733
+  type: 'test'
+  ...
+# Subtest: validate rejects a non-object document
+ok 48 - validate rejects a non-object document
+  ---
+  duration_ms: 0.096693
+  type: 'test'
+  ...
+# Subtest: the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
+ok 49 - the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
+  ---
+  duration_ms: 2.290788
+  type: 'test'
+  ...
+# Subtest: a Part address named __proto__ or constructor is an ordinary row, not a prototype write
+ok 50 - a Part address named __proto__ or constructor is an ordinary row, not a prototype write
+  ---
+  duration_ms: 0.353204
+  type: 'test'
+  ...
+# Subtest: validate accepts an array `into` and the produce-qualified binding spelling
+ok 51 - validate accepts an array `into` and the produce-qualified binding spelling
+  ---
+  duration_ms: 0.194052
+  type: 'test'
+  ...
+# Subtest: derivePartIndex credits the produce an fn: binding names, and only that one
+ok 52 - derivePartIndex credits the produce an fn: binding names, and only that one
+  ---
+  duration_ms: 0.390549
+  type: 'test'
+  ...
+# Subtest: parseBinding reads both spellings and prefers a known invocation id
+ok 53 - parseBinding reads both spellings and prefers a known invocation id
+  ---
+  duration_ms: 0.085813
+  type: 'test'
+  ...
+# Subtest: validate refuses the malformed shapes of the multi-produce clauses
+ok 54 - validate refuses the malformed shapes of the multi-produce clauses
+  ---
+  duration_ms: 0.339364
+  type: 'test'
+  ...
+# Subtest: validate rejects a png-data-url whose data is not a PNG data URL
+ok 55 - validate rejects a png-data-url whose data is not a PNG data URL
+  ---
+  duration_ms: 3.047924
+  type: 'test'
+  ...
+# Subtest: materialize never classifies a string as png-data-url that validate would refuse
+ok 56 - materialize never classifies a string as png-data-url that validate would refuse
+  ---
+  duration_ms: 2.104184
+  type: 'test'
+  ...
+# Subtest: coerceToRecord accepts a record and every raw runtime document
+ok 57 - coerceToRecord accepts a record and every raw runtime document
+  ---
+  duration_ms: 11.758335
+  type: 'test'
+  ...
+# Subtest: readEmbeddedRecord reads the block, and returns null when it is empty
+ok 58 - readEmbeddedRecord reads the block, and returns null when it is empty
+  ---
+  duration_ms: 5.231313
+  type: 'test'
+  ...
+# Subtest: embeddableJson escapes every character that could end the script element
+ok 59 - embeddableJson escapes every character that could end the script element
+  ---
+  duration_ms: 0.272464
+  type: 'test'
+  ...
+# Subtest: buildPage inlines the viewer and embeds the record, with no module graph left
+ok 60 - buildPage inlines the viewer and embeds the record, with no module graph left
+  ---
+  duration_ms: 13.090797
+  type: 'test'
+  ...
+# Subtest: embedFile converts a raw runtime document on the way in
+ok 61 - embedFile converts a raw runtime document on the way in
+  ---
+  duration_ms: 10.221261
+  type: 'test'
+  ...
+# Subtest: embedFile refuses a document that is not a record and not a known runtime shape
+ok 62 - embedFile refuses a document that is not a record and not a known runtime shape
+  ---
+  duration_ms: 3.505087
+  type: 'test'
+  ...
+# Subtest: buildPage fails loudly when the page and the embedder drift apart
+ok 63 - buildPage fails loudly when the page and the embedder drift apart
+  ---
+  duration_ms: 6.802183
+  type: 'test'
+  ...
+# Subtest: node embed.mjs record.json > page.html writes the same page from the command line
+ok 64 - node embed.mjs record.json > page.html writes the same page from the command line
+  ---
+  duration_ms: 130.138434
+  type: 'test'
+  ...
+# Subtest: the CLI exits 2 with a usage line when no record is named
+ok 65 - the CLI exits 2 with a usage line when no record is named
+  ---
+  duration_ms: 46.14899
+  type: 'test'
+  ...
+# Subtest: the inlined bundle is valid module syntax with no duplicate top-level bindings
+ok 66 - the inlined bundle is valid module syntax with no duplicate top-level bindings
+  ---
+  duration_ms: 34.785288
+  type: 'test'
+  ...
+# Subtest: a record carrying $&, $` and $' is embedded literally, not expanded
+ok 67 - a record carrying $&, $` and $' is embedded literally, not expanded
+  ---
+  duration_ms: 3.432877
+  type: 'test'
+  ...
+# Subtest: loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
+ok 68 - loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
+  ---
+  duration_ms: 1.971698
+  type: 'test'
+  ...
+# Subtest: buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
+ok 69 - buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
+  ---
+  duration_ms: 12.850709
+  type: 'test'
+  ...
+# Subtest: a bad input becomes a world entry naming the failure, never a blank page or an aborted build
+ok 70 - a bad input becomes a world entry naming the failure, never a blank page or an aborted build
+  ---
+  duration_ms: 2.401647
+  type: 'test'
+  ...
+# Subtest: node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
+ok 71 - node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
+  ---
+  duration_ms: 56.965334
+  type: 'test'
+  ...
+# Subtest: --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
+ok 72 - --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
+  ---
+  duration_ms: 78.529899
+  type: 'test'
+  ...
+# Subtest: computeSchedule orders events exactly as the record does: Tick order, then invocation order
+ok 73 - computeSchedule orders events exactly as the record does: Tick order, then invocation order
+  ---
+  duration_ms: 2.367082
+  type: 'test'
+  ...
+# Subtest: at 1x, at_ms is the cumulative sum of recorded durations, strictly increasing
+ok 74 - at 1x, at_ms is the cumulative sum of recorded durations, strictly increasing
+  ---
+  duration_ms: 0.373695
+  type: 'test'
+  ...
+# Subtest: the last event lands on the run total, at 1x and scaled by speed
+ok 75 - the last event lands on the run total, at 1x and scaled by speed
+  ---
+  duration_ms: 0.29467
+  type: 'test'
+  ...
+# Subtest: speed scales every event proportionally, not just the last one
+ok 76 - speed scales every event proportionally, not just the last one
+  ---
+  duration_ms: 0.153881
+  type: 'test'
+  ...
+# Subtest: a run with no durations recorded plays at a fixed 400 ms per Calculation, unaffected by speed
+ok 77 - a run with no durations recorded plays at a fixed 400 ms per Calculation, unaffected by speed
+  ---
+  duration_ms: 1.187777
+  type: 'test'
+  ...
+# Subtest: scheduleFrame reveals Ticks and Calculations in order and never a partial Tick out of sequence
+ok 78 - scheduleFrame reveals Ticks and Calculations in order and never a partial Tick out of sequence
+  ---
+  duration_ms: 1.133893
+  type: 'test'
+  ...
+# Subtest: scheduleFrame keeps counters and the Part index honest for the partial record
+ok 79 - scheduleFrame keeps counters and the Part index honest for the partial record
+  ---
+  duration_ms: 0.241924
+  type: 'test'
+  ...
+# Subtest: the real record renders as four Tick sections and fifteen invocation rows
+ok 80 - the real record renders as four Tick sections and fifteen invocation rows
+  ---
+  duration_ms: 14.111288
+  type: 'test'
+  ...
+# Subtest: one section per Tick, in order, with index, name and invocation count
+ok 81 - one section per Tick, in order, with index, name and invocation count
+  ---
+  duration_ms: 7.497973
+  type: 'test'
+  ...
+# Subtest: an invocation row carries id, address, short implementation hash, pill, duration and digest
+ok 82 - an invocation row carries id, address, short implementation hash, pill, duration and digest
+  ---
+  duration_ms: 1.911439
+  type: 'test'
+  ...
+# Subtest: hit and computed pills follow the record, never the renderer
+ok 83 - hit and computed pills follow the record, never the renderer
+  ---
+  duration_ms: 3.717389
+  type: 'test'
+  ...
+# Subtest: reads show declared beside actual and highlight a divergence
+ok 84 - reads show declared beside actual and highlight a divergence
+  ---
+  duration_ms: 1.494118
+  type: 'test'
+  ...
+# Subtest: a fn: binding is shown as an earlier invocation result, not as a store read
+ok 85 - a fn: binding is shown as an earlier invocation result, not as a store read
+  ---
+  duration_ms: 0.218045
+  type: 'test'
+  ...
+# Subtest: writes carry their kind
+ok 86 - writes carry their kind
+  ---
+  duration_ms: 0.175297
+  type: 'test'
+  ...
+# Subtest: an invocation that records no writes says so instead of rendering an empty list
+ok 87 - an invocation that records no writes says so instead of rendering an empty list
+  ---
+  duration_ms: 0.208217
+  type: 'test'
+  ...
+# Subtest: an svg value containing <script> renders as an <img> data URL and creates no script node
+ok 88 - an svg value containing <script> renders as an <img> data URL and creates no script node
+  ---
+  duration_ms: 0.520968
+  type: 'test'
+  ...
+# Subtest: a whole record whose Parts are hostile SVG still produces no script node
+ok 89 - a whole record whose Parts are hostile SVG still produces no script node
+  ---
+  duration_ms: 3.486911
+  type: 'test'
+  ...
+# Subtest: json is collapsible, text is a pre, png-data-url is an img, omitted is the note
+ok 90 - json is collapsible, text is a pre, png-data-url is an img, omitted is the note
+  ---
+  duration_ms: 0.371788
+  type: 'test'
+  ...
+# Subtest: a png-data-url that is not a PNG data URL never reaches an <img src>
+ok 91 - a png-data-url that is not a PNG data URL never reaches an <img src>
+  ---
+  duration_ms: 1.853966
+  type: 'test'
+  ...
+# Subtest: a note is rendered beside the material it qualifies
+ok 92 - a note is rendered beside the material it qualifies
+  ---
+  duration_ms: 0.14092
+  type: 'test'
+  ...
+# Subtest: toBase64 and svgDataUrl survive non-Latin1 text
+ok 93 - toBase64 and svgDataUrl survive non-Latin1 text
+  ---
+  duration_ms: 0.123509
+  type: 'test'
+  ...
+# Subtest: an empty filter keeps every row
+ok 94 - an empty filter keeps every row
+  ---
+  duration_ms: 0.086371
+  type: 'test'
+  ...
+# Subtest: a substring filter narrows rows to the matching addresses
+ok 95 - a substring filter narrows rows to the matching addresses
+  ---
+  duration_ms: 0.756376
+  type: 'test'
+  ...
+# Subtest: a trailing * filters by address prefix, the way PQL.prefix describes itself
+ok 96 - a trailing * filters by address prefix, the way PQL.prefix describes itself
+  ---
+  duration_ms: 0.367851
+  type: 'test'
+  ...
+# Subtest: the filter matches calculation addresses and tick names too, case-insensitively
+ok 97 - the filter matches calculation addresses and tick names too, case-insensitively
+  ---
+  duration_ms: 1.535433
+  type: 'test'
+  ...
+# Subtest: matchesFilter and searchTerms agree on what an invocation can be found by
+ok 98 - matchesFilter and searchTerms agree on what an invocation can be found by
+  ---
+  duration_ms: 0.171786
+  type: 'test'
+  ...
+# Subtest: renderRecord reports what the filter narrowed and says so when nothing matches
+ok 99 - renderRecord reports what the filter narrowed and says so when nothing matches
+  ---
+  duration_ms: 1.182812
+  type: 'test'
+  ...
+# Subtest: the header shows pcr, source and counters
+ok 100 - the header shows pcr, source and counters
+  ---
+  duration_ms: 2.744694
+  type: 'test'
+  ...
+# Subtest: the Part index lists every address with its writer, readers and preexisting flag
+ok 101 - the Part index lists every address with its writer, readers and preexisting flag
+  ---
+  duration_ms: 0.368392
+  type: 'test'
+  ...
+# Subtest: an empty Part index says so
+ok 102 - an empty Part index says so
+  ---
+  duration_ms: 0.112162
+  type: 'test'
+  ...
+# Subtest: renderRecord validates before it renders
+ok 103 - renderRecord validates before it renders
+  ---
+  duration_ms: 1.41494
+  type: 'test'
+  ...
+# Subtest: a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
+ok 104 - a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
+  ---
+  duration_ms: 0.180037
+  type: 'test'
+  ...
+# Subtest: a world with no input at all is a labelled empty slot, never a faked record
+ok 105 - a world with no input at all is a labelled empty slot, never a faked record
+  ---
+  duration_ms: 0.07869
+  type: 'test'
+  ...
+# Subtest: the page carries a playback toggle and its control bar, wired to mount()
+ok 106 - the page carries a playback toggle and its control bar, wired to mount()
+  ---
+  duration_ms: 0.396725
+  type: 'test'
+  ...
+# Subtest: the page carries a hidden world picker and an empty records block for embed.mjs --worlds
+ok 107 - the page carries a hidden world picker and an empty records block for embed.mjs --worlds
+  ---
+  duration_ms: 0.24185
+  type: 'test'
+  ...
+1..107
+# tests 107
+# suites 0
+# pass 107
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 516.182936
+-- viewer: OK (ran 107)
+
+== suite: viewer-record-schema  (cwd /home/user/DiscStudio-staging/EXP/41/pyto/viewer)
+   $ /home/user/DiscStudio-staging/EXP/41/.venv/bin/python -m unittest discover -s test -p test_*.py -v
+test_a_runtime_that_records_nothing_writes_null_and_never_invents (test_record_schema.AdapterOutputs.test_a_runtime_that_records_nothing_writes_null_and_never_invents) ... ok
+test_all_four_runtimes_of_RECORD_md_are_covered (test_record_schema.AdapterOutputs.test_all_four_runtimes_of_RECORD_md_are_covered) ... ok
+test_counters_are_recomputable_from_the_ticks (test_record_schema.AdapterOutputs.test_counters_are_recomputable_from_the_ticks) ... ok
+test_every_javascript_adapter_output_passes_the_python_validator (test_record_schema.AdapterOutputs.test_every_javascript_adapter_output_passes_the_python_validator) ... ok
+test_the_javascript_pass_through_changes_no_field_of_the_python_record (test_record_schema.AdapterOutputs.test_the_javascript_pass_through_changes_no_field_of_the_python_record) ... ok
+test_the_parts_index_agrees_with_a_third_reading_of_the_rule (test_record_schema.AdapterOutputs.test_the_parts_index_agrees_with_a_third_reading_of_the_rule) ... ok
+test_the_round_trip_is_equal_as_JSON_and_not_promised_as_bytes (test_record_schema.AdapterOutputs.test_the_round_trip_is_equal_as_JSON_and_not_promised_as_bytes) ... ok
+test_a_list_into_validates (test_record_schema.MultiProduceRecords.test_a_list_into_validates)
+record_schema.py `_into`. ... ok
+test_resolve_binding_reads_both_spellings_and_prefers_a_known_id (test_record_schema.MultiProduceRecords.test_resolve_binding_reads_both_spellings_and_prefers_a_known_id) ... ok
+test_the_javascript_reader_agrees_on_all_of_it (test_record_schema.MultiProduceRecords.test_the_javascript_reader_agrees_on_all_of_it)
+The contract is a contract only if both readers answer the same. ... ok
+test_the_malformed_shapes_of_the_new_clauses_are_refused (test_record_schema.MultiProduceRecords.test_the_malformed_shapes_of_the_new_clauses_are_refused) ... ok
+test_the_part_index_credits_the_named_produce_and_only_that_one (test_record_schema.MultiProduceRecords.test_the_part_index_credits_the_named_produce_and_only_that_one)
+record_schema.py `resolve_binding`: `fn:stats#out.count` is a read of ... ok
+test_javascript_accepts_the_record_python_accepts (test_record_schema.TheTwoValidatorsAgree.test_javascript_accepts_the_record_python_accepts) ... ok
+test_javascript_refuses_what_python_refuses_and_names_the_same_path (test_record_schema.TheTwoValidatorsAgree.test_javascript_refuses_what_python_refuses_and_names_the_same_path) ... ok
+test_python_is_the_stricter_reader_only_where_RECORD_md_says_so (test_record_schema.TheTwoValidatorsAgree.test_python_is_the_stricter_reader_only_where_RECORD_md_says_so) ... ok
+test_a_boolean_is_not_an_integer_counter (test_record_schema.TheValidatorActuallyRejects.test_a_boolean_is_not_an_integer_counter) ... ok
+test_a_duplicate_invocation_id_is_rejected_because_ids_anchor_annotations (test_record_schema.TheValidatorActuallyRejects.test_a_duplicate_invocation_id_is_rejected_because_ids_anchor_annotations) ... ok
+test_a_malformed_parts_entry_names_the_address (test_record_schema.TheValidatorActuallyRejects.test_a_malformed_parts_entry_names_the_address) ... ok
+test_a_non_object_document_is_rejected (test_record_schema.TheValidatorActuallyRejects.test_a_non_object_document_is_rejected) ... ok
+test_an_invented_field_is_rejected_wherever_it_appears (test_record_schema.TheValidatorActuallyRejects.test_an_invented_field_is_rejected_wherever_it_appears) ... ok
+test_an_omitted_field_is_rejected_rather_than_read_as_null (test_record_schema.TheValidatorActuallyRejects.test_an_omitted_field_is_rejected_rather_than_read_as_null) ... ok
+test_every_typed_rule_of_RECORD_md_rejects_its_violation (test_record_schema.TheValidatorActuallyRejects.test_every_typed_rule_of_RECORD_md_rejects_its_violation) ... ok
+test_the_unmutated_record_passes (test_record_schema.TheValidatorActuallyRejects.test_the_unmutated_record_passes) ... ok
+test_the_value_kind_rules_of_RECORD_md_59_to_63 (test_record_schema.TheValidatorActuallyRejects.test_the_value_kind_rules_of_RECORD_md_59_to_63) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.723s
+
+OK
+-- viewer-record-schema: OK (ran 24)
+
+== per-suite counts
+suite                         tests  status
+library                         248  OK
+experiments/cross-project         9  OK
+experiments/grouped-ablation    248  OK
+experiments/hiding-primitives      6  OK
+experiments/s3-synthetic          5  OK
+experiments/students             14  OK
+experiments/tick-laws            10  OK
+consumer                         61  OK
+disc-stats                        4  OK
+examples                          3  OK
+art-registry-md                   -  OK
+viewer                          107  OK
+viewer-record-schema             24  OK
+
+ALL SUITES PASSED

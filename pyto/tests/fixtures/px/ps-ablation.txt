@@ -1,0 +1,16 @@
+TICK  TICK-NAME  ID             CALCULATION                 INTO                            STATE
+0     Prepare    select         fn.ablation.selectVariants  scratch.ablation.variants       hit
+0     Prepare    split          fn.ablation.split           scratch.ablation.split          hit
+1     Fit        fit.all        fn.ablation.fit             scratch.ablation.model.all      computed
+1     Fit        fit.drop_g0    fn.ablation.fit             scratch.ablation.model.drop_g0  computed
+1     Fit        fit.drop_g1    fn.ablation.fit             scratch.ablation.model.drop_g1  computed
+1     Fit        fit.drop_g2    fn.ablation.fit             scratch.ablation.model.drop_g2  computed
+1     Fit        fit.drop_g3    fn.ablation.fit             scratch.ablation.model.drop_g3  computed
+1     Fit        fit.drop_g4    fn.ablation.fit             scratch.ablation.model.drop_g4  computed
+2     Score      score.all      fn.ablation.score           scratch.ablation.score.all      computed
+2     Score      score.drop_g0  fn.ablation.score           scratch.ablation.score.drop_g0  computed
+2     Score      score.drop_g1  fn.ablation.score           scratch.ablation.score.drop_g1  computed
+2     Score      score.drop_g2  fn.ablation.score           scratch.ablation.score.drop_g2  computed
+2     Score      score.drop_g3  fn.ablation.score           scratch.ablation.score.drop_g3  computed
+2     Score      score.drop_g4  fn.ablation.score           scratch.ablation.score.drop_g4  computed
+3     Compare    compare        fn.ablation.compare         scratch.ablation.comparison     computed

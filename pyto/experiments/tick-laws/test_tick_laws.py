@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
-from tick_laws import analyze_record, main  # noqa: E402
+from tick_laws import _tick_name, analyze_record, main  # noqa: E402
 
 
 GROUPED_RECORD_PATH = HERE.parent / "grouped-ablation" / "evidence" / "run-1" / "record.json"
@@ -130,6 +130,40 @@ class TickLawTests(unittest.TestCase):
             with self.subTest(record=path.parent.name):
                 report = analyze_record(json.loads(path.read_text()))
                 self.assertFalse(_has_violation(report), _violation_text(report))
+
+    def test_ticks_are_reported_by_name_in_json_and_in_text(self):
+        """Brief: a Tick is a step the program named, so the report says the name.
+
+        The students record's four Ticks are Parse, Stats, Letters and Histogram;
+        every tick report carries that name beside its index, and text mode prints
+        it, so `Tick 1 Stats: work_ms=...` is what a reader sees instead of a bare
+        position (`{?} TickReportsHaveNoNames`).
+        """
+        record = json.loads(STUDENTS_RECORD_PATH.read_text())
+        names = [tick["name"] for tick in record["ticks"]]
+        self.assertEqual(names, ["Parse", "Stats", "Letters", "Histogram"])
+
+        report = analyze_record(record)
+        self.assertEqual([tick["name"] for tick in report["ticks"]], names)
+        self.assertEqual([tick["tick"] for tick in report["ticks"]], list(range(len(names))))
+
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(main([str(STUDENTS_RECORD_PATH)]), 0)
+        text = output.getvalue()
+        for index, name in enumerate(names):
+            self.assertIn(f"Tick {index} {name}: work_ms=", text)
+        # The Stats line is the worked example the READMEs name: work above latency.
+        stats = report["ticks"][names.index("Stats")]
+        self.assertGreater(stats["work_ms"], stats["latency_ms"])
+
+    def test_a_tick_with_no_name_reads_as_unnamed_not_as_a_crash(self):
+        """Brief: the record contract requires a Tick name, so the reporter never
+        invents one -- a record that reached the reporter without one (a producer
+        the validator never saw) reads as `<unnamed>` rather than raising."""
+        self.assertEqual(_tick_name({"index": 0, "invocations": []}), "<unnamed>")
+        self.assertEqual(_tick_name({"name": ""}), "<unnamed>")
+        self.assertEqual(_tick_name({"name": "Stats"}), "Stats")
 
     def test_sibling_actual_consume_names_calculation_and_part(self):
         """Brief: a calculation may not consume a Part produced by a sibling in its Tick."""

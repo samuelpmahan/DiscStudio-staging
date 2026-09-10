@@ -155,6 +155,36 @@ with sync_playwright() as p:
     assert viewer.evaluate("performance.getEntriesByType('resource').length")==0,'the standalone page fetched something'
     server.shutdown();server.server_close()
     record('Export run record writes a validated pyto-run-record@1 Part and file; its Tick render page opens over file:// with one section per Tick and no requests')
+    # The studio's own receipts, read back on the Inspect page through the PQL
+    # prefix query px.receipt.* (src/core/exec.js), with an Undo taken in the
+    # browser as the invocation that has to show up there.
+    route(page,'shelf')
+    depth=page.evaluate('discStudio.runtime.undo.depth()')
+    discs=page.evaluate('Object.keys(discStudio.world.objects.Disc).length')
+    page.locator('[data-action="disc-duplicate"]').click()
+    assert page.evaluate('Object.keys(discStudio.world.objects.Disc).length')==discs+1
+    assert page.evaluate('discStudio.runtime.undo.depth()')==depth+1,'the edit was not recorded on px.undo.studio'
+    page.locator('[data-action="undo"]').click()
+    assert page.evaluate('Object.keys(discStudio.world.objects.Disc).length')==discs,'undo did not restore the exact previous world'
+    assert_world(page,'discStudio.world.objects.Disc["buzzz-mint"].myRating===9')
+    assert page.evaluate('discStudio.runtime.undo.depth()')==depth
+    assert page.evaluate('discStudio.runtime.pxc.get("px.undo.studio").scope')=='studio'
+    route(page,'course')
+    # Open, close, open: the query runs at render time, so the first opening writes
+    # its own px.receipt.studio-receipts and the next one lists it like any other.
+    for _ in range(3):page.locator('[data-action="toggle-trace"]').first.click()
+    rows=page.locator('.receipts-row[data-receipt]')
+    listed=page.evaluate('discStudio.runtime.pxc.get("px.studio.receipts")')
+    names=sorted(page.evaluate('discStudio.runtime.parts().map(p=>p.address).filter(a=>a.startsWith("px.receipt.")).map(a=>a.slice(11))'))
+    assert [r['name'] for r in listed]==names,(listed,names)
+    assert rows.count()==len(names),(rows.count(),names)
+    assert [t.strip() for t in rows.locator('span:first-child').all_text_contents()]==names
+    undone=next(r for r in listed if r['name']=='studio-undo')
+    assert undone['produces']==['px.studio.world','px.undo.studio'],undone
+    assert rows.locator('[data-digest="studio-undo"]').inner_text().strip()==undone['digest']
+    assert page.evaluate('discStudio.runtime.pxc.get("px.studio.receipts.summary").receipts')==len(names)
+    page.locator('[data-action="toggle-trace"]').first.click()
+    record('Inspect lists the studio own receipts through the px.receipt.* PQL query, one row per receipt with its consumes, produces and result digest; an Undo taken in the browser restores the exact previous value and is itself a listed receipt')
     # Reset screenshot state without erasing the verified export/review artifacts.
     page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:"state-1"})')
     for name in ['shelf','course','components','competition']:

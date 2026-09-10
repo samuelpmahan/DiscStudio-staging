@@ -13,3 +13,11 @@
 /* Keep first-use actions obvious even in a short desktop viewport. */
 .bag-picker button { white-space: nowrap; }
 .inspector > .export-section { padding-top: 8px; padding-bottom: 15px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
+.receipts{border-top:1px solid var(--line);padding:14px 0 0}
+.receipts>h3{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:#7a8a6c;padding:0 14px 6px;font-weight:500}
+.receipts>h3 small{font-size:9px;color:#8ca07c;text-transform:none;letter-spacing:0;margin-left:8px}
+.receipts-row{grid-template-columns:minmax(120px,1fr) minmax(140px,1.2fr) minmax(140px,1.2fr) 74px;min-width:520px}
+.receipts-row span:nth-child(2),.receipts-row span:nth-child(3){color:#6d7f63;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.part-links{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.undo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.undo-row [data-undo-stack]{flex:1;min-width:0}
