@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.NeatIsAMount",
+  "sha256": "38d48e18a884c086e78ac2c87c59e2630129a52b376043080facd387d711c386",
+  "value": {
+    "k": 5,
+    "kind": "owner",
+    "label": "NeatIsAMount",
+    "n": 7,
+    "sha256": "dae9ecbdebca5b4e695d0e80a351a072fc4dba04c11a92127aa2741f2e00293c"
+  }
+}

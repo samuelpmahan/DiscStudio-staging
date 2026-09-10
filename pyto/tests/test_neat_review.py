@@ -285,8 +285,19 @@ class OwnerFirstAndDefaults(unittest.TestCase):
             self.assertIn('"pretty on the terminal, canonical on disk"', text)
             self.assertNotIn('Owner, 2026-09-10: "pretty', text)
             again = review.collate({"pyto_root": root, "n": 2})
-            self.assertNotIn("PrintForm", [it["label"] for it in again["items"]])
+            kept = next(it for it in again["items"] if it["label"] == "PrintForm")
+            self.assertEqual(kept["needs"], "default")
+            self.assertEqual(kept["default_sha256"], part["value"]["sha256"])
             self.assertEqual(review.answer_for(root, "PrintForm")["kind"], "default")
+            self.assertIsNone(review.answer_text(root, "PrintForm"))
+            # the owner's answer supersedes the default and leaves the batch
+            review.run_ask(root)
+            owner = review.run_answer(root, 2, kept["number"], "compact on the terminal too", kind="owner")
+            self.assertEqual(owner["value"]["kind"], "owner")
+            self.assertEqual(review.answer_text(root, "PrintForm"), "compact on the terminal too")
+            text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+            self.assertIn('Owner, ', text)
+            self.assertNotIn("PrintForm", [it["label"] for it in review.collate({"pyto_root": root, "n": 3})["items"]])
 
 
 if __name__ == "__main__":

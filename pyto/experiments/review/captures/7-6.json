@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.7.6.response",
+  "recordedAt": 1789048896517.3691,
+  "sha256": "5e44d405e3a407cb891191631d32fcfadea46e448550156ebd0bfb6ba1db712d",
+  "value": {
+    "k": 6,
+    "label": "StubOpensTheSelftest",
+    "n": 7,
+    "text": "6 instead of just finding a case where my logic breaks, examine the commonalities of the set where it DOESNT break to understand"
+  }
+}

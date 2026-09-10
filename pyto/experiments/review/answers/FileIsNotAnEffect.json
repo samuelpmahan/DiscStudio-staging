@@ -1,11 +1,11 @@
 {
   "address": "neat.review.answer.FileIsNotAnEffect",
-  "sha256": "fbb0a0d9ea103994b3b5b3301670b4adc6d46075cd0a8d3a354778e51fef7a4b",
+  "sha256": "baa4d336cb0f2ee922e24b64f36b25c5c968375157d544bb65f3171a9c774816",
   "value": {
-    "k": 230,
-    "kind": "default",
+    "k": 225,
+    "kind": "owner",
     "label": "FileIsNotAnEffect",
-    "n": 6,
-    "sha256": "4eefbc3432d31bb5d298c97741d40e837d0fbd663f7830956c310e665563c823"
+    "n": 8,
+    "sha256": "5fd673df618f770e6513b39fe504a2bf44300354e4a8e7a8920a5f5bb524098b"
   }
 }

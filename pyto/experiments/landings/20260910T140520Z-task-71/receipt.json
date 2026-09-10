@@ -1,0 +1,296 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T140520Z-task-71",
+  "package": "task-71",
+  "base_sha": "129de8f424d4f31965ce3220a89773ce618b828b",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest tests.test_neat_review tests.test_walk && python scripts/walk.py --check && grep -c 'Owner, 2026-09-10: ' questions.md | grep -q .",
+    "exit": 0,
+    "output_sha256": "be458bb65c8fafe44db59ed9fb1f523c01cb8c42d287dbd65b04c8ae1bb05fab"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "a925f47b200290c450191998bd578626efab0990f46110ab020cdd17f3255765",
+    "counts": {
+      "library": 368,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/review/answers/BatchItemTextLength.json",
+      "bytes": 318,
+      "sha256": "ce74ad08894be5af7988bd89a5c342418b5188c2de8df9e06c37cac185ee7f3f"
+    },
+    {
+      "path": "pyto/experiments/review/answers/ChainLatencyIsTheWholeTick.json",
+      "bytes": 334,
+      "sha256": "570d8b0e7e4e562be6a0b1f39b4c336bc012c7ae4353085b94252d48108a5f44"
+    },
+    {
+      "path": "pyto/experiments/review/answers/FileIsNotAnEffect.json",
+      "bytes": 316,
+      "sha256": "e496779e97b3d91a7fb97025e8ac5fa78bf07ba69fcf9a2e55d6e55b8081f60e"
+    },
+    {
+      "path": "pyto/experiments/review/answers/MoleculeAddress.json",
+      "bytes": 312,
+      "sha256": "7a43766eeb72706ab1ac035591fc3266f8d4175fbc257d0d8fa9f01e06d8082d"
+    },
+    {
+      "path": "pyto/experiments/review/answers/MoleculeScheme.json",
+      "bytes": 308,
+      "sha256": "b668b233315b615fe7d93f21019ac393c32b07eab02445e4d905c8b88edcc715"
+    },
+    {
+      "path": "pyto/experiments/review/answers/NeatIsAMount.json",
+      "bytes": 304,
+      "sha256": "be94e2bebf319cf08c005510378ebb19e4c2491a63860b3a89ff341df8cc3645"
+    },
+    {
+      "path": "pyto/experiments/review/answers/OwnerQuotes.json",
+      "bytes": 302,
+      "sha256": "e68537f6770d8d79d5d001a1d74404c99f13b50dcccbac84e7a4d3aaa013e215"
+    },
+    {
+      "path": "pyto/experiments/review/answers/RefusedAndKilledSteps.json",
+      "bytes": 322,
+      "sha256": "ae39275a7cfc57ec1d2c483fe23bb13dad58f44a910fd3d37dc76c332eac68e0"
+    },
+    {
+      "path": "pyto/experiments/review/answers/RootLabelsCountAsOpen.json",
+      "bytes": 322,
+      "sha256": "e21b44bd61190fd421a33f491b5ef471128b1982bdf6d84e2f8515bcec118da8"
+    },
+    {
+      "path": "pyto/experiments/review/answers/StubOpensTheSelftest.json",
+      "bytes": 320,
+      "sha256": "fc679425792c118c4ee0826f56606b395c2224513bf847fc1cda83b06d88690e"
+    },
+    {
+      "path": "pyto/experiments/review/batches/8.json",
+      "bytes": 123116,
+      "sha256": "80db2ed8321dc95a4b7986fa8d45743b071836bb84e61e2c877f41e276ff0f2f"
+    },
+    {
+      "path": "pyto/experiments/review/captures/7-1.json",
+      "bytes": 346,
+      "sha256": "2a6f78d0181fcba01c42b6a1d14b3bea3b79c5dab607d62f43277c8aabe30717"
+    },
+    {
+      "path": "pyto/experiments/review/captures/7-2.json",
+      "bytes": 372,
+      "sha256": "eec805f295b4d304da47247f90f8ae5b3ecbcb2a831cfbe28c9ca3f075ca6599"
+    },
+    {
+      "path": "pyto/experiments/review/captures/7-3.json",
+      "bytes": 394,
+      "sha256": "d434cc726f96acfa373169dda35a470cc4dea3c9e7a406d88b51d90246afa3f6"
+    },
+    {
+      "path": "pyto/experiments/review/captures/7-4.json",
+      "bytes": 363,
+      "sha256": "d716f196a2950e13fcfab90e704f140ee38a4a0e6973c00a99c02b20f01dbfc3"
+    },
+    {
+      "path": "pyto/experiments/review/captures/7-5.json",
+      "bytes": 399,
+      "sha256": "966c1d36366bcdacb398194e9b24e0dacdb8cfddf9a710869de1b40f4effacc1"
+    },
+    {
+      "path": "pyto/experiments/review/captures/7-6.json",
+      "bytes": 390,
+      "sha256": "a8dd2dd8d74152d70c3c3233d8340c9b58670dd1fb61da2ace1da67f61957fc7"
+    },
+    {
+      "path": "pyto/experiments/review/captures/7-7.json",
+      "bytes": 424,
+      "sha256": "ce9d62bb7c3526192d110bfafd48df73cebbc090ea16f9fe249463258b3b1706"
+    },
+    {
+      "path": "pyto/experiments/review/captures/8-157.json",
+      "bytes": 459,
+      "sha256": "0437d00161d67d6e368d41ab29ad493aec687a90f556c3fff77aedd4b7bbff51"
+    },
+    {
+      "path": "pyto/experiments/review/captures/8-215.json",
+      "bytes": 335,
+      "sha256": "5c686f843e2158d1dc7eb18b6557cf7269a6bd9063760d2784ea2c2d615eba53"
+    },
+    {
+      "path": "pyto/experiments/review/captures/8-225.json",
+      "bytes": 321,
+      "sha256": "ed4f049a01328097b343ca12b2f8afc933cf844648954e6ef6e8b6405b0db062"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/7-1.json",
+      "bytes": 337,
+      "sha256": "50979e3cc0e9b7a9f9289b6018c4e94cad325eb848e3e8a34bcb9b805571d60b"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/7-2.json",
+      "bytes": 357,
+      "sha256": "6945fe7a0e8ae3dd37bb30e5fe82d0c4cd3a19219d366d87902cc261c9e48721"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/7-3.json",
+      "bytes": 388,
+      "sha256": "8927e8ef7f0a1bf9af6f1e1113918d734daf2a2d5529a3727736f54f89728316"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/7-4.json",
+      "bytes": 350,
+      "sha256": "705b937437c1e9f7894771439358c6ba78fdf02b102e2d6863e0d035878e0771"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/7-5.json",
+      "bytes": 394,
+      "sha256": "f47a203ae18fc0b187acc5cb8792857706c9c7e7bd5c1b013e795766296b02b4"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/7-6.json",
+      "bytes": 375,
+      "sha256": "8050cf419b7603a1a521f57fd5bd560fc0acf6095c987372bf6bbf0fc44d6009"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/7-7.json",
+      "bytes": 408,
+      "sha256": "0877f398758fbc05e0d1bbd0fc7d4c23197060e547155ff58ca05bbcbc68b341"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/8-157.json",
+      "bytes": 436,
+      "sha256": "266a9aee70a24c9c4fb41a2a1f6cbd1adf226d4116f44b9efbfb4e280ae89887"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/8-215.json",
+      "bytes": 323,
+      "sha256": "8dcb692ff2e20b0d569db2b915d1b76f3824cbe8ff91a66896461a753e8883d1"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/8-225.json",
+      "bytes": 307,
+      "sha256": "19f29bd90f7bea6af22e787f7ff27d90e20363353511494d294b29539e65c43e"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-7-1.json",
+      "bytes": 5483,
+      "sha256": "84ea3f16e208f96780b30c14f0e25a997a6b189a1f5433e3a418b42b2c4ae524"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-7-2.json",
+      "bytes": 5596,
+      "sha256": "d02ce0ca3cdb22399c27274145c3ec1020da470a421eeb9abe59dc5245796f8e"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-7-3.json",
+      "bytes": 5611,
+      "sha256": "ec24227025c94b01f3afbbde23f1bc0d0f80e2598134aea9783d04013086ddc4"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-7-4.json",
+      "bytes": 5559,
+      "sha256": "7257e4ee6322be410fa157fb3e7f519f2387f21a1affd894ce471d9f147b9cb0"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-7-5.json",
+      "bytes": 5634,
+      "sha256": "f04b9b1d3b9902201f1d68e617e2fcfa4b0ee8a0d4a66e5bc1701a821c0de155"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-7-6.json",
+      "bytes": 5645,
+      "sha256": "3de6447ebc79614f3723577d52ab58b1ea0414435713d23e32d6c5efb1e3e9c5"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-7-7.json",
+      "bytes": 5752,
+      "sha256": "a6cb97f601be37aff415c56b0ca099d82e6b284f39a8bf7d0527f0bbc5e72bcd"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-8-157.json",
+      "bytes": 5895,
+      "sha256": "83b7306a6fdab3242a3d9d3d3e000515a608f1c4abd6a0f32d46e17868fb65cf"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-8-215.json",
+      "bytes": 5467,
+      "sha256": "393a17ea346a628f146a820297ea23c130a67780044d932d192dbb07ac61f523"
+    },
+    {
+      "path": "pyto/experiments/review/runs/answer-8-225.json",
+      "bytes": 5434,
+      "sha256": "dfecb1c17b5f49e969e75097cd0ca3830833205ae2e8229981ff09b3d81dcce8"
+    },
+    {
+      "path": "pyto/experiments/review/runs/ask-8.json",
+      "bytes": 112175,
+      "sha256": "d663e4ed36c5d82de495f54317ac422e04393ac3b3f4cfd7e1a8d3b1d162e915"
+    },
+    {
+      "path": "pyto/experiments/tasks/71/HANDOFF.md",
+      "bytes": 12022,
+      "sha256": "1ea53177556c4ecfa0456f3a96e50103d48de5c701c54403870c94c8cbf89c45"
+    },
+    {
+      "path": "pyto/experiments/tasks/71/evidence/check_all.txt",
+      "bytes": 182868,
+      "sha256": "64b5d7e9e64667c8774df43e22a53508f0cf9759f79f868c96f1366c15d0617b"
+    },
+    {
+      "path": "pyto/experiments/tasks/71/evidence/verify.txt",
+      "bytes": 2160,
+      "sha256": "5fb972168820d0c17e3d6c1a4b106aff394dbc27504af22a88dc92c9197465bd"
+    },
+    {
+      "path": "pyto/experiments/tasks/71/packet.md",
+      "bytes": 7751,
+      "sha256": "343c39826fd6fb302476f416d6a52f6e37084474e775405e83169bc51cb8eac1"
+    },
+    {
+      "path": "pyto/questions.md",
+      "bytes": 72559,
+      "sha256": "7c6d1a6d09e5c385befce55533407fd54770c728e678c00f675af33088ce1dbb"
+    },
+    {
+      "path": "pyto/scripts/walk.py",
+      "bytes": 25549,
+      "sha256": "d3c2ad49ade2a39f8c6ebd36573944bbd10f4891e2ec7812aaac4323a9b699dd"
+    },
+    {
+      "path": "pyto/src/pyto/neat/review.py",
+      "bytes": 29745,
+      "sha256": "de308f61cd980c93cd3953029161ac029f5120a3ad64140524b9844fc5c95bb3"
+    },
+    {
+      "path": "pyto/tests/test_neat_review.py",
+      "bytes": 14926,
+      "sha256": "f6038ac7209e4f8826a0d81e5682c2423acab5ce4892c418ab501effb5d37176"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T14:06:51.739922Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

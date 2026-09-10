@@ -255,11 +255,33 @@ def _reviewed_labels(pyto_root: str) -> set[str]:
     return {m.strip() for m in REVIEW_LABEL.findall(_read_lf(path))}
 
 
-def _answered_labels(pyto_root: str) -> set[str]:
+def _answers_by_label(pyto_root: str) -> dict[str, dict]:
+    """Every filed answer's value by label (kind owner or default)."""
     answers_dir = os.path.join(pyto_root, "experiments", "review", "answers")
     if not os.path.isdir(answers_dir):
-        return set()
-    return {name[:-len(".json")] for name in os.listdir(answers_dir) if name.endswith(".json")}
+        return {}
+    out: dict[str, dict] = {}
+    for name in sorted(os.listdir(answers_dir)):
+        if name.endswith(".json"):
+            document = _read_part(os.path.join(answers_dir, name))
+            if document:
+                out[name[:-len(".json")]] = document["value"]
+    return out
+
+
+def _answered_labels(pyto_root: str) -> set[str]:
+    """Labels the owner answered. A default (kind default) is not an answer: the label stays in the
+    batch's default group, numbered, so one `neat answer` overturns it (task 71)."""
+    return {label for label, value in _answers_by_label(pyto_root).items() if value.get("kind", "owner") == "owner"}
+
+
+def answer_text(pyto_root: str, label: str) -> str | None:
+    """The exact frozen bytes of the owner's answer for `label`, or None (a default is not his)."""
+    value = _answers_by_label(pyto_root).get(label)
+    if not value or value.get("kind", "owner") != "owner":
+        return None
+    frozen = _read_part(os.path.join(pyto_root, "experiments", "review", "freezes", f"{value['n']}-{value['k']}.json"))
+    return (frozen or {}).get("value", {}).get("bytes")
 
 
 def _existing_batch_numbers(pyto_root: str) -> list[int]:
@@ -304,9 +326,14 @@ def collate(args: Mapping[str, Any]) -> dict:
         if item["label"] not in answered
     ]
     reviewed = _reviewed_labels(pyto_root)
+    defaults_filed = {label: value for label, value in _answers_by_label(pyto_root).items()
+                      if value.get("kind", "owner") == "default"}
     for item in items:
         task_number = int(item["task"].split("-")[1]) if item["task"].startswith("task-") else None
-        if item["label"] in reviewed or (reviewed and task_number is not None and task_number <= REVIEW_TASK_MAX):
+        if item["label"] in defaults_filed:
+            item["needs"] = "default"   # standing; numbered so the owner can overturn it
+            item["default_sha256"] = defaults_filed[item["label"]]["sha256"]
+        elif item["label"] in reviewed or (reviewed and task_number is not None and task_number <= REVIEW_TASK_MAX):
             item["needs"] = "reviewed"
     # What needs the owner first, then what the review page already lists, then what carries a
     # default; each group in source order.
@@ -316,7 +343,8 @@ def collate(args: Mapping[str, Any]) -> dict:
         item["number"] = number
     ordered = [
         {"number": item["number"], "label": item["label"], "task": item["task"],
-         "text": item["text"], "origin": item["origin"], "needs": item.get("needs", "default")}
+         "text": item["text"], "origin": item["origin"], "needs": item.get("needs", "default"),
+         **({"default_sha256": item["default_sha256"]} if item.get("default_sha256") else {})}
         for item in items
     ]
     return {"n": n, "items": ordered,
@@ -589,7 +617,8 @@ def _print_batch(batch_value: dict) -> None:
     if defaults:
         print("\nDefaults, standing (neat default %d <number> \"<sentence>\" files one; answer it to overturn):" % n)
         for item in defaults:
-            print(f"{item['number']}. [{item['task']}] {item['label']}: {item['text']}")
+            filed = f" (filed {item['default_sha256'][:12]})" if item.get("default_sha256") else ""
+            print(f"{item['number']}. [{item['task']}] {item['label']}{filed}: {item['text']}")
 
 
 def main(argv: list[str] | None = None) -> int:

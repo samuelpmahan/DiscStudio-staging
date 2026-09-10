@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.213933000144607
+  },
+  "parts": {
+    "neat.capture.review.7.2.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.RefusedAndKilledSteps": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.7.2.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.7.2.response"
+          ],
+          "args": {
+            "k": 2,
+            "label": "RefusedAndKilledSteps",
+            "n": 7,
+            "text": "2 sounds like you\u2019ve waltzed along long enough you have no idea what refusal actually means in our scheme"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.10907400019277702,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048896500.597,
+              "result_sha256": "f6b5fff5dee3b2733dc905fc737a96d5940df40e64f5b1f49580457f697d20cb"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.7.2.response",
+          "result_sha256": "c9b119b8f9d657efc130334fd8f1645067598951abab0a8c975d5e6c61b19baa",
+          "value": {
+            "data": {
+              "k": 2,
+              "label": "RefusedAndKilledSteps",
+              "n": 7,
+              "recordedAt": 1789048896500.597,
+              "text": "2 sounds like you\u2019ve waltzed along long enough you have no idea what refusal actually means in our scheme"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.7.2.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.7.2.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.023088000034476863,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.7.2.response",
+          "result_sha256": "a58b3cf8b6741003c1d28dcbfca70444a2afd9a99a08a7f486cbd0b950208fb7",
+          "value": {
+            "data": {
+              "bytes": "2 sounds like you\u2019ve waltzed along long enough you have no idea what refusal actually means in our scheme",
+              "sha256": "da508422178aef7214b8c4beac5f1eccf624ddd4413bb437c38d361066f52441"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.7.2.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.RefusedAndKilledSteps"
+          ],
+          "args": {
+            "k": 2,
+            "kind": "owner",
+            "label": "RefusedAndKilledSteps",
+            "n": 7,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.081770999917353,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.RefusedAndKilledSteps",
+          "result_sha256": "22863ece1edcfdf26ff1cc007a81b801f3195cd8cabeb2fb2fe18cd1fd63615b",
+          "value": {
+            "data": {
+              "k": 2,
+              "kind": "owner",
+              "label": "RefusedAndKilledSteps",
+              "n": 7,
+              "sha256": "da508422178aef7214b8c4beac5f1eccf624ddd4413bb437c38d361066f52441"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.RefusedAndKilledSteps",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}
