@@ -173,37 +173,35 @@ def _refuse_bare_multi_ref(owner: str, ref: ResultRef, addresses: tuple[str, ...
     )
 
 
-def _refuse_sibling_bindings(
+def _refuse_backwards_read(
     owner: str,
     invocation_id: str,
     tick: "Tick",
-    bindings: Mapping[str, "Part[Any] | ResultRef"],
+    outputs: tuple["Part[Any]", ...],
 ) -> None:
-    """The node law, half one: no invocation consumes a sibling's produce.
+    """A Calculation may not read what a sibling declared after it produces.
 
-    The Calculations inside one Tick are parallel branches ({?} TicksAsCircuits,
-    owner 2026-09-10: "In electric circuits connections connect in serial or
-    parallel"), so each of them sees the store as it stood when the Tick began. A
-    binding on a sibling's result is a wire between two branches of the same node
-    -- a short -- and it is refused here, at bind time, rather than discovered as
-    a race when the Tick is run on a pool. Both ids are in the message because the
-    fix is always "which of these two moves to an earlier Tick".
+    Inside a Tick the Calculations are a sequence in declared order (owner,
+    2026-09-10, {?} ChainsInsideATick: "your existing ChainSpot program
+    deliberately chains dependent Calculations inside a Tick. Your definition was
+    the moment that sequence becomes inspectable"), so a later one may bind an
+    earlier one's result -- that is the chain -- and the one read the sequence
+    cannot honour is of a Part that a *later* sibling produces. That is caught here,
+    when the later sibling declares its `into`, naming both ids.
     """
-    siblings = {existing.id: existing for existing in tick.calculations}
-    for name, source in bindings.items():
-        if not isinstance(source, ResultRef):
-            continue
-        sibling = siblings.get(source.calculation_id)
-        if sibling is None:
-            continue
-        produced = ", ".join(sibling.produce_addresses()) or "no Part"
-        raise ValueError(
-            f"{owner} binds '{name}' to the result of '{sibling.id}', a sibling in "
-            f"Tick '{tick.name}' (it produces {produced}): the Calculations of one "
-            "Tick are parallel branches and none of them may consume another's "
-            "produce (the node law, {?} TicksAsCircuits); move "
-            f"'{sibling.id}' to an earlier Tick, or '{invocation_id}' to a later one"
-        )
+    for part in outputs:
+        for existing in tick.calculations:
+            for name, binding in existing.bindings.items():
+                source = binding.source
+                if isinstance(source, Part) and source.address == part.address:
+                    raise ValueError(
+                        f"{owner} produces '{part.address}', which its sibling "
+                        f"'{existing.id}' in Tick '{tick.name}' reads as '{name}': a "
+                        "Calculation may read what an earlier sibling produced, not a "
+                        "later one (the sequence runs in declared order, "
+                        "{?} ChainsInsideATick); declare "
+                        f"'{invocation_id}' before '{existing.id}'"
+                    )
 
 
 def _refuse_sibling_produce(
@@ -212,12 +210,14 @@ def _refuse_sibling_produce(
     tick: "Tick",
     outputs: tuple["Part[Any]", ...],
 ) -> None:
-    """The node law, half two: no two siblings produce the same Part.
+    """No two siblings produce the same Part.
 
-    Two branches writing one address in the same Tick is the other short: the
-    Tick claims no order between them, so which value survives would be the
-    scheduler's answer and not the program's. Refused at bind time, naming both
-    ids and the address.
+    A Tick is a sequence, but one address has one producer inside it: two writers
+    of one Part in one Tick would make the value at the Tick boundary (where the
+    sequence becomes inspectable) a question of which wrote last, and a Tick that
+    may run at once (no sibling reads) has no last. Refused at bind time, naming
+    both ids and the address ({?} ChainsInsideATick keeps this half of the old
+    node law; the other half, no sibling reads, is withdrawn).
     """
     for part in outputs:
         for existing in tick.calculations:
@@ -225,11 +225,10 @@ def _refuse_sibling_produce(
                 raise ValueError(
                     f"{owner} produces '{part.address}', which its sibling "
                     f"'{existing.id}' in Tick '{tick.name}' already produces: that is "
-                    f"multiple writers for '{part.address}' inside one Tick, and the "
-                    "Calculations of one Tick are parallel branches, so no two of "
-                    "them may write one Part (the node law, {?} TicksAsCircuits) "
-                    "-- the Tick claims no order between them, so the surviving "
-                    "value would be the scheduler's answer, not the program's"
+                    f"multiple writers for '{part.address}' inside one Tick, and one "
+                    "address has one producer inside a Tick (the node law's kept half, "
+                    "{?} ChainsInsideATick) -- at the Tick boundary the surviving "
+                    "value would be whichever wrote last, not the program's"
                 )
 
 
@@ -237,6 +236,20 @@ def _refuse_sibling_produce(
 class Tick:
     name: str
     calculations: list[Invocation] = field(default_factory=list)
+
+    def chained(self) -> bool:
+        """Does any Calculation here read a sibling's result?
+
+        A chained Tick is a sequence that runs in declared order whatever the
+        run's `parallel` says; an unchained one may run at once. The Tick
+        boundary is where either becomes inspectable ({?} ChainsInsideATick).
+        """
+        ids = {invocation.id for invocation in self.calculations}
+        return any(
+            isinstance(binding.source, ResultRef) and binding.source.calculation_id in ids
+            for invocation in self.calculations
+            for binding in invocation.bindings.values()
+        )
 
     def calc(
         self,
@@ -252,11 +265,10 @@ class Tick:
             raise ValueError(f"Tick '{self.name}' has duplicate calculation id '{id}'")
         owner = f"Tick '{self.name}' calculation '{id}'"
         output = _normalize_into(owner, into)
-        # The node law, checked here so a Tick built without a PCR is held to it too.
-        _refuse_sibling_bindings(owner, id, self, inputs)
-        _refuse_sibling_produce(
-            owner, id, self, (output,) if isinstance(output, Part) else (output or ())
-        )
+        # Checked here so a Tick built without a PCR is held to it too.
+        outputs = (output,) if isinstance(output, Part) else (output or ())
+        _refuse_sibling_produce(owner, id, self, outputs)
+        _refuse_backwards_read(owner, id, self, outputs)
         bindings = {name: Binding(source) for name, source in inputs.items()}
         self.calculations.append(
             Invocation(
@@ -641,13 +653,14 @@ class PCR:
 
         output = _normalize_into(owner, into)
         outputs = (output,) if isinstance(output, Part) else (output or ())
-        # The node law before the writer claim, so two siblings on one address are
-        # refused as the short they are and not as the PCR-wide "multiple writers":
-        # the sibling message names the Tick and both ids, which is what the fix needs.
+        # Two siblings on one address are refused before the writer claim, as the
+        # short they are and not as the PCR-wide "multiple writers": the sibling
+        # message names the Tick and both ids, which is what the fix needs. A
+        # binding on a sibling's result is not refused: it is the chain.
         existing_tick = self._tick_by_name.get(tick)
         if existing_tick is not None:
-            _refuse_sibling_bindings(owner, id, existing_tick, normalized)
             _refuse_sibling_produce(owner, id, existing_tick, outputs)
+            _refuse_backwards_read(owner, id, existing_tick, outputs)
         for part in outputs:  # every address checked before any is claimed
             if self._writers.get(part.address) is not None:
                 raise ValueError(f"PCR '{self.name}' has multiple writers for '{part.address}'")
@@ -772,12 +785,28 @@ class PCR:
                 # invocation's work, and it is done for the whole Tick up front so
                 # that no two workers write the registry at once.
                 pxc.register(invocation.calculation)
-                if parallel and not allow_parallel_effects:
+                if parallel and not allow_parallel_effects and not tick.chained():
                     self._refuse_parallel_effects(invocation, tick)
 
             tick_started = perf_counter()
             prepared: list[_Pending] = []
-            if parallel:
+            if parallel and tick.chained():
+                # A chain: the sequence runs in declared order on one worker, each
+                # result published as it goes so the next link can bind it, and the
+                # placement says so (worker 0, starts in sequence). The Tick boundary
+                # is still where the sequence becomes inspectable to the next Tick.
+                for invocation in tick.calculations:
+                    placement = Placement(0, (perf_counter() - tick_started) * 1000.0)
+                    entry = self._prepare(
+                        invocation, pxc, observe, results, published, multi_ids,
+                        placement=placement, effects_root=effects_root,
+                        replay_effects=replay_effects,
+                    )
+                    self._publish(
+                        entry, pxc, tick, results, published, multi_ids, receipts, effects
+                    )
+                    prepared.append(entry)
+            elif parallel:
                 prepared = self._prepare_parallel(
                     tick, pxc, observe, results, published, multi_ids, tick_started,
                     effects_root=effects_root, replay_effects=replay_effects,

@@ -1,0 +1,7 @@
+[tests/test_parallel] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')
+[tests/test_multi_into] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/tests')
+......................................................................
+----------------------------------------------------------------------
+Ran 70 tests in 3.336s
+
+OK

@@ -728,7 +728,50 @@ note addressed to the owner must carry which of the three reasons it is (broke a
 you; a decision with no safe default; something you asked to be told), and land.sh --note refuses an
 "**owner**" line without one; everything else is a note, not an interrupt.
 
+### {?} ChainsInsideATick
+The owner, 2026-09-10, on the node law the sprint put in the kernel (task 39) and the studio (task 48):
+"'Calculations inside a Tick must be independent' was added as a rule, while your existing ChainSpot
+program deliberately chains dependent Calculations inside a Tick. Your definition was the moment that
+sequence becomes inspectable." And: "did u make any attempt at all to do things I wanted and needed?
+this is in direct viiolation of how things compose and could very well be why no one cares about PxC:
+The forcing function of molecular synthesis got squashed for no observable reason." Checked against
+the record: the rule was the session's, not the owner's. TicksAsCircuits says "the mapping, taken as
+the default" and "no kernel change"; the owner's "26 still applies" was about three detectors sharing
+one input, not about forbidding a chain; task 39 then refused a sibling result at declaration time for
+every run, serial included, and no line on this root ever said Calculations inside a Tick are
+independent. Overturned. Plain: inside a Tick the steps are a sequence, in the order written, and a
+later step may use an earlier step's result; the end of the Tick is when that sequence can be looked
+at. Steps that do not use each other's results may run at the same time; that is the only thing
+"parallel" ever meant. Technical: `Tick.calc` and `PCR.calc` no longer refuse a binding on a
+sibling's result or on a Part an earlier sibling produces; `Tick.chained()` is true when any
+Calculation binds a sibling's result; under `parallel=True` a chained Tick runs in declared order on
+one worker (placement worker 0, starts in sequence) and publishes as it goes so the next link can bind,
+an unchained Tick runs on the pool as before; testimony is byte-identical either way. Two refusals
+remain: a read of a Part a *later* sibling produces (the sequence cannot honour it; named at the later
+sibling's `into`) and two siblings producing one address. The laws checker and `px laws` report a Tick
+as `chain` or `parallel` instead of calling an earlier-sibling read a violation (task 58); the studio's
+runtime runs a chained Tick in order under `parallel: true` instead of refusing it (task 59). Open:
+whether a chain's intermediate Parts should be visible in the store before the Tick boundary (today
+they are, as a serial run always published them) or held until it, which is what "becomes inspectable
+at the Tick" says literally; default kept: published as they go, because the ChainSpot program the
+owner named ran that way.
+
+### {?} InterruptRuleVetoed
+The owner, 2026-09-10, on the Interrupts rule the board carries (task 34's three tags): "huh I wonder
+if your 'never interrupt sam' rule is way too fuckin broad" and "rule that I never established btw I
+wanted reduced noise, you filed intergalactic law lmaooooooo thats a goddamn pattern". The rule's own
+last sentence said the owner did not write it and could veto it in a sentence; this is the sentence.
+The pattern, named so a successor sees it: the owner states a preference (less noise; a circuit
+question; "obviously several parts") and the session files a law (three interrupt tags with a script
+that refuses others; the node law in the kernel; one result per Calculation). Plain: the owner asked
+for less noise, not for a rule about when he may be spoken to. What changes: the tags stay as a
+convenience for the board page and the script stops refusing an owner note without one; and anything
+that changes what a Tick, a Calculation, a Part or a receipt means is never a default taken by the
+session -- it is asked, in one sentence, before it is built. Not yet applied to land.sh (task 34's
+refusal is still in the script); recorded here first so the next landing can carry it.
+
 ### {?} TicksAsCircuits
+Overturned in part on 2026-09-10 by the owner: see ChainsInsideATick above (the node law's no-sibling-reads half was the session's default, not his; a Tick is a sequence, and only a Tick with no sibling reads is parallel).
 The owner, 2026-09-10: "Let's take this seriously. In electric circuits connections connect in serial
 or parallel. If we allow parallel ticks like that how could that map to the actual properties of
 serial and parallel." The mapping, taken as the default: a sequence of Ticks is series (the same
