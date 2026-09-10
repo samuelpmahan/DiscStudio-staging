@@ -1,0 +1,237 @@
+{
+  "budget": {
+    "completed": false,
+    "limit_ms": 5.0,
+    "stopped_after_tick": "Score"
+  },
+  "counters": {
+    "computed": 3,
+    "hits": 1,
+    "invocations": 4,
+    "wall_ms": 6.5
+  },
+  "parallel": true,
+  "parts": {
+    "px.demo.csv": {
+      "preexisting": true,
+      "read_by": [
+        "load"
+      ],
+      "written_by": null
+    },
+    "px.demo.left": {
+      "preexisting": false,
+      "read_by": [
+        "score"
+      ],
+      "written_by": "left"
+    },
+    "px.demo.right": {
+      "preexisting": false,
+      "read_by": [
+        "score"
+      ],
+      "written_by": "right"
+    },
+    "px.demo.rows": {
+      "preexisting": false,
+      "read_by": [
+        "left",
+        "right"
+      ],
+      "written_by": "load"
+    },
+    "px.demo.score": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "score"
+    }
+  },
+  "pcr": "parallel-demo",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.demo.csv"
+          ],
+          "actual_produces": [
+            "px.demo.rows"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.demo.load",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [
+            "px:px.demo.csv"
+          ],
+          "duration_ms": 1.0,
+          "hit": true,
+          "id": "load",
+          "inputs": {
+            "csv": "px:px.demo.csv"
+          },
+          "into": "px.demo.rows",
+          "placement": {
+            "started_ms": 0.0,
+            "worker": 0
+          },
+          "result_sha256": null,
+          "value": {
+            "data": {
+              "rows": 3
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.demo.rows",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "latency_ms": 1.0,
+      "name": "Prepare"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.demo.left"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.demo.left",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [],
+          "duration_ms": 2.0,
+          "hit": false,
+          "id": "left",
+          "inputs": {
+            "rows": "fn:load"
+          },
+          "into": "px.demo.left",
+          "placement": {
+            "started_ms": 1.0,
+            "worker": 0
+          },
+          "result_sha256": null,
+          "value": {
+            "data": {
+              "left": 1
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.demo.left",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.demo.right"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.demo.right",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [],
+          "duration_ms": 3.0,
+          "hit": false,
+          "id": "right",
+          "inputs": {
+            "rows": "fn:load"
+          },
+          "into": "px.demo.right",
+          "placement": {
+            "started_ms": 1.0,
+            "worker": 1
+          },
+          "result_sha256": null,
+          "value": {
+            "data": {
+              "right": 2
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.demo.right",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "latency_ms": 3.0,
+      "name": "Fan"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.demo.score"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.demo.score",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": null
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.5,
+          "hit": false,
+          "id": "score",
+          "inputs": {
+            "left": "fn:left",
+            "right": "fn:right"
+          },
+          "into": "px.demo.score",
+          "placement": {
+            "started_ms": 4.0,
+            "worker": 0
+          },
+          "result_sha256": null,
+          "value": {
+            "data": {
+              "score": 3
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.demo.score",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "latency_ms": 0.5,
+      "name": "Score"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+....................................E........................................
+======================================================================
+ERROR: test_pql (unittest.loader._FailedTest.test_pql)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_pql
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/41/pyto/tests/test_pql.py", line 23, in <module>
+    from pyto.core import RECEIPT_PREFIX, receipt_writes_allowed
+ImportError: cannot import name 'receipt_writes_allowed' from 'pyto.core' (/home/user/DiscStudio-staging/pyto/src/pyto/core.py)
+
+
+----------------------------------------------------------------------
+Ran 77 tests in 3.227s
+
+FAILED (errors=1)
