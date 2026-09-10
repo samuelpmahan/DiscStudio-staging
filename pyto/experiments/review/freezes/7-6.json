@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.7.6.response",
+  "sha256": "015121b4b6bdafb81139df2aef2318db9e929b36222252cc399c7ae4a79ad659",
+  "value": {
+    "bytes": "6 instead of just finding a case where my logic breaks, examine the commonalities of the set where it DOESNT break to understand",
+    "sha256": "8c656455fc963cb02498bf12206e9323dd3732ee99ae23910da035db781a8ef7"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.StubOpensTheSelftest",
+  "sha256": "d8644ec849a2753833148042c05545742298868b33828e1d8ae3fb5bd444140d",
+  "value": {
+    "k": 6,
+    "kind": "owner",
+    "label": "StubOpensTheSelftest",
+    "n": 7,
+    "sha256": "8c656455fc963cb02498bf12206e9323dd3732ee99ae23910da035db781a8ef7"
+  }
+}

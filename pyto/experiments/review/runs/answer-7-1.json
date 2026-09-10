@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.2902670000585204
+  },
+  "parts": {
+    "neat.capture.review.7.1.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.MoleculeScheme": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.7.1.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.7.1.response"
+          ],
+          "args": {
+            "k": 1,
+            "label": "MoleculeScheme",
+            "n": 7,
+            "text": "1 sounds like both are valid projections of the same truth, how could we accommodate both?"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.1258699999198143,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048896473.4243,
+              "result_sha256": "de954d4262b2accaf2b0bfa20c3307a3b7e186d9df7f00a1d91875627906f1e3"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.7.1.response",
+          "result_sha256": "f9e6dc0c1b3354b628f6c6070a1e058c1d18b64dbe2a70da3e4a9cddaeb9eb06",
+          "value": {
+            "data": {
+              "k": 1,
+              "label": "MoleculeScheme",
+              "n": 7,
+              "recordedAt": 1789048896473.4243,
+              "text": "1 sounds like both are valid projections of the same truth, how could we accommodate both?"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.7.1.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.7.1.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.027423000119597418,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.7.1.response",
+          "result_sha256": "7c2665b3e98e2030a450b79640b3f5afbd2c2ada632c34b116ce33bc45a35741",
+          "value": {
+            "data": {
+              "bytes": "1 sounds like both are valid projections of the same truth, how could we accommodate both?",
+              "sha256": "9275da86639b1df8348e20348e87f88b31d6ebd30b2b25bfcb71d138bc0bdfe2"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.7.1.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.MoleculeScheme"
+          ],
+          "args": {
+            "k": 1,
+            "kind": "owner",
+            "label": "MoleculeScheme",
+            "n": 7,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.1369740000191086,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.MoleculeScheme",
+          "result_sha256": "1fc9cd3377326ff4b661ee3356407fd9a94025f0099bca454e708ef3e5a240fb",
+          "value": {
+            "data": {
+              "k": 1,
+              "kind": "owner",
+              "label": "MoleculeScheme",
+              "n": 7,
+              "sha256": "9275da86639b1df8348e20348e87f88b31d6ebd30b2b25bfcb71d138bc0bdfe2"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.MoleculeScheme",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

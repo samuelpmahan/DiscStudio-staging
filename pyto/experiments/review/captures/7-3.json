@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.7.3.response",
+  "recordedAt": 1789048896504.9639,
+  "sha256": "539e58768aea2fb94861665e1266b9df96799d7cf885fb20243868febd0e7314",
+  "value": {
+    "k": 3,
+    "label": "OwnerQuotes",
+    "n": 7,
+    "text": "3 Owner Quotes seem like overly commented code: saying it all so many times to still consistently miss the point shows the exact failure mode"
+  }
+}

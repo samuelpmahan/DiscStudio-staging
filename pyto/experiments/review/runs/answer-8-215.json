@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.1666599998534366
+  },
+  "parts": {
+    "neat.capture.review.8.215.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.MoleculeAddress": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.8.215.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.8.215.response"
+          ],
+          "args": {
+            "k": 215,
+            "label": "MoleculeAddress",
+            "n": 8,
+            "text": "9 a Molecule is a Part. Whether that Part is a Calculation is case by case"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.0679320000926964,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048970270.8438,
+              "result_sha256": "a63c0c4471cc3c9fac5b9d97255af8759bfe6ff6883cb95e783e543e099676d8"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.8.215.response",
+          "result_sha256": "67dfe44a78c3377c05a57f4da91b40bd3f2312d2d97a975732542ec3cd728f49",
+          "value": {
+            "data": {
+              "k": 215,
+              "label": "MoleculeAddress",
+              "n": 8,
+              "recordedAt": 1789048970270.8438,
+              "text": "9 a Molecule is a Part. Whether that Part is a Calculation is case by case"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.8.215.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.8.215.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.022322999939206056,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.8.215.response",
+          "result_sha256": "e6e7e3aebfbb31acc28685030185819aea032e0c1cb660137e581de84f1b670e",
+          "value": {
+            "data": {
+              "bytes": "9 a Molecule is a Part. Whether that Part is a Calculation is case by case",
+              "sha256": "c3be7894e6ad82bbc965527173a636e68c8c30b940c841aaa7c2a512e9926c10"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.8.215.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.MoleculeAddress"
+          ],
+          "args": {
+            "k": 215,
+            "kind": "owner",
+            "label": "MoleculeAddress",
+            "n": 8,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.0764049998215341,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.MoleculeAddress",
+          "result_sha256": "ce4526535ad3413467a52f3cf1fd4d69bac7d2a98b69a750204e6cd9b1ef2b2c",
+          "value": {
+            "data": {
+              "k": 215,
+              "kind": "owner",
+              "label": "MoleculeAddress",
+              "n": 8,
+              "sha256": "c3be7894e6ad82bbc965527173a636e68c8c30b940c841aaa7c2a512e9926c10"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.MoleculeAddress",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.0514869995859044
+  },
+  "parts": {
+    "neat.capture.review.8.225.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.FileIsNotAnEffect": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.8.225.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.8.225.response"
+          ],
+          "args": {
+            "k": 225,
+            "label": "FileIsNotAnEffect",
+            "n": 8,
+            "text": "10 no idea what this one means that\u2019s kinda not great"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.0506389997099177,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048970275.4795,
+              "result_sha256": "3d5c6dcc58aa68df7b05456c5d29ec2e45078ac79193c52fee96835ec87a58ab"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.8.225.response",
+          "result_sha256": "3326edc77e840cd5ba16a307118a5e92221db984e6c88fe3316639e97d304ea8",
+          "value": {
+            "data": {
+              "k": 225,
+              "label": "FileIsNotAnEffect",
+              "n": 8,
+              "recordedAt": 1789048970275.4795,
+              "text": "10 no idea what this one means that\u2019s kinda not great"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.8.225.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.8.225.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.020603999928425765,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.8.225.response",
+          "result_sha256": "408c38c6e0a492ec2a491adb5f2ab5caac0df401bd39b6bb28dffd4d6409d87e",
+          "value": {
+            "data": {
+              "bytes": "10 no idea what this one means that\u2019s kinda not great",
+              "sha256": "5fd673df618f770e6513b39fe504a2bf44300354e4a8e7a8920a5f5bb524098b"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.8.225.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.FileIsNotAnEffect"
+          ],
+          "args": {
+            "k": 225,
+            "kind": "owner",
+            "label": "FileIsNotAnEffect",
+            "n": 8,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.980243999947561,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.FileIsNotAnEffect",
+          "result_sha256": "baa4d336cb0f2ee922e24b64f36b25c5c968375157d544bb65f3171a9c774816",
+          "value": {
+            "data": {
+              "k": 225,
+              "kind": "owner",
+              "label": "FileIsNotAnEffect",
+              "n": 8,
+              "sha256": "5fd673df618f770e6513b39fe504a2bf44300354e4a8e7a8920a5f5bb524098b"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.FileIsNotAnEffect",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

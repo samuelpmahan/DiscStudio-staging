@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.RootLabelsCountAsOpen",
+  "sha256": "980df15b73d96686a9a04373cf21312d858511eef8e0e29e4b90d91ef832495c",
+  "value": {
+    "k": 7,
+    "kind": "owner",
+    "label": "RootLabelsCountAsOpen",
+    "n": 7,
+    "sha256": "7bdf5e7f3b4f539ff73e92ccc6bb803c2796860f03d17b905ccd511f738c0db2"
+  }
+}

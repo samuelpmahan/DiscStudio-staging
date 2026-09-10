@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.11465100053465
+  },
+  "parts": {
+    "neat.capture.review.7.4.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.BatchItemTextLength": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.7.4.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.7.4.response"
+          ],
+          "args": {
+            "k": 4,
+            "label": "BatchItemTextLength",
+            "n": 7,
+            "text": "4 consider my reply effort first. Notice how your pre effort makes it easier for me to precisely reply?"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.052522000260069035,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048896508.979,
+              "result_sha256": "ca71120ec80821bd965976d986b8e06bbe3045093c3bea5c940bac367fddb9eb"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.7.4.response",
+          "result_sha256": "4492c63a5fae1a7037fd8ea2d8c634ec475823eb989dffbed6d996df7517da21",
+          "value": {
+            "data": {
+              "k": 4,
+              "label": "BatchItemTextLength",
+              "n": 7,
+              "recordedAt": 1789048896508.979,
+              "text": "4 consider my reply effort first. Notice how your pre effort makes it easier for me to precisely reply?"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.7.4.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.7.4.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.014426000234379899,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.7.4.response",
+          "result_sha256": "5c5fdda80a49ffafab24617f66442f0b109f392a8b86a1f7fb80cbc0387132bd",
+          "value": {
+            "data": {
+              "bytes": "4 consider my reply effort first. Notice how your pre effort makes it easier for me to precisely reply?",
+              "sha256": "372c9a3ca2a88dd77661543ca8974cf10c88dc965488799d898841759583988f"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.7.4.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.BatchItemTextLength"
+          ],
+          "args": {
+            "k": 4,
+            "kind": "owner",
+            "label": "BatchItemTextLength",
+            "n": 7,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.047703000040201,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.BatchItemTextLength",
+          "result_sha256": "dfc44c30f15859bfb1343375c1c3e0a75374f099879914c643c5f648602a66cf",
+          "value": {
+            "data": {
+              "k": 4,
+              "kind": "owner",
+              "label": "BatchItemTextLength",
+              "n": 7,
+              "sha256": "372c9a3ca2a88dd77661543ca8974cf10c88dc965488799d898841759583988f"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.BatchItemTextLength",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}
