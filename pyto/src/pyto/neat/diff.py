@@ -304,6 +304,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--label-a", default=None, help="presentation-only label for document a")
     parser.add_argument("--label-b", default=None, help="presentation-only label for document b")
+    parser.add_argument("--diffs-dir", default=None,
+                        help="where the Part and the two run records are written (default pyto/experiments/review/diffs)")
     return parser
 
 
@@ -325,8 +327,9 @@ def main(argv: list[str] | None = None) -> int:
     address = ADDRESS_TEMPLATE.format(a=digest_a, b=digest_b)
     stem = f"{digest_a}-{digest_b}"
 
-    os.makedirs(DIFFS_DIR, exist_ok=True)
-    _write_part(address, value, os.path.join(DIFFS_DIR, f"{stem}.json"))
+    diffs_dir = args.diffs_dir or DIFFS_DIR
+    os.makedirs(diffs_dir, exist_ok=True)
+    _write_part(address, value, os.path.join(diffs_dir, f"{stem}.json"))
 
     if not (_oc_calls(doc_a) or _oc_calls(doc_b)):
         run_a, pxc_a = run_document(doc_a, store, registry, "neat.diff.a")
@@ -334,11 +337,11 @@ def main(argv: list[str] | None = None) -> int:
         preexisting = set(store)
         write_record(
             run_record(run_a, pxc_a, preexisting=preexisting),
-            os.path.join(DIFFS_DIR, f"{stem}.a.record.json"),
+            os.path.join(diffs_dir, f"{stem}.a.record.json"),
         )
         write_record(
             run_record(run_b, pxc_b, preexisting=preexisting),
-            os.path.join(DIFFS_DIR, f"{stem}.b.record.json"),
+            os.path.join(diffs_dir, f"{stem}.b.record.json"),
         )
 
     print(json.dumps(value, indent=2, sort_keys=True))

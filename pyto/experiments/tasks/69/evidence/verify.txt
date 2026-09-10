@@ -1,0 +1,31 @@
+[tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/69/pyto/tests')
+[tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/69/pyto/viewer/test')
+FF........
+======================================================================
+FAIL: test_cli_writes_the_part_and_both_run_records (tests.test_neat_diff.TestCLI.test_cli_writes_the_part_and_both_run_records)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/69/pyto/tests/test_neat_diff.py", line 183, in test_cli_writes_the_part_and_both_run_records
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : usage: python -m pyto.neat.diff [-h] --store STORE --registry REGISTRY
+                                [--label-a LABEL_A] [--label-b LABEL_B]
+                                a b
+python -m pyto.neat.diff: error: unrecognized arguments: --diffs-dir /tmp/tmp7bqu8ww9/diffs
+
+
+======================================================================
+FAIL: test_two_runs_of_the_cli_give_identical_part_bytes (tests.test_neat_diff.TestCLI.test_two_runs_of_the_cli_give_identical_part_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/69/pyto/tests/test_neat_diff.py", line 210, in test_two_runs_of_the_cli_give_identical_part_bytes
+    self.assertEqual(first.returncode, 0, first.stderr)
+AssertionError: 2 != 0 : usage: python -m pyto.neat.diff [-h] --store STORE --registry REGISTRY
+                                [--label-a LABEL_A] [--label-b LABEL_B]
+                                a b
+python -m pyto.neat.diff: error: unrecognized arguments: --diffs-dir /tmp/tmprly8l5g8/diffs
+
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.137s
+
+FAILED (failures=2)
