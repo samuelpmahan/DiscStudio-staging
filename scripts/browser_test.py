@@ -153,6 +153,30 @@ with sync_playwright() as p:
     assert viewer.locator('section.tick').count()==len(run_record['ticks'])
     assert viewer.locator('section.tick .tick-name').all_text_contents()==[t['name'] for t in run_record['ticks']]
     assert viewer.evaluate("performance.getEntriesByType('resource').length")==0,'the standalone page fetched something'
+    # The same sample composition with parallel: true -- one Tick per stage, every
+    # card's branch of that stage at once (src/runtime.js sceneParallel). The record
+    # carries the schedule the Python kernel writes and the Tick page draws the Tick
+    # side by side.
+    parallel=studio.evaluate("""async()=>{await discStudio.runtime.sceneParallel({});const {address,record}=discStudio.runtime.runRecord('on-the-course-parallel');return {address,record};}""")
+    prec=parallel['record']
+    assert prec['parallel'] is True,prec.get('parallel')
+    assert prec['budget']=={'limit_ms':None,'stopped_after_tick':None,'completed':True},prec['budget']
+    assert parallel['address']=='px.run.on-the-course-parallel'
+    assert all(t['latency_ms'] is not None for t in prec['ticks'])
+    fan=next(t for t in prec['ticks'] if len(t['invocations'])>1)
+    assert [i['placement']['worker'] for i in fan['invocations']]==list(range(len(fan['invocations']))),fan
+    assert all(i['placement']['started_ms']>=0 for t in prec['ticks'] for i in t['invocations'])
+    html=studio.evaluate("record=>discStudio.renderRecordPage(record)",prec)
+    (out/'parallel-tick-render.html').write_text(html)
+    branches=context.new_page();branches.set_default_timeout(10000)
+    branches.on('pageerror',lambda e:errors.append(str(e)))
+    branches.goto((out/'parallel-tick-render.html').resolve().as_uri())
+    branches.wait_for_selector('section.tick.parallel')
+    assert branches.locator('section.tick.parallel').count()==sum(1 for t in prec['ticks'] if len(t['invocations'])>1)
+    assert branches.locator('section.tick.parallel[data-tick="%d"] .branches .branch'%fan['index']).count()==len(fan['invocations'])
+    box=[branches.locator('section.tick.parallel[data-tick="%d"] .branches .branch'%fan['index']).nth(i).bounding_box() for i in range(len(fan['invocations']))]
+    assert len({round(b['y']) for b in box})==1,'the branches of a parallel Tick are drawn side by side, on one row'
+    record('The sample composition runs with parallel: true, its exported record validates and carries parallel, placement, latency_ms and budget, and the Tick page draws the parallel Tick side by side')
     server.shutdown();server.server_close()
     record('Export run record writes a validated pyto-run-record@1 Part and file; its Tick render page opens over file:// with one section per Tick and no requests')
     # The studio's own receipts, read back on the Inspect page through the PQL

@@ -1,0 +1,119 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T033133Z-task-48",
+  "package": "task-48",
+  "base_sha": "9add98b2decda224622c4f8d6625a186d9328016",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded",
+    "exit": 0,
+    "output_sha256": "c6ed3efc2ee4c5eaea6d9438e778d15f03adb0b98b65e14afb3afab81866d808"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "4b8dee45b25058e4efe4d9bda4f873e1fa17f10a77a13fe63f55511ed50799de",
+    "counts": {
+      "library": 314,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 12,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": ".neat/items/DS-STUDIO-02.json",
+      "bytes": 5318,
+      "sha256": "a63f4d4c6893eb11080e84c21e3ae668777b4e94eccb7029b14243536d9de8fe"
+    },
+    {
+      "path": "pyto/CHANGES.md",
+      "bytes": 77318,
+      "sha256": "c9c7a874f6b2639b9c64565081e5c0eae1e74f2c649b080ca8fe48dbc1be0a09"
+    },
+    {
+      "path": "pyto/experiments/tasks/48/HANDOFF.md",
+      "bytes": 9555,
+      "sha256": "9b83c1a065950507303c578189d862d0acb1f79a09e85f22acc22315e048660e"
+    },
+    {
+      "path": "pyto/experiments/tasks/48/evidence/check_all.txt",
+      "bytes": 170701,
+      "sha256": "635930e9c82eb948e7bc2a296d5b07f8cc8c0af12b6aca3edf618375e1e666df"
+    },
+    {
+      "path": "pyto/experiments/tasks/48/evidence/verify.txt",
+      "bytes": 42596,
+      "sha256": "ca3d7d0663129bbbc267f8c4e6a33ba47fd7ea3b64302dcecd8d12ad5aa19829"
+    },
+    {
+      "path": "pyto/experiments/tasks/48/packet.md",
+      "bytes": 5087,
+      "sha256": "2771f116f7590fc5b28ef63d3ddb0cfeb834edcf1f017362cc7366d0cbfe1539"
+    },
+    {
+      "path": "pyto/viewer/adapters.js",
+      "bytes": 41724,
+      "sha256": "1e3d6425ce3d9b61ff2a4898e7d389f92f80ff290b1c1080cafe54d0eaba9edf"
+    },
+    {
+      "path": "pyto/viewer/test/adapters.test.mjs",
+      "bytes": 50809,
+      "sha256": "16922174e80a52523dbabfbe1eb65ae220d5bf006dae478b322004410e009e60"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 18107,
+      "sha256": "41562486ef29ae33f5ebaa0eafc82dc7778aff88b698f29bc03b687440773069"
+    },
+    {
+      "path": "scripts/review_checkpoint.mjs",
+      "bytes": 2722,
+      "sha256": "858ab724193f8d8dd2e051a5416e655008c15379f9314b7daf132dc221debec6"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 75135,
+      "sha256": "08b7e9fae7fba39ba2d5f22f7b1f96bd81ecb0005d46f3c209be30b169b714e6"
+    },
+    {
+      "path": "src/core/exec.js",
+      "bytes": 16580,
+      "sha256": "094b66eb3bd32231fdb1012b17c3d5cd43ea8b8ae338bdffd03baa53466dfadc"
+    },
+    {
+      "path": "src/review-data.js",
+      "bytes": 5916,
+      "sha256": "b88eed44b84ea6a4113033da38adf10f3feb4b3334a4e5aeef69c8ca30a5576f"
+    },
+    {
+      "path": "src/runtime.js",
+      "bytes": 15666,
+      "sha256": "5b3f910b9c4253f67e40bf456e4c13f07de476a2614ec74e6ce536fcc7acefa3"
+    },
+    {
+      "path": "tests/core.test.js",
+      "bytes": 36559,
+      "sha256": "359cac13937b5e8040618d1e7570c81bdf237ccced9cb2eaa5310060be43b4ad"
+    },
+    {
+      "path": "tests/fixtures/serial-run-record.json",
+      "bytes": 354153,
+      "sha256": "ba17bb14e7515c6ac22f2b63ce38829e01ba3520e9c307364afbaa3af74c9d83"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T03:33:02.837593Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

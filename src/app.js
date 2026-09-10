@@ -446,5 +446,5 @@ review.setAttribute('data-checklist', JSON.stringify(reviewItems));
 review.setAttribute('checkpoint-id', 'discstudio-pxc-02'); review.setAttribute('subject-commit', 'local-development');
 fetch(new URL('../build-info.json', import.meta.url)).then(r => r.ok ? r.json() : null).then(info => { if (info) { ui.build = info; review.setAttribute('submission-id', `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`); review.setAttribute('checkpoint-id', info.fingerprint); review.setAttribute('subject-commit', info.commit); render(); } }).catch(() => {});
 // Explicit developer inspection/command surface. UI and programmatic commands use the same registered Calculations.
-window.discStudio = { runtime, get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode }; } };
+window.discStudio = { runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode }; } };
 syncRoute();
