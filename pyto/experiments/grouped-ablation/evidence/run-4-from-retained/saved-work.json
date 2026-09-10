@@ -53,9 +53,9 @@
   "invocations_skippable_by_digest": [
     "split"
   ],
-  "ms_saved": 0.05,
+  "ms_saved": 0.075,
   "ms_saved_by_invocation": {
-    "split": 0.050381999699311564
+    "split": 0.07462199982910533
   },
   "prior_run": "run-1",
   "program_lines_changed": {

@@ -6,13 +6,13 @@ which experiments/CAPTURE.md forbids for anything scripts/check_all.sh runs; it
 is therefore outside the discovered test suite, and the tests assert on this
 committed log instead of re-running it (fixer round 1, finding 4).
 
-PYTHONPATH (scratch, removed after the run): /tmp/determinism-lf-3jo7xipg
+PYTHONPATH (scratch, removed after the run): /tmp/determinism-lf-8f6p_ip6
 command: ['/home/user/DiscStudio-staging/EXP/39/.venv/bin/python3', '-c', '<CHILD_LF_SNIPPET>', '/home/user/DiscStudio-staging/EXP/39/pyto/experiments/grouped-ablation', '/home/user/DiscStudio-staging/EXP/39/pyto/experiments/grouped-ablation/evidence/run-1/retained.json']
 record_results_sha256 (the retained.json this log was produced against): 5d68fef265b20ac82bcf949ff1e5eda8c059e64a2bef08d24dc6b40069a4e415
 converted files: ['__init__.py', 'address.py', 'core.py', 'graph.py', 'materialize.py', 'mounts.py', 'neon.py', 'pcr.py', 'pql.py']
-child pyto.__file__: /tmp/determinism-lf-3jo7xipg/pyto/__init__.py  (used editable install instead of the LF copy: False)
+child pyto.__file__: /tmp/determinism-lf-8f6p_ip6/pyto/__init__.py  (used editable install instead of the LF copy: False)
 core.py source sha256: editable-install(LF)=48071a5f25abcb17503b5f93411626426daf7dc2d83df3ac2a676d958258f072 crlf-copy(raw bytes)=ff5e416adcd52ae69c09c1638de5b6206e9f6e1a03f96231665a381e82920fa7 differs_by_construction=True
-pcr.py source sha256: editable-install(LF)=7baec3e41e105118613faa1529b52c509e7b5b57821a26067592858a09184a6a crlf-copy(raw bytes)=282344bc4f2dadd9662bbf11842929ed4c2eff3f7e8d743b00acb9d85b582454 differs_by_construction=True
+pcr.py source sha256: editable-install(LF)=71877321cb2f1278059617464e40e75bc3792c8e9f5394c84cb3f34701eb82e7 crlf-copy(raw bytes)=94c15a2ff819a10ed9c70d55f493909d1bb98a762e62c3034e86a26f924cfbc1 differs_by_construction=True
 normalized sha256 equal to the record's provider digests: True
 replay result digests identical to run-1 despite the source-hash drift: True
 
