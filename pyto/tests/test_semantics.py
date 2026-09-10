@@ -553,6 +553,10 @@ class PCRRunRulesTest(unittest.TestCase):
                 "budget_ms",
                 "stopped_after_tick",
                 "completed",
+                # task 49: what the run did to the world, one ledger per `oc.`
+                # invocation, filled with observe on and off -- trailing and
+                # defaulted for the same reason the four above are.
+                "effects",
             ),
         )
         self.assertEqual(run.receipts, {})  # observe defaults to False
