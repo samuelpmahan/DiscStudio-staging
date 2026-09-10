@@ -4,8 +4,54 @@ Intent: students: Mean and Median run in one Tick as parallel branches (the defa
 Starting point: 42c5c7b0b8f7503ad351cefc09c2cdbbaa8850ef (task 26 packet: ActualEdgeCoverage marked resolved by the result-read fix)
 Verify: cd pyto/experiments/students && python3 -m unittest discover -s . -p 'test_*.py' && python3 grade.py --run evidence/run-1 --handoff HANDOFF.md && cd ../tick-laws && python3 tick_laws.py --check ../students/evidence/run-1/record.json
 Allow: pyto/experiments/students pyto/experiments/tick-laws/README.md pyto/CHANGES.md pyto/experiments/tasks pyto/questions.md
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 11 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/CHANGES.md
+- M  pyto/experiments/students/HANDOFF.md
+- M  pyto/experiments/students/README.md
+- M  pyto/experiments/students/evidence/run-1/receipts.json
+- M  pyto/experiments/students/evidence/run-1/record.json
+- M  pyto/experiments/students/evidence/run-1/tick-viewer.html
+- M  pyto/experiments/students/grade.py
+- M  pyto/experiments/students/homework.py
+- M  pyto/experiments/students/test_students.py
+- M  pyto/experiments/tick-laws/README.md
+- M  pyto/questions.md
+
+```
+pyto/CHANGES.md                                    |   2 +
+ pyto/experiments/students/HANDOFF.md               |  55 ++++++----
+ pyto/experiments/students/README.md                |  31 ++++--
+ .../students/evidence/run-1/receipts.json          |  35 ++++--
+ .../students/evidence/run-1/record.json            |  28 ++---
+ .../students/evidence/run-1/tick-viewer.html       | 120 +++++++++++++++------
+ pyto/experiments/students/grade.py                 |   2 +-
+ pyto/experiments/students/homework.py              |  35 +++---
+ pyto/experiments/students/test_students.py         |  67 +++++++++++-
+ pyto/experiments/tick-laws/README.md               |   2 +-
+ pyto/questions.md                                  |   1 +
+ 11 files changed, 270 insertions(+), 108 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto/experiments/students && python3 -m unittest discover -s . -p 'test_*.py' && python3 grade.py --run evidence/run-1 --handoff HANDOFF.md && cd ../tick-laws && python3 tick_laws.py --check ../students/evidence/run-1/record.json` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         193  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    244  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             11  OK
+    experiments/tick-laws            10  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
 
 ## Uncertain
 
