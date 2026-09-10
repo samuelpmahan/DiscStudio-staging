@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import inspect
 import json
+from collections.abc import Mapping as MappingABC
 from dataclasses import dataclass, field
 from time import perf_counter
 from typing import Any, Mapping
@@ -12,7 +13,36 @@ from .core import RECEIPT_PREFIX, Calculation, Part, PxC, PxWrite
 
 @dataclass(frozen=True, slots=True)
 class ResultRef:
+    """A reference to what one invocation returned.
+
+    `produce` names *which* published Part is meant. It is None for a bare
+    reference -- the whole returned value -- which is all a one-address
+    invocation has. An invocation that declares several `into` addresses
+    publishes one Part per address from one returned value, so a bare reference
+    to it is ambiguous and `PCR` refuses it ({?} WhatIsATick, owner 2026-09-10:
+    "Obviously a Calculation can produce multiple parts"); `ref[address]` and
+    `ref.part(address)` are the two spellings that name one.
+    """
+
     calculation_id: str
+    produce: str | None = None
+
+    def part(self, address: "Part[Any] | str") -> "ResultRef":
+        """This invocation's produce at `address` (a Part or a bare address)."""
+        return ResultRef(self.calculation_id, _address(address))
+
+    def __getitem__(self, address: "Part[Any] | str") -> "ResultRef":
+        return self.part(address)
+
+
+def _ref_spelling(ref: ResultRef) -> str:
+    """The testimony spelling of a result binding: `fn:<id>`, or `fn:<id>#<address>`.
+
+    One address per invocation needs no qualifier, so a one-address program's
+    testimony is the byte it always was; a produce-qualified reference carries the
+    address after `#` (viewer/RECORD.md, Field rules).
+    """
+    return f"fn:{ref.calculation_id}" if ref.produce is None else f"fn:{ref.calculation_id}#{ref.produce}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,11 +52,38 @@ class Binding:
 
 @dataclass(slots=True)
 class Invocation:
+    """One authored call. `into` is one Part, a tuple of Parts, or None.
+
+    The *shape* decides, not the count: `into=Part("a")` publishes the returned
+    value at one address and `into=[Part("a")]` is a one-entry multi-produce
+    invocation whose Calculation returns a mapping or a sequence. A tuple is
+    always the multi-produce form (`is_multi`), so a program cannot slide from
+    one meaning to the other by the length of a computed list.
+    """
+
     id: str
     calculation: Calculation[Any, Any]
     bindings: dict[str, Binding] = field(default_factory=dict)
     args: dict[str, Any] = field(default_factory=dict)
-    into: Part[Any] | None = None
+    into: Part[Any] | tuple[Part[Any], ...] | None = None
+
+    def is_multi(self) -> bool:
+        return isinstance(self.into, tuple)
+
+    def produces(self) -> tuple[Part[Any], ...]:
+        """Every Part this invocation publishes, in the declared order."""
+        if self.into is None:
+            return ()
+        return self.into if isinstance(self.into, tuple) else (self.into,)
+
+    def produce_addresses(self) -> tuple[str, ...]:
+        return tuple(part.address for part in self.produces())
+
+    def testimony_into(self) -> str | tuple[str, ...] | None:
+        """`into` as the testimony and the run record carry it: an address, or a list."""
+        if self.into is None:
+            return None
+        return self.produce_addresses() if isinstance(self.into, tuple) else self.into.address
 
 
 def receipt_address(pcr: str, tick: str, invocation_id: str) -> str:
@@ -55,6 +112,63 @@ def _refuse_receipt_into(owner: str, output: Part[Any] | None) -> None:
         )
 
 
+def _normalize_into(
+    owner: str, into: Part[Any] | str | list[Any] | tuple[Any, ...] | None
+) -> Part[Any] | tuple[Part[Any], ...] | None:
+    """One address, several addresses, or none -- as a Part, a tuple of Parts, or None.
+
+    A list or a tuple is the multi-produce form even when it holds one entry (see
+    `Invocation`). Every address is refused under the reserved receipt segment, and
+    an address declared twice in one invocation is refused here rather than silently
+    publishing the second value over the first.
+    """
+    if into is None:
+        return None
+    if isinstance(into, (str, Part)):
+        output = Part(into) if isinstance(into, str) else into
+        _refuse_receipt_into(owner, output)
+        return output
+    if not isinstance(into, (list, tuple)):
+        raise ValueError(
+            f"{owner} has into={into!r}: expected an address, a Part, or a list of them"
+        )
+    if not into:
+        raise ValueError(
+            f"{owner} has into=[]: a Calculation produces one Part, several, or none "
+            "(into=None), never an empty list of them"
+        )
+    outputs: list[Part[Any]] = []
+    for entry in into:
+        if not isinstance(entry, (str, Part)):
+            raise ValueError(
+                f"{owner} has {entry!r} in its into list: every entry must be an address or a Part"
+            )
+        output = Part(entry) if isinstance(entry, str) else entry
+        _refuse_receipt_into(owner, output)
+        if any(existing.address == output.address for existing in outputs):
+            raise ValueError(
+                f"{owner} declares '{output.address}' twice in into: one invocation "
+                "publishes each address once"
+            )
+        outputs.append(output)
+    return tuple(outputs)
+
+
+def _refuse_bare_multi_ref(owner: str, ref: ResultRef, addresses: tuple[str, ...]) -> None:
+    """Refuse a bare reference to an invocation that publishes several Parts.
+
+    The whole returned value of a multi-produce Calculation is the carrier of its
+    produces, not a result in its own right, so a binding has to say which one it
+    means. Named at bind time by `PCR.calc` and at resolve time by `PCR.run`, so a
+    program built through `Tick.calc` alone is refused too.
+    """
+    raise ValueError(
+        f"{owner} binds the whole result of '{ref.calculation_id}', which produces "
+        f"{len(addresses)} Parts ({', '.join(addresses)}); name the one it means -- "
+        f"ref['{addresses[0]}'] or ref.part('{addresses[0]}')"
+    )
+
+
 @dataclass(slots=True)
 class Tick:
     name: str
@@ -66,14 +180,13 @@ class Tick:
         /,
         *,
         id: str,
-        into: Part[Any] | str | None = None,
+        into: Part[Any] | str | list[Any] | tuple[Any, ...] | None = None,
         args: Mapping[str, Any] | None = None,
         **inputs: Part[Any] | ResultRef,
     ) -> ResultRef:
         if any(existing.id == id for existing in self.calculations):
             raise ValueError(f"Tick '{self.name}' has duplicate calculation id '{id}'")
-        output = Part(into) if isinstance(into, str) else into
-        _refuse_receipt_into(f"Tick '{self.name}' calculation '{id}'", output)
+        output = _normalize_into(f"Tick '{self.name}' calculation '{id}'", into)
         bindings = {name: Binding(source) for name, source in inputs.items()}
         self.calculations.append(
             Invocation(
@@ -89,11 +202,17 @@ class Tick:
 
 @dataclass(frozen=True, slots=True)
 class CalculationTestimony:
+    """`into` is one address, a tuple of addresses (a multi-produce invocation), or None.
+
+    A one-address invocation still testifies a bare string, so the bytes consumers
+    embed are unchanged by this kernel's ability to publish several Parts.
+    """
+
     id: str
     calculation: str
     inputs: dict[str, str]
     args: dict[str, Any]
-    into: str | None
+    into: str | tuple[str, ...] | None
 
 
 @dataclass(frozen=True, slots=True)
@@ -135,6 +254,16 @@ class Receipt:
     are what PCR.run observed, NOT what the callable touched. A Calculation body
     that closed over a PxC and read or wrote it directly is invisible here.
 
+    Two digests, because a Calculation may publish several Parts from one pass
+    ({?} WhatIsATick, decided by the owner 2026-09-10). `result_sha256` is the
+    digest of the whole returned value and is what it always was -- for a
+    one-address invocation the returned value *is* the published Part, so the
+    field is unchanged there. `produce_sha256` is one digest per published
+    address, `{address: sha256 or None}` in declared order: it is the honest
+    per-Part answer when one invocation publishes several, and for a one-address
+    invocation it is `{into: result_sha256}`. Both use `_result_sha256`, so a
+    non-JSON value has no digest rather than an unstable one.
+
     This receipt records digests and durations only. It makes no external-input
     boundary decision and is not the replay seam
     (docs/PYTHON-LAB-STEWARDSHIP.md:62; CHANGES.md).
@@ -150,6 +279,7 @@ class Receipt:
     actual_produces: tuple[str, ...]
     writes: tuple[PxWrite, ...]
     result_sha256: str | None
+    produce_sha256: dict[str, str | None]
     effective_arg_keys: tuple[str, ...]
     shadowed_inputs: tuple[str, ...]
 
@@ -206,6 +336,49 @@ def _result_sha256(value: Any) -> str | None:
     except (TypeError, ValueError):
         return None
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _split_produces(owner: str, addresses: tuple[str, ...], value: Any) -> tuple[Any, ...]:
+    """One value per declared address, in the declared order.
+
+    A Calculation that declares several `into` addresses returns them together, and
+    this is the only place that decides how: a **mapping keyed by the addresses**, or
+    a **sequence in the declared order**. Both are accepted because both are honest
+    spellings of "one value per address"; a mapping says which is which at the call
+    site, a sequence is what a Python function returns when it returns two things.
+
+    Strict in both directions: a missing key, an unexpected key, or a sequence of the
+    wrong length is refused rather than published, because the alternative is a Part
+    quietly holding the wrong value. Nothing is written until every address has its
+    value ({?} MultiReturnStrict).
+    """
+    if isinstance(value, MappingABC):
+        missing = [address for address in addresses if address not in value]
+        if missing:
+            raise ValueError(
+                f"{owner} declares produces {', '.join(addresses)} and returned a mapping "
+                f"with no entry for {', '.join(missing)}"
+            )
+        extra = sorted(str(key) for key in value if key not in addresses)
+        if extra:
+            raise ValueError(
+                f"{owner} declares produces {', '.join(addresses)} and returned a mapping "
+                f"carrying {', '.join(extra)} as well; a produce mapping carries the "
+                "declared addresses and nothing else"
+            )
+        return tuple(value[address] for address in addresses)
+    if isinstance(value, (list, tuple)):
+        if len(value) != len(addresses):
+            raise ValueError(
+                f"{owner} declares {len(addresses)} produces ({', '.join(addresses)}) and "
+                f"returned a sequence of {len(value)}"
+            )
+        return tuple(value)
+    raise ValueError(
+        f"{owner} declares {len(addresses)} produces ({', '.join(addresses)}), so its "
+        "Calculation must return a mapping keyed by those addresses or a sequence in "
+        f"that order; it returned {type(value).__name__}"
+    )
 
 
 class _TrackedPxC:
@@ -268,6 +441,11 @@ class PCR:
         self.ticks: list[Tick] = []
         self._tick_by_name: dict[str, Tick] = {}
         self._writers: dict[str, str] = {}
+        # invocation id -> its produce addresses, for the invocations that declare
+        # several: what makes a bare ResultRef to one of them refusable at bind
+        # time and a Part binding on one of their addresses resolvable to the
+        # right produce.
+        self._multi_produce: dict[str, tuple[str, ...]] = {}
         self._ids: set[str] = set()
 
     def tick(self, name: str) -> Tick:
@@ -284,26 +462,45 @@ class PCR:
         /,
         *,
         id: str,
-        into: Part[Any] | str | None = None,
+        into: Part[Any] | str | list[Any] | tuple[Any, ...] | None = None,
         args: Mapping[str, Any] | None = None,
         **inputs: Part[Any] | ResultRef,
     ) -> ResultRef:
         if id in self._ids:
             raise ValueError(f"PCR '{self.name}' has duplicate calculation id '{id}'")
+        owner = f"PCR '{self.name}' calculation '{id}'"
 
         normalized: dict[str, Part[Any] | ResultRef] = {}
         for name, source in inputs.items():
-            if isinstance(source, Part) and source.address in self._writers:
-                source = ResultRef(self._writers[source.address])
+            if isinstance(source, ResultRef):
+                produces = self._multi_produce.get(source.calculation_id)
+                if produces is not None and source.produce is None:
+                    _refuse_bare_multi_ref(owner, source, produces)
+                if produces is not None and source.produce not in produces:
+                    raise ValueError(
+                        f"{owner} binds produce '{source.produce}' of "
+                        f"'{source.calculation_id}', which publishes {', '.join(produces)}"
+                    )
+            elif isinstance(source, Part) and source.address in self._writers:
+                writer = self._writers[source.address]
+                # A Part already written by this PCR is a read of that invocation's
+                # result, not of the store. When the writer publishes several Parts
+                # the reference has to name which one -- and the address the program
+                # wrote here is exactly that answer.
+                source = ResultRef(
+                    writer, source.address if writer in self._multi_produce else None
+                )
             normalized[name] = source
 
-        output = Part(into) if isinstance(into, str) else into
-        _refuse_receipt_into(f"PCR '{self.name}' calculation '{id}'", output)
-        if output is not None:
-            prior = self._writers.get(output.address)
-            if prior is not None:
-                raise ValueError(f"PCR '{self.name}' has multiple writers for '{output.address}'")
-            self._writers[output.address] = id
+        output = _normalize_into(owner, into)
+        outputs = (output,) if isinstance(output, Part) else (output or ())
+        for part in outputs:  # every address checked before any is claimed
+            if self._writers.get(part.address) is not None:
+                raise ValueError(f"PCR '{self.name}' has multiple writers for '{part.address}'")
+        for part in outputs:
+            self._writers[part.address] = id
+        if isinstance(output, tuple):
+            self._multi_produce[id] = tuple(part.address for part in output)
 
         result = self.tick(tick).calc(
             calculation,
@@ -333,6 +530,12 @@ class PCR:
         record (materialize.run_record) are the same with observe on or off.
         """
         results: dict[str, Any] = {}
+        # invocation id -> {published address: the value published there}. A
+        # one-address invocation publishes its whole result; a multi-produce one
+        # publishes one entry per declared address, which is what `ref[address]`
+        # reads.
+        published: dict[str, dict[str, Any]] = {}
+        multi_ids: set[str] = set()
         testimonies: list[TickTestimony] = []
         receipts: dict[str, Receipt] = {}
 
@@ -365,15 +568,44 @@ class PCR:
                                 f"PCR '{self.name}' calculation '{invocation.id}' depends on "
                                 f"unavailable result '{source.calculation_id}'"
                             )
-                        resolved_inputs[name] = results[source.calculation_id]
-                        input_refs[name] = f"fn:{source.calculation_id}"
+                        owner = f"PCR '{self.name}' calculation '{invocation.id}'"
+                        available = published.get(source.calculation_id, {})
+                        if source.produce is None:
+                            if source.calculation_id in multi_ids:
+                                _refuse_bare_multi_ref(owner, source, tuple(available))
+                            resolved_inputs[name] = results[source.calculation_id]
+                        else:
+                            if source.produce not in available:
+                                raise ValueError(
+                                    f"{owner} binds produce '{source.produce}' of "
+                                    f"'{source.calculation_id}', which publishes "
+                                    f"{', '.join(available) or 'no Part'}"
+                                )
+                            resolved_inputs[name] = available[source.produce]
+                        input_refs[name] = _ref_spelling(source)
 
                 call_args = dict(resolved_inputs)
                 call_args.update(invocation.args)
                 value = board.call(invocation.calculation, call_args)
                 results[invocation.id] = value
-                if invocation.into is not None:
-                    board.set(invocation.into, value)
+                produce_parts = invocation.produces()
+                produce_addresses = invocation.produce_addresses()
+                if invocation.is_multi():
+                    # Split before writing anything: a return value that does not
+                    # answer for every declared address publishes no Part at all.
+                    produced_values = _split_produces(
+                        f"PCR '{self.name}' calculation '{invocation.id}'",
+                        produce_addresses,
+                        value,
+                    )
+                    multi_ids.add(invocation.id)
+                else:
+                    produced_values = (value,) if produce_parts else ()
+                slots = {}
+                for part, part_value in zip(produce_parts, produced_values):
+                    board.set(part, part_value)
+                    slots[part.address] = part_value
+                published[invocation.id] = slots
 
                 if isinstance(board, _TrackedPxC):
                     duration_ms = (perf_counter() - started) * 1000.0
@@ -388,13 +620,15 @@ class PCR:
                         started_ms=started * 1000.0,
                         duration_ms=duration_ms,
                         declared_consumes=declared_consumes,
-                        declared_produces=(
-                            () if invocation.into is None else (invocation.into.address,)
-                        ),
+                        declared_produces=produce_addresses,
                         actual_consumes=tuple(board.consumed),
                         actual_produces=tuple(board.produced),
                         writes=tuple(board.writes),
                         result_sha256=_result_sha256(value),
+                        produce_sha256={
+                            address: _result_sha256(part_value)
+                            for address, part_value in slots.items()
+                        },
                         effective_arg_keys=tuple(call_args),
                         # call_args.update(invocation.args) above overrides a same-named
                         # bound input silently; the receipt records the collision, it does
@@ -418,7 +652,7 @@ class PCR:
                         calculation=invocation.calculation.address,
                         inputs=input_refs,
                         args=dict(invocation.args),
-                        into=invocation.into.address if invocation.into else None,
+                        into=invocation.testimony_into(),
                     )
                 )
             testimonies.append(TickTestimony(tick.name, tuple(calc_testimony)))
@@ -439,8 +673,8 @@ class PCR:
                 for binding in invocation.bindings.values():
                     if isinstance(binding.source, Part):
                         pid(binding.source.address)
-                if invocation.into:
-                    pid(invocation.into.address)
+                for part in invocation.produces():
+                    pid(part.address)
 
         for address, node_id in parts.items():
             lines.append(f'    {node_id}["{address}"]')
@@ -462,7 +696,7 @@ class PCR:
                     source = binding.source
                     source_id = pid(source.address) if isinstance(source, Part) else source.calculation_id
                     lines.append(f"    {source_id} -->|{name}| {invocation.id}")
-                if invocation.into:
-                    lines.append(f"    {invocation.id} --> {pid(invocation.into.address)}")
+                for part in invocation.produces():
+                    lines.append(f"    {invocation.id} --> {pid(part.address)}")
 
         return "\n".join(lines) + "\n"

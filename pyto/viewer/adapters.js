@@ -102,12 +102,43 @@ function requireStringArray(value, path) {
   return value;
 }
 
-/** RECORD.md: `inputs` keeps the testimony spelling `px:<address>` / `fn:<id>`. */
+/**
+ * RECORD.md: `inputs` keeps the testimony spelling `px:<address>`, `fn:<id>`, or
+ * `fn:<id>#<address>` when the producer published several Parts. Both halves of
+ * the qualified form must be non-empty, so a reader always has a producer to
+ * resolve and an address to resolve it to.
+ */
 function requireBindingSpelling(value, path) {
   requireString(value, path);
   if (!value.startsWith('px:') && !value.startsWith('fn:')) {
-    fail(path, `expected a testimony binding spelled "px:<address>" or "fn:<id>", got ${show(value)}`);
+    fail(path, `expected a testimony binding spelled "px:<address>", "fn:<id>" or "fn:<id>#<address>", got ${show(value)}`);
   }
+  if (value.startsWith('fn:') && value.includes('#')) {
+    const body = value.slice(3);
+    const cut = body.lastIndexOf('#');
+    if (cut === 0 || cut === body.length - 1) {
+      fail(path, `expected a produce-qualified result binding "fn:<id>#<address>", got ${show(value)}`);
+    }
+  }
+  return value;
+}
+
+/**
+ * RECORD.md: `into` is one address, an array of addresses, or null. The array is
+ * the multi-produce form -- one invocation publishing several Parts from one
+ * pass. An empty array is refused (an invocation that produces nothing writes
+ * null, like every other absent field) and so is a repeated address.
+ */
+function requireInto(value, path) {
+  if (value === null || typeof value === 'string') return requireNullableString(value, path);
+  if (!Array.isArray(value)) fail(path, `expected an address, an array of addresses, or null, got ${show(value)}`);
+  if (value.length === 0) fail(path, 'expected at least one address; an invocation that produces nothing writes null');
+  const seen = new Set();
+  value.forEach((entry, index) => {
+    requireString(entry, `${path}[${index}]`);
+    if (seen.has(entry)) fail(`${path}[${index}]`, `duplicate produce address ${JSON.stringify(entry)}; one invocation publishes each address once`);
+    seen.add(entry);
+  });
   return value;
 }
 
@@ -148,7 +179,7 @@ function validateInvocation(invocation, path, seenIds) {
   const inputs = requireObject(invocation.inputs, `${path}.inputs`);
   for (const [name, binding] of Object.entries(inputs)) requireBindingSpelling(binding, `${path}.inputs.${name}`);
   requireObject(invocation.args, `${path}.args`);
-  requireNullableString(invocation.into, `${path}.into`);
+  requireInto(invocation.into, `${path}.into`);
 
   // RECORD.md's declared_consumes rule is strict, so it is checked and not
   // assumed: exactly the `px:` bindings of `inputs`, in binding order. An `fn:`
@@ -246,6 +277,37 @@ export function validate(record) {
 export function bareAddress(binding) {
   if (typeof binding !== 'string') return '';
   return binding.startsWith('px:') || binding.startsWith('fn:') ? binding.slice(3) : binding;
+}
+
+/** The addresses an invocation's `into` names: none, one, or several. */
+export function produceAddresses(into) {
+  if (into === null || into === undefined) return [];
+  return typeof into === 'string' ? [into] : [...into];
+}
+
+/**
+ * The Part addresses one testimony binding reads (RECORD.md, Field rules).
+ *
+ * `px:<address>` is that address. `fn:<id>` is the whole result of that
+ * invocation, which is the one Part it published; `fn:<id>#<address>` names one
+ * produce of an invocation that published several. A known id wins over the `#`
+ * split, so an invocation id that itself carries a `#` still resolves as the bare
+ * reference it is. `producedBy` maps an invocation id to the addresses it
+ * published.
+ */
+export function parseBinding(binding, producedBy) {
+  if (typeof binding !== 'string') return [];
+  if (binding.startsWith('px:')) return [binding.slice(3)];
+  if (!binding.startsWith('fn:')) return [];
+  const body = binding.slice(3);
+  if (producedBy.has(body)) return [...producedBy.get(body)];
+  const cut = body.lastIndexOf('#');
+  if (cut > 0 && cut < body.length - 1) {
+    const writer = body.slice(0, cut);
+    const address = body.slice(cut + 1);
+    if (producedBy.has(writer) && producedBy.get(writer).includes(address)) return [address];
+  }
+  return [];
 }
 
 /**
@@ -389,11 +451,12 @@ export function derivePartIndex(ticks) {
       // without passing validate -- a duplicated edge, never a lost one.
       const bindings = [...Object.values(invocation.inputs), ...invocation.declared_consumes];
       for (const binding of bindings) {
-        const address = binding.startsWith('fn:') ? intoById.get(bareAddress(binding)) : bareAddress(binding);
-        if (!address) continue;
-        const part = entry(address);
-        if (!binding.startsWith('fn:') && !produced.has(address)) part.preexisting = true;
-        if (!part.read_by.includes(invocation.id)) part.read_by.push(invocation.id);
+        for (const address of parseBinding(binding, intoById)) {
+          if (!address) continue;
+          const part = entry(address);
+          if (!binding.startsWith('fn:') && !produced.has(address)) part.preexisting = true;
+          if (!part.read_by.includes(invocation.id)) part.read_by.push(invocation.id);
+        }
       }
       for (const address of invocation.actual_consumes) {
         const part = entry(address);
@@ -405,11 +468,14 @@ export function derivePartIndex(ticks) {
         if (part.written_by === null) part.written_by = invocation.id;
         produced.add(write.address);
       }
-      if (invocation.into) {
-        const part = entry(invocation.into);
-        if (part.written_by === null) part.written_by = invocation.id;
-        produced.add(invocation.into);
-        intoById.set(invocation.id, invocation.into);
+      const produces = produceAddresses(invocation.into);
+      if (produces.length) {
+        for (const address of produces) {
+          const part = entry(address);
+          if (part.written_by === null) part.written_by = invocation.id;
+          produced.add(address);
+        }
+        intoById.set(invocation.id, produces);
       }
     }
   }

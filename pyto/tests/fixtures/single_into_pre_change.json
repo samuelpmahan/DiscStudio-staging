@@ -1,0 +1,154 @@
+{
+  "receipt": {
+    "actual_consumes": [
+      "input.v"
+    ],
+    "actual_produces": [
+      "out.v"
+    ],
+    "calculation": {
+      "address": "fn.fixture.take",
+      "identity_scope": "runtime-function-body",
+      "implementation_sha256": "112c7426c4f3bc6e64bc222ddb194231cd8876465bcf8bc9f914d0d9d6ee69db",
+      "limitation": "called helpers, constants, templates, and assets are not covered"
+    },
+    "declared_consumes": [
+      "input.v"
+    ],
+    "declared_produces": [
+      "out.v"
+    ],
+    "duration_ms": null,
+    "effective_arg_keys": [
+      "value"
+    ],
+    "invocation_id": "take",
+    "result_sha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+    "shadowed_inputs": [],
+    "started_ms": null,
+    "writes": [
+      {
+        "address": "out.v",
+        "kind": "new-address"
+      }
+    ]
+  },
+  "record": {
+    "counters": {
+      "computed": 1,
+      "hits": 1,
+      "invocations": 2,
+      "wall_ms": null
+    },
+    "parts": {
+      "input.v": {
+        "preexisting": true,
+        "read_by": [
+          "take"
+        ],
+        "written_by": null
+      },
+      "out.copy": {
+        "preexisting": false,
+        "read_by": [],
+        "written_by": "report"
+      },
+      "out.v": {
+        "preexisting": false,
+        "read_by": [
+          "report"
+        ],
+        "written_by": "take"
+      }
+    },
+    "pcr": "fixture",
+    "schema": "pyto-run-record@1",
+    "source": {
+      "commit": null,
+      "runtime": "pyto",
+      "version": "<version>"
+    },
+    "ticks": [
+      {
+        "index": 0,
+        "invocations": [
+          {
+            "actual_consumes": [
+              "input.v"
+            ],
+            "actual_produces": [
+              "out.v"
+            ],
+            "args": {},
+            "calculation": {
+              "address": "fn.fixture.take",
+              "identity_scope": "runtime-function-body",
+              "implementation_sha256": "112c7426c4f3bc6e64bc222ddb194231cd8876465bcf8bc9f914d0d9d6ee69db"
+            },
+            "declared_consumes": [
+              "px:input.v"
+            ],
+            "duration_ms": null,
+            "hit": true,
+            "id": "take",
+            "inputs": {
+              "value": "px:input.v"
+            },
+            "into": "out.v",
+            "result_sha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+            "value": {
+              "data": 3,
+              "kind": "json",
+              "note": null
+            },
+            "writes": [
+              {
+                "address": "out.v",
+                "kind": "new-address"
+              }
+            ]
+          }
+        ],
+        "name": "Prepare"
+      },
+      {
+        "index": 1,
+        "invocations": [
+          {
+            "actual_consumes": [],
+            "actual_produces": [
+              "out.copy"
+            ],
+            "args": {},
+            "calculation": {
+              "address": "fn.fixture.take",
+              "identity_scope": "runtime-function-body",
+              "implementation_sha256": "112c7426c4f3bc6e64bc222ddb194231cd8876465bcf8bc9f914d0d9d6ee69db"
+            },
+            "declared_consumes": [],
+            "duration_ms": null,
+            "hit": false,
+            "id": "report",
+            "inputs": {
+              "value": "fn:take"
+            },
+            "into": "out.copy",
+            "result_sha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+            "value": {
+              "data": 3,
+              "kind": "json",
+              "note": null
+            },
+            "writes": [
+              {
+                "address": "out.copy",
+                "kind": "new-address"
+              }
+            ]
+          }
+        ],
+        "name": "Report"
+      }
+    ]
+  }
+}

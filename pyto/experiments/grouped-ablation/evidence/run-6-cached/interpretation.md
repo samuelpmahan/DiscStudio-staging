@@ -18,9 +18,9 @@ requests=2 hits=1 misses=1 writes=1
 ## Milliseconds saved
 
 Read from the sibling full-program run's own receipts.json duration_ms for 'split' (the smaller of the two), never by re-running split to time the skipped call -- that would defeat the point of the cache hit. Synthetic-fixture wall time, labelled so (research/ULTRACODE-WEEK.md Reframing 2). ms_saved_total is this figure times hits_observed -- the number of the three resolutions whose own counters recorded a hit -- never times a constant, so a run in which a disk load fails reports 0 saved rather than hits that did not happen.
-split duration_ms, program run 1: 0.031474000024900306; program run 2: 0.02728599997681158.
-ms saved per cache hit (conservative, the smaller of the two): 0.02728599997681158.
-Resolutions whose own counters recorded a hit (derived, never asserted): 2 of 3 -> ms saved this run: 0.055.
+split duration_ms, program run 1: 0.03304000028947485; program run 2: 0.025951000225177268.
+ms saved per cache hit (conservative, the smaller of the two): 0.025951000225177268.
+Resolutions whose own counters recorded a hit (derived, never asserted): 2 of 3 -> ms saved this run: 0.052.
 
 ## Ordinary within-program reuse (hits.py, for comparison)
 

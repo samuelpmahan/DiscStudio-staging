@@ -30,7 +30,7 @@ REAL_RECORD = os.path.join(PYTO, "experiments", "grouped-ablation", "evidence", 
 
 sys.path.insert(0, HERE)
 from record_schema import (  # noqa: E402
-    SCHEMA, RecordSchemaError, derive_part_index, validate,
+    SCHEMA, RecordSchemaError, derive_part_index, resolve_binding, validate,
 )
 
 NODE = shutil.which("node")
@@ -176,6 +176,182 @@ class AdapterOutputs(unittest.TestCase):
                 all(a.strip().rstrip(",") + ".0" == b.strip().rstrip(",") for a, b in differing),
                 f"the only byte differences may be integral-float spelling, got {differing[:3]}",
             )
+
+
+def javascript_verdicts(documents):
+    """`adapters.js validate`'s verdict on each document: {ok, path}.
+
+    The JavaScript reference reader is run as itself, in its own runtime, over
+    exactly the bytes Python judged -- the only way the two readers can be said
+    to agree about a record rather than about a description of one.
+    """
+    with tempfile.TemporaryDirectory(prefix="pyto-record-cases-") as tmp:
+        cases_file = os.path.join(tmp, "cases.json")
+        with open(cases_file, "w", newline="\n", encoding="utf-8") as handle:
+            json.dump(documents, handle)
+        result = subprocess.run(
+            [NODE, os.path.join("test", "validate_cases.mjs"), cases_file],
+            cwd=VIEWER, check=True, capture_output=True, text=True,
+        )
+    return json.loads(result.stdout)
+
+
+def calculation(address):
+    return {"address": address, "implementation_sha256": None, "identity_scope": "runtime-function-body"}
+
+
+def multi_produce_record():
+    """A record whose first invocation publishes two Parts from one pass.
+
+    Written by hand from RECORD.md, not produced by `pyto.materialize`: this
+    suite's whole point is that the contract is read independently of the runtime
+    that writes it, and the multi-produce clauses (`into` may be an array, an
+    `fn:` binding on such a producer carries the address) are read here the same
+    way. The `parts` block is the answer `derive_part_index` has to reach.
+    """
+    return {
+        "schema": SCHEMA,
+        "pcr": "multi",
+        "source": {"runtime": "pyto", "version": "0.1.0", "commit": None},
+        "ticks": [
+            {
+                "index": 0,
+                "name": "Prepare",
+                "invocations": [
+                    {
+                        "id": "stats",
+                        "calculation": calculation("fn.multi.stats"),
+                        "inputs": {"rows": "px:in.rows"},
+                        "args": {},
+                        "into": ["out.mean", "out.count"],
+                        "declared_consumes": ["px:in.rows"],
+                        "actual_consumes": ["in.rows"],
+                        "actual_produces": ["out.mean", "out.count"],
+                        "writes": [
+                            {"address": "out.mean", "kind": "new-address"},
+                            {"address": "out.count", "kind": "new-address"},
+                        ],
+                        "duration_ms": 1.5,
+                        "result_sha256": None,
+                        "hit": True,
+                        "value": {"kind": "json", "data": {"out.mean": 2.5, "out.count": 4}, "note": None},
+                    }
+                ],
+            },
+            {
+                "index": 1,
+                "name": "Report",
+                "invocations": [
+                    {
+                        "id": "report",
+                        "calculation": calculation("fn.multi.take"),
+                        "inputs": {"value": "fn:stats#out.count"},
+                        "args": {},
+                        "into": "out.reported",
+                        "declared_consumes": [],
+                        "actual_consumes": [],
+                        "actual_produces": ["out.reported"],
+                        "writes": [{"address": "out.reported", "kind": "new-address"}],
+                        "duration_ms": 0.5,
+                        "result_sha256": None,
+                        "hit": False,
+                        "value": {"kind": "json", "data": 4, "note": None},
+                    }
+                ],
+            },
+        ],
+        "parts": {
+            "in.rows": {"written_by": None, "read_by": ["stats"], "preexisting": True},
+            "out.mean": {"written_by": "stats", "read_by": [], "preexisting": False},
+            "out.count": {"written_by": "stats", "read_by": ["report"], "preexisting": False},
+            "out.reported": {"written_by": "report", "read_by": [], "preexisting": False},
+        },
+        "counters": {"invocations": 2, "hits": 1, "computed": 1, "wall_ms": 2.0},
+    }
+
+
+class MultiProduceRecords(unittest.TestCase):
+    """RECORD.md: `into` may be an array, and an `fn:` binding on such a producer
+    names the produce it reads (`fn:<id>#<address>`).
+
+    The clauses are read here from RECORD.md, checked against the JavaScript
+    reference reader in `TheTwoValidatorsAgree`, and produced by the kernel in
+    `pyto/tests/test_multi_into.py`.
+    """
+
+    def setUp(self):
+        self.record = multi_produce_record()
+
+    def test_a_list_into_validates(self):
+        """record_schema.py `_into`.
+
+        Mutation: `_nullable_str(inv["into"], ...)` as before -- a legal
+        multi-produce record is refused by the Python reader while the runtime that
+        wrote it and the JavaScript reader both accept it.
+        """
+        self.assertIs(validate(self.record), self.record)
+
+    def test_the_part_index_credits_the_named_produce_and_only_that_one(self):
+        """record_schema.py `resolve_binding`: `fn:stats#out.count` is a read of
+        out.count.
+
+        Mutation: resolve an `fn:` binding to every address its producer published --
+        out.mean gains a reader that no binding declares, which is the edge the
+        node law and the loop law of `{?} ResultReadsAreReads` turn on.
+        """
+        self.assertEqual(
+            normalized_parts(derive_part_index(self.record["ticks"])),
+            normalized_parts(self.record["parts"]),
+        )
+
+    def test_resolve_binding_reads_both_spellings_and_prefers_a_known_id(self):
+        produced_by = {"stats": ("out.mean", "out.count"), "odd#name": ("out.odd",)}
+        self.assertEqual(resolve_binding("px:in.rows", produced_by), ("in.rows",))
+        self.assertEqual(resolve_binding("fn:stats#out.count", produced_by), ("out.count",))
+        # a bare reference to a producer of several is read as a read of all of them
+        self.assertEqual(resolve_binding("fn:stats", produced_by), ("out.mean", "out.count"))
+        # a known id wins over the `#` split, so an id carrying a `#` still resolves
+        self.assertEqual(resolve_binding("fn:odd#name", produced_by), ("out.odd",))
+        self.assertEqual(resolve_binding("fn:nobody#out.x", produced_by), ())
+
+    def test_the_malformed_shapes_of_the_new_clauses_are_refused(self):
+        for path, value, expected in [
+            ("ticks.0.invocations.0.into", [], "ticks[0].invocations[0].into"),
+            ("ticks.0.invocations.0.into", ["out.mean", "out.mean"], "ticks[0].invocations[0].into[1]"),
+            ("ticks.0.invocations.0.into", ["out.mean", 7], "ticks[0].invocations[0].into[1]"),
+            ("ticks.0.invocations.0.into", {"0": "out.mean"}, "ticks[0].invocations[0].into"),
+            ("ticks.1.invocations.0.inputs.value", "fn:stats#", "ticks[1].invocations[0].inputs.value"),
+            ("ticks.1.invocations.0.inputs.value", "fn:#out.count", "ticks[1].invocations[0].inputs.value"),
+        ]:
+            with self.subTest(value=value):
+                with self.assertRaises(RecordSchemaError) as caught:
+                    validate(set_at(self.record, path, value))
+                self.assertEqual(caught.exception.path, expected, str(caught.exception))
+
+    @needs_node
+    def test_the_javascript_reader_agrees_on_all_of_it(self):
+        """The contract is a contract only if both readers answer the same.
+
+        `validate_cases.mjs` runs `adapters.js validate` over the accepted record
+        and every refusal above, and reports the path each names.
+        """
+        documents = [self.record] + [
+            set_at(self.record, path, value)
+            for path, value, _ in [
+                ("ticks.0.invocations.0.into", [], None),
+                ("ticks.0.invocations.0.into", ["out.mean", "out.mean"], None),
+                ("ticks.0.invocations.0.into", ["out.mean", 7], None),
+                ("ticks.1.invocations.0.inputs.value", "fn:stats#", None),
+                ("ticks.1.invocations.0.inputs.value", "fn:#out.count", None),
+            ]
+        ]
+        verdicts = javascript_verdicts(documents)
+        self.assertEqual(verdicts[0], {"ok": True, "path": None})
+        for document, verdict in zip(documents[1:], verdicts[1:]):
+            self.assertFalse(verdict["ok"], "JavaScript accepted a malformed multi-produce record")
+            with self.assertRaises(RecordSchemaError) as caught:
+                validate(document)
+            self.assertEqual(verdict["path"], caught.exception.path)
 
 
 class TheValidatorActuallyRejects(unittest.TestCase):
@@ -372,15 +548,7 @@ class TheTwoValidatorsAgree(unittest.TestCase):
         self.record = load(REAL_RECORD)
 
     def javascript_verdicts(self, documents):
-        with tempfile.TemporaryDirectory(prefix="pyto-record-cases-") as tmp:
-            cases_file = os.path.join(tmp, "cases.json")
-            with open(cases_file, "w", newline="\n", encoding="utf-8") as handle:
-                json.dump(documents, handle)
-            result = subprocess.run(
-                [NODE, os.path.join("test", "validate_cases.mjs"), cases_file],
-                cwd=VIEWER, check=True, capture_output=True, text=True,
-            )
-        return json.loads(result.stdout)
+        return javascript_verdicts(documents)
 
     def test_javascript_accepts_the_record_python_accepts(self):
         self.assertIs(validate(self.record), self.record)

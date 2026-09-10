@@ -125,11 +125,11 @@
     "writes": 1
   },
   "key": "31e1e57286cf7682aa074cb16ad11bc4f41032f78f9af19a12d528e02bb21fa7",
-  "materials_root_process": "/tmp/grouped-ablation-materials-_qcg9g70",
+  "materials_root_process": "/tmp/grouped-ablation-materials-0_zrq3vf",
   "materials_root_process_is_temp": true,
   "ms_saved_note": "Read from the sibling full-program run's own receipts.json duration_ms for 'split' (the smaller of the two), never by re-running split to time the skipped call -- that would defeat the point of the cache hit. Synthetic-fixture wall time, labelled so (research/ULTRACODE-WEEK.md Reframing 2). ms_saved_total is this figure times hits_observed -- the number of the three resolutions whose own counters recorded a hit -- never times a constant, so a run in which a disk load fails reports 0 saved rather than hits that did not happen.",
-  "ms_saved_per_hit": 0.02728599997681158,
-  "ms_saved_total": 0.055,
+  "ms_saved_per_hit": 0.025951000225177268,
+  "ms_saved_total": 0.052,
   "n": 400,
   "resolutions": [
     {
@@ -161,9 +161,9 @@
         "requests": 1,
         "writes": 0
       },
-      "child_materials_root": "/tmp/grouped-ablation-materials-_qcg9g70",
+      "child_materials_root": "/tmp/grouped-ablation-materials-0_zrq3vf",
       "command": [
-        "/usr/local/bin/python3",
+        "<checkout>/.venv/bin/python3",
         "-I",
         "-B",
         "-c",
@@ -179,7 +179,7 @@
         "requests": 1,
         "writes": 0
       },
-      "cwd": "/tmp/run-cached-cwd-3_ghgvvo",
+      "cwd": "/tmp/run-cached-cwd-7jp72jnd",
       "outcome": "hit (disk)",
       "resolution": 3,
       "where": "fresh python3 -I process, PYTO_MATERIALS_DIR shared"
@@ -190,14 +190,14 @@
   "split_receipts": {
     "program_run_1": {
       "calculation": "fn.ablation.split",
-      "duration_ms": 0.031474000024900306,
+      "duration_ms": 0.03304000028947485,
       "implementation_sha256": "8674a964aba6e3cf16317f233884204439271c1853c0f945548a4a625e05bc86",
       "invocation_id": "split",
       "result_sha256": "cefbd6bdda24c1770b8dd863559305b4b4ebc60ccc179fab0a1499297963f4f0"
     },
     "program_run_2": {
       "calculation": "fn.ablation.split",
-      "duration_ms": 0.02728599997681158,
+      "duration_ms": 0.025951000225177268,
       "implementation_sha256": "8674a964aba6e3cf16317f233884204439271c1853c0f945548a4a625e05bc86",
       "invocation_id": "split",
       "result_sha256": "cefbd6bdda24c1770b8dd863559305b4b4ebc60ccc179fab0a1499297963f4f0"

@@ -114,6 +114,27 @@ two derive. It carries both binding spellings on purpose -- `split` binds a Part
 - Missing fields are null, never invented. A runtime that does not record durations writes null.
 - `parts` is derived from the invocations and is present for convenience only.
 - Records are JSON with sorted keys and two-space indentation when written to disk.
+- `into` is one address, an **array of addresses**, or null. A Calculation may publish several
+  Parts from one pass (`{?} WhatIsATick`, owner 2026-09-10: "Obviously a Calculation can produce
+  multiple parts"), and then `into` carries every address it declared, in declared order, while
+  `actual_produces` and `writes` -- lists already -- carry one entry each per published address.
+  One address is still spelled as the bare string it always was, so a one-address record is byte
+  for byte what it was before multi-produce existed.
+- An `fn:` binding on a producer that publishes several Parts names which one:
+  `fn:<id>#<address>`. A reader resolves an `fn:` binding by taking the text after `fn:`, using it
+  whole when it names an invocation in this record (the bare form, the producer's single published
+  Part), and otherwise splitting at the **last** `#` into producer id and produce address -- the
+  order that keeps an invocation id which itself carries a `#` resolvable. A bare `fn:<id>` on a
+  producer of several Parts is what pyto's kernel refuses at bind time (`ResultRef` carries no
+  produce, so `ref[address]`/`ref.part(address)` is how a program names one); a record that
+  carries one anyway is read as a read of every Part that producer published. Both reference
+  readers implement exactly this: `viewer/adapters.js` `parseBinding`/`derivePartIndex` and
+  `viewer/test/record_schema.py` `resolve_binding`/`derive_part_index`.
+- The record carries one `result_sha256` per invocation and no per-produce digest. The digest of
+  each published Part is in the **Receipt** (`produce_sha256`, below), which is where a
+  per-produce claim belongs; adding a field here would change the bytes of every record ever
+  written, including the one-address records this change had to leave alone
+  (`{?} RecordProduceDigest`).
 
 ## Receipts as Parts
 
@@ -126,6 +147,16 @@ Calculation runs many times in one Tick (`fit.all`, `fit.none`); with `observe=F
 written at all, and no Calculation may bind an address under `px.receipt.` as its `into` -- `PCR.calc`
 and `Tick.calc` refuse it, so the segment is written by observation and by nothing else.
 
+A `Receipt` carries two digests, because one invocation may publish several Parts.
+`result_sha256` is the digest of the whole value the Calculation returned -- unchanged, and for a
+one-address invocation the returned value *is* the published Part. `produce_sha256` is
+`{address: sha256 or null}`, one entry per published address in declared order, and for a
+one-address invocation it is `{into: result_sha256}`. Both are canonical-JSON digests, so a value
+that is not JSON has none rather than an unstable one (`pyto/src/pyto/pcr.py` `_result_sha256`).
+The multi-produce return itself is the Calculation's: it returns a mapping keyed by the declared
+addresses, or a sequence in the declared order, and anything else -- a missing key, an extra key,
+a sequence of the wrong length -- publishes no Part at all (`{?} MultiReturnStrict`).
+
 This record does not enumerate store slots and so carries no receipt rows: `ticks` comes from the
 testimony and the receipts, and `parts` from the addresses those name. The one place
 `pyto.materialize.run_record` reads the store is the `preexisting` fallback (when the caller did not
@@ -136,7 +167,7 @@ observation wrote, exactly as it excludes the addresses the run produced.
 
 | Source | Where the fields come from |
 |---|---|
-| pyto | `PcrRun.ticks` (ids, inputs, args, into), `PcrRun.receipts` — required, so `PCR.run(pxc, observe=True)` (calculation identity, declared and actual access, writes, duration, digest), `PcrRun.results` (values), the pre-run `PxC.addresses()` (preexisting Parts) |
+| pyto | `PcrRun.ticks` (ids, inputs, args, into -- one address or a list), `PcrRun.receipts` — required, so `PCR.run(pxc, observe=True)` (calculation identity, declared and actual access, writes, duration, digest), `PcrRun.results` (values), the pre-run `PxC.addresses()` (preexisting Parts) |
 | DiscStudio | `px.pql.<name>` (Ticks, Calculations with `call`, `with`, `args`, `into`, resolved `inputs`, `output`) and `px.receipt.<name>` (`trace[].reused`, `material`, `revision`, `computed`, `reused`) from `src/runtime.js` |
 | ChessLab | `Receipt` from `src/lab/contract.ts`: `opId`, `frozenCalculations[]`, `declaredConsumes`, `declaredProduces`, `actualConsumes`, `actualProduces`, `writes`, `durationMs`; values are not retained, so `value.kind` is `omitted` |
 | Wumpus | `executeTick` records: `inputs[]`/`outputs[]` with values, `calculations[]`, `writes`, `durationMs` |
