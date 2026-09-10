@@ -52,13 +52,17 @@ sentence. An interrupt has one shape: what happened, in a plain sentence; what i
 owner, in one; what they can say, with the default named. No labels, receipts or paths. Knowing
 it works is three lines, read in the morning: the proof line (green or red on D:/ in a fresh
 clone), the product page, and the tally of landings and refusals with each reason. The owner did
-not write this rule and can veto it in a sentence.
+not write this rule and can veto it in a sentence. A note addressed to the owner (a line starting
+`**owner**`) must name which of the three it is as `[broke]`, `[decision]` or `[asked]`, and
+`land.sh --note` refuses one that names none and writes nothing; everything else is a note, not an
+interrupt.
 
 ## Today
 
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 01:50 **landed** `task-34`: interrupts are typed and a shared desk is graded by the class: land.sh --note refuses a line addressed to the owner (**owner**) unless it names one of the three reasons (broke, decision, asked), and neat land <id> --from <remote> <branch> --verify <cmd> --allow <paths> lets the landing repository's brief override the desk's packet (7 files since 3b8dd43, suites green, receipt 20260910T014936Z-task-34)
 - 2026-09-10 01:46 **landed** `task-35`: students: grade.py check 4 matches each Tick as a list line of its own on the hand-off page, not as a substring anywhere, so deleting one step's line is caught even when the name appears elsewhere; the missing-Tick test removes Stats (9 files since 7f9752b, suites green, receipt 20260910T014535Z-task-35)
 - 2026-09-10 01:38 **started** `task-35`: students: grade.py check 4 matches each Tick as a list line of its own on the hand-off page, not as a substring anywhere, so deleting one step's line is caught even when the name appears elsewhere; the missing-Tick test removes Stats (copy EXP/35; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 01:38 **started** `task-34`: interrupts are typed and a shared desk is graded by the class: land.sh --note refuses a line addressed to the owner (**owner**) unless it names one of the three reasons (broke, decision, asked), and neat land <id> --from <remote> <branch> --verify <cmd> --allow <paths> lets the landing repository's brief override the desk's packet (copy EXP/34; it lands only on green, with a receipt, or is killed)

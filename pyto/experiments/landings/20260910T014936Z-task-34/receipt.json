@@ -1,0 +1,73 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T014936Z-task-34",
+  "package": "task-34",
+  "base_sha": "3b8dd433d96fe67cbb63c3f8b80094f4c62d6c16",
+  "result": "verified",
+  "verifier": {
+    "command": "bash pyto/scripts/neat.sh selftest",
+    "exit": 0,
+    "output_sha256": "4eae6e35a6916534e6885cc57d0733ff137f49d0840fec3a7e185c536c55ae69"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "39df75cd5940d042a1c5ca23c01f1f304a16250d396885eabb6ac8060d49308b",
+    "counts": {
+      "library": 193,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 248,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 14,
+      "experiments/tick-laws": 10,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 107,
+      "viewer-record-schema": 24
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/LANDING.md",
+      "bytes": 11136,
+      "sha256": "7f507069a0358d51b188a5da4a3c705e6172da4689a35c3dd228197f8c092417"
+    },
+    {
+      "path": "pyto/experiments/tasks/34/HANDOFF.md",
+      "bytes": 8859,
+      "sha256": "2bdf3dbfcf7efcba7dc541ee8653e36de931351e020eb3a39693ac213f182f51"
+    },
+    {
+      "path": "pyto/experiments/tasks/34/evidence/check_all.txt",
+      "bytes": 138010,
+      "sha256": "92ab1c972c5201c33385007d4fde23ede80e6273cb781ca8dcc5fc3b32ba356b"
+    },
+    {
+      "path": "pyto/experiments/tasks/34/evidence/verify.txt",
+      "bytes": 509,
+      "sha256": "4eae6e35a6916534e6885cc57d0733ff137f49d0840fec3a7e185c536c55ae69"
+    },
+    {
+      "path": "pyto/experiments/tasks/34/packet.md",
+      "bytes": 4450,
+      "sha256": "02492f1726d46dfdc4dc1f7577c7fbddd27a9fa5bbf3b2633f09f18b94f06e6f"
+    },
+    {
+      "path": "pyto/scripts/land.sh",
+      "bytes": 16375,
+      "sha256": "acc1af010035ad800d13d788f56cf0d40eaaf3fb19645a6ba6204bf202e5e8af"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 33990,
+      "sha256": "b8aa39efb94a7c9247781448aa94521ee32d7c401ca9884bba960f06a8d6cc9b"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T01:50:18.919660Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
