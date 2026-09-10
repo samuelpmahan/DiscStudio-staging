@@ -24,6 +24,17 @@ class PQL(Generic[T]):
         self._select = select
         self.description = description
 
+    def __repr__(self) -> str:
+        """``PQL('<description>')`` -- the query it is, not the id it happens to have.
+
+        A query is built to be printed while a person is finding their way around a
+        store, and the default ``<pyto.pql.PQL object at 0x...>`` is both unreadable
+        and different on every run, which is what stopped a documented block from
+        printing one (``pyto/USE.md`` section 6).  ``description`` is the same string
+        the error messages of :meth:`one` and :meth:`optional` already quote.
+        """
+        return f"PQL({self.description!r})"
+
     @classmethod
     def part(cls, part: Part[T] | str) -> "PQL[T]":
         address = part if isinstance(part, str) else part.address
@@ -108,6 +119,18 @@ class PQL(Generic[T]):
 
     def values(self, pxc: PxC) -> tuple[T, ...]:
         return tuple(match.value for match in self.matches(pxc))
+
+    def addresses(self, pxc: PxC) -> tuple[str, ...]:
+        """The addresses this query selects, in the order :meth:`matches` gives them.
+
+        The mirror of :meth:`values`: a query answers "what is there" and "where is
+        it", and before this the second question was a comprehension over
+        ``matches`` at every call site (``pyto/USE.md`` section 6 was the first
+        reader to need it).  Adds no selection of its own -- ``prefix`` already
+        walks ``pxc.items()`` in address order, so a prefix query's addresses are
+        sorted for the same reason its matches are.
+        """
+        return tuple(match.address for match in self.matches(pxc))
 
     def one(self, pxc: PxC) -> T:
         matches = self.matches(pxc)

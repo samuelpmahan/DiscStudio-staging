@@ -1,0 +1,136 @@
+{
+  "counters": {
+    "computed": 1,
+    "hits": 1,
+    "invocations": 2,
+    "wall_ms": 0.11156199980177917
+  },
+  "parts": {
+    "px.order.prices": {
+      "preexisting": true,
+      "read_by": [
+        "sum"
+      ],
+      "written_by": null
+    },
+    "px.order.subtotal": {
+      "preexisting": false,
+      "read_by": [
+        "split"
+      ],
+      "written_by": "sum"
+    },
+    "px.order.tax": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "split"
+    },
+    "px.order.total": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "split"
+    }
+  },
+  "pcr": "order",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.order.prices"
+          ],
+          "actual_produces": [
+            "px.order.subtotal"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.order.add_up",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "71231f0814efacc4a5103549f166b3829173b8a9f8d86643a47ef8e2b60ecb85"
+          },
+          "declared_consumes": [
+            "px:px.order.prices"
+          ],
+          "duration_ms": 0.02067500008706702,
+          "hit": true,
+          "id": "sum",
+          "inputs": {
+            "prices": "px:px.order.prices"
+          },
+          "into": "px.order.subtotal",
+          "result_sha256": "d4b9aead1dd10a596542d1d8211a5021b9c3e894751d019ac64b15a55b9b69ba",
+          "value": {
+            "data": 515,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.order.subtotal",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Sum"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.order.tax",
+            "px.order.total"
+          ],
+          "args": {
+            "rate": 0.08
+          },
+          "calculation": {
+            "address": "fn.order.split",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "7b9724a4d0553f7a92478a4f684978173ff512e01dce9abede6bd08703f23a8b"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.09088699971471215,
+          "hit": false,
+          "id": "split",
+          "inputs": {
+            "subtotal": "fn:sum"
+          },
+          "into": [
+            "px.order.tax",
+            "px.order.total"
+          ],
+          "result_sha256": "1e25c009f8e255a30b855e7d51f06c0b265c433744461678f9082b6353d219de",
+          "value": {
+            "data": {
+              "px.order.tax": 41.2,
+              "px.order.total": 556.2
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.order.tax",
+              "kind": "new-address"
+            },
+            {
+              "address": "px.order.total",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Split"
+    }
+  ]
+}

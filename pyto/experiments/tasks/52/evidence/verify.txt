@@ -1,0 +1,44 @@
+.....F............E...F.................................................
+======================================================================
+ERROR: test_addresses_is_the_mirror_of_values (tests.test_pql.PqlSelection.test_addresses_is_the_mirror_of_values)
+"Where is it" is an answer, not a comprehension at every call site.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/52/pyto/tests/test_pql.py", line 98, in test_addresses_is_the_mirror_of_values
+    subtree.addresses(self.pxc), ("px.students.mean", "px.students.median")
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'PQL' object has no attribute 'addresses'
+
+======================================================================
+FAIL: test_06_6_pql (tests.test_use.UseMarkdownIsExecuted.test_06_6_pql)
+USE.md section '6. PQL', block 6.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/52/pyto/tests/test_use.py", line 173, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/52/pyto/tests/test_use.py", line 157, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '6. PQL' block 6 failed:
+Traceback (most recent call last):
+  File "/tmp/tmp44e17bbv/use_block.py", line 24, in <module>
+    print("prefix:   ", subtree.addresses(pxc))
+                        ^^^^^^^^^^^^^^^^^
+AttributeError: 'PQL' object has no attribute 'addresses'
+
+
+======================================================================
+FAIL: test_repr_is_the_query_and_not_an_id (tests.test_pql.PqlSelection.test_repr_is_the_query_and_not_an_id)
+A printed query has to be readable and the same on every run.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/52/pyto/tests/test_pql.py", line 115, in test_repr_is_the_query_and_not_an_id
+    self.assertEqual(repr(PQL.part("px.students.mean")), "PQL('px.students.mean')")
+AssertionError: '<pyto.pql.PQL object at 0x7faa81d9f550>' != "PQL('px.students.mean')"
+- <pyto.pql.PQL object at 0x7faa81d9f550>
++ PQL('px.students.mean')
+
+
+----------------------------------------------------------------------
+Ran 72 tests in 0.442s
+
+FAILED (failures=2, errors=1)

@@ -35,6 +35,10 @@ def _double(args):
     return args["value"] * 2
 
 
+def _over_81(match):
+    return match.value > 81
+
+
 TAKE = Calculation("fn.pql.take", _take_value)
 DOUBLE = Calculation("fn.pql.double", _double)
 
@@ -81,6 +85,39 @@ class PqlSelection(unittest.TestCase):
     def test_prefix_refuses_an_empty_prefix(self):
         with self.assertRaises(ValueError):
             PQL.prefix("")
+
+    def test_addresses_is_the_mirror_of_values(self):
+        """"Where is it" is an answer, not a comprehension at every call site.
+
+        Added while writing `pyto/USE.md` section 6, which needed the addresses of
+        a subtree three times in nine lines. It selects nothing of its own: the
+        order is `matches`' order, address-sorted for a prefix query.
+        """
+        subtree = PQL.prefix("px.students.")
+        self.assertEqual(
+            subtree.addresses(self.pxc), ("px.students.mean", "px.students.median")
+        )
+        self.assertEqual(
+            subtree.addresses(self.pxc),
+            tuple(match.address for match in subtree.matches(self.pxc)),
+        )
+        self.assertEqual(PQL.part("px.students.absent").addresses(self.pxc), ())
+        self.assertEqual(
+            subtree.where(_over_81).addresses(self.pxc), ("px.students.median",)
+        )
+
+    def test_repr_is_the_query_and_not_an_id(self):
+        """A printed query has to be readable and the same on every run.
+
+        The default `<pyto.pql.PQL object at 0x...>` is neither, which is what kept
+        a `PQL` out of a documented block until now (`pyto/USE.md` section 6).
+        """
+        self.assertEqual(repr(PQL.part("px.students.mean")), "PQL('px.students.mean')")
+        self.assertEqual(repr(PQL.prefix("px.students.")), "PQL('px.students.*')")
+        self.assertEqual(
+            repr(PQL.prefix("px.students.").where(_over_81)),
+            "PQL('px.students.* where \u2026')",
+        )
 
     def test_where_refines_and_one_and_optional_are_strict(self):
         older = PQL.prefix("px.").where(lambda match: match.value > 81)
