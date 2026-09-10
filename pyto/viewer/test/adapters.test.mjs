@@ -23,6 +23,7 @@ import {
   SCHEMA, MAX_ARRAY_ENTRIES, MAX_VALUE_BYTES, PNG_DATA_URL_PREFIX,
   validate, RecordSchemaError, materialize, deriveHit, derivePartIndex, bareAddress,
   parseBinding, produceAddresses,
+  tickLatencyMs, invocationPlacement, runSchedule,
   fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords
 } from '../adapters.js';
 
@@ -686,5 +687,121 @@ test('materialize never classifies a string as png-data-url that validate would 
     const clone = structuredClone(pytoDoc);
     clone.ticks[0].invocations[0].value = block;
     assert.equal(validate(clone), clone, `materialize(${JSON.stringify(raw)}) is not a valid value block`);
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* placement and budget (RECORD.md, "Placement and budget"; task 39)   */
+/* ------------------------------------------------------------------ */
+
+/** The committed pyto record with a schedule bolted on, by hand, from RECORD.md. */
+function scheduled(record) {
+  const clone = JSON.parse(JSON.stringify(record));
+  clone.parallel = true;
+  clone.budget = { limit_ms: 250, stopped_after_tick: clone.ticks[clone.ticks.length - 1].name, completed: false };
+  clone.ticks.forEach((tick, index) => {
+    tick.latency_ms = 1.5 + index;
+    tick.invocations.forEach((invocation, position) => {
+      invocation.placement = { worker: position % 2, started_ms: position * 0.25 };
+    });
+  });
+  return clone;
+}
+
+/** Every adapter's output, the same six records the validate test builds. */
+const everyAdapterRecord = () => [
+  fromPytoRecord(pytoDoc),
+  fromPytoRecord(valueKindsDoc),
+  fromDiscStudioReceipt(dsDoc.first.pql, dsDoc.first.receipt, { version: 'transcribed-82f8fc9' }),
+  fromDiscStudioReceipt(dsDoc.second.pql, dsDoc.second.receipt),
+  fromChessLabReceipts(chessDoc.receipts, { pcr: 'chesslab.debugger' }),
+  fromWumpusRecords(wumpusDoc.records, { pcr: 'wumpus.belief' })
+];
+
+test('every committed fixture reads as a serial, unbudgeted run', () => {
+  for (const doc of everyAdapterRecord()) {
+    assert.deepEqual(runSchedule(doc), {
+      parallel: false,
+      budget: { limit_ms: null, stopped_after_tick: null, completed: true }
+    });
+    for (const invocation of invocations(doc)) assert.equal(invocationPlacement(invocation), null);
+  }
+});
+
+test('tickLatencyMs falls back to the sum of the Tick durations, and to null', () => {
+  for (const tick of pytoDoc.ticks) {
+    const sum = tick.invocations.reduce((total, invocation) => total + invocation.duration_ms, 0);
+    assert.equal(tickLatencyMs(tick), Math.round(sum * 1000) / 1000);
+  }
+  // A null duration makes the Tick's latency unknown, never a partial sum.
+  const unknown = JSON.parse(JSON.stringify(pytoDoc.ticks[0]));
+  unknown.invocations[0].duration_ms = null;
+  assert.equal(tickLatencyMs(unknown), null);
+  assert.equal(tickLatencyMs({ name: 'empty', invocations: [] }), null);
+});
+
+test('a scheduled record validates and reads back through both accessors', () => {
+  const doc = scheduled(pytoDoc);
+  assert.equal(validate(doc), doc);
+  assert.deepEqual(runSchedule(doc), {
+    parallel: true,
+    budget: { limit_ms: 250, stopped_after_tick: doc.ticks[doc.ticks.length - 1].name, completed: false }
+  });
+  assert.equal(tickLatencyMs(doc.ticks[0]), 1.5);
+  assert.deepEqual(invocationPlacement(doc.ticks[0].invocations[0]), { worker: 0, started_ms: 0 });
+  // An explicit latency wins over the sum: it is measured, the sum is derived.
+  assert.notEqual(tickLatencyMs(doc.ticks[0]), tickLatencyMs(pytoDoc.ticks[0]));
+});
+
+test('a null placement is a serial invocation, not a violation', () => {
+  const doc = scheduled(pytoDoc);
+  doc.ticks[0].invocations[0].placement = null;
+  assert.equal(validate(doc), doc);
+  assert.equal(invocationPlacement(doc.ticks[0].invocations[0]), null);
+});
+
+test('validate rejects a placement that is not one, naming the path', () => {
+  const cases = [
+    [{ worker: -1, started_ms: 0 }, 'ticks[0].invocations[0].placement.worker'],
+    [{ worker: 1.5, started_ms: 0 }, 'ticks[0].invocations[0].placement.worker'],
+    [{ worker: 0, started_ms: 'soon' }, 'ticks[0].invocations[0].placement.started_ms'],
+    [{ worker: 0, started_ms: 0, thread: 'main' }, 'ticks[0].invocations[0].placement']
+  ];
+  for (const [placement, path] of cases) {
+    const doc = scheduled(pytoDoc);
+    doc.ticks[0].invocations[0].placement = placement;
+    assert.throws(() => validate(doc), (error) => error instanceof RecordSchemaError && error.path === path);
+  }
+});
+
+test('validate rejects a budget that contradicts itself, naming the path', () => {
+  const cases = [
+    [{ limit_ms: 250, stopped_after_tick: 'Prepare', completed: true }, 'budget.stopped_after_tick'],
+    [{ limit_ms: 250, stopped_after_tick: 'Nowhere', completed: false }, 'budget.stopped_after_tick'],
+    [{ limit_ms: 'soon', stopped_after_tick: null, completed: true }, 'budget.limit_ms'],
+    [{ limit_ms: 250, completed: false }, 'budget'],
+    [{ limit_ms: 250, stopped_after_tick: null, completed: false, spent_ms: 300 }, 'budget']
+  ];
+  for (const [budget, path] of cases) {
+    const doc = JSON.parse(JSON.stringify(pytoDoc));
+    doc.budget = budget;
+    assert.throws(() => validate(doc), (error) => error instanceof RecordSchemaError && error.path === path);
+  }
+  const notABoolean = JSON.parse(JSON.stringify(pytoDoc));
+  notABoolean.parallel = 'yes';
+  assert.throws(() => validate(notABoolean), (error) => error instanceof RecordSchemaError && error.path === 'parallel');
+  const notANumber = JSON.parse(JSON.stringify(pytoDoc));
+  notANumber.ticks[0].latency_ms = 'fast';
+  assert.throws(() => validate(notANumber), (error) => error instanceof RecordSchemaError && error.path === 'ticks[0].latency_ms');
+});
+
+test('the adapters for the other runtimes still write no schedule at all', () => {
+  // Absent means serial and unbudgeted: an adapter that invented `parallel: false`
+  // would change the bytes of every record those three runtimes ever wrote.
+  for (const doc of everyAdapterRecord().slice(2)) {
+    assert.equal('parallel' in doc, false);
+    assert.equal('budget' in doc, false);
+    for (const tick of doc.ticks) assert.equal('latency_ms' in tick, false);
+    for (const invocation of invocations(doc)) assert.equal('placement' in invocation, false);
   }
 });

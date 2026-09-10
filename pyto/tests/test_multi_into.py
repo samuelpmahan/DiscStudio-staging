@@ -505,12 +505,30 @@ class DeclaringTheAddresses(unittest.TestCase):
         self.assertIn("no Calculation may produce into it", str(caught.exception))
 
     def test_two_invocations_may_not_both_write_one_address(self):
-        """The multiple-writers rule is per address, so it holds across the list."""
+        """The multiple-writers rule is per address, so it holds across the list.
+
+        In a *later* Tick, because two writers in one Tick are the node law's
+        business now (task 39) and are refused with the sibling message the next
+        test pins; the PCR-wide rule this test guards is the one that holds
+        whatever Tick the second writer is in.
+        """
         pcr = PCR("writers")
         pcr.calc("T", SPLIT_STATS, id="stats", into=["out.mean", "out.count"])
         with self.assertRaises(ValueError) as caught:
-            pcr.calc("T", TAKE_VALUE, id="other", into="out.count")
+            pcr.calc("T2", TAKE_VALUE, id="other", into="out.count")
         self.assertIn("multiple writers for 'out.count'", str(caught.exception))
+
+    def test_two_siblings_may_not_both_write_one_address_of_the_list(self):
+        """Inside one Tick the same collision is the node law, naming both ids."""
+        pcr = PCR("writers-same-tick")
+        pcr.calc("T", SPLIT_STATS, id="stats", into=["out.mean", "out.count"])
+        with self.assertRaises(ValueError) as caught:
+            pcr.calc("T", TAKE_VALUE, id="other", into="out.count")
+        message = str(caught.exception)
+        self.assertIn("'stats'", message)
+        self.assertIn("'other'", message)
+        self.assertIn("out.count", message)
+        self.assertIn("node law", message)
 
     def test_a_one_entry_list_is_the_multi_produce_form(self):
         """The shape decides, not the count ({?} OneElementList): `into=[a]` asks for a
@@ -575,12 +593,15 @@ class OneAddressCallsAreUnchanged(unittest.TestCase):
         )
 
     def test_the_receipt_differs_only_by_the_added_produce_digest(self):
-        """pcr.py: every other Receipt field is what it was, and the one added field
-        says of a one-address invocation exactly what `result_sha256` already said.
+        """pcr.py: every other Receipt field is what it was, and the added fields
+        say of a one-address serial invocation exactly what was already true --
+        `produce_sha256` is what `result_sha256` already said (task 27), and
+        `placement` is None because a serial Tick has no placement (task 39).
         """
         receipt = dict(self.now["receipt"])
         added = {key: receipt.pop(key) for key in list(receipt) if key not in self.pinned["receipt"]}
-        self.assertEqual(sorted(added), ["produce_sha256"])
+        self.assertEqual(sorted(added), ["placement", "produce_sha256"])
+        self.assertIsNone(added["placement"])
         self.assertEqual(added["produce_sha256"], {"out.v": receipt["result_sha256"]})
         self.assertEqual(
             fixture_single_into.dumps(receipt),
