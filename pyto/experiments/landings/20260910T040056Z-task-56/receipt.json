@@ -1,0 +1,64 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T040056Z-task-56",
+  "package": "task-56",
+  "base_sha": "187b57f49c939e0ac16b50a15eb3b8c5dc7568a3",
+  "result": "verified",
+  "verifier": {
+    "command": "grep -q 'task 48' pyto/FRONTIER.md && grep -q 'task 49' pyto/FRONTIER.md && grep -q 'task 50' pyto/FRONTIER.md && grep -q 'task 51' pyto/FRONTIER.md && grep -q 'task 52' pyto/FRONTIER.md && grep -q 'task 55' pyto/FRONTIER.md",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "6de9a8c4dc9ab459db24975df3eadb7ee2a13821819564d1b1409afef39d7580",
+    "counts": {
+      "library": 327,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 12,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/FRONTIER.md",
+      "bytes": 11627,
+      "sha256": "a4827d9eaf98b917b6f22bef10908655e3d2dea6adab3a927b97ae6f37e640eb"
+    },
+    {
+      "path": "pyto/experiments/tasks/56/HANDOFF.md",
+      "bytes": 6914,
+      "sha256": "d4ec3031d8b2950487298261249acda0e7744f8168bccbbe7893d0c04b3c33cd"
+    },
+    {
+      "path": "pyto/experiments/tasks/56/evidence/check_all.txt",
+      "bytes": 172452,
+      "sha256": "6781c65e2049ed1f97f8fc924974ff305f5590ae34b8d0098d4379e98f28966a"
+    },
+    {
+      "path": "pyto/experiments/tasks/56/evidence/verify.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/56/packet.md",
+      "bytes": 2516,
+      "sha256": "ee9a88ae31fb735ada28a64e7bf5e3bb257857d606ccb04ed8ff79146271debd"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T04:01:48.451529Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
