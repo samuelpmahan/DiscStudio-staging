@@ -14,14 +14,18 @@ molecule: a repeated chain of Calculations over Parts, the thing "molecular synt
 names ({?} ChainsInsideATick)."""
 from __future__ import annotations
 import json, os, sys
-from collections import namedtuple
+from collections import Counter, namedtuple
 HERE = os.path.dirname(os.path.abspath(__file__))
 PYTO = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(PYTO, "experiments", "hiding-primitives"))
 import subdue  # noqa: E402
 SCHEMA = "pyto-run-record@1"
 Graph = namedtuple("Graph", "labels edges where kinds")
-Molecule = namedtuple("Molecule", "rank sub instances bits ratio document query note")
+# `rarest` is the least-counted transition among `sub`'s own edges, counted over the graph
+# state `sub` was mined from ({?} ChainsInsideATick's counting-before-mining half): every
+# instance is one vertex-disjoint occurrence of every edge in `sub`, so `rarest` is never
+# less than `len(instances)` -- counting is what proves the bound, not what checks it.
+Molecule = namedtuple("Molecule", "rank sub instances bits ratio document query note rarest")
 PARAMS = dict(iterations=8, beam=4, min_instances=2, max_size=5)
 def rel(path):
     return os.path.relpath(os.path.abspath(path), PYTO).replace(os.sep, "/")
@@ -103,6 +107,23 @@ def graph_sizes(paths, scheme="exact"):
         graph = build_graph([path], scheme)
         rows.append((rel(path), len(graph.labels), len(graph.edges), None))
     return rows
+def count_transitions(labels, edges):
+    """{(from_label, to_label, kind): count} over every edge of a labels/edges pair --
+    any Graph's, or `mine`'s current working graph mid-compression, whose labels may
+    already include an earlier rank's "SUB<rank>" node standing for a compressed
+    substructure. Counting first, mining second: this is the shared arithmetic behind
+    both `fn.molecules.transitions` (transitions.py, over the uncompressed exact-scheme
+    graph) and every molecule's `rarest` bound below (over whichever graph it was found
+    in)."""
+    counts = Counter()
+    for a, b, kind in edges:
+        counts[(labels[a], labels[b], kind)] += 1
+    return counts
+def rarest_transition_count(sub, counts):
+    """The minimum, over every edge of substructure `sub`, of that edge's count in
+    `counts`. None for an edgeless substructure (nothing to bound)."""
+    values = [counts.get((sub.labels[a], sub.labels[b], kind), 0) for a, b, kind in sub.edges]
+    return min(values) if values else None
 def render_sub(sub):
     return ("%s ; %s" % (", ".join("v%d=%s" % (i, l) for i, l in enumerate(sub.labels)),
                          ", ".join("v%d-%s->v%d" % (a, k, b) for a, b, k in sub.edges)))
@@ -170,6 +191,7 @@ def mine(graph, records, **params):
                                          settings["min_instances"], settings["max_size"],
                                          vertex_ref=vertex_ref)
         if found is None or found.value <= 0.0:  break
+        rarest = rarest_transition_count(found.sub, count_transitions(labels, edges))
         primitive = not any(l.startswith("SUB") for l in found.sub.labels)
         if primitive:
             instances = [tuple(origin[w][0] for w in inst) for inst in found.instances]
@@ -191,7 +213,7 @@ def mine(graph, records, **params):
             doc, prefix = None, None
             note = "compound: built on an earlier rank's SUB node; no document emitted"
         out.append(Molecule(rank, found.sub, instances, found.value, found.ratio, doc,
-                            prefix, note))
+                            prefix, note, rarest))
         labels, edges, origin = subdue.compress(labels, edges, found.instances,
                                                 "SUB%d" % rank, origin)
     return out

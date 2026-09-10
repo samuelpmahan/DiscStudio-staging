@@ -13,6 +13,9 @@
 #   neat list                 every experiment and its state
 #   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
 #   neat walk [N | --page [out]]   the walk: the index of landings, one step as text, or the page (default ./walk.html)
+#   neat diff <a.json> <b.json> --store <seed.json> --registry <module:attr> [--label-a T] [--label-b T]
+#                             two PQL documents' difference, computed before it is shown: px.exp.blok.diff.<a>.<b>
+#                             under pyto/experiments/review/diffs, with both documents' run records beside it
 #
 # The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
 # owner sees what is coming; those lines go through land.sh --note (commit and push, no receipt).
@@ -55,7 +58,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,15p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,18p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -605,6 +608,13 @@ cmd_walk() {
   esac
 }
 
+cmd_diff() {
+  # neat diff <a.json> <b.json> --store <seed.json> --registry <module:attr> [--label-a T] [--label-b T]
+  # A thin forward to the Calculation itself (pyto/src/pyto/neat/diff.py); $PYTHON already has
+  # pyto importable (this copy's own .venv, or PYTHONPATH), so no cwd or sys.path trick is needed here.
+  "$PYTHON" -m pyto.neat.diff "$@"
+}
+
 cmd_list() {
   # A landed task's score is whatever its own landing receipt kept; an experiment that has not
   # landed has no receipt and so no score yet, which is the same "-" as a verifier that printed none.
@@ -626,5 +636,5 @@ cmd_list() {
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
-  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; *) usage;;
+  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; diff) cmd_diff "$@";; *) usage;;
 esac

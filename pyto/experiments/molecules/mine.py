@@ -7,6 +7,7 @@ import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(1, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "src"))  # `import pyto` without the venv, as the README's bare commands run it
 import molecules
+import transitions
 REPORT = os.path.join(molecules.HERE, "report.md")
 RECORDS = ["experiments/students/evidence/run-1/record.json",
            "experiments/grouped-ablation/evidence/run-1/record.json",
@@ -46,8 +47,18 @@ def build_report():
            "order (the chain rule of task 57 is checked on every emission), and as a PQL "
            "query that finds its Parts in a store.  Miner: `experiments/hiding-primitives/"
            "subdue.py` with `%s`.  Rebuild with `python mine.py`; `--check` fails if this "
-           "file drifts." % ", ".join("%s=%s" % kv for kv in sorted(molecules.PARAMS.items())),
-           "", "## Records", "", "| record | nodes | edges | note |", "| --- | ---: | ---: | --- |"]
+           "file drifts." % ", ".join("%s=%s" % kv for kv in sorted(molecules.PARAMS.items()))]
+    counted = transitions.transitions({"paths": paths})
+    out += ["", "## Transitions", "",
+            "Counting before mining ({?} ChainsInsideATick): every (from, kind, to) edge "
+            "the exact scheme draws over every record below, tallied once by "
+            "`fn.molecules.transitions` before any SUBDUE search looks for one repeated -- "
+            "published as `px.exp.molecules.transitions`.  %d edges, %d distinct, top 30 "
+            "shown." % (counted["total"], len(counted["edges"])),
+            "", "| from | kind | to | count |", "| --- | --- | --- | ---: |"]
+    for edge in counted["edges"][:30]:
+        out.append("| `%s` | %s | `%s` | %d |" % (edge["from"], edge["kind"], edge["to"], edge["count"]))
+    out += ["", "## Records", "", "| record | nodes | edges | note |", "| --- | ---: | ---: | --- |"]
     for path, nodes, edges, note in molecules.graph_sizes(paths):
         out.append("| `%s` | %d | %d | %s |" % (path, nodes, edges, note or ""))
     readings = {}
@@ -55,12 +66,13 @@ def build_report():
         graph, found = collect(scheme)
         out += ["", "## Scheme `%s` (%d nodes, %d edges)" % (scheme, len(graph.labels),
                                                              len(graph.edges)), "",
-                "| rank | substructure | instances | records | bits | ratio |",
-                "| ---: | --- | ---: | --- | ---: | ---: |"]
+                "| rank | substructure | instances | rarest transition | records | bits | ratio |",
+                "| ---: | --- | ---: | ---: | --- | ---: | ---: |"]
         for mol in found:
             recs = sorted({graph.where[v][0] for inst in mol.instances for v in inst})
-            out.append("| %d | `%s` | %d | %s | %.1f | %.4f |" % (
+            out.append("| %d | `%s` | %d | %s | %s | %.1f | %.4f |" % (
                 mol.rank, molecules.render_sub(mol.sub), len(mol.instances),
+                mol.rarest if mol.rarest is not None else "-",
                 ", ".join("`%s`" % r for r in recs), mol.bits, mol.ratio))
         for mol in found:
             out += ["", "### %s rank %d" % (scheme, mol.rank), ""]

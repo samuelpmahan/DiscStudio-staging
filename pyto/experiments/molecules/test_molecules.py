@@ -1,7 +1,7 @@
 import json, os, shutil, subprocess, sys, tempfile, unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-import mine, molecules  # noqa: E402
+import mine, molecules, transitions  # noqa: E402
 STUDENTS = os.path.join(molecules.PYTO, "experiments", "students", "evidence", "run-1", "record.json")
 class TestGraph(unittest.TestCase):
     def test_students_graph(self):
@@ -42,6 +42,38 @@ class TestMining(unittest.TestCase):
         self.assertTrue(molecules.chain_rule(doc))
         doc["Ticks"][0]["Calculations"][1]["into"] = "p.a"
         self.assertTrue(any("two producers" in f for f in molecules.chain_rule(doc)))
+    def test_rarest_transition_bound_holds_for_every_molecule(self):
+        # Every instance of `mol.sub` is one vertex-disjoint occurrence of every one of
+        # its edges, so no edge in it can be counted, over the graph it was mined from,
+        # fewer times than there are instances -- rarest is a lower bound, not a guess.
+        for scheme in mine.SCHEMES:
+            _, found = mine.collect(scheme)
+            self.assertTrue(found)
+            for mol in found:
+                if mol.rarest is None:  continue
+                self.assertGreaterEqual(mol.rarest, len(mol.instances), (scheme, mol.rank))
+class TestTransitions(unittest.TestCase):
+    def test_counts_sum_equals_the_graphs_edge_count(self):
+        paths = mine.record_paths()
+        graph = molecules.build_graph(paths, "exact")
+        counted = transitions.transitions({"paths": paths})
+        self.assertEqual(counted["total"], len(graph.edges))
+        self.assertEqual(sum(e["count"] for e in counted["edges"]), len(graph.edges))
+    def test_same_records_same_table(self):
+        paths = mine.record_paths()
+        first = transitions.transitions({"paths": paths})
+        second = transitions.transitions({"paths": paths})
+        self.assertEqual(
+            json.dumps(first, sort_keys=True), json.dumps(second, sort_keys=True))
+    def test_edges_are_sorted_by_count_then_from_to_kind(self):
+        counted = transitions.transitions({"paths": mine.record_paths()})
+        keys = [(-e["count"], e["from"], e["to"], e["kind"]) for e in counted["edges"]]
+        self.assertEqual(keys, sorted(keys))
+    def test_part_digest_matches_the_one_digest_rule(self):
+        value = transitions.transitions({"paths": mine.record_paths()})
+        part = transitions.to_part(value)
+        self.assertEqual(part["address"], transitions.ADDRESS)
+        self.assertEqual(part["sha256"], transitions.digest_of(value))
 class TestCheck(unittest.TestCase):
     def run_check(self, *args):
         return subprocess.run([sys.executable, os.path.join(HERE, "mine.py"), "--check", *args],
