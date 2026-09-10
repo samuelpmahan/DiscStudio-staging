@@ -9,13 +9,15 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
+import { dirname, resolve, join } from 'node:path';
 
 import { fromPytoRecord } from '../adapters.js';
 import { renderRecord, isParallelTick, tickWorkMs, tickLatencyMs, runWorkMs, runCriticalPathMs } from '../tick-viewer.js';
-import { composePage, PAGE_SOURCES } from '../embed.mjs';
+import { composePage, buildPage, PAGE_SOURCES } from '../embed.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const VIEWER = resolve(HERE, '..');
@@ -231,4 +233,25 @@ test('rendering the same record twice builds the same tree, and rendering never 
   });
   assert.deepEqual(shape(renderRecord(demo, { doc })), shape(renderRecord(demo, { doc })));
   assert.equal(JSON.stringify(demo), before, 'the renderer reads the record and writes nothing back');
+});
+
+test('the standalone page keeps the contract fields and its inlined bundle is one valid module', () => {
+  const page = buildPage(demo);
+  // The page is what somebody opens with no server: the fields it renders have to
+  // survive being baked into it, and the two modules have to concatenate into one
+  // script that actually parses (a name declared by both would be a SyntaxError
+  // nobody sees until the page is opened).
+  for (const field of ['"placement"', '"latency_ms"', '"parallel"', '"budget"', '"stopped_after_tick"']) {
+    assert.ok(page.includes(field), `the embedded record keeps ${field}`);
+  }
+  assert.ok(page.includes('.branches {'), 'the page carries the side-by-side layout');
+
+  const open = '<script type="module">\n/* adapters.js + tick-viewer.js, inlined by embed.mjs. No imports, no network. */\n';
+  const start = page.indexOf(open);
+  assert.ok(start > -1, 'the page carries the inlined bundle');
+  const end = page.indexOf('</script>', start);
+  const bundle = page.slice(start + open.length, end).replaceAll('<\\/script', '</script');
+  const file = join(mkdtempSync(join(tmpdir(), 'tick-bundle-')), 'bundle.mjs');
+  writeFileSync(file, bundle);
+  execFileSync(process.execPath, ['--check', file]);
 });
