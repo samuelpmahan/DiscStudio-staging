@@ -4,8 +4,48 @@ Intent: a class in a repo and the desk that teaches the tutor: classroom/make_cl
 Starting point: 9cc413bafb37b07508a5a4ec4fb91efc49eb1006 (board: **started** `task-42`: the studio speaks the whole record: the site's PQ)
 Verify: cd pyto/experiments/classroom && python3 -m unittest discover -s . -p 'test_*.py' && bash make_class.sh --selftest
 Allow: pyto/experiments/classroom pyto/scripts/check_all.sh pyto/CHANGES.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 8 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/CHANGES.md
+- A  pyto/experiments/classroom/README.md
+- A  pyto/experiments/classroom/cold-reader.txt
+- A  pyto/experiments/classroom/cold_reader.py
+- A  pyto/experiments/classroom/make_class.sh
+- A  pyto/experiments/classroom/test_classroom.py
+- A  pyto/experiments/classroom/tutor.py
+- M  pyto/scripts/check_all.sh
+
+```
+pyto/CHANGES.md                              |   1 +
+ pyto/experiments/classroom/README.md         |  51 +++
+ pyto/experiments/classroom/cold-reader.txt   |  36 ++
+ pyto/experiments/classroom/cold_reader.py    | 159 ++++++++
+ pyto/experiments/classroom/make_class.sh     | 578 +++++++++++++++++++++++++++
+ pyto/experiments/classroom/test_classroom.py | 270 +++++++++++++
+ pyto/experiments/classroom/tutor.py          | 518 ++++++++++++++++++++++++
+ pyto/scripts/check_all.sh                    |   6 +-
+ 8 files changed, 1618 insertions(+), 1 deletion(-)
+```
+
+## Evidence
+
+- verify: `cd pyto/experiments/classroom && python3 -m unittest discover -s . -p 'test_*.py' && bash make_class.sh --selftest` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         248  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    249  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             14  OK
+    experiments/tick-laws            12  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
 
 ## Uncertain
 
