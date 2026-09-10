@@ -39,6 +39,10 @@ fi
 PACKAGE="${1:-}"; shift || true
 [ -n "$PACKAGE" ] || { echo "usage: land.sh <package> [--verify cmd] [--allow paths] [--base sha] [--dry-run] [--message line]   |   land.sh --note \"<line>\"" >&2; exit 2; }
 VERIFY=""; ALLOW=""; DRY=0; MESSAGE=""; BASE=""; FROM=""
+# A verifier may report a score as well as an exit code (LANDING.md, "The words"). Empty
+# until step 3 reads it out of the verifier output; empty is what "no score" looks like
+# everywhere below, including in a refusal, which can happen before the verifier ever runs.
+SCORE_PASSED=""; SCORE_TOTAL=""; SCORE_BOARD=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --verify) VERIFY="$2"; shift 2;;
@@ -97,7 +101,7 @@ PYEOF
 }
 fail() { # reason
   if [ -n "$FROM" ] && git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then git merge --abort; fi
-  board "**refused** \`$PACKAGE\`: $1"
+  board "**refused** \`$PACKAGE\`$SCORE_BOARD: $1"
   mkdir -p "$LAND_DIR/failed"
   "$PYTHON" - "$LAND_DIR/failed/$ID.json" "$PACKAGE" "$BASE_SHA" "$1" <<'EOF'
 import json, sys, datetime
@@ -178,6 +182,15 @@ if [ -n "$VERIFY" ]; then
   echo "== verifier: $VERIFY"
   bash -c "$VERIFY" > "$WORK/verifier.txt" 2>&1 || VERIFY_EXIT=$?
   tail -20 "$WORK/verifier.txt"
+  # A score is information, not a verdict: the exit code still decides. The last such line wins,
+  # so a verifier that scores several parts can print a total at the end. (tr strips the CR a
+  # Windows verifier leaves behind, so the digits parse the same on both platforms.)
+  SCORE_LINE="$(tr -d '\r' < "$WORK/verifier.txt" | grep -E '^score: [0-9]+ of [0-9]+' | tail -n 1 || true)"
+  if [ -n "$SCORE_LINE" ]; then
+    read -r _w SCORE_PASSED _o SCORE_TOTAL _rest <<< "$SCORE_LINE"
+    SCORE_BOARD=" score $SCORE_PASSED/$SCORE_TOTAL"
+    echo "== score: $SCORE_PASSED of $SCORE_TOTAL"
+  fi
   [ $VERIFY_EXIT -eq 0 ] || fail "verifier exited $VERIFY_EXIT (see $WORK/verifier.txt)"
 fi
 echo "== check_all"
@@ -192,9 +205,10 @@ else
 fi
 
 # 4. Record.
-"$PYTHON" - "$WORK/receipt.json" "$ID" "$PACKAGE" "$BASE_SHA" "$VERIFY" "$WORK" "$DRY" "$ALLOW" "$CHANGED" "$PYTO_MODE" <<'EOF'
+"$PYTHON" - "$WORK/receipt.json" "$ID" "$PACKAGE" "$BASE_SHA" "$VERIFY" "$WORK" "$DRY" "$ALLOW" "$CHANGED" "$PYTO_MODE" "$SCORE_PASSED" "$SCORE_TOTAL" <<'EOF'
 import json, sys, subprocess, hashlib, os, datetime
-path, lid, package, base, verify, work, dry, allow, changed_list, pyto_mode = sys.argv[1:11]
+path, lid, package, base, verify, work, dry, allow, changed_list, pyto_mode, score_passed, score_total = sys.argv[1:13]
+score = {"passed": int(score_passed), "total": int(score_total)} if score_passed and score_total else None
 allowed = allow.split()
 root = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True, text=True).stdout.strip()
 files = [f for f in changed_list.splitlines() if f.strip()]
@@ -214,6 +228,7 @@ for line in open(os.path.join(work, 'check_all.txt')):
 receipt = {"schema": "pyto-landing-receipt@1", "id": lid, "package": package, "base_sha": base, "result": "verified",
            "verifier": {"command": verify or None, "exit": 0 if verify else None, "output_sha256": sha(os.path.join(work, 'verifier.txt')) if verify else None},
            "check_all": {"exit": 0, "output_sha256": sha(os.path.join(work, 'check_all.txt')), "counts": counts},
+           "score": score,
            "claimed": claimed, "unclaimed": unclaimed, "landed_by": os.environ.get('PYTO_LANDER', 'session'), "at": datetime.datetime.utcnow().isoformat() + 'Z',
            "result_sha": None, "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"}
 if pyto_mode == '0':
@@ -248,7 +263,7 @@ fi
 while IFS= read -r f; do [ -n "$f" ] && git add -A -- "$f"; done <<< "$DIRTY"
 git add -A -- "$LAND_DIR"
 LINE="${MESSAGE:-verified candidate}"
-board "**landed** \`$PACKAGE\`: $LINE ($(printf '%s\n' "$CHANGED" | grep -c . || true) files since ${BASE_SHA:0:7}, suites green, receipt $ID)"
+board "**landed** \`$PACKAGE\`$SCORE_BOARD: $LINE ($(printf '%s\n' "$CHANGED" | grep -c . || true) files since ${BASE_SHA:0:7}, suites green, receipt $ID)"
 git add -A -- "$BOARD"
 if [ "$PYTO_MODE" -eq 1 ]; then
   RECEIPT_LABEL="pyto/experiments/landings/$ID/receipt.json"

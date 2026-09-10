@@ -84,6 +84,23 @@ hostpath() { # Git Bash on Windows: pip and python want D:\... not /d/...; elsew
   if command -v cygpath >/dev/null 2>&1; then cygpath -w "$1"; else printf '%s\n' "$1"; fi
 }
 need_exp() { [ -d "$EXP/$1" ] || die "no experiment EXP/$1 (neat list)"; }
+receipt_of() { # <package> -> the newest committed receipt for it, empty when there is none
+  # Landing directories are <stamp>-<package>, and the stamp sorts the same way it ticks, so the
+  # last glob match is the newest. The stamp is spelled out rather than globbed with * so that
+  # task-0's receipts are not mixed up with undo-task-0's.
+  local d last=""
+  for d in "$ROOT/$LAND_REL"????????T??????Z-"$1"/; do
+    [ -f "$d/receipt.json" ] && last="$d/receipt.json"
+  done
+  printf '%s\n' "$last"
+}
+score_of() { # <receipt path> -> "<passed>/<total>", or "-" when the verifier printed no score
+  local f="${1:-}" p t
+  [ -n "$f" ] && [ -f "$f" ] || { echo "-"; return 0; }
+  p="$(sed -n 's/.*"passed"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$f" | head -n 1)"
+  t="$(sed -n 's/.*"total"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$f" | head -n 1)"
+  if [ -n "$p" ] && [ -n "$t" ]; then echo "$p/$t"; else echo "-"; fi
+}
 status_without_bookkeeping() { # MAIN's status minus the landing script's own leavings: receipts and the board
   local line path
   while IFS= read -r line; do
@@ -442,7 +459,7 @@ cmd_selftest() {
   chmod +x "$tools_dir/neat.sh" "$tools_dir/land.sh"
   git -C "$clone" add tools
   git -C "$clone" commit -q -m "selftest tools"
-  if bash "$tools_dir/neat.sh" new "selftest" --verify true >"$tmp/new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if bash "$tools_dir/neat.sh" new "selftest" --verify "echo score: 3 of 3" >"$tmp/new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
   if [ -d "$clone/EXP/0" ] && [ -f "$clone/EXP/0/.neat/tasks/0/packet.md" ]; then
     echo "selftest new: pass"
   else
@@ -472,6 +489,11 @@ cmd_selftest() {
     echo "selftest board: pass"
   else
     echo "selftest board: FAIL"; failures=$((failures + 1))
+  fi
+  if grep -q '"passed": 3' "$clone"/.neat/landings/*-task-0/receipt.json 2>/dev/null && grep -q 'score 3/3' "$clone/.neat/BOARD.md"; then
+    echo "selftest score: pass"
+  else
+    echo "selftest score: FAIL"; failures=$((failures + 1))
   fi
   if bash "$tools_dir/neat.sh" undo 0 >"$tmp/undo.txt" 2>&1; then :; else failures=$((failures + 1)); fi
   if [ ! -e "$clone/edit.txt" ] && [ -z "$(git -C "$clone" status --porcelain --untracked-files=all)" ]; then
@@ -514,18 +536,20 @@ cmd_selftest() {
 }
 
 cmd_list() {
+  # A landed task's score is whatever its own landing receipt kept; an experiment that has not
+  # landed has no receipt and so no score yet, which is the same "-" as a verifier that printed none.
   local d id packet base n state
-  printf '%-4s %-8s %-6s %s\n' id state files intent
+  printf '%-4s %-8s %-6s %-6s %s\n' id state files score intent
   for d in "$EXP"/*/; do
     [ -d "$d" ] || continue; id="$(basename "$d")"; packet="$(packet_of "$id")"; [ -f "$packet" ] || continue
     base="$(field 'Starting point' "$packet" | cut -d' ' -f1)"
     n="$(git -C "$d" diff --name-only "$base" HEAD -- . ":!$TASKS" | wc -l | tr -d ' ')"
     [ -f "$d/$TASKS/$id/HANDOFF.md" ] && state=packed || state=open
-    printf '%-4s %-8s %-6s %s\n' "$id" "$state" "$n" "$(field Intent "$packet")"
+    printf '%-4s %-8s %-6s %-6s %s\n' "$id" "$state" "$n" "-" "$(field Intent "$packet")"
   done
   for d in "$ROOT/$TASKS"/*/; do
     [ -f "$d/packet.md" ] || continue; id="$(basename "$d")"
-    printf '%-4s %-8s %-6s %s\n' "$id" landed "-" "$(field Intent "$d/packet.md")"
+    printf '%-4s %-8s %-6s %-6s %s\n' "$id" landed "-" "$(score_of "$(receipt_of "task-$id")")" "$(field Intent "$d/packet.md")"
   done
 }
 
