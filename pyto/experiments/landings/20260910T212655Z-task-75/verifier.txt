@@ -1,0 +1,28 @@
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/tests')
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')
+......./home/user/DiscStudio-staging/pyto/tests/test_crisp.py:694: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpcd3bqmel/cards.html' mode='r' encoding='utf-8'>
+  html_text = open(html_path, encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+........................................................................................................................../home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:158: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfmfungd4/receipt.json' mode='w' encoding='utf-8'>
+  json.dump({"schema": "pyto-landing-receipt@1", "package": "task-65"}, open(receipt, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:162: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfmfungd4/receipt.json' mode='r' encoding='utf-8'>
+  written = json.load(open(receipt))["gate"]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:166: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfmfungd4/gate.json' mode='r' encoding='utf-8'>
+  validate_record(json.load(open(record)))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:167: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfmfungd4/gate.json' mode='r' encoding='utf-8'>
+  self.assertEqual(json.load(open(record))["ticks"][0]["invocations"][0]["calculation"]["address"],
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpug2sit5y/approve.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "approve", "selection": "<head>", "text": "stub approve"},
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpug2sit5y/reject.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "reject", "selection": "<head>", "text": "no"}, open(reject, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..
+----------------------------------------------------------------------
+Ran 132 tests in 9.365s
+
+OK
