@@ -1,0 +1,15 @@
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/46/pyto/experiments/grouped-ablation')  # this experiment's own modules (retain, compare_local, pql_document, calculations)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/46/pyto/consumers/discstudio-card/experiments/disc-stats')  # run_experiment.py imports stats.py by top-level name (disc-stats/run_experiment.py:4)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/46/pyto/experiments/grouped-ablation')  # this experiment's own modules
+........................................................................................................................................................................................................s.................................................
+----------------------------------------------------------------------
+Ran 250 tests in 23.615s
+
+OK (skipped=1)
+[students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/46/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+[students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/46/pyto/experiments/tick-laws')  # intra-repo: the Tick node/loop law checker (tick_laws.py)
+.................
+----------------------------------------------------------------------
+Ran 17 tests in 1.021s
+
+OK
