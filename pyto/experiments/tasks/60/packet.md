@@ -16,3 +16,7 @@ Evidence: not packed yet
 {?} MoleculeAddress: the emitted PQL document is one Tick named molecule-<rank>; whether a molecule should become a new Calculation address fn.molecule.<canon-digest> is left open.
 {?} CompoundMolecules: later SUBDUE ranks are built on an earlier rank's SUB node; they are listed with their instances but no PQL document is emitted for them (only primitive ranks embed vertex-for-vertex).
 {?} PxMolecules: "px molecules <record...>" in px.py is not done (time).
+{?} DocumentDropsArgs: the emitted PQL document carries call, with and into but not the invocation's args or id, so where two Calculations differ only by args (exact rank 1: fn.ablation.fit all versus drop_g0) the document names the molecule's wiring and cannot run the instance it was cut from; args belong in it, and the spelling should follow pyto's own writer (src/pyto/graph.py to_pcr_dict) rather than the studio's bare-address form. Found by the verifier, not fixed in the 30 minutes.
+{?} OnePartQuery: a one-Part molecule is spelled PQL.prefix(address), which also matches longer addresses; PQL.part(address) is the exact form the API has.
+{?} HashRefUnchecked: the fn:<id>#<address> branch of resolve() trusts the address without checking it is among the producer's into (record_schema.py does check); no committed record uses the form.
+

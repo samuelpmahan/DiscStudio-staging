@@ -5,6 +5,7 @@ byte for byte.  Paths in the report are relative to the pyto root; no timestamps
 from __future__ import annotations
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(1, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "src"))  # `import pyto` without the venv, as the README's bare commands run it
 import molecules
 REPORT = os.path.join(molecules.HERE, "report.md")
 RECORDS = ["experiments/students/evidence/run-1/record.json",
