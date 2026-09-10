@@ -154,7 +154,9 @@ class TestCLI(unittest.TestCase):
             json.dump(cards["variant"], handle)
         with open(self.store_path, "w", encoding="utf-8") as handle:
             json.dump(cards["store"], handle)
-        self.diffs_dir = os.path.join(PYTO_ROOT, "experiments", "review", "diffs")
+        # Never the tree under test: a landing runs this suite on MAIN and the child
+        # process writes wherever the pyto it imports lives (task 68 was refused for it).
+        self.diffs_dir = os.path.join(self.tmp.name, "diffs")
 
     def run_cli(self):
         return subprocess.run(
@@ -168,6 +170,8 @@ class TestCLI(unittest.TestCase):
                 self.store_path,
                 "--registry",
                 "tests.fixtures.blok.registry:REGISTRY",
+                "--diffs-dir",
+                self.diffs_dir,
             ],
             cwd=PYTO_ROOT,
             capture_output=True,
