@@ -4,8 +4,40 @@ Intent: interrupts are typed and a shared desk is graded by the class: land.sh -
 Starting point: e99ce55ac146f7373dc8d42bcb607769c872d614 (land(task-33): neat land from a remote: neat land <id> --from <url-or-remote> <branch> fetches a branch from another repository and lands it here with the same verifier, allowed paths and receipt, so a student's desk in its own repo can be shared into a class repo with one command; selftest covers it with a second scratch repository)
 Verify: bash pyto/scripts/neat.sh selftest
 Allow: pyto/scripts/neat.sh pyto/scripts/land.sh pyto/LANDING.md pyto/BOARD.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 4 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/BOARD.md
+- M  pyto/LANDING.md
+- M  pyto/scripts/land.sh
+- M  pyto/scripts/neat.sh
+
+```
+pyto/BOARD.md        |  5 ++++-
+ pyto/LANDING.md      | 11 +++++++---
+ pyto/scripts/land.sh | 11 ++++++++++
+ pyto/scripts/neat.sh | 57 +++++++++++++++++++++++++++++++++++++++++++++-------
+ 4 files changed, 73 insertions(+), 11 deletions(-)
+```
+
+## Evidence
+
+- verify: `bash pyto/scripts/neat.sh selftest` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         193  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    248  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             14  OK
+    experiments/tick-laws            10  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
 
 ## Uncertain
 
