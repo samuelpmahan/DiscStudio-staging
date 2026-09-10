@@ -40,7 +40,9 @@ wrong, and I want to say so rather than quietly fix it. A receipt is written per
 Calculation, not per Tick, so one Tick or two, the record shows exactly the same
 reads, writes, durations and fingerprints for Mean and for Median. What a Tick
 actually says is *step*: between two Ticks my program claims an order, and inside
-one Tick it claims none. Mean and Median are one step because neither of them needs
+one Tick it claims an order only where one Calculation reads another's result (a
+chain, which runs in order); Mean and Median read only the roster, so the Stats
+Tick claims none. Mean and Median are one step because neither of them needs
 the other -- both start from the roster Parse made and nothing else. Putting them in
 one Tick is me saying that out loud, and it is a claim the record can be checked
 against: `tick_laws.py` reads this record and reports that the Stats Tick does more
