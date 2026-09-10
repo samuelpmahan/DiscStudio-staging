@@ -1,0 +1,50 @@
+name: Build source bundle
+
+on:
+  push:
+    branches:
+      - claude/python-ultracode-supercharge-st8hnu
+    paths:
+      - .github/workflows/source-bundle.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out complete repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build source archive and Git bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          output_dir="$RUNNER_TEMP/source-bundle"
+          mkdir -p "$output_dir"
+
+          git archive --format=zip --output="$output_dir/source.zip" HEAD
+          git bundle create "$output_dir/repository.bundle" --all
+          git bundle verify "$output_dir/repository.bundle"
+
+          commit="$(git rev-parse HEAD)"
+          source_sha256="$(sha256sum "$output_dir/source.zip" | awk '{print $1}')"
+          bundle_sha256="$(sha256sum "$output_dir/repository.bundle" | awk '{print $1}')"
+          cat > "$output_dir/manifest.txt" <<EOF
+          commit=$commit
+          source.zip.sha256=$source_sha256
+          repository.bundle.sha256=$bundle_sha256
+          EOF
+
+      - name: Upload source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-bundle-${{ github.sha }}
+          path: ${{ runner.temp }}/source-bundle
+          if-no-files-found: error
+          retention-days: 3

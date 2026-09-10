@@ -21,17 +21,18 @@ limit in mind.
 ## What a student does
 
 **1. They write a small program.** Not a wall of code: a handful of named steps over
-a store of named values. In this homework there are five steps, called Ticks: read a
-CSV of a class's names and scores; compute the average; compute the middle score;
-give each student a letter; draw a bar chart. Each step says out loud what it reads
-and what it writes.
+a store of named values. In this homework there are four steps, called Ticks: read a
+CSV of a class's names and scores; compute the average *and* the middle score, which
+are one step because neither needs the other; give each student a letter; draw a bar
+chart. Each step says out loud what it reads and what it writes, and a step may hold
+more than one piece of work when those pieces do not depend on each other.
 
 **2. They run it.** The program does not just print an answer. It leaves a *record*:
-for every step, what it read, what it wrote, what it produced, how long it took, and
-a fingerprint -- a short string of letters and digits computed from the result, which
-changes completely if anything about the result changes. The record is one file. It
-can be opened in a browser as a page you step through one Tick at a time, watching
-each step's numbers appear.
+for every piece of work, what it read, what it wrote, what it produced, how long it
+took, and a fingerprint -- a short string of letters and digits computed from the
+result, which changes completely if anything about the result changes. The record is
+one file. It can be opened in a browser as a page you step through one Tick at a
+time, watching each step's numbers appear.
 
 **3. They write a hand-off page.** One page in their own words: what I built, one
 line per step, which files I touched, and -- this is the part teachers usually never
@@ -45,11 +46,19 @@ four checks and no judgements:
 |---|---|---|
 | 1 | The record is a real record of the agreed shape, read by an independent reader | A record that was hand-written, or that quietly leaves out a field |
 | 2 | A fresh, isolated process runs the homework again and gets the identical record | An answer that only works on the student's machine, or a record edited after the run |
-| 3 | Every step has a receipt, and each receipt's code fingerprint matches the code on disk right now | Code edited after the run, so the record describes a program that no longer exists |
+| 3 | Every piece of work has a receipt, and each receipt's code fingerprint matches the code on disk right now | Code edited after the run, so the record describes a program that no longer exists |
 | 4 | The hand-off names every step and every file | A hand-off that quietly omits the step the student did not understand |
 
 It prints a short report and exits pass or fail. Nothing in those four checks is a
 matter of opinion, and none of them can be argued with.
+
+A separate reading, not part of the pass/fail: `../tick-laws/tick_laws.py --check`
+adds the timings up a step at a time, and on this record the **Stats** step is the one
+whose work is greater than its latency -- the average and the middle score together
+spent more work than they spent time, because two pieces of work sat inside one step,
+while every other step spent exactly as much time as work. That makes Stats the first
+step in this program where doing things at once would buy anything, and the record
+says so before any such thing has been built.
 
 **5. A cold reader does the rest.** Somebody -- another student, a teacher, or an
 agent -- who has seen *only the hand-off page*, never the code, writes in plain words
@@ -83,7 +92,7 @@ and then stops: it does not score this part, and it says so in its own report.
 Three commands, in this directory:
 
 ```
-python homework.py --out evidence/run-1                    # run the five Ticks, write the record
+python homework.py --out evidence/run-1                    # run the four Ticks, write the record
 python grade.py --run evidence/run-1 --handoff HANDOFF.md  # the four mechanical checks
 ```
 

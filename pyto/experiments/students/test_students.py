@@ -17,6 +17,15 @@ repository; see pyto/experiments/tasks/23/packet.md):
     homework.py:parse_scores sorts the roster by name       -> return the rows
         unsorted and CommittedEvidence.test_grade_exits_zero_on_the_committed_evidence
         fails on check 2 (the fresh process no longer reproduces the record): killed.
+    homework.py:build_program puts mean and median in one   -> name them "Mean" and
+        Tick                                                   "Median" again, re-run
+        `python homework.py --out evidence/run-1`, and TickLaws.test_the_stats_tick_-
+        does_more_work_than_it_takes_time fails (there is no Stats Tick, and no Tick
+        has work above latency): killed.
+    homework.py:build_program's mean and median do not read -> bind `mean=MEAN` on the
+        each other                                             median invocation, re-run,
+        and the same test fails on `report["violations"]` ("node law violation: median
+        reads sibling-produced px.students.mean in Tick 1"): killed.
 """
 
 from __future__ import annotations
@@ -33,12 +42,16 @@ import unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 PYTO_ROOT = os.path.dirname(os.path.dirname(HERE))
 VIEWER_TEST_DIR = os.path.join(PYTO_ROOT, "viewer", "test")
+TICK_LAWS_DIR = os.path.join(PYTO_ROOT, "experiments", "tick-laws")
 
-# Two intra-repo sys.path inserts, stated and printed so they appear in the suite log
+# Three intra-repo sys.path inserts, stated and printed so they appear in the suite log
 # (pyto/experiments/CAPTURE.md, "sys.path: what is logged and what is forbidden").
+# tick-laws is imported by path for the same reason grade.py imports the validator by
+# path: the directory name has a hyphen in it, so it is not an importable package.
 for _directory, _why in (
     (HERE, "this experiment's own homework.py and grade.py"),
     (VIEWER_TEST_DIR, "the independent record validator (record_schema.py)"),
+    (TICK_LAWS_DIR, "the Tick node/loop law checker (tick_laws.py)"),
 ):
     if _directory not in sys.path:
         print(f"[students/test] sys.path.insert(0, {_directory!r})  # intra-repo: {_why}", file=sys.stderr)
@@ -49,6 +62,7 @@ from pyto.pcr import receipt_address  # noqa: E402
 
 import grade  # noqa: E402
 import homework  # noqa: E402
+import tick_laws  # noqa: E402
 from record_schema import validate as validate_record  # noqa: E402
 
 RUN_1 = os.path.join(HERE, "evidence", "run-1")
@@ -78,7 +92,12 @@ class RecordShape(unittest.TestCase):
         self.assertEqual(record["pcr"], homework.PCR_NAME)
         self.assertEqual(
             [tick["name"] for tick in record["ticks"]],
-            ["Parse", "Mean", "Median", "Letters", "Histogram"],
+            ["Parse", "Stats", "Letters", "Histogram"],
+        )
+        # Four Ticks, five invocations: Stats holds mean and median side by side.
+        self.assertEqual(
+            [[inv["id"] for inv in tick["invocations"]] for tick in record["ticks"]],
+            [["parse"], ["mean", "median"], ["letters"], ["histogram"]],
         )
         self.assertEqual(record["counters"]["invocations"], 5)
         # The seeded CSV is the run's one preexisting Part, so `parse` is the one hit.
@@ -150,7 +169,8 @@ class TamperedRecord(unittest.TestCase):
             record_path = os.path.join(run_dir, "record.json")
             with open(record_path, encoding="utf-8") as handle:
                 record = json.load(handle)
-            invocation = record["ticks"][2]["invocations"][0]
+            invocation = record["ticks"][1]["invocations"][1]
+            self.assertEqual(record["ticks"][1]["name"], "Stats")
             self.assertEqual(invocation["id"], "median")
             digest = invocation["result_sha256"]
             invocation["result_sha256"] = ("b" if digest[0] == "a" else "a") + digest[1:]
@@ -207,7 +227,7 @@ class Handoff(unittest.TestCase):
         end = next(index for index in range(start + 1, len(lines)) if not lines[index].strip())
         trimmed = "\n".join(lines[:start] + lines[end:])
         self.assertNotIn("Histogram", trimmed)
-        self.assertIn("Median", trimmed)  # only the one Tick went missing
+        self.assertIn("Stats", trimmed)  # only the one Tick went missing
 
         with tempfile.TemporaryDirectory() as scratch:
             path = os.path.join(scratch, "HANDOFF.md")
@@ -253,6 +273,45 @@ class ContractRefusal(unittest.TestCase):
         passed, detail = grade.check_contract(record)
         self.assertFalse(passed)
         self.assertIn("does not validate", detail[0])
+
+
+class TickLaws(unittest.TestCase):
+    def test_the_stats_tick_does_more_work_than_it_takes_time(self):
+        """tick-laws/tick_laws.py:analyze_record -- the claim HANDOFF.md makes about Stats.
+
+        Guards `def build_program` in homework.py (the two `pcr.calc("Stats", ...)`
+        lines) and the hand-off paragraph that says Mean and Median could run side by
+        side. One Tick holding two independent Calculations is exactly a Tick whose
+        work (the sum of its branches) exceeds its latency (the longest branch); the
+        singleton Ticks have work equal to latency. If the two ever drifted back into
+        separate Ticks, or one started reading the other, this fails.
+        """
+        with open(os.path.join(RUN_1, "record.json"), encoding="utf-8") as handle:
+            record = json.load(handle)
+        names = [tick["name"] for tick in record["ticks"]]
+        self.assertEqual(names, ["Parse", "Stats", "Letters", "Histogram"])
+
+        report = tick_laws.analyze_record(record)
+        self.assertTrue(report["valid"], report["violations"])
+        self.assertEqual(report["violations"], [])
+        self.assertTrue(report["ok"])
+        self.assertTrue(report["laws"]["node"]["ok"])
+        self.assertTrue(report["laws"]["loop"]["ok"])
+
+        by_index = {tick["tick"]: tick for tick in report["ticks"]}
+        self.assertEqual(sorted(by_index), list(range(len(names))))
+        stats = by_index[names.index("Stats")]
+        self.assertIsNotNone(stats["work_ms"])
+        self.assertIsNotNone(stats["latency_ms"])
+        self.assertGreater(stats["work_ms"], stats["latency_ms"])
+        for index, name in enumerate(names):
+            if name == "Stats":
+                continue
+            tick = by_index[index]
+            self.assertEqual(tick["work_ms"], tick["latency_ms"], name)
+        # One Tick of two branches is the whole difference between work and the
+        # critical path for this run.
+        self.assertGreater(report["summary"]["work_ms"], report["summary"]["critical_path_ms"])
 
 
 class ObserveOnOff(unittest.TestCase):

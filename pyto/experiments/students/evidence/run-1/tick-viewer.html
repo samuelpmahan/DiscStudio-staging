@@ -194,7 +194,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
     "computed": 4,
     "hits": 1,
     "invocations": 5,
-    "wall_ms": 0.13221100061855395
+    "wall_ms": 0.11029799952666508
   },
   "parts": {
     "px.students.histogram": {
@@ -239,7 +239,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
   "pcr": "students-homework",
   "schema": "pyto-run-record@1",
   "source": {
-    "commit": "d13fcd1c38eab147d1a9d01b2c6c4e4ebf7abf90",
+    "commit": "42c5c7b0b8f7503ad351cefc09c2cdbbaa8850ef",
     "runtime": "pyto",
     "version": "0.1.0"
   },
@@ -263,7 +263,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
           "declared_consumes": [
             "px:px.students.scores_csv"
           ],
-          "duration_ms": 0.03286900027887896,
+          "duration_ms": 0.030250000236264896,
           "hit": true,
           "id": "parse",
           "inputs": {
@@ -350,7 +350,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
             "implementation_sha256": "52c2348bf909078bdf32e7b55a95140e366884feb69c89a94cd07c4da464bc6d"
           },
           "declared_consumes": [],
-          "duration_ms": 0.03024099987669615,
+          "duration_ms": 0.025237000045308378,
           "hit": false,
           "id": "mean",
           "inputs": {
@@ -373,13 +373,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
               "kind": "new-address"
             }
           ]
-        }
-      ],
-      "name": "Mean"
-    },
-    {
-      "index": 2,
-      "invocations": [
+        },
         {
           "actual_consumes": [],
           "actual_produces": [
@@ -392,7 +386,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
             "implementation_sha256": "e40b65bbc48b2a45c76bb9800ed9c5b8240a7192c2d07d0ff89b02c5c19dc312"
           },
           "declared_consumes": [],
-          "duration_ms": 0.0192300003618584,
+          "duration_ms": 0.015716000234533567,
           "hit": false,
           "id": "median",
           "inputs": {
@@ -416,10 +410,10 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
           ]
         }
       ],
-      "name": "Median"
+      "name": "Stats"
     },
     {
-      "index": 3,
+      "index": 2,
       "invocations": [
         {
           "actual_consumes": [],
@@ -456,7 +450,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
             "implementation_sha256": "bdb6828b307fcb2522327e41429c5db7c433ec73388dba8c29e04a072dec51eb"
           },
           "declared_consumes": [],
-          "duration_ms": 0.028363000183162512,
+          "duration_ms": 0.016751999282860197,
           "hit": false,
           "id": "letters",
           "inputs": {
@@ -541,7 +535,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
       "name": "Letters"
     },
     {
-      "index": 4,
+      "index": 3,
       "invocations": [
         {
           "actual_consumes": [],
@@ -579,7 +573,7 @@ figure.material figcaption { color: var(--muted); font-size: 11.5px; margin-top:
             "implementation_sha256": "6618353f306c11b17d0e037e91d044df4f6ee22712bcca7578d731be9f0ed7ce"
           },
           "declared_consumes": [],
-          "duration_ms": 0.021507999917957932,
+          "duration_ms": 0.022342999727698043,
           "hit": false,
           "id": "histogram",
           "inputs": {
@@ -711,12 +705,43 @@ function requireStringArray(value, path) {
   return value;
 }
 
-/** RECORD.md: `inputs` keeps the testimony spelling `px:<address>` / `fn:<id>`. */
+/**
+ * RECORD.md: `inputs` keeps the testimony spelling `px:<address>`, `fn:<id>`, or
+ * `fn:<id>#<address>` when the producer published several Parts. Both halves of
+ * the qualified form must be non-empty, so a reader always has a producer to
+ * resolve and an address to resolve it to.
+ */
 function requireBindingSpelling(value, path) {
   requireString(value, path);
   if (!value.startsWith('px:') && !value.startsWith('fn:')) {
-    fail(path, `expected a testimony binding spelled "px:<address>" or "fn:<id>", got ${show(value)}`);
+    fail(path, `expected a testimony binding spelled "px:<address>", "fn:<id>" or "fn:<id>#<address>", got ${show(value)}`);
   }
+  if (value.startsWith('fn:') && value.includes('#')) {
+    const body = value.slice(3);
+    const cut = body.lastIndexOf('#');
+    if (cut === 0 || cut === body.length - 1) {
+      fail(path, `expected a produce-qualified result binding "fn:<id>#<address>", got ${show(value)}`);
+    }
+  }
+  return value;
+}
+
+/**
+ * RECORD.md: `into` is one address, an array of addresses, or null. The array is
+ * the multi-produce form -- one invocation publishing several Parts from one
+ * pass. An empty array is refused (an invocation that produces nothing writes
+ * null, like every other absent field) and so is a repeated address.
+ */
+function requireInto(value, path) {
+  if (value === null || typeof value === 'string') return requireNullableString(value, path);
+  if (!Array.isArray(value)) fail(path, `expected an address, an array of addresses, or null, got ${show(value)}`);
+  if (value.length === 0) fail(path, 'expected at least one address; an invocation that produces nothing writes null');
+  const seen = new Set();
+  value.forEach((entry, index) => {
+    requireString(entry, `${path}[${index}]`);
+    if (seen.has(entry)) fail(`${path}[${index}]`, `duplicate produce address ${JSON.stringify(entry)}; one invocation publishes each address once`);
+    seen.add(entry);
+  });
   return value;
 }
 
@@ -757,7 +782,7 @@ function validateInvocation(invocation, path, seenIds) {
   const inputs = requireObject(invocation.inputs, `${path}.inputs`);
   for (const [name, binding] of Object.entries(inputs)) requireBindingSpelling(binding, `${path}.inputs.${name}`);
   requireObject(invocation.args, `${path}.args`);
-  requireNullableString(invocation.into, `${path}.into`);
+  requireInto(invocation.into, `${path}.into`);
 
   // RECORD.md's declared_consumes rule is strict, so it is checked and not
   // assumed: exactly the `px:` bindings of `inputs`, in binding order. An `fn:`
@@ -855,6 +880,37 @@ function validate(record) {
 function bareAddress(binding) {
   if (typeof binding !== 'string') return '';
   return binding.startsWith('px:') || binding.startsWith('fn:') ? binding.slice(3) : binding;
+}
+
+/** The addresses an invocation's `into` names: none, one, or several. */
+function produceAddresses(into) {
+  if (into === null || into === undefined) return [];
+  return typeof into === 'string' ? [into] : [...into];
+}
+
+/**
+ * The Part addresses one testimony binding reads (RECORD.md, Field rules).
+ *
+ * `px:<address>` is that address. `fn:<id>` is the whole result of that
+ * invocation, which is the one Part it published; `fn:<id>#<address>` names one
+ * produce of an invocation that published several. A known id wins over the `#`
+ * split, so an invocation id that itself carries a `#` still resolves as the bare
+ * reference it is. `producedBy` maps an invocation id to the addresses it
+ * published.
+ */
+function parseBinding(binding, producedBy) {
+  if (typeof binding !== 'string') return [];
+  if (binding.startsWith('px:')) return [binding.slice(3)];
+  if (!binding.startsWith('fn:')) return [];
+  const body = binding.slice(3);
+  if (producedBy.has(body)) return [...producedBy.get(body)];
+  const cut = body.lastIndexOf('#');
+  if (cut > 0 && cut < body.length - 1) {
+    const writer = body.slice(0, cut);
+    const address = body.slice(cut + 1);
+    if (producedBy.has(writer) && producedBy.get(writer).includes(address)) return [address];
+  }
+  return [];
 }
 
 /**
@@ -998,11 +1054,12 @@ function derivePartIndex(ticks) {
       // without passing validate -- a duplicated edge, never a lost one.
       const bindings = [...Object.values(invocation.inputs), ...invocation.declared_consumes];
       for (const binding of bindings) {
-        const address = binding.startsWith('fn:') ? intoById.get(bareAddress(binding)) : bareAddress(binding);
-        if (!address) continue;
-        const part = entry(address);
-        if (!binding.startsWith('fn:') && !produced.has(address)) part.preexisting = true;
-        if (!part.read_by.includes(invocation.id)) part.read_by.push(invocation.id);
+        for (const address of parseBinding(binding, intoById)) {
+          if (!address) continue;
+          const part = entry(address);
+          if (!binding.startsWith('fn:') && !produced.has(address)) part.preexisting = true;
+          if (!part.read_by.includes(invocation.id)) part.read_by.push(invocation.id);
+        }
       }
       for (const address of invocation.actual_consumes) {
         const part = entry(address);
@@ -1014,11 +1071,14 @@ function derivePartIndex(ticks) {
         if (part.written_by === null) part.written_by = invocation.id;
         produced.add(write.address);
       }
-      if (invocation.into) {
-        const part = entry(invocation.into);
-        if (part.written_by === null) part.written_by = invocation.id;
-        produced.add(invocation.into);
-        intoById.set(invocation.id, invocation.into);
+      const produces = produceAddresses(invocation.into);
+      if (produces.length) {
+        for (const address of produces) {
+          const part = entry(address);
+          if (part.written_by === null) part.written_by = invocation.id;
+          produced.add(address);
+        }
+        intoById.set(invocation.id, produces);
       }
     }
   }
