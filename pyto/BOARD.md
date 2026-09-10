@@ -68,6 +68,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 02:51 **started** `task-47`: neat never reuses an id: next_id also counts the landing receipts (task-N, undo-task-N, failed), so an undone or killed task's number is not handed out again; selftest proves it (copy EXP/47; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 02:50 **landed** `task-40`: parallel you can see: the Tick viewer draws a Tick's Calculations side by side when they are parallel branches, prints the Tick's work and latency and the run's critical path, shows placement when the record carries it, and tick_laws names Ticks; the students record is the demo page (14 files since 2b1e082, suites green, receipt 20260910T024939Z-task-40)
 - 2026-09-10 02:48 **landed** `task-41`: the px shell: a px command over records and stores: px ps, px ls, px cat, px diff, px laws, px receipts; PQL reads receipts as Parts; the store refuses writes under px.receipt except from a run; every command is a pure function of its inputs with byte-identical output tests (66 files since 9338247, suites green, receipt 20260910T024755Z-task-41)
 - 2026-09-10 02:42 **refused** `task-40`: dirty file outside allowed paths: pyto/viewer/fixtures/parallel-demo.json  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- pyto/viewer/fixtures/parallel-demo.json  then land, then git stash pop)
