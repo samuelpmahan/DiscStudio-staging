@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.1485290001473913
+  },
+  "parts": {
+    "neat.capture.review.7.5.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.NeatIsAMount": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.7.5.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.7.5.response"
+          ],
+          "args": {
+            "k": 5,
+            "label": "NeatIsAMount",
+            "n": 7,
+            "text": "5 hugging face problem was OpenAI agent hacking hugging face the company due to misalignment. You just made some shit up clearly. OwnerQuotes suck."
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.04578200014293543,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048896513.01,
+              "result_sha256": "d3660230331f1417aff3752c948512ac30e6dc450bc7a4e2947c6213278ad318"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.7.5.response",
+          "result_sha256": "7bbc5bae55ca22c1ffd967d423cc3001359398b4e8d67e2fa9d9312d1feaec9f",
+          "value": {
+            "data": {
+              "k": 5,
+              "label": "NeatIsAMount",
+              "n": 7,
+              "recordedAt": 1789048896513.01,
+              "text": "5 hugging face problem was OpenAI agent hacking hugging face the company due to misalignment. You just made some shit up clearly. OwnerQuotes suck."
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.7.5.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.7.5.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.014958000065234955,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.7.5.response",
+          "result_sha256": "54d0d19bf4b9a55213aad882a872a3d1ca040a4580ea727d58f0330348bccb76",
+          "value": {
+            "data": {
+              "bytes": "5 hugging face problem was OpenAI agent hacking hugging face the company due to misalignment. You just made some shit up clearly. OwnerQuotes suck.",
+              "sha256": "dae9ecbdebca5b4e695d0e80a351a072fc4dba04c11a92127aa2741f2e00293c"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.7.5.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.NeatIsAMount"
+          ],
+          "args": {
+            "k": 5,
+            "kind": "owner",
+            "label": "NeatIsAMount",
+            "n": 7,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.087788999939221,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.NeatIsAMount",
+          "result_sha256": "38d48e18a884c086e78ac2c87c59e2630129a52b376043080facd387d711c386",
+          "value": {
+            "data": {
+              "k": 5,
+              "kind": "owner",
+              "label": "NeatIsAMount",
+              "n": 7,
+              "sha256": "dae9ecbdebca5b4e695d0e80a351a072fc4dba04c11a92127aa2741f2e00293c"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.NeatIsAMount",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

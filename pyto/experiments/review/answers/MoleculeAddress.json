@@ -1,11 +1,11 @@
 {
   "address": "neat.review.answer.MoleculeAddress",
-  "sha256": "6c617e5313c059ca6aaf31127ff2b99277937eb321b9394fbd628d7a7603e62d",
+  "sha256": "ce4526535ad3413467a52f3cf1fd4d69bac7d2a98b69a750204e6cd9b1ef2b2c",
   "value": {
-    "k": 220,
-    "kind": "default",
+    "k": 215,
+    "kind": "owner",
     "label": "MoleculeAddress",
-    "n": 6,
-    "sha256": "ac348454ba264c0733a5f6b86a6e83b7058bed1cd0860d76f901645232dd38ef"
+    "n": 8,
+    "sha256": "c3be7894e6ad82bbc965527173a636e68c8c30b940c841aaa7c2a512e9926c10"
   }
 }

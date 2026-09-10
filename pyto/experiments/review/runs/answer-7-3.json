@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.120646999879682
+  },
+  "parts": {
+    "neat.capture.review.7.3.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.OwnerQuotes": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.7.3.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.7.3.response"
+          ],
+          "args": {
+            "k": 3,
+            "label": "OwnerQuotes",
+            "n": 7,
+            "text": "3 Owner Quotes seem like overly commented code: saying it all so many times to still consistently miss the point shows the exact failure mode"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.05147700039742631,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048896504.9639,
+              "result_sha256": "c7f8ee45625a6058262fd58da150f00eb421aaf4ce67580820bb933f8e62988b"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.7.3.response",
+          "result_sha256": "a5ef8b027ef0233e579998003490393dfe1a9797869e23c441201a00665c6e0e",
+          "value": {
+            "data": {
+              "k": 3,
+              "label": "OwnerQuotes",
+              "n": 7,
+              "recordedAt": 1789048896504.9639,
+              "text": "3 Owner Quotes seem like overly commented code: saying it all so many times to still consistently miss the point shows the exact failure mode"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.7.3.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.7.3.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.01997399976971792,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.7.3.response",
+          "result_sha256": "3f1440d0282c03a6962f413037211685a2ea5911bc7fa17c86cd888b1a27e14b",
+          "value": {
+            "data": {
+              "bytes": "3 Owner Quotes seem like overly commented code: saying it all so many times to still consistently miss the point shows the exact failure mode",
+              "sha256": "ca54f079205efd7d0442df2b3708319320bdea1caec328e5dc8ad3d6d54d0867"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.7.3.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.OwnerQuotes"
+          ],
+          "args": {
+            "k": 3,
+            "kind": "owner",
+            "label": "OwnerQuotes",
+            "n": 7,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.0491959997125377,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.OwnerQuotes",
+          "result_sha256": "0c156d77a3f3a21a6523e0c02273b5c4942dffbd1116881c3f472b74233281ae",
+          "value": {
+            "data": {
+              "k": 3,
+              "kind": "owner",
+              "label": "OwnerQuotes",
+              "n": 7,
+              "sha256": "ca54f079205efd7d0442df2b3708319320bdea1caec328e5dc8ad3d6d54d0867"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.OwnerQuotes",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

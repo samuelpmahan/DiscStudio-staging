@@ -870,6 +870,8 @@ Filed from batch 6 item 219, frozen 9767e1c750b9 (default)
 ### {?} MoleculeAddress
 Default (session, 2026-09-10): "The default stated in task-60's packet stands: the emitted PQL document is one Tick named molecule-<rank>."
 Filed from batch 6 item 220, frozen ac348454ba26 (default)
+Owner, 2026-09-10: "9 a Molecule is a Part. Whether that Part is a Calculation is case by case"
+Filed from batch 8 item 215, frozen c3be7894e6ad
 
 ### {?} CompoundMolecules
 Default (session, 2026-09-10): "The default stated in task-60's packet stands: later SUBDUE ranks are built on an earlier rank's SUB node."
@@ -910,6 +912,8 @@ Filed from batch 6 item 229, frozen cee77363d849 (default)
 ### {?} FileIsNotAnEffect
 Default (session, 2026-09-10): "The default stated in task-65's packet stands: fn.neat.review.file mutates pyto/questions.md directly inside its own Python body rather than through an oc./Effects handle, on the reading that 'oc."
 Filed from batch 6 item 230, frozen 4eefbc3432d3 (default)
+Owner, 2026-09-10: "10 no idea what this one means that’s kinda not great"
+Filed from batch 8 item 225, frozen 5fd673df618f
 
 ### {?} RootItemText
 Default (session, 2026-09-10): "The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne."
@@ -956,3 +960,35 @@ Filed from batch 6 item 240, frozen d19cd833da48 (default)
 ### {?} SubjectIsTheHeadSha
 Default (session, 2026-09-10): "The default stated in task-67's packet stands: the frozen subject is the package plus the candidate's head sha, because the sha fixes the packet and every claimed byte."
 Filed from batch 6 item 241, frozen 5df979ba149b (default)
+
+### {?} MoleculeScheme
+Owner, 2026-09-10: "1 sounds like both are valid projections of the same truth, how could we accommodate both?"
+Filed from batch 7 item 1, frozen 9275da86639b
+
+### {?} RefusedAndKilledSteps
+Owner, 2026-09-10: "2 sounds like you’ve waltzed along long enough you have no idea what refusal actually means in our scheme"
+Filed from batch 7 item 2, frozen da508422178a
+
+### {?} OwnerQuotes
+Owner, 2026-09-10: "3 Owner Quotes seem like overly commented code: saying it all so many times to still consistently miss the point shows the exact failure mode"
+Filed from batch 7 item 3, frozen ca54f079205e
+
+### {?} BatchItemTextLength
+Owner, 2026-09-10: "4 consider my reply effort first. Notice how your pre effort makes it easier for me to precisely reply?"
+Filed from batch 7 item 4, frozen 372c9a3ca2a8
+
+### {?} NeatIsAMount
+Owner, 2026-09-10: "5 hugging face problem was OpenAI agent hacking hugging face the company due to misalignment. You just made some shit up clearly. OwnerQuotes suck."
+Filed from batch 7 item 5, frozen dae9ecbdebca
+
+### {?} StubOpensTheSelftest
+Owner, 2026-09-10: "6 instead of just finding a case where my logic breaks, examine the commonalities of the set where it DOESNT break to understand"
+Filed from batch 7 item 6, frozen 8c656455fc96
+
+### {?} RootLabelsCountAsOpen
+Owner, 2026-09-10: "7 the noise I objected to so long ago was EVERY neat action being a commit, making git unreadably useless. You took that as I should never talk to Sam again lmao"
+Filed from batch 7 item 7, frozen 7bdf5e7f3b4f
+
+### {?} ChainLatencyIsTheWholeTick
+Owner, 2026-09-10: "8 a Tick is when its Sequence of Calculations becomes Inspectable. It is our MINIMAL COMPARATIVE UNIT. Dispatch a sonnet to see how the ChainSpot Stages are composed of sequences of ticks"
+Filed from batch 8 item 157, frozen 4deb371d6b50

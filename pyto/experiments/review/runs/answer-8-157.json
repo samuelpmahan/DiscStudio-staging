@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.3969070000712236
+  },
+  "parts": {
+    "neat.capture.review.8.157.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.ChainLatencyIsTheWholeTick": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.8.157.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.8.157.response"
+          ],
+          "args": {
+            "k": 157,
+            "label": "ChainLatencyIsTheWholeTick",
+            "n": 8,
+            "text": "8 a Tick is when its Sequence of Calculations becomes Inspectable. It is our MINIMAL COMPARATIVE UNIT. Dispatch a sonnet to see how the ChainSpot Stages are composed of sequences of ticks"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.18138299992642715,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048970242.5564,
+              "result_sha256": "b0d3d07752937c6b49fba3d0514dfd3cdd56b07124201c8df5e5bf3fc21d98da"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.8.157.response",
+          "result_sha256": "5ffdd5e0269ea389c8b32c840209915bc81e92c98b09c577108248860dd96547",
+          "value": {
+            "data": {
+              "k": 157,
+              "label": "ChainLatencyIsTheWholeTick",
+              "n": 8,
+              "recordedAt": 1789048970242.5564,
+              "text": "8 a Tick is when its Sequence of Calculations becomes Inspectable. It is our MINIMAL COMPARATIVE UNIT. Dispatch a sonnet to see how the ChainSpot Stages are composed of sequences of ticks"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.8.157.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.8.157.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.021985999865137273,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.8.157.response",
+          "result_sha256": "fc43fe8c83e5eb7a5a52a1843f3812ecee287cf52fffe1a2c3d6c26f0ff7c37c",
+          "value": {
+            "data": {
+              "bytes": "8 a Tick is when its Sequence of Calculations becomes Inspectable. It is our MINIMAL COMPARATIVE UNIT. Dispatch a sonnet to see how the ChainSpot Stages are composed of sequences of ticks",
+              "sha256": "4deb371d6b500df5036fb52a6bb95b2995e2077df665d35d672210cfb4e15238"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.8.157.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.ChainLatencyIsTheWholeTick"
+          ],
+          "args": {
+            "k": 157,
+            "kind": "owner",
+            "label": "ChainLatencyIsTheWholeTick",
+            "n": 8,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.1935380002796592,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.ChainLatencyIsTheWholeTick",
+          "result_sha256": "b9e61224a65695e67fdfc8428bb051918f673a1235ce5d8a2c8bf184edf009ff",
+          "value": {
+            "data": {
+              "k": 157,
+              "kind": "owner",
+              "label": "ChainLatencyIsTheWholeTick",
+              "n": 8,
+              "sha256": "4deb371d6b500df5036fb52a6bb95b2995e2077df665d35d672210cfb4e15238"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.ChainLatencyIsTheWholeTick",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

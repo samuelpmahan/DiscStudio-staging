@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.1311510002087743
+  },
+  "parts": {
+    "neat.capture.review.7.6.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.StubOpensTheSelftest": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.7.6.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.7.6.response"
+          ],
+          "args": {
+            "k": 6,
+            "label": "StubOpensTheSelftest",
+            "n": 7,
+            "text": "6 instead of just finding a case where my logic breaks, examine the commonalities of the set where it DOESNT break to understand"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.04348299989942461,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789048896517.3691,
+              "result_sha256": "8fb008e8c3fad0734253607239dead27264e7f0ae801e8e7ee543b5798ae952a"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.7.6.response",
+          "result_sha256": "0704bc6c8e57852c7f719baae62f9686662d57ceebe15b3deaa787a06e1f6b4d",
+          "value": {
+            "data": {
+              "k": 6,
+              "label": "StubOpensTheSelftest",
+              "n": 7,
+              "recordedAt": 1789048896517.3691,
+              "text": "6 instead of just finding a case where my logic breaks, examine the commonalities of the set where it DOESNT break to understand"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.7.6.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.7.6.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.01661300029809354,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.7.6.response",
+          "result_sha256": "015121b4b6bdafb81139df2aef2318db9e929b36222252cc399c7ae4a79ad659",
+          "value": {
+            "data": {
+              "bytes": "6 instead of just finding a case where my logic breaks, examine the commonalities of the set where it DOESNT break to understand",
+              "sha256": "8c656455fc963cb02498bf12206e9323dd3732ee99ae23910da035db781a8ef7"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.7.6.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.StubOpensTheSelftest"
+          ],
+          "args": {
+            "k": 6,
+            "kind": "owner",
+            "label": "StubOpensTheSelftest",
+            "n": 7,
+            "pyto_root": "pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.0710550000112562,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.StubOpensTheSelftest",
+          "result_sha256": "d8644ec849a2753833148042c05545742298868b33828e1d8ae3fb5bd444140d",
+          "value": {
+            "data": {
+              "k": 6,
+              "kind": "owner",
+              "label": "StubOpensTheSelftest",
+              "n": 7,
+              "sha256": "8c656455fc963cb02498bf12206e9323dd3732ee99ae23910da035db781a8ef7"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.StubOpensTheSelftest",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

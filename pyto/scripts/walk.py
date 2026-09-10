@@ -96,7 +96,6 @@ TAIL = re.compile(r"\s*\((\d+) files since ([0-9a-f]+), suites green, receipt (\
 ABSOLUTE = re.compile(r"(?<![\w/.])(?:/(?:home|Users|root|tmp|private|var|mnt|opt)/|[A-Za-z]:[/\\])[^\s\"'<>)\]&#;,]*")  # stops before an html entity, so an escaped quote after a path survives
 CUT_PATH = "(absolute path cut)"
 
-OWNER = re.compile(r"(?:the )?owner[^'\"\n]{0,40}?[:,]\s*(['\"])(.+?)\1(?=[\s.,;:)]|$)", re.I)
 
 
 def run_git(*args: str) -> str:
@@ -196,14 +195,15 @@ def packet_of(package: str) -> tuple[str, list[str], bool]:
     return intent, qs, os.path.isfile(os.path.join(d, "HANDOFF.md"))
 
 
-def owner_words(*texts: str) -> list[str]:
-    seen, out = set(), []
-    for t in texts:
-        for m in OWNER.finditer(t or ""):
-            q = m.group(2).strip()
-            if q and q not in seen:
-                seen.add(q)
-                out.append(q)
+def owner_words(labels: list[str]) -> list[str]:
+    """The owner's words on a step: only what he filed through `neat answer` for this step's
+    labels, bytes with a digest. Nothing is scraped from prose any more (his reply to OwnerQuotes,
+    2026-09-10: "Owner Quotes seem like overly commented code")."""
+    out = []
+    for label in labels:
+        text = neat_review.answer_text(PYTO_DIR, label)
+        if text and text not in out:
+            out.append(text)
     return out
 
 
@@ -240,7 +240,7 @@ def build_steps() -> tuple[list[dict], list[str]]:
         steps.append({
             **row, "receipt": receipt, "commit": commit,
             "intent_full": commit["subject"] if commit else row["intent"],
-            "owner": owner_words(row["intent"], commit["subject"] if commit else "", packet_intent),
+            "owner": owner_words([neat_review.split_question_line(q)[0] for q in qs]),
             "result": (receipt or {}).get("result", "no receipt"),
             "rscore": (receipt or {}).get("score"),
             "tests": sum(v for v in counts.values() if isinstance(v, int)),
