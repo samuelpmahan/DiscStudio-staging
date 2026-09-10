@@ -15,7 +15,7 @@ Evidence: suite exit 0, see below
 - M  pyto/experiments/grouped-ablation/test_second_experiment.py
 
 ```
- pyto/CHANGES.md                                    |   2 +
+pyto/CHANGES.md                                    |   2 +
  pyto/experiments/grouped-ablation/compare_local.py |  79 +++++++++-
  pyto/experiments/grouped-ablation/pql_document.py  |  20 +++
  .../grouped-ablation/test_second_experiment.py     | 174 +++++++++++++++++++++
@@ -24,9 +24,20 @@ Evidence: suite exit 0, see below
 
 ## Evidence
 
-- verify: `cd pyto && python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py'` exit 0, 248 tests OK (evidence/verify.txt)
+- verify: `cd pyto && python3 -m unittest discover -s experiments/grouped-ablation -p 'test_*.py'` exit 0 (evidence/verify.txt)
 - suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
-- evidence/ under experiments/grouped-ablation was NOT regenerated: nothing there pins the source of these two readers, `git status --porcelain` is clean of it after both runs.
+    suite                         tests  status
+    library                         193  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    248  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             11  OK
+    experiments/tick-laws            10  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
 
 ## Uncertain
 
