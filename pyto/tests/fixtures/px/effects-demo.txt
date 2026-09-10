@@ -1,0 +1,6 @@
+TICK  ID     INDEX  KIND         ARGS          DIGEST
+0     stamp  0      write_text   out/note.txt  d21ca159a726d89af58f7d9fc59be7bced2c40e07e2ec0fcc02aee380b447de6
+0     stamp  1      now_ms       -             3ac586ef19aeef0c72224b75ab639426b7e2aff953943f6f7251045336d3d3fd
+0     stamp  2      random_seed  -             a30034cc537bfb7d29ad2faa1a4c0594de7bd352f64e7492b9dc06297e3f37f3
+0     stamp  3      random       n=1           1361a01415f7dd8eb8f1b3d6d6c0e62857f7d557094e62e0c755ed2d8c9db175
+0     stamp  4      random       n=1           762aa71a7b8055acaf31ed128a2d4bcb7ce96df7b8d4513a903f034bda9ed59c

@@ -51,9 +51,18 @@ COUNTER_KEYS = ("invocations", "hits", "computed", "wall_ms")
 # either writes.
 DOCUMENT_OPTIONAL = ("parallel", "budget")
 TICK_OPTIONAL = ("latency_ms",)
-INVOCATION_OPTIONAL = ("placement",)
+# RECORD.md, "Effects": optional in the same way and for the same reason. Absent
+# means the run performed none -- what every runtime that never heard of an `oc.`
+# Calculation writes -- and a record that carries it carries it on every
+# invocation, empty for every pure one.
+INVOCATION_OPTIONAL = ("placement", "effects")
 PLACEMENT_KEYS = ("worker", "started_ms")
 BUDGET_KEYS = ("limit_ms", "stopped_after_tick", "completed")
+EFFECT_KEYS = ("kind", "args", "result", "result_sha256")
+EFFECT_KINDS = ("write_text", "read_text", "now_ms", "random_seed", "random", "env")
+# The two kinds whose one argument is a path, relative to the run's effects_root
+# and never absolute (RECORD.md, "Effects").
+EFFECT_PATH_KINDS = ("write_text", "read_text")
 
 
 class RecordSchemaError(ValueError):
@@ -287,6 +296,7 @@ def _invocation(inv, path, seen_ids):
     _bool(inv["hit"], f"{path}.hit")
     _value(inv["value"], f"{path}.value")
     _placement(inv, path)
+    _effects(inv, path)
     return inv
 
 
@@ -312,6 +322,48 @@ def _placement(inv, path):
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         _fail(f"{where}.started_ms", f"expected a number, got {_show(value)}")
     return placement
+
+
+def _effects(inv, path):
+    """`effects`, when it is there: what this invocation did to the world, in order.
+
+    RECORD.md, "Effects". A list, empty for a pure `fn.` invocation; one entry per
+    effect, in the order they happened, each
+    `{"kind", "args", "result", "result_sha256"}`. The rules checked here are the
+    ones a replay depends on: a kind it knows, an object of arguments, a path that
+    is relative (a leading `/` or a `..` segment would name a place the record
+    cannot claim), and a digest that is there for every entry -- `result` may be
+    null (a write keeps its text as a digest alone), `result_sha256` may not.
+    """
+    if "effects" not in inv:
+        return None
+    entries = _arr(inv["effects"], f"{path}.effects")
+    for index, entry in enumerate(entries):
+        where = f"{path}.effects[{index}]"
+        _keys(entry, where, EFFECT_KEYS)
+        _enum(entry["kind"], EFFECT_KINDS, f"{where}.kind")
+        args = _obj(entry["args"], f"{where}.args")
+        _str(entry["result_sha256"], f"{where}.result_sha256")
+        if entry["kind"] in EFFECT_PATH_KINDS:
+            if "path" not in args:
+                _fail(f"{where}.args", f'a {entry["kind"]} effect names the file it touched in args.path')
+            file_path = _str(args["path"], f"{where}.args.path")
+            if file_path.startswith("/") or file_path.startswith("\\") or ":" in file_path.split("/")[0]:
+                _fail(f"{where}.args.path", f"expected a path relative to the run's effects_root, got {_show(file_path)}")
+            if any(segment == ".." for segment in file_path.split("/")):
+                _fail(f"{where}.args.path", f"expected a path inside the run's effects_root, got {_show(file_path)}")
+        if entry["kind"] == "write_text" and entry["result"] is not None:
+            _fail(
+                f"{where}.result",
+                "a write_text effect keeps the text it wrote as result_sha256 alone; "
+                f"result is null, got {_show(entry['result'])}",
+            )
+    return entries
+
+
+def invocation_effects(invocation):
+    """This invocation's effects ledger -- absent and empty read the same."""
+    return list(invocation.get("effects") or ())
 
 
 def tick_latency_ms(tick):
