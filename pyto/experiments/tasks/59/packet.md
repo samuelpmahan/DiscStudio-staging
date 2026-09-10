@@ -4,8 +4,36 @@ Intent: the studio's runtime runs chains: exec.js under parallel: true no longer
 Starting point: 7ef7ea8a107987f50ec6af2a0c1ec5130f3cf6a1 (board: **started** `task-58`: the laws read chains: tick_laws.py, px laws and t)
 Verify: node --test tests/*.test.js
 Allow: src/core/exec.js src/runtime.js tests pyto/viewer/adapters.js pyto/viewer/RECORD.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 2 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  src/core/exec.js
+- M  tests/core.test.js
+
+```
+src/core/exec.js   |  71 +++++++++++++++++++++++--------------
+ tests/core.test.js | 102 ++++++++++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 126 insertions(+), 47 deletions(-)
+```
+
+## Evidence
+
+- verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.twMwmzS1Bm) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         327  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            12  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
 
 ## Uncertain
 
