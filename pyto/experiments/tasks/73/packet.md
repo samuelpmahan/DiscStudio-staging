@@ -4,8 +4,52 @@ Intent: the Tick is the thing a person compares: px tick <record> [<name>] print
 Starting point: d4a44b9d1c315a9cfdca66f9c8ed3917e77f5594 (land(task-72): what the ChainSpot LAB says a Tick is: pyto/research/chainspot-stages-ticks.md records, with sha:path:line evidence from the lab tips, how Stages S0 to S3 are composed of Ticks in YAML (Mermaid compiled to it, Python mirroring it), that a Tick is a chain of dependent Calculations whose results become inspectable together, that dependencies cross Tick boundaries by Part, that the gateway publishes one Receipt per Tick with no rollback and no parallelism, what compare.ts and the neon sheet compare Tick by Tick, and that tidy's manifest is tidy.manifest.yaml naming S0 to S3 with version, clean and hash, which corrects the tidy scout's .tidy/manifest.json)
 Verify: cd pyto && python -m unittest tests.test_px && python -m unittest discover -s viewer/test -p 'test_*.py' && node --test viewer/test/*.test.mjs
 Allow: pyto/src/pyto/px.py pyto/tests/test_px.py pyto/tests/fixtures/px pyto/viewer pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 10 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/src/pyto/px.py
+- M  pyto/tests/fixtures/px/diff-students-flipped.txt
+- M  pyto/tests/fixtures/px/diff-students-students.txt
+- A  pyto/tests/fixtures/px/tick-parallel-demo.txt
+- A  pyto/tests/fixtures/px/tick-students.txt
+- M  pyto/tests/test_px.py
+- M  pyto/viewer/adapters.js
+- M  pyto/viewer/test/students-card-tree.golden.txt
+- A  pyto/viewer/test/tick-projection.test.mjs
+- M  pyto/viewer/tick-viewer.js
+
+```
+pyto/src/pyto/px.py                               | 252 ++++++++++++++++++++--
+ pyto/tests/fixtures/px/diff-students-flipped.txt  |   5 +
+ pyto/tests/fixtures/px/diff-students-students.txt |   5 +
+ pyto/tests/fixtures/px/tick-parallel-demo.txt     |  20 ++
+ pyto/tests/fixtures/px/tick-students.txt          |  27 +++
+ pyto/tests/test_px.py                             | 149 ++++++++++++-
+ pyto/viewer/adapters.js                           | 103 +++++++++
+ pyto/viewer/test/students-card-tree.golden.txt    |  36 ++++
+ pyto/viewer/test/tick-projection.test.mjs         | 118 ++++++++++
+ pyto/viewer/tick-viewer.js                        |  37 +++-
+ 10 files changed, 733 insertions(+), 19 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_px && python -m unittest discover -s viewer/test -p 'test_*.py' && node --test viewer/test/*.test.mjs` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.FRzHBK5w8P) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         379  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
 
 ## Uncertain
 
