@@ -1,0 +1,16 @@
+{
+  "labels": ["One color, two representations"],
+  "Ticks": [
+    {
+      "name": "Coordinates",
+      "Calculations": [
+        {
+          "call": "fn.colorStudy.coordinates",
+          "with": {"hex": "px.color.swatch.anchor"},
+          "args": {},
+          "into": ["px.exp.astar.blok.color.rgb", "px.exp.astar.blok.color.hsl"]
+        }
+      ]
+    }
+  ]
+}

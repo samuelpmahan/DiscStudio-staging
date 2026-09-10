@@ -549,6 +549,184 @@ so you do not have to go looking. And 3 is why a
 receipt is worth reading: nothing but a run can write one, so a receipt in the
 store is testimony and not a claim.
 
+## 9. crisp
+
+Everything above builds a program by hand. `crisp` (`pyto/src/pyto/crisp.py`,
+`python -m pyto.crisp`, or `neat crisp` from `pyto/scripts/neat.sh`) has one tiny
+job: turn a capability sentence, a store and a registry into **a composition
+proposal** — one Part, `capabilityDelta`/`why`/`existingParts`/`proposedParts`/
+`existingCalculations`/`proposedCalculations`/`PQL`/`inspection`/`verification`/
+`decisions`/`limits` — and it is the only door into the store: `crisp import`
+runs a proposal's PQL and writes what it produces, and refuses whatever
+`--mode force` would refuse. Three commands, in order: `template` emits one
+proposal; `vary` makes new options from it by changing one binding or
+substituting one Calculation with the same produce shape ("variation through
+PxC"); `import` runs one and writes its Parts.
+
+The fixture below (`tests/fixtures/crisp/`) is built on the Blok color-study
+fixture from section 6's neighbourhood (`tests/fixtures/blok/`): the same
+`fn.colorStudy.coordinates` Calculation and the same `px.color.swatch.anchor`
+swatch, plus two more swatches, a non-colour Part, and two more Calculations —
+one with the same two-Part produce shape as `coordinates` and one with a
+different shape.
+
+`crisp template`, given the Blok root document as its `--pql`, in `--mode
+force`: every name it reads resolves, so the proposal it writes carries no
+`"{?}"` slot anywhere.
+
+```python
+from pyto import crisp
+
+crisp.main([
+    "template", "Derive the coordinates for the anchor swatch.",
+    "--store", "tests/fixtures/crisp/store.json",
+    "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+    "--set", "blok", "--mode", "force",
+    "--pql", "tests/fixtures/crisp/root.pql.json",
+    "--out", "tests/fixtures/crisp/out",
+])
+```
+
+```text
+address: proposal.neat.composition.blok.root.2d0d8a7337f2
+wrote:   tests/fixtures/crisp/out/blok.root.2d0d8a7337f2.json
+{
+  "PQL": {
+    "Ticks": [
+      {
+        "Calculations": [
+          {
+            "args": {},
+            "call": "fn.colorStudy.coordinates",
+            "into": [
+              "px.exp.astar.blok.color.rgb",
+              "px.exp.astar.blok.color.hsl"
+            ],
+            "with": {
+              "hex": "px.color.swatch.anchor"
+            }
+          }
+        ],
+        "name": "Coordinates"
+      }
+    ],
+    "labels": [
+      "One color, two representations"
+    ]
+  },
+  "capabilityDelta": "Derive the coordinates for the anchor swatch.",
+  "decisions": [],
+  "existingCalculations": [
+    {
+      "address": "fn.colorStudy.coordinates",
+      "sha256": "cddeef00dbf3c44038d2ed20200b294784e415dd9b74cb37ef6fb15297d0554a"
+    }
+  ],
+  "existingParts": [
+    {
+      "address": "px.color.swatch.anchor",
+      "sha256": "4e4cfda60bfc10692677d5224c93e788fa827b60e2bdd3f5bafe4b78b69497e1"
+    }
+  ],
+  "inspection": [],
+  "limits": [],
+  "proposedCalculations": [],
+  "proposedParts": [],
+  "verification": [],
+  "why": "a PQL document handed to `crisp template` in force mode: 'Derive the coordinates for the anchor swatch.'"
+}
+```
+
+`crisp vary` reads that proposal back and makes one new option per way to
+change it and stay the same shape: Variation A swaps the `hex` binding for
+every other store address holding a string (`px.color.swatch.paper` and
+`px.color.swatch.ink` — never `px.canvas.width`, a number); Variation B swaps
+`fn.colorStudy.coordinates` for every other registered Calculation that
+publishes the same two Parts when called the same way (`coordinatesInverted`,
+never `luma`, which publishes one). Each option is written as its own proposal
+Part, named `a<n>-<address>`/`b<n>-<address>`.
+
+```python
+import io
+from contextlib import redirect_stdout
+
+from pyto import crisp
+
+with redirect_stdout(io.StringIO()) as hidden:
+    crisp.main([
+        "template", "Derive the coordinates for the anchor swatch.",
+        "--store", "tests/fixtures/crisp/store.json",
+        "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+        "--set", "blok", "--mode", "force",
+        "--pql", "tests/fixtures/crisp/root.pql.json",
+        "--out", "tests/fixtures/crisp/out",
+    ])
+address = hidden.getvalue().splitlines()[0][len("address: "):]
+digest = address.rsplit(".", 1)[-1]
+proposal_path = f"tests/fixtures/crisp/out/blok.root.{digest}.json"
+
+crisp.main([
+    "vary", proposal_path,
+    "--store", "tests/fixtures/crisp/store.json",
+    "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+])
+```
+
+```text
+proposal.neat.composition.blok.a1-ink.27d1370d2f90  binding hex: px.color.swatch.anchor -> px.color.swatch.ink  digest=27d1370d2f90a787a7cb82050fcb19ca070c05c41523a31e34fb54d16378fe10
+proposal.neat.composition.blok.a2-paper.ac5943d1f570  binding hex: px.color.swatch.anchor -> px.color.swatch.paper  digest=ac5943d1f570837025a4a3fc08ebef10c67582d23052cb687a0cfe1c1e47cfc2
+proposal.neat.composition.blok.b1-coordinatesInverted.5c22d72a43d9  call: fn.colorStudy.coordinates -> fn.colorStudy.coordinatesInverted  digest=5c22d72a43d9b1792f97acba3e07f28f326797648b14e6ad8544ec08a64d129b
+```
+
+`crisp import` is the one door into the store: it runs the proposal's PQL
+through `pyto.neat.diff.run_document` (the same builder section 6's PQL reads
+from, reused rather than rewritten), writes a `pyto-run-record@1` at `--out`,
+and writes every Part the run produced — value and digest — to `store-after`.
+
+```python
+import io
+from contextlib import redirect_stdout
+
+from pyto import crisp
+
+with redirect_stdout(io.StringIO()) as hidden:
+    crisp.main([
+        "template", "Derive the coordinates for the anchor swatch.",
+        "--store", "tests/fixtures/crisp/store.json",
+        "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+        "--set", "blok", "--mode", "force",
+        "--pql", "tests/fixtures/crisp/root.pql.json",
+        "--out", "tests/fixtures/crisp/out",
+    ])
+address = hidden.getvalue().splitlines()[0][len("address: "):]
+digest = address.rsplit(".", 1)[-1]
+proposal_path = f"tests/fixtures/crisp/out/blok.root.{digest}.json"
+
+crisp.main([
+    "import", proposal_path,
+    "--store", "tests/fixtures/crisp/store.json",
+    "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+    "--out", "tests/fixtures/crisp/out/run.json",
+])
+```
+
+```text
+ran:         crisp.import (1 invocation(s))
+record:      tests/fixtures/crisp/out/run.json
+store-after: tests/fixtures/crisp/out/store-after.json
+  px.exp.astar.blok.color.hsl  sha256=03d972fb43342565012e359a459c818dc40e6678bfd8205385a11a984b8e5d75
+  px.exp.astar.blok.color.rgb  sha256=bbf9926d0f47244b1f9acf2a9e947fd2f6b3fccf64fe98ac2007377c8ad8945c
+```
+
+`crisp template` without `--pql` writes a skeleton instead, in `--mode imply`
+only: `existingParts`/`existingCalculations` come from whatever the sentence
+names (verbatim, or by a store or registry address's last segment), the PQL's
+`with` bindings are filled from them by declared input name, and anything
+`crisp` cannot resolve — an output address, a plan for `inspection`,
+`verification`, `decisions`, `limits` — is a `"{?}"` slot for a person to fill
+in, never a guess. `--mode force` refuses a skeleton outright: with nothing to
+resolve against, there is nothing for force mode to verify.
+
 ## Where to go next
 
 - `experiments/students/homework.py` — section 7, as a program you can run.

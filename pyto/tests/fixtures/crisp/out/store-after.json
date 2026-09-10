@@ -1,0 +1,18 @@
+{
+  "px.exp.astar.blok.color.hsl": {
+    "sha256": "03d972fb43342565012e359a459c818dc40e6678bfd8205385a11a984b8e5d75",
+    "value": [
+      149.06,
+      40.51,
+      30.98
+    ]
+  },
+  "px.exp.astar.blok.color.rgb": {
+    "sha256": "bbf9926d0f47244b1f9acf2a9e947fd2f6b3fccf64fe98ac2007377c8ad8945c",
+    "value": [
+      47,
+      111,
+      78
+    ]
+  }
+}

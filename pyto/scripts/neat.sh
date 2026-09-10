@@ -16,6 +16,11 @@
 #   neat diff <a.json> <b.json> --store <seed.json> --registry <module:attr> [--label-a T] [--label-b T]
 #                             two PQL documents' difference, computed before it is shown: px.exp.blok.diff.<a>.<b>
 #                             under pyto/experiments/review/diffs, with both documents' run records beside it
+#   neat crisp template "<sentence>" --store <s.json> --registry <module:attr> --set <name> [--mode imply|force] [--pql <doc.json>] [--out <dir>]
+#   neat crisp vary <proposal.json> --store <s.json> --registry <module:attr> [--bindings] [--calculations] [--max N]
+#   neat crisp import <proposal.json> --store <s.json> --registry <module:attr> --out <run.json> [--into <store-after.json>]
+#                             template gen required to import into PxC-ore (pyto/src/pyto/crisp.py): one composition
+#                             proposal Part, its options through variation, and the run that writes its Parts
 #   neat ask                  the tiny-question batch: every unanswered {?}, collated and numbered
 #   neat answer <n> <k> "<words>" [--technical "<text>"]   file the owner's reply to one batch item
 #   neat answers               every filed answer: label, digest, n, k
@@ -63,7 +68,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,23p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,28p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -652,6 +657,13 @@ cmd_diff() {
   "$PYTHON" -m pyto.neat.diff "$@"
 }
 
+cmd_crisp() {
+  # neat crisp template|vary|import ...  A thin forward to pyto.crisp (pyto/src/pyto/crisp.py);
+  # $PYTHON already has pyto importable (this copy's own .venv, or PYTHONPATH), so no cwd or
+  # sys.path trick is needed here (same shape as cmd_diff, above).
+  "$PYTHON" -m pyto.crisp "$@"
+}
+
 cmd_ask() {
   # Collate every unanswered {?} on the tree into one numbered batch (pyto.neat.review), print it,
   # leave the batch Part and the run record under pyto/experiments/review/. cd's into pyto/ first
@@ -709,5 +721,5 @@ case "$cmd" in
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
-  ask) cmd_ask "$@";; answer) cmd_answer "$@";; default) cmd_default "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; *) usage;;
+  ask) cmd_ask "$@";; answer) cmd_answer "$@";; default) cmd_default "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; crisp) cmd_crisp "$@";; *) usage;;
 esac

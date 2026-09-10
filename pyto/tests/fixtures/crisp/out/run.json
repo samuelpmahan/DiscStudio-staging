@@ -1,0 +1,97 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 1,
+    "invocations": 1,
+    "wall_ms": 0.049745000069378875
+  },
+  "parts": {
+    "px.color.swatch.anchor": {
+      "preexisting": true,
+      "read_by": [
+        "c1"
+      ],
+      "written_by": null
+    },
+    "px.exp.astar.blok.color.hsl": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "c1"
+    },
+    "px.exp.astar.blok.color.rgb": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "c1"
+    }
+  },
+  "pcr": "crisp.import",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.color.swatch.anchor"
+          ],
+          "actual_produces": [
+            "px.exp.astar.blok.color.rgb",
+            "px.exp.astar.blok.color.hsl"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.colorStudy.coordinates",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "cddeef00dbf3c44038d2ed20200b294784e415dd9b74cb37ef6fb15297d0554a"
+          },
+          "declared_consumes": [
+            "px:px.color.swatch.anchor"
+          ],
+          "duration_ms": 0.049745000069378875,
+          "hit": true,
+          "id": "c1",
+          "inputs": {
+            "hex": "px:px.color.swatch.anchor"
+          },
+          "into": [
+            "px.exp.astar.blok.color.rgb",
+            "px.exp.astar.blok.color.hsl"
+          ],
+          "result_sha256": "36b6e1a15ffab51e1f7c5482333387143a07baff98d270823345d2ca88cd95c6",
+          "value": {
+            "data": {
+              "px.exp.astar.blok.color.hsl": [
+                149.06,
+                40.51,
+                30.98
+              ],
+              "px.exp.astar.blok.color.rgb": [
+                47,
+                111,
+                78
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.astar.blok.color.rgb",
+              "kind": "new-address"
+            },
+            {
+              "address": "px.exp.astar.blok.color.hsl",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Coordinates"
+    }
+  ]
+}
