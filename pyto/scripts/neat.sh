@@ -13,6 +13,7 @@
 #   neat list                 every experiment and its state
 #   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
 #   neat walk [N | --page [out]]   the walk: the index of landings, one step as text, or the page (default ./walk.html)
+#   neat gate <id> [--mode github|stub:<file>|none]   the join's gate for the copy's head: open only on a human's approval of that exact sha
 #
 # The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
 # owner sees what is coming; those lines go through land.sh --note (commit and push, no receipt).
@@ -55,7 +56,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,15p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,16p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -587,8 +588,40 @@ cmd_selftest() {
   else
     echo "selftest remote desk graded here: FAIL"; failures=$((failures + 1))
   fi
+  # The gate at the join (task 67): a stub event that approves the exact head lets a landing through
+  # and the receipt records it as untrusted; a stub that rejects closes the join by name.
+  printf '{"login":"selftest","disposition":"approve","selection":"<head>","text":"stub approve"}\n' > "$tmp/approve.json"
+  printf '{"login":"selftest","disposition":"reject","selection":"<head>","text":"no"}\n' > "$tmp/reject.json"
+  if bash "$tools_dir/neat.sh" new "gated" --verify true --allow gated.txt >"$tmp/gate-new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  gated_id="$(ls "$clone/EXP" | sort -n | tail -1)"
+  printf 'gated\n' > "$clone/EXP/$gated_id/gated.txt"
+  if bash "$tools_dir/neat.sh" pack "$gated_id" >"$tmp/gate-pack.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  if NEAT_GATE="stub:$tmp/reject.json" bash "$tools_dir/neat.sh" land "$gated_id" >"$tmp/gate-reject.txt" 2>&1; then
+    echo "selftest gate closed by a rejection: FAIL (it landed)"; failures=$((failures + 1))
+  elif grep -q "gate closed" "$tmp/gate-reject.txt"; then
+    echo "selftest gate closed by a rejection: pass"
+  else
+    echo "selftest gate closed by a rejection: FAIL"; failures=$((failures + 1)); tail -5 "$tmp/gate-reject.txt"
+  fi
+  if NEAT_GATE="stub:$tmp/approve.json" bash "$tools_dir/neat.sh" land "$gated_id" >"$tmp/gate-approve.txt" 2>&1 &&
+     grep -q '"stub_allowed": true' "$clone"/.neat/landings/*-task-"$gated_id"/receipt.json &&
+     grep -q '"trusted": false' "$clone"/.neat/landings/*-task-"$gated_id"/receipt.json; then
+    echo "selftest gate opened by a stub, recorded untrusted: pass"
+  else
+    echo "selftest gate opened by a stub, recorded untrusted: FAIL"; failures=$((failures + 1)); tail -5 "$tmp/gate-approve.txt"
+  fi
   rm -rf "$tmp"
   [ "$failures" -eq 0 ]
+}
+
+cmd_gate() {
+  # neat gate <id> [--mode github|stub:<event.json>|none]: evaluate the gate for the copy's head as a
+  # landing would (task 67). Prints the gate Part; exit 0 open, 3 closed, 2 unknown mode.
+  local id="${1:-}"; [ -n "$id" ] || die "neat gate <id> [--mode ...]"
+  case "$id" in *[!0-9]*) die "neat gate takes a task id: neat gate 65";; esac
+  shift
+  local head; head="$(git -C "$ROOT" rev-parse "exp/$id" 2>/dev/null)" || die "no branch exp/$id here"
+  ( cd "$ROOT" && "$PYTHON" -m pyto.neat.gate --package "task-$id" --head "$head" --branch "exp/$id" --root "$ROOT" "$@" )
 }
 
 cmd_walk() {
@@ -626,5 +659,5 @@ cmd_list() {
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
-  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; *) usage;;
+  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";; *) usage;;
 esac

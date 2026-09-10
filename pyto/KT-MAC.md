@@ -213,6 +213,25 @@ a landed line with no receipt.
 
 Delete it when you have seen it: `rm ~/walk.html`.
 
+## Chunk 9: the gate (10 minutes, needs a GitHub token)
+
+```
+cd ~/DiscStudio-staging
+echo github > .neat/gate
+export GITHUB_TOKEN="$(gh auth token)"     # or paste a token with repo read access
+bash pyto/scripts/neat.sh gate 65          # closed: no review by samuelpmahan on <sha>
+```
+
+Then open a pull request from `exp/65` to the branch you land on, approve it on GitHub
+in your own account, and run the same line again: open, with your login and the sha.
+`neat land 65` now refuses without that approval and records it when it has it; the
+walk's step says "approved by samuelpmahan on <sha>" instead of "unapproved". Remove
+`.neat/gate` to go back to ungated landings; every receipt says which it was.
+
+You see: the first landing you approved before it landed. The stub mode
+(`NEAT_GATE=stub:<event.json>`) is for the selftest only; a receipt it opens says
+`"trusted": false` and the walk says "stub gate, never trusted".
+
 ## Ran on
 
 (one line per machine, appended by chunk 6)
