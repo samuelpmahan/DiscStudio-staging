@@ -320,6 +320,6 @@
   ],
   "landed_by": "session",
   "at": "2026-09-10T03:06:23.440090Z",
-  "result_sha": null,
+  "result_sha": "b58d0cc88a72e2c9ca0ec43dca505dd3707ee015",
   "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
 }

@@ -4,12 +4,15 @@ name: check_all on three OSes
 on:
   push:
     branches: [claude/os-sprint-st8hnu, claude/python-ultracode-supercharge-st8hnu]
+    paths-ignore:
+      - 'pyto/BOARD.md'
+      - 'pyto/experiments/landings/**'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
   group: check-all-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false   # every landing gets its run; runs queue instead of cancelling
 jobs:
   suite:
     strategy:
