@@ -176,6 +176,29 @@ What that sprint landed, one line per add, named by the task's own intent line, 
   default the session took in his place, verified against the record, each with the sentence that
   overturns it.
 
+- The frontier runs through the owner, built: tasks 65, 66 and 67, after his words of 05:20
+  ("tailored for subagent throughput THROUGH ME. As many lil tiny questions as possible") and of 08:30
+  ("Implement the entire thing with a pair of Sonnet XHighs, you do integration. Yours will be expected
+  to easily merge with my local system due to smart P&C usage"). Every piece is a Part or a
+  Calculation with an address from his local YAML's namespaces, run through an observed PCR that
+  leaves a run record:
+  - the question loop (task 65): `fn.neat.review.collate` makes one numbered batch Part
+    (`proposal.neat.batch.<n>`) of every unanswered `{?}`; `oc.neat.review.captureHumanText`,
+    `fn.tidy.freezeText` and `fn.neat.review.file` take the owner's reply as bytes, freeze its digest
+    and file it on the root verbatim; `neat ask`, `neat answer`, `neat answers`; the walk shows each
+    step's open questions and which are answered;
+  - the difference before it is shown, and counting before mining (task 66): `fn.neat.diff.candidates`
+    runs two PQL documents and writes `px.exp.blok.diff.<a>.<b>` (structural same or different, each
+    output same, changed or new, the remainder no calculation settled), on the owner's Blok cards
+    as fixtures; `fn.molecules.transitions` counts every transition in the run records and report.md
+    opens with the count table, the first mathematics before the second;
+  - the join's gate (task 67): `fn.neat.gate.evaluate` and `oc.neat.gate.githubReview`; `neat land`
+    refuses when `.neat/gate` names github and no approving review by the owner's login sits on the
+    candidate's exact head sha; every receipt says which mode it landed under and the walk says
+    "approved by ... on <sha>" or "unapproved" per step.
+  What it does not do: authenticate anyone itself (GitHub does); run a chain's molecule as a
+  Calculation; carry a question to the board page (`{?} Channel`, unanswered).
+
 What those adds did not finish, so it is not lost with them:
 
 - The record still carries one `result_sha256` per invocation and no per-produce digest
