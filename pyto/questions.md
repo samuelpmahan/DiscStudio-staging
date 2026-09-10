@@ -707,6 +707,16 @@ own records (what they retry, where they write `{?}`, what they undo, how long a
 never from a profile.
 Owner, 2026-09-09 evening, on why any of this exists when ChainSpot and DiscStudio do not need it: "Workspace. Educational." and, of Homeroom Heroes, "this would be a good reason why". So the workspace is not a side effect; it is the product for that audience, and the studio is its first tenant.
 
+### {?} Frontier
+The owner, 2026-09-10: "I think the best way to run this is to build whatever task frontier and instead
+of going just in order we refine and merge compatible things. Building the OS is much more understandable
+if each add includes an illustrative feature add or is a few complementary things." Adopted as the way
+work is planned: the frontier is every candidate on the record (open `{?}` defaults, packet residuals,
+product asks), kept at pyto/FRONTIER.md; adds are made by merging compatible candidates so that each add
+is one OS piece plus the feature that shows it, or a few complementary pieces, never a bare kernel change;
+order is by what is understandable next, not by id. Default: the frontier file is the queue; a task opens
+from an add, not from a single candidate, and the add's name is the task's intent.
+
 ### {?} DeterministicInterrupts
 The owner, 2026-09-10, on the board page: "Holy shit the interrupt accumulation is gooooood. Is this all
 deterministic?" Answer: the accounting is (every Today line is written by a script from a verifier exit
