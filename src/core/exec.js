@@ -219,7 +219,7 @@ export async function invokePqlAsync(composition, second, third) {
   for (const tick of composition.Ticks) {
     if (ticks.length && overBudget(budgetMs, clock, started)) { stoppedAfterTick = ticks[ticks.length - 1].name; break; }
     if (parallel) refuseUnparallelTick(tick);
-    const tickStarted = clock(), placements = [];
+    const tickStarted = clock(), placements = [], published = [];
     let steps;
     if (parallel) {
       // Each wrapper runs to its first await, so a worker index is handed out in
@@ -231,15 +231,18 @@ export async function invokePqlAsync(composition, second, third) {
         catch (cause) { throw failed(tick, calculation, cause); }
       }));
     } else {
-      steps = [];
+      // Serial is exactly the synchronous path, awaited: each Calculation is
+      // published before the next one reads, so a serial Tick may read what its
+      // predecessor in the same Tick wrote. Only a parallel Tick refuses that.
+      steps = null;
       for (const calculation of tick.Calculations) {
         placements.push(null);
-        try { const step = invoke(calculation, pxc, overrides); step.output = await step.output; steps.push(step); }
+        try { const step = invoke(calculation, pxc, overrides); step.output = await step.output; published.push(publish(tick, calculation, step, pxc)); }
         catch (cause) { throw failed(tick, calculation, cause); }
       }
     }
     const latency = round3(clock() - tickStarted);
-    const calculations = tick.Calculations.map((calculation, index) => {
+    const calculations = steps === null ? published : tick.Calculations.map((calculation, index) => {
       try { return publish(tick, calculation, steps[index], pxc); }
       catch (cause) { throw failed(tick, calculation, cause); }
     });

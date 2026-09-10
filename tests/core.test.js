@@ -2,12 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSeed } from '../src/seed.js';
 import { createStudioRuntime } from '../src/runtime.js';
-import { createExecBoard, invokePql, pxFn, queryPrefix, readPql } from '../src/core/exec.js';
+import { createExecBoard, invokePql, invokePqlAsync, pxFn, queryPrefix, readPql } from '../src/core/exec.js';
 import { discoverFields, materialFor, currentBattle, clone, validateWorld } from '../src/domain.js';
 import { fieldNode } from '../src/presentation.js';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { validate } from '../pyto/viewer/adapters.js';
+import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
 import { renderRecord } from '../pyto/viewer/tick-viewer.js';
 import { buildPage, composePage } from '../pyto/viewer/embed.mjs';
 import { render as painterRender } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
@@ -361,4 +361,150 @@ test('the run record lists the undo invocations, push and pop alike', () => {
   assert.deepEqual(undone.ticks.flatMap(tick => tick.invocations).map(i => i.into), ['px.studio.world', 'px.undo.studio']);
   assert.equal(undone.counters.invocations, 2);
   assert.equal(r.receipts().rows.map(row => row.name).filter(name => name.startsWith('studio-undo')).length, 2);
+});
+
+/* ------------------------------------------------------------------ */
+/* the schedule: parallel Ticks, placement, latency and a budget       */
+/* (src/core/exec.js, pyto/viewer/RECORD.md "Placement and budget")    */
+/* ------------------------------------------------------------------ */
+
+// Kills: dropping refuseUnparallelTick from invokePqlAsync (exec.js:130) makes
+// the sibling read and the duplicate `into` run instead of being refused;
+// moving the publish loop inside the Promise.all wrapper (exec.js:141-147) lets
+// the board hold half a Tick; checking the budget inside a Tick instead of at
+// the boundary (exec.js:118, `overBudget`) stops mid-Tick and the board keeps a
+// Part of the Tick the record says never ran.
+
+const SLEEP_MS = 40;
+const parse = document => readPql(JSON.stringify(document), JSON.parse);
+const testimony = run => JSON.stringify({ PrincipleComponentRender: run.PrincipleComponentRender, Ticks: run.Ticks });
+function timerBoard() {
+  const board = createExecBoard();
+  board.register(pxFn('fn.seed'), ({ n }) => n);
+  board.register(pxFn('fn.slow'), async ({ base, n }) => { await new Promise(resolve => setTimeout(resolve, SLEEP_MS)); return base * 10 + n; });
+  board.register(pxFn('fn.join'), inputs => Object.keys(inputs).sort().map(key => inputs[key]).join('+'));
+  return board;
+}
+const fanDocument = {
+  PrincipleComponentRender: 'schedule-demo',
+  Ticks: [
+    { name: 'Seed', Calculations: [{ call: 'fn.seed', args: { n: 3 }, into: 'px.seed' }] },
+    { name: 'Fan', Calculations: [0, 1, 2, 3].map(n => ({ call: 'fn.slow', with: { base: 'px.seed' }, args: { n }, into: `px.leg.${n}` })) },
+    { name: 'Join', Calculations: [{ call: 'fn.join', with: { a: 'px.leg.0', b: 'px.leg.1', c: 'px.leg.2', d: 'px.leg.3' }, into: 'px.total' }] }
+  ]
+};
+
+test('a Tick of four timer-awaiting Calculations runs at once: latency under the work, testimony byte-identical to the serial run', async () => {
+  const serialBoard = timerBoard(), parallelBoard = timerBoard();
+  const serialStarted = Date.now();
+  const serial = await invokePqlAsync(parse(fanDocument), serialBoard, { parallel: false });
+  const serialElapsed = Date.now() - serialStarted;
+  const parallel = await invokePqlAsync(parse(fanDocument), parallelBoard, { parallel: true });
+
+  assert.equal(testimony(serial), testimony(parallel), 'the schedule is not the program: the testimony is the same bytes either way');
+  assert.equal(serialBoard.get('px.total'), parallelBoard.get('px.total'));
+  assert.equal(serial.schedule, undefined, 'a serial, unbudgeted run reports no schedule at all');
+
+  const fan = parallel.schedule.ticks[1], work = SLEEP_MS * fanDocument.Ticks[1].Calculations.length;
+  assert.equal(parallel.schedule.parallel, true);
+  assert.deepEqual(parallel.schedule.budget, { limit_ms: null, stopped_after_tick: null, completed: true });
+  assert.deepEqual(fan.placements.map(p => p.worker), [0, 1, 2, 3], 'one worker index per branch, in the order the branches start');
+  assert.ok(fan.placements.every(p => p.started_ms >= 0 && p.started_ms < SLEEP_MS), fan.placements);
+  assert.ok(fan.latency_ms < work * 0.75, `latency ${fan.latency_ms}ms is not under the ${work}ms of work`);
+  assert.ok(serialElapsed >= work * 0.75, `the serial run took ${serialElapsed}ms, which is not the work`);
+  assert.deepEqual(parallel.schedule.ticks[0].placements.map(p => p.worker), [0], 'the one branch of a one-Calculation Tick is worker 0');
+  assert.deepEqual(serialBoard.get('px.leg.2'), parallelBoard.get('px.leg.2'));
+  console.log(`# parallel Fan Tick: work ${work}ms (4 x ${SLEEP_MS}ms), latency ${fan.latency_ms}ms; the same run serially: ${serialElapsed}ms`);
+});
+
+test('a Calculation that reads a sibling produce in the same Tick is refused by name, before the Tick runs', async () => {
+  const board = timerBoard();
+  const document = { PrincipleComponentRender: 'sibling-read', Ticks: [{ name: 'Fan', Calculations: [
+    { call: 'fn.seed', args: { n: 1 }, into: 'px.a' },
+    { call: 'fn.join', with: { a: 'px.a' }, into: 'px.b' }
+  ] }] };
+  await assert.rejects(() => invokePqlAsync(parse(document), board, { parallel: true }), error => {
+    assert.match(error.message, /parallel refused/);
+    assert.match(error.message, /Calculations\[1\] 'fn\.join' -> px\.b reads 'px\.a'/);
+    assert.match(error.message, /sibling Calculations\[0\] 'fn\.seed' -> px\.a/);
+    return true;
+  });
+  assert.equal(board.has('px.a'), false, 'a refused Tick publishes nothing at all');
+  assert.equal(board.has('px.b'), false);
+  // A prefix query reads every address under it, so it reads a sibling's produce too.
+  const query = { PrincipleComponentRender: 'sibling-query', Ticks: [{ name: 'Fan', Calculations: [
+    { call: 'fn.seed', args: { n: 1 }, into: 'px.leaf.one' },
+    { call: 'fn.join', with: { all: 'px.leaf.*' }, into: 'px.b' }
+  ] }] };
+  await assert.rejects(() => invokePqlAsync(parse(query), board, { parallel: true }), /reads 'px\.leaf\.one'/);
+  // The same document is not refused serially: the sibling read is a schedule question.
+  const serial = await invokePqlAsync(parse(document), board, { parallel: false });
+  assert.equal(serial.Ticks[0].Calculations.length, 2);
+});
+
+test('two Calculations of one Tick declaring one into are refused by name', async () => {
+  const board = timerBoard();
+  const document = { PrincipleComponentRender: 'one-address-two-producers', Ticks: [{ name: 'Fan', Calculations: [
+    { call: 'fn.seed', args: { n: 1 }, into: ['px.a', 'px.shared'] },
+    { call: 'fn.seed', args: { n: 2 }, into: 'px.shared' }
+  ] }] };
+  await assert.rejects(() => invokePqlAsync(parse(document), board, { parallel: true }), error => {
+    assert.match(error.message, /Calculations\[0\] 'fn\.seed' -> px\.a, px\.shared and Calculations\[1\] 'fn\.seed' -> px\.shared both declare into 'px\.shared'/);
+    return true;
+  });
+  assert.equal(board.has('px.a'), false, 'a refused Tick publishes nothing at all');
+});
+
+test('a budget stops the run at a Tick boundary: the board holds whole Ticks and the record says which was the last', () => {
+  const board = createExecBoard();
+  let now = 0;
+  const clock = () => now;
+  board.register(pxFn('fn.step'), ({ ms }) => { now += ms; return now; });
+  const document = { PrincipleComponentRender: 'budgeted', Ticks: ['Tick1', 'Tick2', 'Tick3', 'Tick4'].map((name, index) => ({
+    name, Calculations: [{ call: 'fn.step', args: { ms: 10 }, into: `px.part.${index + 1}` }]
+  })) };
+  const run = invokePql(parse(document), board, { budgetMs: 15, clock });
+
+  assert.deepEqual(run.Ticks.map(tick => tick.name), ['Tick1', 'Tick2'], 'the Tick that started finished; the next one never began');
+  assert.deepEqual([1, 2, 3, 4].map(n => board.has(`px.part.${n}`)), [true, true, false, false]);
+  assert.deepEqual(run.schedule.budget, { limit_ms: 15, stopped_after_tick: 'Tick2', completed: false });
+  assert.equal(run.schedule.parallel, false);
+  assert.deepEqual(run.schedule.ticks.map(tick => tick.latency_ms), [10, 10]);
+
+  const trace = run.Ticks.flatMap(tick => tick.Calculations.map(calculation => ({
+    tick: tick.name, call: calculation.actualCall, inputs: calculation.with, output: calculation.into,
+    produces: calculation.produces, reused: false, material: null, revision: 1
+  })));
+  const record = fromDiscStudioReceipt(run, { composition: document, trace, computed: trace.length, reused: 0, schedule: run.schedule });
+  assert.deepEqual(record.budget, { limit_ms: 15, stopped_after_tick: 'Tick2', completed: false });
+  assert.equal(record.parallel, false);
+  assert.deepEqual(record.ticks.map(tick => tick.name), ['Tick1', 'Tick2']);
+  assert.deepEqual(record.ticks.map(tick => tick.latency_ms), [10, 10]);
+  assert.deepEqual(record.ticks.flatMap(tick => tick.invocations.map(invocation => invocation.placement)), [null, null]);
+  assert.ok(validate(record));
+  assert.throws(() => validate({ ...record, budget: { ...record.budget, stopped_after_tick: 'Tick9' } }), /names no Tick in this record/);
+});
+
+test('a serial, unbudgeted run writes the record it always wrote, byte for byte', () => {
+  const r = make();
+  r.scene({ ...context });
+  const { record } = r.runRecord('on-the-course');
+  const fixture = JSON.parse(readFileSync(resolve('tests/fixtures/serial-run-record.json'), 'utf8'));
+  assert.equal(JSON.stringify(record, null, 2), JSON.stringify(fixture, null, 2), 'the schedule fields are absent from a serial, unbudgeted record and nothing else moved');
+  const text = JSON.stringify(record);
+  for (const field of ['parallel', 'budget', 'latency_ms', 'placement']) assert.equal(text.includes(`"${field}"`), false, field);
+});
+
+test('fromDiscStudioReceipt takes an array into: the list is the into, and every declared address is a produce', () => {
+  const r = make();
+  r.receipts();
+  const { record } = r.runRecord('studio-receipts');
+  const invocation = record.ticks[0].invocations[0];
+  assert.deepEqual(invocation.into, ['px.studio.receipts', 'px.studio.receipts.summary']);
+  assert.deepEqual(invocation.actual_produces, invocation.into);
+  assert.deepEqual(invocation.writes, invocation.into.map(address => ({ address, kind: 'new-address' })));
+  assert.equal(invocation.id, 'px.studio.receipts', 'the invocation id is the first address it declares');
+  for (const address of invocation.into) assert.equal(record.parts[address].written_by, invocation.id);
+  assert.equal(record.counters.invocations, 1);
+  assert.ok(validate(record));
 });
