@@ -22,8 +22,8 @@ pyto/FRONTIER.md                        |   23 +
 
 ## Evidence
 
-- verify: `cd pyto && test -s experiments/review/batches/2.json && python -m unittest tests.test_neat_review tests.test_neat_diff tests.test_neat_gate && grep -q 'task 67' FRONTIER.md` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.etyMyPNnNr) (evidence/check_all.txt)
+- verify: `cd pyto && test -s experiments/review/batches/2.json && python -m unittest tests.test_neat_review tests.test_neat_diff tests.test_neat_gate && grep -q 'task 67' FRONTIER.md` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.iBKg1NNRzo) (evidence/check_all.txt)
     suite                         tests  status
     library                         366  OK
     experiments/classroom            16  OK

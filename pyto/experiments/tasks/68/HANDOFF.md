@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/68
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/68:pyto/experiments/tasks/68/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff f6c62a1 origin/exp/68 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 58549df origin/exp/68 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ the first batch through the integrated loop: neat ask run once on the tree that 
 
 ## Starting point
 
-dfd020b77d3fb1e46c4c0274712fd80261d51b8d (land(task-66): the difference is computed before it is shown, and counting comes before mining: pyto/src/pyto/neat/diff.py registers fn.neat.diff.candidates (two PQL documents and a seed store in, px.exp.blok.diff.<a>.<b> out: structural same or different, each output same, changed or new by value digest, and the remainder no calculation settled; documents with oc. calls are not run and say so); neat diff prints it and keeps the Part under pyto/experiments/review/diffs; pyto/experiments/molecules/transitions.py registers fn.molecules.transitions (every run record's invocation-to-invocation and Part-to-invocation transition counted, px.exp.molecules.transitions, stable order) and report.md opens with the count table before any molecule). MAIN may have moved since: `git log --oneline f6c62a1..origin/claude/os-sprint-st8hnu` shows how far.
+dfd020b77d3fb1e46c4c0274712fd80261d51b8d (land(task-66): the difference is computed before it is shown, and counting comes before mining: pyto/src/pyto/neat/diff.py registers fn.neat.diff.candidates (two PQL documents and a seed store in, px.exp.blok.diff.<a>.<b> out: structural same or different, each output same, changed or new by value digest, and the remainder no calculation settled; documents with oc. calls are not run and say so); neat diff prints it and keeps the Part under pyto/experiments/review/diffs; pyto/experiments/molecules/transitions.py registers fn.molecules.transitions (every run record's invocation-to-invocation and Part-to-invocation transition counted, px.exp.molecules.transitions, stable order) and report.md opens with the count table before any molecule). MAIN may have moved since: `git log --oneline 58549df..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -72,8 +72,8 @@ pyto/FRONTIER.md                        |   23 +
 
 ## Evidence
 
-- verify: `cd pyto && test -s experiments/review/batches/2.json && python -m unittest tests.test_neat_review tests.test_neat_diff tests.test_neat_gate && grep -q 'task 67' FRONTIER.md` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.etyMyPNnNr) (evidence/check_all.txt)
+- verify: `cd pyto && test -s experiments/review/batches/2.json && python -m unittest tests.test_neat_review tests.test_neat_diff tests.test_neat_gate && grep -q 'task 67' FRONTIER.md` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.iBKg1NNRzo) (evidence/check_all.txt)
     suite                         tests  status
     library                         366  OK
     experiments/classroom            16  OK
