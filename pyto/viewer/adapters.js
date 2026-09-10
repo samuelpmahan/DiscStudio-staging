@@ -614,7 +614,7 @@ export function runSchedule(record) {
   };
 }
 
-function assemble({ pcr, source, ticks, wallMs = null }) {
+function assemble({ pcr, source, ticks, wallMs = null, schedule = null }) {
   const record = {
     schema: SCHEMA,
     pcr,
@@ -623,6 +623,17 @@ function assemble({ pcr, source, ticks, wallMs = null }) {
     parts: derivePartIndex(ticks),
     counters: deriveCounters(ticks, wallMs)
   };
+  // RECORD.md, "Placement and budget": the four fields go in together and only
+  // when the run was parallel, was given a budget, or was stopped by one, and
+  // they go in last, in the order pyto.materialize.run_record writes them.
+  if (schedule) {
+    record.parallel = schedule.parallel === true;
+    record.budget = {
+      limit_ms: schedule.budget?.limit_ms ?? null,
+      stopped_after_tick: schedule.budget?.stopped_after_tick ?? null,
+      completed: schedule.budget?.completed !== false
+    };
+  }
   return validate(record);
 }
 
@@ -672,6 +683,11 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
   const name = requireString(pqlRun.PrincipleComponentRender, 'discstudio.pqlRun.PrincipleComponentRender');
   const pqlTicks = requireArray(pqlRun.Ticks, 'discstudio.pqlRun.Ticks');
   const trace = receipt ? requireArray(receipt.trace, 'discstudio.receipt.trace') : [];
+  // The schedule exec.js reported for this run (src/core/exec.js `schedule`),
+  // filed on the receipt by runtime.js and on the composition Part by the run
+  // itself. Absent on both is a serial, unbudgeted run and stays absent here.
+  const scheduled = (receipt && receipt.schedule) || pqlRun.schedule || null;
+  const scheduledTick = (index) => (scheduled ? scheduled.ticks?.[index] ?? null : null);
 
   const produced = new Set();
   const seen = new Set();
@@ -679,7 +695,7 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
   let flat = 0;
 
   pqlTicks.forEach((tick, index) => {
-    const invocations = requireArray(tick.Calculations, `discstudio.pqlRun.Ticks[${index}].Calculations`).map((calculation) => {
+    const invocations = requireArray(tick.Calculations, `discstudio.pqlRun.Ticks[${index}].Calculations`).map((calculation, order) => {
       const step = trace[flat] ?? null;
       flat += 1;
       const bindings = calculation.with ?? {};
@@ -693,14 +709,20 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
         declared.push(`px:${address}`);
         actual.push(address);
       }
+      // `into` is one address or, since task 42, a list of them: one pass, several
+      // Parts, one invocation listing all of them ({?} RecordAdapterHasOneIntoPerInvocation).
       const into = calculation.into ?? null;
-      const kind = into === null ? null : actual.includes(into) ? 'refinement' : produced.has(into) ? 'replacement' : 'new-address';
+      const addresses = into === null ? [] : Array.isArray(into) ? [...into] : [into];
+      const writes = addresses.map((address) => ({
+        address,
+        kind: actual.includes(address) ? 'refinement' : produced.has(address) ? 'replacement' : 'new-address'
+      }));
       const reused = step ? step.reused === true : false;
       const hit = deriveHit(declared, produced, reused);
       const material = step && typeof step.material === 'string' ? step.material : null;
       const revision = step && step.revision !== undefined ? step.revision : null;
       const invocation = {
-        id: uniqueId(into ?? `${tick.name}:${calculation.call}`, seen),
+        id: uniqueId(addresses[0] ?? `${tick.name}:${calculation.call}`, seen),
         calculation: {
           address: calculation.actualCall ?? calculation.call ?? null,
           // runtime.js keys memo identity on { revision, inputs } (runtime.js:15),
@@ -713,21 +735,27 @@ export function fromDiscStudioReceipt(pqlRun, receipt, { version = null, commit 
         into,
         declared_consumes: declared,
         actual_consumes: actual,
-        actual_produces: into === null ? [] : [into],
-        writes: into === null ? [] : [{ address: into, kind }],
+        actual_produces: addresses,
+        writes,
         // runtime.js records reuse and material identity, never a duration.
         duration_ms: null,
         result_sha256: material,
         hit,
         value: discStudioValue(calculation.output, material, reused)
       };
-      if (into !== null) produced.add(into);
+      // Placement is written for every invocation of a run that reports a
+      // schedule and for no invocation of one that does not: a serial Tick has
+      // none to report and says so with null.
+      if (scheduled) invocation.placement = scheduledTick(index)?.placements?.[order] ?? null;
+      for (const address of addresses) produced.add(address);
       return invocation;
     });
-    ticks.push({ index, name: requireString(tick.name, `discstudio.pqlRun.Ticks[${index}].name`), invocations });
+    const entry = { index, name: requireString(tick.name, `discstudio.pqlRun.Ticks[${index}].name`), invocations };
+    if (scheduled) entry.latency_ms = scheduledTick(index)?.latency_ms ?? null;
+    ticks.push(entry);
   });
 
-  return assemble({ pcr: name, source: { runtime: 'discstudio', version, commit }, ticks });
+  return assemble({ pcr: name, source: { runtime: 'discstudio', version, commit }, ticks, schedule: scheduled });
 }
 
 function discStudioValue(output, material, reused) {

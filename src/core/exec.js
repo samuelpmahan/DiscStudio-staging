@@ -85,25 +85,169 @@ export function readPql(source, parseYaml) {
     }) };
   }) };
 }
-export function invokePql(composition, { pxc, overrides = {} }) {
-  const ticks = [];
-  for (const tick of composition.Ticks) {
-    const calculations = [];
-    for (const calculation of tick.Calculations) {
-      try {
-        const inputs = Object.fromEntries(Object.entries(calculation.with).map(([name, address]) => [name, isPrefixQuery(address) ? queryPrefix(pxc, address) : pxc.get(address)]));
-        const replacement = overrides[calculation.call], actualCall = replacement?.call ?? calculation.call, args = { ...calculation.args, ...replacement?.args };
-        for (const name of Object.keys(inputs)) if (Object.hasOwn(args, name)) throw new Error(`Argument '${name}' shadows a named input.`);
-        const addresses = produceAddresses(calculation.into);
-        const output = pxc.call(pxFn(actualCall), { ...args, ...inputs });
-        const values = Array.isArray(calculation.into) ? spread(calculation.into, output, `${tick.name}.${calculation.call}.into`) : [output];
-        addresses.forEach((address, index) => pxc.set(address, values[index]));
-        calculations.push({ ...calculation, actualCall, args, inputs, output, produces: addresses });
-      } catch (cause) { throw new Error(`PQL ${tick.name}: ${calculation.call} -> ${produceAddresses(calculation.into).join(', ')} failed.`, { cause }); }
+
+/* ------------------------------------------------------------------ */
+/* the schedule: parallel Ticks, placement, latency and a budget       */
+/* ------------------------------------------------------------------ */
+
+/** Milliseconds, rounded the way the record rounds them (RECORD.md). */
+function round3(value) { return Math.round(value * 1000) / 1000; }
+/** The default clock is injectable so a budget test never waits on real time. */
+const wallClock = () => performance.now();
+/** How the options reach here: `invokePql(doc, pxc, opts)` and `invokePql(doc, {pxc, ...opts})` are the same call. */
+function options(second, third) { return second && typeof second.call === 'function' ? { pxc: second, ...third } : { ...second }; }
+/**
+ * The name one Calculation answers to inside its Tick. PQL gives a Calculation
+ * no id of its own, so a refusal names it the way a reader can find it: its
+ * position, its call and the addresses it declares.
+ */
+function calculationId(calculation, index) { return `Calculations[${index}] '${calculation.call}' -> ${produceAddresses(calculation.into).join(', ')}`; }
+/** Does this binding read `address`? A `.*` prefix query reads every address under it. */
+function bindingReads(binding, address) { return isPrefixQuery(binding) ? address.startsWith(binding.slice(0, -1)) : binding === address; }
+/**
+ * The node law, checked before a parallel Tick runs anything: no Calculation
+ * may read what a sibling publishes in the same Tick, and no address may be
+ * declared by two siblings. Reads are the document's `with` bindings and their
+ * `.*` prefixes, exactly as pyto/experiments/tick-laws/tick_laws.py computes
+ * them, so both readers refuse the same Tick. Refusing before the Tick runs is
+ * what keeps a parallel Tick all-or-nothing: no Calculation of a refused Tick
+ * is invoked and no Part of it is published.
+ */
+export function refuseUnparallelTick(tick) {
+  const declaredBy = new Map();
+  tick.Calculations.forEach((calculation, index) => {
+    const id = calculationId(calculation, index);
+    for (const address of produceAddresses(calculation.into)) {
+      const owner = declaredBy.get(address);
+      if (owner !== undefined) throw new Error(`PQL ${tick.name}: parallel refused: ${owner} and ${id} both declare into '${address}'; in one Tick an address has one producer.`);
+      declaredBy.set(address, id);
     }
-    ticks.push({ name: tick.name, Calculations: calculations });
-  }
+  });
+  tick.Calculations.forEach((calculation, index) => {
+    const id = calculationId(calculation, index);
+    for (const binding of Object.values(calculation.with)) {
+      for (const [address, owner] of declaredBy) {
+        if (owner === id || !bindingReads(binding, address)) continue;
+        throw new Error(`PQL ${tick.name}: parallel refused: ${id} reads '${address}', which its sibling ${owner} produces in the same Tick.`);
+      }
+    }
+  });
+  return tick;
+}
+
+/** Read this Calculation's inputs and invoke it. The output is not published here. */
+function invoke(calculation, pxc, overrides) {
+  const inputs = Object.fromEntries(Object.entries(calculation.with).map(([name, address]) => [name, isPrefixQuery(address) ? queryPrefix(pxc, address) : pxc.get(address)]));
+  const replacement = overrides[calculation.call], actualCall = replacement?.call ?? calculation.call, args = { ...calculation.args, ...replacement?.args };
+  for (const name of Object.keys(inputs)) if (Object.hasOwn(args, name)) throw new Error(`Argument '${name}' shadows a named input.`);
+  const output = pxc.call(pxFn(actualCall), { ...args, ...inputs });
+  return { actualCall, args, inputs, output };
+}
+
+/** Publish what one Calculation returned, and hand back its line of testimony. */
+function publish(tick, calculation, step, pxc) {
+  const addresses = produceAddresses(calculation.into);
+  const values = Array.isArray(calculation.into) ? spread(calculation.into, step.output, `${tick.name}.${calculation.call}.into`) : [step.output];
+  addresses.forEach((address, index) => pxc.set(address, values[index]));
+  return { ...calculation, actualCall: step.actualCall, args: step.args, inputs: step.inputs, output: step.output, produces: addresses };
+}
+
+function failed(tick, calculation, cause) { return new Error(`PQL ${tick.name}: ${calculation.call} -> ${produceAddresses(calculation.into).join(', ')} failed.`, { cause }); }
+
+/**
+ * The schedule the run reports, in the shape RECORD.md's "Placement and budget"
+ * asks for. It is written **only** when the run was parallel, was given a
+ * budget, or was stopped by one: absent means serial and unbudgeted, so a plain
+ * serial run's testimony and receipt are byte for byte what they were before
+ * any of this existed.
+ */
+function schedule({ parallel, budgetMs, stoppedAfterTick, ticks }) {
+  if (!parallel && budgetMs === null && stoppedAfterTick === null) return null;
+  return Object.freeze({
+    parallel,
+    budget: Object.freeze({ limit_ms: budgetMs, stopped_after_tick: stoppedAfterTick, completed: stoppedAfterTick === null }),
+    ticks: Object.freeze(ticks.map(tick => Object.freeze({ name: tick.name, latency_ms: tick.latency_ms, placements: Object.freeze(tick.placements) })))
+  });
+}
+
+/** A budget is read at the Tick boundary and nowhere else: a Tick that started finishes. */
+function overBudget(budgetMs, clock, started) { return budgetMs !== null && clock() - started > budgetMs; }
+
+function finish(composition, ticks, scheduled, pxc) {
   const run = { PrincipleComponentRender: composition.PrincipleComponentRender, Ticks: ticks };
+  if (scheduled) run.schedule = scheduled;
   pxc.set(`px.pql.${composition.PrincipleComponentRender}`, run);
   return run;
+}
+
+/**
+ * Run a composition. `invokePql(doc, pxc, { budgetMs, clock })` is the studio's
+ * synchronous path and is unchanged for a plain serial run; `parallel: true`
+ * needs `invokePqlAsync`, because a Tick whose branches overlap can only be
+ * awaited ({?} ParallelIsAsync).
+ */
+export function invokePql(composition, second, third) {
+  const { pxc, overrides = {}, parallel = false, budgetMs = null, clock = wallClock } = options(second, third);
+  if (parallel) throw new Error('PQL: a parallel run is awaited; call invokePqlAsync(composition, pxc, { parallel: true }).');
+  const started = clock(), ticks = [], measured = [];
+  let stoppedAfterTick = null;
+  for (const tick of composition.Ticks) {
+    if (ticks.length && overBudget(budgetMs, clock, started)) { stoppedAfterTick = ticks[ticks.length - 1].name; break; }
+    const tickStarted = clock(), calculations = [];
+    for (const calculation of tick.Calculations) {
+      try { calculations.push(publish(tick, calculation, invoke(calculation, pxc, overrides), pxc)); }
+      catch (cause) { throw failed(tick, calculation, cause); }
+    }
+    ticks.push({ name: tick.name, Calculations: calculations });
+    measured.push({ name: tick.name, latency_ms: round3(clock() - tickStarted), placements: tick.Calculations.map(() => null) });
+  }
+  return finish(composition, ticks, schedule({ parallel: false, budgetMs, stoppedAfterTick, ticks: measured }), pxc);
+}
+
+/**
+ * The same run, awaited. With `parallel: true` the Calculations of one Tick are
+ * started together (`Promise.all` over async wrappers) and every result is
+ * published in declared order **after** the Tick, so the board never holds half
+ * a Tick; a Calculation that reads a sibling's produce is refused before the
+ * Tick runs. The testimony is byte-identical to the serial run's: placement and
+ * latency live in `run.schedule`, outside it.
+ */
+export async function invokePqlAsync(composition, second, third) {
+  const { pxc, overrides = {}, parallel = false, budgetMs = null, clock = wallClock } = options(second, third);
+  const started = clock(), ticks = [], measured = [];
+  let stoppedAfterTick = null;
+  for (const tick of composition.Ticks) {
+    if (ticks.length && overBudget(budgetMs, clock, started)) { stoppedAfterTick = ticks[ticks.length - 1].name; break; }
+    if (parallel) refuseUnparallelTick(tick);
+    const tickStarted = clock(), placements = [], published = [];
+    let steps;
+    if (parallel) {
+      // Each wrapper runs to its first await, so a worker index is handed out in
+      // the order the branches actually start; a synchronous Calculation simply
+      // runs to completion there and its branch is already done.
+      steps = await Promise.all(tick.Calculations.map(async (calculation, index) => {
+        placements[index] = { worker: index, started_ms: round3(clock() - tickStarted) };
+        try { const step = invoke(calculation, pxc, overrides); step.output = await step.output; return step; }
+        catch (cause) { throw failed(tick, calculation, cause); }
+      }));
+    } else {
+      // Serial is exactly the synchronous path, awaited: each Calculation is
+      // published before the next one reads, so a serial Tick may read what its
+      // predecessor in the same Tick wrote. Only a parallel Tick refuses that.
+      steps = null;
+      for (const calculation of tick.Calculations) {
+        placements.push(null);
+        try { const step = invoke(calculation, pxc, overrides); step.output = await step.output; published.push(publish(tick, calculation, step, pxc)); }
+        catch (cause) { throw failed(tick, calculation, cause); }
+      }
+    }
+    const latency = round3(clock() - tickStarted);
+    const calculations = steps === null ? published : tick.Calculations.map((calculation, index) => {
+      try { return publish(tick, calculation, steps[index], pxc); }
+      catch (cause) { throw failed(tick, calculation, cause); }
+    });
+    ticks.push({ name: tick.name, Calculations: calculations });
+    measured.push({ name: tick.name, latency_ms: latency, placements });
+  }
+  return finish(composition, ticks, schedule({ parallel, budgetMs, stoppedAfterTick, ticks: measured }), pxc);
 }

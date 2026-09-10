@@ -805,3 +805,69 @@ test('the adapters for the other runtimes still write no schedule at all', () =>
     for (const invocation of invocations(doc)) assert.equal('placement' in invocation, false);
   }
 });
+
+/* ------------------------------------------------------------------ */
+/* DiscStudio: an array `into`, and the schedule the run reported      */
+/* ------------------------------------------------------------------ */
+
+// Kills: `actual_produces: [into]` for an array `into` (adapters.js:648) makes
+// actual_produces a list of one list and derivePartIndex indexes no Part;
+// writing the schedule fields when `scheduled` is null (adapters.js:536-544)
+// puts `parallel`/`budget` on every serial record and test (e) in
+// tests/core.test.js -- byte-identical to the pre-change fixture -- fails.
+
+test('an array into publishes several Parts from one invocation, each a write and each indexed', () => {
+  const record = fromDiscStudioReceipt({
+    PrincipleComponentRender: 'several-into',
+    Ticks: [
+      { name: 'Split', Calculations: [{ call: 'fn.split', with: { raw: 'px.raw' }, into: ['px.left', 'px.right'] }] },
+      { name: 'Join', Calculations: [{ call: 'fn.join', with: { a: 'px.left', b: 'px.right' }, into: 'px.joined' }] }
+    ]
+  }, null);
+
+  const split = record.ticks[0].invocations[0];
+  assert.deepEqual(split.into, ['px.left', 'px.right']);
+  assert.deepEqual(split.actual_produces, ['px.left', 'px.right']);
+  assert.deepEqual(split.writes, [{ address: 'px.left', kind: 'new-address' }, { address: 'px.right', kind: 'new-address' }]);
+  assert.equal(split.id, 'px.left', 'the invocation id is the first address it declares');
+  assert.equal(record.parts['px.left'].written_by, 'px.left');
+  assert.equal(record.parts['px.right'].written_by, 'px.left');
+  assert.deepEqual(record.parts['px.right'].read_by, ['px.joined']);
+  assert.equal(record.parts['px.raw'].preexisting, true);
+  assert.equal(validate(record), record);
+});
+
+test('the four schedule fields come from the run and only when the run reported one', () => {
+  const document = {
+    PrincipleComponentRender: 'scheduled',
+    Ticks: [
+      { name: 'Seed', Calculations: [{ call: 'fn.seed', into: 'px.seed' }] },
+      { name: 'Fan', Calculations: [
+        { call: 'fn.leg', with: { seed: 'px.seed' }, into: 'px.leg.0' },
+        { call: 'fn.leg', with: { seed: 'px.seed' }, into: 'px.leg.1' }
+      ] }
+    ]
+  };
+  const schedule = {
+    parallel: true,
+    budget: { limit_ms: 500, stopped_after_tick: 'Fan', completed: false },
+    ticks: [
+      { name: 'Seed', latency_ms: 1.5, placements: [{ worker: 0, started_ms: 0 }] },
+      { name: 'Fan', latency_ms: 4.25, placements: [{ worker: 0, started_ms: 0.1 }, { worker: 1, started_ms: 0.2 }] }
+    ]
+  };
+  const scheduled = fromDiscStudioReceipt(document, { trace: [], schedule });
+  assert.equal(scheduled.parallel, true);
+  assert.deepEqual(scheduled.budget, { limit_ms: 500, stopped_after_tick: 'Fan', completed: false });
+  assert.deepEqual(scheduled.ticks.map((tick) => tick.latency_ms), [1.5, 4.25]);
+  assert.deepEqual(scheduled.ticks[1].invocations.map((invocation) => invocation.placement), [{ worker: 0, started_ms: 0.1 }, { worker: 1, started_ms: 0.2 }]);
+
+  // Absent means serial and unbudgeted: the same run without a schedule carries
+  // none of the four, and the reader still answers one question of both.
+  const plain = fromDiscStudioReceipt(document, { trace: [] });
+  assert.equal('parallel' in plain, false);
+  assert.equal('budget' in plain, false);
+  assert.equal('latency_ms' in plain.ticks[0], false);
+  assert.equal('placement' in plain.ticks[0].invocations[0], false);
+  assert.equal(validate(plain), plain);
+});

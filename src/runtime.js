@@ -1,4 +1,4 @@
-import { createExecBoard, pxFn, readPql, invokePql } from './core/exec.js';
+import { createExecBoard, pxFn, readPql, invokePql, invokePqlAsync } from './core/exec.js';
 import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materialFor, discoverFields, applyCommand, validateWorld, id } from './domain.js';
 import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
@@ -57,15 +57,28 @@ export function createStudioRuntime(initial) {
   pxc.set('px.undo.studio', emptyStack('studio'));
   const world = () => pxc.get('px.studio.world');
   const step = (name, call, bindings, into, args = {}) => ({ name, Calculations: [{ call, with: bindings, args, into }] });
-  function execute(name, ticks) {
-    const mark = calls.length;
-    const composition = readPql(JSON.stringify({ PrincipleComponentRender: name, Ticks: ticks }), JSON.parse);
-    const run = invokePql(composition, { pxc });
+  const compose = (name, ticks) => readPql(JSON.stringify({ PrincipleComponentRender: name, Ticks: ticks }), JSON.parse);
+  /**
+   * One receipt for one run. `run.schedule` is filed on it only when exec.js
+   * reported one -- a parallel run, a budgeted run, or a run a budget stopped --
+   * so a plain serial receipt is byte for byte the receipt it always was
+   * (pyto/viewer/RECORD.md, "Placement and budget").
+   */
+  function settle(name, composition, run, mark) {
     const invoked = calls.slice(mark); if (calls.length > 1000) calls.splice(0, calls.length - 1000);
     const trace = run.Ticks.flatMap(t => t.Calculations.map(c => ({ tick: t.name, call: c.actualCall, inputs: c.with, output: c.into, produces: c.produces }))).map((r, i) => ({ ...r, ...invoked[i] }));
-    const receipt = freeze({ composition, trace, computed: trace.filter(r => !r.reused).length, reused: trace.filter(r => r.reused).length });
+    const receipt = freeze({ composition, trace, computed: trace.filter(r => !r.reused).length, reused: trace.filter(r => r.reused).length, ...(run.schedule ? { schedule: run.schedule } : {}) });
     pxc.set(`px.receipt.${name}`, receipt);
     return receipt;
+  }
+  function execute(name, ticks, schedule = {}) {
+    const mark = calls.length, composition = compose(name, ticks);
+    return settle(name, composition, invokePql(composition, pxc, schedule), mark);
+  }
+  /** The awaited run: the only way to ask for `parallel: true` ({?} ParallelIsAsync). */
+  async function executeAsync(name, ticks, schedule = {}) {
+    const mark = calls.length, composition = compose(name, ticks);
+    return settle(name, composition, await invokePqlAsync(composition, pxc, schedule), mark);
   }
   /**
    * The pyto-run-record@1 view of one recorded execution (pyto/viewer/RECORD.md),
@@ -114,7 +127,7 @@ export function createStudioRuntime(initial) {
     const run = execute('display-card', ticks);
     return { ...pxc.get(`${prefix}.svg`), card: pxc.get(`${prefix}.card`), fields: pxc.get(`${prefix}.fields`), part: `${prefix}.svg`, run };
   }
-  function scene({ mode = 'battle', discId, bagId, competitionId, roundId, stateId, presetId } = {}) {
+  function sceneComposition({ mode = 'battle', discId, bagId, competitionId, roundId, stateId, presetId } = {}) {
     const w = world(), state = stateId ? w.battle.states.find(s => s.id === stateId) : currentBattle(w);
     if (!state) throw new Error('Comparison state is missing.');
     const entries = mode === 'card' ? [{ discId, id: 'single' }] : w.battle.entries;
@@ -126,8 +139,33 @@ export function createStudioRuntime(initial) {
     });
     ticks.push(step('ArrangeComparison', 'fn.comparison.layout', inputs, 'px.course.scene'));
     ticks.push(step('MaterializeOverlay', 'fn.overlay.svg', { scene: 'px.course.scene' }, 'px.course.svg'));
+    return { ticks, state };
+  }
+  const rendered = state => ({ ...pxc.get('px.course.svg'), part: 'px.course.svg', stateId: state.id, scene: pxc.get('px.course.scene') });
+  function scene(options = {}) {
+    const { ticks, state } = sceneComposition(options);
     const run = execute('on-the-course', ticks);
-    return { ...pxc.get('px.course.svg'), part: 'px.course.svg', run, stateId: state.id, scene: pxc.get('px.course.scene') };
+    return { ...rendered(state), run };
+  }
+  /**
+   * The same sample composition, one Tick per stage instead of one Tick per
+   * card: every card's Fields (then Art, then Card, then CardSvg) is a branch of
+   * one Tick, which is what the node law allows to run at once -- no branch
+   * reads what a sibling of its own Tick publishes.
+   */
+  function byStage(ticks) {
+    const stages = new Map();
+    for (const tick of ticks) {
+      const stage = tick.name.includes(':') ? tick.name.slice(0, tick.name.indexOf(':')) : tick.name;
+      if (!stages.has(stage)) stages.set(stage, { name: stage, Calculations: [] });
+      stages.get(stage).Calculations.push(...tick.Calculations);
+    }
+    return [...stages.values()];
+  }
+  async function sceneParallel(options = {}) {
+    const { ticks, state } = sceneComposition(options);
+    const run = await executeAsync('on-the-course-parallel', byStage(ticks), { parallel: true });
+    return { ...rendered(state), run };
   }
   function constraints(competitionId) {
     const w = world(), comp = get(w, 'Competition', competitionId);
@@ -172,7 +210,8 @@ export function createStudioRuntime(initial) {
     return { rows: pxc.get('px.studio.receipts'), summary: pxc.get('px.studio.receipts.summary'), run };
   }
   return {
-    pxc, world, dispatch, card, scene, constraints, counters, runRecord, execute, receipts,
+    pxc, world, dispatch, card, scene, sceneParallel, constraints, counters, runRecord, execute, executeAsync,
+    receipts,
     undo: { push, pop, stack: undoStack, depth: (scope = 'studio') => undoStack(scope).depth },
     onChange(fn) { listener = fn; },
     replace(next) { publishWorld(freeze(validateWorld(next))); listener(world(), { type: 'draft.import' }, null); },
