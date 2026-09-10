@@ -1,4 +1,14 @@
-"""Check observed dependency laws in pyto run records."""
+"""Check observed dependency laws in pyto run records.
+
+Inside a Tick the Calculations are a sequence in declared order. The node law classifies each
+Tick: `parallel` when no Calculation reads a sibling's Part (they can run at once; latency is the
+longest branch), `chain` when one reads an earlier sibling's Part (it runs in order; latency is
+the sum). A read of a sibling declared *after* the reader (a backwards read) and two siblings
+producing one Part remain violations. The owner, 2026-09-10: "'Calculations inside a Tick must
+be independent' was added as a rule, while your existing ChainSpot program deliberately chains
+dependent Calculations inside a Tick. Your definition was the moment that sequence becomes
+inspectable."
+"""
 from __future__ import annotations
 
 import argparse
@@ -95,7 +105,8 @@ def _tick_name(tick: dict[str, Any]) -> str:
 def _empty_report(errors: list[str]) -> dict[str, Any]:
     violations = [{"law": "validation", "kind": "validation", "message": e} for e in errors]
     return {"ok": False, "valid": False, "limitation": LIMITATION, "violations": violations,
-            "laws": {"node": {"ok": None, "violations": []}, "loop": {"ok": None, "violations": []}},
+            "laws": {"node": {"ok": None, "violations": [], "modes": {"parallel": 0, "chain": 0}},
+                     "loop": {"ok": None, "violations": []}},
             "ticks": [], "summary": {"work_ms": None, "critical_path_ms": None}}
 
 
@@ -120,10 +131,17 @@ def analyze_record(record: dict[str, Any]) -> dict[str, Any]:
     violations: list[dict[str, Any]] = []
     node: list[dict[str, Any]] = []
     loop: list[dict[str, Any]] = []
+    # Per Tick: its mode and the chain links (consumer reads an earlier sibling's Part) that
+    # make it a chain. A Tick with no sibling reads is parallel; one with sibling reads is a
+    # chain and runs in declared order, which is where the sequence becomes inspectable.
+    modes: list[str] = []
+    chains: list[list[dict[str, Any]]] = []
     for ti, tick in enumerate(ticks):
         invocations = tick["invocations"]
         siblings: dict[str, list[str]] = {}
-        for inv in invocations:
+        position: dict[str, int] = {}
+        for pos, inv in enumerate(invocations):
+            position.setdefault(_id(inv), pos)
             for part in sorted(_writes(inv)):
                 siblings.setdefault(part, []).append(_id(inv))
         for part in sorted(siblings):
@@ -133,14 +151,23 @@ def analyze_record(record: dict[str, Any]) -> dict[str, Any]:
                            "producer_ids": ids,
                            "message": f"node law violation: Tick {ti} has two producers for {part}: {', '.join(ids)}"}
                 node.append(finding); violations.append({"law": "node", **finding})
-        for inv in invocations:
+        links: list[dict[str, Any]] = []
+        sibling_read = False
+        for pos, inv in enumerate(invocations):
             consumer = _id(inv)
             for part in sorted(_reads(inv, into_by_id)):
                 producers_here = [p for p in siblings.get(part, []) if p != consumer]
-                if producers_here:
-                    finding = {"kind": "sibling_read", "tick": ti, "part": part,
-                               "consumer_id": consumer, "producer_ids": producers_here,
-                               "message": f"node law violation: {consumer} reads sibling-produced {part} in Tick {ti}"}
+                earlier = [p for p in producers_here if position[p] < pos]
+                later = [p for p in producers_here if position[p] > pos]
+                sibling_read = sibling_read or bool(producers_here)
+                if earlier:
+                    # A chain link, not a violation: the sequence inside the Tick, in order.
+                    links.append({"consumer_id": consumer, "producer_ids": earlier, "part": part})
+                if later:
+                    finding = {"kind": "backwards_read", "tick": ti, "part": part,
+                               "consumer_id": consumer, "producer_ids": later,
+                               "message": (f"node law violation: {consumer} reads a sibling declared after it: "
+                                           f"{part} from {', '.join(later)} in Tick {ti}")}
                     node.append(finding); violations.append({"law": "node", **finding})
                 entries = produced.get(part, [])
                 prior = [entry for entry in entries if entry[0] < ti]
@@ -152,6 +179,8 @@ def analyze_record(record: dict[str, Any]) -> dict[str, Any]:
                                "producer_ids": [{"tick": p, "invocation": n} for p, n in later],
                                "message": f"loop law violation: {consumer} in Tick {ti} consumes {part} before its only producer(s), in later Tick(s)"}
                     loop.append(finding); violations.append({"law": "loop", **finding})
+        modes.append("chain" if sibling_read else "parallel")
+        chains.append(links)
 
     tick_reports = []
     for ti, tick in enumerate(ticks):
@@ -161,14 +190,20 @@ def analyze_record(record: dict[str, Any]) -> dict[str, Any]:
         elif any(d is None for d in durations):
             work = latency = None
         else:
-            work, latency = sum(durations), max(durations)
+            # Parallel: the branches run at once, so the Tick takes its longest branch.
+            # Chain: it runs in order, so the Tick takes the sum, the same as its work.
+            work = sum(durations)
+            latency = work if modes[ti] == "chain" else max(durations)
         # A Tick has a name in the record and is reported by it: "Tick 1 Stats" reads
         # as the step the program named, where "Tick 1" reads as a position nobody wrote.
-        tick_reports.append({"tick": ti, "name": _tick_name(tick), "work_ms": work, "latency_ms": latency})
+        tick_reports.append({"tick": ti, "name": _tick_name(tick), "mode": modes[ti], "chain": chains[ti],
+                             "work_ms": work, "latency_ms": latency})
     work = sum(t["work_ms"] for t in tick_reports) if all(t["work_ms"] is not None for t in tick_reports) else None
     critical = sum(t["latency_ms"] for t in tick_reports) if all(t["latency_ms"] is not None for t in tick_reports) else None
     return {"ok": not violations, "valid": True, "limitation": LIMITATION, "violations": violations,
-            "laws": {"node": {"ok": not node, "violations": node}, "loop": {"ok": not loop, "violations": loop}},
+            "laws": {"node": {"ok": not node, "violations": node,
+                              "modes": {"parallel": modes.count("parallel"), "chain": modes.count("chain")}},
+                     "loop": {"ok": not loop, "violations": loop}},
             "ticks": tick_reports, "summary": {"work_ms": work, "critical_path_ms": critical}}
 
 
@@ -197,7 +232,7 @@ def _print_text(result: dict[str, Any]) -> None:
         report = item["report"]
         print(item["path"])
         for tick in report["ticks"]:
-            print(f"Tick {tick['tick']} {tick['name']}: work_ms={tick['work_ms']} latency_ms={tick['latency_ms']}")
+            print(f"Tick {tick['tick']} {tick['name']}: work_ms={tick['work_ms']} latency_ms={tick['latency_ms']} mode={tick['mode']}")
         print(f"Summary: work_ms={report['summary']['work_ms']} critical_path_ms={report['summary']['critical_path_ms']}")
         print("no parallel execution exists yet")
         for violation in report["violations"]:

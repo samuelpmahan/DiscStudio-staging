@@ -308,22 +308,55 @@ class PxFixtures(unittest.TestCase):
     def test_laws_times_students(self):
         self.assert_fixture("laws-times-students.txt", "laws", str(STUDENTS), "--times")
 
-    def test_laws_exits_one_on_a_violated_node_law(self):
-        """A sibling read inside one Tick: the node law's own example.
+    def test_laws_reads_a_sibling_read_as_a_chain_not_a_violation(self):
+        """A read of an earlier sibling inside one Tick is a chain: the Tick runs
+        in order and the node law holds (the owner, 2026-09-10: "'Calculations
+        inside a Tick must be independent' was added as a rule, while your
+        existing ChainSpot program deliberately chains dependent Calculations
+        inside a Tick").
 
-        Mutation: px.py `cmd_laws`, `return EXIT_OK` unconditionally -- this
-        fails while `test_laws_students` still passes.
+        Mutation: px.py `cmd_laws`, drop the `modes["chain"]` guard -- the
+        students fixture then grows a `(4 parallel, 0 chain)` suffix and
+        `test_laws_students` fails.
         """
         record = json.loads(STUDENTS.read_text(encoding="utf-8"))
         # median, in Tick 1, made to read its sibling mean's result.
         record["ticks"][1]["invocations"][1]["inputs"] = {"roster": "fn:mean"}
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "shorted.json"
+            path = Path(directory) / "chained.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            result = run_px("laws", str(path))
+            times = run_px("laws", str(path), "--times")
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("node law: ok (3 parallel, 1 chain)", result.stdout)
+        self.assertNotIn("VIOLATION", result.stdout)
+        # A chain runs in order, so the Tick's latency is its work, and only that
+        # Tick's line says so.
+        self.assertIn("Tick 1: work_ms=0.041 latency_ms=0.041 chain\n", times.stdout)
+        self.assertIn("Tick 0: work_ms=0.030 latency_ms=0.030\n", times.stdout)
+
+    def test_laws_exits_one_on_a_backwards_read(self):
+        """A read of a sibling declared after the reader is still a node-law
+        violation: the sequence inside a Tick runs in declared order, and this
+        Calculation would read a Part nobody has produced yet.
+
+        Mutation: px.py `cmd_laws`, `return EXIT_OK` unconditionally -- this
+        fails while `test_laws_students` still passes.
+        """
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        # mean, first in Tick 1, made to read its later sibling median's result.
+        record["ticks"][1]["invocations"][0]["inputs"] = {"roster": "fn:median"}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "backwards.json"
             path.write_text(json.dumps(record), encoding="utf-8")
             result = run_px("laws", str(path))
         self.assertEqual(result.returncode, 1)
-        self.assertIn("node law: 1 violation(s)", result.stdout)
-        self.assertIn("VIOLATION node: node law violation: median reads sibling-produced", result.stdout)
+        self.assertIn("node law: 1 violation(s) (3 parallel, 1 chain)", result.stdout)
+        self.assertIn(
+            "VIOLATION node: node law violation: mean reads a sibling declared after it: "
+            "px.students.median from median in Tick 1",
+            result.stdout,
+        )
 
     def test_laws_prints_no_path(self):
         """`tick_laws` echoes the path it was handed; `px` names the pcr instead.

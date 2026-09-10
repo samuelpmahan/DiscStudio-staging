@@ -1,8 +1,9 @@
 // "Watch it think": pure playback scheduling. No DOM, no timers.
 //
-// Ticks are in series and the Calculations inside one Tick are in parallel
-// (pyto/questions.md, `{?} TicksAsCircuits`), so the schedule adds Tick times
-// and a parallel Tick's branches share one timestamp -- the Tick's latency.
+// Ticks are in series and the Calculations inside one Tick are in parallel when
+// none reads a sibling, in order when one does (a chain; experiments/tick-laws),
+// so the schedule adds Tick times, a parallel Tick's branches share one
+// timestamp -- the Tick's latency -- and a chain's cards add one after another.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

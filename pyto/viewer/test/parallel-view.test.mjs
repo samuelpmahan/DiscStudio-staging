@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join } from 'node:path';
 
 import { fromPytoRecord } from '../adapters.js';
-import { renderRecord, isParallelTick, tickWorkMs, tickLatencyMs, runWorkMs, runCriticalPathMs } from '../tick-viewer.js';
+import { renderRecord, isParallelTick, isChainTick, tickWorkMs, tickLatencyMs, runWorkMs, runCriticalPathMs } from '../tick-viewer.js';
 import { composePage, buildPage, PAGE_SOURCES } from '../embed.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -171,32 +171,49 @@ test('a budget the run completed is not a banner; an incomplete one always names
 });
 
 /* ---------------------------------------------------------------- */
-/* (c) a sibling read is not a parallel Tick                         */
+/* (c) a sibling read is a chain, not a parallel Tick                */
 /* ---------------------------------------------------------------- */
 
-test('a Tick whose Calculation reads a sibling\'s produce is drawn serially, never side by side', () => {
+test('a Tick whose Calculation reads a sibling\'s produce is a chain: drawn in order, never side by side', () => {
   const serial = structuredClone(demo);
   // `right` now binds `left`'s result: the two are a chain inside one Tick, which
-  // the node law refuses and the page must not draw as branches.
+  // runs in order (tick_laws.py classifies it `chain`, not a violation) and the
+  // page must draw as the sequence it is, not as branches.
   serial.ticks[1].invocations[1].inputs = { rows: 'fn:load', left: 'fn:left' };
   const record = fromPytoRecord(serial);
 
   assert.equal(isParallelTick(record.ticks[1]), false);
+  assert.equal(isChainTick(record.ticks[1]), true);
   const fan = withClass(renderRecord(record, { doc }), 'tick')[1];
   assert.equal(branchesOf(fan).length, 0, 'no branch columns');
   assert.equal(cardsOf(fan).length, 2, 'both cards still shown, one under the other');
-  assert.equal(withClass(fan, 'tick-mode').length, 0, 'no parallel badge');
+  assert.equal(withClass(fan, 'tick-mode')[0].textContent, 'chain · 2 in order', 'the chain badge, not the parallel one');
   assert.equal(fan.getAttribute('data-parallel'), 'no');
+  assert.equal(fan.getAttribute('data-chain'), 'yes');
   assert.ok(textOf(fan).includes('fn:left'), 'the sibling read is on the page');
 
   // The same Tick is parallel again once that binding goes back to Parse's result.
   const restored = fromPytoRecord(structuredClone(demo));
   assert.equal(isParallelTick(restored.ticks[1]), true);
+  assert.equal(isChainTick(restored.ticks[1]), false);
 
   // A store read of a sibling's Part counts too, not only a result read.
   const viaStore = structuredClone(demo);
   viaStore.ticks[1].invocations[1].actual_consumes = ['px.demo.left'];
   assert.equal(isParallelTick(fromPytoRecord(viaStore).ticks[1]), false);
+  assert.equal(isChainTick(fromPytoRecord(viaStore).ticks[1]), true);
+
+  // A chain runs in order, so with no `latency_ms` carried its latency is its work
+  // (the sum), where the parallel Stats Tick's is its longest branch; a single
+  // Calculation is neither.
+  const chained = structuredClone(students);
+  chained.ticks[1].invocations[1].inputs = { roster: 'fn:mean' };
+  const stats = fromPytoRecord(chained).ticks[1];
+  assert.equal(isChainTick(stats), true);
+  assert.equal(tickLatencyMs(stats), tickWorkMs(stats));
+  assert.ok(tickLatencyMs(students.ticks[1]) < tickWorkMs(students.ticks[1]));
+  assert.equal(isChainTick(students.ticks[0]), false);
+  assert.equal(isParallelTick(students.ticks[0]), false);
 });
 
 /* ---------------------------------------------------------------- */

@@ -34,8 +34,9 @@ repository; see pyto/experiments/tasks/23/packet.md):
         has work above latency): killed.
     homework.py:build_program's mean and median do not read -> bind `mean=MEAN` on the
         each other                                             median invocation, re-run,
-        and the same test fails on `report["violations"]` ("node law violation: median
-        reads sibling-produced px.students.mean in Tick 1"): killed.
+        and the same test fails: Stats is then a chain (tick_laws reports its mode as
+        `chain`, not a violation, and its latency equals its work), so
+        `assertGreater(stats["work_ms"], stats["latency_ms"])` fails: killed.
 """
 
 from __future__ import annotations

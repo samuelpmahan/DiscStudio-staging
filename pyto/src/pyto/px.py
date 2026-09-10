@@ -343,19 +343,32 @@ def cmd_laws(args: argparse.Namespace) -> int:
 
     Work and critical path come from the record's durations, so they appear only
     under ``--times``, like every other duration ``px`` prints.
+
+    Inside a Tick the Calculations are a sequence in declared order; ``tick_laws``
+    classifies each Tick ``parallel`` (no sibling reads) or ``chain`` (reads earlier
+    siblings, runs in order, latency is the sum). A chain is not a violation. When a
+    record has one, the node-law line counts the modes (``node law: ok (2 parallel,
+    1 chain)``) and under ``--times`` the chain Tick's line says ``chain``; a record
+    with no chain prints exactly as before. Only a backwards read (a sibling declared
+    after the reader) and two siblings producing one Part break the node law.
     """
     record = load_record(args.record)
     report = _tick_laws().analyze_record(record)
     print(f"LIMITATION: {report['limitation']}")
     print(f"pcr: {record['pcr']}")
+    modes = report["laws"]["node"]["modes"]
     for law in ("node", "loop"):
         found = report["laws"][law]["violations"]
-        print(f"{law} law: ok" if not found else f"{law} law: {len(found)} violation(s)")
+        line = f"{law} law: ok" if not found else f"{law} law: {len(found)} violation(s)"
+        if law == "node" and modes["chain"]:
+            line += f" ({modes['parallel']} parallel, {modes['chain']} chain)"
+        print(line)
     if args.times:
         for tick in report["ticks"]:
             print(
                 f"Tick {tick['tick']}: work_ms={milliseconds(tick['work_ms'])} "
                 f"latency_ms={milliseconds(tick['latency_ms'])}"
+                + (" chain" if tick["mode"] == "chain" else "")
             )
         summary = report["summary"]
         print(
