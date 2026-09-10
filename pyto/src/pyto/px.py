@@ -1,6 +1,7 @@
 """``px``: a small shell over run records.
 
-Six commands -- ``ps``, ``ls``, ``cat``, ``diff``, ``laws``, ``receipts`` -- over a
+Seven commands -- ``ps``, ``ls``, ``cat``, ``diff``, ``laws``, ``receipts``,
+``effects`` -- over a
 ``pyto-run-record@1`` document (``pyto/viewer/RECORD.md``).  The record is the one
 interface, exactly as a path is in the shell this borrows its verbs from
 (``pyto/questions.md`` ``{?} EverythingIsAPart``): every runtime that writes the
@@ -403,13 +404,61 @@ def cmd_receipts(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+# --- px effects ---------------------------------------------------------------
+
+
+def effect_summary(entry: dict[str, Any]) -> str:
+    """One effect's arguments in one column: the path, or ``key=value`` pairs.
+
+    The path is what a reader looks for first, so ``write_text`` and ``read_text``
+    print it bare; every other kind prints its arguments sorted by name, and a
+    kind with no arguments (``now_ms``, ``random_seed``) prints ``-``.
+    """
+    args = entry.get("args") or {}
+    if entry.get("kind") in ("write_text", "read_text") and "path" in args:
+        return str(args["path"])
+    if not args:
+        return NOTHING
+    return ",".join(f"{name}={json.dumps(args[name], sort_keys=True)}" for name in sorted(args))
+
+
+def cmd_effects(args: argparse.Namespace) -> int:
+    """Every effect the record carries, one line each, in the order they happened.
+
+    The ledger is per invocation and ordered (RECORD.md, "Effects"), so the index
+    column is the entry's position in *that* invocation's ledger -- which is
+    exactly what a refusal from ``ReplayEffects`` names when a replay diverges.
+    A record whose run performed no effects carries no ledgers and prints the
+    header alone; nothing is invented for it.
+    """
+    record = load_record(args.record)
+    schema = _schema()
+    headers = ["TICK", "ID", "INDEX", "KIND", "ARGS", "DIGEST"]
+    rows = []
+    for index, name, inv in invocations(record):
+        if args.tick is not None and name != args.tick:
+            continue
+        for position, entry in enumerate(schema.invocation_effects(inv)):
+            rows.append([
+                str(index),
+                inv["id"],
+                str(position),
+                entry["kind"],
+                effect_summary(entry),
+                entry["result_sha256"] or NOTHING,
+            ])
+    for line in table(headers, rows):
+        print(line)
+    return EXIT_OK
+
+
 # --- the shell ----------------------------------------------------------------
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="px",
-        description="A shell over pyto run records: ps, ls, cat, diff, laws, receipts.",
+        description="A shell over pyto run records: ps, ls, cat, diff, laws, receipts, effects.",
     )
     sub = parser.add_subparsers(dest="command", metavar="COMMAND")
 
@@ -442,6 +491,11 @@ def build_parser() -> argparse.ArgumentParser:
     receipts.add_argument("record")
     receipts.add_argument("--tick", default=None, help="only receipts from the Tick of this name")
     receipts.set_defaults(run=cmd_receipts)
+
+    effects = sub.add_parser("effects", help="one line per recorded effect: kind, args, digest")
+    effects.add_argument("record")
+    effects.add_argument("--tick", default=None, help="only effects from the Tick of this name")
+    effects.set_defaults(run=cmd_effects)
 
     return parser
 

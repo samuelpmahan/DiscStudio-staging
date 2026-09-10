@@ -1,0 +1,160 @@
+{
+  "counters": {
+    "computed": 2,
+    "hits": 0,
+    "invocations": 2,
+    "wall_ms": 0.2461979997860908
+  },
+  "parts": {
+    "scratch.effects.report": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "summary"
+    },
+    "scratch.effects.stamp": {
+      "preexisting": false,
+      "read_by": [
+        "summary"
+      ],
+      "written_by": "stamp"
+    }
+  },
+  "pcr": "effects-demo",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.effects.stamp"
+          ],
+          "args": {
+            "note": "the receipt is the subject\n"
+          },
+          "calculation": {
+            "address": "oc.effects.stamp",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d95e8ee325d37b823ef68d631ce7a39df7b95d01fe890548c88dc6d7dd3f0097"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.2289250001012988,
+          "effects": [
+            {
+              "args": {
+                "path": "out/note.txt"
+              },
+              "kind": "write_text",
+              "result": null,
+              "result_sha256": "d21ca159a726d89af58f7d9fc59be7bced2c40e07e2ec0fcc02aee380b447de6"
+            },
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789009794149.337,
+              "result_sha256": "3ac586ef19aeef0c72224b75ab639426b7e2aff953943f6f7251045336d3d3fd"
+            },
+            {
+              "args": {},
+              "kind": "random_seed",
+              "result": 13174603989524089503,
+              "result_sha256": "a30034cc537bfb7d29ad2faa1a4c0594de7bd352f64e7492b9dc06297e3f37f3"
+            },
+            {
+              "args": {
+                "n": 1
+              },
+              "kind": "random",
+              "result": [
+                0.8791089282778273
+              ],
+              "result_sha256": "1361a01415f7dd8eb8f1b3d6d6c0e62857f7d557094e62e0c755ed2d8c9db175"
+            },
+            {
+              "args": {
+                "n": 1
+              },
+              "kind": "random",
+              "result": [
+                0.11093126783544349
+              ],
+              "result_sha256": "762aa71a7b8055acaf31ed128a2d4bcb7ce96df7b8d4513a903f034bda9ed59c"
+            }
+          ],
+          "hit": false,
+          "id": "stamp",
+          "inputs": {},
+          "into": "scratch.effects.stamp",
+          "result_sha256": "4117747f50075998aea5cfdd4af1d805bbdf607fc75c532907950f525efe1cfe",
+          "value": {
+            "data": {
+              "at_ms": 1789009794149.337,
+              "draws": [
+                0.8791089282778273,
+                0.11093126783544349
+              ],
+              "path": "out/note.txt"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.effects.stamp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Stamp"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "scratch.effects.report"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.effects.summarize",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "50ac0419e18d5be73c1707077a6ef618293e4615166f0bc238a2c1dd64aabffc"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.017272999684792012,
+          "effects": [],
+          "hit": false,
+          "id": "summary",
+          "inputs": {
+            "stamp": "fn:stamp"
+          },
+          "into": "scratch.effects.report",
+          "result_sha256": "39b114bd0418c3c84e2ab3fc78580d643de571943cb0bdd07b709ed7a4c7df88",
+          "value": {
+            "data": {
+              "draws": 2,
+              "path": "out/note.txt"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "scratch.effects.report",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Summarize"
+    }
+  ]
+}

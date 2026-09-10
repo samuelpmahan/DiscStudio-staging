@@ -24,16 +24,51 @@ class Part(Generic[T]):
         return self.address
 
 
+CALCULATION_ROOTS = ("fn.", "oc.")
+"""The two kinds of Calculation and no third (``BOARD.md`` Lane 1, ``address.py``).
+
+``fn.`` is pure.  ``oc.`` is an **OperationalCalculation**: the syscall table, the
+only place an effect happens, and the only kind ``PCR.run`` calls with an
+:class:`pyto.effects.Effects` handle (``pcr.py``, ``args["effects"]``).  The
+registration rule is the constructor, because a Calculation is the only thing
+``PxC.register`` accepts: an address under any other root -- ``px.``, a bare
+noun -- is refused here and so can never reach a registry.
+"""
+
+EFFECTS_ARG = "effects"
+"""The one argument name an ``oc.`` Calculation receives its handle under.
+
+An ``fn.`` Calculation never receives one: reading ``args["effects"]`` inside a
+pure Calculation raises ``KeyError`` because the key is not there, which is the
+whole enforcement -- purity is a missing handle, not a promise.
+"""
+
+
 @dataclass(frozen=True, slots=True)
 class Calculation(Generic[Args, Result]):
-    """A named calculation that PxC can register and PCR can compose."""
+    """A named calculation that PxC can register and PCR can compose.
+
+    Two kinds: ``fn.`` (pure) and ``oc.`` (:attr:`is_operational`, an effect may
+    happen).  The address is the whole declaration -- the callable is not
+    inspected -- so which kind a Calculation is, is visible in every testimony,
+    every receipt and every record that names it.
+    """
 
     address: str
     calculate: Callable[[Args], Result]
 
     def __post_init__(self) -> None:
-        if not self.address.startswith("fn."):
-            raise ValueError("Calculation address must start with 'fn.'")
+        if not self.address.startswith(CALCULATION_ROOTS):
+            raise ValueError(
+                "Calculation address must start with 'fn.' (pure) or with 'oc.' "
+                "(an OperationalCalculation: the syscall table, the only place an "
+                "effect happens)"
+            )
+
+    @property
+    def is_operational(self) -> bool:
+        """True for an ``oc.`` Calculation -- the only kind that gets an Effects handle."""
+        return self.address.startswith("oc.")
 
     def __call__(self, args: Args) -> Result:
         return self.calculate(args)

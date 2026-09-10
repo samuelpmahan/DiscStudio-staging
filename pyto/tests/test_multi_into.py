@@ -595,13 +595,16 @@ class OneAddressCallsAreUnchanged(unittest.TestCase):
     def test_the_receipt_differs_only_by_the_added_produce_digest(self):
         """pcr.py: every other Receipt field is what it was, and the added fields
         say of a one-address serial invocation exactly what was already true --
-        `produce_sha256` is what `result_sha256` already said (task 27), and
-        `placement` is None because a serial Tick has no placement (task 39).
+        `produce_sha256` is what `result_sha256` already said (task 27),
+        `placement` is None because a serial Tick has no placement (task 39), and
+        `effects` is empty because a pure `fn.` Calculation is given no Effects
+        handle at all (task 49).
         """
         receipt = dict(self.now["receipt"])
         added = {key: receipt.pop(key) for key in list(receipt) if key not in self.pinned["receipt"]}
-        self.assertEqual(sorted(added), ["placement", "produce_sha256"])
+        self.assertEqual(sorted(added), ["effects", "placement", "produce_sha256"])
         self.assertIsNone(added["placement"])
+        self.assertEqual(added["effects"], ())
         self.assertEqual(added["produce_sha256"], {"out.v": receipt["result_sha256"]})
         self.assertEqual(
             fixture_single_into.dumps(receipt),
