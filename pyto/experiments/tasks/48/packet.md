@@ -4,8 +4,56 @@ Intent: the JavaScript runtime speaks the same schedule: exec.js runs a Tick's C
 Starting point: f48fb3568c948fc5b43eb7ed13971fad9b9c0805 (exp/47: next_id counts the landing receipts; an undone id is never reused)
 Verify: npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded
 Allow: src tests scripts/browser_test.py scripts/review_checkpoint.mjs .neat/items pyto/viewer/adapters.js pyto/viewer/test/adapters.test.mjs pyto/viewer/RECORD.md pyto/CHANGES.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 12 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  .neat/items/DS-STUDIO-02.json
+- M  pyto/CHANGES.md
+- M  pyto/viewer/adapters.js
+- M  pyto/viewer/test/adapters.test.mjs
+- M  scripts/browser_test.py
+- M  scripts/review_checkpoint.mjs
+- M  src/app.js
+- M  src/core/exec.js
+- M  src/review-data.js
+- M  src/runtime.js
+- M  tests/core.test.js
+- A  tests/fixtures/serial-run-record.json
+
+```
+.neat/items/DS-STUDIO-02.json         |    4 +-
+ pyto/CHANGES.md                       |    1 +
+ pyto/viewer/adapters.js               |  142 +-
+ pyto/viewer/test/adapters.test.mjs    |   66 +
+ scripts/browser_test.py               |   24 +
+ scripts/review_checkpoint.mjs         |    2 +-
+ src/app.js                            |    2 +-
+ src/core/exec.js                      |  176 +-
+ src/review-data.js                    |    4 +-
+ src/runtime.js                        |   57 +-
+ tests/core.test.js                    |  150 +-
+ tests/fixtures/serial-run-record.json | 7058 +++++++++++++++++++++++++++++++++
+ 12 files changed, 7644 insertions(+), 42 deletions(-)
+```
+
+## Evidence
+
+- verify: `npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         248  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    249  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             14  OK
+    experiments/tick-laws            12  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
 
 ## Uncertain
 
