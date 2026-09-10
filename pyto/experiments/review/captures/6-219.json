@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.219.response",
+  "recordedAt": 1789046558265.2446,
+  "sha256": "73d8fdac7ec8ccc62e60759b75d0b0cee3b7190e4b4c4660c82b3e7459bf9da4",
+  "value": {
+    "k": 219,
+    "label": "PartLabelKind",
+    "n": 6,
+    "text": "The default stated in task-60's packet stands: Parts are labelled by full address (exact) or the constant 'part' (shape)."
+  }
+}

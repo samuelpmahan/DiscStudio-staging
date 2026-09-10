@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.239.response",
+  "sha256": "60227301bc05a14764e3274e1a30938b095d6e5cb509bcab343e30e383c663f9",
+  "value": {
+    "bytes": "The default stated in task-67's packet stands: Effects.env records the value it reads, so the GitHub token is read with os.environ and never through the handle.",
+    "sha256": "7e8502b6357b5bb62311bc9606b60a262d18e2b5df1222b7023df7022f7cc4f6"
+  }
+}

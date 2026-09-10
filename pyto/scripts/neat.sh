@@ -19,6 +19,7 @@
 #   neat ask                  the tiny-question batch: every unanswered {?}, collated and numbered
 #   neat answer <n> <k> "<words>" [--technical "<text>"]   file the owner's reply to one batch item
 #   neat answers               every filed answer: label, digest, n, k
+#   neat default <n> <k> "<sentence>"   file the session's default for one item; it stands until an answer overturns it
 #   neat gate <id> [--mode github|stub:<file>|none]   the join's gate for the copy's head: open only on a human's approval of that exact sha
 #
 # The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
@@ -62,7 +63,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,22p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,23p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -669,6 +670,16 @@ cmd_answer() {
   (cd "$PY" && "$PYTHON" -m pyto.neat.review answer "$n" "$k" "$words" "$@")
 }
 
+cmd_default() {
+  # neat default <n> <k> "<sentence>": file the session's default for one batch item (kind default);
+  # the item leaves the batch and stays overturnable by `neat answer` in one sentence.
+  [ "$PYTO_MODE" -eq 1 ] || die "neat default needs a pyto repository (pyto/pyproject.toml)"
+  local n="${1:-}" k="${2:-}" words="${3:-}"
+  [ -n "$n" ] && [ -n "$k" ] && [ -n "$words" ] || die 'neat default <n> <k> "<sentence>" [--technical "<text>"]'
+  shift 3
+  (cd "$PY" && "$PYTHON" -m pyto.neat.review default "$n" "$k" "$words" "$@")
+}
+
 cmd_answers() {
   # Every filed answer: label, digest, n, k -- one line each.
   [ "$PYTO_MODE" -eq 1 ] || die "neat answers needs a pyto repository (pyto/pyproject.toml)"
@@ -698,5 +709,5 @@ case "$cmd" in
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
-  ask) cmd_ask "$@";; answer) cmd_answer "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; *) usage;;
+  ask) cmd_ask "$@";; answer) cmd_answer "$@";; default) cmd_default "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; *) usage;;
 esac

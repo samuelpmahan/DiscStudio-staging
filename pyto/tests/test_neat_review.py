@@ -251,5 +251,43 @@ class BashRoundTrip(unittest.TestCase):
             shutil.rmtree(tmp)
 
 
+class OwnerFirstAndDefaults(unittest.TestCase):
+    """Task 70: the batch carries what needs the owner first; a root entry that quotes him
+    deciding is answered; a default is filed as the session's, never as his words."""
+
+    def _tree(self, root: str) -> None:
+        os.makedirs(os.path.join(root, "experiments", "tasks", "1"))
+        os.makedirs(os.path.join(root, "experiments", "tasks", "2"))
+        _write(os.path.join(root, "experiments", "tasks", "1", "packet.md"),
+               "# Task 1\n\n## Uncertain\n{?} PrintForm: pretty on the terminal; a file name is the session's.\n")
+        _write(os.path.join(root, "experiments", "tasks", "2", "packet.md"),
+               "# Task 2\n\n## Uncertain\n{?} TickMeaning: what a chain's boundary means is the owner's to say.\n")
+        _write(os.path.join(root, "questions.md"),
+               "# root\n\n### {?} Decided\nOwner, 2026-09-10: \"yes\"\n\n### {?} Open\nDefault taken: none.\n")
+
+    def test_owner_items_first_and_decided_root_entries_omitted(self):
+        with tempfile.TemporaryDirectory() as root:
+            self._tree(root)
+            batch = review.collate({"pyto_root": root, "n": 1})
+            labels = [(it["number"], it["label"], it["needs"]) for it in batch["items"]]
+            self.assertEqual(labels, [(1, "TickMeaning", "owner"), (2, "Open", "root"), (3, "PrintForm", "default")])
+            self.assertEqual((batch["needs_owner"], batch["root_open"], batch["defaults"]), (1, 1, 1))
+            self.assertNotIn("Decided", [it["label"] for it in batch["items"]])
+
+    def test_default_is_filed_as_the_sessions_and_leaves_the_batch(self):
+        with tempfile.TemporaryDirectory() as root:
+            self._tree(root)
+            review.run_ask(root)
+            part = review.run_answer(root, 1, 3, "pretty on the terminal, canonical on disk", kind="default")
+            self.assertEqual(part["value"]["kind"], "default")
+            text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+            self.assertIn('Default (session, ', text)
+            self.assertIn('"pretty on the terminal, canonical on disk"', text)
+            self.assertNotIn('Owner, 2026-09-10: "pretty', text)
+            again = review.collate({"pyto_root": root, "n": 2})
+            self.assertNotIn("PrintForm", [it["label"] for it in again["items"]])
+            self.assertEqual(review.answer_for(root, "PrintForm")["kind"], "default")
+
+
 if __name__ == "__main__":
     unittest.main()

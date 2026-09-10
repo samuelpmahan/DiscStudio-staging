@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.219.response",
+  "sha256": "35fbfbde16ebd71a5e25a3dd39e75577cad625d3ec55a8266b7f7acb02be5a93",
+  "value": {
+    "bytes": "The default stated in task-60's packet stands: Parts are labelled by full address (exact) or the constant 'part' (shape).",
+    "sha256": "9767e1c750b961c1f72f0f36e0325b6598a8868421d9fc11c269901ffd4c5413"
+  }
+}

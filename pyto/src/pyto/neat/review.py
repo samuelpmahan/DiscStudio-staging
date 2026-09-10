@@ -115,6 +115,15 @@ def _read_lf(path: str) -> str:
 
 QUESTION_LINE = re.compile(r"^\{\?\}\s+([^:]+):\s?(.*)$")
 ROOT_LABEL = re.compile(r"\{\?\}\s+([^\s,]+)")
+#: A root entry is answered when a line quotes the owner deciding or marks it resolved.
+DECIDED_LINE = re.compile(r"[Oo]wner, 20\d\d|[Oo]wner \(20\d\d|^Owner[,:]|Status: resolved|\bDecided\b|\bOverturned\b|by owner")
+#: A root entry still marked open carries no decision; it is open on the root, where the owner reads it,
+#: and is counted rather than asked again in a batch (`bash pyto/scripts/questions.sh` lists them).
+OPEN_LINE = re.compile(r"Status: open|Status: proposed")
+#: The review page (task 62) read every packet up to this task; their {?} lines are the page's, not the batch's.
+REVIEW_TASK_MAX = 59
+#: A packet {?} line needs the owner when it says so; otherwise its stated default stands.
+NEEDS_OWNER = re.compile(r"\bowner", re.I)
 
 
 def split_question_line(line: str) -> tuple[str, str]:
@@ -163,6 +172,7 @@ def _packet_items(pyto_root: str) -> list[dict]:
             items.append({
                 "label": label, "task": f"task-{task_id}", "text": question_text,
                 "origin": "packet",
+                "needs": "owner" if NEEDS_OWNER.search(question_text) else "default",
             })
     return items
 
@@ -189,14 +199,24 @@ def _root_items(pyto_root: str) -> list[dict]:
         if not labels:
             continue
         text = None
+        decided = False
+        marked_open = False
         for line in lines[i + 1:]:
             if line.startswith("### "):
                 break
-            if line.strip():
+            if DECIDED_LINE.search(line):
+                decided = True
+            if OPEN_LINE.search(line):
+                marked_open = True
+            if line.strip() and text is None:
                 text = line.strip()
-                break
+        if decided:
+            # The entry already carries the owner's decision in his words (or a resolved
+            # status): it is answered on the root itself, not open ({?} RootLabelsCountAsOpen).
+            continue
         for label in labels:
-            items.append({"label": label, "task": "root", "text": text or label, "origin": "root"})
+            items.append({"label": label, "task": "root", "text": text or label, "origin": "root",
+                          "needs": "root"})  # the root is the owner's own page; counted, not re-asked
     return items
 
 
@@ -217,9 +237,22 @@ def _diff_items(pyto_root: str) -> list[dict]:
                 continue
             items.append({
                 "label": label, "task": "diff", "text": (entry or {}).get("text", ""),
-                "origin": "diff",
+                "origin": "diff", "needs": "owner",
             })
     return items
+
+
+REVIEW_PAGE = os.path.join("research", "decisions-to-review.md")
+REVIEW_LABEL = re.compile(r"^- \*\*([^*]+)\*\*", re.M)
+
+
+def _reviewed_labels(pyto_root: str) -> set[str]:
+    """Labels the review page (task 62) already lists: they are the owner's to read there, not to be
+    asked again in the batch; an answer under the label still removes them everywhere."""
+    path = os.path.join(pyto_root, REVIEW_PAGE)
+    if not os.path.isfile(path):
+        return set()
+    return {m.strip() for m in REVIEW_LABEL.findall(_read_lf(path))}
 
 
 def _answered_labels(pyto_root: str) -> set[str]:
@@ -270,14 +303,27 @@ def collate(args: Mapping[str, Any]) -> dict:
         )
         if item["label"] not in answered
     ]
+    reviewed = _reviewed_labels(pyto_root)
+    for item in items:
+        task_number = int(item["task"].split("-")[1]) if item["task"].startswith("task-") else None
+        if item["label"] in reviewed or (reviewed and task_number is not None and task_number <= REVIEW_TASK_MAX):
+            item["needs"] = "reviewed"
+    # What needs the owner first, then what the review page already lists, then what carries a
+    # default; each group in source order.
+    rank = {"owner": 0, "root": 1, "reviewed": 2, "default": 3}
+    items = sorted(items, key=lambda it: rank.get(it.get("needs", "default"), 2))
     for number, item in enumerate(items, start=1):
         item["number"] = number
     ordered = [
         {"number": item["number"], "label": item["label"], "task": item["task"],
-         "text": item["text"], "origin": item["origin"]}
+         "text": item["text"], "origin": item["origin"], "needs": item.get("needs", "default")}
         for item in items
     ]
-    return {"n": n, "items": ordered}
+    return {"n": n, "items": ordered,
+            "needs_owner": sum(1 for it in ordered if it["needs"] == "owner"),
+            "reviewed": sum(1 for it in ordered if it["needs"] == "reviewed"),
+            "root_open": sum(1 for it in ordered if it["needs"] == "root"),
+            "defaults": sum(1 for it in ordered if it["needs"] == "default")}
 
 
 COLLATE = Calculation("fn.neat.review.collate", collate)
@@ -382,8 +428,13 @@ def file_answer(args: Mapping[str, Any]) -> dict:
     pyto_root = args["pyto_root"]
     date = datetime.fromtimestamp(capture["recordedAt"] / 1000.0, tz=timezone.utc).strftime("%Y-%m-%d")
 
-    marker = f"Filed from batch {n} item {k}, frozen {frozen['sha256'][:12]}"
-    lines = [f'Owner, {date}: "{frozen["bytes"]}"']
+    kind = args.get("kind") or "owner"
+    marker = f"Filed from batch {n} item {k}, frozen {frozen['sha256'][:12]}" + ("" if kind == "owner" else f" ({kind})")
+    if kind == "owner":
+        lines = [f'Owner, {date}: "{frozen["bytes"]}"']
+    else:
+        # The session's default, never the owner's words: it stands until he says otherwise.
+        lines = [f'Default (session, {date}): "{frozen["bytes"]}"']
     if technical:
         lines.append(f"Technical: {technical}")
     lines.append(marker)
@@ -395,7 +446,7 @@ def file_answer(args: Mapping[str, Any]) -> dict:
         with open(questions_path, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(text)
 
-    return {"label": label, "n": n, "k": k, "sha256": frozen["sha256"]}
+    return {"label": label, "n": n, "k": k, "sha256": frozen["sha256"], "kind": kind}
 
 
 FILE = Calculation("fn.neat.review.file", file_answer)
@@ -424,8 +475,10 @@ def run_ask(pyto_root: str) -> dict:
     )
 
 
-def run_answer(pyto_root: str, n: int, k: int, text: str, technical: str | None = None) -> dict:
-    """`neat answer <n> <k> "<words>"`: capture, freeze, file; one run record."""
+def run_answer(pyto_root: str, n: int, k: int, text: str, technical: str | None = None,
+               kind: str = "owner") -> dict:
+    """`neat answer <n> <k> "<words>"` (kind owner) or `neat default ...` (kind default):
+    capture, freeze, file; one run record."""
     batch = _read_part(os.path.join(pyto_root, "experiments", "review", "batches", f"{n}.json"))
     if batch is None:
         raise ValueError(f"neat answer: no batch {n} on disk; run 'neat ask' first")
@@ -457,14 +510,15 @@ def run_answer(pyto_root: str, n: int, k: int, text: str, technical: str | None 
     pcr.calc(
         "File", FILE, id="file", into=answer_address,
         frozen=freeze_ref, capture=capture_ref,
-        args={"label": label, "n": n, "k": k, "technical": technical, "pyto_root": pyto_root},
+        args={"label": label, "n": n, "k": k, "technical": technical, "pyto_root": pyto_root,
+              "kind": kind},
     )
 
     effects_root = os.path.join(pyto_root, "experiments", "review")
     run = pcr.run(pxc, observe=True, effects_root=effects_root)
 
     record = run_record(run, pxc, preexisting=preexisting)
-    write_record(record, os.path.join(_runs_dir(pyto_root), f"answer-{n}-{k}.json"))
+    write_record(record, os.path.join(_runs_dir(pyto_root), f"{'answer' if kind == 'owner' else 'default'}-{n}-{k}.json"))
 
     capture_value = dict(run.results["capture"])
     recorded_at = capture_value.pop("recordedAt")
@@ -514,24 +568,44 @@ def default_pyto_root() -> str:
 
 
 def _print_batch(batch_value: dict) -> None:
-    for item in batch_value["items"]:
-        print(f"{item['number']}. [{item['task']}] {item['label']}: {item['text']}")
+    items = batch_value["items"]
+    owner = [it for it in items if it.get("needs") == "owner"]
+    reviewed = [it for it in items if it.get("needs") == "reviewed"]
+    root_open = [it for it in items if it.get("needs") == "root"]
+    defaults = [it for it in items if it.get("needs") == "default"]
+    n = batch_value["n"]
+    print(f"batch {n}: {len(owner)} need you; {len(root_open)} open on the root since before the loop; "
+          f"{len(reviewed)} are on the review page (research/decisions-to-review.md); "
+          f"{len(defaults)} carry a default that stands until you say otherwise")
+    if owner:
+        print("\nNeed you (neat answer %d <number> \"<words>\"):" % n)
+        for item in owner:
+            print(f"{item['number']}. [{item['task']}] {item['label']}: {item['text']}")
+    if root_open:
+        print(f"\nOpen on the root since before the loop, not asked again here: {len(root_open)} labels "
+              f"(bash pyto/scripts/questions.sh lists them; neat answer {n} <number> still files one).")
+    if reviewed:
+        print(f"\nOn the review page, not asked again here: {len(reviewed)} labels (neat answer {n} <number> still files one).")
+    if defaults:
+        print("\nDefaults, standing (neat default %d <number> \"<sentence>\" files one; answer it to overturn):" % n)
+        for item in defaults:
+            print(f"{item['number']}. [{item['task']}] {item['label']}: {item['text']}")
 
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     pyto_root = default_pyto_root()
     if not argv:
-        print("usage: python -m pyto.neat.review ask|answer|answers", file=sys.stderr)
+        print("usage: python -m pyto.neat.review ask|answer|default|answers", file=sys.stderr)
         return 2
     verb, rest = argv[0], argv[1:]
     if verb == "ask":
         part = run_ask(pyto_root)
         _print_batch(part["value"])
         return 0
-    if verb == "answer":
+    if verb in ("answer", "default"):
         if len(rest) < 3:
-            print('usage: neat answer <n> <k> "<words>" [--technical "<text>"]', file=sys.stderr)
+            print(f'usage: neat {verb} <n> <k> "<words>" [--technical "<text>"]', file=sys.stderr)
             return 2
         try:
             n, k = int(rest[0]), int(rest[1])
@@ -544,16 +618,17 @@ def main(argv: list[str] | None = None) -> int:
         if tail[:1] == ["--technical"]:
             technical = tail[1] if len(tail) > 1 else ""
         try:
-            part = run_answer(pyto_root, n, k, text, technical=technical)
+            part = run_answer(pyto_root, n, k, text, technical=technical,
+                              kind="owner" if verb == "answer" else "default")
         except ValueError as refused:
-            print(f"neat answer: {refused}", file=sys.stderr)
+            print(f"neat {verb}: {refused}", file=sys.stderr)
             return 1
         value = part["value"]
-        print(f"{value['label']} {value['sha256']}")
+        print(f"{value['label']} {value['sha256']} {value.get('kind', 'owner')}")
         return 0
     if verb == "answers":
         for value in list_answers(pyto_root):
-            print(f"{value['label']} {value['sha256']} {value['n']} {value['k']}")
+            print(f"{value['label']} {value['sha256']} {value['n']} {value['k']} {value.get('kind', 'owner')}")
         return 0
     print(f"python -m pyto.neat.review: unknown verb {verb!r}", file=sys.stderr)
     return 2

@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.CompoundMolecules",
+  "sha256": "62dab1c3db610eafc5c94d5356099f66014f3d476e9ad0ccff4de5735bc754aa",
+  "value": {
+    "k": 221,
+    "kind": "default",
+    "label": "CompoundMolecules",
+    "n": 6,
+    "sha256": "642b4f903d359cd3d317cd7ac4f489211c791eb24872e06039ffe592ad34512a"
+  }
+}

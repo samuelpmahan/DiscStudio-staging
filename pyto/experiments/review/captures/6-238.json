@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.238.response",
+  "recordedAt": 1789046608608.829,
+  "sha256": "bdd5d92352496c2690c5c3697636adbca36608520df8dcae6b7618920ca9cb2f",
+  "value": {
+    "k": 238,
+    "label": "LabelsOutsideReadPqlGrammar",
+    "n": 6,
+    "text": "The default stated in task-66's packet stands: documents here carry a top-level labels list that the JS readPql grammar does not know; labels stay Python-side."
+  }
+}

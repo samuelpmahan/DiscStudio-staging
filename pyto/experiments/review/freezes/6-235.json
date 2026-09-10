@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.235.response",
+  "sha256": "d5d5ab2ff4691028408bedb33c240d71bdfe6e0b9bd1ecf8567f064d0fedc8f9",
+  "value": {
+    "bytes": "The default stated in task-66's packet stands: the CLI prints the diff value pretty (two-space indent, sorted keys -- px.py's own meaning of 'canonical JSON' for a value meant to be read) while the sha256 in.",
+    "sha256": "687ad0f4d40932d8d1587a9acdbb37121a055717a512e1f5006efd08a1b5c0c3"
+  }
+}

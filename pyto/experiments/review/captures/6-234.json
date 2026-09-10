@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.234.response",
+  "recordedAt": 1789046560053.5823,
+  "sha256": "8cba3ddb9e09b6e76f2e6edd3e02e5ab11f336fdadc442f06f9faa15511f9738",
+  "value": {
+    "k": 234,
+    "label": "DiffNewIsAsymmetric",
+    "n": 6,
+    "text": "The default stated in task-66's packet stands: the outputs vocabulary (same/changed/new/unknown) has no fifth word for 'removed', so an address only one of the two documents declares as  -- on either s."
+  }
+}

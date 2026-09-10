@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.228.response",
+  "recordedAt": 1789046559367.279,
+  "sha256": "70367cabf619d52952029319d903c0f66fd4c4b4cc3db540decc4e32c6c98c3e",
+  "value": {
+    "k": 228,
+    "label": "NeatWalkCheck",
+    "n": 6,
+    "text": "The default stated in task-63's packet stands: neat walk --check is also accepted (dispatches to walk.py --check) though the brief named only walk, walk N and walk --page."
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.225.response",
+  "recordedAt": 1789046559006.5874,
+  "sha256": "31efa177a80aba2affe128457446377a060e66a7548bc81c2ec5000c0b52649a",
+  "value": {
+    "k": 225,
+    "label": "HashRefUnchecked",
+    "n": 6,
+    "text": "The default stated in task-60's packet stands: the fn:<id>#<address> branch of resolve() trusts the address without checking it is among the producer's into (record_schema.py does check)."
+  }
+}

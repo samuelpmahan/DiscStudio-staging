@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.2742799998477494
+  },
+  "parts": {
+    "neat.capture.review.6.226.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.ConceptMap": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.6.226.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.6.226.response"
+          ],
+          "args": {
+            "k": 226,
+            "label": "ConceptMap",
+            "n": 6,
+            "text": "The default stated in task-63's packet stands: changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to C."
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.11999099990589457,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789046559135.7725,
+              "result_sha256": "530cda9ed98bc294da60a199c99dc4035104dc792d0a3dd49c72ba9a985360c8"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.6.226.response",
+          "result_sha256": "ed8a9ddd74c882b3f1fcb802418b6886b580bab292a2ef96a4e230e0a42c41ea",
+          "value": {
+            "data": {
+              "k": 226,
+              "label": "ConceptMap",
+              "n": 6,
+              "recordedAt": 1789046559135.7725,
+              "text": "The default stated in task-63's packet stands: changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to C."
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.6.226.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.6.226.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.02572699997926975,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.6.226.response",
+          "result_sha256": "623fff6b8f24ebc90815d6169458295b488d2efa19a743065a62bb1cab45caf9",
+          "value": {
+            "data": {
+              "bytes": "The default stated in task-63's packet stands: changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to C.",
+              "sha256": "72522db6c8022c2d72435573b8242014b0874891fd0a71da361c68af6802759f"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.6.226.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.ConceptMap"
+          ],
+          "args": {
+            "k": 226,
+            "kind": "default",
+            "label": "ConceptMap",
+            "n": 6,
+            "pyto_root": "/home/user/DiscStudio-staging/EXP/70/pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.128561999962585,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.ConceptMap",
+          "result_sha256": "cf84d87738d6929112823314e944cf4a1d5a047bb1cd5945dda5720215ea2c47",
+          "value": {
+            "data": {
+              "k": 226,
+              "kind": "default",
+              "label": "ConceptMap",
+              "n": 6,
+              "sha256": "72522db6c8022c2d72435573b8242014b0874891fd0a71da361c68af6802759f"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.ConceptMap",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

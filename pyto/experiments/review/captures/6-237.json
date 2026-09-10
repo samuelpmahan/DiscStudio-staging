@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.237.response",
+  "recordedAt": 1789046560407.619,
+  "sha256": "5e7bb82882f0deb7347debfe12a655a4e7d600e3286bf842c601c00dbb0f0c9b",
+  "value": {
+    "k": 237,
+    "label": "DiffRemainderOcOrder",
+    "n": 6,
+    "text": "The default stated in task-66's packet stands: the remainder lists every label (a's then b's) followed by one 'not run: <call> is oc.' line per oc."
+  }
+}

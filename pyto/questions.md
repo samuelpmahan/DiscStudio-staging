@@ -862,3 +862,97 @@ step. The awesome-* part: neat-learning is a repo of assignment packages (brief,
 sample hand-off) and contributors add them through neat, so the collection grades its own additions.
 Missing: a score in the receipt (passed of total, not exit 0/1) and `neat list` showing it.
 Owner overturned the first default the same night: "Private by default, sharing ez. All controlled by deterministic RBAC to prevent mini hugging face attack like OpenAI." So: a student's desk is its own repo, visible to the student and the teacher only; sharing is a landing into a shared repo (showcase, pair, class) with allowed paths, a verifier and a receipt, and unsharing is undo; who may do what is a plain file at the class root plus the git host's collaborator list, read by neat and never by a model, so a prompt cannot widen access; one desk, one repo, one token scoped to it, so a leaked token reaches one student's work and the leak shows in that desk's receipts; copying still shows because digests travel with a share. Owner, on the note that one desk per repo was a day's change: "Neat assumes one repo with branches per client yes. So?" Right: the student's repo is their MAIN and neat anywhere already runs there; sharing is the class repo fetching a student's branch and landing it, which is land --from behind a remote fetch. What is left is small: a score in the receipt (passed of total, not exit 0/1) and neat land taking a remote and a branch. Remaining defaults: the verifier is the teacher's reference and the cold read stays the real grade; personal Parts accumulate on the student's own desk and that is what a tutoring agent reads, never a profile. Bites: pyto/experiments/students/, LANDING.md, neat.sh.
+
+### {?} PartLabelKind
+Default (session, 2026-09-10): "The default stated in task-60's packet stands: Parts are labelled by full address (exact) or the constant 'part' (shape)."
+Filed from batch 6 item 219, frozen 9767e1c750b9 (default)
+
+### {?} MoleculeAddress
+Default (session, 2026-09-10): "The default stated in task-60's packet stands: the emitted PQL document is one Tick named molecule-<rank>."
+Filed from batch 6 item 220, frozen ac348454ba26 (default)
+
+### {?} CompoundMolecules
+Default (session, 2026-09-10): "The default stated in task-60's packet stands: later SUBDUE ranks are built on an earlier rank's SUB node."
+Filed from batch 6 item 221, frozen 642b4f903d35 (default)
+
+### {?} PxMolecules
+Default (session, 2026-09-10): "The default stated in task-60's packet stands: 'px molecules <record...>' in px.py is not done (time)."
+Filed from batch 6 item 222, frozen 97fb9740987e (default)
+
+### {?} DocumentDropsArgs
+Default (session, 2026-09-10): "The default stated in task-60's packet stands: the emitted PQL document carries call, with and into but not the invocation's args or id, so where two Calculations differ only by args (exact rank 1: fn.ablati."
+Filed from batch 6 item 223, frozen e6f97ac4c21c (default)
+
+### {?} OnePartQuery
+Default (session, 2026-09-10): "The default stated in task-60's packet stands: a one-Part molecule is spelled PQL.prefix(address), which also matches longer addresses."
+Filed from batch 6 item 224, frozen 1c3ae0264867 (default)
+
+### {?} HashRefUnchecked
+Default (session, 2026-09-10): "The default stated in task-60's packet stands: the fn:<id>#<address> branch of resolve() trusts the address without checking it is among the producer's into (record_schema.py does check)."
+Filed from batch 6 item 225, frozen 05aef5349b71 (default)
+
+### {?} ConceptMap
+Default (session, 2026-09-10): "The default stated in task-63's packet stands: changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to C."
+Filed from batch 6 item 226, frozen 72522db6c802 (default)
+
+### {?} AbsolutePathsInTheRecord
+Default (session, 2026-09-10): "The default stated in task-63's packet stands: the record itself carries a machine's absolute path in places (refused lines on the board, check_all.txt)."
+Filed from batch 6 item 227, frozen 7bcf7f1d9523 (default)
+
+### {?} NeatWalkCheck
+Default (session, 2026-09-10): "The default stated in task-63's packet stands: neat walk --check is also accepted (dispatches to walk.py --check) though the brief named only walk, walk N and walk --page."
+Filed from batch 6 item 228, frozen f087e58e24d5 (default)
+
+### {?} PathCutSwallowedQuotes
+Default (session, 2026-09-10): "The default stated in task-63's packet stands: the first build cut an escaped quote along with a path 190 times (the verifier's find)."
+Filed from batch 6 item 229, frozen cee77363d849 (default)
+
+### {?} FileIsNotAnEffect
+Default (session, 2026-09-10): "The default stated in task-65's packet stands: fn.neat.review.file mutates pyto/questions.md directly inside its own Python body rather than through an oc./Effects handle, on the reading that 'oc."
+Filed from batch 6 item 230, frozen 4eefbc3432d3 (default)
+
+### {?} RootItemText
+Default (session, 2026-09-10): "The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne."
+Filed from batch 6 item 231, frozen 65b0279c75a5 (default)
+
+### {?} RootItemScope
+Default (session, 2026-09-10): "The default stated in task-65's packet stands: the real questions.md carries 102 '### {?}' headings naming 117 labels (five headings group several labels on one comma-separated line, e.g."
+Filed from batch 6 item 232, frozen 9cdb7825d1ab (default)
+
+### {?} WalkReachability
+Default (session, 2026-09-10): "The default stated in task-65's packet stands: the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent."
+Filed from batch 6 item 233, frozen c9f5aed26d24 (default)
+
+### {?} DiffNewIsAsymmetric
+Default (session, 2026-09-10): "The default stated in task-66's packet stands: the outputs vocabulary (same/changed/new/unknown) has no fifth word for 'removed', so an address only one of the two documents declares as  -- on either s."
+Filed from batch 6 item 234, frozen e5c2d8a22a4e (default)
+
+### {?} DiffPrintForm
+Default (session, 2026-09-10): "The default stated in task-66's packet stands: the CLI prints the diff value pretty (two-space indent, sorted keys -- px.py's own meaning of 'canonical JSON' for a value meant to be read) while the sha256 in."
+Filed from batch 6 item 235, frozen 687ad0f4d409 (default)
+
+### {?} NeatDiffCalculationRunForm
+
+Default (session, 2026-09-10): "The default stated in task-66's packet stands: fn.neat.diff.candidates is registered in a PxC and invoked with pxc.call, not as its own observed PCR."
+Filed from batch 6 item 236, frozen 4e4755797624 (default)
+
+### {?} DiffRemainderOcOrder
+Default (session, 2026-09-10): "The default stated in task-66's packet stands: the remainder lists every label (a's then b's) followed by one 'not run: <call> is oc.' line per oc."
+Filed from batch 6 item 237, frozen 8dded9bfe7b9 (default)
+
+### {?} LabelsOutsideReadPqlGrammar
+
+Default (session, 2026-09-10): "The default stated in task-66's packet stands: documents here carry a top-level labels list that the JS readPql grammar does not know; labels stay Python-side."
+Filed from batch 6 item 238, frozen 794f10704601 (default)
+
+### {?} SecretsAreNotEffects
+Default (session, 2026-09-10): "The default stated in task-67's packet stands: Effects.env records the value it reads, so the GitHub token is read with os.environ and never through the handle."
+Filed from batch 6 item 239, frozen 7e8502b6357b (default)
+
+### {?} HttpIsNotAnEffectKind
+Default (session, 2026-09-10): "The default stated in task-67's packet stands: the GitHub requests are not ledgered (the handle has write_text, read_text, now_ms, random, env)."
+Filed from batch 6 item 240, frozen d19cd833da48 (default)
+
+### {?} SubjectIsTheHeadSha
+Default (session, 2026-09-10): "The default stated in task-67's packet stands: the frozen subject is the package plus the candidate's head sha, because the sha fixes the packet and every claimed byte."
+Filed from batch 6 item 241, frozen 5df979ba149b (default)

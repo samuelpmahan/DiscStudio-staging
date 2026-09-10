@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.HttpIsNotAnEffectKind",
+  "sha256": "f6e04053d6a24ecb3f5fb15b342255e6c7b9f731430e9aec731db3ea64b41a88",
+  "value": {
+    "k": 240,
+    "kind": "default",
+    "label": "HttpIsNotAnEffectKind",
+    "n": 6,
+    "sha256": "d19cd833da48cb9f50ff423b9fafe901d55d2f839c33eeb52ef3d994d4c63e7f"
+  }
+}

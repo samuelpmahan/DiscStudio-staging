@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.225.response",
+  "sha256": "f771a931f7d173048ec9d5aa3b23788c436aebb15a52b96d78d7535a16bac3b6",
+  "value": {
+    "bytes": "The default stated in task-60's packet stands: the fn:<id>#<address> branch of resolve() trusts the address without checking it is among the producer's into (record_schema.py does check).",
+    "sha256": "05aef5349b7100359cec98b7250e4909a7daa3a5b7ee2fb279a58a3a629d590e"
+  }
+}

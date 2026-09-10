@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.231.response",
+  "recordedAt": 1789046559700.1226,
+  "sha256": "0592a8fcd46321bbd7783744695715f51f417428a0fd399307e4da637544016c",
+  "value": {
+    "k": 231,
+    "label": "RootItemText",
+    "n": 6,
+    "text": "The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne."
+  }
+}

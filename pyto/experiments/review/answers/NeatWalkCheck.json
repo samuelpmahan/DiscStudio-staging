@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.NeatWalkCheck",
+  "sha256": "a2cc091e0beede6ab8e7b40bf5bf7a66061bcd16fcc625863a754be9f0fa0f78",
+  "value": {
+    "k": 228,
+    "kind": "default",
+    "label": "NeatWalkCheck",
+    "n": 6,
+    "sha256": "f087e58e24d550c1b0f2ef041a1ac5e0144d219972da1a83f1fd890c1bd5bb34"
+  }
+}

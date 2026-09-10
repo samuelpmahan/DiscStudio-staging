@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.230.response",
+  "recordedAt": 1789046559588.3777,
+  "sha256": "b8704f07ce6d822aaa8b35e384eb0ec90b22eb664b0a7b206033f5e040b4e220",
+  "value": {
+    "k": 230,
+    "label": "FileIsNotAnEffect",
+    "n": 6,
+    "text": "The default stated in task-65's packet stands: fn.neat.review.file mutates pyto/questions.md directly inside its own Python body rather than through an oc./Effects handle, on the reading that 'oc."
+  }
+}
