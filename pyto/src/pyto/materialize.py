@@ -369,6 +369,21 @@ def run_record(
             "nullable and which the reference reader (viewer/adapters.js validate) "
             "refuses -- a document tagged pyto-run-record@1 that is not one."
         )
+    # Placement and budget (RECORD.md, "Placement and budget"). The four fields are
+    # written together and only when this run has something to say with them -- a
+    # parallel run, a budgeted run, or a run a budget stopped. A plain serial
+    # unbudgeted run's record is byte for byte the record it was before they
+    # existed, which is what "absent means serial, unbudgeted" buys: every consumer
+    # that compares a fresh record against a committed one (experiments/students
+    # grade.py check 2 drops `duration_ms` and nothing else) keeps working, and a
+    # per-Tick wall clock is not silently added to documents that are compared byte
+    # for byte ({?} ScheduleFieldsOptional).
+    parallel = bool(getattr(run, "parallel", False))
+    budget_ms = getattr(run, "budget_ms", None)
+    completed = bool(getattr(run, "completed", True))
+    measured_latency = dict(getattr(run, "tick_latency_ms", None) or {})
+    reports_schedule = parallel or budget_ms is not None or not completed
+
     produces_by_id: dict[str, tuple[str, ...]] = {}
     for tick in run.ticks:
         for testimony in tick.calculations:
@@ -473,6 +488,7 @@ def run_record(
             duration_ms: float | None = receipt.duration_ms
             result_sha256: str | None = receipt.result_sha256
             wall_ms = receipt.duration_ms if wall_ms is None else wall_ms + receipt.duration_ms
+            placement = getattr(receipt, "placement", None)
 
             invocations.append(
                 {
@@ -499,9 +515,32 @@ def run_record(
                     )
                     if testimony.id in run.results
                     else _omitted("the run retained no result for this invocation"),
+                    **(
+                        {
+                            "placement": (
+                                {
+                                    "worker": placement.worker,
+                                    "started_ms": placement.started_ms,
+                                }
+                                if placement is not None
+                                else None
+                            )
+                        }
+                        if reports_schedule
+                        else {}
+                    ),
                 }
             )
-        ticks.append({"index": index, "name": tick.name, "invocations": invocations})
+        entry: dict[str, Any] = {"index": index, "name": tick.name, "invocations": invocations}
+        if reports_schedule:
+            # The Tick's wall time, first start to last finish: measured when the
+            # run was parallel (only the run knows when its pool started and
+            # stopped), and the sum of its own durations when it was serial --
+            # which for a series of Calculations is the same number.
+            entry["latency_ms"] = _tick_latency_ms(
+                measured_latency.get(tick.name), invocations
+            )
+        ticks.append(entry)
 
     parts = {
         address: {
@@ -516,7 +555,7 @@ def run_record(
     if source:
         document_source.update(source)
 
-    return {
+    document: dict[str, Any] = {
         "schema": SCHEMA,
         "pcr": pcr_name if pcr_name is not None else run.pcr,
         "source": document_source,
@@ -529,6 +568,34 @@ def run_record(
             "wall_ms": wall_ms,
         },
     }
+    if reports_schedule:
+        document["parallel"] = parallel
+        document["budget"] = {
+            "limit_ms": budget_ms,
+            "stopped_after_tick": getattr(run, "stopped_after_tick", None),
+            "completed": completed,
+        }
+    return document
+
+
+def _tick_latency_ms(measured: float | None, invocations: list[dict[str, Any]]) -> float | None:
+    """One Tick's wall time: what the run measured, else the sum of its durations.
+
+    Null when the runtime recorded no duration for one of the invocations -- a
+    partial sum would read as a fast Tick rather than as an unknown one
+    (RECORD.md: missing fields are null, never invented).
+    """
+    if measured is not None:
+        return measured
+    if not invocations:
+        return None
+    total = 0.0
+    for invocation in invocations:
+        duration = invocation["duration_ms"]
+        if duration is None:
+            return None
+        total += duration
+    return total
 
 
 def write_record(record: Mapping[str, Any], path: str) -> str:

@@ -7,6 +7,6 @@ split digest equal to run-1: False -- expected False: split's args include the r
 Ranking (ablations only): drop_g3 > drop_g0 > drop_g1. The planted ranking (drop_g3 > drop_g0 > drop_g1, features.py TRUE_W) is expected to hold regardless of seed/n (Day 1 kill criterion, verified across seeds 3, 11, 13, 99 in the completeness critic's checks).
 
 Invocations skippable by digest against run-1 (compare_local.explain_changes, unchanged_upstream): ['select']. 'select' is the one id whose inputs, args and external value (features.GROUPS) are byte-identical to run-1 and whose result digest therefore matches -- the only genuinely reusable invocation when just the rows change.
-ms saved (run-1 receipts.json duration of the skippable ids): 0.023
+ms saved (run-1 receipts.json duration of the skippable ids): 0.039
 
 Reconstruction required: no. program.py and calculations.py are imported unchanged (program_lines_changed == 0 above); only seed and n (and the rows they produce) differ from run-1.

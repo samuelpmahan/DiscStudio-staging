@@ -1,0 +1,346 @@
+[tests/test_receipts] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/39/pyto/experiments/grouped-ablation')
+[tests/test_materialize] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/39/pyto/viewer/test')
+.........................................................................................F........................FFF.FFEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+======================================================================
+ERROR: test_a_parallel_tick_publishes_in_declared_order_after_the_whole_tick (tests.test_parallel.Placement.test_a_parallel_tick_publishes_in_declared_order_after_the_whole_tick)
+The store never holds half a Tick, and the order is the program's.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 182, in setUp
+    self.run = build_program().run(self.pxc, observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_a_serial_run_places_nothing (tests.test_parallel.Placement.test_a_serial_run_places_nothing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 182, in setUp
+    self.run = build_program().run(self.pxc, observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_every_invocation_of_a_parallel_run_carries_a_placement (tests.test_parallel.Placement.test_every_invocation_of_a_parallel_run_carries_a_placement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 182, in setUp
+    self.run = build_program().run(self.pxc, observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_the_fanned_tick_takes_less_time_than_it_does_work (tests.test_parallel.Placement.test_the_fanned_tick_takes_less_time_than_it_does_work)
+Work adds; time is the longest branch ({?} TicksAsCircuits).
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 182, in setUp
+    self.run = build_program().run(self.pxc, observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_the_four_branches_really_overlapped (tests.test_parallel.Placement.test_the_four_branches_really_overlapped)
+Every branch starts before the first one could have finished.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 182, in setUp
+    self.run = build_program().run(self.pxc, observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_the_record_says_the_run_was_parallel (tests.test_parallel.Placement.test_the_record_says_the_run_was_parallel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 182, in setUp
+    self.run = build_program().run(self.pxc, observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_a_serial_record_carries_none_of_the_four_new_keys (tests.test_parallel.SerialRecordUnchanged.test_a_serial_record_carries_none_of_the_four_new_keys)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 336, in setUp
+    build_program().run(self.parallel_pxc, observe=True, parallel=True),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_a_serial_records_key_sets_are_the_committed_fixtures (tests.test_parallel.SerialRecordUnchanged.test_a_serial_records_key_sets_are_the_committed_fixtures)
+Byte level, not shape level: the pre-change record's own key sets.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 336, in setUp
+    build_program().run(self.parallel_pxc, observe=True, parallel=True),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_a_serial_ticks_latency_is_the_sum_of_its_durations (tests.test_parallel.SerialRecordUnchanged.test_a_serial_ticks_latency_is_the_sum_of_its_durations)
+Which is what a series of Calculations means: durations add.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 336, in setUp
+    build_program().run(self.parallel_pxc, observe=True, parallel=True),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_deleting_the_four_new_keys_makes_the_parallel_record_the_serial_one (tests.test_parallel.SerialRecordUnchanged.test_deleting_the_four_new_keys_makes_the_parallel_record_the_serial_one)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 336, in setUp
+    build_program().run(self.parallel_pxc, observe=True, parallel=True),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_the_committed_fixture_still_validates_and_reads_as_serial (tests.test_parallel.SerialRecordUnchanged.test_the_committed_fixture_still_validates_and_reads_as_serial)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 336, in setUp
+    build_program().run(self.parallel_pxc, observe=True, parallel=True),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_the_results_are_identical_serial_and_parallel (tests.test_parallel.Testimony.test_the_results_are_identical_serial_and_parallel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 168, in test_the_results_are_identical_serial_and_parallel
+    parallel = build_program().run(PxC(), observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_the_store_holds_the_same_parts_with_the_same_values (tests.test_parallel.Testimony.test_the_store_holds_the_same_parts_with_the_same_values)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 175, in test_the_store_holds_the_same_parts_with_the_same_values
+    build_program().run(parallel_store, observe=False, parallel=True)
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_the_testimony_bytes_are_identical_serial_and_parallel (tests.test_parallel.Testimony.test_the_testimony_bytes_are_identical_serial_and_parallel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 163, in test_the_testimony_bytes_are_identical_serial_and_parallel
+    parallel = build_program().run(PxC(), observe=True, parallel=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_every_completed_tick_carries_its_latency (tests.test_budget.Budget.test_every_completed_tick_carries_its_latency)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 110, in setUp
+    self.run = build_program().run(
+               ^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_the_clock_is_read_once_at_each_tick_boundary (tests.test_budget.Budget.test_the_clock_is_read_once_at_each_tick_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 110, in setUp
+    self.run = build_program().run(
+               ^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_the_published_parts_are_exactly_the_first_two_ticks (tests.test_budget.Budget.test_the_published_parts_are_exactly_the_first_two_ticks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 110, in setUp
+    self.run = build_program().run(
+               ^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_the_record_validates_and_says_where_the_run_stopped (tests.test_budget.Budget.test_the_record_validates_and_says_where_the_run_stopped)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 110, in setUp
+    self.run = build_program().run(
+               ^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_the_run_stops_after_the_second_tick (tests.test_budget.Budget.test_the_run_stops_after_the_second_tick)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 110, in setUp
+    self.run = build_program().run(
+               ^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_the_testimony_is_the_unbudgeted_runs_prefix_byte_for_byte (tests.test_budget.Budget.test_the_testimony_is_the_unbudgeted_runs_prefix_byte_for_byte)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 110, in setUp
+    self.run = build_program().run(
+               ^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_a_budget_already_spent_publishes_nothing_and_names_no_tick (tests.test_budget.BudgetEdges.test_a_budget_already_spent_publishes_nothing_and_names_no_tick)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 189, in test_a_budget_already_spent_publishes_nothing_and_names_no_tick
+    run = build_program().run(pxc, observe=True, budget_ms=100.0, clock=clock)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_a_budget_stops_a_parallel_run_at_the_same_seam (tests.test_budget.BudgetEdges.test_a_budget_stops_a_parallel_run_at_the_same_seam)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 203, in test_a_budget_stops_a_parallel_run_at_the_same_seam
+    run = build_program().run(
+          ^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'parallel'
+
+======================================================================
+ERROR: test_a_budget_that_is_never_spent_completes (tests.test_budget.BudgetEdges.test_a_budget_that_is_never_spent_completes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 175, in test_a_budget_that_is_never_spent_completes
+    run = build_program().run(pxc, observe=True, budget_ms=10_000.0, clock=clock)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_an_unbudgeted_run_never_reads_the_clock (tests.test_budget.BudgetEdges.test_an_unbudgeted_run_never_reads_the_clock)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 197, in test_an_unbudgeted_run_never_reads_the_clock
+    build_program().run(PxC(), observe=True, clock=clock)
+TypeError: PCR.run() got an unexpected keyword argument 'clock'
+
+======================================================================
+ERROR: test_the_default_clock_is_monotonic_milliseconds (tests.test_budget.BudgetEdges.test_the_default_clock_is_monotonic_milliseconds)
+No injected clock: a generous budget completes, a zero budget does not.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 216, in test_the_default_clock_is_monotonic_milliseconds
+    run = build_program().run(PxC(), observe=True, budget_ms=60_000.0)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_a_completed_run_may_not_name_a_stopping_tick (tests.test_budget.BudgetRecordRules.test_a_completed_run_may_not_name_a_stopping_tick)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 229, in setUp
+    run = build_program().run(pxc, observe=True, budget_ms=250.0, clock=clock)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_a_placement_worker_is_a_non_negative_integer (tests.test_budget.BudgetRecordRules.test_a_placement_worker_is_a_non_negative_integer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 229, in setUp
+    run = build_program().run(pxc, observe=True, budget_ms=250.0, clock=clock)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_a_stopping_tick_must_name_a_tick_of_this_record (tests.test_budget.BudgetRecordRules.test_a_stopping_tick_must_name_a_tick_of_this_record)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 229, in setUp
+    run = build_program().run(pxc, observe=True, budget_ms=250.0, clock=clock)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_budget_carries_its_three_fields_and_no_others (tests.test_budget.BudgetRecordRules.test_budget_carries_its_three_fields_and_no_others)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 229, in setUp
+    run = build_program().run(pxc, observe=True, budget_ms=250.0, clock=clock)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+ERROR: test_latency_is_a_number_or_null (tests.test_budget.BudgetRecordRules.test_latency_is_a_number_or_null)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_budget.py", line 229, in setUp
+    run = build_program().run(pxc, observe=True, budget_ms=250.0, clock=clock)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PCR.run() got an unexpected keyword argument 'budget_ms'
+
+======================================================================
+FAIL: test_results_keyed_by_id_not_tick_and_rerun_replaces (tests.test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces)
+pcr.py: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_semantics.py", line 542, in test_results_keyed_by_id_not_tick_and_rerun_replaces
+    self.assertEqual(
+AssertionError: Tuples differ: ('pcr[28 chars]ipts') != ('pcr[28 chars]ipts', 'parallel', 'tick_latency_ms', 'budget_[34 chars]ted')
+
+Second tuple contains 5 additional elements.
+First extra element 4:
+'parallel'
+
+- ('pcr', 'ticks', 'results', 'receipts')
++ ('pcr',
++  'ticks',
++  'results',
++  'receipts',
++  'parallel',
++  'tick_latency_ms',
++  'budget_ms',
++  'stopped_after_tick',
++  'completed')
+
+======================================================================
+FAIL: test_a_part_binding_on_a_siblings_produce_is_the_same_refusal (tests.test_parallel.NodeLaw.test_a_part_binding_on_a_siblings_produce_is_the_same_refusal)
+`Part('px.short.a')` is a read of the sibling's result (ResultReadsAreReads).
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 281, in test_a_part_binding_on_a_siblings_produce_is_the_same_refusal
+    with self.assertRaises(ValueError) as caught:
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_a_sibling_result_ref_is_refused_at_bind_time (tests.test_parallel.NodeLaw.test_a_sibling_result_ref_is_refused_at_bind_time)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 270, in test_a_sibling_result_ref_is_refused_at_bind_time
+    with self.assertRaises(ValueError) as caught:
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_a_tick_built_without_a_pcr_is_held_to_the_law_too (tests.test_parallel.NodeLaw.test_a_tick_built_without_a_pcr_is_held_to_the_law_too)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 318, in test_a_tick_built_without_a_pcr_is_held_to_the_law_too
+    with self.assertRaises(ValueError) as caught:
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_two_siblings_producing_one_address_are_refused (tests.test_parallel.NodeLaw.test_two_siblings_producing_one_address_are_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 300, in test_two_siblings_producing_one_address_are_refused
+    self.assertIn("'left'", message)
+AssertionError: "'left'" not found in "PCR 'two-writers' has multiple writers for 'px.both'"
+
+======================================================================
+FAIL: test_two_siblings_sharing_one_address_of_a_multi_produce_are_refused (tests.test_parallel.NodeLaw.test_two_siblings_sharing_one_address_of_a_multi_produce_are_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/39/pyto/tests/test_parallel.py", line 310, in test_two_siblings_sharing_one_address_of_a_multi_produce_are_refused
+    self.assertIn("'left'", str(caught.exception))
+AssertionError: "'left'" not found in "PCR 'two-writers-multi' has multiple writers for 'px.y'"
+
+----------------------------------------------------------------------
+Ran 150 tests in 3.543s
+
+FAILED (failures=6, errors=30)

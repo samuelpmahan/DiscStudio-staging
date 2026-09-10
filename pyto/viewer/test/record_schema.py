@@ -46,6 +46,14 @@ WRITE_KEYS = ("address", "kind")
 VALUE_KEYS = ("kind", "data", "note")
 PART_KEYS = ("written_by", "read_by", "preexisting")
 COUNTER_KEYS = ("invocations", "hits", "computed", "wall_ms")
+# RECORD.md, "Placement and budget": optional everywhere they appear. Absent means
+# the run was serial and unbudgeted, which is what a runtime that never heard of
+# either writes.
+DOCUMENT_OPTIONAL = ("parallel", "budget")
+TICK_OPTIONAL = ("latency_ms",)
+INVOCATION_OPTIONAL = ("placement",)
+PLACEMENT_KEYS = ("worker", "started_ms")
+BUDGET_KEYS = ("limit_ms", "stopped_after_tick", "completed")
 
 
 class RecordSchemaError(ValueError):
@@ -67,12 +75,17 @@ def _show(value):
     return type(value).__name__
 
 
-def _keys(value, path, expected):
-    """Exactly `expected`, in any order: nothing missing, nothing invented."""
+def _keys(value, path, expected, optional=()):
+    """Exactly `expected`, in any order, plus any of `optional`.
+
+    `optional` is the placement-and-budget set (RECORD.md, "Placement and budget"):
+    a record that carries none of them is a serial, unbudgeted run, which is what
+    every runtime but a parallel pyto writes.
+    """
     if not isinstance(value, dict):
         _fail(path, f"expected an object, got {_show(value)}")
     have, want = set(value), set(expected)
-    missing, extra = sorted(want - have), sorted(have - want)
+    missing, extra = sorted(want - have), sorted(have - want - set(optional))
     if missing:
         _fail(path, f"missing required field(s) {', '.join(missing)}; RECORD.md: missing fields are null, never absent")
     if extra:
@@ -231,7 +244,7 @@ def _value(block, path):
 
 
 def _invocation(inv, path, seen_ids):
-    _keys(inv, path, INVOCATION_KEYS)
+    _keys(inv, path, INVOCATION_KEYS, INVOCATION_OPTIONAL)
     ident = _str(inv["id"], f"{path}.id")
     if ident in seen_ids:
         _fail(f"{path}.id", f"duplicate invocation id {json.dumps(ident)}; ids anchor annotations and must be unique in a record")
@@ -273,12 +286,78 @@ def _invocation(inv, path, seen_ids):
     _nullable_str(inv["result_sha256"], f"{path}.result_sha256")
     _bool(inv["hit"], f"{path}.hit")
     _value(inv["value"], f"{path}.value")
+    _placement(inv, path)
     return inv
+
+
+def _placement(inv, path):
+    """`placement`, when it is there: which worker ran this, how far into the Tick.
+
+    Optional, and null for a serial run: a Tick that ran on one thread has no
+    placement to report. `worker` is a 0-based index inside its Tick and
+    `started_ms` an offset from the moment the Tick began, so both are numbers a
+    reader can draw without a wall clock.
+    """
+    if "placement" not in inv:
+        return None
+    placement = inv["placement"]
+    if placement is None:
+        return None
+    where = f"{path}.placement"
+    _keys(placement, where, PLACEMENT_KEYS)
+    worker = placement["worker"]
+    if isinstance(worker, bool) or not isinstance(worker, int) or worker < 0:
+        _fail(f"{where}.worker", f"expected a non-negative integer, got {_show(worker)}")
+    value = placement["started_ms"]
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        _fail(f"{where}.started_ms", f"expected a number, got {_show(value)}")
+    return placement
+
+
+def tick_latency_ms(tick):
+    """One Tick's wall time: `latency_ms` when the record carries it, else the sum.
+
+    The fallback is the same arithmetic a serial run does (RECORD.md, "Placement
+    and budget"), and it is null when any invocation's duration is null.
+    """
+    if tick.get("latency_ms") is not None:
+        return tick["latency_ms"]
+    total = 0.0
+    invocations = tick["invocations"]
+    if not invocations:
+        return None
+    for invocation in invocations:
+        if invocation["duration_ms"] is None:
+            return None
+        total += invocation["duration_ms"]
+    return total
+
+
+def invocation_placement(invocation):
+    """This invocation's placement, or None -- absent and null read the same."""
+    return invocation.get("placement") or None
+
+
+def run_schedule(record):
+    """How the run was scheduled, with the defaults an absent field means.
+
+    `{"parallel": bool, "budget": {"limit_ms", "stopped_after_tick", "completed"}}`.
+    A record with neither field is a serial, unbudgeted run that ran to the end.
+    """
+    budget = record.get("budget") or {}
+    return {
+        "parallel": bool(record.get("parallel", False)),
+        "budget": {
+            "limit_ms": budget.get("limit_ms"),
+            "stopped_after_tick": budget.get("stopped_after_tick"),
+            "completed": bool(budget.get("completed", True)),
+        },
+    }
 
 
 def validate(record):
     """Return `record` unchanged, or raise RecordSchemaError naming the path."""
-    _keys(record, "document", DOCUMENT_KEYS)
+    _keys(record, "document", DOCUMENT_KEYS, DOCUMENT_OPTIONAL)
     if record["schema"] != SCHEMA:
         _fail("schema", f"expected {json.dumps(SCHEMA)}, got {_show(record['schema'])}")
     _str(record["pcr"], "pcr")
@@ -292,7 +371,7 @@ def validate(record):
     seen_ids, n_invocations, n_hits = set(), 0, 0
     for index, tick in enumerate(ticks):
         path = f"ticks[{index}]"
-        _keys(tick, path, TICK_KEYS)
+        _keys(tick, path, TICK_KEYS, TICK_OPTIONAL)
         if tick["index"] != index or isinstance(tick["index"], bool):
             _fail(f"{path}.index", f"expected {index} (position in ticks), got {_show(tick['index'])}")
         _str(tick["name"], f"{path}.name")
@@ -315,6 +394,29 @@ def validate(record):
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
             _fail(f"counters.{key}", f"expected a non-negative integer, got {_show(value)}")
     _nullable_number(counters["wall_ms"], "counters.wall_ms")
+    for index, tick in enumerate(ticks):
+        if "latency_ms" in tick:
+            _nullable_number(tick["latency_ms"], f"ticks[{index}].latency_ms")
+    if "parallel" in record:
+        _bool(record["parallel"], "parallel")
+    if "budget" in record:
+        budget = _keys(record["budget"], "budget", BUDGET_KEYS)
+        _nullable_number(budget["limit_ms"], "budget.limit_ms")
+        _nullable_str(budget["stopped_after_tick"], "budget.stopped_after_tick")
+        _bool(budget["completed"], "budget.completed")
+        if budget["completed"] and budget["stopped_after_tick"] is not None:
+            _fail(
+                "budget.stopped_after_tick",
+                "a completed run stopped after no Tick; stopped_after_tick names the "
+                f"last Tick a budget cut the run after, got {_show(budget['stopped_after_tick'])}",
+            )
+        names = {tick["name"] for tick in ticks}
+        if budget["stopped_after_tick"] is not None and budget["stopped_after_tick"] not in names:
+            _fail(
+                "budget.stopped_after_tick",
+                f"names no Tick in this record ({', '.join(sorted(names)) or 'none'}), got "
+                f"{_show(budget['stopped_after_tick'])}",
+            )
     if counters["invocations"] != n_invocations:
         _fail("counters.invocations", f"expected {n_invocations} (invocations in ticks), got {counters['invocations']}")
     if counters["hits"] != n_hits:
