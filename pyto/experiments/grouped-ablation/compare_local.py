@@ -60,33 +60,102 @@ def invocations(program: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
     return out
 
 
+def _into_addresses(into: Any) -> tuple[str, ...]:
+    """Every address one entry's `into` names: none, one, or several.
+
+    `into` is one address, an array of addresses, or null (RECORD.md, Field rules;
+    `pcr.Invocation.testimony_into`). The array form is not hashable, so no reader
+    may use the field itself as a key or put it in a set.
+    """
+    if not into:
+        return ()
+    return (into,) if isinstance(into, str) else tuple(into)
+
+
+def _writer_of(entries: Mapping[str, Mapping[str, Any]]) -> dict[str, str]:
+    """address -> the id of the invocation that publishes it, over *every* produce.
+
+    A multi-produce invocation writes one entry per declared address, so a px: ref
+    to any one of them finds its writer. Later declarations win, as they did when
+    an `into` was one address.
+    """
+    out: dict[str, str] = {}
+    for entry in entries.values():
+        for address in _into_addresses(entry.get("into")):
+            out[address] = entry["id"]
+    return out
+
+
+def _fn_writer(ref: str, entries: Mapping[str, Any]) -> str:
+    """The invocation id an 'fn:' ref names, resolving the produce-qualified form.
+
+    `fn:<id>` is the whole result of that invocation; `fn:<id>#<address>` names one
+    produce of an invocation that published several (RECORD.md, Field rules). A
+    known id wins over the `#` split, so an id that itself carries a `#` still
+    resolves as the bare reference it is -- the same rule as
+    `viewer/test/record_schema.py:resolve_binding` and `viewer/adapters.js`.
+    """
+    body = ref[len(FN):]
+    if body in entries:
+        return body
+    writer, separator, address = body.rpartition("#")
+    if separator and address and writer in entries:
+        return writer
+    return body
+
+
+def _fn_addresses(ref: str, entries: Mapping[str, Mapping[str, Any]]) -> tuple[str, ...]:
+    """The Part addresses an 'fn:' ref reads: one produce, or every one of them."""
+    writer = _fn_writer(ref, entries)
+    if writer not in entries:
+        return ()
+    published = _into_addresses(entries[writer].get("into"))
+    body = ref[len(FN):]
+    if body == writer:
+        return published
+    address = body[len(writer) + 1:]
+    return (address,) if address in published else ()
+
+
 def consumers_of(program: Mapping[str, Any], ref: str) -> list[str]:
-    """Ids binding `ref` ('fn:<id>' or 'px:<address>'), in program order.
+    """Ids binding `ref` ('fn:<id>', 'fn:<id>#<address>' or 'px:<address>'), in program order.
 
     A px: ref also lists the ids that read the Part *address* written by another
     invocation's `into`, which is how a cross-PCR program (writers are per PCR,
     pcr.py:267-272) still shows its edges.
+
+    Two fn: refs match when they read a Part in common, not only when they are the
+    same string: a bare `fn:<id>` is every Part that invocation published, so it
+    lists the ids that bind `fn:<id>#<address>` for any one of them, and a
+    qualified ref lists only the ids that read that one produce (plus any bare ref
+    to the same writer, which reads all of them).
     """
     program = _program_of(program)
     if not (ref.startswith(PX) or ref.startswith(FN)):
         raise ValueError(f"compare_local.consumers_of: ref '{ref}' must start with 'px:' or 'fn:'")
+    entries = invocations(program)
+    wanted = set(_fn_addresses(ref, entries)) if ref.startswith(FN) else set()
     return [
         entry["id"]
-        for entry in invocations(program).values()
-        if ref in (entry.get("inputs") or {}).values()
+        for entry in entries.values()
+        if any(
+            bound == ref
+            or (wanted and bound.startswith(FN) and wanted & set(_fn_addresses(bound, entries)))
+            for bound in (entry.get("inputs") or {}).values()
+        )
     ]
 
 
 def _edges(program: Mapping[str, Any]) -> dict[str, list[str]]:
     """producer id -> consumer ids, over fn: refs and over px: addresses written in-program."""
     entries = invocations(program)
-    writer_of = {entry["into"]: entry["id"] for entry in entries.values() if entry.get("into")}
+    writer_of = _writer_of(entries)
     out: dict[str, list[str]] = {invocation_id: [] for invocation_id in entries}
     for entry in entries.values():
         for ref in (entry.get("inputs") or {}).values():
             producer = None
             if ref.startswith(FN):
-                producer = ref[len(FN):]
+                producer = _fn_writer(ref, entries)
             elif ref.startswith(PX) and ref[len(PX):] in writer_of:
                 producer = writer_of[ref[len(PX):]]
             if producer is not None and producer in out and entry["id"] not in out[producer]:

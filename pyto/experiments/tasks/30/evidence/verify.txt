@@ -1,0 +1,8 @@
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/30/pyto/experiments/grouped-ablation')  # this experiment's own modules (retain, compare_local, pql_document, calculations)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/30/pyto/consumers/discstudio-card/experiments/disc-stats')  # run_experiment.py imports stats.py by top-level name (disc-stats/run_experiment.py:4)
+[grouped-ablation] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/30/pyto/experiments/grouped-ablation')  # this experiment's own modules
+.......................................................................................................................................................................................................s................................................
+----------------------------------------------------------------------
+Ran 248 tests in 23.019s
+
+OK (skipped=1)

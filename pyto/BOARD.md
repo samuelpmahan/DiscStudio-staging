@@ -59,6 +59,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 01:27 **landed** `task-30`: every reader handles several produces: compare_local.py and pql_document.py in grouped-ablation stop assuming one into per invocation; tests for both (8 files since 887454c, suites green, receipt 20260910T012611Z-task-30)
 - 2026-09-10 01:24 **landed** `task-29`: students: Mean and Median run in one Tick as parallel branches (the default under WhatIsATick), the hand-off says the honest reason (a receipt is per Calculation; a Tick is a step), evidence regenerated, and tick_laws shows the first Tick where work exceeds latency (15 files since be3fa2d, suites green, receipt 20260910T012337Z-task-29)
 - 2026-09-10 01:19 **landed** `task-31`: board_page.py renders pyto/BOARD.md as one HTML page (the Today log as a timeline, open copies, lanes folded) with no dependencies, so the owner reads the board on a phone; the cloud session republishes it after every landing (7 files since 35172f8, suites green, receipt 20260910T011840Z-task-31)
 - 2026-09-10 01:17 **started** `task-31`: board_page.py renders pyto/BOARD.md as one HTML page (the Today log as a timeline, open copies, lanes folded) with no dependencies, so the owner reads the board on a phone; the cloud session republishes it after every landing (copy EXP/31; it lands only on green, with a receipt, or is killed)
