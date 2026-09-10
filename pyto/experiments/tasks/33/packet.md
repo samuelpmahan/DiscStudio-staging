@@ -4,8 +4,36 @@ Intent: neat land from a remote: neat land <id> --from <url-or-remote> <branch> 
 Starting point: d8ccde810b9fc2f600c27795c8247c2fb956f7a1 (board: **started** `task-32`: a score in the receipt: a verifier can print one)
 Verify: bash pyto/scripts/neat.sh selftest
 Allow: pyto/scripts/neat.sh pyto/scripts/land.sh pyto/LANDING.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 2 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/LANDING.md
+- M  pyto/scripts/neat.sh
+
+```
+pyto/LANDING.md      |  7 +++-
+ pyto/scripts/neat.sh | 95 ++++++++++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 91 insertions(+), 11 deletions(-)
+```
+
+## Evidence
+
+- verify: `bash pyto/scripts/neat.sh selftest` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         193  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    248  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             11  OK
+    experiments/tick-laws            10  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
 
 ## Uncertain
 
