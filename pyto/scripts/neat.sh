@@ -6,7 +6,7 @@
 #   neat show <id>            print the hand-off (what a fresh agent gets)
 #   neat drop <id> <path>...  put those files back to the starting point, repack
 #   neat land <id>            merge into MAIN, verify, receipt, commit, push; EXP/<id> goes away
-#   neat land <id> --from <url-or-remote-name> <branch>   the same landing for a desk that lives in another repository
+#   neat land <id> --from <url-or-remote-name> <branch> [--verify "<cmd>"] [--allow "<paths>"]   the same landing for a desk in another repository; --verify/--allow grade it with this repository's brief instead of the packet's
 #   neat kill <id>            abandon: EXP/<id> goes away, nothing lands; exp/<id> is kept (nothing is deleted)
 #   neat undo <id>            take a landed task back out of MAIN: revert, verify, receipt, push
 #   neat update <id>          bring MAIN's newer commits into EXP/<id> (a conflict names the files and stops)
@@ -339,13 +339,23 @@ cmd_land() {
   # `neat land <id> --from <url-or-remote-name> <branch>`: the desk lives in another repository (a
   # student's own repo; sharing is a landing into the class repo). Fetch that branch, land it from a
   # ref named by id, and touch nothing else there: the desk's branch is its owner's.
-  local remote="" rbranch="" shown="" tmpref=""
+  local remote="" rbranch="" shown="" tmpref="" over_verify="" over_allow="" graded=0
   if [ "${1:-}" = "--from" ]; then
     remote="${2:-}"; rbranch="${3:-}"
     { [ -n "$remote" ] && [ -n "$rbranch" ]; } || die "land --from needs both a remote and a branch: neat land $id --from <url-or-remote-name> <branch>"
     shift 3
+    # The landing repository may grade the desk with its own brief: --verify and --allow replace the
+    # incoming packet's Verify and Allow for this landing (a class repo's tests are the real grade;
+    # a desk's own Verify may name files only that desk has). The packet itself lands as it was.
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --verify) over_verify="${2:-}"; [ -n "$over_verify" ] || die "land --verify needs a command: neat land $id --from <url-or-remote-name> <branch> --verify \"<cmd>\""; graded=1; shift 2;;
+        --allow) over_allow="${2:-}"; [ -n "$over_allow" ] || die "land --allow needs one or more paths: neat land $id --from <url-or-remote-name> <branch> --allow \"<paths>\""; graded=1; shift 2;;
+        *) break;;
+      esac
+    done
   fi
-  [ $# -eq 0 ] || die "unknown option $1  (neat land <id> [--from <url-or-remote-name> <branch>])"
+  [ $# -eq 0 ] || die "unknown option $1  (neat land <id> [--from <url-or-remote-name> <branch> [--verify \"<cmd>\"] [--allow \"<paths>\"]])"
   if [ -n "$remote" ]; then
     shown="$(printf '%s' "$remote" | strip_creds)"
     # refs/neat/from/<id>, never exp/<id>: task 0 here and task 0 on the desk are different tasks.
@@ -365,15 +375,21 @@ cmd_land() {
   fi
   intent="$(field Intent "$packet")"; verify="$(field Verify "$packet")"; allow="$(field Allow "$packet")"
   base="$(field 'Starting point' "$packet" | cut -d' ' -f1)"
+  [ -z "$over_verify" ] || verify="$over_verify"
+  [ -z "$over_allow" ] || allow="$over_allow"
   echo "== land task $id: $intent"
   if [ -n "$remote" ]; then
     echo "   from $shown $rbranch (it started at ${base:0:7}, which may be a commit only that desk has); the candidate is merged onto MAIN as it is now and verified there"
+    [ "$graded" -eq 0 ] || echo "   graded here: this repository's brief replaces the packet's (verify: $verify; allow: $allow)"
   else
     moved="$(git -C "$ROOT" rev-list --count "$base..HEAD")"
     echo "   MAIN moved $moved commit(s) since the task started; the candidate is merged onto MAIN as it is now and verified there"
   fi
   local args=("task-$id" --from "$ref" --message "$intent")
-  [ -z "$remote" ] || args=("task-$id" --from "$ref" --message "$intent (from $shown $rbranch)")
+  if [ -n "$remote" ]; then
+    if [ "$graded" -eq 0 ]; then args=("task-$id" --from "$ref" --message "$intent (from $shown $rbranch)")
+    else args=("task-$id" --from "$ref" --message "$intent (from $shown $rbranch, graded here)"); fi
+  fi
   [ "$verify" = "none" ] || args+=(--verify "$verify")
   [ "$allow" = "any" ] || args+=(--allow "$allow $TASKS/$id")
   if bash "$HERE/land.sh" "${args[@]}"; then
@@ -437,7 +453,7 @@ cmd_update() {
 
 cmd_selftest() {
   local tmp seed clone origin tools_dir out failures=0
-  local desk_origin desk desk_tools
+  local desk_origin desk desk_tools from_receipt d
   tmp="$(mktemp -d "${TMPDIR:-/tmp}/neat-selftest.XXXXXX")"
   origin="$tmp/origin.git"; seed="$tmp/seed"; clone="$tmp/clone"; tools_dir="$clone/tools"
   desk_origin="$tmp/desk-origin.git"; desk="$tmp/desk"; desk_tools="$desk/tools"
@@ -501,6 +517,20 @@ cmd_selftest() {
   else
     echo "selftest undo clean: FAIL"; failures=$((failures + 1))
   fi
+  # A note addressed to the owner is an interrupt, and the board allows three reasons for one: an
+  # untagged "**owner**" line is refused with exit 2 and writes nothing; a tagged one is an ordinary note.
+  out=0; bash "$tools_dir/land.sh" --note "**owner** something" >"$tmp/note-untagged.txt" 2>&1 || out=$?
+  if [ "$out" -eq 2 ] && ! grep -qF '**owner**' "$clone/.neat/BOARD.md"; then
+    echo "selftest owner note without a reason: pass"
+  else
+    echo "selftest owner note without a reason: FAIL"; failures=$((failures + 1))
+  fi
+  if bash "$tools_dir/land.sh" --note "**owner** [asked] something" >"$tmp/note-asked.txt" 2>&1 &&
+     grep -qF '**owner** [asked] something' "$clone/.neat/BOARD.md"; then
+    echo "selftest owner note with a reason: pass"
+  else
+    echo "selftest owner note with a reason: FAIL"; failures=$((failures + 1))
+  fi
   # A second repository: the student's desk, its own origin and clone, made from the same seed
   # commit so the two histories meet (a desk is normally a fork of the class repo). It packs its own
   # task 0 -- ids in two repos collide, that is the point -- and the class repo lands it with one
@@ -518,18 +548,31 @@ cmd_selftest() {
   if bash "$desk_tools/neat.sh" new "shared desk" --verify true --allow desk.txt >"$tmp/desk-new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
   printf 'desk\n' > "$desk/EXP/0/desk.txt"
   if bash "$desk_tools/neat.sh" pack 0 >"$tmp/desk-pack.txt" 2>&1; then :; else failures=$((failures + 1)); fi
-  if bash "$tools_dir/neat.sh" land 0 --from "$desk_origin" exp/0 >"$tmp/land-from.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  # The class repo grades the desk with its own brief: --verify replaces the packet's Verify line
+  # (the desk asked for `true`; here it is the class's command, and its score is what the receipt keeps).
+  if bash "$tools_dir/neat.sh" land 0 --from "$desk_origin" exp/0 --verify "echo score: 2 of 2" >"$tmp/land-from.txt" 2>&1; then :; else failures=$((failures + 1)); fi
   if [ -f "$clone/desk.txt" ] && [ -f "$clone/.neat/tasks/0/packet.md" ] &&
      grep -q '"path": "desk.txt"' "$clone"/.neat/landings/*/receipt.json; then
     echo "selftest land from a remote: pass"
   else
     echo "selftest land from a remote: FAIL"; failures=$((failures + 1))
   fi
-  if grep -qF "(from $desk_origin exp/0)" "$clone/.neat/BOARD.md" &&
+  if grep -qF "(from $desk_origin exp/0, graded here)" "$clone/.neat/BOARD.md" &&
      ! git -C "$clone" show-ref --verify --quiet refs/neat/from/0; then
     echo "selftest remote board line and temporary ref: pass"
   else
     echo "selftest remote board line and temporary ref: FAIL"; failures=$((failures + 1))
+  fi
+  # The newest task-0 receipt is the one from the desk; the stamp is spelled out so the undo's
+  # receipt (undo-task-0) is not mistaken for it.
+  from_receipt=""
+  for d in "$clone"/.neat/landings/????????T??????Z-task-0/; do
+    if [ -f "$d/receipt.json" ]; then from_receipt="$d/receipt.json"; fi
+  done
+  if [ -n "$from_receipt" ] && grep -q '"passed": 2' "$from_receipt"; then
+    echo "selftest remote desk graded here: pass"
+  else
+    echo "selftest remote desk graded here: FAIL"; failures=$((failures + 1))
   fi
   rm -rf "$tmp"
   [ "$failures" -eq 0 ]

@@ -52,7 +52,10 @@ sentence. An interrupt has one shape: what happened, in a plain sentence; what i
 owner, in one; what they can say, with the default named. No labels, receipts or paths. Knowing
 it works is three lines, read in the morning: the proof line (green or red on D:/ in a fresh
 clone), the product page, and the tally of landings and refusals with each reason. The owner did
-not write this rule and can veto it in a sentence.
+not write this rule and can veto it in a sentence. A note addressed to the owner (a line starting
+`**owner**`) must name which of the three it is as `[broke]`, `[decision]` or `[asked]`, and
+`land.sh --note` refuses one that names none and writes nothing; everything else is a note, not an
+interrupt.
 
 ## Today
 

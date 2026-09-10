@@ -31,9 +31,20 @@ cd "$ROOT"
 
 # land.sh --note "<one plain line>": write the line under "## Today", commit it, push it. No verify,
 # no receipt: a note is not a claim. neat uses it so the board says when a task starts or is killed.
+# A note that starts with "**owner**" is addressed to the owner, which is an interrupt, and the board
+# allows three reasons for one (BOARD.md, "Interrupts"): it must name which it is as [broke],
+# [decision] or [asked]. Without a tag the note is refused here and nothing is written: an untagged
+# interrupt is a note that has not decided whether it is one.
 NOTE=""
 if [ "${1:-}" = "--note" ]; then
   NOTE="${2:-}"; [ -n "$NOTE" ] || { echo 'usage: land.sh --note "<one plain line>"' >&2; exit 2; }
+  case "$NOTE" in
+    '**owner**'*)
+      case "$NOTE" in
+        *'[broke]'*|*'[decision]'*|*'[asked]'*) ;;
+        *) echo 'land.sh: a note to the owner is an interrupt, so it must say which of the three reasons it is: [broke] (something broke that cannot be fixed without the owner), [decision] (a decision with no safe default) or [asked] (something the owner asked to be told).' >&2; exit 2;;
+      esac;;
+  esac
   set -- note
 fi
 PACKAGE="${1:-}"; shift || true

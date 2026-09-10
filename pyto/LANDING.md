@@ -13,7 +13,7 @@ bash pyto/scripts/neat.sh new "what you want"   -> EXP/0, a copy of MAIN to work
 bash pyto/scripts/neat.sh pack 0                -> the packet: intent, starting point, candidate, evidence, uncertain
 bash pyto/scripts/neat.sh show 0                -> the hand-off a fresh agent explains from, after cloning
 bash pyto/scripts/neat.sh land 0                -> merge into MAIN, verify there, receipt, commit, push; EXP/0 gone
-bash pyto/scripts/neat.sh land 0 --from <url-or-remote> exp/0  -> the same landing for a desk that lives in another repo
+bash pyto/scripts/neat.sh land 0 --from <url-or-remote> exp/0 [--verify "<cmd>"] [--allow "<paths>"]  -> a desk in another repo, graded there or here
 bash pyto/scripts/neat.sh drop 0 <path> ...     -> "I like two of the three files": back to the start, repacked
 bash pyto/scripts/neat.sh kill 0                -> abandon, nothing lands
 bash pyto/scripts/neat.sh undo 0                -> a landed task back out of MAIN: revert, verify, receipt, push
@@ -31,6 +31,8 @@ asking invalidates the wrong half of it for the price of a sentence.
 The board says when a task starts, not only when it lands: `neat new` writes a **started** line
 with the intent, `neat kill` a **killed** line, so the owner sees what is coming before a **landed**
 line appears. Both go through `land.sh --note`. A note is not a claim; only a landing is.
+A note that starts with `**owner**` is an interrupt and must name its reason as `[broke]`,
+`[decision]` or `[asked]` (BOARD.md, "Interrupts"); `--note` refuses one without a tag, writing nothing.
 
 Every task carries a packet at `pyto/experiments/tasks/<id>/`: Intent (what you asked), Starting
 point (what MAIN was), Candidate (exactly what changed), Evidence (what was checked, exit codes,
@@ -41,8 +43,11 @@ fresh agent how to clone, why the repository is worth its time, and what to expl
 holds for it too. Sharing a desk is a landing into another repository: `neat land <id> --from
 <url-or-remote> <branch>` fetches that desk's packed branch, reads its packet, and lands it here
 with that packet's verifier and allowed paths, so shared work gets the same receipt as anything
-else (the desk keeps its branch; unsharing is `neat undo <id>`). Underneath: EXP/<id> is a git
-worktree on branch `exp/<id>`, deleted at landing.
+else (the desk keeps its branch; unsharing is `neat undo <id>`). The landing repository can grade
+the desk with its own brief instead: `--verify "<cmd>"` and `--allow "<paths>"` after the branch
+replace the incoming packet's Verify and Allow for that landing (a class's tests are the real
+grade, and a desk's own Verify may name files only that desk has), and the board line says `graded
+here`. Underneath: EXP/<id> is a git worktree on branch `exp/<id>`, deleted at landing.
 Control is a way back, not a gate (owner, 2026-09-09: "minimal hard stops"): `neat undo <id>`
 reverts a landed task through the same protocol, so the owner never needs git to take something
 back, and nothing waits on the owner to go in.
