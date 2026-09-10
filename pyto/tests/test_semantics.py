@@ -539,7 +539,22 @@ class PCRRunRulesTest(unittest.TestCase):
         self.assertEqual(sorted(run.results), ["a", "b"])
         fields = tuple(f.name for f in dataclasses.fields(PcrRun))
         self.assertEqual(fields[:3], ("pcr", "ticks", "results"))
-        self.assertEqual(fields, ("pcr", "ticks", "results", "receipts"))
+        self.assertEqual(
+            fields,
+            (
+                "pcr",
+                "ticks",
+                "results",
+                "receipts",
+                # task 39: how the run was scheduled and whether it finished, all
+                # trailing and defaulted, so the first four keep their positions.
+                "parallel",
+                "tick_latency_ms",
+                "budget_ms",
+                "stopped_after_tick",
+                "completed",
+            ),
+        )
         self.assertEqual(run.receipts, {})  # observe defaults to False
         self.assertEqual(pcr.run(pxc).ticks, run.ticks)
 

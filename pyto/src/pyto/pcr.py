@@ -3,10 +3,13 @@ from __future__ import annotations
 import hashlib
 import inspect
 import json
+import os
+import threading
 from collections.abc import Mapping as MappingABC
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from time import perf_counter
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 
 from .core import RECEIPT_PREFIX, Calculation, Part, PxC, PxWrite
 
@@ -169,6 +172,65 @@ def _refuse_bare_multi_ref(owner: str, ref: ResultRef, addresses: tuple[str, ...
     )
 
 
+def _refuse_sibling_bindings(
+    owner: str,
+    invocation_id: str,
+    tick: "Tick",
+    bindings: Mapping[str, "Part[Any] | ResultRef"],
+) -> None:
+    """The node law, half one: no invocation consumes a sibling's produce.
+
+    The Calculations inside one Tick are parallel branches ({?} TicksAsCircuits,
+    owner 2026-09-10: "In electric circuits connections connect in serial or
+    parallel"), so each of them sees the store as it stood when the Tick began. A
+    binding on a sibling's result is a wire between two branches of the same node
+    -- a short -- and it is refused here, at bind time, rather than discovered as
+    a race when the Tick is run on a pool. Both ids are in the message because the
+    fix is always "which of these two moves to an earlier Tick".
+    """
+    siblings = {existing.id: existing for existing in tick.calculations}
+    for name, source in bindings.items():
+        if not isinstance(source, ResultRef):
+            continue
+        sibling = siblings.get(source.calculation_id)
+        if sibling is None:
+            continue
+        produced = ", ".join(sibling.produce_addresses()) or "no Part"
+        raise ValueError(
+            f"{owner} binds '{name}' to the result of '{sibling.id}', a sibling in "
+            f"Tick '{tick.name}' (it produces {produced}): the Calculations of one "
+            "Tick are parallel branches and none of them may consume another's "
+            "produce (the node law, {?} TicksAsCircuits); move "
+            f"'{sibling.id}' to an earlier Tick, or '{invocation_id}' to a later one"
+        )
+
+
+def _refuse_sibling_produce(
+    owner: str,
+    invocation_id: str,
+    tick: "Tick",
+    outputs: tuple["Part[Any]", ...],
+) -> None:
+    """The node law, half two: no two siblings produce the same Part.
+
+    Two branches writing one address in the same Tick is the other short: the
+    Tick claims no order between them, so which value survives would be the
+    scheduler's answer and not the program's. Refused at bind time, naming both
+    ids and the address.
+    """
+    for part in outputs:
+        for existing in tick.calculations:
+            if part.address in existing.produce_addresses():
+                raise ValueError(
+                    f"{owner} produces '{part.address}', which its sibling "
+                    f"'{existing.id}' in Tick '{tick.name}' already produces: the "
+                    "Calculations of one Tick are parallel branches, so no two of "
+                    "them may write one Part (the node law, {?} TicksAsCircuits) "
+                    "-- the Tick claims no order between them, so the surviving "
+                    "value would be the scheduler's answer, not the program's"
+                )
+
+
 @dataclass(slots=True)
 class Tick:
     name: str
@@ -186,7 +248,13 @@ class Tick:
     ) -> ResultRef:
         if any(existing.id == id for existing in self.calculations):
             raise ValueError(f"Tick '{self.name}' has duplicate calculation id '{id}'")
-        output = _normalize_into(f"Tick '{self.name}' calculation '{id}'", into)
+        owner = f"Tick '{self.name}' calculation '{id}'"
+        output = _normalize_into(owner, into)
+        # The node law, checked here so a Tick built without a PCR is held to it too.
+        _refuse_sibling_bindings(owner, id, self, inputs)
+        _refuse_sibling_produce(
+            owner, id, self, (output,) if isinstance(output, Part) else (output or ())
+        )
         bindings = {name: Binding(source) for name, source in inputs.items()}
         self.calculations.append(
             Invocation(
@@ -239,6 +307,25 @@ class FrozenCalculation:
 
 
 @dataclass(frozen=True, slots=True)
+class Placement:
+    """Where one invocation ran inside its Tick, and when it started there.
+
+    `worker` is the index of the pool thread that ran it, 0-based within the Tick
+    (workers are numbered in the order they first pick work up, so a Tick of four
+    on two workers numbers them 0 and 1). `started_ms` is the offset from the
+    moment the Tick began, not a wall clock: it is what makes "these two really
+    did overlap" readable off the record.
+
+    Placement is an observation of the schedule, never of the program: it is
+    outside the testimony for the same reason durations are, and a serial run has
+    none (`None`), because a serial Tick has no placement to report.
+    """
+
+    worker: int
+    started_ms: float
+
+
+@dataclass(frozen=True, slots=True)
 class Receipt:
     """What PCR.run observed while executing one invocation.
 
@@ -282,6 +369,10 @@ class Receipt:
     produce_sha256: dict[str, str | None]
     effective_arg_keys: tuple[str, ...]
     shadowed_inputs: tuple[str, ...]
+    # Trailing and defaulted, like PcrRun.receipts: a serial run's receipt is the
+    # dataclass it always was with `placement: None` appended, so a reader that
+    # never heard of parallel Ticks reads every field it knew at the same name.
+    placement: Placement | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -301,6 +392,20 @@ class PcrRun:
     ticks: tuple[TickTestimony, ...]
     results: dict[str, Any]
     receipts: dict[str, Receipt] = field(default_factory=dict)
+    # Everything below is additive and trailing for the same reason `receipts` is:
+    # it says how the run was scheduled and whether it finished, never what the
+    # program was, so `ticks` -- the bytes consumers embed -- is untouched by it.
+    parallel: bool = False
+    #: Tick name -> measured wall time of that Tick, filled by a parallel run only.
+    #: A serial Tick's latency is the sum of its own durations and is derived where
+    #: the durations are (materialize.run_record), not measured twice here.
+    tick_latency_ms: dict[str, float] = field(default_factory=dict)
+    budget_ms: float | None = None
+    #: The last Tick that completed before the budget stopped the run, or None --
+    #: None both when the run completed and when the budget was already spent
+    #: before the first Tick.
+    stopped_after_tick: str | None = None
+    completed: bool = True
 
 
 def _address(part: Part[Any] | str) -> str:
@@ -433,6 +538,33 @@ class _TrackedPxC:
         return self._pxc.call(calculation, args)
 
 
+def _now_ms() -> float:
+    """The default budget clock: monotonic milliseconds, injectable for tests."""
+    return perf_counter() * 1000.0
+
+
+@dataclass(slots=True)
+class _Pending:
+    """One invocation, called but not yet published.
+
+    The seam a parallel Tick needs: everything before the first write is done on
+    a worker, everything from the first write on is done in declared order by the
+    thread that owns the store.
+    """
+
+    invocation: Invocation
+    board: PxC | _TrackedPxC
+    declared_consumes: tuple[str, ...]
+    started: float
+    resolved_inputs: dict[str, Any]
+    call_args: dict[str, Any]
+    value: Any
+    produce_parts: tuple[Part[Any], ...]
+    produced_values: tuple[Any, ...]
+    placement: Placement | None
+    testimony: CalculationTestimony
+
+
 class PCR:
     """Executable Python composition of PxC Parts and Calculations."""
 
@@ -494,6 +626,13 @@ class PCR:
 
         output = _normalize_into(owner, into)
         outputs = (output,) if isinstance(output, Part) else (output or ())
+        # The node law before the writer claim, so two siblings on one address are
+        # refused as the short they are and not as the PCR-wide "multiple writers":
+        # the sibling message names the Tick and both ids, which is what the fix needs.
+        existing_tick = self._tick_by_name.get(tick)
+        if existing_tick is not None:
+            _refuse_sibling_bindings(owner, id, existing_tick, normalized)
+            _refuse_sibling_produce(owner, id, existing_tick, outputs)
         for part in outputs:  # every address checked before any is claimed
             if self._writers.get(part.address) is not None:
                 raise ValueError(f"PCR '{self.name}' has multiple writers for '{part.address}'")
@@ -512,7 +651,15 @@ class PCR:
         self._ids.add(id)
         return result
 
-    def run(self, pxc: PxC, *, observe: bool = False) -> PcrRun:
+    def run(
+        self,
+        pxc: PxC,
+        *,
+        observe: bool = False,
+        parallel: bool = False,
+        budget_ms: float | None = None,
+        clock: Callable[[], float] | None = None,
+    ) -> PcrRun:
         """Execute every invocation in declaration order and return the testimony.
 
         With observe=True the run additionally returns one Receipt per invocation
@@ -528,6 +675,25 @@ class PCR:
         Observation adds fields to PcrRun and Parts under the reserved receipt
         segment only: the testimony in `ticks`, the produced results and the run
         record (materialize.run_record) are the same with observe on or off.
+
+        With parallel=True the invocations of one Tick are run concurrently on a
+        ThreadPoolExecutor of `min(len(tick), os.cpu_count())` workers -- the Tick
+        is the parallel element of the circuit ({?} TicksAsCircuits), and the node
+        law refused at bind time is what makes that safe. Every produce is held
+        until the whole Tick has finished and is then written **in declared
+        order**, so the store never holds half a Tick and the write kinds are the
+        ones a serial run would record. Each Receipt carries a `placement`
+        (which worker, how far into the Tick it started). Scheduling is not the
+        program: `ticks` -- the testimony consumers embed -- is byte-identical
+        serial versus parallel, because placement and durations are not in it.
+
+        `budget_ms` stops the run at a Tick boundary. The clock is injectable
+        (`clock`, a callable returning milliseconds) so a budget test is a
+        determinism test and not a race; the default is monotonic. Elapsed time is
+        read before each Tick, and when it is over the budget the run stops there:
+        every Tick before the seam is published in full, `PcrRun.stopped_after_tick`
+        names the last one that completed, `PcrRun.completed` is False, and the
+        testimony is the prefix -- byte for byte -- of the unbudgeted run's.
         """
         results: dict[str, Any] = {}
         # invocation id -> {published address: the value published there}. A
@@ -538,126 +704,258 @@ class PCR:
         multi_ids: set[str] = set()
         testimonies: list[TickTestimony] = []
         receipts: dict[str, Receipt] = {}
+        latencies: dict[str, float] = {}
+
+        now = _now_ms if clock is None else clock
+        # The clock is read only when there is a budget to spend, so an injected
+        # clock is called exactly once per Tick boundary and a test can count them.
+        started_at = now() if budget_ms is not None else 0.0
+        completed = True
+        last_completed: str | None = None
 
         for tick in self.ticks:
-            calc_testimony: list[CalculationTestimony] = []
+            if budget_ms is not None and (now() - started_at) > budget_ms:
+                completed = False
+                break
+
             for invocation in tick.calculations:
-                board: PxC | _TrackedPxC = pxc
-                declared_consumes: tuple[str, ...] = ()
-                started = 0.0
-                if observe:
-                    declared_consumes = tuple(
-                        binding.source.address
-                        for binding in invocation.bindings.values()
-                        if isinstance(binding.source, Part)
-                    )
-                    board = _TrackedPxC(pxc, declared_consumes)
-                    started = perf_counter()
+                # Registration is the composition's bookkeeping, not the
+                # invocation's work, and it is done for the whole Tick up front so
+                # that no two workers write the registry at once.
+                pxc.register(invocation.calculation)
 
-                board.register(invocation.calculation)
-                resolved_inputs: dict[str, Any] = {}
-                input_refs: dict[str, str] = {}
-                for name, binding in invocation.bindings.items():
-                    source = binding.source
-                    if isinstance(source, Part):
-                        resolved_inputs[name] = board.get(source)
-                        input_refs[name] = f"px:{source.address}"
-                    else:
-                        if source.calculation_id not in results:
-                            raise ValueError(
-                                f"PCR '{self.name}' calculation '{invocation.id}' depends on "
-                                f"unavailable result '{source.calculation_id}'"
-                            )
-                        owner = f"PCR '{self.name}' calculation '{invocation.id}'"
-                        available = published.get(source.calculation_id, {})
-                        if source.produce is None:
-                            if source.calculation_id in multi_ids:
-                                _refuse_bare_multi_ref(owner, source, tuple(available))
-                            resolved_inputs[name] = results[source.calculation_id]
-                        else:
-                            if source.produce not in available:
-                                raise ValueError(
-                                    f"{owner} binds produce '{source.produce}' of "
-                                    f"'{source.calculation_id}', which publishes "
-                                    f"{', '.join(available) or 'no Part'}"
-                                )
-                            resolved_inputs[name] = available[source.produce]
-                        input_refs[name] = _ref_spelling(source)
-
-                call_args = dict(resolved_inputs)
-                call_args.update(invocation.args)
-                value = board.call(invocation.calculation, call_args)
-                results[invocation.id] = value
-                produce_parts = invocation.produces()
-                produce_addresses = invocation.produce_addresses()
-                if invocation.is_multi():
-                    # Split before writing anything: a return value that does not
-                    # answer for every declared address publishes no Part at all.
-                    produced_values = _split_produces(
-                        f"PCR '{self.name}' calculation '{invocation.id}'",
-                        produce_addresses,
-                        value,
-                    )
-                    multi_ids.add(invocation.id)
-                else:
-                    produced_values = (value,) if produce_parts else ()
-                slots = {}
-                for part, part_value in zip(produce_parts, produced_values):
-                    board.set(part, part_value)
-                    slots[part.address] = part_value
-                published[invocation.id] = slots
-
-                if isinstance(board, _TrackedPxC):
-                    duration_ms = (perf_counter() - started) * 1000.0
-                    receipt = Receipt(
-                        invocation_id=invocation.id,
-                        calculation=FrozenCalculation(
-                            address=invocation.calculation.address,
-                            implementation_sha256=_implementation_sha256(
-                                invocation.calculation.calculate
-                            ),
-                        ),
-                        started_ms=started * 1000.0,
-                        duration_ms=duration_ms,
-                        declared_consumes=declared_consumes,
-                        declared_produces=produce_addresses,
-                        actual_consumes=tuple(board.consumed),
-                        actual_produces=tuple(board.produced),
-                        writes=tuple(board.writes),
-                        result_sha256=_result_sha256(value),
-                        produce_sha256={
-                            address: _result_sha256(part_value)
-                            for address, part_value in slots.items()
-                        },
-                        effective_arg_keys=tuple(call_args),
-                        # call_args.update(invocation.args) above overrides a same-named
-                        # bound input silently; the receipt records the collision, it does
-                        # not raise ({?} ShadowRule, research/lab-transfer-ledger.md:65-67).
-                        shadowed_inputs=tuple(
-                            name for name in resolved_inputs if name in invocation.args
-                        ),
-                    )
-                    receipts[invocation.id] = receipt
-                    # Everything is a Part: the receipt is written into the store under
-                    # its reserved segment, so PQL reads it like any other Part. It goes
-                    # to `pxc` and not to `board`, and only after the Receipt above is
-                    # frozen: the tracked view is this invocation's, and filing a receipt
-                    # is not something the invocation did. Written the other way round,
-                    # every invocation would testify that it produced its own receipt.
-                    pxc.set(receipt_address(self.name, tick.name, invocation.id), receipt)
-
-                calc_testimony.append(
-                    CalculationTestimony(
-                        id=invocation.id,
-                        calculation=invocation.calculation.address,
-                        inputs=input_refs,
-                        args=dict(invocation.args),
-                        into=invocation.testimony_into(),
-                    )
+            tick_started = perf_counter()
+            prepared: list[_Pending] = []
+            if parallel:
+                prepared = self._prepare_parallel(
+                    tick, pxc, observe, results, published, multi_ids, tick_started
                 )
-            testimonies.append(TickTestimony(tick.name, tuple(calc_testimony)))
+                for entry in prepared:
+                    self._publish(entry, pxc, tick, results, published, multi_ids, receipts)
+            else:
+                for invocation in tick.calculations:
+                    # Serial publishes as it goes, exactly as it always has: the
+                    # deferred publish above is what a parallel Tick needs, not a
+                    # new rule for every run.
+                    entry = self._prepare(
+                        invocation, pxc, observe, results, published, multi_ids
+                    )
+                    self._publish(entry, pxc, tick, results, published, multi_ids, receipts)
+                    prepared.append(entry)
 
-        return PcrRun(self.name, tuple(testimonies), results, receipts)
+            if parallel:
+                latencies[tick.name] = (perf_counter() - tick_started) * 1000.0
+            testimonies.append(
+                TickTestimony(tick.name, tuple(entry.testimony for entry in prepared))
+            )
+            last_completed = tick.name
+
+        return PcrRun(
+            self.name,
+            tuple(testimonies),
+            results,
+            receipts,
+            parallel=parallel,
+            tick_latency_ms=latencies,
+            budget_ms=budget_ms,
+            stopped_after_tick=None if completed else last_completed,
+            completed=completed,
+        )
+
+    def _prepare_parallel(
+        self,
+        tick: Tick,
+        pxc: PxC,
+        observe: bool,
+        results: dict[str, Any],
+        published: dict[str, dict[str, Any]],
+        multi_ids: set[str],
+        tick_started: float,
+    ) -> list["_Pending"]:
+        """Run one Tick's invocations concurrently and return them in declared order.
+
+        `pool.map` keeps the input order and re-raises the first exception, so a
+        failing branch stops the run before anything of that Tick is published --
+        the price of "the store never sees half a Tick" ({?} ParallelFailure).
+        Worker numbers are handed out in the order threads first pick work up, so
+        they are 0..workers-1 within the Tick and mean nothing across Ticks.
+        """
+        invocations = tick.calculations
+        workers = max(1, min(len(invocations) or 1, os.cpu_count() or 1))
+        numbers: dict[int, int] = {}
+        lock = threading.Lock()
+
+        def prepare_one(invocation: Invocation) -> "_Pending":
+            with lock:
+                worker = numbers.setdefault(threading.get_ident(), len(numbers))
+            placement = Placement(worker, (perf_counter() - tick_started) * 1000.0)
+            return self._prepare(
+                invocation, pxc, observe, results, published, multi_ids, placement=placement
+            )
+
+        with ThreadPoolExecutor(
+            max_workers=workers, thread_name_prefix=f"pyto-{self.name}-{tick.name}"
+        ) as pool:
+            return list(pool.map(prepare_one, invocations))
+
+    def _prepare(
+        self,
+        invocation: Invocation,
+        pxc: PxC,
+        observe: bool,
+        results: dict[str, Any],
+        published: dict[str, dict[str, Any]],
+        multi_ids: set[str],
+        *,
+        placement: Placement | None = None,
+    ) -> "_Pending":
+        """Everything one invocation does before anything of it is published.
+
+        Resolve the bindings, call the Calculation, split a multi-produce return.
+        It writes nothing: `_publish` does, and in declared order.
+        """
+        board: PxC | _TrackedPxC = pxc
+        declared_consumes: tuple[str, ...] = ()
+        started = 0.0
+        if observe:
+            declared_consumes = tuple(
+                binding.source.address
+                for binding in invocation.bindings.values()
+                if isinstance(binding.source, Part)
+            )
+            board = _TrackedPxC(pxc, declared_consumes)
+            started = perf_counter()
+
+        resolved_inputs: dict[str, Any] = {}
+        input_refs: dict[str, str] = {}
+        for name, binding in invocation.bindings.items():
+            source = binding.source
+            if isinstance(source, Part):
+                resolved_inputs[name] = board.get(source)
+                input_refs[name] = f"px:{source.address}"
+            else:
+                if source.calculation_id not in results:
+                    raise ValueError(
+                        f"PCR '{self.name}' calculation '{invocation.id}' depends on "
+                        f"unavailable result '{source.calculation_id}'"
+                    )
+                owner = f"PCR '{self.name}' calculation '{invocation.id}'"
+                available = published.get(source.calculation_id, {})
+                if source.produce is None:
+                    if source.calculation_id in multi_ids:
+                        _refuse_bare_multi_ref(owner, source, tuple(available))
+                    resolved_inputs[name] = results[source.calculation_id]
+                else:
+                    if source.produce not in available:
+                        raise ValueError(
+                            f"{owner} binds produce '{source.produce}' of "
+                            f"'{source.calculation_id}', which publishes "
+                            f"{', '.join(available) or 'no Part'}"
+                        )
+                    resolved_inputs[name] = available[source.produce]
+                input_refs[name] = _ref_spelling(source)
+
+        call_args = dict(resolved_inputs)
+        call_args.update(invocation.args)
+        value = board.call(invocation.calculation, call_args)
+        produce_parts = invocation.produces()
+        if invocation.is_multi():
+            # Split before writing anything: a return value that does not answer
+            # for every declared address publishes no Part at all.
+            produced_values = _split_produces(
+                f"PCR '{self.name}' calculation '{invocation.id}'",
+                invocation.produce_addresses(),
+                value,
+            )
+        else:
+            produced_values = (value,) if produce_parts else ()
+
+        return _Pending(
+            invocation=invocation,
+            board=board,
+            declared_consumes=declared_consumes,
+            started=started,
+            resolved_inputs=resolved_inputs,
+            call_args=call_args,
+            value=value,
+            produce_parts=produce_parts,
+            produced_values=produced_values,
+            placement=placement,
+            testimony=CalculationTestimony(
+                id=invocation.id,
+                calculation=invocation.calculation.address,
+                inputs=input_refs,
+                args=dict(invocation.args),
+                into=invocation.testimony_into(),
+            ),
+        )
+
+    def _publish(
+        self,
+        entry: "_Pending",
+        pxc: PxC,
+        tick: Tick,
+        results: dict[str, Any],
+        published: dict[str, dict[str, Any]],
+        multi_ids: set[str],
+        receipts: dict[str, Receipt],
+    ) -> None:
+        """Write one prepared invocation's Parts, then file its Receipt.
+
+        Called in declared order, from one thread: a Tick's writes are the writes a
+        serial run would have made, in the order it would have made them, whoever
+        computed the values.
+        """
+        invocation = entry.invocation
+        board = entry.board
+        results[invocation.id] = entry.value
+        if invocation.is_multi():
+            multi_ids.add(invocation.id)
+        slots: dict[str, Any] = {}
+        for part, part_value in zip(entry.produce_parts, entry.produced_values):
+            board.set(part, part_value)
+            slots[part.address] = part_value
+        published[invocation.id] = slots
+
+        if isinstance(board, _TrackedPxC):
+            duration_ms = (perf_counter() - entry.started) * 1000.0
+            receipt = Receipt(
+                invocation_id=invocation.id,
+                calculation=FrozenCalculation(
+                    address=invocation.calculation.address,
+                    implementation_sha256=_implementation_sha256(
+                        invocation.calculation.calculate
+                    ),
+                ),
+                started_ms=entry.started * 1000.0,
+                duration_ms=duration_ms,
+                declared_consumes=entry.declared_consumes,
+                declared_produces=invocation.produce_addresses(),
+                actual_consumes=tuple(board.consumed),
+                actual_produces=tuple(board.produced),
+                writes=tuple(board.writes),
+                result_sha256=_result_sha256(entry.value),
+                produce_sha256={
+                    address: _result_sha256(part_value)
+                    for address, part_value in slots.items()
+                },
+                effective_arg_keys=tuple(entry.call_args),
+                # call_args.update(invocation.args) above overrides a same-named
+                # bound input silently; the receipt records the collision, it does
+                # not raise ({?} ShadowRule, research/lab-transfer-ledger.md:65-67).
+                shadowed_inputs=tuple(
+                    name for name in entry.resolved_inputs if name in invocation.args
+                ),
+                placement=entry.placement,
+            )
+            receipts[invocation.id] = receipt
+            # Everything is a Part: the receipt is written into the store under
+            # its reserved segment, so PQL reads it like any other Part. It goes
+            # to `pxc` and not to `board`, and only after the Receipt above is
+            # frozen: the tracked view is this invocation's, and filing a receipt
+            # is not something the invocation did. Written the other way round,
+            # every invocation would testify that it produced its own receipt.
+            pxc.set(receipt_address(self.name, tick.name, invocation.id), receipt)
 
     def mermaid(self) -> str:
         lines = ["flowchart TD"]
