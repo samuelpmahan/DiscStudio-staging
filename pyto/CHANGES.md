@@ -939,3 +939,4 @@ Then every other reader: `src/pyto/graph.py` (the authoring surface) and
 experiments/cross-project 9, experiments/grouped-ablation 244, experiments/hiding-primitives 6,
 experiments/s3-synthetic 5, experiments/students 10, consumer 61, disc-stats 4, examples 3,
 art-registry-md, viewer 107, viewer-record-schema 24).
+- task-48: the JavaScript runtime speaks the same schedule -- `invokePqlAsync` runs a Tick's Calculations at once when the node law holds (refusing a sibling read and a doubly-declared `into` by name, before the Tick runs), `invokePql` takes a budget that stops at a Tick boundary with an injectable clock, and the studio's record carries `parallel`, per-invocation `placement`, per-Tick `latency_ms` and `budget` exactly as `pyto.materialize.run_record` writes them; testimony is byte-identical serial versus parallel and a serial unbudgeted record is byte for byte what it was; `fromDiscStudioReceipt` takes an array `into`.
