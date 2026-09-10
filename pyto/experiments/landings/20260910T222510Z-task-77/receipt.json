@@ -1,0 +1,75 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T222510Z-task-77",
+  "package": "task-77",
+  "base_sha": "c34a4e860165c22f4701c4548396f597101a2d72",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest tests.test_use && ! grep -rn 'parallel branches, so none of them' USE.md README.md research/START-HERE.md LANDING.md",
+    "exit": 0,
+    "output_sha256": "312d9064be05c8a01746bca9899819dd3e5ca0b4439134802b541b0825e83c85"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "0f3f7df3c5a151ec8068b1c09ec0e6bb627866b909a277bb7bcfabbcc2ca6214",
+    "counts": {
+      "library": 435,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/USE.md",
+      "bytes": 38380,
+      "sha256": "9396738eb99237c3253d1a93f379ac5acf51eff0efd27d6f2fab7b17f6a473be"
+    },
+    {
+      "path": "pyto/experiments/tasks/77/HANDOFF.md",
+      "bytes": 7319,
+      "sha256": "df3cd36877bbf9c0d200d9e35dcbdbc0f84db02925cf604c337288d7d620a3f7"
+    },
+    {
+      "path": "pyto/experiments/tasks/77/evidence/check_all.txt",
+      "bytes": 194023,
+      "sha256": "1dfdab626c0cfc7e6450da8d2e69df73a7a4c73ba3dbb28c4d1ba7b76d8b0f0f"
+    },
+    {
+      "path": "pyto/experiments/tasks/77/evidence/verify.txt",
+      "bytes": 116,
+      "sha256": "7a661a0353abef6d46021f30796b45fe34995c6b3a6a840f1772b43f250bc89a"
+    },
+    {
+      "path": "pyto/experiments/tasks/77/packet.md",
+      "bytes": 2627,
+      "sha256": "8a8329005f3d5d78d5b2c629641220ce2d54edba7e4bb9bb24204a1aa12f056d"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-10T22:26:32.885780Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
