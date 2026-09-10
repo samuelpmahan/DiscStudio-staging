@@ -47,7 +47,15 @@ four checks and no judgements:
 | 1 | The record is a real record of the agreed shape, read by an independent reader | A record that was hand-written, or that quietly leaves out a field |
 | 2 | A fresh, isolated process runs the homework again and gets the identical record | An answer that only works on the student's machine, or a record edited after the run |
 | 3 | Every piece of work has a receipt, and each receipt's code fingerprint matches the code on disk right now | Code edited after the run, so the record describes a program that no longer exists |
-| 4 | The hand-off names every step and every file | A hand-off that quietly omits the step the student did not understand |
+| 4 | The hand-off gives every step a line of its own in its list of steps, and names every file | A hand-off that quietly omits the step the student did not understand |
+
+Check 4 asks for a line, not a mention: a step counts as named only when the
+hand-off's "one line per step" list has a bullet of its own that *starts* with that
+step's name -- written `- **Name**`, `- Name:` or `- Name ` -- because a student who
+drops a step from the list usually goes on mentioning its name in the prose around
+it, and a check that only looked for the name somewhere on the page would let that
+through. (Files are looser, and can be: a file counts as named wherever on the page
+it appears.)
 
 It prints a short report and exits pass or fail. Nothing in those four checks is a
 matter of opinion, and none of them can be argued with.

@@ -58,7 +58,8 @@ pyto/CHANGES.md                                    |   2 +
 (The agent working on this writes one line per thing it was unsure about, as
 `{?} Label: description`, and leaves the decision to the owner. Empty means nothing was unsure.)
 
-{?} MissingTickTestStillRemovesHistogram: the brief suggested the missing-Tick test drop the Stats line, but check 4 matches a Tick name as a substring of the whole hand-off and "Stats" also appears in the honest-reason paragraph and in a `{?}` line, so removing only the Stats bullet leaves check 4 passing; the test still removes the Histogram bullet, which is the only Tick name that appears exactly once. Either check 4 should test the "one line per Tick" list rather than the page, or the test stays on Histogram.
+- Decided: check 4 needs one list line per Tick; the substring gap from task 29 is closed.
+  (was `{?} MissingTickTestStillRemovesHistogram`, settled in task 35)
 
 {?} HandoffConfessesTheOldReason: the new paragraph says in the student's voice that the earlier reason was wrong and names it, rather than silently replacing it. That is a claim about the student's own history, which a cold reader has no way to check and which will read oddly to a reader who never saw the five-Tick version; the alternative is to state only the honest reason. Left as the confession because the point of the experiment was that a cold read caught it.
 
