@@ -5,10 +5,11 @@ Starting point: `0ae4c75d1fb5e8bc0fec19f3d7db76b81026bd36` (`exp/26`).
 
 ## Evidence
 
-- `python3 -m unittest discover -s pyto/experiments/tick-laws -p 'test_*.py' -v` — PASS, 9 tests.
+- `python3 -m unittest discover -s pyto/experiments/tick-laws -p 'test_*.py' -v` — PASS, 10 tests.
 - `python3 pyto/experiments/tick-laws/tick_laws.py --check pyto/experiments/grouped-ablation/evidence/run-1/record.json pyto/experiments/students/evidence/run-1/record.json` — PASS.
 - Mutation check 1: replacing `if producers_here:` with `if False:` made the sibling-consume test fail.
 - Mutation check 2: replacing `if len(ids) > 1:` with `if len(ids) > 2:` made the duplicate-producer test fail.
+- `PYTHON=/workspace/scratch/f2ea76ad2141/DiscStudio-staging/.venv/bin/python bash pyto/scripts/check_all.sh` — BLOCKED/FAIL while reconstructing the authenticated checkout: connector `fetch_file` truncated some large baseline files (for example `experiments/grouped-ablation/replay.py`) and the nonbinary evidence closure is incomplete. The latest incomplete-run log is `/tmp/tmp.pCaSaOIZ25`; it is not evidence that the baseline itself fails. The integration lane is verifying blobs before one final run.
 
 ## Uncertain
 
