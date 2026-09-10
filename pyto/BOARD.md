@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 00:32 **for Codex** `task-26`: the tick laws are Codex's to build, since its question set this off; brief on exp/26 at pyto/experiments/tasks/26/BRIEF.md; my builder was stopped and its work discarded
 - 2026-09-10 00:27 **started** `task-26`: Ticks as circuits: tick_laws.py checks any pyto-run-record@1 against the node law (inside a Tick no Calculation consumes a sibling's produce, no two siblings produce one Part) and the loop law (nothing consumes a Part produced later), and reports total work versus critical path per Tick; no kernel change (copy EXP/26; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 00:16 **landed** `task-25`: the hand-off starts with a stopping rule: read the named files and no more, write the one question you would answer by reading another 100k tokens, ask the owner, stop; the answer goes on the root verbatim (8 files since b558911, suites green, receipt 20260910T001528Z-task-25)
 - 2026-09-10 00:13 **started** `task-25`: the hand-off starts with a stopping rule: read the named files and no more, write the one question you would answer by reading another 100k tokens, ask the owner, stop; the answer goes on the root verbatim (copy EXP/25; it lands only on green, with a receipt, or is killed)
