@@ -60,11 +60,15 @@ PATH_RULES = [
     (re.compile(r"^pyto/scripts/(neat|land)\.sh$|^pyto/experiments/classroom/"), ["neat"]),
     (re.compile(r"^src/"), ["the studio"]),
     (re.compile(r"^pyto/experiments/"), ["experiments"]),
+    (re.compile(r"^pyto/tests/|^tests/"), ["tests"]),
+    (re.compile(r"^pyto/src/pyto/"), ["PxC"]),
+    (re.compile(r"^pyto/scripts/|^scripts/|^\.github/"), ["neat"]),
 ]
 OTHER = {
     "record": "the run written down: every receipt of a run, replayable without the program",
     "the studio": "DiscStudio, the JavaScript side that runs the same Ticks in a browser",
     "experiments": "a run kept under pyto/experiments with its own evidence and report",
+    "tests": "the executable spec: a test names the paragraph that would lie",
     "docs": "prose on the record: the board, the questions, the hand-offs",
 }
 
@@ -72,7 +76,7 @@ LANDED = re.compile(r"^- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) \*\*landed\*\* `([^`]+)
 TAIL = re.compile(r"\s*\((\d+) files since ([0-9a-f]+), suites green, receipt (\S+)\)\s*$")
 # The record itself sometimes carries a machine's absolute path (a refusal line, a check_all.txt);
 # the page carries none, so the same tree on any machine gives the same bytes.
-ABSOLUTE = re.compile(r"(?<![\w/.])(?:/(?:home|Users|root|tmp|private|var|mnt|opt)/|[A-Za-z]:[/\\])[^\s\"'<>)\]]*")
+ABSOLUTE = re.compile(r"(?<![\w/.])(?:/(?:home|Users|root|tmp|private|var|mnt|opt)/|[A-Za-z]:[/\\])[^\s\"'<>)\]&#;,]*")  # stops before an html entity, so an escaped quote after a path survives
 CUT_PATH = "(absolute path cut)"
 
 OWNER = re.compile(r"(?:the )?owner[^'\"\n]{0,40}?[:,]\s*(['\"])(.+?)\1(?=[\s.,;:)]|$)", re.I)
