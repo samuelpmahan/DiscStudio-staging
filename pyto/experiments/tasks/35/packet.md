@@ -4,7 +4,7 @@ Intent: students: grade.py check 4 matches each Tick as a list line of its own o
 Starting point: 1f8f671a766aac70dd5de81299a03fb700a64af1 (board: **started** `task-34`: interrupts are typed and a shared desk is graded)
 Verify: cd pyto/experiments/students && python3 -m unittest discover -s . -p 'test_*.py' && python3 grade.py --run evidence/run-1 --handoff HANDOFF.md
 Allow: pyto/experiments/students pyto/CHANGES.md pyto/experiments/tasks
-Candidate: 5 files, see below
+Candidate: 4 files, see below
 Evidence: suite exit 0, see below
 
 ## Candidate
@@ -13,29 +13,18 @@ Evidence: suite exit 0, see below
 - M  pyto/experiments/students/README.md
 - M  pyto/experiments/students/grade.py
 - M  pyto/experiments/students/test_students.py
-- M  pyto/experiments/tasks/29/packet.md
 
 ```
- pyto/CHANGES.md                            |   2 +
+pyto/CHANGES.md                            |   2 +
  pyto/experiments/students/README.md        |  10 ++-
  pyto/experiments/students/grade.py         |  65 +++++++++++++++--
  pyto/experiments/students/test_students.py | 112 ++++++++++++++++++++++++-----
- pyto/experiments/tasks/29/packet.md        |   3 +-
- 5 files changed, 168 insertions(+), 24 deletions(-)
+ 4 files changed, 166 insertions(+), 23 deletions(-)
 ```
-
-HANDOFF.md is unchanged: its four Tick bullets are already `- **Name** -- ...`, which
-is one of the three accepted forms. `evidence/run-1` is unchanged: nothing in the
-program moved, so there is nothing to regenerate.
 
 ## Evidence
 
 - verify: `cd pyto/experiments/students && python3 -m unittest discover -s . -p 'test_*.py' && python3 grade.py --run evidence/run-1 --handoff HANDOFF.md` exit 0 (evidence/verify.txt)
-    Ran 14 tests -- OK
-    PASS  4 hand-off
-            one list line each for all 4 Tick(s): Parse, Stats, Letters, Histogram
-            names all 8 file(s)
-    mechanical: 4 of 4 checks passed
 - suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
     suite                         tests  status
     library                         193  OK
@@ -49,10 +38,6 @@ program moved, so there is nothing to regenerate.
     disc-stats                        4  OK
     examples                          3  OK
     art-registry-md                   -  OK
-    viewer                          107  OK
-    viewer-record-schema             24  OK
-- mutation: `grade.py:check_handoff` back to the task-29 rule (`name not in handoff_text`) -> Handoff.test_a_missing_stats_line_fails_check_four_even_though_the_prose_says_stats fails (grade exits 0 where 1 was asserted): killed.
-- mutation: `grade.py:names_tick` loosened to `name in bullet` -> Handoff.test_the_three_accepted_bullet_forms_and_nothing_else fails on `"*Mean* and *Median* live in Stats"`: killed.
 
 ## Uncertain
 

@@ -2,7 +2,7 @@
 [students/test] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/35/pyto/experiments/tick-laws')  # intra-repo: the Tick node/loop law checker (tick_laws.py)
 ..............
 ----------------------------------------------------------------------
-Ran 14 tests in 1.033s
+Ran 14 tests in 0.999s
 
 OK
 [students/grade] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/35/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
