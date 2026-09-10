@@ -4,8 +4,54 @@ Intent: the difference is computed before it is shown, and counting comes before
 Starting point: c0368114ed2864f030f0f5d19b03d23d4cfef34f (board: **started** `task-65`: the question loop as Parts and Calculations: pyto)
 Verify: cd pyto && python -m unittest tests.test_neat_diff && python -m unittest discover -s experiments/molecules -p 'test_*.py' && python experiments/molecules/mine.py --check
 Allow: pyto/src/pyto/neat/diff.py pyto/src/pyto/neat/__init__.py pyto/tests/test_neat_diff.py pyto/tests/fixtures/blok pyto/scripts/neat.sh pyto/experiments/molecules pyto/experiments/review/diffs pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 11 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/molecules/mine.py
+- M  pyto/experiments/molecules/molecules.py
+- M  pyto/experiments/molecules/report.md
+- M  pyto/experiments/molecules/test_molecules.py
+- A  pyto/experiments/molecules/transitions.py
+- A  pyto/experiments/review/diffs/.gitkeep
+- M  pyto/scripts/neat.sh
+- A  pyto/src/pyto/neat/diff.py
+- A  pyto/tests/fixtures/blok/cards.json
+- A  pyto/tests/fixtures/blok/registry.py
+- A  pyto/tests/test_neat_diff.py
+
+```
+pyto/experiments/molecules/mine.py           |  22 +-
+ pyto/experiments/molecules/molecules.py      |  28 ++-
+ pyto/experiments/molecules/report.md         |  77 ++++--
+ pyto/experiments/molecules/test_molecules.py |  34 ++-
+ pyto/experiments/molecules/transitions.py    | 102 ++++++++
+ pyto/experiments/review/diffs/.gitkeep       |   0
+ pyto/scripts/neat.sh                         |  15 +-
+ pyto/src/pyto/neat/diff.py                   | 349 +++++++++++++++++++++++++++
+ pyto/tests/fixtures/blok/cards.json          |  37 +++
+ pyto/tests/fixtures/blok/registry.py         |  39 +++
+ pyto/tests/test_neat_diff.py                 | 236 ++++++++++++++++++
+ 11 files changed, 908 insertions(+), 31 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_neat_diff && python -m unittest discover -s experiments/molecules -p 'test_*.py' && python experiments/molecules/mine.py --check` exit 1 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.TnV7T5Fpos) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         366  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
 
 ## Uncertain
 
