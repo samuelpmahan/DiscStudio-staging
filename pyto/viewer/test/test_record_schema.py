@@ -30,7 +30,8 @@ REAL_RECORD = os.path.join(PYTO, "experiments", "grouped-ablation", "evidence", 
 
 sys.path.insert(0, HERE)
 from record_schema import (  # noqa: E402
-    SCHEMA, RecordSchemaError, derive_part_index, resolve_binding, validate,
+    SCHEMA, RecordSchemaError, derive_part_index, invocation_placement, resolve_binding,
+    run_schedule, tick_latency_ms, validate,
 )
 
 NODE = shutil.which("node")
@@ -436,6 +437,23 @@ class TheValidatorActuallyRejects(unittest.TestCase):
             ("ticks.0.invocations.0.actual_produces.0", 3, "ticks[0].invocations[0].actual_produces[0]"),
             ("ticks.0.invocations.0.writes.0.kind", "clobber", "ticks[0].invocations[0].writes[0].kind"),
             ("ticks.0.invocations.0.duration_ms", "fast", "ticks[0].invocations[0].duration_ms"),
+        # RECORD.md, "Placement and budget": optional, but held to the same rules
+        # as everything else once a record carries them (task 39).
+        ("ticks.0.latency_ms", "fast", "ticks[0].latency_ms"),
+        ("ticks.0.invocations.0.placement", {"worker": -1, "started_ms": 0.0},
+         "ticks[0].invocations[0].placement.worker"),
+        ("ticks.0.invocations.0.placement", {"worker": 0, "started_ms": "soon"},
+         "ticks[0].invocations[0].placement.started_ms"),
+        ("ticks.0.invocations.0.placement", {"worker": 0, "started_ms": 0.0, "thread": "main"},
+         "ticks[0].invocations[0].placement"),
+        ("parallel", "yes", "parallel"),
+        ("budget", {"limit_ms": 250.0, "stopped_after_tick": None, "completed": "no"},
+         "budget.completed"),
+        ("budget", {"limit_ms": 250.0, "stopped_after_tick": "Prepare", "completed": True},
+         "budget.stopped_after_tick"),
+        ("budget", {"limit_ms": 250.0, "stopped_after_tick": "Nowhere", "completed": False},
+         "budget.stopped_after_tick"),
+        ("budget", {"limit_ms": 250.0, "completed": False}, "budget"),
             ("ticks.0.invocations.0.hit", "yes", "ticks[0].invocations[0].hit"),
             ("ticks.0.invocations.0.value.kind", "binary", "ticks[0].invocations[0].value.kind"),
             ("counters.invocations", 99, "counters.invocations"),
@@ -498,6 +516,145 @@ class TheValidatorActuallyRejects(unittest.TestCase):
         for document in (None, [], "record", 3):
             with self.subTest(document=document):
                 self.assertRejects(document, "document")
+
+
+class PlacementAndBudget(unittest.TestCase):
+    """RECORD.md, "Placement and budget": optional, and read by both runtimes.
+
+    Optional is the load-bearing word. A record that carries none of the four is
+    a serial, unbudgeted run -- which is what every runtime but a parallel pyto
+    writes, and what the committed Day 1 record is -- so the readers must answer
+    the schedule question for a record that never heard of it.
+    """
+
+    def setUp(self):
+        self.record = load(REAL_RECORD)
+
+    def scheduled(self):
+        """The committed record with a schedule bolted on, by hand, from RECORD.md."""
+        record = json.loads(json.dumps(self.record))
+        record["parallel"] = True
+        record["budget"] = {
+            "limit_ms": 250.0,
+            "stopped_after_tick": record["ticks"][-1]["name"],
+            "completed": False,
+        }
+        for index, tick in enumerate(record["ticks"]):
+            tick["latency_ms"] = 1.5 + index
+            for position, invocation in enumerate(tick["invocations"]):
+                invocation["placement"] = {"worker": position % 2, "started_ms": position * 0.25}
+        return record
+
+    def test_the_committed_record_carries_none_of_the_four_and_reads_as_serial(self):
+        self.assertNotIn("parallel", self.record)
+        self.assertNotIn("budget", self.record)
+        for tick in self.record["ticks"]:
+            self.assertNotIn("latency_ms", tick)
+            for invocation in tick["invocations"]:
+                self.assertNotIn("placement", invocation)
+        self.assertEqual(
+            run_schedule(self.record),
+            {"parallel": False,
+             "budget": {"limit_ms": None, "stopped_after_tick": None, "completed": True}},
+        )
+        self.assertIsNone(invocation_placement(self.record["ticks"][0]["invocations"][0]))
+
+    def test_an_absent_latency_is_the_sum_of_the_ticks_durations(self):
+        for tick in self.record["ticks"]:
+            self.assertAlmostEqual(
+                tick_latency_ms(tick),
+                sum(inv["duration_ms"] for inv in tick["invocations"]),
+                places=9,
+            )
+
+    def test_a_null_latency_falls_back_the_same_way_a_missing_one_does(self):
+        record = self.scheduled()
+        record["ticks"][0]["latency_ms"] = None
+        self.assertAlmostEqual(
+            tick_latency_ms(record["ticks"][0]),
+            sum(inv["duration_ms"] for inv in record["ticks"][0]["invocations"]),
+            places=9,
+        )
+
+    def test_a_scheduled_record_validates_and_reads_back(self):
+        record = self.scheduled()
+        self.assertIs(validate(record), record)
+        self.assertEqual(
+            run_schedule(record),
+            {"parallel": True,
+             "budget": {"limit_ms": 250.0,
+                        "stopped_after_tick": record["ticks"][-1]["name"],
+                        "completed": False}},
+        )
+        self.assertEqual(tick_latency_ms(record["ticks"][0]), 1.5)
+        self.assertEqual(
+            invocation_placement(record["ticks"][0]["invocations"][0]),
+            {"worker": 0, "started_ms": 0.0},
+        )
+
+    def test_a_null_placement_is_a_serial_invocation_not_a_violation(self):
+        record = self.scheduled()
+        record["ticks"][0]["invocations"][0]["placement"] = None
+        self.assertIs(validate(record), record)
+        self.assertIsNone(invocation_placement(record["ticks"][0]["invocations"][0]))
+
+    @needs_node
+    def test_javascript_accepts_the_scheduled_record_too(self):
+        self.assertEqual(
+            javascript_verdicts([self.record, self.scheduled()]),
+            [{"ok": True, "path": None}, {"ok": True, "path": None}],
+        )
+
+    @needs_node
+    def test_both_readers_expose_the_same_latency_placement_and_schedule(self):
+        record = self.scheduled()
+        with tempfile.TemporaryDirectory(prefix="pyto-schedule-") as tmp:
+            path = os.path.join(tmp, "record.json")
+            with open(path, "w", newline="\n", encoding="utf-8") as handle:
+                json.dump(record, handle)
+            snippet = (
+                "import {readFileSync} from 'node:fs';"
+                "import {runSchedule, tickLatencyMsFromRecord, invocationPlacement} from './adapters.js';"
+                f"const record = JSON.parse(readFileSync({json.dumps(path)}, 'utf8'));"
+                "process.stdout.write(JSON.stringify({"
+                "schedule: runSchedule(record),"
+                "latency: record.ticks.map(tickLatencyMsFromRecord),"
+                "placement: record.ticks.map((t) => t.invocations.map(invocationPlacement))"
+                "}));"
+            )
+            result = subprocess.run(
+                [NODE, "--input-type=module", "-e", snippet],
+                cwd=VIEWER, check=True, capture_output=True, text=True,
+            )
+        seen = json.loads(result.stdout)
+        self.assertEqual(seen["schedule"], run_schedule(record))
+        self.assertEqual(seen["latency"], [tick_latency_ms(tick) for tick in record["ticks"]])
+        self.assertEqual(
+            seen["placement"],
+            [[invocation_placement(inv) for inv in tick["invocations"]] for tick in record["ticks"]],
+        )
+
+    @needs_node
+    def test_both_readers_fall_back_to_the_sum_for_a_record_without_latency(self):
+        with tempfile.TemporaryDirectory(prefix="pyto-schedule-") as tmp:
+            path = os.path.join(tmp, "record.json")
+            with open(path, "w", newline="\n", encoding="utf-8") as handle:
+                json.dump(self.record, handle)
+            snippet = (
+                "import {readFileSync} from 'node:fs';"
+                "import {runSchedule, tickLatencyMsFromRecord} from './adapters.js';"
+                f"const record = JSON.parse(readFileSync({json.dumps(path)}, 'utf8'));"
+                "process.stdout.write(JSON.stringify({"
+                "schedule: runSchedule(record), latency: record.ticks.map(tickLatencyMsFromRecord)}));"
+            )
+            result = subprocess.run(
+                [NODE, "--input-type=module", "-e", snippet],
+                cwd=VIEWER, check=True, capture_output=True, text=True,
+            )
+        seen = json.loads(result.stdout)
+        self.assertEqual(seen["schedule"], run_schedule(self.record))
+        for js_latency, tick in zip(seen["latency"], self.record["ticks"]):
+            self.assertAlmostEqual(js_latency, tick_latency_ms(tick), places=3)
 
 
 class TheTwoValidatorsAgree(unittest.TestCase):

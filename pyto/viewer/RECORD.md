@@ -136,6 +136,48 @@ two derive. It carries both binding spellings on purpose -- `split` binds a Part
   written, including the one-address records this change had to leave alone
   (`{?} RecordProduceDigest`).
 
+## Placement and budget
+
+Four optional fields say how a run was *scheduled* -- never what it was. **Absent means serial
+and unbudgeted**, which is what every runtime that never heard of either writes, and what
+`pyto.materialize.run_record` writes for a plain serial run: the four appear together, and only
+when the run was parallel, was given a budget, or was stopped by one. A serial unbudgeted record
+is therefore byte for byte the record it was before these existed
+(`{?} ScheduleFieldsOptional`).
+
+- per invocation, `"placement": {"worker": <int>, "started_ms": <float>}` or `null`. `worker` is
+  the 0-based index of the pool thread that ran this invocation **within its Tick**; `started_ms`
+  is the offset from the moment that Tick began, not a wall clock, so a reader draws the overlap
+  without one. A serial run writes `null`: a Tick that ran on one thread has no placement to
+  report. Placement is outside the compared and replayed fields for the same reason durations
+  are -- it is the schedule, and the schedule is not the program.
+- per Tick, `"latency_ms": <float>` or `null`: the wall time of the Tick from its first start to
+  its last finish. A parallel run measures it; a serial run's is the sum of its own durations,
+  which for a series of Calculations is the same number. Null when any invocation's duration is
+  null. Both reference readers derive it the same way and fall back to the sum when the field is
+  absent: `viewer/adapters.js tickLatencyMsFromRecord`, `viewer/test/record_schema.py
+  tick_latency_ms`. `viewer/tick-viewer.js` exports a `tickLatencyMs` of its own whose
+  fallback is the **longest branch** rather than the sum, because that is the critical
+  path it draws; the two agree whenever the field is present, which is the only case a
+  record decides (`{?} TwoLatencyFallbacks`).
+- run level, `"parallel": <bool>`: true when the invocations of each Tick ran concurrently
+  (`PCR.run(pxc, parallel=True)`).
+- run level, `"budget": {"limit_ms": <float or null>, "stopped_after_tick": <tick name or null>,
+  "completed": <bool>}`. The budget is checked at the Tick boundary and nowhere else, so a run
+  that stops stops **between** two Ticks with everything before the seam published in full:
+  `stopped_after_tick` names the last Tick that completed and `completed` is false. A completed
+  run has `stopped_after_tick: null`; both validators refuse a record that claims both, and one
+  whose `stopped_after_tick` names no Tick in the record.
+
+`viewer/adapters.js runSchedule` and `viewer/test/record_schema.py run_schedule` read the pair
+back with those defaults, so a reader asks one question of every record, old or new.
+
+Work against latency is the number `{?} TicksAsCircuits` asked for: a Tick's work is the sum of
+its `duration_ms`, its latency is `latency_ms`, and the ratio is what the parallel element bought.
+The testimony itself is unchanged by any of this -- `ticks` in `PcrRun` carries no placement, no
+latency and no budget, so a run's testimony bytes are identical serial versus parallel, and a
+budgeted run's testimony is the byte-for-byte prefix of the unbudgeted run's.
+
 ## Receipts as Parts
 
 `PCR.run(pxc, observe=True)` writes each invocation's `Receipt` into the store as an ordinary Part at
