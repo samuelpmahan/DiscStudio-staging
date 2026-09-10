@@ -724,7 +724,13 @@ a number before any parallel execution exists. Limit: bridge circuits are not se
 neither is every dependency graph; Ticks are the author's series-parallel drawing over the true graph
 the reads and writes define, and the node law is the test of whether the drawing is honest. Default:
 one check over any run record that applies both laws and reports work versus critical path per Tick;
-no kernel change; parallel execution stays a `{?}`.
+no kernel change; parallel execution stays a `{?}`. Owner, 2026-09-10, on whether task 26 still applies once a
+Calculation can produce several Parts (task 27): "but 26 still applies if multiple things want the same output
+right? (Badge Basket Tee detectors all require white component set)". Yes: 27 is fan-out on the producing side
+(one step, several named results), 26 is fan-out on the consuming side (three detectors, one white component
+set); the detectors belong in one Tick as parallel branches and the node law passes because their shared input
+was produced in an earlier Tick, not by a sibling; bound by result instead of address, the read still counts
+(ResultReadsAreReads). This is the worked example the checker's README should carry beside the students one.
 
 ### {?} WhatIsATick
 The first question asked under the stopping rule, 2026-09-10, from pyto/experiments/students/HANDOFF.md:
