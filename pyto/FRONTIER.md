@@ -18,9 +18,10 @@ the verifier that decides; and the size in tasks.
 
 ### F. The workshop runs everywhere (partly landed: tasks 44 and 46)
 
-Landed already: `check_all.sh` runs on ubuntu, macos and windows on every push, and it is green on
-two Python versions, with the per-suite logs uploaded as the receipt (tasks 44, 46). So the suite
-is proved on three operating systems by a machine, not by a claim.
+Landed already: a GitHub Action runs `check_all.sh` on ubuntu, macos and windows on every push to
+the sprint branch (task 44), and task 46 made it green there on two Python versions and had it
+upload the per-suite logs as the receipt. So the suite is proved on three operating systems by a
+machine, not by a claim.
 
 Still open, and both of them want the Mac itself:
 
@@ -122,8 +123,8 @@ What that sprint landed, one line per add, named by the task's own intent line, 
   graded by the class's own verifier -- the board line is the gradebook -- and `tutor.py` renders
   that desk's own record as a page that is the same bytes on rerun and reads no profile.
 - The suite runs everywhere it claims to: tasks 44 and 46 (add F, in part). A GitHub Action runs
-  `check_all.sh` on ubuntu, macos and windows on every push to the sprint branch, and it is green
-  on two Python versions, with the per-suite logs uploaded as the receipt.
+  `check_all.sh` on ubuntu, macos and windows on every push to the sprint branch, and 46 made it
+  green there on two Python versions and had it upload the per-suite logs as the receipt.
 - KT answers: task 45. Five questions from the local session answered from the record, at
   `pyto/research/kt-answers.md`, with `START-HERE.md` pointing at them.
 - neat never reuses an id: task 47. `next_id` counts the landing receipts as well, so an undone or

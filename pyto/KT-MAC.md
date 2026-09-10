@@ -26,10 +26,11 @@ Mac landmines, known in advance (Codex reads these first):
 - No Playwright, no Chromium, no browser tests on this machine. They are not in any chunk.
 - BSD `sed` and `date` are fine: the scripts avoid GNU-only flags. If Codex ever reaches for
   `sed -i`, it needs `sed -i ''` on a Mac; it should not need to.
-- The classroom selftest in chunk 7 makes real commits in throwaway repositories under a temp
-  directory, so git has to be configured before it runs: `git config --global user.name` and
-  `user.email` (chunk 0 sets them). Without them the first commit fails and the selftest stops
-  part-built; nothing outside the temp directory is touched either way.
+- The classroom selftest in chunk 7 makes real commits in throwaway repositories under the
+  directory you name it (chunk 7 uses `~/class`), so git has to be configured before it runs:
+  `git config --global user.name` and `user.email` (chunk 0 sets them). Without them the first
+  commit fails and the selftest stops part-built; nothing outside that directory is touched
+  either way.
 
 ## Chunk 0: tools (10 minutes, once)
 
@@ -161,7 +162,9 @@ You see: the whole of a class built from nothing under `~/class` and then checke
 goes -- the class repo and the student's own private desk cut from one seed, the student starting,
 submitting, being refused once at 1 of 2 and landing at 2 of 2, landing one task and taking it
 straight back out, killing another, and then the teacher's one command grading the desk with the
-class's own verifier. The line that matters is the class board's, which is the gradebook:
+class's own verifier. The line that matters is the class board's, which is the gradebook. This is
+the one written when it ran here, with the desk's long path cut down; yours will carry your own
+date, your own commit and your own receipt name:
 
 ```
 - 2026-09-10 03:06 **landed** `task-0` score 4/4: class scores: four Ticks over a roster of twelve (from <desk-origin.git> exp/0, graded here) (20 files since 50e0deb, suites green, receipt 20260910T030606Z-task-0)
