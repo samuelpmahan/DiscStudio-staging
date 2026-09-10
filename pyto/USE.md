@@ -282,9 +282,9 @@ that last line is the whole program written down, `fn:count` for a result and
 `fn:split#px.order.total` for one of several — and, with `observe=True`, one
 `Receipt` per id. The store is left holding every published Part.
 
-`run` also takes `parallel=True` (the invocations of a Tick run side by side, which
-the node law is what makes safe) and `budget_ms=...` (stop at a Tick boundary).
-Neither changes `ticks`: scheduling is not the program.
+`run` also takes `parallel=True` (the invocations of a Tick run side by side —
+the node law is what makes that safe) and `budget_ms=...` (stop at a Tick
+boundary). Neither changes `ticks`: scheduling is not the program.
 
 `pyto.Pcr` — lowercase — is a different thing and is not on this path: it is the
 authoring graph that *emits* a PCR document (JSON, Mermaid) without executing
@@ -298,9 +298,9 @@ its `into`, its writes, its digests, its value, and which addresses were there
 before the run started. `write_record(record, path)` puts it on disk.
 
 That document is what a fresh process replays: it never imports your program, and
-`px` reads it as a process table. Only three fields anywhere in it come from a
-wall clock — `counters.wall_ms` and `duration_ms` per invocation — plus the
-`source` block, which names the commit. Drop those and two runs of the same
+`px` reads it as a process table. A wall clock reaches two of its fields and no
+others — `counters.wall_ms`, and `duration_ms` per invocation — and the `source`
+block names the commit. Drop those and two runs of the same
 program produce the same bytes, which is what the last line below checks against
 a copy committed months ago.
 
@@ -391,9 +391,9 @@ record). They are all `python -m pyto.px <command> <record.json>`.
 
 `PQL` reads the store back. Two selectors are first-class — `PQL.part(address)`
 for an exact Part and `PQL.prefix("px.order.")` for a subtree — and refinement
-stays ordinary Python through `where(predicate)`. The four answers are `matches`
-(the `Match(address, value)` pairs), `values`, `addresses`, and the two strict
-ones: `one` raises unless there is exactly one, `optional` returns `None` for
+stays ordinary Python through `where(predicate)`. A query answers in four
+spellings — `matches` (the `Match(address, value)` pairs), `values`, `addresses`,
+and `one`/`optional`, the two strict ones: `one` raises unless there is exactly one, `optional` returns `None` for
 none and raises for more than one.
 
 `PQL.receipts(pxc, pcr=..., tick=...)` is the same thing with the receipt address
