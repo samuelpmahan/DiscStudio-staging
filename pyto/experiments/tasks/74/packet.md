@@ -4,8 +4,60 @@ Intent: crisp: the owner, 2026-09-10: 'Like neat(not) and tidy, it has a TINY jo
 Starting point: bc4d45c266d6de1d0ee1de7a207160854d5da81b (land(task-73): the Tick is the thing a person compares: px tick <record> [<name>] prints one Tick's projection of the record in the LAB's receipt shape (consumes, produces, writes with their kinds, frozen Calculations with source digests, latency, mode), byte-stable; px diff compares Tick by Tick before invocation by invocation and says which Ticks differ and in what; the viewer's Tick card shows the same four facts at the top of each Tick; derived from the record, no kernel change, no record change)
 Verify: cd pyto && python -m unittest tests.test_crisp
 Allow: pyto/src/pyto/crisp.py pyto/tests/test_crisp.py pyto/tests/test_use.py pyto/tests/fixtures/crisp pyto/tests/fixtures/blok pyto/scripts/neat.sh pyto/USE.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 14 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/USE.md
+- M  pyto/scripts/neat.sh
+- A  pyto/src/pyto/crisp.py
+- A  pyto/tests/fixtures/crisp/out/blok.a1-ink.27d1370d2f90.json
+- A  pyto/tests/fixtures/crisp/out/blok.a2-paper.ac5943d1f570.json
+- A  pyto/tests/fixtures/crisp/out/blok.b1-coordinatesInverted.5c22d72a43d9.json
+- A  pyto/tests/fixtures/crisp/out/blok.root.2d0d8a7337f2.json
+- A  pyto/tests/fixtures/crisp/out/run.json
+- A  pyto/tests/fixtures/crisp/out/store-after.json
+- A  pyto/tests/fixtures/crisp/registry.py
+- A  pyto/tests/fixtures/crisp/root.pql.json
+- A  pyto/tests/fixtures/crisp/store.json
+- A  pyto/tests/test_crisp.py
+- M  pyto/tests/test_use.py
+
+```
+pyto/USE.md                                        | 178 ++++++
+ pyto/scripts/neat.sh                               |  16 +-
+ pyto/src/pyto/crisp.py                             | 708 +++++++++++++++++++++
+ .../crisp/out/blok.a1-ink.27d1370d2f90.json        |  49 ++
+ .../crisp/out/blok.a2-paper.ac5943d1f570.json      |  49 ++
+ .../blok.b1-coordinatesInverted.5c22d72a43d9.json  |  49 ++
+ .../fixtures/crisp/out/blok.root.2d0d8a7337f2.json |  49 ++
+ pyto/tests/fixtures/crisp/out/run.json             |  97 +++
+ pyto/tests/fixtures/crisp/out/store-after.json     |  18 +
+ pyto/tests/fixtures/crisp/registry.py              |  63 ++
+ pyto/tests/fixtures/crisp/root.pql.json            |  16 +
+ pyto/tests/fixtures/crisp/store.json               |   6 +
+ pyto/tests/test_crisp.py                           | 387 +++++++++++
+ pyto/tests/test_use.py                             |   3 +
+ 14 files changed, 1686 insertions(+), 2 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_crisp` exit 1 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.xMLNplx4lI) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         402  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
 
 ## Uncertain
 

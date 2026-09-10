@@ -1,0 +1,55 @@
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/74/pyto/tests')
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/74/pyto/viewer/test')
+......FF..........FF
+======================================================================
+FAIL: test_import_runs_the_root_proposal_and_writes_rgb_and_hsl (tests.test_crisp.TestImportCLI.test_import_runs_the_root_proposal_and_writes_rgb_and_hsl)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 333, in test_import_runs_the_root_proposal_and_writes_rgb_and_hsl
+    proposal_path = self._template("force", self.tmp.name, pql=ROOT_PQL_PATH)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 327, in _template
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : /home/user/DiscStudio-staging/.venv/bin/python: No module named pyto.crisp
+
+
+======================================================================
+FAIL: test_refuses_an_imply_mode_proposal_with_a_slot (tests.test_crisp.TestImportCLI.test_refuses_an_imply_mode_proposal_with_a_slot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 354, in test_refuses_an_imply_mode_proposal_with_a_slot
+    proposal_path = self._template("imply", self.tmp.name)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 327, in _template
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : /home/user/DiscStudio-staging/.venv/bin/python: No module named pyto.crisp
+
+
+======================================================================
+FAIL: test_max_caps_the_count_and_says_how_many_were_cut (tests.test_crisp.TestVaryCLI.test_max_caps_the_count_and_says_how_many_were_cut)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 299, in test_max_caps_the_count_and_says_how_many_were_cut
+    _address, proposal_path, _digest = self._template(self.tmp.name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 274, in _template
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : /home/user/DiscStudio-staging/.venv/bin/python: No module named pyto.crisp
+
+
+======================================================================
+FAIL: test_vary_gives_exactly_the_three_options_byte_stable_and_new_digests (tests.test_crisp.TestVaryCLI.test_vary_gives_exactly_the_three_options_byte_stable_and_new_digests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 281, in test_vary_gives_exactly_the_three_options_byte_stable_and_new_digests
+    _address, proposal_path, root_digest = self._template(self.tmp.name)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/74/pyto/tests/test_crisp.py", line 274, in _template
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : /home/user/DiscStudio-staging/.venv/bin/python: No module named pyto.crisp
+
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.315s
+
+FAILED (failures=4)
