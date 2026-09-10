@@ -31,8 +31,15 @@ more than one piece of work when those pieces do not depend on each other.
 for every piece of work, what it read, what it wrote, what it produced, how long it
 took, and a fingerprint -- a short string of letters and digits computed from the
 result, which changes completely if anything about the result changes. The record is
-one file. It can be opened in a browser as a page you step through one Tick at a
-time, watching each step's numbers appear.
+one file. It can be opened in a browser as a page you step through one step at a
+time, and a step that holds two pieces of work neither of which needs the other is
+drawn as two cards *side by side*, with that step's **work** (both pieces added up)
+and its **latency** (the longer of the two -- the time the step takes if the pieces
+run at once) printed underneath it, and, at the top of the page, the whole run's
+work against its **critical path** -- how long the run would take if every such
+pair ran at once. Stepping through, the side-by-side cards appear
+together rather than one after the other, and if the record says which worker ran a
+piece, or that a time budget stopped the run before it finished, the page says so.
 
 **3. They write a hand-off page.** One page in their own words: what I built, one
 line per step, which files I touched, and -- this is the part teachers usually never

@@ -1,0 +1,59 @@
+# The workshop runs everywhere: every suite on three operating systems, on every push to the
+# sprint branch and on demand. Portability is a check with a receipt (the run log), not a claim.
+name: check_all on three OSes
+on:
+  push:
+    branches: [claude/os-sprint-st8hnu, claude/python-ultracode-supercharge-st8hnu]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: check-all-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  suite:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Make the venv the scripts look for
+        run: |
+          python -m venv .venv
+          if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=.venv/Scripts/python.exe; fi
+          "$PY" -m pip install -q --upgrade pip
+          "$PY" -m pip install -q -e "./pyto[drawing]"
+          "$PY" -c "import pyto, sys; print(sys.platform, sys.version.split()[0], pyto.__file__)"
+      - name: Every suite
+        run: bash pyto/scripts/check_all.sh
+      - name: neat proves itself here
+        run: |
+          git config user.email ci@example.invalid
+          git config user.name ci
+          bash pyto/scripts/neat.sh selftest
+      - name: The students grader
+        run: |
+          if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=.venv/Scripts/python.exe; fi
+          cd pyto/experiments/students
+          "../../../$PY" grade.py --run evidence/run-1 --handoff HANDOFF.md
+      - name: Keep the logs as the receipt
+        if: always()
+        run: |
+          mkdir -p ci-receipt
+          printf 'os=%s\ncommit=%s\nrun=%s\n' "${{ matrix.os }}" "$GITHUB_SHA" "$GITHUB_RUN_ID" > ci-receipt/receipt.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: check-all-${{ matrix.os }}-${{ github.sha }}
+          path: ci-receipt
