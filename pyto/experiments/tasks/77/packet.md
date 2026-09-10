@@ -4,8 +4,34 @@ Intent: USE.md section 4 still teaches the rule the owner overturned: 'the Calcu
 Starting point: 56f1bf6acc6f129d8dd3183f0ce44d81bc60a3e7 (land(task-76): a landing finishes on its own when a candidate deletes a file and starts ignoring it: land.sh step 5 staged each dirty path with git add -A, which is fatal for a deleted path that .gitignore now covers (task 75's landing passed every suite and died at the commit; finished by hand); the stage step now removes a deleted path from the index and adds the rest, and the selftest lands a candidate that deletes and ignores one file)
 Verify: cd pyto && python -m unittest tests.test_use && ! grep -rn 'parallel branches, so none of them' USE.md README.md research/START-HERE.md LANDING.md
 Allow: pyto/USE.md pyto/README.md pyto/research/START-HERE.md pyto/LANDING.md pyto/tests/fixtures/use pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 1 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/USE.md
+
+```
+pyto/USE.md | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_use && ! grep -rn 'parallel branches, so none of them' USE.md README.md research/START-HERE.md LANDING.md` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.EZOANQpHvP) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         435  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
 
 ## Uncertain
 
