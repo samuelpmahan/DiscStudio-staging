@@ -4,8 +4,68 @@ Intent: crisp, second pass, what the owner settled today: two digests on every p
 Starting point: f432097ec200503ed5fb299d900e958fad407316 (land(task-74): crisp: the owner, 2026-09-10: 'Like neat(not) and tidy, it has a TINY job it does VERY well. It does template gen that is required to import into PxC-ore and is tunable to imply or force decomposition. Variation through PxC is key.' pyto/src/pyto/crisp.py: crisp template <capability> [--mode imply|force] emits one composition proposal (capabilityDelta, why, existing and proposed Parts and Calculations, the PQL in the readPql shape, inspection, verification, decisions, limits) as a Part proposal.neat.composition.<set>.<option>.<revision> with a digest, from a store and a registry; imply leaves {?} slots, force refuses any name that does not resolve and any backwards read; crisp vary makes the options by changing one binding (variation A) or substituting one Calculation with the same produce shape (variation B), each option its own Part; crisp import runs a proposal's PQL against the registry and writes its Parts into the store with a run record; same inputs same bytes)
 Verify: cd pyto && python -m unittest tests.test_crisp tests.test_use tests.test_px tests.test_neat_gate
 Allow: pyto/src/pyto/crisp.py pyto/src/pyto/px.py pyto/src/pyto/neat/gate.py pyto/src/pyto/materialize.py pyto/tests pyto/USE.md pyto/scripts/neat.sh pyto/scripts/land.sh .gitignore pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 18 files, see below
+Evidence: suite exit 1, see below
+
+## Candidate
+
+- M  .gitignore
+- M  pyto/USE.md
+- M  pyto/scripts/land.sh
+- M  pyto/scripts/neat.sh
+- M  pyto/src/pyto/crisp.py
+- M  pyto/src/pyto/neat/gate.py
+- M  pyto/src/pyto/px.py
+- A  pyto/tests/fixtures/crisp/astar-blok.json
+- D  pyto/tests/fixtures/crisp/out/blok.a1-ink.27d1370d2f90.json
+- D  pyto/tests/fixtures/crisp/out/blok.a2-paper.ac5943d1f570.json
+- D  pyto/tests/fixtures/crisp/out/blok.b1-coordinatesInverted.5c22d72a43d9.json
+- D  pyto/tests/fixtures/crisp/out/blok.root.2d0d8a7337f2.json
+- D  pyto/tests/fixtures/crisp/out/run.json
+- D  pyto/tests/fixtures/crisp/out/store-after.json
+- M  pyto/tests/test_crisp.py
+- M  pyto/tests/test_neat_gate.py
+- M  pyto/tests/test_px.py
+- M  pyto/tests/test_use.py
+
+```
+.gitignore                                         |   3 +
+ pyto/USE.md                                        | 236 ++++++++-
+ pyto/scripts/land.sh                               |  36 +-
+ pyto/scripts/neat.sh                               |   6 +-
+ pyto/src/pyto/crisp.py                             | 549 ++++++++++++++++++++-
+ pyto/src/pyto/neat/gate.py                         |  27 +-
+ pyto/src/pyto/px.py                                |  79 ++-
+ pyto/tests/fixtures/crisp/astar-blok.json          |  16 +
+ .../crisp/out/blok.a1-ink.27d1370d2f90.json        |  49 --
+ .../crisp/out/blok.a2-paper.ac5943d1f570.json      |  49 --
+ .../blok.b1-coordinatesInverted.5c22d72a43d9.json  |  49 --
+ .../fixtures/crisp/out/blok.root.2d0d8a7337f2.json |  49 --
+ pyto/tests/fixtures/crisp/out/run.json             |  97 ----
+ pyto/tests/fixtures/crisp/out/store-after.json     |  18 -
+ pyto/tests/test_crisp.py                           | 335 ++++++++++++-
+ pyto/tests/test_neat_gate.py                       |  21 +
+ pyto/tests/test_px.py                              |  44 ++
+ pyto/tests/test_use.py                             |   3 +
+ 18 files changed, 1315 insertions(+), 351 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_crisp tests.test_use tests.test_px tests.test_neat_gate` exit 1 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.v30WWtZLOX) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         435  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
 
 ## Uncertain
 
