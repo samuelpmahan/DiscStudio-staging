@@ -13,6 +13,9 @@
 #   neat list                 every experiment and its state
 #   neat selftest             build a scratch repo in a temp dir and run new, pack, land, undo there
 #   neat walk [N | --page [out]]   the walk: the index of landings, one step as text, or the page (default ./walk.html)
+#   neat ask                  the tiny-question batch: every unanswered {?}, collated and numbered
+#   neat answer <n> <k> "<words>" [--technical "<text>"]   file the owner's reply to one batch item
+#   neat answers               every filed answer: label, digest, n, k
 #
 # The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
 # owner sees what is coming; those lines go through land.sh --note (commit and push, no receipt).
@@ -55,7 +58,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,15p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,18p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -605,6 +608,30 @@ cmd_walk() {
   esac
 }
 
+cmd_ask() {
+  # Collate every unanswered {?} on the tree into one numbered batch (pyto.neat.review), print it,
+  # leave the batch Part and the run record under pyto/experiments/review/. cd's into pyto/ first
+  # like cmd_pack and cmd_land do, so the module's relative paths (experiments/review/*, questions.md)
+  # mean what they say regardless of where `neat ask` itself was invoked from.
+  [ "$PYTO_MODE" -eq 1 ] || die "neat ask needs a pyto repository (pyto/pyproject.toml)"
+  (cd "$PY" && "$PYTHON" -m pyto.neat.review ask)
+}
+
+cmd_answer() {
+  # neat answer <n> <k> "<words>" [--technical "<text>"]
+  [ "$PYTO_MODE" -eq 1 ] || die "neat answer needs a pyto repository (pyto/pyproject.toml)"
+  local n="${1:-}" k="${2:-}" words="${3:-}"
+  [ -n "$n" ] && [ -n "$k" ] && [ -n "$words" ] || die 'neat answer <n> <k> "<words>" [--technical "<text>"]'
+  shift 3
+  (cd "$PY" && "$PYTHON" -m pyto.neat.review answer "$n" "$k" "$words" "$@")
+}
+
+cmd_answers() {
+  # Every filed answer: label, digest, n, k -- one line each.
+  [ "$PYTO_MODE" -eq 1 ] || die "neat answers needs a pyto repository (pyto/pyproject.toml)"
+  (cd "$PY" && "$PYTHON" -m pyto.neat.review answers)
+}
+
 cmd_list() {
   # A landed task's score is whatever its own landing receipt kept; an experiment that has not
   # landed has no receipt and so no score yet, which is the same "-" as a verifier that printed none.
@@ -626,5 +653,6 @@ cmd_list() {
 case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
-  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; *) usage;;
+  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";;
+  ask) cmd_ask "$@";; answer) cmd_answer "$@";; answers) cmd_answers "$@";; *) usage;;
 esac

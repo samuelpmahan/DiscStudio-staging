@@ -10,7 +10,9 @@
 Everything is derived from git and the files under pyto/: the board's "## Today" landed lines
 give the order, each landing's receipt gives the verdict, the landing commit gives the change.
 No clock is read, no absolute path is written, the output is LF only; same tree, same bytes.
-Standard library only.
+Standard library only, apart from this repository's own `pyto` package (`pyto.neat.review`, for
+the question loop's answered state -- one parser, one answers directory, read here and by `neat
+ask`, never two).
 """
 from __future__ import annotations
 
@@ -22,10 +24,22 @@ import subprocess
 import sys
 import textwrap
 
+import pyto.neat.review as neat_review
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))  # the repository (pyto/ is one level down)
+PYTO_DIR = os.path.join(ROOT, "pyto")
 sys.path.insert(0, HERE)
 from board_page import inline  # noqa: E402  (the board's renderer: same inline markup, same tokens)
+
+
+def question_status(line: str) -> str:
+    """"open", or "answered <digest first 12>" -- the label of one raw `{?}` line, looked up in
+    `pyto/experiments/review/answers/` the same way `neat answers` does (`pyto.neat.review.
+    answer_for`), so a step and the CLI never disagree about what counts as answered."""
+    label, _ = neat_review.split_question_line(line)
+    answer = neat_review.answer_for(PYTO_DIR, label)
+    return "open" if answer is None else f"answered {answer['sha256'][:12]}"
 
 DIFF_CAP = 60 * 1024
 WIDTH = 100
@@ -368,7 +382,7 @@ def step_html(s: dict, total: int) -> str:
                    f'<pre><code>{html.escape(patch)}{html.escape(cut)}</code></pre></details>')
     if s["questions"]:
         out.append('<p class="eyebrow">the packet left open</p><ul>')
-        out.extend(f"<li>{inline(q)}</li>" for q in s["questions"])
+        out.extend(f"<li>{inline(q)} — {html.escape(question_status(q))}</li>" for q in s["questions"])
         out.append("</ul>")
     if s["handoff"]:
         m = re.match(r"^task-(\d+)$", s["package"])
@@ -420,7 +434,7 @@ def step_text(s: dict, total: int) -> str:
         out.append(f"diff: git show {s['sha']}")
     if s["questions"]:
         out.append("the packet left open:")
-        out.extend(wrap(q, "  ") for q in s["questions"])
+        out.extend(wrap(f"{q} — {question_status(q)}", "  ") for q in s["questions"])
     if s["handoff"]:
         out.append(f"hand-off: pyto/experiments/tasks/{s['package'].split('-', 1)[1]}/HANDOFF.md")
     m = re.match(r"^task-(\d+)$", s["package"])
