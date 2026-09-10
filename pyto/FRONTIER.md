@@ -156,6 +156,26 @@ What that sprint landed, one line per add, named by the task's own intent line, 
   test_parallel's overlap check gave four threads 50 ms to start where a slow macOS runner took
   114. Each test is made true on the platform it runs on without loosening what it proves.
 
+- Chains inside a Tick: tasks 57 (the kernel), 58 (the laws, `px laws`, the readers and the viewer)
+  and 59 (the studio's runtime), after the owner's correction of 04:05 ("'Calculations inside a Tick
+  must be independent' was added as a rule, while your existing ChainSpot program deliberately chains
+  dependent Calculations inside a Tick. Your definition was the moment that sequence becomes
+  inspectable."). Inside a Tick the Calculations are a sequence in declared order and the Tick
+  boundary is where it becomes inspectable; a Tick with no sibling reads may run at once; a read of
+  a later sibling and two siblings producing one address are the refusals that remain. Decided on
+  `pyto/questions.md` under ChainsInsideATick, in his words; the interrupt rule's veto beside it.
+- The Mac's next three: task 61. KT-MAC.md's hand-off carries what the three-OS run showed after
+  task 55, so the Mac session starts on facts, not on a green claim.
+- Molecules, the owner's last call ("one last 30 min moonshot NOT OS. SUBDUE-PxC-PQL moonshot"):
+  task 60. `pyto/experiments/molecules` mines the eight committed run records with the SUBDUE miner
+  from hiding-primitives and names each repeated chain of Calculations over Parts a molecule, with
+  the PQL document that spells it and the PQL query that finds its Parts; `report.md` rebuilds byte
+  for byte and `--check` refuses drift. What it does not do yet: run an emitted document, or make a
+  molecule a Calculation of its own (its packet's `{?}` lines).
+- Decisions taken for the owner, to review: task 62, `pyto/research/decisions-to-review.md`, every
+  default the session took in his place, verified against the record, each with the sentence that
+  overturns it.
+
 What those adds did not finish, so it is not lost with them:
 
 - The record still carries one `result_sha256` per invocation and no per-produce digest
