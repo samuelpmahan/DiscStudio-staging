@@ -1,0 +1,93 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T010331Z-task-26",
+  "package": "task-26",
+  "base_sha": "71e2cbb57866744c6fd1b16665a30fb5844c03fd",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto/experiments/tick-laws && python3 -m unittest discover -s . -p 'test_*.py' && python3 tick_laws.py --check ../grouped-ablation/evidence/run-1/record.json ../students/evidence/run-1/record.json",
+    "exit": 0,
+    "output_sha256": "932916734886b187604132d3df7070c412b2593fbf87f00e4a1fe99510f8a419"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "d721bd9dce07507e5dd1f53f9d757c263c1f9f99b0e388034795564864b343a1",
+    "counts": {
+      "library": 155,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 240,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 10,
+      "experiments/tick-laws": 10,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 103,
+      "viewer-record-schema": 19
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/CHANGES.md",
+      "bytes": 64931,
+      "sha256": "82d89ec35f431525bd10180f77387b4bf0209d798ee24c9c41a3f4342e6a7421"
+    },
+    {
+      "path": "pyto/experiments/tasks/26/BRIEF.md",
+      "bytes": 3991,
+      "sha256": "24af8ae3708dbba8cbc56987a3ca10e7651e7e15384afc97400b26af5b61ee71"
+    },
+    {
+      "path": "pyto/experiments/tasks/26/HANDOFF.md",
+      "bytes": 6812,
+      "sha256": "9460406007b663f07afd4ee0815108dab54e2a2ead7c1ac0f4351e53c25a377c"
+    },
+    {
+      "path": "pyto/experiments/tasks/26/evidence/check_all.txt",
+      "bytes": 125323,
+      "sha256": "645854b3b811c9d23242db3752a1054caccb445dfaa857f90739e03ff533f8e7"
+    },
+    {
+      "path": "pyto/experiments/tasks/26/evidence/verify.txt",
+      "bytes": 2571,
+      "sha256": "1de36cd5014726b3b56e59e87ee580fee2c86353a59d095f6c4752d6575e0f15"
+    },
+    {
+      "path": "pyto/experiments/tasks/26/packet.md",
+      "bytes": 2619,
+      "sha256": "7871517083736151c218ac5a63b8df87c1f55b2c7bb6167eaa7bb661c5565b12"
+    },
+    {
+      "path": "pyto/experiments/tick-laws/README.md",
+      "bytes": 2006,
+      "sha256": "ce1aaf08f25e8f68dec3c78d3d6587c78d08d6b4e7a662defeb89dcd3df151aa"
+    },
+    {
+      "path": "pyto/experiments/tick-laws/test_tick_laws.py",
+      "bytes": 12305,
+      "sha256": "e321e98f6838a61d17802ea8aaf11ffc382c5ccac559841db0d43214215c3876"
+    },
+    {
+      "path": "pyto/experiments/tick-laws/tick_laws.py",
+      "bytes": 9417,
+      "sha256": "ad5c9cb930928a6834d89ebe6fedf46e72f6ac811f91d20225107d406442fbc5"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 40058,
+      "sha256": "361cde6ae63dbe09f39a6a0f4a70e7fa8bdc581792d8595b61a961baee059e9e"
+    },
+    {
+      "path": "pyto/questions.md",
+      "bytes": 55579,
+      "sha256": "0a8e4a178fe4326b971219de2bc04dd19d65d31e8942ca9d5e25449510e7e346"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-10T01:04:10.675630Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

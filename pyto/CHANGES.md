@@ -15,6 +15,8 @@ None. Every seam so far is additive: no existing field, default, exception, orde
 or serialized shape changed. A seam that changes what an existing program means
 is recorded here first, with the consumer call sites it moves.
 
+## exp/26: no library seam — added `experiments/tick-laws`, a record-only checker for observed Tick node/loop laws and Tick-model work versus critical-path reporting; `pyto/src` is unchanged.
+
 ## Day 2 (base d9dded6): `PcrRun.receipts`, opt-in through `PCR.run(..., observe=True)`
 
 **What landed.** `pyto/src/pyto/pcr.py` only:
