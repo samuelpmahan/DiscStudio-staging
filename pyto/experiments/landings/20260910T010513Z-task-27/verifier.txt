@@ -1,0 +1,57 @@
+EEEE
+======================================================================
+ERROR: test_receipts (unittest.loader._FailedTest.test_receipts)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_receipts
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/tests/test_receipts.py", line 32, in <module>
+    from pyto import Calculation, Part, PCR, PQL, PxC, PxWrite
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_materialize (unittest.loader._FailedTest.test_materialize)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_materialize
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/tests/test_materialize.py", line 29, in <module>
+    from pyto import Calculation, Part, PCR, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_semantics (unittest.loader._FailedTest.test_semantics)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_semantics
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/tests/test_semantics.py", line 20, in <module>
+    from pyto import (
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_first_class (unittest.loader._FailedTest.test_first_class)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_first_class
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/tests/test_first_class.py", line 13, in <module>
+    from pyto import Calculation, Match, Part, PCR, Pcr, PQL, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+FAILED (errors=4)

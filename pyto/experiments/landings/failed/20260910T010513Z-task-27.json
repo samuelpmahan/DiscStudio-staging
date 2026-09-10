@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T010513Z-task-27",
+  "package": "task-27",
+  "base_sha": "e2fbbd4959318665bf0dfa36087946fbb98bd266",
+  "result": "failed",
+  "reason": "verifier exited 1 (see /home/user/DiscStudio-staging/pyto/experiments/landings/20260910T010513Z-task-27/verifier.txt)",
+  "at": "2026-09-10T01:05:13.996602Z"
+}
