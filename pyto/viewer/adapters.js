@@ -615,6 +615,109 @@ export function runSchedule(record) {
   };
 }
 
+/* ------------------------------------------------------------------ */
+/* the Tick projection                                                 */
+/* ------------------------------------------------------------------ */
+//
+// research/chainspot-stages-ticks.md: "a Tick is when its Sequence of
+// Calculations becomes Inspectable. It is our MINIMAL COMPARATIVE UNIT" -- the
+// LAB's own TickInspection.svelte renders, per Tick, actualConsumes,
+// frozenCalculations (address plus the body's digest) and writes; compare.ts
+// compares Tick by Tick. tickProjection is that same shape read off a
+// pyto-run-record@1 document. `pyto.px` `tick_projection` is the same
+// projection in Python (pyto/src/pyto/px.py); a node test in viewer/test
+// compares the two, tick by tick, over the same fixtures, so a reader in
+// either language sees the same four facts.
+
+/** Every address one invocation reads, resolved against a record-wide
+ * producedBy map (id -> the addresses its `into` names) so a read of an
+ * earlier Tick's produce still resolves -- unlike tick-viewer.js's own
+ * `invocationReads`, whose caller deliberately narrows that map to one Tick's
+ * siblings to decide chain-vs-parallel. Duplicated here, small, rather than
+ * imported from tick-viewer.js: that module already imports from this one,
+ * and embed.mjs concatenates both into one script, where a cycle cannot
+ * resolve. */
+function tickProjectionReads(invocation, producedBy) {
+  const reads = new Set(invocation.actual_consumes || []);
+  for (const binding of Object.values(invocation.inputs || {})) {
+    for (const address of parseBinding(binding, producedBy)) reads.add(address);
+  }
+  return reads;
+}
+
+/** Every address one invocation writes: `into` (one or several) plus
+ * `actual_produces` -- tick_laws.py `_writes`' reading, not the record's own
+ * `writes` list (kept separately below, for its kind and digest). */
+function tickProjectionWrites(invocation) {
+  const produced = new Set(produceAddresses(invocation.into));
+  for (const address of invocation.actual_produces || []) produced.add(address);
+  return produced;
+}
+
+/** One frozen Calculation identity: `address@<implementation_sha256[:12]>`,
+ * `-` for either half the record left null -- the same spelling
+ * `pyto.px.frozen_identity` prints. */
+function frozenIdentity(calculation) {
+  const address = calculation.address || '-';
+  const impl = calculation.implementation_sha256;
+  const short = typeof impl === 'string' && impl.length ? impl.slice(0, 12) : '-';
+  return `${address}@${short}`;
+}
+
+/**
+ * One Tick's testimony, in the LAB's receipt shape -- the JavaScript twin of
+ * `pyto.px.tick_projection` (pyto/src/pyto/px.py). `consumes` is every address
+ * any invocation of `record.ticks[tickIndex]` reads, resolved over the whole
+ * record, minus whatever this Tick itself produced; `internal` is the
+ * intersection -- an address this Tick both produced and consumed, the
+ * chain's own link. `produces` pairs the record's own `writes` (address and
+ * kind, when the runtime recorded one) with the producing invocation's
+ * `result_sha256` -- the record carries one digest per invocation and no
+ * separate per-produce digest. `calculations` is `frozenIdentity` over the
+ * invocations in declared order. `latency_ms` and `mode` are the record's own
+ * accounting (`tickLatencyMsFromRecord`, `runSchedule`), not
+ * tick-viewer.js's longest-branch-for-a-parallel-Tick number
+ * (RECORD.md, `{?} TwoLatencyFallbacks`).
+ */
+export function tickProjection(record, tickIndex) {
+  const tick = record.ticks[tickIndex];
+  if (!tick) throw new Error(`tickProjection: no Tick at index ${tickIndex} (record has ${record.ticks.length})`);
+
+  const producedBy = new Map();
+  for (const other of record.ticks) {
+    for (const invocation of other.invocations) producedBy.set(invocation.id, produceAddresses(invocation.into));
+  }
+
+  const reads = new Set();
+  const produced = new Set();
+  for (const invocation of tick.invocations) {
+    for (const address of tickProjectionReads(invocation, producedBy)) reads.add(address);
+    for (const address of tickProjectionWrites(invocation)) produced.add(address);
+  }
+  const consumes = [...reads].filter((address) => !produced.has(address)).sort();
+  const internal = [...reads].filter((address) => produced.has(address)).sort();
+
+  const produces = [];
+  for (const invocation of tick.invocations) {
+    const digest = invocation.result_sha256 ?? null;
+    for (const write of invocation.writes) produces.push({ address: write.address, kind: write.kind ?? null, digest });
+  }
+  produces.sort((a, b) => (a.address < b.address ? -1 : a.address > b.address ? 1 : 0));
+
+  const calculations = tick.invocations.map((invocation) => frozenIdentity(invocation.calculation));
+
+  return {
+    index: tick.index,
+    name: tick.name,
+    consumes,
+    internal,
+    produces,
+    calculations,
+    latency_ms: tickLatencyMsFromRecord(tick),
+    mode: runSchedule(record).parallel ? 'parallel' : 'serial'
+  };
+}
+
 function assemble({ pcr, source, ticks, wallMs = null, schedule = null }) {
   const record = {
     schema: SCHEMA,

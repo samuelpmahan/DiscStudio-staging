@@ -1,0 +1,20 @@
+Tick 0 Prepare
+  consumes: px.demo.csv
+  internal: -
+  produces: px.demo.rows:new-address:-
+  calculations: fn.demo.load@-
+  latency: latency_ms=1.000 mode=parallel
+
+Tick 1 Fan
+  consumes: px.demo.rows
+  internal: -
+  produces: px.demo.left:new-address:-,px.demo.right:new-address:-
+  calculations: fn.demo.left@-,fn.demo.right@-
+  latency: latency_ms=3.000 mode=parallel
+
+Tick 2 Score
+  consumes: px.demo.left,px.demo.right
+  internal: -
+  produces: px.demo.score:new-address:-
+  calculations: fn.demo.score@-
+  latency: latency_ms=0.500 mode=parallel
