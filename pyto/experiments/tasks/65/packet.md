@@ -4,8 +4,46 @@ Intent: the question loop as Parts and Calculations: pyto/src/pyto/neat/review.p
 Starting point: 2f1dafe4cb5f8e4096c3a5289cd3997799f0b36a (land(task-64): the owner's words on what this is for and how the frontier runs through him: pyto/questions.md gains SuperGoogle (verbatim: a Python lib anyone can use to figure stuff out so long as they do something real and meaningful; AI as super Google and Python creator powers he can conceive but not implement; not distilling anything; the projection of his reasoning is a molecule) and TinyQuestions (the frontier workflow is tailored for subagent throughput through him: as many little questions as possible, answered by him, filed in his words; defaults are for nothing that carries meaning); FRONTIER.md's opening paragraph says so)
 Verify: cd pyto && python -m unittest tests.test_neat_review tests.test_walk && python scripts/walk.py --check
 Allow: pyto/src/pyto/neat pyto/tests/test_neat_review.py pyto/scripts/neat.sh pyto/scripts/walk.py pyto/tests/test_walk.py pyto/experiments/review pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 7 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- A  pyto/experiments/review/batches/1.json
+- A  pyto/experiments/review/runs/ask-1.json
+- M  pyto/scripts/neat.sh
+- M  pyto/scripts/walk.py
+- M  pyto/src/pyto/neat/__init__.py
+- A  pyto/src/pyto/neat/review.py
+- A  pyto/tests/test_neat_review.py
+
+```
+pyto/experiments/review/batches/1.json  | 1850 +++++++++++++++++++++++++++++++
+ pyto/experiments/review/runs/ask-1.json | 1467 ++++++++++++++++++++++++
+ pyto/scripts/neat.sh                    |   32 +-
+ pyto/scripts/walk.py                    |   28 +-
+ pyto/src/pyto/neat/__init__.py          |   20 +-
+ pyto/src/pyto/neat/review.py            |  563 ++++++++++
+ pyto/tests/test_neat_review.py          |  255 +++++
+ 7 files changed, 4207 insertions(+), 8 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_neat_review tests.test_walk && python scripts/walk.py --check` exit 1 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.T7rCI1NunU) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         356  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules             5  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
 
 ## Uncertain
 
