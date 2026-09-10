@@ -42,6 +42,12 @@ entries on pyto/questions.md, and continue." Every answer to an agent's question
 in the owner's words and in the technical words side by side; the owner never carries the technical
 half (owner, 2026-09-10: "Can't you translate between OSspeak and Samspeak").
 
+## The frontier
+
+What gets built next is planned as adds, not as a queue of tasks (owner, 2026-09-10: "we refine and
+merge compatible things; each add includes an illustrative feature or is a few complementary things").
+The adds, with what you will see when each lands, are on `pyto/FRONTIER.md`. A task opens from an add.
+
 ## Interrupts
 
 The owner is interrupted for three things only: something they would want to know broke and
