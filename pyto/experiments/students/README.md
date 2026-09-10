@@ -111,7 +111,14 @@ python homework.py --out evidence/run-1                    # run the four Ticks,
 python grade.py --run evidence/run-1 --handoff HANDOFF.md  # the four mechanical checks
 ```
 
-and open `evidence/run-1/tick-viewer.html` in any browser to step through the run.
+and open `evidence/run-1/tick-viewer.html` in any browser to step through the run. That
+page is the committed one, rebuilt from the committed record by today's renderer -- so the
+Stats step really is drawn as two cards side by side there, with the work and latency
+numbers under it, and not only on the page you get by dropping the record on the viewer.
+Nothing was re-run to rebuild it: `node ../../viewer/embed.mjs evidence/run-1/record.json
+--out evidence/run-1/tick-viewer.html` bakes the same record into a new page, so the record
+and the receipts beside it are the same bytes they were, and building it twice gives the
+same file twice.
 
 The files are: `homework.py` (the program), `HANDOFF.md` (the student's page),
 `grade.py` (the four checks), `test_students.py` (tests of both), this `README.md`,

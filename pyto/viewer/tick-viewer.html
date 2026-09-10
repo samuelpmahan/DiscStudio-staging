@@ -139,6 +139,22 @@ tr.resultref .addr { color: var(--muted); }
 .kind-replacement { color: var(--warn); background: var(--warn-bg); }
 .kind-refinement { color: var(--computed); background: var(--computed-bg); }
 
+/* effects: an OperationalCalculation's own rows, and the oc card it sits on */
+.inv.oc { border-color: var(--computed); border-left: 3px solid var(--computed); }
+.pill.oc { color: var(--computed); background: var(--computed-bg); }
+.effects { margin: 8px 0; }
+.effects-head {
+  margin: 0 0 4px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+}
+.effect-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3px; }
+.effect-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 12.5px; }
+.effect-index { color: var(--muted); font-size: 11px; min-width: 1.2em; text-align: right; }
+.effect-arg { word-break: break-all; }
+.effect-digest { color: var(--muted); font-size: 12px; }
+.kind-read_text, .kind-now_ms, .kind-random, .kind-env { color: var(--hit); background: var(--hit-bg); }
+.kind-write_text { color: var(--warn); background: var(--warn-bg); }
+
 details { margin: 8px 0; }
 summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
 pre { background: var(--code); border-radius: 6px; padding: 8px 10px; margin: 6px 0 0; overflow-x: auto; max-height: 340px; font-size: 12px; }
