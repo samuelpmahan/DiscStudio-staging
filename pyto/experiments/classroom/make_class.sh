@@ -339,6 +339,19 @@ build_desk() { # <dir>
 
 # --- the student ----------------------------------------------------------------
 
+new_task() { # <dir> <intent> [neat new options...] -> the id neat handed out
+  # Never assume the id: neat hands out the next free one, and "free" moves as branches
+  # land, are killed or are undone. The caller reads it back from what neat printed.
+  local dir="$1"; shift
+  local out id
+  out="$dir/log-new-$$.txt"
+  bash "$dir/desk/tools/neat.sh" new "$@" > "$out" 2>&1
+  id="$(sed -n 's/^Task \([0-9][0-9]*\):.*/\1/p' "$out" | head -n 1)"
+  [ -n "$id" ] || { cat "$out" >&2; echo "make_class: neat new printed no task id" >&2; exit 1; }
+  mv "$out" "$dir/log-new-$id.txt"
+  printf '%s\n' "$id"
+}
+
 uncertain() { # <packet path> <line...>  -- one {?} line, the habit the record is built on
   local packet="$1"; shift
   printf '%s\n' "$*" >> "$packet"
@@ -348,14 +361,15 @@ play_student() { # <dir>
   local dir="$1"
   local desk="$1/desk"
   local neat="$1/desk/tools/neat.sh"
-  local sub
+  local sub t0 t1 t2 t3
 
   step "the student, task 0: the homework itself"
   # Task 0 goes first, before anything else on the desk: the branch it opens is what
   # the class will merge, so everything the desk does afterwards stays off it.
-  bash "$neat" new "class scores: four Ticks over a roster of twelve" \
-      --verify "bash tools/check_submission.sh" --allow "submissions/$STUDENT" > "$dir/log-new-0.txt" 2>&1
-  sub="$desk/EXP/0/submissions/$STUDENT"
+  t0="$(new_task "$dir" "class scores: four Ticks over a roster of twelve" \
+        --verify "bash tools/check_submission.sh" --allow "submissions/$STUDENT")"
+  [ "$t0" = "0" ] || die "the desk's first task came out as $t0, not 0"
+  sub="$desk/EXP/$t0/submissions/$STUDENT"
   mkdir -p "$sub/evidence/run-1"
   cp "$STUDENTS/homework.py" "$sub/homework.py"
   cp "$STUDENTS/HANDOFF.md" "$sub/HANDOFF.md"
@@ -363,59 +377,61 @@ play_student() { # <dir>
   cp "$STUDENTS/evidence/run-1/receipts.json" "$sub/evidence/run-1/receipts.json"
   cp "$STUDENTS/evidence/run-1/tick-viewer.html" "$sub/evidence/run-1/tick-viewer.html"
   cp "$HERE/cold-reader.txt" "$sub/cold-reader.txt"
-  uncertain "$desk/EXP/0/.neat/tasks/0/packet.md" \
+  uncertain "$desk/EXP/$t0/.neat/tasks/$t0/packet.md" \
     '{?} Rounding: the mean is rounded to two decimals and the median is not; I could not decide which way to make the two agree.'
-  uncertain "$desk/EXP/0/.neat/tasks/0/packet.md" \
+  uncertain "$desk/EXP/$t0/.neat/tasks/$t0/packet.md" \
     '{?} ColdReaderAnswer: the reader answered from my page alone and I kept their answer in the submission; I do not know whether the class wants it there or somewhere only the teacher can see.'
-  bash "$neat" pack 0 > "$dir/log-pack-0.txt" 2>&1
-  echo "  packed task 0: $(sed -n 's/^ *score: /score /p' "$desk/.neat/tasks/0/evidence/verify.txt" 2>/dev/null || grep -h '^score: ' "$desk/EXP/0/.neat/tasks/0/evidence/verify.txt")"
+  bash "$neat" pack "$t0" > "$dir/log-pack-$t0.txt" 2>&1
+  echo "  packed task $t0: $(grep -m1 '^score: ' "$desk/EXP/$t0/.neat/tasks/$t0/evidence/verify.txt")"
 
   step "the student, task 1: a page of my own questions (refused once, then landed)"
-  bash "$neat" new "a page of my own questions" \
-      --verify "bash tools/check_notes.sh" --allow "notes" > "$dir/log-new-1.txt" 2>&1
-  mkdir -p "$desk/EXP/1/notes"
-  cat > "$desk/EXP/1/notes/questions.md" <<'Q1'
+  t1="$(new_task "$dir" "a page of my own questions" \
+        --verify "bash tools/check_notes.sh" --allow "notes")"
+  mkdir -p "$desk/EXP/$t1/notes"
+  cat > "$desk/EXP/$t1/notes/questions.md" <<'Q1'
 # What I am unsure about
 
 {?} Ticks: why is Stats one Tick and not two? Nothing I read says what a Tick is
 Q1
-  uncertain "$desk/EXP/1/.neat/tasks/1/packet.md" \
+  uncertain "$desk/EXP/$t1/.neat/tasks/$t1/packet.md" \
     '{?} OneQuestion: my own check wants two questions on the page and I only had one I could write down honestly.'
-  bash "$neat" pack 1 > "$dir/log-pack-1a.txt" 2>&1
-  if bash "$neat" land 1 > "$dir/log-land-1a.txt" 2>&1; then
-    die "task 1 landed on the first try; the desk's story needs the refusal (see $dir/log-land-1a.txt)"
+  bash "$neat" pack "$t1" > "$dir/log-pack-$t1-a.txt" 2>&1
+  if bash "$neat" land "$t1" > "$dir/log-land-$t1-a.txt" 2>&1; then
+    die "task $t1 landed on the first try; the desk's story needs the refusal (see $dir/log-land-$t1-a.txt)"
   fi
-  echo "  refused, as it should be: $(grep -h '^score: ' "$desk/.neat/landings/failed"/*.json >/dev/null 2>&1 || true)$(grep -m1 -o 'score 1/2' "$desk/.neat/BOARD.md" || true)"
-  cat > "$desk/EXP/1/notes/questions.md" <<'Q2'
+  echo "  refused, as it should be: $(grep -m1 -o 'score 1/2' "$desk/.neat/BOARD.md")"
+  cat > "$desk/EXP/$t1/notes/questions.md" <<'Q2'
 # What I am unsure about
 
 {?} Ticks: why is Stats one Tick and not two? Nothing I read says what a Tick is
-{?} Timings: the record keeps how long each calculation took, and the grader drops
+{?} Timings: the record keeps how long each calculation took, and the grader drops them
 Q2
-  bash "$neat" pack 1 > "$dir/log-pack-1b.txt" 2>&1
-  bash "$neat" land 1 > "$dir/log-land-1b.txt" 2>&1
-  echo "  landed task 1: $(grep -m1 -o 'score 2/2' "$desk/.neat/BOARD.md" || true)"
+  bash "$neat" pack "$t1" > "$dir/log-pack-$t1-b.txt" 2>&1
+  bash "$neat" land "$t1" > "$dir/log-land-$t1-b.txt" 2>&1
+  echo "  landed task $t1: $(grep -m1 -o 'score 2/2' "$desk/.neat/BOARD.md")"
 
-  step "the student, task 2: landed, then taken straight back out"
-  bash "$neat" new "put the two questions in the order I asked them" \
-      --verify "bash tools/check_notes.sh" --allow "notes" > "$dir/log-new-2.txt" 2>&1
-  cat > "$desk/EXP/2/notes/questions.md" <<'Q3'
+  step "the student, task 2: started and killed"
+  # Before the undo, not after: a killed task keeps its branch, so its id stays taken.
+  # An undone one does not, and the next `neat new` would hand the id out again.
+  t2="$(new_task "$dir" "colour in the histogram")"
+  bash "$neat" kill "$t2" > "$dir/log-kill-$t2.txt" 2>&1
+  echo "  killed task $t2; nothing landed, exp/$t2 is kept"
+
+  step "the student, task 3: landed, then taken straight back out"
+  t3="$(new_task "$dir" "put the two questions in the order I asked them" \
+        --verify "bash tools/check_notes.sh" --allow "notes")"
+  cat > "$desk/EXP/$t3/notes/questions.md" <<'Q3'
 # What I am unsure about
 
-{?} Timings: the record keeps how long each calculation took, and the grader drops
+{?} Timings: the record keeps how long each calculation took, and the grader drops them
 {?} Ticks: why is Stats one Tick and not two? Nothing I read says what a Tick is
 Q3
-  bash "$neat" pack 2 > "$dir/log-pack-2.txt" 2>&1
-  bash "$neat" land 2 > "$dir/log-land-2.txt" 2>&1
+  bash "$neat" pack "$t3" > "$dir/log-pack-$t3.txt" 2>&1
+  bash "$neat" land "$t3" > "$dir/log-land-$t3.txt" 2>&1
   # Immediately: an undo reverts the landing commit, so it has to be the newest one or
   # the revert fights the board lines written since.
-  bash "$neat" undo 2 > "$dir/log-undo-2.txt" 2>&1
-  echo "  landed and undone: $(grep -c 'undo-task-2' "$desk/.neat/BOARD.md" | tr -d ' ') board line(s)"
-
-  step "the student, task 3: started and killed"
-  bash "$neat" new "colour in the histogram" > "$dir/log-new-3.txt" 2>&1
-  bash "$neat" kill 3 > "$dir/log-kill-3.txt" 2>&1
-  echo "  killed task 3; nothing landed"
+  bash "$neat" undo "$t3" > "$dir/log-undo-$t3.txt" 2>&1
+  echo "  landed task $t3 and took it straight back out: $(grep -c "undo-task-$t3" "$desk/.neat/BOARD.md" | tr -d ' ') board line"
 }
 
 # --- the teacher ----------------------------------------------------------------
@@ -535,8 +551,9 @@ selftest() { # <dir>
   ls "$desk"/.neat/landings/failed/*.json > /dev/null 2>&1 || rc=1
   grep -q 'score 1/2' "$desk/.neat/BOARD.md" || rc=1
   grep -q 'score 2/2' "$desk/.neat/BOARD.md" || rc=1
-  grep -q 'undo-task-2' "$desk/.neat/BOARD.md" || rc=1
-  grep -q 'killed' "$desk/.neat/BOARD.md" || rc=1
+  grep -q '\*\*landed\*\* `undo-task-' "$desk/.neat/BOARD.md" || rc=1
+  grep -q '\*\*killed\*\*' "$desk/.neat/BOARD.md" || rc=1
+  grep -q '\*\*refused\*\*' "$desk/.neat/BOARD.md" || rc=1
   check "the desk's record holds a refusal, a retry, an undo and a kill" "$rc"
 
   echo
