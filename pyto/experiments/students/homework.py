@@ -305,7 +305,13 @@ def main(argv: list[str] | None = None) -> int:
     for line in result["run"].results["histogram"].splitlines():
         print("  " + line)
     for path in write_evidence(result, out_dir):
-        print("wrote", os.path.relpath(path, HERE))
+        # `--out` may point anywhere, including another drive on Windows, where
+        # os.path.relpath raises rather than answering. The name is a label.
+        try:
+            shown = os.path.relpath(path, HERE)
+        except ValueError:
+            shown = os.path.abspath(path)
+        print("wrote", shown)
     return 0
 
 

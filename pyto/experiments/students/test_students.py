@@ -48,6 +48,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PYTO_ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -337,6 +338,41 @@ class Handoff(unittest.TestCase):
         passed, detail = grade.check_handoff({"ticks": []}, text.replace("`grade.py`", "`the rubric`"))
         self.assertFalse(passed)
         self.assertIn("the hand-off never names the file 'grade.py'", detail)
+
+
+class PathsWithNoRelativeForm(unittest.TestCase):
+    """grade.py:display_path -- the report's label survives a path off the drive.
+
+    Four of these tests hand grade.py a scratch copy of the run, or a scratch
+    HANDOFF.md, under `tempfile`. On a GitHub windows-latest runner the checkout
+    is on D: and TEMP is on C:, and `os.path.relpath` has no answer for that pair
+    -- ntpath raises `ValueError: path is on mount 'C:', start on mount 'D:'`.
+    That call was the report's FIRST line, before check 1 ran, so grade.py died
+    with an empty stdout and exit 1 and the four tests reported
+    `'FAIL  4 hand-off' not found in ''` (CI run 34429580002, windows job
+    102722032579). Nothing about it is Windows-specific except which paths raise,
+    so the raise is what is reproduced here.
+    """
+
+    def test_ntpath_really_refuses_a_cross_drive_pair(self):
+        """The premise, not an assumption: this is the call that used to crash."""
+        import ntpath
+
+        with self.assertRaises(ValueError):
+            ntpath.relpath(
+                r"C:\Users\RUNNER~1\AppData\Local\Temp\tmp0\run-1",
+                r"D:\a\DiscStudio-staging\DiscStudio-staging\pyto\experiments\students",
+            )
+
+    def test_display_path_answers_with_the_absolute_path_instead_of_raising(self):
+        """Kills a `display_path` that is a bare `os.path.relpath` again."""
+        boom = ValueError("path is on mount 'C:', start on mount 'D:'")
+        with unittest.mock.patch("os.path.relpath", side_effect=boom):
+            self.assertEqual(grade.display_path(RUN_1), os.path.abspath(RUN_1))
+
+    def test_the_ordinary_case_is_still_relative(self):
+        """And it did not stop being a relative label where one exists."""
+        self.assertEqual(grade.display_path(RUN_1), os.path.join("evidence", "run-1"))
 
 
 class ContractRefusal(unittest.TestCase):
