@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/40
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/40:pyto/experiments/tasks/40/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 83a5d77 origin/exp/40 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 2b1e082 origin/exp/40 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ parallel you can see: the Tick viewer draws a Tick's Calculations side by side w
 
 ## Starting point
 
-53d31d925730b00a954afb7524e4c024d1760ef5 (board: **started** `task-39`: parallel for real and budgets: PcrRun runs the Ca). MAIN may have moved since: `git log --oneline 83a5d77..origin/claude/os-sprint-st8hnu` shows how far.
+53d31d925730b00a954afb7524e4c024d1760ef5 (board: **started** `task-39`: parallel for real and budgets: PcrRun runs the Ca). MAIN may have moved since: `git log --oneline 2b1e082..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -71,7 +71,7 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 - M  pyto/viewer/tick-viewer.js
 
 ```
-pyto/CHANGES.md                              |   2 +
+pyto/CHANGES.md                              |   1 +
  pyto/experiments/students/README.md          |  11 +-
  pyto/experiments/tick-laws/README.md         |  12 +-
  pyto/experiments/tick-laws/test_tick_laws.py |  36 +++-
@@ -81,7 +81,7 @@ pyto/CHANGES.md                              |   2 +
  pyto/viewer/test/playback.test.mjs           |  99 ++++++++---
  pyto/viewer/tick-viewer.html                 |  18 ++
  pyto/viewer/tick-viewer.js                   | 199 ++++++++++++++++++++-
- 10 files changed, 843 insertions(+), 40 deletions(-)
+ 10 files changed, 842 insertions(+), 40 deletions(-)
 ```
 
 ## Evidence
@@ -89,7 +89,7 @@ pyto/CHANGES.md                              |   2 +
 - verify: `cd pyto && node --test viewer/test/*.test.mjs && cd experiments/tick-laws && python3 -m unittest discover -s . -p 'test_*.py' && python3 tick_laws.py --check ../students/evidence/run-1/record.json` exit 0 (evidence/verify.txt)
 - suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
     suite                         tests  status
-    library                         193  OK
+    library                         248  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    248  OK
     experiments/hiding-primitives      6  OK
