@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T024252Z-task-40",
+  "package": "task-40",
+  "base_sha": "83a5d779ab2021224ad0f1b4bc58f6d7ad54b3cb",
+  "result": "failed",
+  "reason": "dirty file outside allowed paths: pyto/viewer/fixtures/parallel-demo.json  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- pyto/viewer/fixtures/parallel-demo.json  then land, then git stash pop)",
+  "at": "2026-09-10T02:42:53.306950Z"
+}
