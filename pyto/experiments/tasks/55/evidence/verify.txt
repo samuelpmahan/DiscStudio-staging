@@ -1,0 +1,12 @@
+[tests/test_parallel] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/55/pyto/viewer/test')
+...............................
+----------------------------------------------------------------------
+Ran 31 tests in 3.323s
+
+OK
+.............[students/grade] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/55/pyto/viewer/test')  # intra-repo: the independent record validator (record_schema.py)
+...
+----------------------------------------------------------------------
+Ran 16 tests in 4.325s
+
+OK

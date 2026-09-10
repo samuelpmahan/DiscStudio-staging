@@ -4,8 +4,38 @@ Intent: green on macOS and Windows: the three failures at a9e3b1a were the tests
 Starting point: 48d08984047b080ed8b2edbd5ccb335f0f93de09 (board: **killed** `task-53`: nothing landed; exp/53 is kept)
 Verify: cd pyto && python -m unittest tests.test_use tests.test_parallel && python -m unittest discover -s experiments/classroom -p 'test_*.py'
 Allow: pyto/tests/test_use.py pyto/tests/test_parallel.py pyto/experiments/classroom/test_classroom.py pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 3 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/classroom/test_classroom.py
+- M  pyto/tests/test_parallel.py
+- M  pyto/tests/test_use.py
+
+```
+pyto/experiments/classroom/test_classroom.py |  8 +++++++-
+ pyto/tests/test_parallel.py                  | 28 +++++++++++++++++++++++-----
+ pyto/tests/test_use.py                       |  9 ++++++++-
+ 3 files changed, 38 insertions(+), 7 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_use tests.test_parallel && python -m unittest discover -s experiments/classroom -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.HNNDXdMwZn) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         327  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            12  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
 
 ## Uncertain
 
