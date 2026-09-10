@@ -43,3 +43,5 @@ pyto/CHANGES.md                              |   2 +
 
 {?} ActualEdgeCoverage: Records often leave `actual_consumes` empty, so this tool deliberately cannot certify all declared or `fn:` dependencies as parallel-safe. It reports only observed actual edges.
 {?} TimingSemantics: Run records provide invocation durations, not measured parallel scheduling; work and critical path are a Tick-model estimate, and unknown durations remain null.
+
+- Credit: Codex built what the brief said. The brief specified "actual consumes", which was wrong; Codex's question under the stopping rule ("why doesn't using another Calculation's result count as an actual read?") exposed it, and the fix (result reads are reads, resolved through `into`) was applied on top of Codex's work by the cloud session. The error was the brief's, not Codex's.
