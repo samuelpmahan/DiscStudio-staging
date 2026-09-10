@@ -168,6 +168,15 @@ handoff = f'''# Task {tid}: {intent}
 You are a fresh agent. Everything you need is on this page and in the files it names. The
 conversation that produced this task is not needed and you will not see it.
 
+## Stop here first (the owner's rule)
+
+Read this page, `pyto/BOARD.md`, and the packet. No fourth file yet. Then write the one question
+you would answer by reading another hundred thousand tokens of code, and ask the owner instead.
+His answer is worth more than the reading: the last session that read everything first was
+confidently wrong about half of it, and one sentence from him undid each wrong half. The answer
+goes on `pyto/questions.md` verbatim, as `{{?}} Label: ...` with his words, so the next agent starts
+one stupid question deeper. Only then read further and do the work below.
+
 ## Get the code (once)
 
 ```

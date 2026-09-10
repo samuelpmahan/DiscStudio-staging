@@ -57,6 +57,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 00:16 **landed** `task-25`: the hand-off starts with a stopping rule: read the named files and no more, write the one question you would answer by reading another 100k tokens, ask the owner, stop; the answer goes on the root verbatim (8 files since b558911, suites green, receipt 20260910T001528Z-task-25)
 - 2026-09-10 00:13 **started** `task-25`: the hand-off starts with a stopping rule: read the named files and no more, write the one question you would answer by reading another 100k tokens, ask the owner, stop; the answer goes on the root verbatim (copy EXP/25; it lands only on green, with a receipt, or is killed)
 - 2026-09-09 23:23 **correction**: `task-3` (neat anywhere) was written by the owner's D:/ session under his own git identity, not by Codex; Codex never received it. The board and two replies said Codex. Earlier lines stand as written; this line is the record.
 - 2026-09-09 23:22 **landed** `task-24`: the board says when a task starts, not only when it lands: neat new writes a started line, neat kill a killed line, and land.sh --note writes any one plain line, commits and pushes it (7 files since 9138dfc, suites green, receipt 20260909T232223Z-task-24)
