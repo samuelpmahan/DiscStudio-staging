@@ -89,7 +89,6 @@
           ]
         }
       ],
-      "latency_ms": 2.0,
       "name": "Read"
     },
     {
@@ -131,7 +130,6 @@
           ]
         }
       ],
-      "latency_ms": 0.5,
       "name": "Count"
     }
   ]
