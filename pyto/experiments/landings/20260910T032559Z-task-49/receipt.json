@@ -1,0 +1,355 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T032559Z-task-49",
+  "package": "task-49",
+  "base_sha": "20cee0f66ad11c454118b17857267b00e309c3cd",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python3 -m unittest tests.test_receipts tests.test_materialize tests.test_semantics tests.test_first_class tests.test_parallel tests.test_budget tests.test_effects tests.test_px",
+    "exit": 0,
+    "output_sha256": "20a477f3774d01cae260b219e8e94a5345b3d7bb8eaf782642c4504542545c68"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "b5dab497627de930478c84fdb71d38ad5c37f2b249b6787f426120bc8ab7ed03",
+    "counts": {
+      "library": 314,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 12,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 130,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/CHANGES.md",
+      "bytes": 76691,
+      "sha256": "37cf7d93c5ffb104e9e5eff555cb7cb4773ce4e1e11b0c483df21aa15ead7afa"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json",
+      "bytes": 1469,
+      "sha256": "d8906de63d962d4a7209da9b1f522f87c391618f11c31780746acef5d20bf206"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/lf-source-drift.log",
+      "bytes": 2162,
+      "sha256": "8c43d8dabef9cc6f81595bc828c97c75f3fcb6698d99c907f696127a4893f999"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/forged-record-refused.log",
+      "bytes": 13409,
+      "sha256": "0319873d88049296b05a5ad8c1eeda3bb544b6c82cef41c19f9fe5bdfe269a96"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-2-regroup.log",
+      "bytes": 13315,
+      "sha256": "fbbfb6ef38b4f5ce8b5bfd07a149a8ebbbc252dd77e2ce37ff82a9519b82a29f"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-3-reinput.log",
+      "bytes": 13315,
+      "sha256": "ebf61a1c2fe8da504b05966ca4623740439568bbd395b9597fd7f9161f1f86ef"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-4-from-retained.log",
+      "bytes": 13366,
+      "sha256": "e089f3802eead73acc3ae5c3b4b5932d6d508032af3229d53a71d15fbc11a786"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/fresh-process.log",
+      "bytes": 13298,
+      "sha256": "2f98c2d2fd3c2596a76d4122f498cb18b84dbc013f8d650ba414661feae91c7b"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/refusals/digest-forged.log",
+      "bytes": 13238,
+      "sha256": "d96aaf4ecb0dd17cc31f03ea50e594e380ad169c103a32ab41e62ff66eecfc52"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/refusals/module-leak.log",
+      "bytes": 13318,
+      "sha256": "9eb53c2e8ea241c8c7999ba8ba3f1678c7e1d0cf3b9814336682f2774e9505f0"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/refusals/registry-forged.log",
+      "bytes": 13242,
+      "sha256": "460e2309aded75d2f1828f22c360335a817b937446e0d4f2e776369dd30b1f2a"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/refusals/source-sha-mismatch.log",
+      "bytes": 13315,
+      "sha256": "c375aff6a87ebbd27e86c6df85db40aff79bb5e1ea7fddb6bdb653a4a1e53166"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/replay/refusals/value-forged-rows.log",
+      "bytes": 13284,
+      "sha256": "e7f444240d16aa9182aab1f3f8fde2bfd41f6b75a92dd845a8c59febd0be9cb3"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-1/commit.txt",
+      "bytes": 47,
+      "sha256": "51d969583afec300a84501604ea877081718457ed5a29059378e0ddb98709e56"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-1/receipts.json",
+      "bytes": 16928,
+      "sha256": "d3d1346d1db2bd5f670c9a9627f3afe4cdc581ee85fbd5bbf957c6f633d7356e"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-1/retained.json",
+      "bytes": 219708,
+      "sha256": "e53987d11dbc24df2d9424034557bf6ddebf30961490ae8582ba1f1834f1ae78"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-1/saved-work.json",
+      "bytes": 1021,
+      "sha256": "b32b198b9e702b95c535ed68f6e6c82b37b787443b4c8550e22dbdb33b98940a"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-1/timings.json",
+      "bytes": 497,
+      "sha256": "84c1dcfed0798a9dfce1e162337490c927692d423f02a9c4388f98caa23c81a0"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-2-regroup/commit.txt",
+      "bytes": 47,
+      "sha256": "51d969583afec300a84501604ea877081718457ed5a29059378e0ddb98709e56"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-2-regroup/interpretation.md",
+      "bytes": 2533,
+      "sha256": "ce8b8b803fb52423c2121c3e197806ef2757ece20d0c1d15936436a4de02e3e9"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-2-regroup/receipts.json",
+      "bytes": 12383,
+      "sha256": "d6b414ca9e4b98b44d6869a2479bf8d9cdc83724805b6318ecb8ca701552910d"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-2-regroup/retained.json",
+      "bytes": 217244,
+      "sha256": "f8fd22b83f18e5d14bd3c1e5fd1765b7d5974f4f74a2e8f88bc1dfd0fcf3dfc8"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-2-regroup/saved-work.json",
+      "bytes": 1365,
+      "sha256": "5fbacb46acf610fa28b53c10e68a25f17dd522ba12569a31aac97c860ef2ca71"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-2-regroup/timings.json",
+      "bytes": 464,
+      "sha256": "6115b1a038cb9595597e4277363d55e49e1ce7e265a64f9ba02676d5de4a5eb6"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-3-reinput/commit.txt",
+      "bytes": 47,
+      "sha256": "51d969583afec300a84501604ea877081718457ed5a29059378e0ddb98709e56"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-3-reinput/interpretation.md",
+      "bytes": 1292,
+      "sha256": "b4cc87874f7ca31278765b40df35a79d769f07f5528f267400c097b27c9d7c0a"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-3-reinput/receipts.json",
+      "bytes": 16934,
+      "sha256": "47d2180bf163a9566fd46efdd8fa4910e5c927e5cae8d6651757015e43fd091e"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-3-reinput/retained.json",
+      "bytes": 429058,
+      "sha256": "87e997b69c1b78e17a4f4561f90354d98ec7bf76589ccb9022c5ca73e95fc821"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-3-reinput/saved-work.json",
+      "bytes": 1572,
+      "sha256": "8fb2b5fe7f4ac9096487a1c376b55fbbf36e178ad850a92f4f29757fd400bdf5"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-3-reinput/timings.json",
+      "bytes": 466,
+      "sha256": "e815ac13780f2ac6f9788085a33e6a10c0b9f09305ed68272bbe27984365c199"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-4-from-retained/commit.txt",
+      "bytes": 47,
+      "sha256": "51d969583afec300a84501604ea877081718457ed5a29059378e0ddb98709e56"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-4-from-retained/interpretation.md",
+      "bytes": 950,
+      "sha256": "70ca1c3d63f1f3241dd4699c1b58e9dd3bfa4b0c20d46248bb184bbf62e80b5c"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-4-from-retained/receipts.json",
+      "bytes": 16676,
+      "sha256": "b88c1c932d67cb3afb9f643f55d9d9eddc6e0f3c34d243b25e784c4c9fdc9648"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-4-from-retained/retained.json",
+      "bytes": 227708,
+      "sha256": "eab427d19576a84900013228b30caf00463a4331cf414da4ee2c7db836fbe3bd"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-4-from-retained/saved-work.json",
+      "bytes": 1512,
+      "sha256": "8d16cd246f7077025e5b8241f553215a5a21910ec35cd8524572f1780a6d7a46"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-4-from-retained/timings.json",
+      "bytes": 184,
+      "sha256": "76f383e7fd1a813b71275c8d0a5e3548b9ee5a2829892772cbbc576b4d0cf59c"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-6-cached/interpretation.md",
+      "bytes": 2797,
+      "sha256": "3ed37b940aa440ae869625e123da07bea67a37c0ed36002b1af9157e49198d3f"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json",
+      "bytes": 6687,
+      "sha256": "5552fdcb87c161f6dcc3fb42a6b46555e870875febe6b8fc5afd34109f6876b6"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/tamper/mutating-baseline-refused-record.json",
+      "bytes": 219777,
+      "sha256": "657860ca32ad14d1c90c0b7c7615709922dd18f0810d2d12bf89b28509bd85a1"
+    },
+    {
+      "path": "pyto/experiments/grouped-ablation/evidence/tamper/retained-tampered.json",
+      "bytes": 219777,
+      "sha256": "657860ca32ad14d1c90c0b7c7615709922dd18f0810d2d12bf89b28509bd85a1"
+    },
+    {
+      "path": "pyto/experiments/tasks/49/HANDOFF.md",
+      "bytes": 17927,
+      "sha256": "35b455558f9dafc84912ebd633e7e8aa76e123c8a7fa858503b4f261ed390c72"
+    },
+    {
+      "path": "pyto/experiments/tasks/49/evidence/check_all.txt",
+      "bytes": 170223,
+      "sha256": "41aeb2ceaedc0f479cd12f2f81e05ee2351828281b23f7973a9919321d07c51f"
+    },
+    {
+      "path": "pyto/experiments/tasks/49/evidence/verify.txt",
+      "bytes": 2280,
+      "sha256": "0d3bb96c3dd1345a36c1f91a200a80e076b8fc330e9789a92a697acd7d67d218"
+    },
+    {
+      "path": "pyto/experiments/tasks/49/packet.md",
+      "bytes": 13814,
+      "sha256": "dbd43c63597e5ac2c59abc7038caabbdd989f29108cec2895243a63e352a8ba8"
+    },
+    {
+      "path": "pyto/src/pyto/__init__.py",
+      "bytes": 606,
+      "sha256": "0b6ef7a5e208138fa32b5a8b7ce93b0c3584de9bf23c87e70549ae8c0b3a6116"
+    },
+    {
+      "path": "pyto/src/pyto/core.py",
+      "bytes": 8141,
+      "sha256": "877e0218b19f54685b7580618c8cfec23e5dcc28acb119efb33e98d7de05598d"
+    },
+    {
+      "path": "pyto/src/pyto/effects.py",
+      "bytes": 16960,
+      "sha256": "643bf735a4f976c030ed62c97e6be28e143309a118eb3c94efcc9594a6cd69fd"
+    },
+    {
+      "path": "pyto/src/pyto/materialize.py",
+      "bytes": 35301,
+      "sha256": "0441907a4313157eed4e86d86e854fa331324c24bc93fbee0eeef2f4e6cbd546"
+    },
+    {
+      "path": "pyto/src/pyto/pcr.py",
+      "bytes": 53379,
+      "sha256": "2dda66e57131d33067b4cc3dfbc3e6eb4629df1d61e6472bcb3f9d3dfa40b427"
+    },
+    {
+      "path": "pyto/src/pyto/px.py",
+      "bytes": 20391,
+      "sha256": "50ad4f93eec10077995bbb5ad5576bedd0d99285be000242f9dcaaa5732470f7"
+    },
+    {
+      "path": "pyto/tests/fixture_effects.py",
+      "bytes": 3754,
+      "sha256": "5df450c31e9a411545b349b3d13a8d342d5edb6b4a65f289658eb922c700c4f5"
+    },
+    {
+      "path": "pyto/tests/fixtures/px/effects-demo-summarize.txt",
+      "bytes": 36,
+      "sha256": "be77fffb618a6b2fa7d32cdc180df62aeb73b92fcbc471e891f5ac2937690f19"
+    },
+    {
+      "path": "pyto/tests/fixtures/px/effects-demo.txt",
+      "bytes": 614,
+      "sha256": "d1abd4dbd995de5531c3909c95a43606442b4b400153f9b0e9fea0a9f6af7fbd"
+    },
+    {
+      "path": "pyto/tests/fixtures/px/effects-record.json",
+      "bytes": 4415,
+      "sha256": "ac93b656f9524eb9c09b00e99e2cf3cba6d3d04f2eecdeefd46cd7f358521051"
+    },
+    {
+      "path": "pyto/tests/fixtures/px/effects-students.txt",
+      "bytes": 36,
+      "sha256": "be77fffb618a6b2fa7d32cdc180df62aeb73b92fcbc471e891f5ac2937690f19"
+    },
+    {
+      "path": "pyto/tests/test_effects.py",
+      "bytes": 27482,
+      "sha256": "4c29a8d4478973fdd3e6fc60b2f158d6771e13384b2eb0b417dfed768f8134fb"
+    },
+    {
+      "path": "pyto/tests/test_multi_into.py",
+      "bytes": 28172,
+      "sha256": "fe93c4011bd9b3078247ef528d48f5fbceb16e2205e15db47a454243b00e5f3a"
+    },
+    {
+      "path": "pyto/tests/test_px.py",
+      "bytes": 23494,
+      "sha256": "79abbaa5f279abe58c114d429ca5e877e51ceeb58297907422401a17ce3109ff"
+    },
+    {
+      "path": "pyto/tests/test_semantics.py",
+      "bytes": 27212,
+      "sha256": "0d2842785be377590b418e379ae2912b8c4ccba37fdfe5fc9e29bd8fb146ff08"
+    },
+    {
+      "path": "pyto/viewer/RECORD.md",
+      "bytes": 18915,
+      "sha256": "d51cbff12f8626347ddc8710734cdc2e94cf5530d5515c151b9f96893d8badb8"
+    },
+    {
+      "path": "pyto/viewer/test/record_schema.py",
+      "bytes": 23308,
+      "sha256": "e30cb80c125de3feade0ae85883f3cedafd033d3b206ff59fcbe390ad33595d2"
+    },
+    {
+      "path": "pyto/viewer/test/test_record_schema.py",
+      "bytes": 40794,
+      "sha256": "95b188abc75a845fe31c5e02f305b769e2e6aa2cd6562b58fe6820a50abecb1f"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 61921,
+      "sha256": "745f44b619b412a706cc5f478670b9513f4f4dab75892a55e454657771bf7769"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-10T03:27:01.431255Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}

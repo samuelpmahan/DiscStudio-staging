@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 from time import perf_counter
 from typing import Any, Callable, Mapping
 
-from .core import RECEIPT_PREFIX, Calculation, Part, PxC, PxWrite
+from .core import EFFECTS_ARG, RECEIPT_PREFIX, Calculation, Part, PxC, PxWrite
+from .effects import Effect, EffectRefused, Effects, ReplayEffects
 
 
 @dataclass(frozen=True, slots=True)
@@ -374,6 +375,12 @@ class Receipt:
     # dataclass it always was with `placement: None` appended, so a reader that
     # never heard of parallel Ticks reads every field it knew at the same name.
     placement: Placement | None = None
+    #: Every effect this invocation performed, in order, through the `Effects`
+    #: handle `PCR.run` gave it -- empty for an `fn.` Calculation, which is given
+    #: no handle at all (core.py: EFFECTS_ARG). The ledger is not an observation:
+    #: it is recorded whether `observe` is on or off (`PcrRun.effects`), and this
+    #: field is the same tuple, on the receipt where the rest of what happened is.
+    effects: tuple[Effect, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -407,6 +414,12 @@ class PcrRun:
     #: before the first Tick.
     stopped_after_tick: str | None = None
     completed: bool = True
+    #: invocation id -> that invocation's effects ledger, for every `oc.`
+    #: invocation that ran. Filled with `observe` on **and** off: an effect is
+    #: what happened, not an observation of what happened, so a run that records
+    #: no receipts still records what it did to the world. `receipts` carries the
+    #: same tuple per invocation when observation is on.
+    effects: dict[str, tuple[Effect, ...]] = field(default_factory=dict)
 
 
 def _address(part: Part[Any] | str) -> str:
@@ -563,6 +576,7 @@ class _Pending:
     produce_parts: tuple[Part[Any], ...]
     produced_values: tuple[Any, ...]
     placement: Placement | None
+    effects: tuple[Effect, ...]
     testimony: CalculationTestimony
 
 
@@ -660,6 +674,9 @@ class PCR:
         parallel: bool = False,
         budget_ms: float | None = None,
         clock: Callable[[], float] | None = None,
+        effects_root: str | None = None,
+        replay_effects: Mapping[str, Any] | None = None,
+        allow_parallel_effects: bool = False,
     ) -> PcrRun:
         """Execute every invocation in declaration order and return the testimony.
 
@@ -688,6 +705,36 @@ class PCR:
         program: `ticks` -- the testimony consumers embed -- is byte-identical
         serial versus parallel, because placement and durations are not in it.
 
+        `effects_root` is where this run's world is: an `oc.` Calculation is
+        called with an `Effects` handle (`args["effects"]`, core.py:EFFECTS_ARG)
+        whose every path is recorded relative to that root, and an `fn.`
+        Calculation is called with no handle at all, so purity is a missing key
+        and not a promise. Each `oc` invocation gets its own fresh handle, so a
+        ledger belongs to one invocation. Reaching an `oc` with no
+        `effects_root` refuses the run rather than letting an effect happen
+        somewhere this record could not name.
+
+        `replay_effects` is a mapping `invocation id -> recorded ledger` (the
+        `effects` list of a run record, or a Receipt's own `effects`): every `oc`
+        invocation then runs under a `ReplayEffects` handle, which feeds the
+        recorded reads, clocks, seeds and draws back in order, re-writes the
+        files and refuses a write whose digest is not the recorded one. When it
+        is given, every `oc` invocation must have a ledger in it -- a replay that
+        silently performed a real effect for one invocation would not be one.
+        An invocation that performs fewer effects than its ledger, or one more,
+        is refused with the kind and index (`effects.py`, `EffectRefused`).
+
+        Effects are recorded with `observe` off as well as on
+        (`PcrRun.effects`): an effect is what happened, not an observation of it.
+        The testimony -- `ticks`, the bytes consumers embed -- carries none of
+        this, so it stays byte-identical with observation on and off.
+
+        An `oc` inside a **parallel** Tick is refused unless
+        `allow_parallel_effects=True`: two branches writing the world at once is
+        only safe when their effects are file writes to distinct paths, and this
+        kernel cannot know that before they run, so it asks the program to say so
+        ({?} ParallelEffectsOptIn).
+
         `budget_ms` stops the run at a Tick boundary. The clock is injectable
         (`clock`, a callable returning milliseconds) so a budget test is a
         determinism test and not a race; the default is monotonic. Elapsed time is
@@ -706,6 +753,7 @@ class PCR:
         testimonies: list[TickTestimony] = []
         receipts: dict[str, Receipt] = {}
         latencies: dict[str, float] = {}
+        effects: dict[str, tuple[Effect, ...]] = {}
 
         now = _now_ms if clock is None else clock
         # The clock is read only when there is a budget to spend, so an injected
@@ -724,24 +772,32 @@ class PCR:
                 # invocation's work, and it is done for the whole Tick up front so
                 # that no two workers write the registry at once.
                 pxc.register(invocation.calculation)
+                if parallel and not allow_parallel_effects:
+                    self._refuse_parallel_effects(invocation, tick)
 
             tick_started = perf_counter()
             prepared: list[_Pending] = []
             if parallel:
                 prepared = self._prepare_parallel(
-                    tick, pxc, observe, results, published, multi_ids, tick_started
+                    tick, pxc, observe, results, published, multi_ids, tick_started,
+                    effects_root=effects_root, replay_effects=replay_effects,
                 )
                 for entry in prepared:
-                    self._publish(entry, pxc, tick, results, published, multi_ids, receipts)
+                    self._publish(
+                        entry, pxc, tick, results, published, multi_ids, receipts, effects
+                    )
             else:
                 for invocation in tick.calculations:
                     # Serial publishes as it goes, exactly as it always has: the
                     # deferred publish above is what a parallel Tick needs, not a
                     # new rule for every run.
                     entry = self._prepare(
-                        invocation, pxc, observe, results, published, multi_ids
+                        invocation, pxc, observe, results, published, multi_ids,
+                        effects_root=effects_root, replay_effects=replay_effects,
                     )
-                    self._publish(entry, pxc, tick, results, published, multi_ids, receipts)
+                    self._publish(
+                        entry, pxc, tick, results, published, multi_ids, receipts, effects
+                    )
                     prepared.append(entry)
 
             if parallel:
@@ -761,6 +817,7 @@ class PCR:
             budget_ms=budget_ms,
             stopped_after_tick=None if completed else last_completed,
             completed=completed,
+            effects=effects,
         )
 
     def _prepare_parallel(
@@ -772,6 +829,9 @@ class PCR:
         published: dict[str, dict[str, Any]],
         multi_ids: set[str],
         tick_started: float,
+        *,
+        effects_root: str | None = None,
+        replay_effects: Mapping[str, Any] | None = None,
     ) -> list["_Pending"]:
         """Run one Tick's invocations concurrently and return them in declared order.
 
@@ -791,7 +851,8 @@ class PCR:
                 worker = numbers.setdefault(threading.get_ident(), len(numbers))
             placement = Placement(worker, (perf_counter() - tick_started) * 1000.0)
             return self._prepare(
-                invocation, pxc, observe, results, published, multi_ids, placement=placement
+                invocation, pxc, observe, results, published, multi_ids,
+                placement=placement, effects_root=effects_root, replay_effects=replay_effects,
             )
 
         with ThreadPoolExecutor(
@@ -809,6 +870,8 @@ class PCR:
         multi_ids: set[str],
         *,
         placement: Placement | None = None,
+        effects_root: str | None = None,
+        replay_effects: Mapping[str, Any] | None = None,
     ) -> "_Pending":
         """Everything one invocation does before anything of it is published.
 
@@ -858,7 +921,38 @@ class PCR:
 
         call_args = dict(resolved_inputs)
         call_args.update(invocation.args)
-        value = board.call(invocation.calculation, call_args)
+        # The handle is put in after the authored args, so a program cannot
+        # shadow it with an `args={"effects": ...}` of its own, and it is put in
+        # only for an `oc.`: an `fn.` Calculation reading `args["effects"]` gets
+        # a KeyError because the key is not there.
+        handle = None
+        if invocation.calculation.is_operational:
+            handle = self._effects_handle(invocation, effects_root, replay_effects)
+            call_args[EFFECTS_ARG] = handle
+        if handle is None:
+            value = board.call(invocation.calculation, call_args)
+        else:
+            try:
+                value = board.call(invocation.calculation, call_args)
+            except EffectRefused as refusal:
+                # The handle knows the kind and the index; only the run knows whose
+                # effect it was, so the invocation is named here and the refusal is
+                # otherwise passed through word for word.
+                raise EffectRefused(
+                    f"PCR '{self.name}' calculation '{invocation.id}': {refusal}"
+                ) from refusal
+        performed: tuple[Effect, ...] = ()
+        if handle is not None:
+            performed = handle.ledger
+            unspent = getattr(handle, "remaining", None)
+            left = unspent() if unspent is not None else ()
+            if left:
+                raise ValueError(
+                    f"PCR '{self.name}' calculation '{invocation.id}' replayed "
+                    f"{len(performed)} of {len(performed) + len(left)} recorded effect(s); "
+                    f"the next unspent one is {left[0].kind} at index {len(performed)}. A "
+                    "replay performs the recorded effects, all of them, in order"
+                )
         produce_parts = invocation.produces()
         if invocation.is_multi():
             # Split before writing anything: a return value that does not answer
@@ -882,6 +976,7 @@ class PCR:
             produce_parts=produce_parts,
             produced_values=produced_values,
             placement=placement,
+            effects=performed,
             testimony=CalculationTestimony(
                 id=invocation.id,
                 calculation=invocation.calculation.address,
@@ -900,6 +995,7 @@ class PCR:
         published: dict[str, dict[str, Any]],
         multi_ids: set[str],
         receipts: dict[str, Receipt],
+        effects: dict[str, tuple[Effect, ...]],
     ) -> None:
         """Write one prepared invocation's Parts, then file its Receipt.
 
@@ -909,6 +1005,10 @@ class PCR:
         """
         invocation = entry.invocation
         board = entry.board
+        # Before anything else: what this invocation did to the world, whether or
+        # not anybody was observing (see PcrRun.effects).
+        if entry.effects:
+            effects[invocation.id] = entry.effects
         results[invocation.id] = entry.value
         if invocation.is_multi():
             multi_ids.add(invocation.id)
@@ -948,6 +1048,7 @@ class PCR:
                     name for name in entry.resolved_inputs if name in invocation.args
                 ),
                 placement=entry.placement,
+                effects=entry.effects,
             )
             receipts[invocation.id] = receipt
             # Everything is a Part: the receipt is written into the store under
@@ -968,6 +1069,66 @@ class PCR:
                 receipt,
                 _from_run=True,
             )
+
+    def _refuse_parallel_effects(self, invocation: Invocation, tick: Tick) -> None:
+        """Refuse an `oc.` inside a parallel Tick unless the program allowed it.
+
+        The Calculations of one Tick are parallel branches ({?} TicksAsCircuits),
+        and two branches performing effects at the same time are safe only when
+        those effects are file writes to distinct paths. This kernel cannot know
+        that before they run -- the paths are decided inside the Calculation -- so
+        the simplest honest rule is the one taken here: refuse, and let a program
+        that knows its branches write distinct paths say so with
+        `allow_parallel_effects=True` ({?} ParallelEffectsOptIn). Refused before
+        the Tick starts, so no branch has run when the run stops.
+        """
+        if not invocation.calculation.is_operational:
+            return
+        raise ValueError(
+            f"PCR '{self.name}' calculation '{invocation.id}' is an "
+            f"OperationalCalculation ('{invocation.calculation.address}') in Tick "
+            f"'{tick.name}', which this run would execute in parallel: the "
+            "Calculations of one Tick are parallel branches, and effects from two "
+            "branches at once are safe only when they are file writes to distinct "
+            "paths, which the kernel cannot check before they run. Run this Tick "
+            "serially, or pass PCR.run(..., allow_parallel_effects=True) to say the "
+            "program has checked it ({?} ParallelEffectsOptIn)"
+        )
+
+    def _effects_handle(
+        self,
+        invocation: Invocation,
+        effects_root: str | None,
+        replay_effects: Mapping[str, Any] | None,
+    ) -> Any:
+        """This `oc` invocation's own handle: a fresh `Effects`, or a `ReplayEffects`.
+
+        Fresh per invocation, so a ledger is one invocation's and a Receipt's
+        `effects` needs no filtering. A run with `replay_effects` must carry a
+        ledger for every `oc` it reaches -- an id it does not name would perform
+        real effects in the middle of a replay, which is the one thing a replay
+        must not do.
+        """
+        address = invocation.calculation.address
+        if effects_root is None:
+            raise ValueError(
+                f"PCR '{self.name}' calculation '{invocation.id}' is an "
+                f"OperationalCalculation ('{address}') and PCR.run was given no "
+                "effects_root: an oc performs its effects through a handle whose "
+                "every path is recorded relative to that root, so a run that will "
+                "not say where the world is refuses to start one"
+            )
+        if replay_effects is not None:
+            if invocation.id not in replay_effects:
+                raise ValueError(
+                    f"PCR '{self.name}' calculation '{invocation.id}' is an "
+                    f"OperationalCalculation ('{address}') and the replay_effects "
+                    f"mapping carries no ledger for it ({', '.join(sorted(replay_effects)) or 'it is empty'}); "
+                    "a replay that performed a real effect for one invocation would "
+                    "not be a replay"
+                )
+            return ReplayEffects(replay_effects[invocation.id], effects_root)
+        return Effects(effects_root)
 
     def mermaid(self) -> str:
         lines = ["flowchart TD"]
