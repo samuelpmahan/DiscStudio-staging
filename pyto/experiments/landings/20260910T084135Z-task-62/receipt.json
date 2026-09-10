@@ -1,0 +1,70 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T084135Z-task-62",
+  "package": "task-62",
+  "base_sha": "134a41417cd758737c5f018a6799398144a6a01f",
+  "result": "verified",
+  "verifier": {
+    "command": "test -s pyto/research/decisions-to-review.md && grep -q 'To overturn' pyto/research/decisions-to-review.md",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "4ed7902fbd62d87563539ad6c4c8aadbde2a21d2d3534ec5371df302104d71c5",
+    "counts": {
+      "library": 336,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 5,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/FRONTIER.md",
+      "bytes": 13668,
+      "sha256": "f4d5af6bd4f4b29dd3794f6afba639d6bed13e597aa4e6e1aab1b525f0fa5208"
+    },
+    {
+      "path": "pyto/experiments/tasks/62/HANDOFF.md",
+      "bytes": 7003,
+      "sha256": "de3fa0e7ae101d2b264883c95d5367daf807441537414badcc83b2a32cfa8c46"
+    },
+    {
+      "path": "pyto/experiments/tasks/62/evidence/check_all.txt",
+      "bytes": 176662,
+      "sha256": "05a0ddbe4fcc7882687db4d92a0bdd24b0882fd33788956d8c6b1916690f16ba"
+    },
+    {
+      "path": "pyto/experiments/tasks/62/evidence/verify.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/62/packet.md",
+      "bytes": 2429,
+      "sha256": "fe12b1c14fc0fd6c8a6dd70fe90fa8821a45e8361b70269f58db5765cd839e0b"
+    },
+    {
+      "path": "pyto/research/decisions-to-review.md",
+      "bytes": 171855,
+      "sha256": "207c9bb7cf109d59ed83ef6efaf57afdd28c81cbad88e1855393dc904a3f076e"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T08:42:39.865034Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
