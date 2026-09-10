@@ -11,7 +11,7 @@
  * run under a minimal document shim in `node --test` with no jsdom.
  */
 
-import { validate, bareAddress, tickDurationMs, produceAddresses, parseBinding, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex } from './adapters.js';
+import { validate, bareAddress, produceAddresses, parseBinding, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex } from './adapters.js';
 
 /* ------------------------------------------------------------------ */
 /* small DOM helpers (doc is always explicit)                          */
@@ -147,9 +147,10 @@ export function tickLatencyMs(tick) {
 }
 
 /**
- * Add one number per Tick over the whole run, rounding once at the end: a Tick's
- * own reported work is rounded to the microsecond for display, and adding the
- * rounded numbers would print a run total that disagrees with tick_laws.py's.
+ * Add one number per Tick over the whole run, rounding only at the end -- the
+ * run total then agrees to the microsecond with the one tick_laws.py prints,
+ * instead of carrying a rounding error per Tick. A Tick with no Calculations
+ * costs nothing; a Tick whose number is unknown makes the run's unknown.
  */
 function sumOverTicks(record, per) {
   let total = 0;
@@ -345,7 +346,7 @@ export function renderInvocation(doc, invocation) {
   const address = invocation.calculation.address || '(no calculation address recorded)';
   const impl = shortHash(invocation.calculation.implementation_sha256);
   const worker = placementWorker(invocation);
-  const started = worker === null || typeof invocation.placement.started_ms !== 'number' ? null : invocation.placement.started_ms;
+  const started = worker !== null && typeof invocation.placement.started_ms === 'number' ? invocation.placement.started_ms : null;
   const row = el(doc, 'article', { className: 'inv', attrs: { 'data-invocation': invocation.id } });
 
   const head = el(doc, 'header', { className: 'inv-head' }, [
