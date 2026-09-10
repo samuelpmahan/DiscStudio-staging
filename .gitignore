@@ -6,3 +6,6 @@ __pycache__/
 # neat experiments: git worktrees on exp/<id>, each with its own .venv (pyto/scripts/neat.sh)
 EXP/
 .venv/
+
+# crisp writes here when USE.md section 9 runs; generated, never committed (task 75)
+pyto/tests/fixtures/crisp/out/

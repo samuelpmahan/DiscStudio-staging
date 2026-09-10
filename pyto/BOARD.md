@@ -65,6 +65,7 @@ interrupt.
 
 ## Today
 
+- 2026-09-10 21:33 **landed** `task-75`: crisp, second pass, what the owner settled today: two digests on every proposal, pnc over the Parts and Calculations only and review over structure, labels, prompt and candidates, so a label changes review and never pnc; crisp cards emits a set as Blok cards (root labelled, root unlabelled, each variant) with both digests; a binding may be live or pinned (address, or address plus sha256 that must match the store's value); an A-Star's known and unresolved seed the template's existing Parts and its {?} slots; and partness propagates instead of refusing: a Part computed from a part is a part, its receipt names its basis, force mode records a part binding as basis rather than refusing it, px ls shows provisional values with their basis, and the landing receipt counts provisional Parts; production is gated at promotion, never at binding (23 files since 5c8d3cc, suites green, receipt 20260910T213138Z-task-75)
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 

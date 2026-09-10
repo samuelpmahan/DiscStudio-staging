@@ -588,8 +588,8 @@ crisp.main([
 ```
 
 ```text
-address: proposal.neat.composition.blok.root.2d0d8a7337f2
-wrote:   tests/fixtures/crisp/out/blok.root.2d0d8a7337f2.json
+address: proposal.neat.composition.blok.root.af8434cc0302
+wrote:   tests/fixtures/crisp/out/blok.root.af8434cc0302.json
 {
   "PQL": {
     "Ticks": [
@@ -614,6 +614,7 @@ wrote:   tests/fixtures/crisp/out/blok.root.2d0d8a7337f2.json
       "One color, two representations"
     ]
   },
+  "basis": [],
   "capabilityDelta": "Derive the coordinates for the anchor swatch.",
   "decisions": [],
   "existingCalculations": [
@@ -630,12 +631,22 @@ wrote:   tests/fixtures/crisp/out/blok.root.2d0d8a7337f2.json
   ],
   "inspection": [],
   "limits": [],
+  "pnc": "902d7a6764bccf7f7e755406302c780f83b2d62d169a4f9b99dd4313b3029bfd",
   "proposedCalculations": [],
   "proposedParts": [],
+  "provisional": false,
+  "review": "af8434cc0302676cef1a2d65da8f40f1203813dfa83fbcb9aef52773c944df3a",
   "verification": [],
   "why": "a PQL document handed to `crisp template` in force mode: 'Derive the coordinates for the anchor swatch.'"
 }
 ```
+
+Two digests are on every proposal, card and option (task 75): `pnc` is sha256
+over the mechanism alone — the PQL's Ticks, `existingParts`, `proposedParts`,
+`existingCalculations`, `proposedCalculations` — and `review` is sha256 over
+the whole value, labels included. The address revision is `review`'s first 12
+hex; a label change moves `review` and never `pnc`, and `basis`/`provisional`
+name whether any binding here stands on a part (below, "partness propagates").
 
 `crisp vary` reads that proposal back and makes one new option per way to
 change it and stay the same shape: Variation A swaps the `hex` binding for
@@ -673,9 +684,9 @@ crisp.main([
 ```
 
 ```text
-proposal.neat.composition.blok.a1-ink.27d1370d2f90  binding hex: px.color.swatch.anchor -> px.color.swatch.ink  digest=27d1370d2f90a787a7cb82050fcb19ca070c05c41523a31e34fb54d16378fe10
-proposal.neat.composition.blok.a2-paper.ac5943d1f570  binding hex: px.color.swatch.anchor -> px.color.swatch.paper  digest=ac5943d1f570837025a4a3fc08ebef10c67582d23052cb687a0cfe1c1e47cfc2
-proposal.neat.composition.blok.b1-coordinatesInverted.5c22d72a43d9  call: fn.colorStudy.coordinates -> fn.colorStudy.coordinatesInverted  digest=5c22d72a43d9b1792f97acba3e07f28f326797648b14e6ad8544ec08a64d129b
+proposal.neat.composition.blok.a1-ink.f12fe5a05630  binding hex: px.color.swatch.anchor -> px.color.swatch.ink  digest=f12fe5a05630c7f2b0a1219c12a39fdc6dc9f5bcd8d1df8869a3bb6224d8f739
+proposal.neat.composition.blok.a2-paper.ce8145250cb5  binding hex: px.color.swatch.anchor -> px.color.swatch.paper  digest=ce8145250cb501c0b4932da236ec0e5e1b00ef7fd69072db6f5bc7c246454f4c
+proposal.neat.composition.blok.b1-coordinatesInverted.e993fa404441  call: fn.colorStudy.coordinates -> fn.colorStudy.coordinatesInverted  digest=e993fa404441b49c322337aafe82198db48e54dc3318de24507ab45b0dd9d4f0
 ```
 
 `crisp import` is the one door into the store: it runs the proposal's PQL
@@ -726,6 +737,221 @@ names (verbatim, or by a store or registry address's last segment), the PQL's
 `verification`, `decisions`, `limits` — is a `"{?}"` slot for a person to fill
 in, never a guess. `--mode force` refuses a skeleton outright: with nothing to
 resolve against, there is nothing for force mode to verify.
+
+`crisp cards` reads a proposal (or the whole set directory `template` and
+`vary` wrote into together) and emits one Blok card set — root labelled, root
+unlabelled, then every option present — as its own Part, alongside a static
+HTML rendering (no script anywhere) in the same style: a card per candidate,
+both digests on each. The root labelled and root unlabelled cards are
+otherwise identical, which is the label/`pnc`/`review` rule made concrete: the
+same `pnc`, a different `review`.
+
+```python
+import io
+from contextlib import redirect_stdout
+
+from pyto import crisp
+
+with redirect_stdout(io.StringIO()) as hidden:
+    crisp.main([
+        "template", "Derive the coordinates for the anchor swatch.",
+        "--store", "tests/fixtures/crisp/store.json",
+        "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+        "--set", "blok", "--mode", "force",
+        "--pql", "tests/fixtures/crisp/root.pql.json",
+        "--out", "tests/fixtures/crisp/out",
+    ])
+address = hidden.getvalue().splitlines()[0][len("address: "):]
+digest = address.rsplit(".", 1)[-1]
+proposal_path = f"tests/fixtures/crisp/out/blok.root.{digest}.json"
+
+with redirect_stdout(io.StringIO()):
+    crisp.main([
+        "vary", proposal_path,
+        "--store", "tests/fixtures/crisp/store.json",
+        "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+    ])
+
+crisp.main([
+    "cards", "tests/fixtures/crisp/out",
+    "--store", "tests/fixtures/crisp/store.json",
+    "--labels", "One color, two representations",
+    "--out", "tests/fixtures/crisp/out/cards.json",
+])
+```
+
+```text
+address: proposal.neat.cards.blok.17ecb2fca4fa
+wrote:   tests/fixtures/crisp/out/cards.json
+html:    tests/fixtures/crisp/out/cards.html
+  One color, two representations  pnc=902d7a6764bc  review=6756d72e9d42
+  (unlabelled)  pnc=902d7a6764bc  review=6d3a1e5e1c6e
+  (unlabelled)  pnc=0e5a23fbb161  review=0839ab630fee
+  (unlabelled)  pnc=9db618d9624f  review=0ba360b7e759
+  (unlabelled)  pnc=31337aa6b3aa  review=0a16b629e9ef
+```
+
+A `with` binding may be a plain address (live: whatever the store holds now)
+or `{"address": ..., "sha256": ...}` (pinned): `template` and `--mode force`
+accept either, always writing the plain address into `PQL` — the grammar the
+studio reads has no third shape for `with` — with every pin collected beside
+it, under `pins`. `crisp import` is where a pin is actually checked, against
+the store it is about to read: the exact digest it names imports; anything
+else refuses by name.
+
+```python
+from pyto import crisp
+from pyto.crisp import _digest_of, _load_json
+
+store = _load_json("tests/fixtures/crisp/store.json")
+document = _load_json("tests/fixtures/crisp/root.pql.json")
+document["Ticks"][0]["Calculations"][0]["with"]["hex"] = {
+    "address": "px.color.swatch.anchor",
+    "sha256": _digest_of(store["px.color.swatch.anchor"]),
+}
+crisp._write_json(document, "tests/fixtures/crisp/out/pinned/pinned.pql.json")
+
+crisp.main([
+    "template", "Derive the coordinates for the anchor swatch.",
+    "--store", "tests/fixtures/crisp/store.json",
+    "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+    "--set", "blok", "--mode", "force",
+    "--pql", "tests/fixtures/crisp/out/pinned/pinned.pql.json",
+    "--out", "tests/fixtures/crisp/out/pinned",
+])
+```
+
+```text
+address: proposal.neat.composition.blok.root.7586d6ab1108
+wrote:   tests/fixtures/crisp/out/pinned/blok.root.7586d6ab1108.json
+{
+  "PQL": {
+    "Ticks": [
+      {
+        "Calculations": [
+          {
+            "args": {},
+            "call": "fn.colorStudy.coordinates",
+            "into": [
+              "px.exp.astar.blok.color.rgb",
+              "px.exp.astar.blok.color.hsl"
+            ],
+            "with": {
+              "hex": "px.color.swatch.anchor"
+            }
+          }
+        ],
+        "name": "Coordinates"
+      }
+    ],
+    "labels": [
+      "One color, two representations"
+    ]
+  },
+  "basis": [],
+  "capabilityDelta": "Derive the coordinates for the anchor swatch.",
+  "decisions": [],
+  "existingCalculations": [
+    {
+      "address": "fn.colorStudy.coordinates",
+      "sha256": "cddeef00dbf3c44038d2ed20200b294784e415dd9b74cb37ef6fb15297d0554a"
+    }
+  ],
+  "existingParts": [
+    {
+      "address": "px.color.swatch.anchor",
+      "sha256": "4e4cfda60bfc10692677d5224c93e788fa827b60e2bdd3f5bafe4b78b69497e1"
+    }
+  ],
+  "inspection": [],
+  "limits": [],
+  "pins": {
+    "px.color.swatch.anchor": "4e4cfda60bfc10692677d5224c93e788fa827b60e2bdd3f5bafe4b78b69497e1"
+  },
+  "pnc": "902d7a6764bccf7f7e755406302c780f83b2d62d169a4f9b99dd4313b3029bfd",
+  "proposedCalculations": [],
+  "proposedParts": [],
+  "provisional": false,
+  "review": "7586d6ab1108f0e95765a49853c2eac1bbfffdfebcd46200ad45b86783f4c580",
+  "verification": [],
+  "why": "a PQL document handed to `crisp template` in force mode: 'Derive the coordinates for the anchor swatch.'"
+}
+```
+
+An A-Star study (the local PoC shape: `known`, `unresolved`, `references`,
+`possibilities`, `return_when`) seeds a proposal directly: a `known` entry
+naming a store or registry address becomes an `existingPart`/
+`existingCalculation`, each `unresolved` entry becomes a `"{?}"` slot in
+`decisions`, and `return_when` becomes `limits`. `--mode force` refuses while
+any `unresolved` entry remains (the fixture's does: "which representation the
+site shows"); `--mode imply` writes it as it stands.
+
+```python
+from pyto import crisp
+
+crisp.main([
+    "template", "Derive the coordinates for the anchor swatch.",
+    "--store", "tests/fixtures/crisp/store.json",
+    "--registry", "tests.fixtures.crisp.registry:REGISTRY",
+    "--set", "blok", "--mode", "imply",
+    "--astar", "tests/fixtures/crisp/astar-blok.json",
+    "--out", "tests/fixtures/crisp/out/astar",
+])
+```
+
+```text
+address: proposal.neat.composition.blok.root.e5837595ea56
+wrote:   tests/fixtures/crisp/out/astar/blok.root.e5837595ea56.json
+{
+  "PQL": {
+    "Ticks": [
+      {
+        "Calculations": [],
+        "name": "blok"
+      }
+    ]
+  },
+  "basis": [],
+  "capabilityDelta": "Derive the coordinates for the anchor swatch.",
+  "decisions": [
+    "{?} which representation the site shows"
+  ],
+  "existingCalculations": [
+    {
+      "address": "fn.colorStudy.coordinates",
+      "sha256": "cddeef00dbf3c44038d2ed20200b294784e415dd9b74cb37ef6fb15297d0554a"
+    }
+  ],
+  "existingParts": [
+    {
+      "address": "px.color.swatch.anchor",
+      "sha256": "4e4cfda60bfc10692677d5224c93e788fa827b60e2bdd3f5bafe4b78b69497e1"
+    }
+  ],
+  "inspection": [
+    "{?} Inspection: what a person would see or do is not yet specified"
+  ],
+  "limits": [
+    "Return when the site has settled on one representation to show."
+  ],
+  "pnc": "e4be4850b75c7cb4d713c62700e2a8ec089d52d6514570ba441ca45e06065fcc",
+  "proposedCalculations": [],
+  "proposedParts": [],
+  "provisional": false,
+  "review": "e5837595ea56d8262cb46464a655904a2298452f78e17751ba78f5a013c0124b",
+  "verification": [
+    "{?} Verification: what would be checked, and what it protects, is not yet specified"
+  ],
+  "why": "an A-Star study handed to `crisp template` in imply mode: 'Derive the coordinates for the anchor swatch.'"
+}
+```
+
+Partness propagates instead of refusing: a `with` binding to a part (any
+address under `proposal.*` or `px.exp.*`) is never refused in force mode,
+even when the store does not hold it yet — it is recorded as the proposal's
+`basis`, and `provisional` turns `true`. `px ls`/`px tick` show the same rule
+over a run record once such a proposal imports (`pyto/src/pyto/px.py`
+`part_basis`): a Part computed from a part is a part.
 
 ## Where to go next
 

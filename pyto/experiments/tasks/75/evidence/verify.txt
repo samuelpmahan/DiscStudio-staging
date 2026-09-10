@@ -1,0 +1,233 @@
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/75/pyto/tests')
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/75/pyto/viewer/test')
+.F....FF..............FFF............................FF.FFF....................................................................../home/user/DiscStudio-staging/EXP/75/pyto/tests/test_neat_gate.py:158: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpdjly3zoi/receipt.json' mode='w' encoding='utf-8'>
+  json.dump({"schema": "pyto-landing-receipt@1", "package": "task-65"}, open(receipt, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_neat_gate.py:162: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpdjly3zoi/receipt.json' mode='r' encoding='utf-8'>
+  written = json.load(open(receipt))["gate"]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_neat_gate.py:166: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpdjly3zoi/gate.json' mode='r' encoding='utf-8'>
+  validate_record(json.load(open(record)))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_neat_gate.py:167: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpdjly3zoi/gate.json' mode='r' encoding='utf-8'>
+  self.assertEqual(json.load(open(record))["ticks"][0]["invocations"][0]["calculation"]["address"],
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/user/DiscStudio-staging/EXP/75/pyto/tests/test_neat_gate.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpghxyv4fb/approve.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "approve", "selection": "<head>", "text": "stub approve"},
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_neat_gate.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpghxyv4fb/reject.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "reject", "selection": "<head>", "text": "no"}, open(reject, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..
+======================================================================
+FAIL: test_template_astar_imply_writes_a_proposal (tests.test_crisp.TestAstarCLI.test_template_astar_imply_writes_a_proposal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 598, in test_template_astar_imply_writes_a_proposal
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : usage: python -m pyto.crisp [-h] {template,vary,import} ...
+python -m pyto.crisp: error: unrecognized arguments: --astar /home/user/DiscStudio-staging/EXP/75/pyto/tests/fixtures/crisp/astar-blok.json
+
+
+======================================================================
+FAIL: test_cards_from_a_single_proposal_file_has_only_the_root_pair (tests.test_crisp.TestCards.test_cards_from_a_single_proposal_file_has_only_the_root_pair)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 712, in test_cards_from_a_single_proposal_file_has_only_the_root_pair
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : usage: python -m pyto.crisp [-h] {template,vary,import} ...
+python -m pyto.crisp: error: argument command: invalid choice: 'cards' (choose from 'template', 'vary', 'import')
+
+
+======================================================================
+FAIL: test_cards_from_the_set_directory (tests.test_crisp.TestCards.test_cards_from_the_set_directory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 677, in test_cards_from_the_set_directory
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : usage: python -m pyto.crisp [-h] {template,vary,import} ...
+python -m pyto.crisp: error: argument command: invalid choice: 'cards' (choose from 'template', 'vary', 'import')
+
+
+======================================================================
+FAIL: test_import_refuses_by_name_with_the_wrong_pin (tests.test_crisp.TestPinnedBindingCLI.test_import_refuses_by_name_with_the_wrong_pin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 528, in test_import_refuses_by_name_with_the_wrong_pin
+    proposal_path = self._template(self._pinned_pql_path("f" * 64, name="bad.pql.json"))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 516, in _template
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 708, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 696, in main
+    return cmd_template(args)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 463, in cmd_template
+    value = build_pql_proposal(args.sentence, document, store, registry, args.mode)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 433, in build_pql_proposal
+    existing_parts, existing_calcs = check_pql_force(document, store, registry)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 321, in check_pql_force
+    _refuse_backwards_reads(document)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 304, in _refuse_backwards_reads
+    if one in produced_in_tick and one not in seen:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unhashable type: 'dict'
+
+
+======================================================================
+FAIL: test_import_succeeds_with_the_right_pin (tests.test_crisp.TestPinnedBindingCLI.test_import_succeeds_with_the_right_pin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 520, in test_import_succeeds_with_the_right_pin
+    proposal_path = self._template(self._pinned_pql_path(self.anchor_digest))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 516, in _template
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 708, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 696, in main
+    return cmd_template(args)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 463, in cmd_template
+    value = build_pql_proposal(args.sentence, document, store, registry, args.mode)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 433, in build_pql_proposal
+    existing_parts, existing_calcs = check_pql_force(document, store, registry)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 321, in check_pql_force
+    _refuse_backwards_reads(document)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 304, in _refuse_backwards_reads
+    if one in produced_in_tick and one not in seen:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unhashable type: 'dict'
+
+
+======================================================================
+FAIL: test_vary_keeps_a_pinned_binding_pinned_when_it_substitutes_the_address (tests.test_crisp.TestPinnedBindingCLI.test_vary_keeps_a_pinned_binding_pinned_when_it_substitutes_the_address)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 539, in test_vary_keeps_a_pinned_binding_pinned_when_it_substitutes_the_address
+    proposal_path = self._template(self._pinned_pql_path(self.anchor_digest))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_crisp.py", line 516, in _template
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 708, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 696, in main
+    return cmd_template(args)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 463, in cmd_template
+    value = build_pql_proposal(args.sentence, document, store, registry, args.mode)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 433, in build_pql_proposal
+    existing_parts, existing_calcs = check_pql_force(document, store, registry)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 321, in check_pql_force
+    _refuse_backwards_reads(document)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 304, in _refuse_backwards_reads
+    if one in produced_in_tick and one not in seen:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unhashable type: 'dict'
+
+
+======================================================================
+FAIL: test_08_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_08_9_crisp)
+USE.md section '9. crisp', block 8.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 169, in check
+    self.assertEqual(
+AssertionError: 'addr[36 chars]root.2d0d8a7337f2\nwrote:   tests/fixtures/cri[1224 chars]n}\n' != 'addr[36 chars]root.af8434cc0302\nwrote:   tests/fixtures/cri[1424 chars]n}\n'
+Diff is 1922 characters long. Set self.maxDiff to None to see it. : USE.md section '9. crisp' block 8 prints something other than the text block under it
+
+======================================================================
+FAIL: test_09_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_09_9_crisp)
+USE.md section '9. crisp', block 9.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 169, in check
+    self.assertEqual(
+AssertionError: 'prop[29 chars]-ink.27d1370d2f90  binding hex: px.color.swatc[502 chars]9b\n' != 'prop[29 chars]-ink.f12fe5a05630  binding hex: px.color.swatc[502 chars]f0\n'
+Diff is 1177 characters long. Set self.maxDiff to None to see it. : USE.md section '9. crisp' block 9 prints something other than the text block under it
+
+======================================================================
+FAIL: test_11_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_11_9_crisp)
+USE.md section '9. crisp', block 11.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 2 != 0 : USE.md section '9. crisp' block 11 failed:
+usage: python -m pyto.crisp [-h] {template,vary,import} ...
+python -m pyto.crisp: error: argument command: invalid choice: 'cards' (choose from 'template', 'vary', 'import')
+
+
+======================================================================
+FAIL: test_12_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_12_9_crisp)
+USE.md section '9. crisp', block 12.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '9. crisp' block 12 failed:
+Traceback (most recent call last):
+  File "/tmp/tmptgnr_4l5/use_block.py", line 12, in <module>
+    crisp.main([
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 696, in main
+    return cmd_template(args)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 463, in cmd_template
+    value = build_pql_proposal(args.sentence, document, store, registry, args.mode)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 433, in build_pql_proposal
+    existing_parts, existing_calcs = check_pql_force(document, store, registry)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 321, in check_pql_force
+    _refuse_backwards_reads(document)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/crisp.py", line 304, in _refuse_backwards_reads
+    if one in produced_in_tick and one not in seen:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unhashable type: 'dict'
+
+
+======================================================================
+FAIL: test_13_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_13_9_crisp)
+USE.md section '9. crisp', block 13.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/75/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 2 != 0 : USE.md section '9. crisp' block 13 failed:
+usage: python -m pyto.crisp [-h] {template,vary,import} ...
+python -m pyto.crisp: error: unrecognized arguments: --astar tests/fixtures/crisp/astar-blok.json
+
+
+----------------------------------------------------------------------
+Ran 132 tests in 9.055s
+
+FAILED (failures=11)

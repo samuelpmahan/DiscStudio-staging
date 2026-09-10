@@ -16,11 +16,13 @@
 #   neat diff <a.json> <b.json> --store <seed.json> --registry <module:attr> [--label-a T] [--label-b T]
 #                             two PQL documents' difference, computed before it is shown: px.exp.blok.diff.<a>.<b>
 #                             under pyto/experiments/review/diffs, with both documents' run records beside it
-#   neat crisp template "<sentence>" --store <s.json> --registry <module:attr> --set <name> [--mode imply|force] [--pql <doc.json>] [--out <dir>]
+#   neat crisp template "<sentence>" --store <s.json> --registry <module:attr> --set <name> [--mode imply|force] [--pql <doc.json> | --astar <study.json>] [--out <dir>]
 #   neat crisp vary <proposal.json> --store <s.json> --registry <module:attr> [--bindings] [--calculations] [--max N]
 #   neat crisp import <proposal.json> --store <s.json> --registry <module:attr> --out <run.json> [--into <store-after.json>]
+#   neat crisp cards <set-dir-or-proposal.json> --store <s.json> [--labels "<text>"] [--out <cards.json>]
 #                             template gen required to import into PxC-ore (pyto/src/pyto/crisp.py): one composition
-#                             proposal Part, its options through variation, and the run that writes its Parts
+#                             proposal Part, its options through variation, the run that writes its Parts, and a
+#                             Blok card set (with a static HTML rendering) over a proposal or a whole set directory
 #   neat ask                  the tiny-question batch: every unanswered {?}, collated and numbered
 #   neat answer <n> <k> "<words>" [--technical "<text>"]   file the owner's reply to one batch item
 #   neat answers               every filed answer: label, digest, n, k

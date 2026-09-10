@@ -65,16 +65,27 @@ def digest(value: Any) -> str:
     return hashlib.sha256(canonical(value).encode("utf-8")).hexdigest()
 
 
-def subject(package: str, head_sha: str, base_sha: str | None = None) -> dict[str, Any]:
+def subject(
+    package: str, head_sha: str, base_sha: str | None = None, pnc: str | None = None
+) -> dict[str, Any]:
     """What a landing would join: the package and the exact candidate head.
 
     The head sha fixes every byte of the candidate, including its packet (the
     review text) and its claimed files, so it is the frozen subject; the
-    receipt's per-file digests are derived from it.
+    receipt's per-file digests are derived from it. ``pnc`` (task 75, optional)
+    is a crisp candidate's own Parts-and-Calculations digest -- when the
+    caller passes one (``--selection-digest``), it is carried on the subject
+    and ``evaluate`` additionally requires the approving event to name this
+    exact pnc; the head sha stays the subject, this only narrows further.
+    Omitted entirely when not given, so a subject built the old way digests
+    exactly as it always has.
     """
     if not package or not head_sha:
         raise ValueError("a gate subject needs a package and a head sha")
-    return {"kind": "landing", "package": package, "head_sha": head_sha, "base_sha": base_sha}
+    subj: dict[str, Any] = {"kind": "landing", "package": package, "head_sha": head_sha, "base_sha": base_sha}
+    if pnc is not None:
+        subj["pnc"] = pnc
+    return subj
 
 
 # --- fn.neat.gate.evaluate ----------------------------------------------------------
@@ -104,6 +115,7 @@ def evaluate(args: Mapping[str, Any]) -> dict[str, Any]:
         "text": event.get("text"),
         "disposition": event.get("disposition"),
         "selection": event.get("selection"),
+        "selection_pnc": event.get("selection_pnc"),
         "login": event.get("login"),
         "source": event.get("source"),
     }
@@ -127,6 +139,9 @@ def evaluate(args: Mapping[str, Any]) -> dict[str, Any]:
         return out
     if response["selection"] != subj["head_sha"]:
         out["reason"] = "approve names another candidate"
+        return out
+    if subj.get("pnc") is not None and response["selection_pnc"] != subj["pnc"]:
+        out["reason"] = "approve names another candidate (pnc)"
         return out
     out["allowed"] = True
     out["reason"] = f"approved by {response['login']} on {subj['head_sha'][:7]}"
@@ -251,6 +266,10 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--package", required=True)
     parser.add_argument("--head", required=True, help="the candidate head sha")
     parser.add_argument("--base", default=None)
+    parser.add_argument(
+        "--selection-digest", dest="selection_pnc", default=None,
+        help="a crisp candidate's pnc (task 75): when set, approval must also name this exact pnc",
+    )
     parser.add_argument("--mode", default=None, help="github | stub:<event.json> | none (default: .neat/gate or $NEAT_GATE)")
     parser.add_argument("--repo", default=None, help="owner/name (default: from origin)")
     parser.add_argument("--branch", default=None, help="the candidate branch (default: exp/<n> from the package)")
@@ -261,7 +280,7 @@ def main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
 
     mode = args.mode or read_mode(args.root)
-    subj = subject(args.package, args.head, args.base)
+    subj = subject(args.package, args.head, args.base, pnc=args.selection_pnc)
     event, trusted, note = None, False, ""
     if mode == "github":
         repo = args.repo or _origin_repo(args.root)

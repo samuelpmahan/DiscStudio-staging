@@ -1,0 +1,16 @@
+{
+  "address": "px.exp.astar.blok.study",
+  "sha256": "6080e6cc1276082d2ff8e19810afc5737548db0277e1688122901e1dc4102d37",
+  "value": {
+    "known": {
+      "anchor swatch": "px.color.swatch.anchor",
+      "coordinates calculation": "fn.colorStudy.coordinates"
+    },
+    "possibilities": [],
+    "references": [],
+    "return_when": "Return when the site has settled on one representation to show.",
+    "unresolved": [
+      "which representation the site shows"
+    ]
+  }
+}
