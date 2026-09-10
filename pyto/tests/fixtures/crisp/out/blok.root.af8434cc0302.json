@@ -1,6 +1,6 @@
 {
-  "address": "proposal.neat.composition.blok.root.2d0d8a7337f2",
-  "sha256": "2d0d8a7337f2ced5eb422fad9d6c0a6960c745a1e821521a21f842a61ba5cb56",
+  "address": "proposal.neat.composition.blok.root.af8434cc0302",
+  "sha256": "a37d94f425648e3ee6d09b4be9a32e8ef911c79968bd705f9b9727cad54b00f8",
   "value": {
     "PQL": {
       "Ticks": [
@@ -25,6 +25,7 @@
         "One color, two representations"
       ]
     },
+    "basis": [],
     "capabilityDelta": "Derive the coordinates for the anchor swatch.",
     "decisions": [],
     "existingCalculations": [
@@ -41,8 +42,11 @@
     ],
     "inspection": [],
     "limits": [],
+    "pnc": "902d7a6764bccf7f7e755406302c780f83b2d62d169a4f9b99dd4313b3029bfd",
     "proposedCalculations": [],
     "proposedParts": [],
+    "provisional": false,
+    "review": "af8434cc0302676cef1a2d65da8f40f1203813dfa83fbcb9aef52773c944df3a",
     "verification": [],
     "why": "a PQL document handed to `crisp template` in force mode: 'Derive the coordinates for the anchor swatch.'"
   }

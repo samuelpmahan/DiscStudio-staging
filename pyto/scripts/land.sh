@@ -232,6 +232,37 @@ def entry(f):
 files = [f for f in files if not f.startswith('pyto/experiments/landings/')]
 claimed = [entry(f) for f in files if not allowed or any(f.startswith(a) for a in allowed)]
 unclaimed = [entry(f) for f in files if allowed and not any(f.startswith(a) for a in allowed)]
+# Provisional Parts (task 75): every run record among the claimed files -- under
+# pyto/experiments/**/record.json or pyto/tests/fixtures/**/*.json -- scanned with
+# part_basis (same interpreter, no new dependency: pyto is already installed where
+# $PYTHON runs). A file that is not a pyto-run-record@1 (no 'ticks') is skipped,
+# not an error -- most of tests/fixtures/**/*.json is not one.
+def _is_record_path(rel):
+    if rel.startswith('pyto/experiments/') and rel.endswith('/record.json'): return True
+    if rel.startswith('pyto/tests/fixtures/') and rel.endswith('.json'): return True
+    return False
+provisional_addresses = set()
+try:
+    from pyto.px import part_basis
+except Exception:
+    part_basis = None
+if part_basis is not None:
+    for c in claimed:
+        if not _is_record_path(c['path']):
+            continue
+        try:
+            record = json.load(open(os.path.join(root, c['path'])))
+        except Exception:
+            continue
+        if not isinstance(record, dict) or 'ticks' not in record:
+            continue
+        try:
+            basis_map = part_basis(record)
+        except Exception:
+            continue
+        for parts in basis_map.values():
+            provisional_addresses.update(parts)
+provisional = {"count": len(provisional_addresses), "addresses": sorted(provisional_addresses)}
 counts = {}
 for line in open(os.path.join(work, 'check_all.txt')):
     parts = line.split()
@@ -240,7 +271,8 @@ receipt = {"schema": "pyto-landing-receipt@1", "id": lid, "package": package, "b
            "verifier": {"command": verify or None, "exit": 0 if verify else None, "output_sha256": sha(os.path.join(work, 'verifier.txt')) if verify else None},
            "check_all": {"exit": 0, "output_sha256": sha(os.path.join(work, 'check_all.txt')), "counts": counts},
            "score": score,
-           "claimed": claimed, "unclaimed": unclaimed, "landed_by": os.environ.get('PYTO_LANDER', 'session'), "at": datetime.datetime.utcnow().isoformat() + 'Z',
+           "claimed": claimed, "unclaimed": unclaimed, "provisional": provisional,
+           "landed_by": os.environ.get('PYTO_LANDER', 'session'), "at": datetime.datetime.utcnow().isoformat() + 'Z',
            "result_sha": None, "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"}
 if pyto_mode == '0':
     receipt['check_all'] = None
@@ -256,7 +288,7 @@ if prev and dry != '1':
         if r.get('result_sha') is None:
             r['result_sha'] = subprocess.run(['git', 'log', '-1', '--format=%H', '--', p], capture_output=True, text=True).stdout.strip() or None
             json.dump(r, open(p, 'w'), indent=2)
-print(json.dumps({k: receipt[k] for k in ('id', 'package', 'base_sha', 'result')} | {"claimed": len(claimed), "unclaimed": len(unclaimed)}))
+print(json.dumps({k: receipt[k] for k in ('id', 'package', 'base_sha', 'result')} | {"claimed": len(claimed), "unclaimed": len(unclaimed), "provisional": provisional['count']}))
 EOF
 
 # 4b. The gate. The join asks once, and only a human can open it (task 67, pyto/src/pyto/neat/gate.py).

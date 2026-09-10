@@ -162,6 +162,50 @@ class PxFixtures(unittest.TestCase):
         self.assertIn(["px.receipt.earlier-run.Tick.id", "receipt", "preexisting"], rows)
         self.assertIn(["px.students.roster", "part", "parse"], rows)
 
+    # --- partness (task 75) ----------------------------------------------------
+
+    def _record_with_a_part_binding(self):
+        """The students record, Tick 2 (Letters) made to also read a
+        ``proposal.*`` address -- a part, task 75 -- so its own produce
+        (``px.students.letters``) becomes provisional, and Tick 3 (Histogram),
+        which reads Letters' produce, becomes provisional transitively."""
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        part_address = "proposal.neat.composition.blok.root.abc123def456"
+        record["parts"][part_address] = {"written_by": None, "read_by": [], "preexisting": True}
+        record["ticks"][2]["invocations"][0]["inputs"]["basis"] = f"px:{part_address}"
+        return record, part_address
+
+    def test_ls_shows_no_provisional_column_when_the_record_touches_no_part(self):
+        """"a record with no parts shows none": the column is not merely blank,
+        it does not exist -- `test_ls_students` above is the byte-stable proof."""
+        out = run_px("ls", str(STUDENTS)).stdout
+        self.assertNotIn("PROVISIONAL", out)
+        self.assertNotIn("provisional", out)
+
+    def test_ls_shows_a_provisional_part_and_its_basis(self):
+        record, part_address = self._record_with_a_part_binding()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "with-part.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            rows = {line.split()[0]: line for line in run_px("ls", str(path)).stdout.splitlines()[1:]}
+        self.assertIn(f"provisional (basis: {part_address})", rows["px.students.letters"])
+        self.assertIn(f"provisional (basis: {part_address})", rows["px.students.histogram"])
+        self.assertTrue(rows["px.students.roster"].rstrip().endswith("-"))
+
+    def test_tick_lists_the_basis_line_only_when_provisional(self):
+        record, part_address = self._record_with_a_part_binding()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "with-part.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            letters = run_px("tick", str(path), "Letters").stdout
+            histogram = run_px("tick", str(path), "Histogram").stdout
+            parse = run_px("tick", str(path), "Parse").stdout
+            payload = json.loads(run_px("tick", str(path), "Letters", "--json").stdout)
+        self.assertIn(f"  basis: {part_address}\n", letters)
+        self.assertIn(f"  basis: {part_address}\n", histogram)
+        self.assertNotIn("basis:", parse)
+        self.assertEqual(payload["basis"], [part_address])
+
     def test_ls_prefix_is_a_filter_over_the_same_index(self):
         """The prefix narrows which rows print; column widths follow the rows that
         remain, which is why the fixtures are compared to files and not to each

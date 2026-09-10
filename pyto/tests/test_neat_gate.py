@@ -72,6 +72,27 @@ class GateTests(unittest.TestCase):
         ev = event(disposition="retain", suite="green", score="4/4", elapsed_ms=1)
         self.assertFalse(G.evaluate({"subject": SUBJECT, "event": ev, "trusted": True})["allowed"])
 
+    def test_approval_naming_another_pnc_is_closed(self):
+        """task 75 item 3: a subject carrying a crisp candidate's pnc additionally
+        requires the approving event to name that exact pnc; the head sha alone
+        is not enough once a pnc is on the subject."""
+        pinned = G.subject("task-65", HEAD, "14b0b40", pnc="a" * 64)
+
+        def pinned_event(**overrides):
+            return event(reviewDigest=G.digest(pinned), **overrides)
+
+        closed = G.evaluate({"subject": pinned, "event": pinned_event(selection_pnc="b" * 64), "trusted": True})
+        self.assertFalse(closed["allowed"])
+        self.assertIn("another candidate", closed["reason"])
+        # the missing case: no selection_pnc at all in the event
+        closed_missing = G.evaluate({"subject": pinned, "event": pinned_event(), "trusted": True})
+        self.assertFalse(closed_missing["allowed"])
+        opened = G.evaluate({"subject": pinned, "event": pinned_event(selection_pnc="a" * 64), "trusted": True})
+        self.assertTrue(opened["allowed"])
+        # a subject with no pnc at all is unaffected -- existing behavior, untouched
+        unpinned = G.evaluate({"subject": SUBJECT, "event": event(), "trusted": True})
+        self.assertTrue(unpinned["allowed"])
+
     def test_same_inputs_same_bytes(self):
         a = G.canonical(G.evaluate({"subject": SUBJECT, "event": event(), "trusted": True}))
         b = G.canonical(G.evaluate({"subject": copy.deepcopy(SUBJECT), "event": event(), "trusted": True}))

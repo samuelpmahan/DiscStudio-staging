@@ -3,7 +3,7 @@
     "computed": 0,
     "hits": 1,
     "invocations": 1,
-    "wall_ms": 0.050784999984898604
+    "wall_ms": 0.04332200023782207
   },
   "parts": {
     "px.color.swatch.anchor": {
@@ -52,7 +52,7 @@
           "declared_consumes": [
             "px:px.color.swatch.anchor"
           ],
-          "duration_ms": 0.050784999984898604,
+          "duration_ms": 0.04332200023782207,
           "hit": true,
           "id": "c1",
           "inputs": {

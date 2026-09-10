@@ -139,6 +139,52 @@ def reads_of(record: dict[str, Any]) -> dict[str, tuple[str, ...]]:
     return out
 
 
+# --- partness (task 75) --------------------------------------------------------
+#
+# "A Part computed from a part is a part": a part is any address under
+# ``proposal.*`` or ``px.exp.*`` (crisp.py's own ``is_part``, repeated here
+# rather than imported across the module boundary crisp.py already keeps --
+# ``px`` reads JSON and nothing else, no kernel-adjacent import beyond the
+# schema and the law checker, both loaded by path). ``part_basis`` is the run
+# record's own mirror of crisp's ``_document_basis``: derived from the record
+# alone, in its own run order, so an invocation that reads a part -- or an
+# address a still-earlier invocation already made provisional -- makes every
+# address it produces provisional too, standing on the same root part(s).
+
+
+def is_part(address: str) -> bool:
+    return address.startswith("proposal.") or address.startswith("px.exp.")
+
+
+def part_basis(record: dict[str, Any]) -> dict[str, list[str]]:
+    """address -> sorted part addresses (``is_part``) it transitively stands on.
+
+    Sparse: an address with no part anywhere in its basis is not a key here at
+    all -- a record that touches no part returns ``{}``, which is what "a
+    record with no parts shows none" means for both ``px ls`` and ``px tick``.
+    """
+    reads = reads_of(record)
+    basis: dict[str, set[str]] = {}
+
+    universe: set[str] = set(record.get("parts", {}).keys())
+    for _index, _name, inv in invocations(record):
+        universe.update(into_addresses(inv))
+        universe.update(reads[inv["id"]])
+    for address in universe:
+        if is_part(address):
+            basis[address] = {address}
+
+    for _index, _name, inv in invocations(record):
+        combined: set[str] = set()
+        for address in reads[inv["id"]]:
+            combined |= basis.get(address, set())
+        if combined:
+            for address in into_addresses(inv):
+                basis[address] = basis.get(address, set()) | combined
+
+    return {address: sorted(parts) for address, parts in basis.items() if parts}
+
+
 # --- the Tick projection --------------------------------------------------------
 #
 # research/chainspot-stages-ticks.md: "a Tick is when its Sequence of Calculations
@@ -165,7 +211,8 @@ def frozen_identity(calc: dict[str, Any]) -> str:
 
 
 def tick_projection(
-    record: dict[str, Any], tick: dict[str, Any], tick_laws: Any, schema: Any
+    record: dict[str, Any], tick: dict[str, Any], tick_laws: Any, schema: Any,
+    basis_map: dict[str, list[str]] | None = None,
 ) -> dict[str, Any]:
     """One Tick's testimony, in the LAB's receipt shape.
 
@@ -211,6 +258,12 @@ def tick_projection(
             produces.append({"address": write["address"], "kind": write["kind"], "digest": digest})
     produces.sort(key=lambda row: row["address"])
 
+    if basis_map is None:
+        basis_map = part_basis(record)
+    basis: set[str] = set()
+    for row in produces:
+        basis |= set(basis_map.get(row["address"], ()))
+
     return {
         "index": tick["index"],
         "name": tick["name"],
@@ -220,6 +273,7 @@ def tick_projection(
         "calculations": [frozen_identity(inv["calculation"]) for inv in tick["invocations"]],
         "latency_ms": schema.tick_latency_ms(tick),
         "mode": "parallel" if schema.run_schedule(record)["parallel"] else "serial",
+        "basis": sorted(basis),
     }
 
 
@@ -341,6 +395,7 @@ def cmd_ls(args: argparse.Namespace) -> int:
         rows_by_address[address] = dict(row)
     for address, row in record["parts"].items():
         rows_by_address.setdefault(address, dict(row))
+    basis_map = part_basis(record)
     lines = []
     for address in sorted(rows_by_address):
         if args.prefix and not address.startswith(args.prefix):
@@ -354,8 +409,16 @@ def cmd_ls(args: argparse.Namespace) -> int:
         else:
             origin = "unknown"
         kind = "receipt" if address.startswith("px.receipt.") else "part"
-        lines.append([address, kind, origin])
-    for line in table(["ADDRESS", "KIND", "PRODUCED-BY"], lines):
+        line = [address, kind, origin]
+        if basis_map:
+            line.append(
+                f"provisional (basis: {','.join(basis_map[address])})" if address in basis_map else NOTHING
+            )
+        lines.append(line)
+    headers = ["ADDRESS", "KIND", "PRODUCED-BY"]
+    if basis_map:
+        headers.append("PROVISIONAL")
+    for line in table(headers, lines):
         print(line)
     return EXIT_OK
 
@@ -658,10 +721,11 @@ def cmd_tick(args: argparse.Namespace) -> int:
     """
     record = load_record(args.record)
     tick_laws, schema = _tick_laws(), _schema()
+    basis_map = part_basis(record)
     ticks = record["ticks"]
     if args.tick_selector is not None:
         ticks = [select_tick(record, args.tick_selector, args.record)]
-    projections = [tick_projection(record, tick, tick_laws, schema) for tick in ticks]
+    projections = [tick_projection(record, tick, tick_laws, schema, basis_map) for tick in ticks]
 
     if args.json:
         payload = projections[0] if args.tick_selector is not None else projections
@@ -670,14 +734,17 @@ def cmd_tick(args: argparse.Namespace) -> int:
 
     blocks = []
     for projection in projections:
-        blocks.append("\n".join([
+        lines = [
             f"Tick {projection['index']} {projection['name']}",
             f"  consumes: {joined(projection['consumes'])}",
             f"  internal: {joined(projection['internal'])}",
             f"  produces: {joined(format_produce_row(row) for row in projection['produces'])}",
             f"  calculations: {joined(projection['calculations'])}",
             f"  latency: latency_ms={milliseconds(projection['latency_ms'])} mode={projection['mode']}",
-        ]))
+        ]
+        if projection["basis"]:
+            lines.append(f"  basis: {joined(projection['basis'])}")
+        blocks.append("\n".join(lines))
     print("\n\n".join(blocks))
     return EXIT_OK
 

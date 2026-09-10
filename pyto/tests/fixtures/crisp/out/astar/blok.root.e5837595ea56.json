@@ -1,0 +1,46 @@
+{
+  "address": "proposal.neat.composition.blok.root.e5837595ea56",
+  "sha256": "e269076d8d48982f782f95f04bb77712d98cfd1baedfcaa6e98ca43191d02b58",
+  "value": {
+    "PQL": {
+      "Ticks": [
+        {
+          "Calculations": [],
+          "name": "blok"
+        }
+      ]
+    },
+    "basis": [],
+    "capabilityDelta": "Derive the coordinates for the anchor swatch.",
+    "decisions": [
+      "{?} which representation the site shows"
+    ],
+    "existingCalculations": [
+      {
+        "address": "fn.colorStudy.coordinates",
+        "sha256": "cddeef00dbf3c44038d2ed20200b294784e415dd9b74cb37ef6fb15297d0554a"
+      }
+    ],
+    "existingParts": [
+      {
+        "address": "px.color.swatch.anchor",
+        "sha256": "4e4cfda60bfc10692677d5224c93e788fa827b60e2bdd3f5bafe4b78b69497e1"
+      }
+    ],
+    "inspection": [
+      "{?} Inspection: what a person would see or do is not yet specified"
+    ],
+    "limits": [
+      "Return when the site has settled on one representation to show."
+    ],
+    "pnc": "e4be4850b75c7cb4d713c62700e2a8ec089d52d6514570ba441ca45e06065fcc",
+    "proposedCalculations": [],
+    "proposedParts": [],
+    "provisional": false,
+    "review": "e5837595ea56d8262cb46464a655904a2298452f78e17751ba78f5a013c0124b",
+    "verification": [
+      "{?} Verification: what would be checked, and what it protects, is not yet specified"
+    ],
+    "why": "an A-Star study handed to `crisp template` in imply mode: 'Derive the coordinates for the anchor swatch.'"
+  }
+}
