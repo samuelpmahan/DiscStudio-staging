@@ -717,7 +717,7 @@ Ticks the program claims an order and a state of the world in between; inside a 
 the Calculations there are independent and belong to the same moment; the tick page pauses on Ticks.
 By that meaning Mean and Median belong in one Tick, and five Ticks was a teaching choice, not a
 kernel need. The student's page is left as written because the cold read catching it is the point.
-Owner: overturn or confirm in a sentence.
+Owner, 2026-09-10: "Is this implying we need lambda ticks? Idk if that's actually possible but you don't need to read a dataset twice to calculate mean and median and if you do here that's a legit gap." Checked: the roster is one Part in the store; Mean and Median each bind it (homework.py:185-186) and the store hands over the same value, no second parse, so the dataset is read once and two Calculations consume it; the only repeated work is the median's sort, which a one-pass version would need too. The gap that is real: a Calculation writes exactly one Part (`into`), so one pass producing two results is only possible as a composite Part (px.stats = {mean, median}) at the cost of one fingerprint for the pair instead of one each. Ticks do no reading; Parts do, so the sharing the owner wants already lives at the Part level. Default: keep one result per Calculation; write the composite-vs-two-Calculations trade-off on the student page as the honest reason; no kernel change.
 
 ### {?} StoppingRule
 The owner, 2026-09-10, on how to launch an agent that gains real depth: "Reading is not depth of
