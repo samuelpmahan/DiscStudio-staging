@@ -35,8 +35,9 @@ one file. It can be opened in a browser as a page you step through one step at a
 time, and a step that holds two pieces of work neither of which needs the other is
 drawn as two cards *side by side*, with that step's **work** (both pieces added up)
 and its **latency** (the longer of the two -- the time the step takes if the pieces
-run at once) printed underneath it, and the whole run's work against its critical
-path at the top of the page. Stepping through, the side-by-side cards appear
+run at once) printed underneath it, and, at the top of the page, the whole run's
+work against its **critical path** -- how long the run would take if every such
+pair ran at once. Stepping through, the side-by-side cards appear
 together rather than one after the other, and if the record says which worker ran a
 piece, or that a time budget stopped the run before it finished, the page says so.
 

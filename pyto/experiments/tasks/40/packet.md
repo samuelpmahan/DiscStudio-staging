@@ -20,4 +20,6 @@ Evidence: not packed yet
 
 {?} ViolationLinesStillSayTickIndexOnly: the per-Tick text lines now name the Tick, but law-violation messages still read `... in Tick 0`, because those strings are part of `--json` and the packet fixed `--json` as unchanged otherwise.
 
+{?} StudentsDemoPageIsBakedAndStale: `experiments/students/evidence/run-1/tick-viewer.html` is baked by `homework.py` through `embed.mjs`, so the committed demo page still carries the previous renderer -- the side-by-side Stats Tick is in `pyto/viewer/tick-viewer.html` (drop the record on it) but not in that committed file. Regenerating it means writing under `experiments/students/evidence/`, outside this task's allow list, so it was left alone; one `python homework.py --out evidence/run-1` re-bakes it.
+
 {?} PlaybackClockIsNowTheCriticalPath: with a parallel Tick's cards appearing together at the Tick's latency, the playback clock's last event lands on the run's critical path rather than on the sum of every duration; `viewer/test/playback.test.mjs` was rewritten to that law (5 of its tests changed), which is the one place an existing test's expectations were replaced rather than added to.
