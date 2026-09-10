@@ -42,6 +42,12 @@ entries on pyto/questions.md, and continue." Every answer to an agent's question
 in the owner's words and in the technical words side by side; the owner never carries the technical
 half (owner, 2026-09-10: "Can't you translate between OSspeak and Samspeak").
 
+## The frontier
+
+What gets built next is planned as adds, not as a queue of tasks (owner, 2026-09-10: "we refine and
+merge compatible things; each add includes an illustrative feature or is a few complementary things").
+The adds, with what you will see when each lands, are on `pyto/FRONTIER.md`. A task opens from an add.
+
 ## Interrupts
 
 The owner is interrupted for three things only: something they would want to know broke and
@@ -62,6 +68,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 02:09 **landed** `task-37`: the frontier: pyto/FRONTIER.md holds every candidate on the record merged into nine adds, each one OS piece plus the feature that shows it, in the order that reads best; the board points at it; tasks open from adds (7 files since aec5160, suites green, receipt 20260910T020908Z-task-37)
 - 2026-09-10 02:08 **started** `task-37`: the frontier: pyto/FRONTIER.md holds every candidate on the record merged into nine adds, each one OS piece plus the feature that shows it, in the order that reads best; the board points at it; tasks open from adds (copy EXP/37; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 01:52 **hand-off** from the cloud session, 2026-09-10: 46 landings since the loop was built; every decision is on pyto/questions.md in the owner's words; the Mac path is pyto/KT-MAC.md, six chunks for Codex, each ending with something to see; one known hazard for the Mac to debug (a task that edits land.sh can fail silently at commit; workaround in the file); nothing is running, no copies are open
 - 2026-09-10 01:52 **landed** `task-36`: KT for the MacBook: pyto/KT-MAC.md walks Codex through six chunks that each end with something the owner sees (the board, receipts, a grade, the self-test, a landing), names the Mac landmines first, and records the cloud session's hand-off; board_page.py renders on Python 3.9 too (8 files since 90d3a93, suites green, receipt 20260910T015135Z-task-36)
