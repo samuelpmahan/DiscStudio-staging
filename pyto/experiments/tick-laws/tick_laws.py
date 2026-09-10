@@ -86,6 +86,12 @@ def _id(inv: dict[str, Any]) -> str:
     return str(inv.get("id", "<unnamed>"))
 
 
+def _tick_name(tick: dict[str, Any]) -> str:
+    """The name the record gives a Tick; "<unnamed>" when it carries none."""
+    name = tick.get("name")
+    return name if isinstance(name, str) and name else "<unnamed>"
+
+
 def _empty_report(errors: list[str]) -> dict[str, Any]:
     violations = [{"law": "validation", "kind": "validation", "message": e} for e in errors]
     return {"ok": False, "valid": False, "limitation": LIMITATION, "violations": violations,
@@ -156,7 +162,9 @@ def analyze_record(record: dict[str, Any]) -> dict[str, Any]:
             work = latency = None
         else:
             work, latency = sum(durations), max(durations)
-        tick_reports.append({"tick": ti, "work_ms": work, "latency_ms": latency})
+        # A Tick has a name in the record and is reported by it: "Tick 1 Stats" reads
+        # as the step the program named, where "Tick 1" reads as a position nobody wrote.
+        tick_reports.append({"tick": ti, "name": _tick_name(tick), "work_ms": work, "latency_ms": latency})
     work = sum(t["work_ms"] for t in tick_reports) if all(t["work_ms"] is not None for t in tick_reports) else None
     critical = sum(t["latency_ms"] for t in tick_reports) if all(t["latency_ms"] is not None for t in tick_reports) else None
     return {"ok": not violations, "valid": True, "limitation": LIMITATION, "violations": violations,
@@ -189,7 +197,7 @@ def _print_text(result: dict[str, Any]) -> None:
         report = item["report"]
         print(item["path"])
         for tick in report["ticks"]:
-            print(f"Tick {tick['tick']}: work_ms={tick['work_ms']} latency_ms={tick['latency_ms']}")
+            print(f"Tick {tick['tick']} {tick['name']}: work_ms={tick['work_ms']} latency_ms={tick['latency_ms']}")
         print(f"Summary: work_ms={report['summary']['work_ms']} critical_path_ms={report['summary']['critical_path_ms']}")
         print("no parallel execution exists yet")
         for violation in report["violations"]:
