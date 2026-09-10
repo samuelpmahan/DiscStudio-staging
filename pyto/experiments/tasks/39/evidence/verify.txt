@@ -341,6 +341,6 @@ Traceback (most recent call last):
 AssertionError: "'left'" not found in "PCR 'two-writers-multi' has multiple writers for 'px.y'"
 
 ----------------------------------------------------------------------
-Ran 150 tests in 3.593s
+Ran 150 tests in 3.543s
 
 FAILED (failures=6, errors=30)

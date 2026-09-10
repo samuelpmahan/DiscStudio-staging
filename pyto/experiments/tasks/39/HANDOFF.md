@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/39
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/39:pyto/experiments/tasks/39/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff c712cf2 origin/exp/39 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 41a1e1e origin/exp/39 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ parallel for real and budgets: PcrRun runs the Calculations inside a Tick concur
 
 ## Starting point
 
-0debaf30cfd58da2fd65860d320438abe3bbee54 (board: **sprint** 2026-09-10 02:20 UTC on branch claude/os-sprint-st8hnu: the o). MAIN may have moved since: `git log --oneline c712cf2..origin/claude/os-sprint-st8hnu` shows how far.
+0debaf30cfd58da2fd65860d320438abe3bbee54 (board: **sprint** 2026-09-10 02:20 UTC on branch claude/os-sprint-st8hnu: the o). MAIN may have moved since: `git log --oneline 41a1e1e..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -160,26 +160,26 @@ pyto/CHANGES.md                                    |   1 +
  pyto/tests/test_parallel.py                        | 437 +++++++++++++++++
  pyto/tests/test_receipts.py                        |   4 +-
  pyto/tests/test_semantics.py                       |  17 +-
- pyto/viewer/RECORD.md                              |  38 ++
- pyto/viewer/adapters.js                            |  88 ++++
+ pyto/viewer/RECORD.md                              |  42 ++
+ pyto/viewer/adapters.js                            |  96 ++++
  pyto/viewer/test/adapters.test.mjs                 | 117 +++++
  pyto/viewer/test/record_schema.py                  | 114 ++++-
  pyto/viewer/test/test_record_schema.py             | 159 +++++-
- 52 files changed, 2088 insertions(+), 406 deletions(-)
+ 52 files changed, 2100 insertions(+), 406 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python3 -m unittest tests.test_receipts tests.test_materialize tests.test_semantics tests.test_first_class tests.test_parallel tests.test_budget` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.wQyMWb0GWD) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.wxnN2cjSow) (evidence/check_all.txt)
     suite                         tests  status
     library                         285  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
-    experiments/grouped-ablation    249  OK
+    experiments/grouped-ablation    250  OK
     experiments/hiding-primitives      6  OK
     experiments/s3-synthetic          5  OK
-    experiments/students             14  OK
+    experiments/students             17  OK
     experiments/tick-laws            12  OK
     consumer                         61  OK
     disc-stats                        4  OK
@@ -193,6 +193,8 @@ pyto/CHANGES.md                                    |   1 +
 {?} ScheduleFieldsOptional: the contract says a serial run writes `"placement": null`, but a serial run's record is compared byte for byte against committed evidence by `experiments/students/grade.py` (check 2 drops `duration_ms` and `counters.wall_ms` and nothing else, and `students/` is outside this task's allow list), and `latency_ms` is a wall clock that moves between two identical runs. Taken as the default: the four fields are written **together and only** when the run was parallel, was given a budget, or was stopped by one, so "absent means serial, unbudgeted" is the whole rule in both validators and a serial record is byte for byte what it was. Owner: say the word and `run_record` writes them always, and `students/evidence/run-1/record.json` is regenerated with `latency_ms` added to grade.py's not-compared list.
 
 {?} ReceiptWriteMarker (merge with task 41, decided by the record): after merging MAIN, `pcr.py` files its receipts with `pxc.set(..., _from_run=True)` -- the marker `core.py`'s new guard names as the run's own (`PxC.set`, "``_from_run`` is the run's marker: ``PcrRun``'s observe branch passes it when it files a receipt"). The guard's frame fallback (`RUN_MODULE = "pyto.pcr"`) still passes for this kernel, and was written only because `pcr.py` was another team's file at the time; saying so beats being recognised, and it is what lets a store *view* between the run and the PxC relay a receipt write without owning a frame in `pyto.pcr` -- which is exactly what `tests/test_parallel.RecordingPxC`, the oracle for "the store never holds half a Tick", is. Two lines: the marker in `pcr.py:_publish`, and `**marker` relayed by that test's view.
+
+{?} TwoLatencyFallbacks: `viewer/adapters.js` and `viewer/tick-viewer.js` (task 40) both answer "how long did this Tick take". They agree whenever the record carries `latency_ms`, which is the only case a record decides. With the field **absent** they disagree on purpose: the record contract's fallback is the **sum** of the Tick's durations (RECORD.md, "Placement and budget"; `record_schema.py tick_latency_ms`, `adapters.js tickLatencyMsFromRecord`), because a serial Tick's latency *is* that sum; the viewer's fallback is the **longest branch**, because that is the critical path it draws. A record from a serial runtime that never writes `latency_ms` therefore reads one way in the validator and another in the page. Mine is renamed rather than merged (`embed.mjs` concatenates both files into one module, so two top-level `tickLatencyMs` bindings are a SyntaxError, and `tick-viewer.js` is another team's file). Owner: one of the two fallbacks should win and the other should call it.
 
 {?} ParallelFailure: a branch that raises stops the run before anything of its Tick is published, so its siblings' work is discarded and they file no receipts -- the price of "the store never sees half a Tick". `{?} TicksAsCircuits` wants the other reading ("a failing branch leaves its siblings' receipts and shows as a hole downstream"), which needs a partial-Tick publish and a receipt for a Calculation whose Part was never written. Left as it is, with a test only for the atomicity, until the owner picks which of the two the record should show.
 

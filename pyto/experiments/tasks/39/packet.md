@@ -5,7 +5,7 @@ Starting point: 0debaf30cfd58da2fd65860d320438abe3bbee54 (board: **sprint** 2026
 Verify: cd pyto && python3 -m unittest tests.test_receipts tests.test_materialize tests.test_semantics tests.test_first_class tests.test_parallel tests.test_budget
 Allow: pyto/src/pyto/pcr.py pyto/src/pyto/materialize.py pyto/tests pyto/viewer/RECORD.md pyto/viewer/test/record_schema.py pyto/viewer/test/test_record_schema.py pyto/viewer/adapters.js pyto/viewer/test/adapters.test.mjs pyto/viewer/fixtures pyto/experiments/grouped-ablation/evidence pyto/CHANGES.md pyto/experiments/tasks
 Candidate: 52 files, see below
-Evidence: suite exit 1, see below
+Evidence: suite exit 0, see below
 
 ## Candidate
 
@@ -110,26 +110,26 @@ pyto/CHANGES.md                                    |   1 +
  pyto/tests/test_parallel.py                        | 437 +++++++++++++++++
  pyto/tests/test_receipts.py                        |   4 +-
  pyto/tests/test_semantics.py                       |  17 +-
- pyto/viewer/RECORD.md                              |  38 ++
- pyto/viewer/adapters.js                            |  88 ++++
+ pyto/viewer/RECORD.md                              |  42 ++
+ pyto/viewer/adapters.js                            |  96 ++++
  pyto/viewer/test/adapters.test.mjs                 | 117 +++++
  pyto/viewer/test/record_schema.py                  | 114 ++++-
  pyto/viewer/test/test_record_schema.py             | 159 +++++-
- 52 files changed, 2088 insertions(+), 406 deletions(-)
+ 52 files changed, 2100 insertions(+), 406 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python3 -m unittest tests.test_receipts tests.test_materialize tests.test_semantics tests.test_first_class tests.test_parallel tests.test_budget` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.wQyMWb0GWD) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.wxnN2cjSow) (evidence/check_all.txt)
     suite                         tests  status
     library                         285  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
-    experiments/grouped-ablation    249  OK
+    experiments/grouped-ablation    250  OK
     experiments/hiding-primitives      6  OK
     experiments/s3-synthetic          5  OK
-    experiments/students             14  OK
+    experiments/students             17  OK
     experiments/tick-laws            12  OK
     consumer                         61  OK
     disc-stats                        4  OK
