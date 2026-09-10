@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/48
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/48:pyto/experiments/tasks/48/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff c712cf2 origin/exp/48 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 9add98b origin/exp/48 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ the JavaScript runtime speaks the same schedule: exec.js runs a Tick's Calculati
 
 ## Starting point
 
-f48fb3568c948fc5b43eb7ed13971fad9b9c0805 (exp/47: next_id counts the landing receipts; an undone id is never reused). MAIN may have moved since: `git log --oneline c712cf2..origin/claude/os-sprint-st8hnu` shows how far.
+f48fb3568c948fc5b43eb7ed13971fad9b9c0805 (exp/47: next_id counts the landing receipts; an undone id is never reused). MAIN may have moved since: `git log --oneline 9add98b..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -75,7 +75,7 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 ```
 .neat/items/DS-STUDIO-02.json         |    4 +-
  pyto/CHANGES.md                       |    1 +
- pyto/viewer/adapters.js               |  142 +-
+ pyto/viewer/adapters.js               |   46 +-
  pyto/viewer/test/adapters.test.mjs    |   66 +
  scripts/browser_test.py               |   24 +
  scripts/review_checkpoint.mjs         |    2 +-
@@ -85,21 +85,21 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
  src/runtime.js                        |   57 +-
  tests/core.test.js                    |  150 +-
  tests/fixtures/serial-run-record.json | 7058 +++++++++++++++++++++++++++++++++
- 12 files changed, 7644 insertions(+), 42 deletions(-)
+ 12 files changed, 7548 insertions(+), 42 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.t7f3vPGTVt) (evidence/check_all.txt)
     suite                         tests  status
-    library                         248  OK
+    library                         314  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
-    experiments/grouped-ablation    249  OK
+    experiments/grouped-ablation    250  OK
     experiments/hiding-primitives      6  OK
     experiments/s3-synthetic          5  OK
-    experiments/students             14  OK
+    experiments/students             17  OK
     experiments/tick-laws            12  OK
     consumer                         61  OK
     disc-stats                        4  OK

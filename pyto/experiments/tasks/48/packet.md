@@ -25,7 +25,7 @@ Evidence: suite exit 0, see below
 ```
 .neat/items/DS-STUDIO-02.json         |    4 +-
  pyto/CHANGES.md                       |    1 +
- pyto/viewer/adapters.js               |  142 +-
+ pyto/viewer/adapters.js               |   46 +-
  pyto/viewer/test/adapters.test.mjs    |   66 +
  scripts/browser_test.py               |   24 +
  scripts/review_checkpoint.mjs         |    2 +-
@@ -35,21 +35,21 @@ Evidence: suite exit 0, see below
  src/runtime.js                        |   57 +-
  tests/core.test.js                    |  150 +-
  tests/fixtures/serial-run-record.json | 7058 +++++++++++++++++++++++++++++++++
- 12 files changed, 7644 insertions(+), 42 deletions(-)
+ 12 files changed, 7548 insertions(+), 42 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `npm test && node --test pyto/viewer/test/*.test.mjs && python3 scripts/browser_test.py --embedded` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.t7f3vPGTVt) (evidence/check_all.txt)
     suite                         tests  status
-    library                         248  OK
+    library                         314  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
-    experiments/grouped-ablation    249  OK
+    experiments/grouped-ablation    250  OK
     experiments/hiding-primitives      6  OK
     experiments/s3-synthetic          5  OK
-    experiments/students             14  OK
+    experiments/students             17  OK
     experiments/tick-laws            12  OK
     consumer                         61  OK
     disc-stats                        4  OK
