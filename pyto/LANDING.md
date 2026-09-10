@@ -61,7 +61,9 @@ Calculation, a receipt means) are not in scope for the loop; they run as their o
 - **Package**: the brief the candidate answers. The brief names the allowed paths and the verifier
   command. If there is no brief, the package is `unbriefed` and the allowed paths are what the
   candidate touches.
-- **Verifier**: a command that exits 0 or not. No judgment.
+- **Verifier**: a command that exits 0 or not. No judgment. It runs with the repository's own
+  `.venv` first on PATH, so a bare `python3` means the same interpreter in a copy and on MAIN.
+  A packet with no Verify line does not pack; `none` is the way to say there is no verifier.
 - **Landing receipt**: one JSON file per landing attempt, under `pyto/experiments/landings/`,
   committed with the landing. A failed attempt gets a receipt too, under `failed/`.
 - **Landed**: on the working branch, every suite green, the receipt committed, pushed.

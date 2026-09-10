@@ -51,8 +51,9 @@ cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
 usage() { sed -n '4,13p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
-field() { # <name> <file>  -> the value after "<name>: "
-  grep -m1 "^$1: " "$2" | sed "s/^$1: //"
+field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
+  # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
+  { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
 }
 next_id() { # the highest id seen anywhere: local copies, landed packets, and exp/* branches here or on origin
   local max=-1 d n
@@ -260,6 +261,8 @@ cmd_pack() {
   local wt="$EXP/$id" packet vpy verify vexit=- cexit intent
   packet="$(packet_of "$id")"; vpy="$(venv_python "$id")"
   intent="$(field Intent "$packet")"; verify="$(field Verify "$packet")"
+  [ -n "$intent" ] || die "task $id: the packet has no Intent line ($TASKS/$id/packet.md); the header above '## Uncertain' is neat's, restore it from the branch's first commit (git show \$(git -C \"$wt\" rev-list --max-parents=0 exp/$id | tail -1):$TASKS/$id/packet.md)"
+  [ -n "$verify" ] || die "task $id: the packet has no Verify line ($TASKS/$id/packet.md); write one (a command that exits 0, or the word none) and pack again"
   git -C "$wt" add -A
   git -C "$wt" commit -q -m "exp/$id: $intent" 2>/dev/null || true
   mkdir -p "$wt/$TASKS/$id/evidence"
