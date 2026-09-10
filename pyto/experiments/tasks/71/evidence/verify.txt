@@ -1,0 +1,34 @@
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+......./home/user/DiscStudio-staging/EXP/71/pyto/tests/test_neat_review.py:283: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp4i9p8rb0/questions.md' mode='r' encoding='utf-8'>
+  text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E..E
+======================================================================
+ERROR: test_default_is_filed_as_the_sessions_and_leaves_the_batch (tests.test_neat_review.OwnerFirstAndDefaults.test_default_is_filed_as_the_sessions_and_leaves_the_batch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/71/pyto/tests/test_neat_review.py", line 288, in test_default_is_filed_as_the_sessions_and_leaves_the_batch
+    kept = next(it for it in again["items"] if it["label"] == "PrintForm")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
+
+======================================================================
+ERROR: setUpClass (tests.test_walk.TheWalk)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/71/pyto/tests/test_walk.py", line 25, in setUpClass
+    cls.steps, cls.problems = walk.build_steps()
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/71/pyto/scripts/walk.py", line 243, in build_steps
+    "owner": owner_words([neat_review.split_question_line(q)[0] for q in qs]),
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/71/pyto/scripts/walk.py", line 204, in owner_words
+    text = neat_review.answer_text(PYTO_DIR, label)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'pyto.neat.review' has no attribute 'answer_text'
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.959s
+
+FAILED (errors=2)
