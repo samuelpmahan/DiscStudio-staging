@@ -679,7 +679,50 @@ function frozenIdentity(calculation) {
  * tick-viewer.js's longest-branch-for-a-parallel-Tick number
  * (RECORD.md, `{?} TwoLatencyFallbacks`).
  */
-export function tickProjection(record, tickIndex) {
+/** A part is partial and isolated: under `proposal.*` or `px.exp.*` (pyto.px.is_part). */
+export function isPart(address) {
+  return typeof address === 'string' && (address.startsWith('proposal.') || address.startsWith('px.exp.'));
+}
+
+/** address -> sorted part addresses it transitively stands on; sparse, exactly
+ * `pyto.px.part_basis`: parts seed their own basis, and an invocation whose reads
+ * carry any basis hands the union to every address it writes. */
+export function partBasis(record) {
+  const producedBy = new Map();
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) producedBy.set(invocation.id, produceAddresses(invocation.into));
+  }
+  const basis = new Map();
+  const universe = new Set(Object.keys(record.parts || {}));
+  const readsById = new Map();
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) {
+      const reads = tickProjectionReads(invocation, producedBy);
+      readsById.set(invocation.id, reads);
+      for (const address of produceAddresses(invocation.into)) universe.add(address);
+      for (const address of reads) universe.add(address);
+    }
+  }
+  for (const address of universe) if (isPart(address)) basis.set(address, new Set([address]));
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) {
+      const combined = new Set();
+      for (const address of readsById.get(invocation.id)) for (const part of basis.get(address) || []) combined.add(part);
+      if (combined.size) {
+        for (const address of produceAddresses(invocation.into)) {
+          const own = basis.get(address) || new Set();
+          for (const part of combined) own.add(part);
+          basis.set(address, own);
+        }
+      }
+    }
+  }
+  const out = {};
+  for (const [address, parts] of basis) if (parts.size) out[address] = [...parts].sort();
+  return out;
+}
+
+export function tickProjection(record, tickIndex, basisMap = null) {
   const tick = record.ticks[tickIndex];
   if (!tick) throw new Error(`tickProjection: no Tick at index ${tickIndex} (record has ${record.ticks.length})`);
 
@@ -706,6 +749,10 @@ export function tickProjection(record, tickIndex) {
 
   const calculations = tick.invocations.map((invocation) => frozenIdentity(invocation.calculation));
 
+  const basisOf = basisMap || partBasis(record);
+  const basis = new Set();
+  for (const row of produces) for (const part of basisOf[row.address] || []) basis.add(part);
+
   return {
     index: tick.index,
     name: tick.name,
@@ -713,6 +760,7 @@ export function tickProjection(record, tickIndex) {
     internal,
     produces,
     calculations,
+    basis: [...basis].sort(),
     latency_ms: tickLatencyMsFromRecord(tick),
     mode: runSchedule(record).parallel ? 'parallel' : 'serial'
   };
