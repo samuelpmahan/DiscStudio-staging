@@ -20,7 +20,8 @@ const ui = {
   nodeId: 'mold', query: '', fieldQuery: '', library: 'fields', onlyBag: false, traceOpen: false, inspectAddress: '', previewState: 'idle',
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
-  motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' }
+  motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
+  cardsProjection: savedView.cardsProjection || 'single', lastCascade: null
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -52,25 +53,51 @@ function shownPcr() {
   if (!name) throw new Error('Render a composition before exporting its run record.');
   return name;
 }
-function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component })); } catch { /* Nonessential view state. */ } }
+function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, cardsProjection: ui.cardsProjection })); } catch { /* Nonessential view state. */ } }
 runtime.onChange(() => {
   if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
   catch (error) { ui.saved = 'Not saved · download a draft'; message('Browser storage is full or unavailable. Your current work is still open. Download a draft to keep it.', true); }
   persistView();
 });
 function execute(command) { runtime.dispatch(command); }
+/**
+ * Every cascade edit: dispatch cards.set, then mark the edit as pending its
+ * recompose. `recompose` itself is called exactly once, by render()'s single
+ * pass over the Cards route -- calling it here too would let its own
+ * memoization see "nothing changed since the previous call" (the one this
+ * function just made) and mark every projection reused, erasing the very
+ * `changed` signal the receipt and the preview grid depend on.
+ */
+function cascadeSet(layer, token, value, projection, discId) {
+  execute({ type: 'cards.set', layer, token, value, ...(projection ? { projection } : {}), ...(discId ? { discId } : {}) });
+  ui.lastCascade = { edit: { layer, token, value, projection, discId }, result: null };
+}
+const CARD_TOKENS = ['background', 'foreground', 'accent', 'font', 'radius', 'sponsor'];
+const cardTokenLabel = token => ({ background: 'Background', foreground: 'Foreground', accent: 'Accent', font: 'Font', radius: 'Radius', sponsor: 'Sponsor' }[token] || token);
+/** One editable token control at a given layer. `scope` = {layer, projection?, disc?} becomes the data-layer/data-projection/data-disc attributes the browser test finds. */
+function tokenControl(token, value, scope) {
+  const label = cardTokenLabel(token), aria = `${label} (${scope.layer}${scope.projection ? ` · ${scope.projection}` : ''}${scope.disc ? ` · ${scope.disc}` : ''})`;
+  const attrs = dataAttr({ layer: scope.layer, token, ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) });
+  let field;
+  if (token === 'font') field = `<select data-control="cascade-token" aria-label="${esc(aria)}" ${attrs}>${[['sans', 'Sans'], ['serif', 'Serif'], ['mono', 'Mono']].map(([k, l]) => `<option value="${k}" ${k === value ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+  else if (token === 'radius') field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="number" min="0" max="100" value="${esc(value ?? 0)}" ${attrs}>`;
+  else if (token === 'sponsor') field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="text" maxlength="40" value="${esc(value ?? '')}" ${attrs}>`;
+  else field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="color" value="${esc(value ?? '#000000')}" ${attrs}>`;
+  return `<label class="control"><span>${esc(label)}</span>${field}</label>`;
+}
+function cascadeResetButton(scope, token) { return button('Reset to inherited', 'cascade-reset', { layer: scope.layer, token, ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) }, 'quiet small'); }
 function navigate(route) { location.hash = `/${route}`; }
 function syncRoute() {
   const [path, query] = location.hash.slice(1).split('?'), params = new URLSearchParams(query);
-  ui.route = ['shelf', 'course', 'components', 'competition'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
+  ui.route = ['shelf', 'course', 'components', 'competition', 'cards'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
   if (params.has('node')) { ui.nodeId = params.get('node'); ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; }
   if (params.has('trace')) ui.traceOpen = true;
   render();
 }
 window.addEventListener('hashchange', syncRoute);
-const safeThumb = (discId, preset = 'discImage') => { try { return runtime.card(discId, preset, context()).svg; } catch { return '<span class="missing">Missing disc</span>'; } };
+const safeThumb = (discId, preset = 'discImage', projection = 'bag') => { try { return runtime.card(discId, preset, context(), null, projection).svg; } catch { return '<span class="missing">Missing disc</span>'; } };
 function header() {
-  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a><a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
+  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a><a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a><a href="#/cards" class="${ui.route === 'cards' ? 'active' : ''}">Cards</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
 }
 function bagSelect(control = 'bag') { return select(control, ui.bagId, all(w(), 'Bag').map(b => [b.id, `${b.name} · ${b.discIds.length}`])); }
 function shelfSidebar() {
@@ -85,7 +112,7 @@ function shelfCenter() {
   const bag = get(w(), 'Bag', ui.bagId);
   return `<section class="center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Rename', 'bag-rename', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description"><span class="eyebrow">${bag ? `${bag.discIds.length} PHYSICAL DISCS · SHARED REFERENCES` : 'CREATE YOUR FIRST BAG'}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${(bag?.discIds || []).map(key => {
     const { disc, mold, maker } = discInfo(key); if (!disc) return `<div class="error-panel">Missing physical disc ${esc(key)}. Fix this reference before using the bag.</div>`;
-    return `<article class="bag-card ${ui.discId === key ? 'is-selected' : ''}"><button class="bag-card-select" data-action="disc-select" data-id="${esc(key)}"><div class="bag-art">${safeThumb(key)}</div><div class="bag-card-caption"><span class="eyebrow">${esc(maker?.name)}</span><h3>${esc(mold?.name)}</h3><p>${esc(disc.nickname)}</p><span class="tiny">${[disc.plastic, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).map(esc).join(' · ')}</span></div></button>${button('−', 'membership', { id: key }, 'bag-remove', 'aria-label="Remove from this bag only"')}</article>`;
+    return `<article class="bag-card ${ui.discId === key ? 'is-selected' : ''}"><button class="bag-card-select" data-action="disc-select" data-id="${esc(key)}"><div class="bag-art">${safeThumb(key, undefined, 'shelf')}</div><div class="bag-card-caption"><span class="eyebrow">${esc(maker?.name)}</span><h3>${esc(mold?.name)}</h3><p>${esc(disc.nickname)}</p><span class="tiny">${[disc.plastic, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).map(esc).join(' · ')}</span></div></button>${button('−', 'membership', { id: key }, 'bag-remove', 'aria-label="Remove from this bag only"')}</article>`;
   }).join('') || '<div class="empty-state"><h2>Start with the discs you actually throw.</h2><p>Use the + beside any shelf disc to put it in this bag. One disc can belong to several bags.</p></div>'}</div><div class="principle-strip"><span>ONE DISC. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bound card sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
 }
 function discInspector() {
@@ -128,7 +155,7 @@ function editorCenter(result) {
 function nodeInspector(result) {
   if (ui.component === 'DiscComp') return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE DISPLAYCARDS</span><h2>DiscComp</h2><p class="muted">A comparison is an arrangement of the same reusable cards, not a parallel card renderer.</p>${layoutControls()}${button('Edit participants & scores ↗', 'go-course', {}, 'wide secondary')}${button('Compose competition rules ↗', 'go-competition', {}, 'wide quiet')}</aside>`;
   const p = w().presets[ui.presetId], n = p.nodes.find(n => n.id === ui.nodeId), field = result.fields.find(f => f.path === n?.binding);
-  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & COMPOSE</span><span class="live-tag">LIVE</span></div><h2>${esc(n ? field?.label || 'Presentation element' : 'Select a component')}</h2>${n ? `<p class="binding-path mono">${esc(n.binding || 'Static text')}</p><section class="control-section"><label class="control"><span>Bind to domain material</span>${select('node-binding', n.binding, [['', 'Static text'], ...result.fields.filter(f => (n.kind === 'image') === (f.type === 'image')).map(f => [f.path, `${f.group} · ${f.label}`])])}</label>${!n.binding ? input('Static text', 'node-text', n.text || '') : `<div class="value-box"><span class="eyebrow">CURRENT VALUE</span><strong>${n.kind === 'image' ? field?.available ? 'Your exact photo' : 'Labelled sample artwork' : esc(field?.value == null ? 'Not entered' : String(field.value))}</strong></div>`}<div class="four-inputs two">${[['X', 'x'], ['Y', 'y'], ['Width', 'w'], ['Height', 'h']].map(([label, key]) => input(label, 'node-number', n[key], 'number', `data-key="${key}" step="1"`)).join('')}</div>${n.kind === 'text' ? `${input('Type size (px)', 'node-number', n.size, 'number', 'data-key="size" min="4" max="200"')}<label class="control"><span>Typeface</span>${select('node-font', n.font || 'sans', [['sans', 'Clean sans'], ['serif', 'Editorial serif'], ['mono', 'Monospace']])}</label><label class="control"><span>Alignment</span>${select('node-align', n.align, [['left', 'Left'], ['center', 'Center'], ['right', 'Right']])}</label>${input('Text color', 'node-color', n.color || p.foreground, 'color')}${check('Bold', 'node-bold', n.bold)}${check('Show field label', 'node-showLabel', n.showLabel)}${check('Hide when empty', 'node-hideEmpty', n.hideEmpty)}${input('Prefix', 'node-prefix', n.prefix || '')}${input('Suffix', 'node-suffix', n.suffix || '')}` : `<label class="control"><span>Image fit</span>${select('node-fit', n.fit || 'contain', [['contain', 'Contain · preserve all'], ['cover', 'Cover · crop to frame']])}</label>${input('Corner radius', 'node-number', n.radius || 0, 'number', 'data-key="radius" min="0"')}`}${check('Visible in presentation', 'node-visible', n.visible)}<div class="button-row">${button('Move back', 'node-move', { value: -1 }, 'quiet small')}${button('Move front', 'node-move', { value: 1 }, 'quiet small')}</div><div class="button-row">${button('Duplicate element', 'node-duplicate', {}, 'quiet small')}${button('Remove', 'node-remove', {}, 'quiet danger small')}</div></section>` : '<p class="muted">Choose a field on the left or a piece of the graphic. Its binding and presentation become editable here.</p>'}<section class="control-section"><h3>The whole card <span>PRESET</span></h3>${input('Design name', 'preset-name', p.name)}<div class="four-inputs two">${input('Card width', 'preset-number', p.width, 'number', 'data-key="width" min="100" max="2000"')}${input('Card height', 'preset-number', p.height, 'number', 'data-key="height" min="100" max="2000"')}</div>${input('Card background', 'preset-color', p.background === 'transparent' ? '#ffffff' : p.background, 'color', 'data-key="background"')}${check('Transparent card background', 'preset-transparent', p.background === 'transparent')}${input('Default text', 'preset-color', p.foreground, 'color', 'data-key="foreground"')}${input('Accent', 'preset-color', p.accent, 'color', 'data-key="accent"')}${input('Card corner radius', 'preset-number', p.radius, 'number', 'data-key="radius" min="0" max="100"')}</section><section class="control-section"><h3>State treatments <span>REUSABLE</span></h3><label class="control"><span>Highlight</span>${select('preset-highlight', p.highlight, [['ring', 'Accent ring'], ['stripe', 'Accent stripe']])}</label><label class="control"><span>Score-change preview</span>${select('preset-motion', p.scoreMotion, [['pulse', 'Small pulse'], ['none', 'No animation']])}</label>${input('Motion duration (ms)', 'preset-number', p.duration, 'number', 'data-key="duration" min="100" max="1500"')}<p class="tiny muted">Motion respects reduced-motion preferences. Exports are static states.</p></section></aside>`;
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & COMPOSE</span><span class="live-tag">LIVE</span></div><h2>${esc(n ? field?.label || 'Presentation element' : 'Select a component')}</h2>${n ? `<p class="binding-path mono">${esc(n.binding || 'Static text')}</p><section class="control-section"><label class="control"><span>Bind to domain material</span>${select('node-binding', n.binding, [['', 'Static text'], ...result.fields.filter(f => (n.kind === 'image') === (f.type === 'image')).map(f => [f.path, `${f.group} · ${f.label}`])])}</label>${!n.binding ? input('Static text', 'node-text', n.text || '') : `<div class="value-box"><span class="eyebrow">CURRENT VALUE</span><strong>${n.kind === 'image' ? field?.available ? 'Your exact photo' : 'Labelled sample artwork' : esc(field?.value == null ? 'Not entered' : String(field.value))}</strong></div>`}<div class="four-inputs two">${[['X', 'x'], ['Y', 'y'], ['Width', 'w'], ['Height', 'h']].map(([label, key]) => input(label, 'node-number', n[key], 'number', `data-key="${key}" step="1"`)).join('')}</div>${n.kind === 'text' ? `${input('Type size (px)', 'node-number', n.size, 'number', 'data-key="size" min="4" max="200"')}<label class="control"><span>Typeface</span>${select('node-font', n.font || 'sans', [['sans', 'Clean sans'], ['serif', 'Editorial serif'], ['mono', 'Monospace']])}</label><label class="control"><span>Alignment</span>${select('node-align', n.align, [['left', 'Left'], ['center', 'Center'], ['right', 'Right']])}</label>${input('Text color', 'node-color', n.color || p.foreground, 'color')}${check('Bold', 'node-bold', n.bold)}${check('Show field label', 'node-showLabel', n.showLabel)}${check('Hide when empty', 'node-hideEmpty', n.hideEmpty)}${input('Prefix', 'node-prefix', n.prefix || '')}${input('Suffix', 'node-suffix', n.suffix || '')}` : `<label class="control"><span>Image fit</span>${select('node-fit', n.fit || 'contain', [['contain', 'Contain · preserve all'], ['cover', 'Cover · crop to frame']])}</label>${input('Corner radius', 'node-number', n.radius || 0, 'number', 'data-key="radius" min="0"')}`}${check('Visible in presentation', 'node-visible', n.visible)}<div class="button-row">${button('Move back', 'node-move', { value: -1 }, 'quiet small')}${button('Move front', 'node-move', { value: 1 }, 'quiet small')}</div><div class="button-row">${button('Duplicate element', 'node-duplicate', {}, 'quiet small')}${button('Remove', 'node-remove', {}, 'quiet danger small')}</div></section>` : '<p class="muted">Choose a field on the left or a piece of the graphic. Its binding and presentation become editable here.</p>'}<section class="control-section"><h3>The whole card <span>PRESET</span></h3>${input('Design name', 'preset-name', p.name)}<div class="four-inputs two">${input('Card width', 'preset-number', p.width, 'number', 'data-key="width" min="100" max="2000"')}${input('Card height', 'preset-number', p.height, 'number', 'data-key="height" min="100" max="2000"')}</div>${input('Card background', 'preset-color', p.background === 'transparent' ? '#ffffff' : p.background, 'color', 'data-key="background"')}${check('Transparent card background', 'preset-transparent', p.background === 'transparent')}${input('Default text', 'preset-color', p.foreground, 'color', 'data-key="foreground"')}${input('Accent', 'preset-color', p.accent, 'color', 'data-key="accent"')}${input('Card corner radius', 'preset-number', p.radius, 'number', 'data-key="radius" min="0" max="100"')}${button('Cards ↗', 'go-cards', {}, 'wide secondary small')}<p class="tiny muted">Background, text, accent, font, radius and sponsor cascade global → projection → instance across shelf, bag, single and competition.</p></section><section class="control-section"><h3>State treatments <span>REUSABLE</span></h3><label class="control"><span>Highlight</span>${select('preset-highlight', p.highlight, [['ring', 'Accent ring'], ['stripe', 'Accent stripe']])}</label><label class="control"><span>Score-change preview</span>${select('preset-motion', p.scoreMotion, [['pulse', 'Small pulse'], ['none', 'No animation']])}</label>${input('Motion duration (ms)', 'preset-number', p.duration, 'number', 'data-key="duration" min="100" max="1500"')}<p class="tiny muted">Motion respects reduced-motion preferences. Exports are static states.</p></section></aside>`;
 }
 function competitionSidebar() {
   const comp = get(w(), 'Competition', ui.competitionId);
@@ -147,6 +174,52 @@ function competitionCenter(result) {
 function competitionInspector() {
   const comp = get(w(), 'Competition', ui.competitionId);
   return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPETITION OBJECTS</span><h2>Teams & bags</h2>${input('Competition name', 'competition-name', comp.name)}${comp.teamIds.map(key => { const team = get(w(), 'Team', key); return `<section class="control-section">${input('Team name', 'team-name', team?.name, 'text', `data-id="${esc(key)}"`)}<label class="control"><span>Referenced bag</span>${select('team-bag', team?.bagId, all(w(), 'Bag').map(b => [b.id, b.name]), `data-id="${esc(key)}"`)}</label>${button('Edit this bag ↗', 'team-bag-open', { id: team?.bagId }, 'wide quiet')}</section>`; }).join('')}${button('Use these discs OnTheCourse ↗', 'competition-course', {}, 'wide primary')}<p class="tiny muted">Adds the team bags’ physical discs to your current comparison. It does not infer points or replace authored states.</p><div class="subtle-box"><span class="eyebrow">LOCAL INSTRUMENTATION</span><p>${w().events.length} recorded edits<br>${w().exports.length} actual PNG exports<br>${all(w(), 'Throw').length} recorded throws</p>${button('Export local activity ↓', 'activity-export', {}, 'quiet small')}<p class="tiny muted">Nothing is transmitted. Sample objects are not usage, sales, reach or performance evidence.</p></div></aside>`;
+}
+function cardsSidebar() {
+  const global = w().cards.global, projectionCount = runtime.cards.projections.length;
+  return `<aside class="sidebar cards-sidebar" data-scroll="cards"><div class="sidebar-heading"><div><span class="eyebrow">GLOBAL DEFAULTS</span><h2>All cards</h2></div></div><p class="tiny muted">The root of the cascade. Every projection inherits these six tokens unless it overrides one.</p>${CARD_TOKENS.map(token => {
+    const inherits = runtime.cards.query('inherits', { token }), count = Object.values(inherits.projections).filter(Boolean).length;
+    return `<div class="cascade-token-row">${tokenControl(token, global[token], { layer: 'global' })}<p class="tiny muted">inherited by ${count} of ${projectionCount} projections</p></div>`;
+  }).join('')}</aside>`;
+}
+function cardPreviewTile(p, card) {
+  const preset = runtime.cards.presetFor(p), selected = ui.cardsProjection === p, provenance = runtime.cards.query('provenance', { projection: p, discId: ui.discId });
+  const chips = provenance ? `<div class="provenance-chips">${CARD_TOKENS.map(token => `<span class="chip chip-${esc(provenance[token])}">${esc(token)} · ${esc(provenance[token])}</span>`).join('')}</div>` : '';
+  return `<button class="card-preview-tile ${selected ? 'selected' : ''}" data-action="cascade-tab" data-value="${esc(p)}" data-projection-preview="${esc(p)}" data-changed="${card.changed ? 'true' : 'false'}"><div class="card-preview-head"><span class="eyebrow">${esc(p.toUpperCase())}</span>${card.changed ? '<span class="changed-marker">recomposed</span>' : ''}</div><div class="card-preview-art">${card.svg}</div><div class="card-preview-foot"><span class="tiny muted mono">${esc(preset)}</span></div>${chips}</button>`;
+}
+function cardsProjectionEditor() {
+  const p = ui.cardsProjection, proj = w().cards.projections[p] || {}, global = w().cards.global;
+  return `<section class="control-section cards-projection-editor"><h3>Projection layer <span>${esc(p.toUpperCase())}</span></h3>${CARD_TOKENS.map(token => {
+    const overridden = Object.hasOwn(proj, token), value = overridden ? proj[token] : global[token];
+    return `<div class="cascade-token-row">${tokenControl(token, value, { layer: 'projection', projection: p })}<div class="token-meta"><span class="tiny ${overridden ? 'provenance-here' : 'muted'}">${overridden ? 'overridden here' : 'inherited from global'}</span>${overridden ? cascadeResetButton({ layer: 'projection', projection: p }, token) : ''}</div></div>`;
+  }).join('')}</section>`;
+}
+function cardsCenter(result) {
+  const projections = runtime.cards.projections;
+  return `<section class="center cards-center" data-scroll="cards-center"><div class="section-heading"><div><span class="eyebrow">CASCADE · GLOBAL → PROJECTION → INSTANCE</span><h1>Card cascade.</h1><p>Change a token once. Watch which of the four surfaces actually recompose.</p></div></div><div class="segmented cards-tabs">${projections.map(p => button(p, 'cascade-tab', { value: p }, ui.cardsProjection === p ? 'active' : '')).join('')}</div><div class="cards-preview-grid">${projections.map(p => cardPreviewTile(p, result.cards[p])).join('')}</div>${cardsProjectionEditor()}</section>`;
+}
+function cardsCascadeReceipt() {
+  const c = ui.lastCascade;
+  if (!c || !c.result) return '<p class="tiny mono cascade-receipt">No cascade edit made yet this session.</p>';
+  const { edit, result } = c, changed = Object.entries(result.cards).filter(([, card]) => card.changed).map(([p]) => p);
+  return `<p class="tiny mono cascade-receipt">${esc(edit.layer)}.${esc(edit.token)} -> ${esc(String(edit.value))} recomposed: ${esc(changed.join(', ') || 'none')}</p>`;
+}
+function cardsFindingsStrip() {
+  let rows; try { rows = runtime.select('proposal.cards.'); } catch (error) { return `<div class="findings-strip"><h3 class="eyebrow">FINDINGS</h3><p class="tiny muted">${esc(error.message)}</p></div>`; }
+  const isFriction = r => r.value && (r.value.kind === 'friction' || r.value.for);
+  const strengths = rows.filter(r => !isFriction(r)), frictions = rows.filter(isFriction);
+  const line = r => `<p class="tiny finding-row"><span class="mono">${esc(r.address)}</span> ${esc(r.value?.text ?? r.value?.summary ?? (typeof r.value === 'string' ? r.value : JSON.stringify(r.value)))}${r.value?.for ? ` <span class="finding-for">for ${esc(r.value.for)}</span>` : ''}${r.value?.workaround ? `<br><span class="finding-workaround">Workaround: ${esc(r.value.workaround)}</span>` : ''}</p>`;
+  return `<div class="findings-strip"><h3 class="eyebrow">FINDINGS · px.discstudio.cards</h3>${rows.length ? '' : '<p class="tiny muted">No findings published.</p>'}${strengths.length ? `<div class="findings-group"><span class="tiny caps muted">Strengths</span>${strengths.map(line).join('')}</div>` : ''}${frictions.length ? `<div class="findings-group"><span class="tiny caps muted">Frictions</span>${frictions.map(line).join('')}</div>` : ''}</div>`;
+}
+function cardsInspector() {
+  const p = ui.cardsProjection, discId = ui.discId;
+  const instance = (w().cards.instances[p] || {})[discId] || {}, proj = w().cards.projections[p] || {}, global = w().cards.global;
+  const provenance = runtime.cards.query('provenance', { projection: p, discId }) || {};
+  return `<aside class="inspector cards-inspector" data-scroll="cards-inspector"><div class="inspector-title"><span class="eyebrow">SELECTED CARD</span><span class="live-tag">LIVE · PxC</span></div><h2>Instance</h2><label class="control"><span>Disc</span>${select('cascade-disc', discId, all(w(), 'Disc').map(d => [d.id, d.nickname]))}</label><section class="control-section"><h3>Instance layer <span>${esc(p.toUpperCase())} · ${esc(discId)}</span></h3>${CARD_TOKENS.map(token => {
+    const overridden = Object.hasOwn(instance, token), value = overridden ? instance[token] : (Object.hasOwn(proj, token) ? proj[token] : global[token]);
+    const layer = provenance[token] || (overridden ? 'instance' : (Object.hasOwn(proj, token) ? 'projection' : 'global')), label = layer === 'instance' ? 'here' : layer;
+    return `<div class="cascade-token-row">${tokenControl(token, value, { layer: 'instance', projection: p, disc: discId })}<div class="token-meta"><span class="tiny ${layer === 'instance' ? 'provenance-here' : 'muted'}">${esc(label)}</span>${overridden ? cascadeResetButton({ layer: 'instance', projection: p, disc: discId }, token) : ''}</div></div>`;
+  }).join('')}</section>${cardsCascadeReceipt()}<div class="undo-row">${button('↶ Undo last change', 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p>${cardsFindingsStrip()}</aside>`;
 }
 function summaryValue(value) { return JSON.stringify(value, (key, v) => key === 'signature' ? '[full input signature retained in PxC; omitted here]' : typeof v === 'string' && v.startsWith('data:image/') ? `[embedded photo: ${v.length} characters]` : key === 'svg' && typeof v === 'string' && v.length > 1000 ? `${v.slice(0, 600)}… [${v.length} characters, full value in Part]` : v, 2); }
 /**
@@ -185,10 +258,16 @@ function render() {
       body = `${shelfSidebar()}${courseCenter(ui.lastResult)}${courseInspector()}`;
     } else if (ui.route === 'components') {
       let result;
-      if (ui.component === 'DiscComp') result = { ...runtime.scene({ mode: 'battle', ...context() }), fields: runtime.card(ui.discId, ui.presetId, context(), previewEntry()).fields };
-      else result = runtime.card(ui.discId, ui.presetId, context(), previewEntry());
+      if (ui.component === 'DiscComp') result = { ...runtime.scene({ mode: 'battle', ...context() }), fields: runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single').fields };
+      else result = runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single');
       ui.lastResult = result;
       body = `${componentSidebar(result)}${editorCenter(result)}${nodeInspector(result)}`;
+    } else if (ui.route === 'cards') {
+      if (!runtime.cards.projections.includes(ui.cardsProjection)) ui.cardsProjection = 'single';
+      const result = runtime.cards.recompose(ui.discId, context());
+      if (ui.lastCascade && !ui.lastCascade.result) ui.lastCascade.result = result; // the one recompose this edit gets to be measured against
+      ui.lastResult = result;
+      body = `${cardsSidebar()}${cardsCenter(result)}${cardsInspector()}`;
     } else {
       ui.lastResult = runtime.constraints(ui.competitionId);
       body = `${competitionSidebar()}${competitionCenter(ui.lastResult)}${competitionInspector()}`;
@@ -248,6 +327,9 @@ async function action(name, el) {
     case 'go-course': navigate('course'); return;
     case 'go-competition': navigate('competition'); return;
     case 'go-editor': ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; navigate('components'); return;
+    case 'go-cards': ui.cardsProjection = 'single'; navigate('cards'); return;
+    case 'cascade-tab': ui.cardsProjection = d.value; break;
+    case 'cascade-reset': cascadeSet(d.layer, d.token, null, d.projection || undefined, d.disc || undefined); break;
     case 'dismiss': ui.message = ''; break;
     case 'save-draft': downloadJson(w(), 'discstudio-draft.json'); message('Draft downloaded with domain objects, photos, presentations and states.'); break;
     case 'save-protected': downloadBlob(new Blob([localStorage.getItem(DATA_KEY) || ''], { type: 'application/json' }), 'discstudio-protected-original.json'); break;
@@ -371,6 +453,8 @@ function controlChange(el) {
     case 'gap': execute({ type: 'layout.set', patch: { gap: number() } }); break;
     case 'edit-preset': ui.presetId = value; ui.component = w().presets[value].kind; ui.nodeId = w().presets[value].nodes[0]?.id; if (w().presets[value].kind === 'DisplayCard') execute({ type: 'layout.set', patch: { presetId: value } }); break;
     case 'editor-disc': ui.discId = value; break;
+    case 'cascade-disc': ui.discId = value; break;
+    case 'cascade-token': cascadeSet(d.layer, d.token, d.token === 'radius' ? number() : value, d.projection || undefined, d.disc || undefined); break;
     case 'extra-type': ui.extraType = value; ui.extraId = all(w(), value)[0]?.id || ''; break;
     case 'extra-id': ui.extraId = value; break;
     case 'node-binding': setNode({ binding: value, context: value.startsWith('entry.') ? 'battle' : null }); break;
@@ -446,5 +530,5 @@ review.setAttribute('data-checklist', JSON.stringify(reviewItems));
 review.setAttribute('checkpoint-id', 'discstudio-pxc-02'); review.setAttribute('subject-commit', 'local-development');
 fetch(new URL('../build-info.json', import.meta.url)).then(r => r.ok ? r.json() : null).then(info => { if (info) { ui.build = info; review.setAttribute('submission-id', `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`); review.setAttribute('checkpoint-id', info.fingerprint); review.setAttribute('subject-commit', info.commit); render(); } }).catch(() => {});
 // Explicit developer inspection/command surface. UI and programmatic commands use the same registered Calculations.
-window.discStudio = { runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode }; } };
+window.discStudio = { runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode }; }, cards: () => ui.lastCascade };
 syncRoute();
