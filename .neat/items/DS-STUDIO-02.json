@@ -55,6 +55,12 @@
       "text": "The composition exports its own pyto-run-record@1 and opens a Tick render",
       "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cExport run record \u2193\u201d, expect a downloaded pyto-run-record@1 the shared validator accepted and the Part px.run.on-the-course (14 Ticks, one invocation per PQL Calculation); press \u201cOpen Tick render \u2197\u201d, expect a saved standalone page that opens over file:// with no server and shows one section per Tick.",
       "verification": "Verified by npm test (tests/core.test.js: the record validates, one Tick per composition Tick, the receipt's material digests reach it, composePage's page round-trips the record and renders one section per Tick), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose new block drives the studio on a real local origin and opens the saved page over file:// with zero network requests. Deployed build: scripts/build.mjs now copies pyto/viewer/ into dist/ because src/app.js and src/runtime.js import it directly; npm run build confirms dist/pyto/viewer/ exists. The deployed page itself has not been opened in a browser. Automated verification only; no human acceptance is recorded."
+    },
+    {
+      "id": "receipts",
+      "text": "The studio reads its own receipts through PQL, and undo is one more Calculation on the record",
+      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cInspect PxC \u2197\u201d and read the Receipts section, expect one row per px.receipt.* Part with its name, consumes, produces and result digest; on the Shelf, press \u201c\u21b6 Undo last change\u201d, expect the exact previous workspace back and a studio-undo row in that same list.",
+      "verification": "Verified by npm test (tests/core.test.js: `into` may be an array and both Parts are published or neither is, the px.receipt.* prefix query is answered sorted, the Receipts rows and summary are the two Parts one Calculation publishes, push/pop restores the exact previous value, a pop on an empty stack is a recorded no-op, and the run record carries the undo invocations), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose eleventh check drives the Undo button and compares the rendered rows against px.receipt.* in the store. scripts/review_checkpoint.mjs pins the count at 11. Automated verification only; no human acceptance is recorded."
     }
   ],
   "dependencies": [],
@@ -66,6 +72,12 @@
       "id": "astra-discstudio-1",
       "summary": "Ported painter disc-art Calculation and deterministic shelf-sheet Calculation are available for review.",
       "verification": "npm test and build passed in the integration workspace; embedded browser verification could not start because Playwright is unavailable in the runtime.",
+      "acceptance": null
+    },
+    {
+      "id": "exp-42-whole-record",
+      "summary": "Several `into` per Calculation and a px.receipt.* prefix query in the PQL grammar; a Receipts section on Inspect built from them; px.undo.<scope> with fn.undo.push/pop/settle and an Undo button on the Shelf card.",
+      "verification": "npm test, node --test pyto/viewer/test/*.test.mjs and scripts/browser_test.py --embedded all pass; the browser checks are now 11 and scripts/review_checkpoint.mjs pins that count.",
       "acceptance": null
     }
   ],

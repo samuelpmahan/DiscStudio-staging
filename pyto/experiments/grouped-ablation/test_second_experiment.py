@@ -822,41 +822,64 @@ class CompareLocalReadsEveryProduce(unittest.TestCase):
         self.assertEqual(compare_local.consumers_of(self.program, "fn:report"), [])
 
 
-class PqlDocumentRefusesSeveralProduces(unittest.TestCase):
-    """The readPql grammar has one `into` string per Calculation, so it must refuse."""
+class PqlDocumentEmitsSeveralProduces(unittest.TestCase):
+    """The readPql grammar now takes an array of `into` addresses, so it must emit."""
 
-    def test_a_multi_produce_invocation_is_refused_naming_it_and_its_addresses(self):
-        """Guards the `isinstance(into, (list, tuple))` refusal in
-        `pql_document.to_pql_document` (the check that was
-        `if not isinstance(into, str) or not into`, pql_document.py:86).
+    def test_a_multi_produce_invocation_is_emitted_with_every_address_it_declared(self):
+        """Guards the `isinstance(into, (list, tuple))` branch in
+        `pql_document.to_pql_document`, which used to raise there (task 30) and now
+        carries the array through.
 
-        src/core/exec.js:46 reads `into` with `text(...)` -- a nonempty string --
-        and invokePql writes exactly that one address (`pxc.set(calculation.into,
-        output)`, exec.js:58), so several produces have no representation in the
-        document and are refused here rather than emitted.
+        src/core/exec.js reads `into` with `produces(...)` -- a nonempty string or a
+        non-empty array of distinct addresses (exec.js:50-57, :84) -- and invokePql
+        publishes one Part per declared address from one pass (exec.js:98-100), so
+        the two addresses `stats` declares have a representation and both are
+        written. The refusal this replaces said the opposite; what it was really
+        guarding is that nothing is chosen and nothing is dropped, which is what is
+        asserted here.
 
-        Mutation: delete the list branch -- the old `isinstance(into, str)` check
-        refuses too, but the message says "has no 'into'" of an invocation that
-        declares two, and a `tuple` `into` would slip through a check written as
-        `isinstance(into, list)` only. Emit `into=addresses[0]` instead -- the
-        document claims `stats` publishes one Part and the second is lost silently.
+        Mutation: emit `into=addresses[0]` -- the document claims `stats` publishes
+        one Part and the second is lost silently. Emit `sorted(addresses)` -- the
+        declared order is what invokePql spreads an array output across
+        (exec.js:66-69), so a positional output would land on the wrong addresses.
+        Restore the raise -- the invocation has no document at all.
         """
         program = multi_program()
         program["ticks"] = program["ticks"][:1]  # the multi-produce invocation alone, px: bound
-        with self.assertRaises(pql_document.PqlDocumentError) as caught:
-            pql_document.to_pql_document(program)
-        message = str(caught.exception)
-        self.assertIn("Prepare.stats", message)
-        for address in MULTI_PRODUCES:
-            self.assertIn(address, message)
-        self.assertIn("exec.js:46", message)
-        self.assertNotIn("has no 'into'", message)
-        accepted, why = pql_document.can_render(program)
-        self.assertFalse(accepted)
-        self.assertEqual(why, message)
+        document = pql_document.to_pql_document(program)
+        calculation = document["Ticks"][0]["Calculations"][0]
+        self.assertEqual(calculation["into"], MULTI_PRODUCES)
+        self.assertEqual(calculation["call"], "fn.multi.stats")
+        self.assertEqual(calculation["with"], {"rows": "scratch.multi.rows"})
+        self.assertEqual(sorted(calculation), ["args", "call", "into", "with"])
+        self.assertEqual(pql_document.can_render(program), (True, None))
+
+    def test_a_malformed_array_into_is_still_refused_naming_the_invocation(self):
+        """An array is a shape, not a licence: empty, repeated or non-string addresses
+        have no representation either (exec.js:50-54).
+
+        Mutation: accept the list as it comes -- readPql then refuses the document
+        node-side, which is exactly the "fails later" this module exists to prevent.
+        """
+        for into, expected in (
+            ([], "empty 'into'"),
+            (list(MULTI_PRODUCES) + [MULTI_PRODUCES[0]], "twice in 'into'"),
+            ([MULTI_PRODUCES[0], 3], "nonempty string"),
+        ):
+            program = multi_program()
+            program["ticks"] = program["ticks"][:1]
+            program["ticks"][0]["calculations"][0]["into"] = into
+            with self.assertRaises(pql_document.PqlDocumentError) as caught:
+                pql_document.to_pql_document(program)
+            message = str(caught.exception)
+            self.assertIn("Prepare.stats", message)
+            self.assertIn(expected, message)
+            accepted, why = pql_document.can_render(program)
+            self.assertFalse(accepted)
+            self.assertEqual(why, message)
 
     def test_a_one_address_invocation_still_renders(self):
-        """The refusal is by the SHAPE of `into`, so a plain string is untouched."""
+        """The array branch is by the SHAPE of `into`, so a plain string is untouched."""
         program = multi_program()
         program["ticks"][0]["calculations"][0]["into"] = "scratch.multi.mean"
         program["ticks"] = program["ticks"][:1]
