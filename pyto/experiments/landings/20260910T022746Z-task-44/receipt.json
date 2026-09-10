@@ -1,0 +1,68 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T022746Z-task-44",
+  "package": "task-44",
+  "base_sha": "10bb4fa9b0c2a32fddbcb94a0cf27eb1e28675b9",
+  "result": "verified",
+  "verifier": {
+    "command": "python3 -c \"import yaml,sys; yaml.safe_load(open('.github/workflows/check_all.yml')); print('yaml ok')\"",
+    "exit": 0,
+    "output_sha256": "9cd3a8a179dfd3e574e29521101f0a8c0eb19088b469a84e79e80ace7f9b7fb1"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "8c16389bb35dcccf68cbaf537d5ee1a9c69f9530e4407fa1046b28981b39e8b3",
+    "counts": {
+      "library": 193,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 248,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 14,
+      "experiments/tick-laws": 10,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 107,
+      "viewer-record-schema": 24
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": ".github/workflows/check_all.yml",
+      "bytes": 2161,
+      "sha256": "80e256069cb3ffee855e0fbfbe3ca67385e1bb6dfec6946a26b07f23b08d4c9d"
+    },
+    {
+      "path": "pyto/LANDING.md",
+      "bytes": 11521,
+      "sha256": "51e711988305914a04a71f22a338608276a5a756a49df1285b4487b828782f81"
+    },
+    {
+      "path": "pyto/experiments/tasks/44/HANDOFF.md",
+      "bytes": 6004,
+      "sha256": "ea192eeba1cee46e3c1e2b1adac4371e2ce0d713fad4c6c298f1737de7d7f073"
+    },
+    {
+      "path": "pyto/experiments/tasks/44/evidence/check_all.txt",
+      "bytes": 137998,
+      "sha256": "5e2b6af580b8d41ffac6de4bc35898157cd2de29c17f383660d9e9e9e46bbc74"
+    },
+    {
+      "path": "pyto/experiments/tasks/44/evidence/verify.txt",
+      "bytes": 8,
+      "sha256": "9cd3a8a179dfd3e574e29521101f0a8c0eb19088b469a84e79e80ace7f9b7fb1"
+    },
+    {
+      "path": "pyto/experiments/tasks/44/packet.md",
+      "bytes": 1870,
+      "sha256": "bb940bab4326bbffdd47726f01f185fe93837d478503bb4d7b5b2003ecf3fb91"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T02:28:24.186063Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
