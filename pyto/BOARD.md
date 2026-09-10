@@ -59,6 +59,7 @@ not write this rule and can veto it in a sentence.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 01:15 **started** `task-30`: every reader handles several produces: compare_local.py and pql_document.py in grouped-ablation stop assuming one into per invocation; tests for both (copy EXP/30; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 01:14 **started** `task-29`: students: Mean and Median run in one Tick as parallel branches (the default under WhatIsATick), the hand-off says the honest reason (a receipt is per Calculation; a Tick is a step), evidence regenerated, and tick_laws shows the first Tick where work exceeds latency (copy EXP/29; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 01:09 **landed** `task-28`: neat pack refuses with a sentence when the packet has no Verify line instead of exiting silently; land.sh runs the verifier and the suite with the repository's venv first on PATH so a bare python3 in a Verify line means the same thing in a copy and on MAIN (8 files since f2954cc, suites green, receipt 20260910T010844Z-task-28)
 - 2026-09-10 01:06 **started** `task-28`: neat pack refuses with a sentence when the packet has no Verify line instead of exiting silently; land.sh runs the verifier and the suite with the repository's venv first on PATH so a bare python3 in a Verify line means the same thing in a copy and on MAIN (copy EXP/28; it lands only on green, with a receipt, or is killed)
