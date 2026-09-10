@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import sys
+from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Generic, Iterator, TypeVar
 
 T = TypeVar("T")
 Args = TypeVar("Args")
@@ -42,9 +44,69 @@ RECEIPT_PREFIX = "px.receipt."
 
 Addresses under it are written by ``PCR.run(..., observe=True)`` only
 (``pcr.py:receipt_address``); a Calculation may not bind one as its ``into``
-(``pcr.py:_refuse_receipt_into``). ``PxC`` itself still stores any address: this is
-the name the binder checks against, not a rule ``set`` enforces.
+(``pcr.py:_refuse_receipt_into``), and since task 41 ``PxC.set`` refuses one too
+unless the write is the run's own (``_receipt_write_is_the_run_s``).
 """
+
+RUN_MODULE = "pyto.pcr"
+"""The one module whose ``PxC.set`` calls may write under ``RECEIPT_PREFIX``.
+
+``pcr.py`` is another team's file and is not edited for this guard, so the guard
+recognises the run by the module the calling frame belongs to rather than by an
+argument ``pcr.py`` does not pass yet.
+"""
+
+_receipt_writes_open = 0
+
+
+@contextmanager
+def receipt_writes_allowed() -> Iterator[None]:
+    """Open ``px.receipt.`` to ``PxC.set`` for the duration of the block.
+
+    The explicit form of the guard's exception, for a caller that files receipts
+    without living in :data:`RUN_MODULE` -- a future ``pcr.py`` that would rather
+    say so than be recognised by its frame, a replayer rebuilding a store from a
+    record, a test. Re-entrant, single-threaded, and restored on the way out even
+    when the block raises.
+    """
+    global _receipt_writes_open
+    _receipt_writes_open += 1
+    try:
+        yield
+    finally:
+        _receipt_writes_open -= 1
+
+
+def _receipt_write_is_the_run_s(depth: int) -> bool:
+    """True when the ``PxC.set`` ``depth`` frames up is the run filing its own receipt.
+
+    The rule, chosen for being deterministic and needing no edit to ``pcr.py``:
+    a write under ``px.receipt.`` is the run's when it is inside an open
+    :func:`receipt_writes_allowed` block, or when the frame that called
+    ``PxC.set`` belongs to :data:`RUN_MODULE`.  Nothing about timing, ordering or
+    the value is consulted, so the answer is a pure function of who is calling.
+
+    A caller with no Python frame at ``depth`` (an interpreter without frame
+    support) is not the run: the guard refuses rather than guesses.
+    """
+    if _receipt_writes_open:
+        return True
+    try:
+        frame = sys._getframe(depth)
+    except ValueError:  # pragma: no cover - no caller frame to inspect
+        return False
+    return frame.f_globals.get("__name__") == RUN_MODULE
+
+
+def _refuse_forged_receipt(address: str) -> None:
+    # 0 _receipt_write_is_the_run_s, 1 here, 2 PxC.set, 3 whoever called set.
+    if _receipt_write_is_the_run_s(3):
+        return
+    raise ValueError(
+        f"PxC: '{address}' is under the reserved '{RECEIPT_PREFIX}' segment, which "
+        f"only a run may write ({RUN_MODULE}, or inside receipt_writes_allowed(), "
+        "or set(..., _from_run=True))"
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,8 +131,18 @@ class PxC:
             raise KeyError(f"PxC: Part '{address}' has not been produced")
         return self._values[address]
 
-    def set(self, part: Part[T] | str, value: T) -> PxWrite:
+    def set(self, part: Part[T] | str, value: T, *, _from_run: bool = False) -> PxWrite:
+        """Store ``value`` at ``part``'s address.
+
+        ``_from_run`` is the run's marker: ``PcrRun``'s observe branch passes it
+        when it files a receipt.  Without it a write under ``RECEIPT_PREFIX`` is
+        refused unless :func:`_receipt_write_is_the_run_s` recognises the caller,
+        so the reserved segment is reserved against callers and not only against
+        programs (``experiments/tasks/22/packet.md`` ``{?} ReceiptStoreSetUnguarded``).
+        """
         address = self._address(part)
+        if address.startswith(RECEIPT_PREFIX) and not _from_run:
+            _refuse_forged_receipt(address)
         kind = "replacement" if address in self._values else "new-address"
         self._values[address] = value
         return PxWrite(address, kind)
