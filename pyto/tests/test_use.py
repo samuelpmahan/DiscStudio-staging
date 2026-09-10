@@ -113,7 +113,14 @@ def run_block(source: str) -> tuple[int, bytes, bytes]:
             env=environment,
             timeout=300,
         )
-    return completed.returncode, completed.stdout, completed.stderr
+    out = completed.stdout
+    if os.name == "nt":
+        # A text-mode stdout on Windows writes every "\n" the block prints as "\r\n".
+        # That translation is the platform's, not the block's, and USE.md's text
+        # blocks are LF, so it is undone here and nowhere else; the comparison below
+        # is still byte for byte against what the document says.
+        out = out.replace(b"\r\n", b"\n")
+    return completed.returncode, out, completed.stderr
 
 
 BLOCKS = parse_blocks(read_use_md())
