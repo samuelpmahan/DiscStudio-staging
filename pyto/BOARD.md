@@ -68,6 +68,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 02:22 **started** `task-40`: parallel you can see: the Tick viewer draws a Tick's Calculations side by side when they are parallel branches, prints the Tick's work and latency and the run's critical path, shows placement when the record carries it, and tick_laws names Ticks; the students record is the demo page (copy EXP/40; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 02:22 **started** `task-39`: parallel for real and budgets: PcrRun runs the Calculations inside a Tick concurrently when the node law holds, records placement per invocation, refuses a sibling result ref at bind time; a run takes a time budget and stops at a Tick boundary with the record saying where; testimony byte-identical serial versus parallel (copy EXP/39; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 02:22 **sprint** 2026-09-10 02:20 UTC on branch claude/os-sprint-st8hnu: the owner's call: build the most capable OS possible in 2h35m, push at least every ten minutes, explainability off, testable determinism is the guide, Opus-led teams with Sonnet lanes, the frontier merged and parallelized. The KT branch is untouched.
 - 2026-09-10 02:11 **landed** `task-38`: KT-MAC: chunk 3 notes that questions.sh prints a harmless BrokenPipe traceback after head; chunks 2 and 3 were dry-run as written (6 files since c805dea, suites green, receipt 20260910T021122Z-task-38)
