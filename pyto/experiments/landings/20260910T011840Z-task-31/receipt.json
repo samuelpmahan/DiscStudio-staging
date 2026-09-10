@@ -1,0 +1,73 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T011840Z-task-31",
+  "package": "task-31",
+  "base_sha": "35172f8a59efd610d94dcee724aaea39bdf809c0",
+  "result": "verified",
+  "verifier": {
+    "command": "python3 pyto/scripts/board_page.py pyto/BOARD.md > /tmp/board-check.html && python3 -c \"import re,sys;s=open('/tmp/board-check.html').read();bad=[t for t in ['section','details','ul','li','p','pre'] if len(re.findall('<'+t+'[ >]',s))!=len(re.findall('</'+t+'>',s))];sys.exit(1 if bad or 'class=\\\"row' not in s else 0)\"",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "af473a471c1cfe7e1f72059adabf27c7a41e588d0b42cb14be0470f403cb9204",
+    "counts": {
+      "library": 193,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 244,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 10,
+      "experiments/tick-laws": 10,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 107,
+      "viewer-record-schema": 24
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/LANDING.md",
+      "bytes": 9762,
+      "sha256": "4bf151bdb42f12a43d6b99a18e1b35310b6834365bb6767970efcfa1d0aeae16"
+    },
+    {
+      "path": "pyto/experiments/tasks/31/HANDOFF.md",
+      "bytes": 6216,
+      "sha256": "a426736288cc1047c02034bbd8b98bcbc9571dbf6edafd3ddb1f638effc91523"
+    },
+    {
+      "path": "pyto/experiments/tasks/31/evidence/check_all.txt",
+      "bytes": 135934,
+      "sha256": "6ff860642ecc96e4f039f08464dc948de4033fe4ebc4b9a3341f53b2789c0e54"
+    },
+    {
+      "path": "pyto/experiments/tasks/31/evidence/verify.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/31/packet.md",
+      "bytes": 2276,
+      "sha256": "21842f37180c03f67932e5834cd369ec907f79f1200a498d590aac79e08683f7"
+    },
+    {
+      "path": "pyto/scripts/board_page.py",
+      "bytes": 11211,
+      "sha256": "98b53297a176e4f0cf91fceea1b6e734a0dd4586c307510194fe87b02b37d33f"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 42733,
+      "sha256": "f01ee94d890c989cd8a2b356b9183abc6fc19c2cee749c40d7544568a28e1b3e"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-10T01:19:19.647314Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
