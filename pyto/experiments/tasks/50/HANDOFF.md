@@ -1,13 +1,63 @@
-# Task 50
+# Task 50: effects you can see and the sprint on the one page: the Tick viewer shows an invocation's effects (kind, path, digest) when the record carries them and draws oc Calculations distinctly; the students demo page is regenerated with the side-by-side renderer; KT-MAC gains the px shell in chunk 3 and a classroom chunk 7; FRONTIER records the sprint's landed adds
 
-Intent: effects you can see and the sprint on the one page: the Tick viewer shows an invocation's effects (kind, path, digest) when the record carries them and draws oc Calculations distinctly; the students demo page is regenerated with the side-by-side renderer; KT-MAC gains the px shell in chunk 3 and a classroom chunk 7; FRONTIER records the sprint's landed adds
-Starting point: defc5b93a8623c6c418d2abc71d867b9848e98f2 (land(task-47): neat never reuses an id: next_id also counts the landing receipts (task-N, undo-task-N, failed), so an undone or killed task's number is not handed out again; selftest proves it)
-Verify: cd pyto && node --test viewer/test/*.test.mjs && cd experiments/students && python3 -m unittest discover -s . -p 'test_*.py' && python3 grade.py --run evidence/run-1 --handoff HANDOFF.md
-Allow: pyto/viewer/tick-viewer.html pyto/viewer/tick-viewer.js pyto/viewer/test pyto/viewer/fixtures/effects-demo.json pyto/experiments/students/evidence pyto/experiments/students/README.md pyto/KT-MAC.md pyto/FRONTIER.md pyto/CHANGES.md pyto/experiments/tasks
-Candidate: 10 files, see below
-Evidence: suite exit 0, see below
+You are a fresh agent. Everything you need is on this page and in the files it names. The
+conversation that produced this task is not needed and you will not see it.
 
-## Candidate
+## Stop here first (the owner's rule)
+
+Read this page, `pyto/BOARD.md`, and the packet. No fourth file yet. Then write the one question
+you would answer by reading another hundred thousand tokens of code, and ask the owner instead.
+His answer is worth more than the reading: the last session that read everything first was
+confidently wrong about half of it, and one sentence from him undid each wrong half. The answer
+goes on `pyto/questions.md` verbatim, as `{?} Label: ...` with his words, so the next agent starts
+one stupid question deeper. Only then read further and do the work below.
+
+## Get the code (once)
+
+```
+git clone -b claude/os-sprint-st8hnu https://github.com/samuelpmahan/DiscStudio-staging DiscStudio-staging     # or: cd into the clone you have
+cd DiscStudio-staging
+git fetch origin exp/50
+python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
+git show origin/exp/50:pyto/experiments/tasks/50/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
+git diff bc70a0c origin/exp/50 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+```
+
+## Why this repository is worth twenty minutes
+
+pyto is a Python transfer of a design the owner proved three times in JavaScript and TypeScript
+(ChainSpot, ChessLab, EmbodiedWumpusWorld): a store of named values (PxC), pure functions over them
+(Calculations), and a program that names which functions run in which order (a PCR, made of Ticks).
+Every run leaves receipts: what each function read and wrote, how long it took, and a digest of its
+source. From receipts you get three things for free: a cache (same inputs and digest, skip the call,
+also across processes), a replay that verifies a shipped record in a fresh process, and a per-Tick
+view of what the algorithm used. The founding need is the last one: the owner's course-map parser
+had to fit five seconds on a phone, and nothing it used was visible. pyto is the workshop where that
+visibility is designed before it is stripped for speed. JavaScript is first class; Python is where
+the design is checked.
+
+Do not take that from this page. In two minutes:
+
+```
+bash pyto/scripts/check_all.sh                                        # nine suites, ~600 tests
+python pyto/experiments/grouped-ablation/run_cached.py --out /tmp/hit  # a miss, then two hits, one from a fresh process
+node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /tmp/hit/ticks.html
+```
+
+The tests were checked by mutation (each guards a specific line). The fixtures for the JavaScript
+port are 440 byte-exact cases. `pyto/questions.md` is where anyone unsure writes `{?} Label: ...`
+and the owner answers; read it before assuming. `pyto/BOARD.md` is the owner's one page.
+
+## What was asked
+
+effects you can see and the sprint on the one page: the Tick viewer shows an invocation's effects (kind, path, digest) when the record carries them and draws oc Calculations distinctly; the students demo page is regenerated with the side-by-side renderer; KT-MAC gains the px shell in chunk 3 and a classroom chunk 7; FRONTIER records the sprint's landed adds
+
+## Starting point
+
+defc5b93a8623c6c418d2abc71d867b9848e98f2 (land(task-47): neat never reuses an id: next_id also counts the landing receipts (task-N, undo-task-N, failed), so an undone or killed task's number is not handed out again; selftest proves it). MAIN may have moved since: `git log --oneline bc70a0c..origin/claude/os-sprint-st8hnu` shows how far.
+Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
+
+## What changed (the candidate)
 
 - M  pyto/CHANGES.md
 - M  pyto/FRONTIER.md
@@ -63,3 +113,15 @@ pyto/CHANGES.md                                    |   1 +
 {?} TheDemoPageWasRebuiltNotRerun: `experiments/students/evidence/run-1/tick-viewer.html` was rebuilt from its own committed `record.json` with `embed.mjs`, so `record.json` and `receipts.json` are byte for byte what they were (git diff empty) and run-1 is still the run that was shipped. Task 40's `{?} StudentsDemoPageIsBakedAndStale` suggested `python homework.py --out evidence/run-1`, which would rewrite all three; the record would very probably come back identical apart from the durations, and the durations are exactly what nothing may compare. Rebuilding only the page keeps the evidence and fixes the staleness.
 {?} SprintAddsAreNamedByTheirTaskIntent: the owner named the sprint (his sentence is quoted at the head of FRONTIER's "Landed adds") and named none of the eight adds under it, so each entry is named by its own task intent line and the sentence after it is this session's description of what you see, marked as such in the file's header. Tasks 39 and 46 landed at 03:06 and 03:03 on the sprint branch, after this copy was cut, so their entries are written from the board's landed lines rather than from their packets, which are not in this copy.
 {?} FIsPartlyLandedNotLanded: adds A to E moved to "Landed adds" whole; F did not. CI proves `check_all.sh` on three operating systems (44, 46), but F's own two sentences -- `proof.sh` green on the Mac with the same receipt shape, and a landing that edits `land.sh` itself landing cleanly -- are both untouched and both want the machine. F is therefore left in the open list with a "partly landed" head and what is left spelled out, rather than moved. Four residuals of the landed adds are listed under them so they are not lost with the add.
+
+## What to do
+
+1. Explain this to the owner in plain words: what was asked, what changed file by file (one line
+   each), what the evidence shows, what is uncertain. Use no term this page does not define.
+2. Ask the owner: land it, drop some files, or send it back. To drop files, from the clone:
+   `bash pyto/scripts/neat.sh drop 50 <path> ...` (they go back to the starting point, the
+   packet is rewritten, the suite runs again).
+3. Land: `bash pyto/scripts/neat.sh land 50`. It merges the candidate into MAIN, runs the suite
+   again on the merged tree, writes a receipt under `pyto/experiments/landings/`, commits
+   `land(task-50): effects you can see and the sprint on the one page: the Tick viewer shows an invocation's effects (kind, path, digest) when the record carries them and draws oc Calculations distinctly; the students demo page is regenerated with the side-by-side renderer; KT-MAC gains the px shell in chunk 3 and a classroom chunk 7; FRONTIER records the sprint's landed adds`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
+   If it refuses, it says exactly why, and nothing has changed.
