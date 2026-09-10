@@ -707,6 +707,15 @@ own records (what they retry, where they write `{?}`, what they undo, how long a
 never from a profile.
 Owner, 2026-09-09 evening, on why any of this exists when ChainSpot and DiscStudio do not need it: "Workspace. Educational." and, of Homeroom Heroes, "this would be a good reason why". So the workspace is not a side effect; it is the product for that audience, and the studio is its first tenant.
 
+### {?} StoppingRule
+The owner, 2026-09-10, on how to launch an agent that gains real depth: "Reading is not depth of
+understanding. Remember that 2M tokens from like 24 hours ago? And then each and every question
+invalidated like 50% of what you assumed? The key to initializing is an agent getting just enough
+context to go wtf and ask me what feels like the stupid question that should have an obvious
+answer if it could only check another 100k tokens of code." Status: adopted. The hand-off page now
+opens with the rule (read three files, no fourth; write the question; ask; stop) and the answer is
+written here verbatim. Default: the first task for any newcomer is a question, not a change.
+
 ### {?} NeatLearning
 The owner, 2026-09-09 night: "imagine neat-learning (like awesome-* but neat based). Easy, neat based
 teacher-student stuff. Teacher says okay assignments in, they submit and get instant scores." Status:

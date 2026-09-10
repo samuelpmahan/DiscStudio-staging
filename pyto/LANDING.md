@@ -21,6 +21,11 @@ bash pyto/scripts/neat.sh list
 bash pyto/scripts/land.sh --note "one plain line"  -> onto the board under Today, committed, pushed; no receipt
 ```
 
+A hand-off starts with a stopping rule (owner, 2026-09-10): read the hand-off, the board and the
+packet, no more; write the one question you would answer by reading another hundred thousand
+tokens, and ask the owner instead; his answer goes on the root verbatim. Reading builds a model;
+asking invalidates the wrong half of it for the price of a sentence.
+
 The board says when a task starts, not only when it lands: `neat new` writes a **started** line
 with the intent, `neat kill` a **killed** line, so the owner sees what is coming before a **landed**
 line appears. Both go through `land.sh --note`. A note is not a claim; only a landing is.
