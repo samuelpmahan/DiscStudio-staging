@@ -105,35 +105,48 @@ function calculationId(calculation, index) { return `Calculations[${index}] '${c
 /** Does this binding read `address`? A `.*` prefix query reads every address under it. */
 function bindingReads(binding, address) { return isPrefixQuery(binding) ? address.startsWith(binding.slice(0, -1)) : binding === address; }
 /**
- * The node law, checked before a parallel Tick runs anything: no Calculation
- * may read what a sibling publishes in the same Tick, and no address may be
- * declared by two siblings. Reads are the document's `with` bindings and their
- * `.*` prefixes, exactly as pyto/experiments/tick-laws/tick_laws.py computes
- * them, so both readers refuse the same Tick. Refusing before the Tick runs is
- * what keeps a parallel Tick all-or-nothing: no Calculation of a refused Tick
+ * How one Tick runs, decided before it runs anything. Inside a Tick the
+ * Calculations are a sequence in declared order, and a later one may read what
+ * an earlier sibling produced; the Tick boundary is where that sequence becomes
+ * inspectable (the owner, 2026-09-10: ChainSpot deliberately chains dependent
+ * Calculations inside a Tick). A Tick with no sibling reads is `'parallel'`: all
+ * of it may run at once. A Tick with a read of an earlier sibling is a `'chain'`
+ * and runs in declared order. Two laws still refuse a Tick outright: no address
+ * may be declared by two siblings, and no Calculation may read what a LATER
+ * sibling produces, a backwards read that no order in the Tick could satisfy.
+ * Reads are the document's `with` bindings and their `.*` prefixes. Refusing
+ * before the Tick runs keeps a refused Tick all-or-nothing: no Calculation of it
  * is invoked and no Part of it is published.
  */
-export function refuseUnparallelTick(tick) {
+export function classifyTick(tick) {
   const declaredBy = new Map();
   tick.Calculations.forEach((calculation, index) => {
     const id = calculationId(calculation, index);
     for (const address of produceAddresses(calculation.into)) {
       const owner = declaredBy.get(address);
-      if (owner !== undefined) throw new Error(`PQL ${tick.name}: parallel refused: ${owner} and ${id} both declare into '${address}'; in one Tick an address has one producer.`);
-      declaredBy.set(address, id);
+      if (owner !== undefined) throw new Error(`PQL ${tick.name}: parallel refused: ${owner.id} and ${id} both declare into '${address}'; in one Tick an address has one producer.`);
+      declaredBy.set(address, { id, index });
     }
   });
+  let chained = false;
   tick.Calculations.forEach((calculation, index) => {
     const id = calculationId(calculation, index);
     for (const binding of Object.values(calculation.with)) {
       for (const [address, owner] of declaredBy) {
-        if (owner === id || !bindingReads(binding, address)) continue;
-        throw new Error(`PQL ${tick.name}: parallel refused: ${id} reads '${address}', which its sibling ${owner} produces in the same Tick.`);
+        if (owner.index === index || !bindingReads(binding, address)) continue;
+        if (owner.index > index) throw new Error(`PQL ${tick.name}: parallel refused: ${id} reads '${address}', which its sibling ${owner.id} produces later in the same Tick.`);
+        chained = true;
       }
     }
   });
-  return tick;
+  return chained ? 'chain' : 'parallel';
 }
+/**
+ * The old name, kept: it no longer refuses a chain (a read of an earlier
+ * sibling), only what no order could run -- a duplicate producer or a backwards
+ * read -- and hands the Tick back.
+ */
+export function refuseUnparallelTick(tick) { classifyTick(tick); return tick; }
 
 /** Read this Calculation's inputs and invoke it. The output is not published here. */
 function invoke(calculation, pxc, overrides) {
@@ -159,14 +172,16 @@ function failed(tick, calculation, cause) { return new Error(`PQL ${tick.name}: 
  * asks for. It is written **only** when the run was parallel, was given a
  * budget, or was stopped by one: absent means serial and unbudgeted, so a plain
  * serial run's testimony and receipt are byte for byte what they were before
- * any of this existed.
+ * any of this existed. Under `parallel: true` each Tick also carries `mode`,
+ * `'parallel'` or `'chain'` (`classifyTick`), so the record says which Ticks
+ * were chains; a serial run's Ticks carry no `mode`, as they carry no placement.
  */
 function schedule({ parallel, budgetMs, stoppedAfterTick, ticks }) {
   if (!parallel && budgetMs === null && stoppedAfterTick === null) return null;
   return Object.freeze({
     parallel,
     budget: Object.freeze({ limit_ms: budgetMs, stopped_after_tick: stoppedAfterTick, completed: stoppedAfterTick === null }),
-    ticks: Object.freeze(ticks.map(tick => Object.freeze({ name: tick.name, latency_ms: tick.latency_ms, placements: Object.freeze(tick.placements) })))
+    ticks: Object.freeze(ticks.map(tick => Object.freeze({ name: tick.name, ...(tick.mode ? { mode: tick.mode } : {}), latency_ms: tick.latency_ms, placements: Object.freeze(tick.placements) })))
   });
 }
 
@@ -205,12 +220,14 @@ export function invokePql(composition, second, third) {
 }
 
 /**
- * The same run, awaited. With `parallel: true` the Calculations of one Tick are
- * started together (`Promise.all` over async wrappers) and every result is
- * published in declared order **after** the Tick, so the board never holds half
- * a Tick; a Calculation that reads a sibling's produce is refused before the
- * Tick runs. The testimony is byte-identical to the serial run's: placement and
- * latency live in `run.schedule`, outside it.
+ * The same run, awaited. With `parallel: true` each Tick is classified first: a
+ * `'parallel'` Tick's Calculations are started together (`Promise.all` over
+ * async wrappers) and every result is published in declared order **after** the
+ * Tick, so the board never holds half a Tick; a `'chain'` Tick runs in declared
+ * order with each result published as soon as it finishes, so the next sibling
+ * reads it from the store -- the serial semantics, on worker 0. The testimony is
+ * byte-identical to the serial run's either way: placement, latency and mode
+ * live in `run.schedule`, outside it.
  */
 export async function invokePqlAsync(composition, second, third) {
   const { pxc, overrides = {}, parallel = false, budgetMs = null, clock = wallClock } = options(second, third);
@@ -218,10 +235,10 @@ export async function invokePqlAsync(composition, second, third) {
   let stoppedAfterTick = null;
   for (const tick of composition.Ticks) {
     if (ticks.length && overBudget(budgetMs, clock, started)) { stoppedAfterTick = ticks[ticks.length - 1].name; break; }
-    if (parallel) refuseUnparallelTick(tick);
+    const mode = parallel ? classifyTick(tick) : null;
     const tickStarted = clock(), placements = [], published = [];
     let steps;
-    if (parallel) {
+    if (mode === 'parallel') {
       // Each wrapper runs to its first await, so a worker index is handed out in
       // the order the branches actually start; a synchronous Calculation simply
       // runs to completion there and its branch is already done.
@@ -232,11 +249,13 @@ export async function invokePqlAsync(composition, second, third) {
       }));
     } else {
       // Serial is exactly the synchronous path, awaited: each Calculation is
-      // published before the next one reads, so a serial Tick may read what its
-      // predecessor in the same Tick wrote. Only a parallel Tick refuses that.
+      // published before the next one reads, so a Tick may read what its
+      // predecessor in the same Tick wrote. A chain under parallel: true is the
+      // same sequence; it is placed on worker 0, started offsets in order, where
+      // a serial Tick has no placement at all.
       steps = null;
       for (const calculation of tick.Calculations) {
-        placements.push(null);
+        placements.push(mode === 'chain' ? { worker: 0, started_ms: round3(clock() - tickStarted) } : null);
         try { const step = invoke(calculation, pxc, overrides); step.output = await step.output; published.push(publish(tick, calculation, step, pxc)); }
         catch (cause) { throw failed(tick, calculation, cause); }
       }
@@ -247,7 +266,7 @@ export async function invokePqlAsync(composition, second, third) {
       catch (cause) { throw failed(tick, calculation, cause); }
     });
     ticks.push({ name: tick.name, Calculations: calculations });
-    measured.push({ name: tick.name, latency_ms: latency, placements });
+    measured.push({ name: tick.name, latency_ms: latency, placements, mode });
   }
   return finish(composition, ticks, schedule({ parallel, budgetMs, stoppedAfterTick, ticks: measured }), pxc);
 }
