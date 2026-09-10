@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.227.response",
+  "recordedAt": 1789046559253.7676,
+  "sha256": "957c0bb551f88e3ea4d5cf6c83cf299b8f4ae61b04f6ec4d22ec2e9708274d13",
+  "value": {
+    "k": 227,
+    "label": "AbsolutePathsInTheRecord",
+    "n": 6,
+    "text": "The default stated in task-63's packet stands: the record itself carries a machine's absolute path in places (refused lines on the board, check_all.txt)."
+  }
+}

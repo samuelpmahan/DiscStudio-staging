@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.PathCutSwallowedQuotes",
+  "sha256": "5cc000ff9c5558abfb2a9befb794826b5370963d80e6f1ff43cca7651e01a897",
+  "value": {
+    "k": 229,
+    "kind": "default",
+    "label": "PathCutSwallowedQuotes",
+    "n": 6,
+    "sha256": "cee77363d849cf639ddbd9e01ca724cb870207b1e3e7ee1b9926ada3e1808ed9"
+  }
+}

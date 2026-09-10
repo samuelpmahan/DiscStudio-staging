@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.240.response",
+  "sha256": "acfb7cfa146a86690dcbea9e4f7f36d4753342d9947a89864484ef99b088320d",
+  "value": {
+    "bytes": "The default stated in task-67's packet stands: the GitHub requests are not ledgered (the handle has write_text, read_text, now_ms, random, env).",
+    "sha256": "d19cd833da48cb9f50ff423b9fafe901d55d2f839c33eeb52ef3d994d4c63e7f"
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.2187959999891973
+  },
+  "parts": {
+    "neat.capture.review.6.231.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.RootItemText": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.6.231.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.6.231.response"
+          ],
+          "args": {
+            "k": 231,
+            "label": "RootItemText",
+            "n": 6,
+            "text": "The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne."
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.11734999998225248,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789046559700.1226,
+              "result_sha256": "579643e20e8e56e140e5e6b059977df1abde287e3d60904d2c3b90def0e8d92e"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.6.231.response",
+          "result_sha256": "091cce52cb3c417cf7075594e65cc7c2137e8134e072f3cdc7a7302a415b285f",
+          "value": {
+            "data": {
+              "k": 231,
+              "label": "RootItemText",
+              "n": 6,
+              "recordedAt": 1789046559700.1226,
+              "text": "The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne."
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.6.231.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.6.231.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.024861000042619708,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.6.231.response",
+          "result_sha256": "c8441bed1c333a445b27e8f3ffb38c08cbd8ed257c57b475580310e2e79d2ada",
+          "value": {
+            "data": {
+              "bytes": "The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne.",
+              "sha256": "65b0279c75a517d055451c87d9c5ac364ece53fcbc673363ed2fb7d58ac38373"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.6.231.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.RootItemText"
+          ],
+          "args": {
+            "k": 231,
+            "kind": "default",
+            "label": "RootItemText",
+            "n": 6,
+            "pyto_root": "/home/user/DiscStudio-staging/EXP/70/pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.076584999964325,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.RootItemText",
+          "result_sha256": "ba36ad7e939fccf47b19ff7388c865498afe0b5fc5b0c5b9859118de80959c0e",
+          "value": {
+            "data": {
+              "k": 231,
+              "kind": "default",
+              "label": "RootItemText",
+              "n": 6,
+              "sha256": "65b0279c75a517d055451c87d9c5ac364ece53fcbc673363ed2fb7d58ac38373"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.RootItemText",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

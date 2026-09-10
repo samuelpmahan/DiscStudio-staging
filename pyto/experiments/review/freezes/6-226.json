@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.226.response",
+  "sha256": "623fff6b8f24ebc90815d6169458295b488d2efa19a743065a62bb1cab45caf9",
+  "value": {
+    "bytes": "The default stated in task-63's packet stands: changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to C.",
+    "sha256": "72522db6c8022c2d72435573b8242014b0874891fd0a71da361c68af6802759f"
+  }
+}

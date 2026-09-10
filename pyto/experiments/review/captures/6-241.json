@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.241.response",
+  "recordedAt": 1789046560900.7134,
+  "sha256": "a8f63a0c595cef4c0b9e5a98da60a089976900d41be0b450d3c81b39bfc865e8",
+  "value": {
+    "k": 241,
+    "label": "SubjectIsTheHeadSha",
+    "n": 6,
+    "text": "The default stated in task-67's packet stands: the frozen subject is the package plus the candidate's head sha, because the sha fixes the packet and every claimed byte."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.236.response",
+  "sha256": "7a89325d9ef1793c4f8c4fcb37dab05d39ff564ae9a1dfd8d0e25eecc1bda662",
+  "value": {
+    "bytes": "The default stated in task-66's packet stands: fn.neat.diff.candidates is registered in a PxC and invoked with pxc.call, not as its own observed PCR.",
+    "sha256": "4e4755797624efaea7955f5122c22fc94aa184be5c22febfa3c13bff41618a3c"
+  }
+}

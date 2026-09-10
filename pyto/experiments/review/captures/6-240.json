@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.240.response",
+  "recordedAt": 1789046560776.8308,
+  "sha256": "4560e61b952ec7e642c88a645fc7767d2b779b51cfeb412df384b309ca791b2f",
+  "value": {
+    "k": 240,
+    "label": "HttpIsNotAnEffectKind",
+    "n": 6,
+    "text": "The default stated in task-67's packet stands: the GitHub requests are not ledgered (the handle has write_text, read_text, now_ms, random, env)."
+  }
+}

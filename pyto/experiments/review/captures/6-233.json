@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.233.response",
+  "recordedAt": 1789046559936.662,
+  "sha256": "afb4fa5901ffd4a4f189302065386ba78311d365a1ce787559bd7bbb6d2e9cdc",
+  "value": {
+    "k": 233,
+    "label": "WalkReachability",
+    "n": 6,
+    "text": "The default stated in task-65's packet stands: the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent."
+  }
+}

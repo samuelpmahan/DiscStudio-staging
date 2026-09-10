@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.233.response",
+  "sha256": "62effa55b1883237022a2807080c7e62224785ed9f387f68ba4f0e15f2271bd0",
+  "value": {
+    "bytes": "The default stated in task-65's packet stands: the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent.",
+    "sha256": "c9f5aed26d240da88b96bf7e3902d258dcba5a0c026bee8ccd714838137380b8"
+  }
+}

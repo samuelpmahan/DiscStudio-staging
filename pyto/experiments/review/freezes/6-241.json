@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.241.response",
+  "sha256": "ea311f55fd804b51d76e39efac8c9f65b70ba46caa48ea54e9593fe2103f24d3",
+  "value": {
+    "bytes": "The default stated in task-67's packet stands: the frozen subject is the package plus the candidate's head sha, because the sha fixes the packet and every claimed byte.",
+    "sha256": "5df979ba149bcfffa10cb87ca6357a5335d2b42f378f06bfe316e3174be01b0d"
+  }
+}

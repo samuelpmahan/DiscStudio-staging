@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.WalkReachability",
+  "sha256": "fc5b46cebf1269eab2459c36a88eeabe833ebeb9ca13288e9c7db173655b4640",
+  "value": {
+    "k": 233,
+    "kind": "default",
+    "label": "WalkReachability",
+    "n": 6,
+    "sha256": "c9f5aed26d240da88b96bf7e3902d258dcba5a0c026bee8ccd714838137380b8"
+  }
+}

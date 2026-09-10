@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.2774979999221614
+  },
+  "parts": {
+    "neat.capture.review.6.233.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.WalkReachability": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.6.233.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.6.233.response"
+          ],
+          "args": {
+            "k": 233,
+            "label": "WalkReachability",
+            "n": 6,
+            "text": "The default stated in task-65's packet stands: the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent."
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.11923900001420407,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789046559936.662,
+              "result_sha256": "756d51f2d224e856ffe84444533b03f63c158d1a3f373ec0ca646b4fc677b201"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.6.233.response",
+          "result_sha256": "1c1606292526e61df47b6d3c769055fef8c29330346a2ad84d60689bf6b91938",
+          "value": {
+            "data": {
+              "k": 233,
+              "label": "WalkReachability",
+              "n": 6,
+              "recordedAt": 1789046559936.662,
+              "text": "The default stated in task-65's packet stands: the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent."
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.6.233.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.6.233.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.022742999931324448,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.6.233.response",
+          "result_sha256": "62effa55b1883237022a2807080c7e62224785ed9f387f68ba4f0e15f2271bd0",
+          "value": {
+            "data": {
+              "bytes": "The default stated in task-65's packet stands: the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent.",
+              "sha256": "c9f5aed26d240da88b96bf7e3902d258dcba5a0c026bee8ccd714838137380b8"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.6.233.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.WalkReachability"
+          ],
+          "args": {
+            "k": 233,
+            "kind": "default",
+            "label": "WalkReachability",
+            "n": 6,
+            "pyto_root": "/home/user/DiscStudio-staging/EXP/70/pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.1355159999766329,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.WalkReachability",
+          "result_sha256": "fc5b46cebf1269eab2459c36a88eeabe833ebeb9ca13288e9c7db173655b4640",
+          "value": {
+            "data": {
+              "k": 233,
+              "kind": "default",
+              "label": "WalkReachability",
+              "n": 6,
+              "sha256": "c9f5aed26d240da88b96bf7e3902d258dcba5a0c026bee8ccd714838137380b8"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.WalkReachability",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

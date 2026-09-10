@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.239.response",
+  "recordedAt": 1789046560652.8953,
+  "sha256": "d04dc561d7535852c978fe0ccca67768c754bca397b3b8f79a8e8275d9deba98",
+  "value": {
+    "k": 239,
+    "label": "SecretsAreNotEffects",
+    "n": 6,
+    "text": "The default stated in task-67's packet stands: Effects.env records the value it reads, so the GitHub token is read with os.environ and never through the handle."
+  }
+}

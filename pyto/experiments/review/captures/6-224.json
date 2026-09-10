@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.224.response",
+  "recordedAt": 1789046558862.417,
+  "sha256": "b62440d5dfc14891c0702c1646df12cc45356e13cbf343015eac82eea7d53d42",
+  "value": {
+    "k": 224,
+    "label": "OnePartQuery",
+    "n": 6,
+    "text": "The default stated in task-60's packet stands: a one-Part molecule is spelled PQL.prefix(address), which also matches longer addresses."
+  }
+}

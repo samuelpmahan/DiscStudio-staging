@@ -1,0 +1,28 @@
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+.......EE.
+======================================================================
+ERROR: test_default_is_filed_as_the_sessions_and_leaves_the_batch (tests.test_neat_review.OwnerFirstAndDefaults.test_default_is_filed_as_the_sessions_and_leaves_the_batch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/70/pyto/tests/test_neat_review.py", line 281, in test_default_is_filed_as_the_sessions_and_leaves_the_batch
+    part = review.run_answer(root, 1, 3, "pretty on the terminal, canonical on disk", kind="default")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: run_answer() got an unexpected keyword argument 'kind'
+
+======================================================================
+ERROR: test_owner_items_first_and_decided_root_entries_omitted (tests.test_neat_review.OwnerFirstAndDefaults.test_owner_items_first_and_decided_root_entries_omitted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/70/pyto/tests/test_neat_review.py", line 272, in test_owner_items_first_and_decided_root_entries_omitted
+    labels = [(it["number"], it["label"], it["needs"]) for it in batch["items"]]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/70/pyto/tests/test_neat_review.py", line 272, in <listcomp>
+    labels = [(it["number"], it["label"], it["needs"]) for it in batch["items"]]
+                                          ~~^^^^^^^^^
+KeyError: 'needs'
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.497s
+
+FAILED (errors=2)

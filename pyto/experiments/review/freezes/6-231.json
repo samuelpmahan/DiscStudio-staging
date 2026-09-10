@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.231.response",
+  "sha256": "c8441bed1c333a445b27e8f3ffb38c08cbd8ed257c57b475580310e2e79d2ada",
+  "value": {
+    "bytes": "The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne.",
+    "sha256": "65b0279c75a517d055451c87d9c5ac364ece53fcbc673363ed2fb7d58ac38373"
+  }
+}

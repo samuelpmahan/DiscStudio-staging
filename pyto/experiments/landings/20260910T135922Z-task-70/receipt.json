@@ -1,0 +1,601 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T135922Z-task-70",
+  "package": "task-70",
+  "base_sha": "ebab76525e12d4b75910d497da4b6886a3eadac9",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest tests.test_neat_review && python scripts/walk.py --check",
+    "exit": 0,
+    "output_sha256": "fb17ccab55bb5296535403662c436b3cd5fbfe8710c5e924672f671d4104f794"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "494d3c56f86e0e10026cf8521b3b5ce2fbcfc8375903508c790e1bf87f78a1ce",
+    "counts": {
+      "library": 368,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/review/answers/AbsolutePathsInTheRecord.json",
+      "bytes": 332,
+      "sha256": "44c9ca7813341b57614c30f73fcd59ee086034099f02e0d43dbe5801c69d68b3"
+    },
+    {
+      "path": "pyto/experiments/review/answers/CompoundMolecules.json",
+      "bytes": 318,
+      "sha256": "47ef9098235bcb1316b7b2ff89c1b95f506b93b3561b9fd7fd4d53182b2783df"
+    },
+    {
+      "path": "pyto/experiments/review/answers/ConceptMap.json",
+      "bytes": 304,
+      "sha256": "e80af6475758b5e790b08f56eda8647a4013d2167c4da5e4be15cc4aaa82e71d"
+    },
+    {
+      "path": "pyto/experiments/review/answers/DiffNewIsAsymmetric.json",
+      "bytes": 322,
+      "sha256": "cc413576be04f2b79327385951211a6261003a404ab587ddae4ff878b7b8bca4"
+    },
+    {
+      "path": "pyto/experiments/review/answers/DiffPrintForm.json",
+      "bytes": 310,
+      "sha256": "ba32ae8a09f914000bbaa7efa474459d5b9a94c5efa284cd5de79402e7fb91d1"
+    },
+    {
+      "path": "pyto/experiments/review/answers/DiffRemainderOcOrder.json",
+      "bytes": 324,
+      "sha256": "48d07768782982804255b90e4a0fa38ef77a2bcf81f5a72906190690e09df668"
+    },
+    {
+      "path": "pyto/experiments/review/answers/DocumentDropsArgs.json",
+      "bytes": 318,
+      "sha256": "7be058a38f59db8d81fca33fba135d85d537a6e958cbbe84f9fd37fb1b96a856"
+    },
+    {
+      "path": "pyto/experiments/review/answers/FileIsNotAnEffect.json",
+      "bytes": 318,
+      "sha256": "ceb6b53b7b1eb147992bf83ca8447951a28136c4fdb7e216b90d208dcbd0c7ac"
+    },
+    {
+      "path": "pyto/experiments/review/answers/HashRefUnchecked.json",
+      "bytes": 316,
+      "sha256": "c03ac204aed2346d59c26090f12cfa9a6fdf0f9f36c754a7ffee1452df46edef"
+    },
+    {
+      "path": "pyto/experiments/review/answers/HttpIsNotAnEffectKind.json",
+      "bytes": 326,
+      "sha256": "986a449ee282eb27b656ca6a84162d42ed716b73777f99e9965998939d297aa0"
+    },
+    {
+      "path": "pyto/experiments/review/answers/LabelsOutsideReadPqlGrammar.json",
+      "bytes": 338,
+      "sha256": "ff322d1e4f00013f88fd3c68d759bc96ce0dc7185e9e5343235b786939c37a14"
+    },
+    {
+      "path": "pyto/experiments/review/answers/MoleculeAddress.json",
+      "bytes": 314,
+      "sha256": "3f24cd4594e5ef0b2d3ff7b216e5a9427de00e90842b113297fc5bb6cb41a5fe"
+    },
+    {
+      "path": "pyto/experiments/review/answers/NeatDiffCalculationRunForm.json",
+      "bytes": 336,
+      "sha256": "4eeb505871f894abf4ae2629c1bcc377b8b9ae13a0ecfa416b22e8a998b40946"
+    },
+    {
+      "path": "pyto/experiments/review/answers/NeatWalkCheck.json",
+      "bytes": 310,
+      "sha256": "04221efd7a1ef18b16ab00ff7bb755f0ee6b1fc947146dae8728dbba603d655f"
+    },
+    {
+      "path": "pyto/experiments/review/answers/OnePartQuery.json",
+      "bytes": 308,
+      "sha256": "589aebe3edb1d3b7fc7b0ae18a91696959f3af3045ae84998b3e5a6346c55eec"
+    },
+    {
+      "path": "pyto/experiments/review/answers/PartLabelKind.json",
+      "bytes": 310,
+      "sha256": "33d8822900fe92864f5b99a113d66fe0425adf67064d575725ce0f4385cf5b21"
+    },
+    {
+      "path": "pyto/experiments/review/answers/PathCutSwallowedQuotes.json",
+      "bytes": 328,
+      "sha256": "02231131b81170d571c75176483d9a1eaec32110dcf0471c4f95c4c9047050ae"
+    },
+    {
+      "path": "pyto/experiments/review/answers/PxMolecules.json",
+      "bytes": 306,
+      "sha256": "8faa115598175f725072b0ff27288eb22982e5c65e9d738e19df6b6861d98fdc"
+    },
+    {
+      "path": "pyto/experiments/review/answers/RootItemScope.json",
+      "bytes": 310,
+      "sha256": "5798ec66679221153f5cca45a6406cf5f455f8e1c7dcf45f73c019d9ff2a158b"
+    },
+    {
+      "path": "pyto/experiments/review/answers/RootItemText.json",
+      "bytes": 308,
+      "sha256": "f40746b9bab69da0b772e1937aa2d2cc135c6a90321eb2b919744ddd6e7ddf48"
+    },
+    {
+      "path": "pyto/experiments/review/answers/SecretsAreNotEffects.json",
+      "bytes": 324,
+      "sha256": "5927421ef5718fdd0380a076d1327eac39ade8e54f78dd019150863d122496b8"
+    },
+    {
+      "path": "pyto/experiments/review/answers/SubjectIsTheHeadSha.json",
+      "bytes": 322,
+      "sha256": "752692179da11115fb9956b96b318c97ccc75b3bebe62b928b29c3b995616465"
+    },
+    {
+      "path": "pyto/experiments/review/answers/WalkReachability.json",
+      "bytes": 316,
+      "sha256": "0ad7a7a8bf3d16ab0f00125216d69aa40f93d365310111486c6d5625e28e1647"
+    },
+    {
+      "path": "pyto/experiments/review/batches/3.json",
+      "bytes": 116630,
+      "sha256": "14552704af6a7eb368df85c67d3e3d9c018bfd190575160b33af10fb8237ad0b"
+    },
+    {
+      "path": "pyto/experiments/review/batches/4.json",
+      "bytes": 116962,
+      "sha256": "4d09087eed52e890d3061764bd75b0c38de22e440aaca853a01076a658e264f9"
+    },
+    {
+      "path": "pyto/experiments/review/batches/5.json",
+      "bytes": 111946,
+      "sha256": "9d881a28aa01f26742a653a9d76454ee51c914c905d5b5f37cbfa50ea446fb25"
+    },
+    {
+      "path": "pyto/experiments/review/batches/6.json",
+      "bytes": 111935,
+      "sha256": "1164a2508d13501bc333bbf0317cbf6aa865f0ee0cf282d6590b6bbefee72118"
+    },
+    {
+      "path": "pyto/experiments/review/batches/7.json",
+      "bytes": 100415,
+      "sha256": "eb0bc89a1eb8b9eaa93676956ead28aee1a01ad8820356e1b79691f470de6547"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-219.json",
+      "bytes": 380,
+      "sha256": "ca22444bd988ab550450f0c4d44a4f6a0b713fee7923c857d21148a14fb58904"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-220.json",
+      "bytes": 367,
+      "sha256": "adbee578e0df6165b85b439e9a969b1a4f87574fe1c2dd8620df2fc393eedaab"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-221.json",
+      "bytes": 368,
+      "sha256": "cc8ee608f439601315e21b46ad95e7e4bd0de54db636c2eeb84527d0dd0bbfae"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-222.json",
+      "bytes": 358,
+      "sha256": "bb2290c0c9063fc3a33bda852633529a2336381d443823d7b73ddb3dd8871135"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-223.json",
+      "bytes": 470,
+      "sha256": "e14d05b4a1cd768aaec5e210c7617b8118af4a4b4fd706c8a1f57aa0f782ecf6"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-224.json",
+      "bytes": 392,
+      "sha256": "127769538ac0ffe328efbd116bde83864cdbc3b6fbede13dad0e95ec0b9ac457"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-225.json",
+      "bytes": 449,
+      "sha256": "bdc869b44621c58be658c8f300b7bc3314ad978edced276ab0d3b5b55ed6330d"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-226.json",
+      "bytes": 464,
+      "sha256": "4881c692c254abfa9b653abf8e879d66a8efceba5be1b5d6cabef456f05f0064"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-227.json",
+      "bytes": 423,
+      "sha256": "0b45b75225ca3c2cd60ed3d915693939aabbedfd53e778868422330bd2ae2f53"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-228.json",
+      "bytes": 429,
+      "sha256": "70e87666e375052755225bf94db0912210e1fad61ba9c9ac99ebcf06e30511fd"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-229.json",
+      "bytes": 402,
+      "sha256": "97078f44471e41c24fbea5bdd620cfe19aa0ec27b78113160736b4db764319f0"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-230.json",
+      "bytes": 459,
+      "sha256": "a9dc8193a82444f2f74e8150400da0b83e22934890baacca467809b616bdaf16"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-231.json",
+      "bytes": 460,
+      "sha256": "ebd55b6959d49f66929ed3c8a36ccc5188ba02524fea6a89b07e752e1d2a6371"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-232.json",
+      "bytes": 445,
+      "sha256": "f2fb022298f5d74e88c3304ca99359fae2a93ea6cb78556a5891485c111e6a68"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-233.json",
+      "bytes": 466,
+      "sha256": "7789e55abe8b929a69225f198fa0bd0c32c52e2c6832e0d7b35802836eff9168"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-234.json",
+      "bytes": 467,
+      "sha256": "438610b99d44cf4a5f71f817fe04ec4b0df110adffc429a89411af29eafb0390"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-235.json",
+      "bytes": 467,
+      "sha256": "db88363402937a6d49ca49e17e761034cc6fd7737e0ed31a5fdfc4a17271076a"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-236.json",
+      "bytes": 420,
+      "sha256": "fbbce89e8787cff03804c3af494ae723c91f29ec23421ff484ffaca6866e631a"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-237.json",
+      "bytes": 412,
+      "sha256": "75d692765bbfb93fd9173cac1cb9d59f2dd78b80668e53f5b97c662d73ae2ed2"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-238.json",
+      "bytes": 431,
+      "sha256": "f532e478d004ddc6c3398989513603cd22fd4fc38bb3493ca5b2cc343375f483"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-239.json",
+      "bytes": 426,
+      "sha256": "63f04981f48370fd6dd1c1631622e7914564e37693048bdd9b02970b2d69d9dc"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-240.json",
+      "bytes": 411,
+      "sha256": "135762ffb24d7ad2b14c5f252adf034c977ab29cfe0b1679cc88fcad2a3e16f7"
+    },
+    {
+      "path": "pyto/experiments/review/captures/6-241.json",
+      "bytes": 433,
+      "sha256": "de0b58ce77f3af389ef8b2538007dcf936b54e9a95429695cf27d42d79ee04b8"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-219.json",
+      "bytes": 370,
+      "sha256": "a6be3ca96182d2ff6fbae131c953be141b9ef90dcb6d4e0e08977eaca38624cc"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-220.json",
+      "bytes": 355,
+      "sha256": "5b3dc6601fedcea57ed95bf04eebd7a133d1e0f21fca2a9fee0f99fd912ca94e"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-221.json",
+      "bytes": 355,
+      "sha256": "5a0bb0ebbe5996587c0693d21c4d6daad383662c48e27c636b3b913f6e277f4a"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-222.json",
+      "bytes": 351,
+      "sha256": "c826a0b494dd789993e007c0516e274175730cedf887c31d4ccdab287d56aff9"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-223.json",
+      "bytes": 457,
+      "sha256": "c52ba86dd4ed6b952cf32d90bf4fd6516c2c461279e84120f48eb166549fe3dd"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-224.json",
+      "bytes": 384,
+      "sha256": "63591fe31accee81f99ce6fb12f594fafc3c12a0543b9ad3699f5f8777e9418d"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-225.json",
+      "bytes": 436,
+      "sha256": "540195a45f2f80c056a0bf4379e1ffdaf3a7b629c625ae551bc05edbe78ab75f"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-226.json",
+      "bytes": 457,
+      "sha256": "c2a59712015de160a35a7dbe3633fd6828696e2559d126eb8e0c4503eb0976e2"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-227.json",
+      "bytes": 402,
+      "sha256": "4b653484fd69c268ff101b83ced5180aa9e732492eceebcb558557ba52cc035d"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-228.json",
+      "bytes": 420,
+      "sha256": "5f220b12153e2432ef671765e027a32747797065949edf3f9596b79f5f7f0705"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-229.json",
+      "bytes": 383,
+      "sha256": "0a9ace49472eb090d2bcabbeea775a11a67365ea8ea8da8294660b724c7e3166"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-230.json",
+      "bytes": 445,
+      "sha256": "2f73e17f2a7e848717d1474e1832c999f8b209899a1c6d958fcbe8132a29b15d"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-231.json",
+      "bytes": 451,
+      "sha256": "0f84ec288bc141e99e4d554eb00e1beb6c3a32a25647919e12932a212392d93a"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-232.json",
+      "bytes": 436,
+      "sha256": "e3681c13a035fd49790f9c011f80226e1ae87e087b45a8ddbf41871f30e4f3f6"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-233.json",
+      "bytes": 454,
+      "sha256": "cd77724d55f002089dc7e6755fd28c2575ed1e2e32eacd4f297d408093a62713"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-234.json",
+      "bytes": 451,
+      "sha256": "da6a6164423f70feb27d48de10a171f139ad9230acbbd03788ec74216745b8a8"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-235.json",
+      "bytes": 457,
+      "sha256": "a6d56260f9870d30b7ed0e76ed4cdf4bae4853653afbcc27a8546c0a8c26c91e"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-236.json",
+      "bytes": 398,
+      "sha256": "4ea419cfa7efde883f2063173732f58cc77a3013ff8078b955a4cae464288c01"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-237.json",
+      "bytes": 396,
+      "sha256": "2fb2d3e7cac74f8da438274e3d9d820d13fd06acf66b72c40886dac4ce537d12"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-238.json",
+      "bytes": 408,
+      "sha256": "0ea7ddf4eb69fd4d1a10e158892753f4ec740f5030e6684e919d8713e3dfb3ee"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-239.json",
+      "bytes": 409,
+      "sha256": "5fbf33624f6191e282f3fe3211a0102bf13d96e579520e4a853053ca2b5ebc3e"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-240.json",
+      "bytes": 393,
+      "sha256": "bf02c7cc35b6b1ad52df7c6dc52ae5b18efb270a3cb5536ff4af63f184b8042f"
+    },
+    {
+      "path": "pyto/experiments/review/freezes/6-241.json",
+      "bytes": 417,
+      "sha256": "b805a224376e1a8c48668367f4832b865ca8a35023beae4a8e07b205134d374f"
+    },
+    {
+      "path": "pyto/experiments/review/runs/ask-3.json",
+      "bytes": 105494,
+      "sha256": "e49f7a10f280eaab0b034446d53bd89948bd63d3fc652603b386fe0e97115cbd"
+    },
+    {
+      "path": "pyto/experiments/review/runs/ask-4.json",
+      "bytes": 107160,
+      "sha256": "cfb414cbf4c62c1caf2c179e23f0e4234ab190964bbd3e60fd295e8891ec9443"
+    },
+    {
+      "path": "pyto/experiments/review/runs/ask-5.json",
+      "bytes": 113376,
+      "sha256": "9e4b94e7b51353db63ef14198b52b6e259c603779a753afbb90e1699e4cfea12"
+    },
+    {
+      "path": "pyto/experiments/review/runs/ask-6.json",
+      "bytes": 113365,
+      "sha256": "05a0d1a59678f3f569f6bf02c4bf791923482af1b8c57ccad3272c90459b8a6b"
+    },
+    {
+      "path": "pyto/experiments/review/runs/ask-7.json",
+      "bytes": 113366,
+      "sha256": "388f994641eec96ee825ff917b05a25fc22b6c08ede30cd37d2835aaa650d99e"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-219.json",
+      "bytes": 5632,
+      "sha256": "9fb354a33477ef52d054b11ff437ebcc889567e4fd882a1f514ac5316dec6b50"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-220.json",
+      "bytes": 5602,
+      "sha256": "739d2ac0413e3c71c5ef3ef91ce210e1a67a7d80f310ccafc41abd1995f9476f"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-221.json",
+      "bytes": 5618,
+      "sha256": "7530db949249c8ac4c6eb6c91fe7177f2c99f5a5b67d1642e3fbe6443b1db986"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-222.json",
+      "bytes": 5557,
+      "sha256": "6ae6e8f5952064c3fbf04eb1503b73548b82b82cbb99be91ee6fb3f3c950ecec"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-223.json",
+      "bytes": 5924,
+      "sha256": "c387cf0e2df2996a888437036c8dd0610b09fffaf2a6cf2fff0ad9a109b17bde"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-224.json",
+      "bytes": 5664,
+      "sha256": "9520d410a8613d4e6d11d3c9cad335b83249ff268989c74feb08f5b2ef555ca9"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-225.json",
+      "bytes": 5855,
+      "sha256": "5af5ce32c61635b7bf5ff4825a9c4c7583f72dd9df29cf648d2c2cca918296ea"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-226.json",
+      "bytes": 5869,
+      "sha256": "c66608e3aa29facc99b0b0928437b0540e6e0beb08fee8ff89644f87a50a2cf3"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-227.json",
+      "bytes": 5817,
+      "sha256": "64553bd8e6513f3c9ed5c76240688d7873ce58d9d391afe6ffcdbcb48f151be9"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-228.json",
+      "bytes": 5779,
+      "sha256": "8da10a333985316d7109ed2570811a992cf58b695f8e12ebe3b33a15c13dd865"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-229.json",
+      "bytes": 5744,
+      "sha256": "1b44f09f8cea62cc15ed7e6d0e67455c27e15bd59dd7a8e26d5f178559ef5350"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-230.json",
+      "bytes": 5891,
+      "sha256": "91163e9e4bc6eec09567fcc833e1e2e6f87f8c0bd0be8ab6550e682dea5a09c5"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-231.json",
+      "bytes": 5868,
+      "sha256": "c5897d9bad90cec441d6f08eb570a5ff439b50c04e2a5451b441cbc2efdfa388"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-232.json",
+      "bytes": 5828,
+      "sha256": "b9ca4e946661502bd1b7a1399e29f8107b30b264fc94a41c054ff22d31ce62bc"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-233.json",
+      "bytes": 5908,
+      "sha256": "19244113a2b39d0c795376f24acbe53c909d38541e7f3b53dca4ed4d3e5f25ff"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-234.json",
+      "bytes": 5924,
+      "sha256": "0f23388f1bb407927c56b9604c1b00fe68992d4956d2cd9046a9776fcd3c0d5a"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-235.json",
+      "bytes": 5893,
+      "sha256": "4dbf0009fd5e8ff134142cb8d3144b4dae5afbd2ef48fe772a515145dac11476"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-236.json",
+      "bytes": 5782,
+      "sha256": "2a02b0f02959b56ed57e36a2de3622483df988467edda534471daa448a3c6524"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-237.json",
+      "bytes": 5765,
+      "sha256": "8b8766e9cc2f7c15b47f07c9f7e58d9d4b81dcf546b986692d04bb34b33d9bd6"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-238.json",
+      "bytes": 5816,
+      "sha256": "7322610d78b2637a6c815dc3b0e05081f8b05b2e97eb2b145664bb46af0fc008"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-239.json",
+      "bytes": 5806,
+      "sha256": "4567650d5bbab3c3d7b11f9a51e1f9889abc61850034e6ead7fa5046d40a8f07"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-240.json",
+      "bytes": 5765,
+      "sha256": "6e1fe80c05f1d07f33f9faf4394766bb64200acc307f0d420f7d3b8693d57d37"
+    },
+    {
+      "path": "pyto/experiments/review/runs/default-6-241.json",
+      "bytes": 5822,
+      "sha256": "a42c1305b4fb76dfae34166641a1c61125766f3ab1c736856b5f1cea8f65533d"
+    },
+    {
+      "path": "pyto/experiments/tasks/70/HANDOFF.md",
+      "bytes": 19889,
+      "sha256": "5cfbce95aa2e638a669af001928a552bc430b66480a637693660dfedbf8a2c1e"
+    },
+    {
+      "path": "pyto/experiments/tasks/70/evidence/check_all.txt",
+      "bytes": 182533,
+      "sha256": "31468f5d5df80bc28f76a74165588f0c92e4d50867d8c4cb113dcf4dcfd35ac1"
+    },
+    {
+      "path": "pyto/experiments/tasks/70/evidence/verify.txt",
+      "bytes": 1919,
+      "sha256": "f3dfdd16e6bf819d4462511bcec6a7bd28c947949ee141153789c3632a1bdc2a"
+    },
+    {
+      "path": "pyto/experiments/tasks/70/packet.md",
+      "bytes": 15302,
+      "sha256": "54c4b28c00b9fbe1b5e68d2edc86b5ea11b8d1bbd0df28726511c8618cdd1f7c"
+    },
+    {
+      "path": "pyto/questions.md",
+      "bytes": 70446,
+      "sha256": "5cc9320c8142bcfcb3c9be318682b39791fda86a7734cb6d1e698f679ec3cc66"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 41148,
+      "sha256": "bd7d52d11efe112d8e4754a8f94e23aed2353b2da1958d0ddaaa1f9be4681717"
+    },
+    {
+      "path": "pyto/scripts/walk.py",
+      "bytes": 25449,
+      "sha256": "533fd77da5236563c0f60dfbf9241268e579d2d7b3f09d4c0115362f5616d412"
+    },
+    {
+      "path": "pyto/src/pyto/neat/review.py",
+      "bytes": 28087,
+      "sha256": "80bfb9f8d9f3287c21defbda953fb2f9a3185f35dc7a122dc6802bd2a9661ffc"
+    },
+    {
+      "path": "pyto/tests/test_neat_review.py",
+      "bytes": 14096,
+      "sha256": "6d3874dc0847f983397775d5554ad35c5f4b811887c8c7ee9677731d63621d16"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T14:00:51.955474Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

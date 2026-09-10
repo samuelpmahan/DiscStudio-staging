@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.6.227.response",
+  "sha256": "144d3fa766873e37271bb2a19538e072bfde52bab72d9d9a3bb0ccc62decc8a0",
+  "value": {
+    "bytes": "The default stated in task-63's packet stands: the record itself carries a machine's absolute path in places (refused lines on the board, check_all.txt).",
+    "sha256": "7bcf7f1d95239a7374b41bed30c327b3bf466c73ded1b00ce4719a1215e67df3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.226.response",
+  "recordedAt": 1789046559135.7725,
+  "sha256": "38b75ecb0c19e365fab60abf1cfac2dcd1c7f82e0fccdbdcb596e52ae93fdfa4",
+  "value": {
+    "k": 226,
+    "label": "ConceptMap",
+    "n": 6,
+    "text": "The default stated in task-63's packet stands: changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to C."
+  }
+}

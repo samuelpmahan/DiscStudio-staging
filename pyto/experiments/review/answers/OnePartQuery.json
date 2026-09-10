@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.OnePartQuery",
+  "sha256": "11af59d18e321c78307156dd331f94941269dec6021b7037044d33b00807b2d6",
+  "value": {
+    "k": 224,
+    "kind": "default",
+    "label": "OnePartQuery",
+    "n": 6,
+    "sha256": "1c3ae0264867e609b1dc18ed2f61133a66b30e91499484551b1afc1cc633275d"
+  }
+}

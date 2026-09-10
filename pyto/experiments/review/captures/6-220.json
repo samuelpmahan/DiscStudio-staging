@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.6.220.response",
+  "recordedAt": 1789046558384.5916,
+  "sha256": "26e506f61541ad768b60b9053ac3a3bb6d2f898e913af12143adb468ac1be052",
+  "value": {
+    "k": 220,
+    "label": "MoleculeAddress",
+    "n": 6,
+    "text": "The default stated in task-60's packet stands: the emitted PQL document is one Tick named molecule-<rank>."
+  }
+}

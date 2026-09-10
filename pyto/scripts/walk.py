@@ -39,7 +39,10 @@ def question_status(line: str) -> str:
     answer_for`), so a step and the CLI never disagree about what counts as answered."""
     label, _ = neat_review.split_question_line(line)
     answer = neat_review.answer_for(PYTO_DIR, label)
-    return "open" if answer is None else f"answered {answer['sha256'][:12]}"
+    if answer is None:
+        return "open"
+    kind = answer.get("kind", "owner")
+    return f"{'answered' if kind == 'owner' else 'default'} {answer['sha256'][:12]}"
 
 DIFF_CAP = 60 * 1024
 WIDTH = 100

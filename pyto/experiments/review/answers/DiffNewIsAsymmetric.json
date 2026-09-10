@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.DiffNewIsAsymmetric",
+  "sha256": "0e0af079b4a33885240099c48e0c93e365ff06b75ba70e7dc4c9bec8c07e83f3",
+  "value": {
+    "k": 234,
+    "kind": "default",
+    "label": "DiffNewIsAsymmetric",
+    "n": 6,
+    "sha256": "e5c2d8a22a4e067b2d5ad7d0f52da48a29711b4f17bd0e1df00c28151e15f911"
+  }
+}

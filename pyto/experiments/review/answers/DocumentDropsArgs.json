@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.DocumentDropsArgs",
+  "sha256": "d9778ab712479b57d3a986c554e4cc4f4aecec2b698db91f9ce1a89df429e9f1",
+  "value": {
+    "k": 223,
+    "kind": "default",
+    "label": "DocumentDropsArgs",
+    "n": 6,
+    "sha256": "e6f97ac4c21c0568a0dc8a681ab0d37b462cc32f690ccaebdc815b8227c16990"
+  }
+}

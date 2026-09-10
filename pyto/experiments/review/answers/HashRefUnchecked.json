@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.HashRefUnchecked",
+  "sha256": "38559e24a60d703ca8eb879d8c46b93adffe8b451495b2355f8825b15af0c930",
+  "value": {
+    "k": 225,
+    "kind": "default",
+    "label": "HashRefUnchecked",
+    "n": 6,
+    "sha256": "05aef5349b7100359cec98b7250e4909a7daa3a5b7ee2fb279a58a3a629d590e"
+  }
+}
