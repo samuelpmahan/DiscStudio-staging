@@ -76,8 +76,9 @@ ls pyto/experiments/landings | tail -5
 cat "pyto/experiments/landings/$(ls pyto/experiments/landings | grep task- | tail -1)/receipt.json"
 ```
 
-You see: every task with its state and score column; the open questions with their defaults; the
-last landing receipts by name; one receipt in full (package, base, result, verifier, suite,
+You see: every task with its state and score column; the open questions with their defaults (a
+`BrokenPipeError` traceback after the questions list is `head` closing the pipe early: harmless,
+ignore it); the last landing receipts by name; one receipt in full (package, base, result, verifier, suite,
 claimed files). Nothing here is a claim without one of these.
 
 ## Chunk 4: neat proves itself here (3 minutes)
