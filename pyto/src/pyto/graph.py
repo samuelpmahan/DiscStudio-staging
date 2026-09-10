@@ -12,17 +12,52 @@ class PartRef:
 
 @dataclass(frozen=True)
 class ValueRef:
+    """A reference to what one calculation produced.
+
+    `produce` names which published Part is meant, for a calculation that declared
+    several; it is None for the one-address case, so a graph that publishes one
+    Part per calculation emits exactly the document it always did.
+    """
+
     calc_id: str
+    produce: str | None = None
+
+    @property
+    def ref(self) -> str:
+        """The emitted spelling: `<id>`, or `<id>#<address>` for one of several."""
+        return self.calc_id if self.produce is None else f"{self.calc_id}#{self.produce}"
 
 
 @dataclass
 class Calculation:
+    """One authored call. `into` is one PartRef, a tuple of them, or None.
+
+    A Calculation may publish several Parts from one pass ({?} WhatIsATick, owner
+    2026-09-10), so every reader here walks `produce_addresses()` rather than a
+    single `into.address` -- the same helper name `pyto.pcr.Invocation` carries,
+    so the two authoring surfaces are read the same way.
+    """
+
     id: str
     call: str
     tick: str
     bindings: dict[str, PartRef | ValueRef] = field(default_factory=dict)
     args: dict[str, Any] = field(default_factory=dict)
-    into: PartRef | None = None
+    into: PartRef | tuple[PartRef, ...] | None = None
+
+    def produce_addresses(self) -> tuple[str, ...]:
+        """Every address this calculation publishes, in the declared order."""
+        if self.into is None:
+            return ()
+        if isinstance(self.into, PartRef):
+            return (self.into.address,)
+        return tuple(ref.address for ref in self.into)
+
+    def emitted_into(self) -> str | list[str] | None:
+        """`into` as the emitted document carries it: an address, or an array."""
+        if self.into is None:
+            return None
+        return self.into.address if isinstance(self.into, PartRef) else list(self.produce_addresses())
 
 
 class Pcr:
@@ -38,6 +73,7 @@ class Pcr:
         self._ticks: list[str] = []
         self._calcs: list[Calculation] = []
         self._writers: dict[str, str] = {}
+        self._multi: set[str] = set()  # ids that publish several Parts
 
     def part(self, address: str) -> PartRef:
         return PartRef(address)
@@ -50,7 +86,7 @@ class Pcr:
         *,
         id: str,
         args: dict[str, Any] | None = None,
-        into: str | None = None,
+        into: str | list[str] | tuple[str, ...] | None = None,
         **inputs: PartRef | ValueRef,
     ) -> ValueRef:
         if any(calc.id == id for calc in self._calcs):
@@ -65,14 +101,30 @@ class Pcr:
             # Match the Mermaid compiler's direct-result behavior: once a Part has a
             # writer in this graph, consuming that Part refers to the writer result.
             if isinstance(ref, PartRef) and ref.address in self._writers:
-                ref = ValueRef(self._writers[ref.address])
+                writer = self._writers[ref.address]
+                # When the writer published several Parts, the address written here
+                # is which one this binding meant; a one-address writer keeps the
+                # bare reference it always had.
+                ref = ValueRef(writer, ref.address if writer in self._multi else None)
             normalized[key] = ref
 
-        output = PartRef(into) if into else None
-        if output:
-            if output.address in self._writers:
-                raise ValueError(f"multiple writers for {output.address}")
-            self._writers[output.address] = id
+        if into is None or isinstance(into, str):
+            output = PartRef(into) if into else None
+            outputs = (output,) if output is not None else ()
+        else:
+            # A list or a tuple is the multi-produce form, even with one entry --
+            # the shape decides, not the count (pyto/src/pyto/pcr.py `Invocation`).
+            outputs = tuple(PartRef(address) for address in into)
+            if not outputs:
+                raise ValueError(f"{id}: into=[] declares no address")
+            output = outputs
+        for ref in outputs:  # every address checked before any is claimed
+            if ref.address in self._writers:
+                raise ValueError(f"multiple writers for {ref.address}")
+        for ref in outputs:
+            self._writers[ref.address] = id
+        if not isinstance(output, PartRef) and output is not None:
+            self._multi.add(id)
 
         self._calcs.append(
             Calculation(
@@ -98,14 +150,14 @@ class Pcr:
                         key: (
                             {"kind": "px", "ref": ref.address}
                             if isinstance(ref, PartRef)
-                            else {"kind": "fn", "ref": ref.calc_id}
+                            else {"kind": "fn", "ref": ref.ref}
                         )
                         for key, ref in calc.bindings.items()
                     },
                     "args": calc.args,
                 }
                 if calc.into:
-                    item["into"] = calc.into.address
+                    item["into"] = calc.emitted_into()
                 calculations.append(item)
             ticks.append({"name": tick, "Calculations": calculations})
         return {"PrincipleComponentRender": self.name, "Ticks": ticks}
@@ -126,8 +178,8 @@ class Pcr:
             for ref in calc.bindings.values():
                 if isinstance(ref, PartRef):
                     part_id(ref.address)
-            if calc.into:
-                part_id(calc.into.address)
+            for address in calc.produce_addresses():
+                part_id(address)
 
         for address, node_id in part_ids.items():
             lines.append(f'    {node_id}["{address}"]')
@@ -145,7 +197,7 @@ class Pcr:
             for key, ref in calc.bindings.items():
                 source = part_id(ref.address) if isinstance(ref, PartRef) else ref.calc_id
                 lines.append(f"    {source} -->|{key}| {calc.id}")
-            if calc.into:
-                lines.append(f"    {calc.id} --> {part_id(calc.into.address)}")
+            for address in calc.produce_addresses():
+                lines.append(f"    {calc.id} --> {part_id(address)}")
 
         return "\n".join(lines) + "\n"

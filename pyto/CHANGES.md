@@ -918,7 +918,11 @@ before the change -- and the grouped-ablation evidence was regenerated with the 
 scripts (`run.py --force`, `run_regrouped.py`, `run_reinput.py`, `run_from_retained.py`,
 `run_cached.py --force`, `replay.py --force`) because the receipts and pcr.py's pinned source
 digest moved; no test expectation was edited by hand.
-`bash pyto/scripts/check_all.sh`: ALL SUITES PASSED (library 191,
-experiments/cross-project 9, experiments/grouped-ablation 240, experiments/hiding-primitives 6,
+Then every other reader: `src/pyto/graph.py` (the authoring surface) and
+`experiments/grouped-ablation/retain.py` (retain/replay) walk `produce_addresses()` instead of one
+`into.address`, so `to_program`/`from_program` round-trip a multi-produce program and
+`check_record` unions the produces rather than putting a list in a set; one test per file guards it.
+`bash pyto/scripts/check_all.sh`: ALL SUITES PASSED (library 193,
+experiments/cross-project 9, experiments/grouped-ablation 244, experiments/hiding-primitives 6,
 experiments/s3-synthetic 5, experiments/students 10, consumer 61, disc-stats 4, examples 3,
 art-registry-md, viewer 107, viewer-record-schema 24).
