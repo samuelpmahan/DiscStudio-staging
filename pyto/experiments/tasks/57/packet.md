@@ -4,30 +4,32 @@ Intent: chains inside a Tick: the owner, 2026-09-10: 'Calculations inside a Tick
 Starting point: 97f318d4ddc4d9b52162e1736171de2d7caafce5 (land(task-56): the frontier says what the second wave landed: FRONTIER.md's Landed adds gains one line each for tasks 48 (the JS runtime speaks the same schedule), 49 (oc, effects with receipts), 50 (effects on the page), 51 (CI runs to completion), 52 (USE.md, executed) and 55 (green on macOS and Windows), each named by the task's own intent line, so the one file that says what got built is complete at the end of the sprint)
 Verify: cd pyto && python -m unittest tests.test_parallel tests.test_multi_into tests.test_use
 Allow: pyto/src/pyto/pcr.py pyto/tests pyto/USE.md pyto/questions.md pyto/CHANGES.md pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json pyto/experiments/tasks
-Candidate: 5 files, see below
+Candidate: 6 files, see below
 Evidence: suite exit 1, see below
 
 ## Candidate
 
 - M  pyto/CHANGES.md
 - M  pyto/USE.md
+- M  pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json
 - M  pyto/questions.md
 - M  pyto/src/pyto/pcr.py
 - M  pyto/tests/test_parallel.py
 
 ```
-pyto/CHANGES.md             |  16 ++++++
- pyto/USE.md                 |  21 +++++---
- pyto/questions.md           |  43 +++++++++++++++
- pyto/src/pyto/pcr.py        | 125 +++++++++++++++++++++++++++-----------------
- pyto/tests/test_parallel.py | 103 ++++++++++++++++++++++++------------
- 5 files changed, 220 insertions(+), 88 deletions(-)
+pyto/CHANGES.md                                    |  16 +++
+ pyto/USE.md                                        |  21 ++--
+ .../evidence/disc-stats-sidecar.json               |   2 +-
+ pyto/questions.md                                  |  43 +++++++
+ pyto/src/pyto/pcr.py                               | 125 +++++++++++++--------
+ pyto/tests/test_parallel.py                        | 103 +++++++++++------
+ 6 files changed, 221 insertions(+), 89 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python -m unittest tests.test_parallel tests.test_multi_into tests.test_use` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.lEhBhZ7rML) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.gqrk9P3ULO) (evidence/check_all.txt)
     suite                         tests  status
     library                         329  OK
     experiments/classroom            16  OK

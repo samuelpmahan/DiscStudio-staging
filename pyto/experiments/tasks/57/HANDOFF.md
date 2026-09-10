@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/57
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/57:pyto/experiments/tasks/57/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff adc6db6 origin/exp/57 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 19ad992 origin/exp/57 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,30 +54,32 @@ chains inside a Tick: the owner, 2026-09-10: 'Calculations inside a Tick must be
 
 ## Starting point
 
-97f318d4ddc4d9b52162e1736171de2d7caafce5 (land(task-56): the frontier says what the second wave landed: FRONTIER.md's Landed adds gains one line each for tasks 48 (the JS runtime speaks the same schedule), 49 (oc, effects with receipts), 50 (effects on the page), 51 (CI runs to completion), 52 (USE.md, executed) and 55 (green on macOS and Windows), each named by the task's own intent line, so the one file that says what got built is complete at the end of the sprint). MAIN may have moved since: `git log --oneline adc6db6..origin/claude/os-sprint-st8hnu` shows how far.
+97f318d4ddc4d9b52162e1736171de2d7caafce5 (land(task-56): the frontier says what the second wave landed: FRONTIER.md's Landed adds gains one line each for tasks 48 (the JS runtime speaks the same schedule), 49 (oc, effects with receipts), 50 (effects on the page), 51 (CI runs to completion), 52 (USE.md, executed) and 55 (green on macOS and Windows), each named by the task's own intent line, so the one file that says what got built is complete at the end of the sprint). MAIN may have moved since: `git log --oneline 19ad992..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
 
 - M  pyto/CHANGES.md
 - M  pyto/USE.md
+- M  pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json
 - M  pyto/questions.md
 - M  pyto/src/pyto/pcr.py
 - M  pyto/tests/test_parallel.py
 
 ```
-pyto/CHANGES.md             |  16 ++++++
- pyto/USE.md                 |  21 +++++---
- pyto/questions.md           |  43 +++++++++++++++
- pyto/src/pyto/pcr.py        | 125 +++++++++++++++++++++++++++-----------------
- pyto/tests/test_parallel.py | 103 ++++++++++++++++++++++++------------
- 5 files changed, 220 insertions(+), 88 deletions(-)
+pyto/CHANGES.md                                    |  16 +++
+ pyto/USE.md                                        |  21 ++--
+ .../evidence/disc-stats-sidecar.json               |   2 +-
+ pyto/questions.md                                  |  43 +++++++
+ pyto/src/pyto/pcr.py                               | 125 +++++++++++++--------
+ pyto/tests/test_parallel.py                        | 103 +++++++++++------
+ 6 files changed, 221 insertions(+), 89 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python -m unittest tests.test_parallel tests.test_multi_into tests.test_use` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.lEhBhZ7rML) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.gqrk9P3ULO) (evidence/check_all.txt)
     suite                         tests  status
     library                         329  OK
     experiments/classroom            16  OK
@@ -95,6 +97,7 @@ pyto/CHANGES.md             |  16 ++++++
 
 (The agent working on this writes one line per thing it was unsure about, as
 `{?} Label: description`, and leaves the decision to the owner. Empty means nothing was unsure.)
+{?} SidecarDigest: pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json carries pcr.py's source digest and the disc-stats suite rewrites it whenever the kernel changes, so it is on this task's allow list as it was on task 39's; a kernel change that forgets it is refused at landing, which is what happened to this task's first attempt (20260910T041052Z-task-57).
 
 ## What to do
 
