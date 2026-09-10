@@ -78,7 +78,11 @@ run_suite library "$PYTO" "$PYTHON" -m unittest discover -s tests -v
 # This loop is how an experiment suite is registered: dropping test_*.py into
 # experiments/<name>/ is the whole registration, and no count is pinned anywhere.
 # So experiments/students (the homework, its committed evidence/run-1 and grade.py's
-# four mechanical checks) runs here for the same reason grouped-ablation does.
+# four mechanical checks) runs here for the same reason grouped-ablation does, and so
+# does experiments/classroom (make_class.sh --selftest builds a class repository and a
+# private desk under a temp directory and lands one graded by the class's own verifier;
+# tutor.py renders that desk's record twice and the two runs are compared byte for
+# byte). Neither pins a count, and neither writes anywhere but its own temp directory.
 for dir in "$PYTO"/experiments/*/; do
     name="$(basename "$dir")"
     [ "$name" = "runs" ] && continue

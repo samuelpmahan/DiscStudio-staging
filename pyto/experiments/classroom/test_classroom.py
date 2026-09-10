@@ -23,12 +23,14 @@ test failed, the mutation was reverted):
         temp directory in the refusal line ("...the page names /tmp/...").
         Everything else stayed green, so that test is the only thing holding the
         no-absolute-paths claim up.
-  2. make_class.sh's grader made to print `score: 4 of 5` (the total widened without
-     the checks changing)
-     -> test_the_selftest_passes FAILED on the receipt assertion ("passed": 4 with
-        "total": 4) and test_the_class_board_records_the_grade FAILED on `score 4/4`.
-        Two independent tests caught it, one through the receipt and one through the
-        board, which is the pair the landing writes.
+  2. make_class.sh's grader made to print `score: $passed of $((checks + 1))` -- the
+     total widened while the checks stayed as they were
+     -> three tests FAILED, and they are three different readings of the same number:
+        test_the_landing_receipt_keeps_the_score_and_the_cold_read (the receipt no
+        longer says "total": 4), test_the_class_board_records_the_grade (the board
+        line no longer says score 4/4) and test_the_selftest_passes (make_class.sh's
+        own assertion caught it too). The receipt and the board are written by
+        separate code paths in land.sh, so neither test alone is the claim.
 """
 
 from __future__ import annotations
