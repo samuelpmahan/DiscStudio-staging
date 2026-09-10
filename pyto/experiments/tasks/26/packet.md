@@ -4,18 +4,40 @@ Intent: Ticks as circuits: tick_laws.py checks any pyto-run-record@1 against the
 Starting point: 71e2cbb57866744c6fd1b16665a30fb5844c03fd (root: {?} TicksAsCircuits, the owner's series/parallel question with the mapping as default)
 Verify: cd pyto/experiments/tick-laws && python3 -m unittest discover -s . -p 'test_*.py' && python3 tick_laws.py --check ../grouped-ablation/evidence/run-1/record.json ../students/evidence/run-1/record.json
 Allow: pyto/experiments/tick-laws pyto/scripts/check_all.sh pyto/CHANGES.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 4 files, see below
+Evidence: suite exit 0, see below
 
-## Codex's own notes (kept as written)
+## Candidate
+
+- M  pyto/CHANGES.md
+- A  pyto/experiments/tick-laws/README.md
+- A  pyto/experiments/tick-laws/test_tick_laws.py
+- A  pyto/experiments/tick-laws/tick_laws.py
+
+```
+pyto/CHANGES.md                              |   2 +
+ pyto/experiments/tick-laws/README.md         |  38 ++++
+ pyto/experiments/tick-laws/test_tick_laws.py | 284 +++++++++++++++++++++++++++
+ pyto/experiments/tick-laws/tick_laws.py      | 216 ++++++++++++++++++++
+ 4 files changed, 540 insertions(+)
+```
 
 ## Evidence
 
-- `python3 -m unittest discover -s pyto/experiments/tick-laws -p 'test_*.py' -v` — PASS, 10 tests.
-- `python3 pyto/experiments/tick-laws/tick_laws.py --check pyto/experiments/grouped-ablation/evidence/run-1/record.json pyto/experiments/students/evidence/run-1/record.json` — PASS.
-- Mutation check 1: replacing `if producers_here:` with `if False:` made the sibling-consume test fail.
-- Mutation check 2: replacing `if len(ids) > 1:` with `if len(ids) > 2:` made the duplicate-producer test fail.
-- `PYTHON=/workspace/scratch/f2ea76ad2141/DiscStudio-staging/.venv/bin/python bash pyto/scripts/check_all.sh` — BLOCKED/FAIL while reconstructing the authenticated checkout: connector `fetch_file` truncated some large baseline files (for example `experiments/grouped-ablation/replay.py`) and the nonbinary evidence closure is incomplete. The captured attempt is `evidence/check_all.txt`; it is not evidence that the baseline itself fails. It shows baseline tests are blocked because this connector reconstruction has no authentic `.git`, and three oversized PNG evidence files are unavailable through the connector binary limit.
+- verify: `cd pyto/experiments/tick-laws && python3 -m unittest discover -s . -p 'test_*.py' && python3 tick_laws.py --check ../grouped-ablation/evidence/run-1/record.json ../students/evidence/run-1/record.json` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         155  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    240  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             10  OK
+    experiments/tick-laws            10  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
 
 ## Uncertain
 

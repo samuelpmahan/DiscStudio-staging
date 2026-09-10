@@ -1,0 +1,36 @@
+.LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+/tmp/tmpm8gauaaq/invalid.json
+Summary: work_ms=None critical_path_ms=None
+no parallel execution exists yet
+VIOLATION: pyto-run-record@1 document: missing required field(s) counters, parts, pcr, source, ticks; RECORD.md: missing fields are null, never absent
+LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+/tmp/tmpm8gauaaq/clean.json
+Tick 0: work_ms=0.1 latency_ms=0.1
+Summary: work_ms=0.1 critical_path_ms=0.1
+no parallel execution exists yet
+/tmp/tmpm8gauaaq/law.json
+Tick 0: work_ms=0.2 latency_ms=0.1
+Summary: work_ms=0.2 critical_path_ms=0.1
+no parallel execution exists yet
+VIOLATION: node law violation: consumer reads sibling-produced px.bad in Tick 0 producers=['producer']
+.........
+----------------------------------------------------------------------
+Ran 10 tests in 0.007s
+
+OK
+LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+../grouped-ablation/evidence/run-1/record.json
+Tick 0: work_ms=0.07768499926896766 latency_ms=0.053461997595150024
+Tick 1: work_ms=25.269521000154782 latency_ms=5.857051997736562
+Tick 2: work_ms=0.9298010008933488 latency_ms=0.2129480017174501
+Tick 3: work_ms=0.0357530007022433 latency_ms=0.0357530007022433
+Summary: work_ms=26.312760001019342 critical_path_ms=6.1592149977514055
+no parallel execution exists yet
+../students/evidence/run-1/record.json
+Tick 0: work_ms=0.03286900027887896 latency_ms=0.03286900027887896
+Tick 1: work_ms=0.03024099987669615 latency_ms=0.03024099987669615
+Tick 2: work_ms=0.0192300003618584 latency_ms=0.0192300003618584
+Tick 3: work_ms=0.028363000183162512 latency_ms=0.028363000183162512
+Tick 4: work_ms=0.021507999917957932 latency_ms=0.021507999917957932
+Summary: work_ms=0.13221100061855395 critical_path_ms=0.13221100061855395
+no parallel execution exists yet
