@@ -20,7 +20,7 @@ what is there, sorted.
 An address has three roots and only three: `px` for values, `fn` for pure
 calculations, `oc` for effects. `pyto.address.check` describes that rule; it is a
 reader, not a gate, so nothing in the kernel refuses an address for it today
-(only the `fn.` prefix of a Calculation is enforced, in section 3).
+(only a Calculation's `fn.`/`oc.` prefix is enforced, in section 3).
 
 ```python
 from pyto import Part, PxC
@@ -106,9 +106,18 @@ address was new or replaced. That is the same fact a receipt records in section 
 ## 3. A Calculation
 
 A `Calculation` is a named pure function of **one argument**: a mapping of named
-inputs. Its address must start with `fn.` — that is the one address rule the
-kernel enforces, and it is what makes a calculation distinguishable from a value
-at a glance.
+inputs. Its address must start with `fn.` (pure) or with `oc.` — that is the one
+address rule the kernel enforces, and it is what makes a calculation
+distinguishable from a value at a glance.
+
+An `oc.` address is an **OperationalCalculation**: the one kind that may touch
+the world, and only through the `Effects` handle the run hands it as
+`args["effects"]` — `write_text`, `read_text`, `now_ms`, `random`, `env`, every
+path relative to the run's `effects_root`, and an `fn.` Calculation gets no
+handle at all. Every effect it performs is appended to a ledger that lands on the
+invocation's receipt and in the run record, so a replay plays the recorded value
+back instead of re-running the effect and refuses a ledger that does not match;
+`src/pyto/effects.py` is the whole syscall table and says what each verb records.
 
 A Calculation returns **one result**, published at the one address in `into`; or
 it declares **several** addresses with `into=[...]` and returns them together, as
@@ -174,7 +183,7 @@ print("the receipt is a Part:", pxc.has("px.receipt.order.Sum.sum"))
 ```text
 by hand:          515
 through the store: 3
-no prefix:        Calculation address must start with 'fn.'
+no prefix:        Calculation address must start with 'fn.' (pure) or with 'oc.' (an OperationalCalculation: the syscall table, the only place an effect happens)
 one result:       515 -> 515
 several results:  {'px.order.tax': 41.2, 'px.order.total': 556.2}
 published:        41.2 556.2
@@ -496,7 +505,7 @@ def double(args):
     return args["subtotal"] * 2
 
 
-# 1. A Calculation whose address does not start with `fn.`.
+# 1. A Calculation whose address starts with neither `fn.` nor `oc.`.
 try:
     Calculation("order.add_up", add_up)
 except ValueError as refused:
@@ -523,7 +532,7 @@ except ValueError as refused:
 ```
 
 ```text
-1: Calculation address must start with 'fn.'
+1: Calculation address must start with 'fn.' (pure) or with 'oc.' (an OperationalCalculation: the syscall table, the only place an effect happens)
 2: PCR 'order' calculation 'double' binds 'subtotal' to the result of 'sum', a sibling in Tick 'Sum' (it produces px.order.subtotal): the Calculations of one Tick are parallel branches and none of them may consume another's produce (the node law, {?} TicksAsCircuits); move 'sum' to an earlier Tick, or 'double' to a later one
 3: PxC: 'px.receipt.order.Sum.sum' is under the reserved 'px.receipt.' segment, which only a run may write (pyto.pcr, or inside receipt_writes_allowed(), or set(..., _from_run=True))
 ```
