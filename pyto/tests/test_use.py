@@ -227,6 +227,9 @@ class UseMarkdownIsPortable(unittest.TestCase):
                 "5. The record",
                 "6. PQL",
                 "8. What not to do",
+                "9. crisp",
+                "9. crisp",
+                "9. crisp",
             ],
         )
 

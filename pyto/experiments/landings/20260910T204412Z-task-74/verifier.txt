@@ -1,0 +1,7 @@
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/tests')
+[tests/test_crisp] sys.path.insert(0, '/home/user/DiscStudio-staging/pyto/viewer/test')
+....................
+----------------------------------------------------------------------
+Ran 20 tests in 0.806s
+
+OK
