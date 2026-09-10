@@ -1,9 +1,49 @@
 [tests/test_receipts] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/49/pyto/experiments/grouped-ablation')
 [tests/test_materialize] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/49/pyto/viewer/test')
-[tests/test_effects] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/49/pyto/tests')
-.......................................................................................................................................................................................................................
+.........................................................................................F............................................................E.........................................
+======================================================================
+ERROR: test_effects (unittest.loader._FailedTest.test_effects)
 ----------------------------------------------------------------------
-Ran 215 tests in 9.216s
+ImportError: Failed to import test module: test_effects
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/49/pyto/tests/test_effects.py", line 53, in <module>
+    from pyto.effects import EFFECT_KINDS, EffectRefused, Effects, ReplayEffects, effect_digest
+ModuleNotFoundError: No module named 'pyto.effects'
 
-OK
-exit=0
+
+======================================================================
+FAIL: test_results_keyed_by_id_not_tick_and_rerun_replaces (tests.test_semantics.PCRRunRulesTest.test_results_keyed_by_id_not_tick_and_rerun_replaces)
+pcr.py: PcrRun.results is a flat dict keyed by invocation id (no tick segment); PcrRun
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/49/pyto/tests/test_semantics.py", line 542, in test_results_keyed_by_id_not_tick_and_rerun_replaces
+    self.assertEqual(
+AssertionError: Tuples differ: ('pcr[61 chars]ms', 'budget_ms', 'stopped_after_tick', 'completed') != ('pcr[61 chars]ms', 'budget_ms', 'stopped_after_tick', 'completed', 'effects')
+
+Second tuple contains 1 additional elements.
+First extra element 9:
+'effects'
+
+  ('pcr',
+   'ticks',
+   'results',
+   'receipts',
+   'parallel',
+   'tick_latency_ms',
+   'budget_ms',
+   'stopped_after_tick',
+-  'completed')
+?             ^
+
++  'completed',
+?             ^
+
++  'effects')
+
+----------------------------------------------------------------------
+Ran 192 tests in 8.829s
+
+FAILED (failures=1, errors=1)
