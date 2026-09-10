@@ -1,0 +1,18 @@
+# Task 60
+
+Intent: SUBDUE-PxC-PQL moonshot (the owner's last call of the sprint, not OS): mine the run records for molecules. A new experiment pyto/experiments/molecules builds one labelled graph from every committed pyto-run-record@1 (invocations labelled by Calculation address, Parts by address shape; reads, writes and declared-order edges), runs the SUBDUE miner from hiding-primitives over it, and names each mined substructure a molecule: a repeated chain of Calculations over Part shapes, emitted as a PQL document that runs it, a PQL query that finds its Parts in a store, and the compression it buys in bits; report.md is rebuilt byte for byte and --check refuses drift; tests pin determinism and that every instance really embeds in its record
+Starting point: d9934c299ce88b05fa17b21960187422d37f606e (land(task-57): chains inside a Tick: the owner, 2026-09-10: 'Calculations inside a Tick must be independent was added as a rule, while your existing ChainSpot program deliberately chains dependent Calculations inside a Tick. Your definition was the moment that sequence becomes inspectable.' The kernel stops refusing a Calculation that binds an earlier sibling's result; inside a Tick the Calculations are a sequence in declared order and the Tick boundary is where the sequence becomes inspectable; a Tick with no sibling reads may run at once, a Tick with them runs in order even under parallel=True; two siblings producing one address is still refused; the decision goes on pyto/questions.md in the owner's words)
+Verify: cd pyto && python -m unittest discover -s experiments/molecules -p 'test_*.py' && python experiments/molecules/mine.py --check
+Allow: pyto/experiments/molecules pyto/experiments/hiding-primitives/subdue.py pyto/src/pyto/px.py pyto/tests/test_px.py pyto/FRONTIER.md pyto/experiments/tasks
+Candidate: not packed yet
+Evidence: not packed yet
+
+## Uncertain
+
+(The agent working on this writes one line per thing it was unsure about, as
+`{?} Label: description`, and leaves the decision to the owner. Empty means nothing was unsure.)
+{?} MoleculeScheme: exact names a program's own molecule (the ablation's fit-fit-score triple), shape names a studio-wide one (produce-then-consume); which one the owner means by molecular synthesis is his call, both are reported.
+{?} PartLabelKind: Parts are labelled by full address (exact) or the constant "part" (shape); labelling by value kind (json/text/svg) would sit between the two and was not tried.
+{?} MoleculeAddress: the emitted PQL document is one Tick named molecule-<rank>; whether a molecule should become a new Calculation address fn.molecule.<canon-digest> is left open.
+{?} CompoundMolecules: later SUBDUE ranks are built on an earlier rank's SUB node; they are listed with their instances but no PQL document is emitted for them (only primitive ranks embed vertex-for-vertex).
+{?} PxMolecules: "px molecules <record...>" in px.py is not done (time).
