@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/75
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/75:pyto/experiments/tasks/75/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 5d840db origin/exp/75 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 5c8d3cc origin/exp/75 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ crisp, second pass, what the owner settled today: two digests on every proposal,
 
 ## Starting point
 
-f432097ec200503ed5fb299d900e958fad407316 (land(task-74): crisp: the owner, 2026-09-10: 'Like neat(not) and tidy, it has a TINY job it does VERY well. It does template gen that is required to import into PxC-ore and is tunable to imply or force decomposition. Variation through PxC is key.' pyto/src/pyto/crisp.py: crisp template <capability> [--mode imply|force] emits one composition proposal (capabilityDelta, why, existing and proposed Parts and Calculations, the PQL in the readPql shape, inspection, verification, decisions, limits) as a Part proposal.neat.composition.<set>.<option>.<revision> with a digest, from a store and a registry; imply leaves {?} slots, force refuses any name that does not resolve and any backwards read; crisp vary makes the options by changing one binding (variation A) or substituting one Calculation with the same produce shape (variation B), each option its own Part; crisp import runs a proposal's PQL against the registry and writes its Parts into the store with a run record; same inputs same bytes). MAIN may have moved since: `git log --oneline 5d840db..origin/claude/os-sprint-st8hnu` shows how far.
+f432097ec200503ed5fb299d900e958fad407316 (land(task-74): crisp: the owner, 2026-09-10: 'Like neat(not) and tidy, it has a TINY job it does VERY well. It does template gen that is required to import into PxC-ore and is tunable to imply or force decomposition. Variation through PxC is key.' pyto/src/pyto/crisp.py: crisp template <capability> [--mode imply|force] emits one composition proposal (capabilityDelta, why, existing and proposed Parts and Calculations, the PQL in the readPql shape, inspection, verification, decisions, limits) as a Part proposal.neat.composition.<set>.<option>.<revision> with a digest, from a store and a registry; imply leaves {?} slots, force refuses any name that does not resolve and any backwards read; crisp vary makes the options by changing one binding (variation A) or substituting one Calculation with the same produce shape (variation B), each option its own Part; crisp import runs a proposal's PQL against the registry and writes its Parts into the store with a run record; same inputs same bytes). MAIN may have moved since: `git log --oneline 5c8d3cc..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -77,6 +77,7 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 - M  pyto/tests/test_neat_gate.py
 - M  pyto/tests/test_px.py
 - M  pyto/tests/test_use.py
+- M  pyto/viewer/adapters.js
 
 ```
 .gitignore                                         |   3 +
@@ -97,13 +98,14 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
  pyto/tests/test_neat_gate.py                       |  21 +
  pyto/tests/test_px.py                              |  44 ++
  pyto/tests/test_use.py                             |   3 +
- 18 files changed, 1315 insertions(+), 351 deletions(-)
+ pyto/viewer/adapters.js                            |  50 +-
+ 19 files changed, 1364 insertions(+), 352 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python -m unittest tests.test_crisp tests.test_use tests.test_px tests.test_neat_gate` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.v30WWtZLOX) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.O9CNmLYpfT) (evidence/check_all.txt)
     suite                         tests  status
     library                         435  OK
     experiments/classroom            16  OK
