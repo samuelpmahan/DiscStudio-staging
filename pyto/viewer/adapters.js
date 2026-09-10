@@ -578,7 +578,8 @@ export function tickDurationMs(tick) {
  * top-level bindings of one name is a SyntaxError. The two are not the same
  * function: with `latency_ms` present they agree, and with it absent this one
  * sums the durations (the serial reading RECORD.md specifies for the fallback)
- * while the viewer's takes the longest branch (the critical path it draws).
+ * while the viewer's takes the longest branch of a parallel Tick and the sum of a
+ * chain (the critical path it draws).
  * See `{?} TwoLatencyFallbacks` in experiments/tasks/39/packet.md.
  */
 export function tickLatencyMsFromRecord(tick) {

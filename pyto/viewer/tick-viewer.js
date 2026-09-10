@@ -87,11 +87,17 @@ export function invocationReads(invocation, producedBy) {
 
 /**
  * A Tick is parallel when it holds more than one Calculation and no Calculation
- * reads what a sibling produced -- the node law's first clause
- * (`pyto/questions.md`, `{?} TicksAsCircuits`). Siblings are the only producers
- * that matter here, so the resolver map is built from this Tick alone: an
- * `fn:` reference to an earlier Tick resolves to nothing and is not a branch
- * dependency.
+ * reads what a sibling produced: its branches can run at once. Inside a Tick the
+ * Calculations are a sequence in declared order, so a Tick where one reads a
+ * sibling's produce is a chain instead (`isChainTick`): it runs in order, and the
+ * Tick boundary is where that sequence becomes inspectable. The classification is
+ * experiments/tick-laws/tick_laws.py's (the owner, 2026-09-10: "'Calculations
+ * inside a Tick must be independent' was added as a rule, while your existing
+ * ChainSpot program deliberately chains dependent Calculations inside a Tick.
+ * Your definition was the moment that sequence becomes inspectable"). Siblings
+ * are the only producers that matter here, so the resolver map is built from
+ * this Tick alone: an `fn:` reference to an earlier Tick resolves to nothing and
+ * is not a branch dependency.
  */
 export function isParallelTick(tick) {
   const invocations = tick.invocations || [];
@@ -114,6 +120,16 @@ export function isParallelTick(tick) {
 }
 
 /**
+ * A Tick is a chain when it holds more than one Calculation and one of them
+ * reads what a sibling produced: the Calculations run in declared order, one
+ * after another, and the Tick takes the sum of their durations. The page draws
+ * a chain as the sequence it is, one card under the other, and says so.
+ */
+export function isChainTick(tick) {
+  return (tick.invocations || []).length >= 2 && !isParallelTick(tick);
+}
+
+/**
  * A Tick's work: the sum of its branches' durations, or null when the runtime
  * recorded none. Unrounded, unlike adapters.js `tickDurationMs`, so that adding
  * Ticks up gives the run total tick_laws.py reports and not a rounded-per-Tick one.
@@ -132,11 +148,13 @@ export function tickWorkMs(tick) {
 
 /**
  * A Tick's latency: `latency_ms` when the record carries it, else the longest
- * branch -- the time the Tick takes when its branches run at once, which is
- * what tick_laws.py reports and what the run's critical path adds up.
+ * branch of a parallel Tick -- the time the Tick takes when its branches run at
+ * once -- or the sum through a chain, which runs in order. Either way it is what
+ * tick_laws.py reports and what the run's critical path adds up.
  */
 export function tickLatencyMs(tick) {
   if (typeof tick.latency_ms === 'number' && Number.isFinite(tick.latency_ms)) return tick.latency_ms;
+  if (isChainTick(tick)) return tickWorkMs(tick);
   let longest = null;
   for (const invocation of tick.invocations) {
     if (typeof invocation.duration_ms === 'number' && Number.isFinite(invocation.duration_ms)) {
@@ -473,9 +491,14 @@ export function renderInvocation(doc, invocation) {
 
 export function renderTick(doc, tick) {
   const parallel = isParallelTick(tick);
+  const chain = isChainTick(tick);
+  // `data-chain` is set only on a chain, so a record with no chain renders byte
+  // for byte what it rendered before chains were read (the golden card tree).
+  const attrs = { 'data-tick': String(tick.index), 'data-parallel': parallel ? 'yes' : 'no' };
+  if (chain) attrs['data-chain'] = 'yes';
   const section = el(doc, 'section', {
-    className: parallel ? 'tick parallel' : 'tick',
-    attrs: { 'data-tick': String(tick.index), 'data-parallel': parallel ? 'yes' : 'no' }
+    className: parallel ? 'tick parallel' : chain ? 'tick chain' : 'tick',
+    attrs
   });
   const count = tick.invocations.length;
   const work = tickWorkMs(tick);
@@ -485,7 +508,8 @@ export function renderTick(doc, tick) {
     el(doc, 'h2', {}, [
       el(doc, 'span', { className: 'tick-index', text: String(tick.index) }),
       el(doc, 'span', { className: 'tick-name', text: tick.name }),
-      parallel ? el(doc, 'span', { className: 'tick-mode', text: `parallel · ${count} branches` }) : null
+      parallel ? el(doc, 'span', { className: 'tick-mode', text: `parallel · ${count} branches` })
+        : chain ? el(doc, 'span', { className: 'tick-mode', text: `chain · ${count} in order` }) : null
     ]),
     el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${timing}` })
   ]));
@@ -497,6 +521,7 @@ export function renderTick(doc, tick) {
     }
     section.appendChild(branches);
   } else {
+    // One card under the other: a chain in the order it ran, or a single Calculation.
     for (const invocation of tick.invocations) section.appendChild(renderInvocation(doc, invocation));
   }
   return section;
