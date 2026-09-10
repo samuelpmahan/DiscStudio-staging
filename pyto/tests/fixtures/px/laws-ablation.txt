@@ -1,0 +1,4 @@
+LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+pcr: ablation.grouped
+node law: ok
+loop law: ok

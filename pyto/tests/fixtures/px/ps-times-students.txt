@@ -1,0 +1,6 @@
+TICK  TICK-NAME  ID         CALCULATION            INTO                   STATE     MS
+0     Parse      parse      fn.students.parse      px.students.roster     hit       0.030
+1     Stats      mean       fn.students.mean       px.students.mean       computed  0.025
+1     Stats      median     fn.students.median     px.students.median     computed  0.016
+2     Letters    letters    fn.students.letters    px.students.letters    computed  0.017
+3     Histogram  histogram  fn.students.histogram  px.students.histogram  computed  0.022

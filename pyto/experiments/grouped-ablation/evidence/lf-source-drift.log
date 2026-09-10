@@ -6,13 +6,13 @@ which experiments/CAPTURE.md forbids for anything scripts/check_all.sh runs; it
 is therefore outside the discovered test suite, and the tests assert on this
 committed log instead of re-running it (fixer round 1, finding 4).
 
-PYTHONPATH (scratch, removed after the run): /tmp/determinism-lf-8f6p_ip6
+PYTHONPATH (scratch, removed after the run): /tmp/determinism-lf-isyyluym
 command: ['/home/user/DiscStudio-staging/EXP/39/.venv/bin/python3', '-c', '<CHILD_LF_SNIPPET>', '/home/user/DiscStudio-staging/EXP/39/pyto/experiments/grouped-ablation', '/home/user/DiscStudio-staging/EXP/39/pyto/experiments/grouped-ablation/evidence/run-1/retained.json']
 record_results_sha256 (the retained.json this log was produced against): 5d68fef265b20ac82bcf949ff1e5eda8c059e64a2bef08d24dc6b40069a4e415
-converted files: ['__init__.py', 'address.py', 'core.py', 'graph.py', 'materialize.py', 'mounts.py', 'neon.py', 'pcr.py', 'pql.py']
-child pyto.__file__: /tmp/determinism-lf-8f6p_ip6/pyto/__init__.py  (used editable install instead of the LF copy: False)
-core.py source sha256: editable-install(LF)=48071a5f25abcb17503b5f93411626426daf7dc2d83df3ac2a676d958258f072 crlf-copy(raw bytes)=ff5e416adcd52ae69c09c1638de5b6206e9f6e1a03f96231665a381e82920fa7 differs_by_construction=True
-pcr.py source sha256: editable-install(LF)=71877321cb2f1278059617464e40e75bc3792c8e9f5394c84cb3f34701eb82e7 crlf-copy(raw bytes)=94c15a2ff819a10ed9c70d55f493909d1bb98a762e62c3034e86a26f924cfbc1 differs_by_construction=True
+converted files: ['__init__.py', 'address.py', 'core.py', 'graph.py', 'materialize.py', 'mounts.py', 'neon.py', 'pcr.py', 'pql.py', 'px.py']
+child pyto.__file__: /tmp/determinism-lf-isyyluym/pyto/__init__.py  (used editable install instead of the LF copy: False)
+core.py source sha256: editable-install(LF)=f62689e276478730b093976d15650743eb026ae2f6f8d59746a8dd3cccc07f78 crlf-copy(raw bytes)=8c08a74917e7eda8235206c8062e2c464d738e25b73618530ff83b4e2729ffce differs_by_construction=True
+pcr.py source sha256: editable-install(LF)=66fcbf559cc110482562da3d7bd8ef3526829f2236e1f0db3c34fce19e83d70d crlf-copy(raw bytes)=02e837daede0e04c3f037c0b5095c7ba5e665997efeb64f3a7372fa92fffcdc5 differs_by_construction=True
 normalized sha256 equal to the record's provider digests: True
 replay result digests identical to run-1 despite the source-hash drift: True
 

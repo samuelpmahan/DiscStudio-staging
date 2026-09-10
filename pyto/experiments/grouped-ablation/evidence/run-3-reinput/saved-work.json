@@ -53,9 +53,9 @@
   "invocations_skippable_by_digest": [
     "select"
   ],
-  "ms_saved": 0.035,
+  "ms_saved": 0.039,
   "ms_saved_by_invocation": {
-    "select": 0.03500699995129253
+    "select": 0.03925099963453249
   },
   "prior_run": "run-1",
   "program_lines_changed": {

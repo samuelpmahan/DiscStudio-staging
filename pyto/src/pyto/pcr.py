@@ -956,7 +956,18 @@ class PCR:
             # frozen: the tracked view is this invocation's, and filing a receipt
             # is not something the invocation did. Written the other way round,
             # every invocation would testify that it produced its own receipt.
-            pxc.set(receipt_address(self.name, tick.name, invocation.id), receipt)
+            # `_from_run=True` is the marker core.py's receipt guard asks the run
+            # for (core.py:PxC.set, task 41). The guard's fallback -- recognising
+            # `pyto.pcr` by the calling frame -- was written because pcr.py was
+            # another team's file; it is this one's, so the run says so instead of
+            # being recognised, and a store *view* between the run and the PxC (a
+            # recording or proxying store, `_TrackedPxC`'s cousin) can relay a run
+            # write without owning a frame in this module.
+            pxc.set(
+                receipt_address(self.name, tick.name, invocation.id),
+                receipt,
+                _from_run=True,
+            )
 
     def mermaid(self) -> str:
         lines = ["flowchart TD"]

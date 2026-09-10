@@ -84,11 +84,16 @@ def note(kind: str, name: str) -> None:
 
 
 class RecordingPxC(PxC):
-    """A PxC that remembers the order its Parts were written in, and nothing else."""
+    """A PxC that remembers the order its Parts were written in, and nothing else.
 
-    def set(self, part, value):
+    It relays every keyword it is given rather than deciding anything: a view
+    that swallowed `_from_run` would refuse the run's own receipts (core.py's
+    receipt guard, task 41), and a view that invented it would forge them.
+    """
+
+    def set(self, part, value, **marker):
         note("wrote", part if isinstance(part, str) else part.address)
-        return super().set(part, value)
+        return super().set(part, value, **marker)
 
 
 def slow_branch(args):

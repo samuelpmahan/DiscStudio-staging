@@ -6,19 +6,19 @@
       "clock": "time.perf_counter",
       "fixture": "synthetic-fixture",
       "label": "make_data",
-      "wall_ms": 8.457
+      "wall_ms": 7.152
     },
     {
       "clock": "time.perf_counter",
       "fixture": "synthetic-fixture",
       "label": "build_program",
-      "wall_ms": 0.245
+      "wall_ms": 0.179
     },
     {
       "clock": "time.perf_counter",
       "fixture": "synthetic-fixture",
       "label": "pcr.run",
-      "wall_ms": 29.068
+      "wall_ms": 23.635
     }
   ]
 }
