@@ -75,6 +75,6 @@
   "unclaimed": [],
   "landed_by": "session",
   "at": "2026-09-10T04:51:32.537246Z",
-  "result_sha": null,
+  "result_sha": "2810f4efa75371153d5c2ba6e4517750c8346780",
   "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
 }

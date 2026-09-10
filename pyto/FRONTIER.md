@@ -1,6 +1,6 @@
 # The frontier
 
-Every candidate on the record, merged into adds. The owner, 2026-09-10, on `pyto/questions.md`
+Every candidate on the record, merged into adds. The frontier runs through the owner (2026-09-10: "tailored for subagent throughput THROUGH ME. As many lil tiny questions as possible"): agents ask small questions, the owner answers by number, the answers are filed on `pyto/questions.md` in his words, and what gets built next follows the answers, not a default. The owner, 2026-09-10, on `pyto/questions.md`
 under `{?} Frontier`: "I think the best way to run this is to build whatever task frontier and
 instead of going just in order we refine and merge compatible things. Building the OS is much more
 understandable if each add includes an illustrative feature add or is a few complementary things."
