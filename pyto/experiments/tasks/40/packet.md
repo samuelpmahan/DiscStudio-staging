@@ -4,8 +4,52 @@ Intent: parallel you can see: the Tick viewer draws a Tick's Calculations side b
 Starting point: 53d31d925730b00a954afb7524e4c024d1760ef5 (board: **started** `task-39`: parallel for real and budgets: PcrRun runs the Ca)
 Verify: cd pyto && node --test viewer/test/*.test.mjs && cd experiments/tick-laws && python3 -m unittest discover -s . -p 'test_*.py' && python3 tick_laws.py --check ../students/evidence/run-1/record.json
 Allow: pyto/viewer/tick-viewer.html pyto/viewer/tick-viewer.js pyto/viewer/embed.mjs pyto/viewer/test pyto/experiments/tick-laws pyto/experiments/students/README.md pyto/CHANGES.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 10 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/CHANGES.md
+- M  pyto/experiments/students/README.md
+- M  pyto/experiments/tick-laws/README.md
+- M  pyto/experiments/tick-laws/test_tick_laws.py
+- M  pyto/experiments/tick-laws/tick_laws.py
+- A  pyto/viewer/fixtures/parallel-demo.json
+- A  pyto/viewer/test/parallel-view.test.mjs
+- M  pyto/viewer/test/playback.test.mjs
+- M  pyto/viewer/tick-viewer.html
+- M  pyto/viewer/tick-viewer.js
+
+```
+pyto/CHANGES.md                              |   2 +
+ pyto/experiments/students/README.md          |  11 +-
+ pyto/experiments/tick-laws/README.md         |  12 +-
+ pyto/experiments/tick-laws/test_tick_laws.py |  36 +++-
+ pyto/experiments/tick-laws/tick_laws.py      |  12 +-
+ pyto/viewer/fixtures/parallel-demo.json      | 237 ++++++++++++++++++++++++
+ pyto/viewer/test/parallel-view.test.mjs      | 257 +++++++++++++++++++++++++++
+ pyto/viewer/test/playback.test.mjs           |  99 ++++++++---
+ pyto/viewer/tick-viewer.html                 |  18 ++
+ pyto/viewer/tick-viewer.js                   | 199 ++++++++++++++++++++-
+ 10 files changed, 843 insertions(+), 40 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && node --test viewer/test/*.test.mjs && cd experiments/tick-laws && python3 -m unittest discover -s . -p 'test_*.py' && python3 tick_laws.py --check ../students/evidence/run-1/record.json` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         193  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    248  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             14  OK
+    experiments/tick-laws            12  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
 
 ## Uncertain
 
