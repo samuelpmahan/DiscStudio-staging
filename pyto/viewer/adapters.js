@@ -22,6 +22,10 @@ export const RUNTIMES = ['pyto', 'discstudio', 'chesslab', 'wumpus'];
 export const VALUE_KINDS = ['json', 'text', 'svg', 'png-data-url', 'omitted'];
 export const WRITE_KINDS = ['new-address', 'refinement', 'replacement'];
 
+/** RECORD.md, "Placement and budget": the optional fields, and their key sets. */
+export const PLACEMENT_KEYS = ['worker', 'started_ms'];
+export const BUDGET_KEYS = ['limit_ms', 'stopped_after_tick', 'completed'];
+
 /** RECORD.md:109-110: a `png-data-url` value's data is exactly this shape. */
 export const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
 
@@ -212,7 +216,29 @@ function validateInvocation(invocation, path, seenIds) {
   requireNullableString(invocation.result_sha256, `${path}.result_sha256`);
   requireBoolean(invocation.hit, `${path}.hit`);
   validateValue(invocation.value, `${path}.value`);
+  validatePlacement(invocation, path);
   return invocation;
+}
+
+/**
+ * RECORD.md, "Placement and budget": `placement` is optional and null for a
+ * serial run -- a Tick that ran on one thread has no placement to report.
+ * `worker` is a 0-based index inside its Tick, `started_ms` the offset from the
+ * moment that Tick began, so a reader draws the overlap without a wall clock.
+ */
+function validatePlacement(invocation, path) {
+  if (!('placement' in invocation) || invocation.placement === null) return null;
+  const where = `${path}.placement`;
+  const placement = requireObject(invocation.placement, where);
+  const extra = Object.keys(placement).filter((key) => !PLACEMENT_KEYS.includes(key));
+  if (extra.length > 0) fail(where, `unknown field(s) ${extra.sort().join(', ')} not in RECORD.md`);
+  if (!Number.isInteger(placement.worker) || placement.worker < 0) {
+    fail(`${where}.worker`, `expected a non-negative integer, got ${show(placement.worker)}`);
+  }
+  if (typeof placement.started_ms !== 'number' || !Number.isFinite(placement.started_ms)) {
+    fail(`${where}.started_ms`, `expected a finite number, got ${show(placement.started_ms)}`);
+  }
+  return placement;
 }
 
 /**
@@ -265,6 +291,30 @@ export function validate(record) {
   if (counters.hits !== hitCount) fail('counters.hits', `expected ${hitCount} (invocations with hit=true), got ${counters.hits}`);
   if (counters.hits + counters.computed !== counters.invocations) {
     fail('counters.computed', `expected ${counters.invocations - counters.hits} so hits + computed === invocations, got ${counters.computed}`);
+  }
+
+  // Placement and budget: optional, so absent is a serial unbudgeted run and not
+  // a violation; present, they are held to the same rules as everything else.
+  ticks.forEach((tick, index) => {
+    if ('latency_ms' in tick) requireNullableNumber(tick.latency_ms, `ticks[${index}].latency_ms`);
+  });
+  if ('parallel' in record) requireBoolean(record.parallel, 'parallel');
+  if ('budget' in record) {
+    const budget = requireObject(record.budget, 'budget');
+    const missing = BUDGET_KEYS.filter((key) => !(key in budget));
+    if (missing.length > 0) fail('budget', `missing required field(s) ${missing.join(', ')}; RECORD.md: missing fields are null, never absent`);
+    const extra = Object.keys(budget).filter((key) => !BUDGET_KEYS.includes(key));
+    if (extra.length > 0) fail('budget', `unknown field(s) ${extra.sort().join(', ')} not in RECORD.md`);
+    requireNullableNumber(budget.limit_ms, 'budget.limit_ms');
+    requireNullableString(budget.stopped_after_tick, 'budget.stopped_after_tick');
+    requireBoolean(budget.completed, 'budget.completed');
+    if (budget.completed && budget.stopped_after_tick !== null) {
+      fail('budget.stopped_after_tick', `a completed run stopped after no Tick; stopped_after_tick names the last Tick a budget cut the run after, got ${show(budget.stopped_after_tick)}`);
+    }
+    const names = new Set(ticks.map((tick) => tick.name));
+    if (budget.stopped_after_tick !== null && !names.has(budget.stopped_after_tick)) {
+      fail('budget.stopped_after_tick', `names no Tick in this record (${[...names].sort().join(', ') || 'none'}), got ${show(budget.stopped_after_tick)}`);
+    }
   }
   return record;
 }
@@ -516,6 +566,52 @@ export function tickDurationMs(tick) {
     }
   }
   return saw ? round3(total) : null;
+}
+
+/**
+ * One Tick's wall time: `latency_ms` when the record carries it, else the sum of
+ * its durations -- the same arithmetic a serial run does, and null when any one
+ * duration is null (RECORD.md, "Placement and budget").
+ *
+ * Qualified `FromRecord` because `tick-viewer.js` exports its own `tickLatencyMs`
+ * (task 40) and `embed.mjs` concatenates both files into one module, where two
+ * top-level bindings of one name is a SyntaxError. The two are not the same
+ * function: with `latency_ms` present they agree, and with it absent this one
+ * sums the durations (the serial reading RECORD.md specifies for the fallback)
+ * while the viewer's takes the longest branch (the critical path it draws).
+ * See `{?} TwoLatencyFallbacks` in experiments/tasks/39/packet.md.
+ */
+export function tickLatencyMsFromRecord(tick) {
+  if (typeof tick.latency_ms === 'number') return tick.latency_ms;
+  if (tick.invocations.length === 0) return null;
+  let total = 0;
+  for (const invocation of tick.invocations) {
+    if (typeof invocation.duration_ms !== 'number') return null;
+    total += invocation.duration_ms;
+  }
+  return round3(total);
+}
+
+/** This invocation's placement, or null -- absent and null read the same. */
+export function invocationPlacement(invocation) {
+  return invocation.placement ?? null;
+}
+
+/**
+ * How the run was scheduled, with the defaults an absent field means: a record
+ * carrying neither `parallel` nor `budget` is a serial, unbudgeted run that ran
+ * to the end.
+ */
+export function runSchedule(record) {
+  const budget = record.budget ?? {};
+  return {
+    parallel: record.parallel === true,
+    budget: {
+      limit_ms: budget.limit_ms ?? null,
+      stopped_after_tick: budget.stopped_after_tick ?? null,
+      completed: budget.completed ?? true
+    }
+  };
 }
 
 function assemble({ pcr, source, ticks, wallMs = null }) {
