@@ -491,7 +491,9 @@ class WriteKinds(unittest.TestCase):
         pxc.set(Part("input.v"), 3)
         pcr = PCR("refs")
         pcr.calc("t", TAKE_VALUE, id="first", value=Part("input.v"), into=Part("mid.v"))
-        pcr.calc("t", TAKE_VALUE, id="second", value=Part("mid.v"), into=Part("out.v"))
+        # 'second' reads what 'first' wrote, so it belongs to a *later* Tick: the node
+        # law (pcr.py:_refuse_sibling_bindings, task 39) refuses a sibling result ref.
+        pcr.calc("t2", TAKE_VALUE, id="second", value=Part("mid.v"), into=Part("out.v"))
         receipts = pcr.run(pxc, observe=True).receipts
         self.assertEqual(receipts["second"].declared_consumes, ())
         self.assertEqual(receipts["second"].actual_consumes, ())

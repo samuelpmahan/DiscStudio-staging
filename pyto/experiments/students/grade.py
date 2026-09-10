@@ -322,9 +322,26 @@ def check_handoff(record: dict, handoff_text: str) -> tuple[bool, list[str]]:
 # --- the report ----------------------------------------------------------------
 
 
+def display_path(path: str, start: str = HERE) -> str:
+    """`path` written relative to `start`, or absolute when there is no relative form.
+
+    Only for the report's first line, which is a label. On Windows a scratch copy
+    of a run lives under the user's TEMP (`C:\\Users\\...\\Temp\\...`) while the
+    checkout is on another drive (`D:\\a\\...` on a GitHub runner), and
+    `os.path.relpath` raises `ValueError: path is on mount 'C:', start on mount
+    'D:'` for a pair like that -- which used to kill grade.py before it printed a
+    single check. There is no relative name for such a path, so the absolute one
+    is the honest label.
+    """
+    try:
+        return os.path.relpath(path, start)
+    except ValueError:
+        return os.path.abspath(path)
+
+
 def grade(run_dir: str, handoff_path: str, python: str | None = None) -> tuple[int, list[str]]:
     """Run the four checks and build the report. Returns (exit code, lines)."""
-    lines: list[str] = [f"grade.py: {os.path.relpath(run_dir, HERE)} against {os.path.relpath(handoff_path, HERE)}", ""]
+    lines: list[str] = [f"grade.py: {display_path(run_dir)} against {display_path(handoff_path)}", ""]
     record_path = os.path.join(run_dir, "record.json")
     receipts_path = os.path.join(run_dir, "receipts.json")
     for path in (record_path, receipts_path, handoff_path):

@@ -1,105 +1,41 @@
 # The frontier
 
-Every candidate on the record, merged into adds. An add is one piece of the OS plus the feature
-that shows it, or a few complementary pieces. Never a bare kernel change (owner, 2026-09-10, on
-`pyto/questions.md` under Frontier). A task opens from an add; the add's name is the intent. Order
-is by what is understandable next, not by number. When an add lands, move it to "Landed adds" with
-its task ids; when a candidate is absorbed elsewhere, say where.
+Every candidate on the record, merged into adds. The owner, 2026-09-10, on `pyto/questions.md`
+under `{?} Frontier`: "I think the best way to run this is to build whatever task frontier and
+instead of going just in order we refine and merge compatible things. Building the OS is much more
+understandable if each add includes an illustrative feature add or is a few complementary things."
+
+So: an add is one piece of the OS plus the feature that shows it, or a few complementary pieces,
+never a bare kernel change. A task opens from an add; the add's name is the intent. Order is by
+what is understandable next, not by number. When an add lands, move it to "Landed adds" with its
+task ids; when a candidate is absorbed elsewhere, say where. Everything below that is not quoted is
+this session's description of what landed, not the owner's words.
 
 Each add lists: what you see when it lands; the pieces it merges (with where each came from);
 the verifier that decides; and the size in tasks.
 
 ## Adds, in the order that reads best
 
-### A. Parallel you can see
+### F. The workshop runs everywhere (partly landed: tasks 44 and 46)
 
-You see: the Tick viewer shows a Tick's Calculations side by side when they are parallel branches,
-with the Tick's work and its latency printed under it, and the students record (four steps, one
-parallel) is the demo page.
+Landed already: a GitHub Action runs `check_all.sh` on ubuntu, macos and windows on every push to
+the sprint branch (task 44), and task 46 made it green there on two Python versions and had it
+upload the per-suite logs as the receipt. So the suite is proved on three operating systems by a
+machine, not by a claim.
 
-Merges: tick_laws reports Ticks by name, not index (task 29, `{?} TickReportsHaveNoNames`);
-work versus critical path on the tick page (TicksAsCircuits, "a number before any parallel
-execution exists"); the tick page plays parallel branches together instead of one after another
-(task 16's play/pause/step, extended).
+Still open, and both of them want the Mac itself:
 
-Verifier: the viewer suite plus `tick_laws.py --check` on the students record; a node test that the
-students page renders the Stats Tick as two side-by-side blocks.
-Size: one task. Allow: pyto/experiments/tick-laws, pyto/viewer, pyto/experiments/students/README.md.
+You see: `proof.sh` green on the Mac with the same receipt shape it has on Windows, and a landing
+that edits `land.sh` itself lands cleanly.
 
-### B. Several results, all the way through
-
-You see: a Calculation that publishes two Parts shows two fingerprints in the run record and two
-cards in the viewer, and the studio's PQL document can say `into: [a, b]` and run it.
-
-Merges: per-produce digests in the record document, not only the receipt (task 27,
-`{?} RecordProduceDigest`; rewrites every committed record, touches viewer fixtures); the site's
-`readPql`/`invokePql` grammar for several `into` (task 30, `{?} PqlMultiProduceIsRefused`: today
-refused by name); the viewer's part index credits each produce (task 27 did the adapters; the
-page does not draw them yet).
-
-Verifier: the record-schema suite, the viewer suite, `npm test` in the studio, evidence regenerated
-with the experiments' own scripts.
-Size: two tasks (record and viewer first; the site grammar second). Kernel semantics, so its own
-tasks, not the self-improve loop.
-
-### C. The receipts are queryable
-
-You see: `px ps <record>` prints one line per invocation from a record in a terminal without a
-browser, and the studio's Inspect page lists its own receipts from `px.receipt.*` through PQL.
-
-Merges: receipts as Parts (task 22, landed: `px.receipt.<pcr>.<tick>.<invocation>`); the Day 3
-queue item "a text `px ps` over a record" (BOARD, 2026-09-09 09:20, never opened); the studio's
-run-record export (task 21, landed) as the source; `{?} ReceiptInputNotRefused` and
-`{?} ReceiptRerunOverwrite` from task 22's packet get a decision on the way (a receipt may be an
-input; a rerun replaces, and the record keeps the run id).
-
-Verifier: `python -m unittest tests.test_receipts` plus a new `px_ps` test on the students and
-ablation records; the studio's browser check gains one check (raise the checkpoint count).
-Size: one task for `px ps`, one for the studio page.
-
-### D. A class in a repo
-
-You see: a second repository holding one assignment (brief, verifier, reference, a sample
-hand-off); a "student" desk in its own repo; `neat land <id> --from <desk> exp/<id> --verify <the
-class's grader>`; the class board shows `landed task-N score 4/4 (from <desk>, graded here)`; and
-the cold reader's answer, recorded beside the hand-off and compared.
-
-Merges: NeatLearning (all the neat pieces landed: tasks 32, 33, 34); the students experiment (tasks
-23, 29, 35); `{?}` from task 23, "where the cold reader's answer goes" (nothing records or scores
-it today); the score line; private by default (the desk is its own repo).
-
-Verifier: the class repo's own `check_all`; the selftest already proves the mechanics, so this add
-is the first real trial rather than a script change.
-Size: one task to make the assignment package and the trial script; the trial itself is the owner's
-term with real students (Show Your Work, section 06).
-
-### E. The student's own desk teaches the tutor
-
-You see: a tutoring hand-off page generated from one student's desk: what they retried, where they
-wrote `{?}`, what they undid, how long each Tick took them, drawn from their own records and never
-from a profile.
-
-Merges: Mounts (task 11, landed: a world above an ordinary PxC by an id outside the address space)
-as the student's personal Part space; the `{?} Students` note "personal parts and calculations let
-the agent learn how the student learns"; the landing receipts and undo receipts on the desk as the
-source; the hand-off template (task 25's stopping rule) as the output shape.
-
-Verifier: a test that the tutoring page is a pure function of the desk's receipts (same desk, same
-page, byte for byte) and names no fact that is not in a receipt.
-Size: one task after D.
-
-### F. The workshop runs everywhere
-
-You see: `proof.sh` green on Windows and on the Mac with the same receipt shape, and a landing that
-edits `land.sh` itself lands cleanly.
-
-Merges: `proof.sh` uses `mapfile` (bash 4) and macOS ships bash 3.2 (KT-MAC.md landmines); the
-self-modifying landing hazard (task 34; the Mac debugs this by the owner's call: land.sh copies
-itself to a temp file and re-execs before merging); the Windows proof already green.
+Merges: `proof.sh` uses `mapfile` (bash 4) and macOS ships bash 3.2, so today it needs
+`brew install bash` and an explicit interpreter (KT-MAC.md landmines); the self-modifying landing
+hazard (task 34; the Mac debugs this by the owner's call: land.sh copies itself to a temp file and
+re-execs before merging), which nothing in the sprint touched.
 
 Verifier: `proof.sh --selftest` on both shells, `neat selftest`, and a selftest check that lands a
 change to `land.sh` in the scratch repo.
-Size: one task, on the Mac.
+Size: one task, on the Mac. CI covers `check_all.sh` on three OSes; it does not run `proof.sh`.
 
 ### G. DiscStudio ships
 
@@ -140,6 +76,9 @@ Size: one careful task; the owner decides when.
 
 ## Candidates absorbed above (so nothing is lost)
 
+Adds A to E landed in the sprint below and are no longer on this list; the arrows are kept as they
+were written, so a candidate can still be traced to the add that took it.
+
 - `{?} TickReportsHaveNoNames` (29) → A. `{?} TickLawsReadmeQuotesLiveMicroseconds` (29) → A.
 - `{?} RecordProduceDigest`, `{?} SingleIntoReaders` (27; readers done in 30) → B.
 - `{?} PqlMultiProduceIsRefused`, `{?} ConsumersOfOverlap`, `{?} PxWriterLastWins` (30) → B.
@@ -157,6 +96,52 @@ Size: one careful task; the owner decides when.
   undo in the browser.
 
 ## Landed adds
+
+The sprint of 2026-09-10 02:20 UTC, in the owner's words: "Now branch and build the most badass OS
+out of this you possibly can. Make sure to push no less than once every ten minutes. No longer
+worry about explanability: testable determinism is your guide. Use as many agents as you can in
+OpusSonnetSonnet teams and plan ahead to merge and parallelize your frontier."
+
+What that sprint landed, one line per add, named by the task's own intent line, with what you see:
+
+- Parallel for real and budgets: task 39. A Tick's Calculations run at once when none of them reads
+  another, each invocation says which worker ran it and when it started, and a run given a time
+  budget stops at a Tick boundary with the record saying where it stopped -- and the testimony is
+  the same bytes serial or parallel.
+- Parallel you can see: task 40 (add A). The Tick page draws a parallel Tick's Calculations side by
+  side, prints that Tick's work against its latency and the run's work against its critical path,
+  and shows placement and an unfinished budget when the record carries them.
+- The px shell: task 41 (add C, the terminal half). `px ps`, `px ls`, `px cat`, `px diff`,
+  `px laws` and `px receipts` read a run record in a terminal with no browser, each one byte for
+  byte the same twice, and the store now refuses a write under `px.receipt.` that is not a run's own.
+- The studio speaks the whole record: task 42 (add B, the site half, and add C's studio half). The
+  browser grammar takes several `into` per Calculation and runs it, the Inspect page lists the
+  studio's own receipts through PQL, and the Shelf card has an Undo button whose push and pop are
+  ordinary invocations the run record carries.
+- A class in a repo and the desk that teaches the tutor: task 43 (adds D and E). One command builds
+  a class repo and a student's private desk, plays both sides, and lands the desk into the class
+  graded by the class's own verifier -- the board line is the gradebook -- and `tutor.py` renders
+  that desk's own record as a page that is the same bytes on rerun and reads no profile.
+- The suite runs everywhere it claims to: tasks 44 and 46 (add F, in part). A GitHub Action runs
+  `check_all.sh` on ubuntu, macos and windows on every push to the sprint branch, and 46 made it
+  green there on two Python versions and had it upload the per-suite logs as the receipt.
+- KT answers: task 45. Five questions from the local session answered from the record, at
+  `pyto/research/kt-answers.md`, with `START-HERE.md` pointing at them.
+- neat never reuses an id: task 47. `next_id` counts the landing receipts as well, so an undone or
+  killed task's number is never handed out again, and the selftest proves it.
+
+What those adds did not finish, so it is not lost with them:
+
+- The record still carries one `result_sha256` per invocation and no per-produce digest
+  (`{?} RecordProduceDigest`): adding the field rewrites the bytes of every record ever written.
+- The viewer's DiscStudio reader still writes one `into` per invocation, so the studio's own
+  multi-produce Calculation is not run-recorded (`{?} RecordAdapterHasOneIntoPerInvocation`, 42).
+- A rerun replaces each receipt Part in place and the record has a `pcr` name but no run id, so
+  add C's "the record keeps the run id" is not done (`{?} ReceiptRerunOverwrite`, 41).
+- `neat undo <id>` freeing an id was worked around inside `make_class.sh` before task 47 fixed
+  `next_id`; the workaround is still in that script (`{?} NeatUndoFreesTheId`, 43).
+
+Before the sprint:
 
 - Ticks as circuits: tasks 26 (the laws), 27 (several produces), 29 (the students demo), 30 (the
   readers). The first add built the frontier way, before the method had a name.
