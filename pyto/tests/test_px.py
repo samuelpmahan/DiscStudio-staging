@@ -1,0 +1,362 @@
+"""Executable spec of the `px` shell (pyto/src/pyto/px.py).
+
+Every test here runs `px` the way a person runs it -- a subprocess, a record path,
+stdout -- and compares the bytes to a file committed under `tests/fixtures/px/`.
+That is the whole claim the task makes: each command's output is a *pure function
+of its inputs*, so an expected file can be committed at all. A test that called
+the command functions in-process would prove the rendering; only a subprocess
+proves the command.
+
+The two records are the ones every command is tested on:
+
+* `experiments/students/evidence/run-1/record.json`     -- 5 invocations, 4 Ticks
+* `experiments/grouped-ablation/evidence/run-1/record.json` -- 15 invocations, 4 Ticks
+
+The fixtures were written by the first run of each command and then read back and
+checked by hand; they are expected output, not a snapshot of whatever happened.
+
+Mutation notes are attached to the tests that carry a real claim, naming the line
+in `px.py` to change and what fails when it does. Three of them were run
+(see `experiments/tasks/41/packet.md`).
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+PYTO_ROOT = Path(__file__).resolve().parents[1]
+SRC = PYTO_ROOT / "src"
+FIXTURES = Path(__file__).resolve().parent / "fixtures" / "px"
+
+STUDENTS = PYTO_ROOT / "experiments" / "students" / "evidence" / "run-1" / "record.json"
+ABLATION = PYTO_ROOT / "experiments" / "grouped-ablation" / "evidence" / "run-1" / "record.json"
+
+# A digest that is not the students record's, fixed so `px diff`'s output is a
+# pure function of its inputs here too.
+FLIPPED = "f" * 64
+
+
+def run_px(*args: str) -> subprocess.CompletedProcess:
+    """`python -m pyto.px ...` in a subprocess, with a fixed environment.
+
+    `PYTHONPATH` points at `src` so the test does not depend on the package being
+    installed, and the environment is otherwise inherited; nothing `px` prints
+    reads from it.
+    """
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join([str(SRC), env.get("PYTHONPATH", "")]).rstrip(os.pathsep)
+    return subprocess.run(
+        [sys.executable, "-m", "pyto.px", *args],
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=str(PYTO_ROOT),
+    )
+
+
+class PxFixtures(unittest.TestCase):
+    """Every command, on both records, byte for byte against a committed file."""
+
+    maxDiff = None
+
+    def assert_fixture(self, name: str, *args: str, exit_code: int = 0) -> str:
+        result = run_px(*args)
+        self.assertEqual(result.stderr, "", f"px {' '.join(args)} wrote to stderr")
+        self.assertEqual(result.returncode, exit_code, f"px {' '.join(args)} exit code")
+        expected = (FIXTURES / name).read_text(encoding="utf-8")
+        self.assertEqual(result.stdout, expected, f"px {' '.join(args)} != fixtures/px/{name}")
+        return result.stdout
+
+    # --- ps -------------------------------------------------------------------
+
+    def test_ps_students(self):
+        self.assert_fixture("ps-students.txt", "ps", str(STUDENTS))
+
+    def test_ps_ablation(self):
+        self.assert_fixture("ps-ablation.txt", "ps", str(ABLATION))
+
+    def test_ps_times_students(self):
+        """`--times` is the only way a duration reaches stdout.
+
+        Mutation: px.py `cmd_ps`, drop the `if args.times` guard on the `MS`
+        column -- `test_ps_students` fails, because the durations appear without
+        being asked for.
+        """
+        self.assert_fixture("ps-times-students.txt", "ps", str(STUDENTS), "--times")
+
+    def test_ps_without_times_names_no_duration(self):
+        """The claim behind the fixture, stated so a reader need not diff two files."""
+        plain = run_px("ps", str(STUDENTS)).stdout
+        self.assertNotIn("MS", plain)
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        for tick in record["ticks"]:
+            for inv in tick["invocations"]:
+                self.assertNotIn(f"{inv['duration_ms']:.3f}", plain)
+
+    # --- ls -------------------------------------------------------------------
+
+    def test_ls_students(self):
+        self.assert_fixture("ls-students.txt", "ls", str(STUDENTS))
+
+    def test_ls_ablation(self):
+        self.assert_fixture("ls-ablation.txt", "ls", str(ABLATION))
+
+    def test_ls_prefix_ablation(self):
+        self.assert_fixture(
+            "ls-ablation-models.txt", "ls", str(ABLATION), "scratch.ablation.model"
+        )
+
+    def test_ls_is_sorted_and_carries_every_address_the_record_knows(self):
+        """Sorted, and a superset of the record's own `parts` block.
+
+        Mutation: px.py `cmd_ls`, `for address in sorted(rows_by_address)` ->
+        `for address in rows_by_address` -- the fixtures fail on the ablation
+        record, whose derived order is not its sorted order.
+        """
+        lines = run_px("ls", str(ABLATION)).stdout.splitlines()[1:]
+        addresses = [line.split()[0] for line in lines]
+        self.assertEqual(addresses, sorted(addresses))
+        record = json.loads(ABLATION.read_text(encoding="utf-8"))
+        self.assertEqual(set(record["parts"]) - set(addresses), set())
+
+    # --- cat ------------------------------------------------------------------
+
+    def test_cat_students_mean(self):
+        self.assert_fixture("cat-students-mean.txt", "cat", str(STUDENTS), "px.students.mean")
+
+    def test_cat_ablation_comparison(self):
+        self.assert_fixture(
+            "cat-ablation-comparison.txt", "cat", str(ABLATION), "scratch.ablation.comparison"
+        )
+
+    def test_cat_is_canonical_json_the_record_carries(self):
+        """`px cat` reads the record's `value` field and re-spells it canonically.
+
+        Mutation: px.py `canonical_json`, drop `sort_keys=True` -- this fails on
+        the mean's `{mean, n, total}`, which the record stores in insertion order.
+        """
+        out = run_px("cat", str(STUDENTS), "px.students.mean").stdout
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        value = record["ticks"][1]["invocations"][0]["value"]["data"]
+        self.assertEqual(json.loads(out), value)
+        self.assertEqual(out, json.dumps(value, indent=2, sort_keys=True) + "\n")
+
+    def test_cat_says_not_carried_when_the_record_omits_the_value(self):
+        """The `omitted` kind is a real record state (RECORD.md `value.kind`)."""
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        record["ticks"][1]["invocations"][0]["value"] = {
+            "kind": "omitted", "data": None, "note": "the runtime did not retain values"
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "omitted.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            result = run_px("cat", str(path), "px.students.mean")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "not carried: the runtime did not retain values\n")
+
+    def test_cat_refuses_an_address_no_invocation_produced(self):
+        result = run_px("cat", str(STUDENTS), "px.students.scores_csv")
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, "")
+        self.assertIn("no invocation in this record produced", result.stderr)
+        self.assertNotIn(str(PYTO_ROOT), result.stderr)
+
+    # --- diff -----------------------------------------------------------------
+
+    def test_diff_of_a_record_with_itself(self):
+        self.assert_fixture("diff-students-students.txt", "diff", str(STUDENTS), str(STUDENTS))
+
+    def test_diff_names_the_invocation_whose_digest_flipped(self):
+        """The task's own check: one digest changed, exit 1, the id named.
+
+        Mutation: px.py `cmd_diff`, return `EXIT_OK` instead of `EXIT_DIFFERENCE`
+        -- this fails on the exit code while the text still matches, which is why
+        both are asserted.
+        """
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        record["ticks"][1]["invocations"][0]["result_sha256"] = FLIPPED
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "flipped.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            result = run_px("diff", str(STUDENTS), str(path))
+        self.assertEqual(result.returncode, 1)
+        expected = (FIXTURES / "diff-students-flipped.txt").read_text(encoding="utf-8")
+        self.assertEqual(result.stdout, expected)
+        self.assertIn("mean", result.stdout)
+        self.assertNotIn(str(PYTO_ROOT), result.stdout)
+
+    def test_diff_reports_added_removed_and_changed_reads(self):
+        """The other three kinds of difference, in one record pair."""
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        record["ticks"][2]["invocations"][0]["id"] = "letters2"  # removed + added
+        record["ticks"][3]["invocations"][0]["inputs"] = {"letters": "fn:parse"}  # reads changed
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "shuffled.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            result = run_px("diff", str(STUDENTS), str(path))
+        self.assertEqual(result.returncode, 1)
+        lines = result.stdout.splitlines()
+        self.assertIn("added    letters2  tick 2 Letters", lines)
+        self.assertIn("removed  letters  tick 2 Letters", lines)
+        self.assertIn("reads    histogram  -px.students.letters +px.students.roster", lines)
+
+    def test_diff_ignores_durations(self):
+        """Two records that differ only in how long they took are not different.
+
+        Mutation: px.py `cmd_diff`, compare `duration_ms` as well -- this fails,
+        and every rerun of a deterministic program becomes a difference.
+        """
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        for tick in record["ticks"]:
+            for inv in tick["invocations"]:
+                inv["duration_ms"] = 99.0
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "slow.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            result = run_px("diff", str(STUDENTS), str(path))
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "no differences\n")
+
+    # --- laws -----------------------------------------------------------------
+
+    def test_laws_students(self):
+        self.assert_fixture("laws-students.txt", "laws", str(STUDENTS))
+
+    def test_laws_ablation(self):
+        self.assert_fixture("laws-ablation.txt", "laws", str(ABLATION))
+
+    def test_laws_times_students(self):
+        self.assert_fixture("laws-times-students.txt", "laws", str(STUDENTS), "--times")
+
+    def test_laws_exits_one_on_a_violated_node_law(self):
+        """A sibling read inside one Tick: the node law's own example.
+
+        Mutation: px.py `cmd_laws`, `return EXIT_OK` unconditionally -- this
+        fails while `test_laws_students` still passes.
+        """
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        # median, in Tick 1, made to read its sibling mean's result.
+        record["ticks"][1]["invocations"][1]["inputs"] = {"roster": "fn:mean"}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "shorted.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            result = run_px("laws", str(path))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("node law: 1 violation(s)", result.stdout)
+        self.assertIn("VIOLATION node: node law violation: median reads sibling-produced", result.stdout)
+
+    def test_laws_prints_no_path(self):
+        """`tick_laws` echoes the path it was handed; `px` names the pcr instead.
+
+        Mutation: px.py `cmd_laws`, print `args.record` instead of
+        `record['pcr']` -- the fixture fails on any machine but the one that
+        wrote it, which is the whole reason the line is there.
+        """
+        out = run_px("laws", str(STUDENTS)).stdout
+        self.assertNotIn(str(PYTO_ROOT), out)
+        self.assertIn("pcr: students-homework", out)
+
+    # --- receipts -------------------------------------------------------------
+
+    def test_receipts_students(self):
+        self.assert_fixture("receipts-students.txt", "receipts", str(STUDENTS))
+
+    def test_receipts_ablation(self):
+        self.assert_fixture("receipts-ablation.txt", "receipts", str(ABLATION))
+
+    def test_receipts_tick_students(self):
+        self.assert_fixture(
+            "receipts-students-stats.txt", "receipts", str(STUDENTS), "--tick", "Stats"
+        )
+
+    def test_receipts_show_declared_beside_actual(self):
+        """The pair the format exists for: a result read declares nothing and
+        touches the store not at all, so both of its columns are empty while its
+        writes are not (RECORD.md, `declared_consumes`).
+        """
+        rows = [line.split() for line in run_px("receipts", str(STUDENTS)).stdout.splitlines()]
+        parse = next(row for row in rows if row[1] == "parse")
+        mean = next(row for row in rows if row[1] == "mean")
+        self.assertEqual(parse[2:6], [
+            "px:px.students.scores_csv", "px.students.scores_csv",
+            "px.students.roster", "px.students.roster:new-address",
+        ])
+        self.assertEqual(mean[2:6], [
+            "-", "-", "px.students.mean", "px.students.mean:new-address",
+        ])
+
+
+class PxShell(unittest.TestCase):
+    """The shell around the six commands."""
+
+    def test_help_lists_the_six_commands(self):
+        result = run_px("--help")
+        self.assertEqual(result.returncode, 0)
+        for command in ("ps", "ls", "cat", "diff", "laws", "receipts"):
+            with self.subTest(command=command):
+                self.assertRegex(result.stdout, rf"(?m)^\s+{command}\s")
+
+    def test_no_command_prints_help_and_exits_two(self):
+        result = run_px()
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("ps", result.stdout)
+
+    def test_a_file_that_is_not_a_record_is_refused_by_the_shared_validator(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "nope.json"
+            path.write_text('{"schema": "not-a-record"}', encoding="utf-8")
+            result = run_px("ps", str(path))
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("is not a pyto-run-record@1", result.stderr)
+        self.assertIn("nope.json", result.stderr)
+        self.assertNotIn(str(PYTO_ROOT), result.stderr)
+
+    def test_a_missing_file_names_the_file_and_not_its_path(self):
+        result = run_px("ps", str(PYTO_ROOT / "no" / "such" / "record.json"))
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("record.json", result.stderr)
+        self.assertNotIn(str(PYTO_ROOT), result.stderr)
+
+    def test_every_command_is_a_pure_function_of_its_inputs(self):
+        """Run each command twice and compare: the point of the whole file."""
+        invocations = [
+            ("ps", str(STUDENTS)),
+            ("ps", str(ABLATION), "--times"),
+            ("ls", str(STUDENTS)),
+            ("cat", str(STUDENTS), "px.students.roster"),
+            ("diff", str(STUDENTS), str(ABLATION)),
+            ("laws", str(ABLATION), "--times"),
+            ("receipts", str(ABLATION)),
+        ]
+        for args in invocations:
+            with self.subTest(command=args[0]):
+                first, second = run_px(*args), run_px(*args)
+                self.assertEqual(first.stdout, second.stdout)
+                self.assertEqual(first.returncode, second.returncode)
+
+    def test_px_imports_no_kernel_runtime(self):
+        """The design constraint: `px` reads JSON, and the only pyto modules it
+        may import are the two shared readers it loads by path.
+
+        Mutation: px.py, add `from .pcr import PCR` -- this fails.
+        """
+        source = (PYTO_ROOT / "src" / "pyto" / "px.py").read_text(encoding="utf-8")
+        for forbidden in ("from .pcr", "from .core", "from .pql", "from .materialize",
+                          "import pyto.pcr", "import pyto.core"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, source)
+
+    def test_the_console_script_is_registered(self):
+        pyproject = (PYTO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+        self.assertIn("[project.scripts]", pyproject)
+        self.assertIn('px = "pyto.px:main"', pyproject)
+
+
+if __name__ == "__main__":
+    unittest.main()

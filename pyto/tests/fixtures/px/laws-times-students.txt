@@ -1,0 +1,9 @@
+LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
+pcr: students-homework
+node law: ok
+loop law: ok
+Tick 0: work_ms=0.030 latency_ms=0.030
+Tick 1: work_ms=0.041 latency_ms=0.025
+Tick 2: work_ms=0.017 latency_ms=0.017
+Tick 3: work_ms=0.022 latency_ms=0.022
+Summary: work_ms=0.110 critical_path_ms=0.095
