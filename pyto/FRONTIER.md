@@ -130,6 +130,32 @@ What that sprint landed, one line per add, named by the task's own intent line, 
 - neat never reuses an id: task 47. `next_id` counts the landing receipts as well, so an undone or
   killed task's number is never handed out again, and the selftest proves it.
 
+- The JavaScript runtime speaks the same schedule: task 48 (add B's runtime half). `exec.js` runs a
+  Tick's Calculations concurrently when the node law holds and refuses sibling reads at read time,
+  takes a budget that stops at a Tick boundary, and the studio's run record carries `parallel`,
+  `placement`, `latency_ms` and `budget` exactly as the Python kernel writes them; testimony
+  byte-identical serial versus parallel; the studio's Tick page shows a parallel Tick.
+- oc, effects with receipts: task 49 (the `oc` item the Day 3 queue left open). An
+  OperationalCalculation (`oc.` prefix) may perform effects only through an Effects handle the run
+  gives it (write_text, read_text, now_ms, random, env); every effect is recorded in the receipt and
+  the run record; replay feeds recorded effect results back and refuses a tampered one; `fn.`
+  Calculations get no effects; `px effects` lists them; testimony byte-identical observe on and off.
+- Effects you can see and the sprint on the one page: task 50. The Tick viewer shows an
+  invocation's effects (kind, path, digest) when the record carries them and draws `oc`
+  Calculations distinctly; KT-MAC gains the px shell in chunk 3 and a classroom chunk 7; this file
+  records the sprint's landed adds.
+- CI runs to completion: task 51 (add F, in part). `check_all.yml` no longer cancels a run in
+  progress when the next landing pushes, and skips pushes that touch only the board or the landing
+  receipts, so every landing gets its three-OS receipt.
+- The surface a person uses: task 52. `pyto/USE.md` is a quickstart for PxC, Parts, Calculations,
+  PCR and PQL that a test executes block by block and compares printed output byte for byte, so the
+  document is true or the suite is red; the students homework is its worked example.
+- Green on macOS and Windows: task 55 (add F, in part). The three failures the three-OS run showed
+  at a9e3b1a were the tests, not the kernel: test_use.py compared CRLF stdout on Windows to LF
+  text, test_classroom.py spelled bash so Windows resolved WSL's instead of Git's, and
+  test_parallel's overlap check gave four threads 50 ms to start where a slow macOS runner took
+  114. Each test is made true on the platform it runs on without loosening what it proves.
+
 What those adds did not finish, so it is not lost with them:
 
 - The record still carries one `result_sha256` per invocation and no per-produce digest
