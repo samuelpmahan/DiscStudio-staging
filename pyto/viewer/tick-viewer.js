@@ -11,7 +11,7 @@
  * run under a minimal document shim in `node --test` with no jsdom.
  */
 
-import { validate, bareAddress, tickDurationMs, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex } from './adapters.js';
+import { validate, bareAddress, tickDurationMs, produceAddresses, parseBinding, PNG_DATA_URL_PREFIX, fromPytoRecord, fromDiscStudioReceipt, fromChessLabReceipts, fromWumpusRecords, deriveCounters, derivePartIndex } from './adapters.js';
 
 /* ------------------------------------------------------------------ */
 /* small DOM helpers (doc is always explicit)                          */
@@ -50,6 +50,116 @@ function shortHash(hex, keep = 12) {
 function ms(value) {
   if (typeof value !== 'number') return '—';
   return `${value.toFixed(value < 10 ? 3 : 1)} ms`;
+}
+
+/* ------------------------------------------------------------------ */
+/* parallel branches: work, latency, placement, budget                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The contract this section renders when a record carries it, and never
+ * requires (a record without any of it renders exactly as it did before):
+ * per invocation `placement: {worker, started_ms} | null`, per tick
+ * `latency_ms: number | null`, and at run level `parallel: bool` and
+ * `budget: {limit_ms, stopped_after_tick, completed}`.
+ */
+
+/** Every Part address one invocation publishes: `into` (one or several) and actual_produces. */
+export function invocationProduces(invocation) {
+  const produced = new Set(produceAddresses(invocation.into));
+  for (const address of invocation.actual_produces || []) produced.add(address);
+  return produced;
+}
+
+/**
+ * Every Part address one invocation reads, resolved the way
+ * experiments/tick-laws/tick_laws.py resolves it: `px:` bindings are store
+ * reads, `fn:` bindings are result reads resolved through the producer's
+ * `into` (one address or a list), unioned with actual_consumes.
+ */
+export function invocationReads(invocation, producedBy) {
+  const reads = new Set(invocation.actual_consumes || []);
+  for (const binding of Object.values(invocation.inputs || {})) {
+    for (const address of parseBinding(binding, producedBy)) reads.add(address);
+  }
+  return reads;
+}
+
+/**
+ * A Tick is parallel when it holds more than one Calculation and no Calculation
+ * reads what a sibling produced -- the node law's first clause
+ * (`pyto/questions.md`, `{?} TicksAsCircuits`). Siblings are the only producers
+ * that matter here, so the resolver map is built from this Tick alone: an
+ * `fn:` reference to an earlier Tick resolves to nothing and is not a branch
+ * dependency.
+ */
+export function isParallelTick(tick) {
+  const invocations = tick.invocations || [];
+  if (invocations.length < 2) return false;
+  const produces = new Map();
+  const producedBy = new Map();
+  for (const invocation of invocations) {
+    const addresses = invocationProduces(invocation);
+    produces.set(invocation.id, addresses);
+    producedBy.set(invocation.id, [...addresses]);
+  }
+  for (const invocation of invocations) {
+    const reads = invocationReads(invocation, producedBy);
+    for (const sibling of invocations) {
+      if (sibling.id === invocation.id) continue;
+      for (const address of produces.get(sibling.id)) if (reads.has(address)) return false;
+    }
+  }
+  return true;
+}
+
+/** A Tick's work: the sum of its branches' durations, or null when none was recorded. */
+export function tickWorkMs(tick) {
+  return tickDurationMs(tick);
+}
+
+/**
+ * A Tick's latency: `latency_ms` when the record carries it, else the longest
+ * branch -- the time the Tick takes when its branches run at once, which is
+ * what tick_laws.py reports and what the run's critical path adds up.
+ */
+export function tickLatencyMs(tick) {
+  if (typeof tick.latency_ms === 'number' && Number.isFinite(tick.latency_ms)) return tick.latency_ms;
+  let longest = null;
+  for (const invocation of tick.invocations) {
+    if (typeof invocation.duration_ms === 'number' && Number.isFinite(invocation.duration_ms)) {
+      longest = longest === null ? invocation.duration_ms : Math.max(longest, invocation.duration_ms);
+    }
+  }
+  return longest === null ? null : scheduleRound3(longest);
+}
+
+function sumOverTicks(record, per) {
+  let total = 0;
+  for (const tick of record.ticks) {
+    if (!tick.invocations.length) continue;
+    const value = per(tick);
+    if (value === null) return null;
+    total += value;
+  }
+  return scheduleRound3(total);
+}
+
+/** The run's total work: every branch's duration added up. */
+export function runWorkMs(record) {
+  return sumOverTicks(record, tickWorkMs);
+}
+
+/** The run's critical path: the Tick latencies added up, Ticks being in series. */
+export function runCriticalPathMs(record) {
+  return sumOverTicks(record, tickLatencyMs);
+}
+
+/** `placement.worker` when the record carries it, else null. */
+export function placementWorker(invocation) {
+  const placement = invocation.placement;
+  if (!placement || typeof placement !== 'object') return null;
+  return typeof placement.worker === 'number' && Number.isFinite(placement.worker) ? placement.worker : null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -217,6 +327,8 @@ export function renderWrites(doc, invocation) {
 export function renderInvocation(doc, invocation) {
   const address = invocation.calculation.address || '(no calculation address recorded)';
   const impl = shortHash(invocation.calculation.implementation_sha256);
+  const worker = placementWorker(invocation);
+  const started = worker === null || typeof invocation.placement.started_ms !== 'number' ? null : invocation.placement.started_ms;
   const row = el(doc, 'article', { className: 'inv', attrs: { 'data-invocation': invocation.id } });
 
   const head = el(doc, 'header', { className: 'inv-head' }, [
@@ -224,7 +336,12 @@ export function renderInvocation(doc, invocation) {
     el(doc, 'span', { className: 'inv-call', text: address }),
     impl ? el(doc, 'span', { className: 'impl', attrs: { title: invocation.calculation.implementation_sha256 }, text: `impl ${impl}` }) : null,
     el(doc, 'span', { className: `pill ${invocation.hit ? 'hit' : 'computed'}`, text: invocation.hit ? 'hit' : 'computed' }),
-    el(doc, 'span', { className: 'dur', text: ms(invocation.duration_ms) })
+    el(doc, 'span', { className: 'dur', text: ms(invocation.duration_ms) }),
+    worker === null ? null : el(doc, 'span', {
+      className: 'placement',
+      text: `worker ${worker}`,
+      attrs: started === null ? {} : { title: `started ${ms(started)}` }
+    })
   ]);
   row.appendChild(head);
 
@@ -257,17 +374,33 @@ export function renderInvocation(doc, invocation) {
 /* ------------------------------------------------------------------ */
 
 export function renderTick(doc, tick) {
-  const section = el(doc, 'section', { className: 'tick', attrs: { 'data-tick': String(tick.index) } });
+  const parallel = isParallelTick(tick);
+  const section = el(doc, 'section', {
+    className: parallel ? 'tick parallel' : 'tick',
+    attrs: { 'data-tick': String(tick.index), 'data-parallel': parallel ? 'yes' : 'no' }
+  });
   const count = tick.invocations.length;
-  const duration = tickDurationMs(tick);
+  const work = tickWorkMs(tick);
+  const latency = tickLatencyMs(tick);
+  const timing = work === null && latency === null ? 'no durations recorded' : `work ${ms(work)} · latency ${ms(latency)}`;
   section.appendChild(el(doc, 'header', { className: 'tick-head' }, [
     el(doc, 'h2', {}, [
       el(doc, 'span', { className: 'tick-index', text: String(tick.index) }),
-      el(doc, 'span', { className: 'tick-name', text: tick.name })
+      el(doc, 'span', { className: 'tick-name', text: tick.name }),
+      parallel ? el(doc, 'span', { className: 'tick-mode', text: `parallel · ${count} branches` }) : null
     ]),
-    el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${duration === null ? 'no durations recorded' : ms(duration)}` })
+    el(doc, 'p', { className: 'tick-meta', text: `${count} invocation${count === 1 ? '' : 's'} · ${timing}` })
   ]));
-  for (const invocation of tick.invocations) section.appendChild(renderInvocation(doc, invocation));
+  if (parallel) {
+    // A row of columns: one branch per Calculation, none of them reading another.
+    const branches = el(doc, 'div', { className: 'branches', attrs: { 'data-branches': String(count) } });
+    for (const invocation of tick.invocations) {
+      branches.appendChild(el(doc, 'div', { className: 'branch' }, [renderInvocation(doc, invocation)]));
+    }
+    section.appendChild(branches);
+  } else {
+    for (const invocation of tick.invocations) section.appendChild(renderInvocation(doc, invocation));
+  }
   return section;
 }
 
@@ -323,6 +456,23 @@ export function renderRecord(record, { doc = globalThis.document, filter = '' } 
       el(doc, 'li', {}, [el(doc, 'span', { className: 'n', text: String(record.ticks.length) }), el(doc, 'span', { className: 'k', text: 'ticks' })])
     ])
   ]);
+  header.appendChild(el(doc, 'p', {
+    className: 'run-timing',
+    text: `work ${ms(runWorkMs(record))} · critical path ${ms(runCriticalPathMs(record))}`
+  }));
+  if (record.parallel === true) {
+    header.appendChild(el(doc, 'p', { className: 'run-mode', text: 'parallel: the branches inside a Tick ran at once' }));
+  } else if (record.parallel === false) {
+    header.appendChild(el(doc, 'p', { className: 'run-mode', text: 'serial: the branches inside a Tick ran one after another; the critical path is what parallel would buy' }));
+  }
+  const budget = record.budget;
+  if (budget && typeof budget === 'object' && budget.completed === false) {
+    const limit = typeof budget.limit_ms === 'number' ? `limit ${ms(budget.limit_ms)}` : 'no limit recorded';
+    const where = typeof budget.stopped_after_tick === 'string' && budget.stopped_after_tick.length
+      ? `stopped after tick ${JSON.stringify(budget.stopped_after_tick)}`
+      : 'stopped before the run completed';
+    header.appendChild(el(doc, 'p', { className: 'budget-banner', text: `budget: ${where} · ${limit}` }));
+  }
   if (filter && filter.trim()) {
     header.appendChild(el(doc, 'p', { className: 'filtered', text: `filter ${JSON.stringify(filter.trim())}: ${shown} of ${total} invocations, ${ticks.length} of ${record.ticks.length} ticks` }));
   }
@@ -348,15 +498,26 @@ function scheduleRound3(value) {
 }
 
 /**
- * Ordered {tick, invocation, at_ms} events: each Calculation "finishes" at
+ * Ordered {tick, invocation, at_ms} events: a serial Calculation "finishes" at
  * the cumulative sum of the durations recorded before it, in record order,
  * scaled by speedFactor (1 = real time, 10/100 = that many times slower).
+ *
+ * A parallel Tick's branches share one timestamp -- the Tick's latency, not the
+ * sum of its branches -- so the page shows that row of cards at once instead of
+ * one after another, and the last event lands on the run's critical path.
  */
 export function computeSchedule(record, speedFactor = 1) {
   const hasDurations = record.ticks.some((tick) => tick.invocations.some((invocation) => typeof invocation.duration_ms === 'number'));
   const events = [];
   let cumulative = 0;
   for (const tick of record.ticks) {
+    if (isParallelTick(tick)) {
+      const latency = hasDurations ? tickLatencyMs(tick) : FIXED_STEP_MS;
+      cumulative += typeof latency === 'number' ? latency : 0;
+      const at = hasDurations ? scheduleRound3(cumulative * speedFactor) : cumulative;
+      for (const invocation of tick.invocations) events.push({ tick: tick.index, invocation: invocation.id, at_ms: at });
+      continue;
+    }
     for (const invocation of tick.invocations) {
       if (hasDurations) cumulative += typeof invocation.duration_ms === 'number' ? invocation.duration_ms : 0;
       else cumulative += FIXED_STEP_MS;
@@ -471,7 +632,9 @@ function createPlayback(doc, output, filterBox, getRecord) {
 
   const revealOne = () => {
     if (shown >= schedule.length) return;
-    shown += 1;
+    // A parallel Tick's branches share one timestamp: Step reveals the row, not one card of it.
+    const at = schedule[shown].at_ms;
+    do { shown += 1; } while (shown < schedule.length && schedule[shown].at_ms === at);
     render();
   };
   const scheduleNext = () => {
