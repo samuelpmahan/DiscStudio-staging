@@ -707,6 +707,18 @@ own records (what they retry, where they write `{?}`, what they undo, how long a
 never from a profile.
 Owner, 2026-09-09 evening, on why any of this exists when ChainSpot and DiscStudio do not need it: "Workspace. Educational." and, of Homeroom Heroes, "this would be a good reason why". So the workspace is not a side effect; it is the product for that audience, and the studio is its first tenant.
 
+### {?} WhatIsATick
+The first question asked under the stopping rule, 2026-09-10, from pyto/experiments/students/HANDOFF.md:
+"why does reading the same roster twice require separate Ticks if each Calculation already records
+its own reads and results; what is a Tick supposed to mean to the person watching?" Default answer
+(the session's, not yet the owner's): a receipt is per Calculation, so the hand-off's reason ("keeping
+them apart is what makes the record show each one's own reads") is false. A Tick is a step: between
+Ticks the program claims an order and a state of the world in between; inside a Tick it claims none,
+the Calculations there are independent and belong to the same moment; the tick page pauses on Ticks.
+By that meaning Mean and Median belong in one Tick, and five Ticks was a teaching choice, not a
+kernel need. The student's page is left as written because the cold read catching it is the point.
+Owner: overturn or confirm in a sentence.
+
 ### {?} StoppingRule
 The owner, 2026-09-10, on how to launch an agent that gains real depth: "Reading is not depth of
 understanding. Remember that 2M tokens from like 24 hours ago? And then each and every question
