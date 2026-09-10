@@ -70,7 +70,9 @@ test('at 1x, Ticks add and a parallel Tick\'s branches share one timestamp', () 
 test('the last event lands on the run critical path, not on its total work', () => {
   const work = runWorkMs(record);
   const critical = runCriticalPathMs(record);
-  assert.ok(Math.abs(work - totalDuration(record)) < 0.001, 'work is every branch added up');
+  // Per-Tick work is rounded to the microsecond before the Ticks are added, so the
+  // run total agrees with the raw sum to within that rounding, not to the bit.
+  assert.ok(Math.abs(work - totalDuration(record)) < 0.01, 'work is every branch added up');
   assert.ok(critical < work, 'this record has parallel Ticks, so its critical path is shorter than its work');
 
   const at1x = computeSchedule(record, 1);
