@@ -4,8 +4,46 @@ Intent: the surface a person uses: pyto/USE.md is a quickstart for PxC, Parts, C
 Starting point: 1eb5be232b32fb7f17591b9c6546b5f79f8f9810 (board: **measured** on MAIN after `task-39` landed, by the session, not a copy:)
 Verify: cd pyto && python3 -m unittest tests.test_use tests.test_pql tests.test_first_class tests.test_semantics
 Allow: pyto/USE.md pyto/README.md pyto/src/pyto/pql.py pyto/tests/test_use.py pyto/tests/test_pql.py pyto/tests/fixtures/use pyto/CHANGES.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 7 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/CHANGES.md
+- M  pyto/README.md
+- A  pyto/USE.md
+- M  pyto/src/pyto/pql.py
+- A  pyto/tests/fixtures/use/order-record.json
+- M  pyto/tests/test_pql.py
+- A  pyto/tests/test_use.py
+
+```
+pyto/CHANGES.md                           |   1 +
+ pyto/README.md                            |   3 +
+ pyto/USE.md                               | 551 ++++++++++++++++++++++++++++++
+ pyto/src/pyto/pql.py                      |  23 ++
+ pyto/tests/fixtures/use/order-record.json | 136 ++++++++
+ pyto/tests/test_pql.py                    |  37 ++
+ pyto/tests/test_use.py                    | 238 +++++++++++++
+ 7 files changed, 989 insertions(+)
+```
+
+## Evidence
+
+- verify: `cd pyto && python3 -m unittest tests.test_use tests.test_pql tests.test_first_class tests.test_semantics` exit 1 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.ujjQNgglnQ) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         327  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            12  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
 
 ## Uncertain
 
