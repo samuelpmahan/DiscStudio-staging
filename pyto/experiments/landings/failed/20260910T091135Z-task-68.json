@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T091135Z-task-68",
+  "package": "task-68",
+  "base_sha": "f6c62a12fb0ac68c2c01bd354f4fc30e99f4385d",
+  "result": "failed",
+  "reason": "the tree is not clean; a branch can only land into a clean tree (dirty: pyto/experiments/review/diffs/b4451e1719627b30-693fd65accf8b280.a.record.json pyto/experiments/review/diffs/b4451e1719627b30-693fd65accf8b280.b.record.json pyto/experiments/review/diffs/b4451e1719627b30-693fd65accf8b280.json )",
+  "at": "2026-09-10T09:11:36.110015Z"
+}

@@ -1,0 +1,76 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T091439Z-task-69",
+  "package": "task-69",
+  "base_sha": "01a03b1e5a1edb15fcdbfb782f76e1ca153ce77b",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest tests.test_neat_diff && git status --porcelain experiments/review/diffs | grep -q . && exit 1 || true",
+    "exit": 0,
+    "output_sha256": "3055cf191c34c7e2b2e6742b1ca38bcbd71e5ffdd3e698ec56c35a5546344d05"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "bdf3b8e4ecaf807e92ae74c2733a57ea7524bccfb8081400247ad671b188e7f5",
+    "counts": {
+      "library": 366,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 132,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/69/HANDOFF.md",
+      "bytes": 6273,
+      "sha256": "ac13d9ec627b644e84197cdb0ef4500aa68b81dc791024cbbf9c70d294c64b69"
+    },
+    {
+      "path": "pyto/experiments/tasks/69/evidence/check_all.txt",
+      "bytes": 181864,
+      "sha256": "5baa19ef32824714e70c2f296dea5706bd1ef5039872787371ec29a39440ea44"
+    },
+    {
+      "path": "pyto/experiments/tasks/69/evidence/verify.txt",
+      "bytes": 1925,
+      "sha256": "bcc2581b82dec56bb204ae89963152a63786909bcb9799ddc516d192d0b2feb7"
+    },
+    {
+      "path": "pyto/experiments/tasks/69/packet.md",
+      "bytes": 2069,
+      "sha256": "dd1112aef19896094da2a439f3e275548475c43e8c40e4df93285f18eb0eb607"
+    },
+    {
+      "path": "pyto/src/pyto/neat/diff.py",
+      "bytes": 14687,
+      "sha256": "d044ccca7aaacbc04d87ddeb51ed26c6adfab768159713519ac8a5cf7c1d2dbb"
+    },
+    {
+      "path": "pyto/tests/test_neat_diff.py",
+      "bytes": 9404,
+      "sha256": "a8c7e40d110bc7118fb8cad5b29b4f2e6d07187aa9f1f3275005e066bdafb05c"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T09:15:42.455848Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
