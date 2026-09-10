@@ -1,0 +1,108 @@
+[tests/test_parallel] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/57/pyto/viewer/test')
+[tests/test_multi_into] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/57/pyto/tests')
+EEFEEEE...........................................................F....
+======================================================================
+ERROR: test_a_chain_runs_in_order_on_one_worker_and_testifies_the_same (tests.test_parallel.NodeLaw.test_a_chain_runs_in_order_on_one_worker_and_testifies_the_same)
+Under parallel=True a chained Tick is placed on worker 0, one after another,
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 318, in test_a_chain_runs_in_order_on_one_worker_and_testifies_the_same
+    serial = program().run(serial_pxc, observe=True)
+             ^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 314, in program
+    b = pcr.calc("t", ECHO, id="b", into=Part("px.cp.b"), value=a)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 649, in calc
+    _refuse_sibling_bindings(owner, id, existing_tick, normalized)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 200, in _refuse_sibling_bindings
+    raise ValueError(
+ValueError: PCR 'chain-placed' calculation 'b' binds 'value' to the result of 'a', a sibling in Tick 't' (it produces px.cp.a): the Calculations of one Tick are parallel branches and none of them may consume another's produce (the node law, {?} TicksAsCircuits); move 'a' to an earlier Tick, or 'b' to a later one
+
+======================================================================
+ERROR: test_a_part_binding_on_a_siblings_produce_is_the_same_chain (tests.test_parallel.NodeLaw.test_a_part_binding_on_a_siblings_produce_is_the_same_chain)
+`Part('px.chain.a')` is a read of the sibling's result (ResultReadsAreReads).
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 303, in test_a_part_binding_on_a_siblings_produce_is_the_same_chain
+    pcr.calc("t", ECHO, id="second", into=Part("px.chain.b"), value=Part("px.chain.a"))
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 649, in calc
+    _refuse_sibling_bindings(owner, id, existing_tick, normalized)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 200, in _refuse_sibling_bindings
+    raise ValueError(
+ValueError: PCR 'chain-by-address' calculation 'second' binds 'value' to the result of 'first', a sibling in Tick 't' (it produces px.chain.a): the Calculations of one Tick are parallel branches and none of them may consume another's produce (the node law, {?} TicksAsCircuits); move 'first' to an earlier Tick, or 'second' to a later one
+
+======================================================================
+ERROR: test_a_sibling_result_ref_is_a_chain (tests.test_parallel.NodeLaw.test_a_sibling_result_ref_is_a_chain) (parallel=False)
+The later link binds the earlier one's result and runs after it, serial or parallel.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 293, in test_a_sibling_result_ref_is_a_chain
+    pcr.calc("t", ECHO, id="second", into=Part("px.chain.b"), value=first)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 649, in calc
+    _refuse_sibling_bindings(owner, id, existing_tick, normalized)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 200, in _refuse_sibling_bindings
+    raise ValueError(
+ValueError: PCR 'chain' calculation 'second' binds 'value' to the result of 'first', a sibling in Tick 't' (it produces px.chain.a): the Calculations of one Tick are parallel branches and none of them may consume another's produce (the node law, {?} TicksAsCircuits); move 'first' to an earlier Tick, or 'second' to a later one
+
+======================================================================
+ERROR: test_a_sibling_result_ref_is_a_chain (tests.test_parallel.NodeLaw.test_a_sibling_result_ref_is_a_chain) (parallel=True)
+The later link binds the earlier one's result and runs after it, serial or parallel.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 293, in test_a_sibling_result_ref_is_a_chain
+    pcr.calc("t", ECHO, id="second", into=Part("px.chain.b"), value=first)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 649, in calc
+    _refuse_sibling_bindings(owner, id, existing_tick, normalized)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 200, in _refuse_sibling_bindings
+    raise ValueError(
+ValueError: PCR 'chain' calculation 'second' binds 'value' to the result of 'first', a sibling in Tick 't' (it produces px.chain.a): the Calculations of one Tick are parallel branches and none of them may consume another's produce (the node law, {?} TicksAsCircuits); move 'first' to an earlier Tick, or 'second' to a later one
+
+======================================================================
+ERROR: test_a_tick_built_without_a_pcr_chains_too (tests.test_parallel.NodeLaw.test_a_tick_built_without_a_pcr_chains_too)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 372, in test_a_tick_built_without_a_pcr_chains_too
+    tick.calc(ECHO, id="second", into=Part("px.t.b"), value=first)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 256, in calc
+    _refuse_sibling_bindings(owner, id, self, inputs)
+  File "/home/user/DiscStudio-staging/pyto/src/pyto/pcr.py", line 200, in _refuse_sibling_bindings
+    raise ValueError(
+ValueError: Tick 'standalone' calculation 'second' binds 'value' to the result of 'first', a sibling in Tick 'standalone' (it produces px.t.a): the Calculations of one Tick are parallel branches and none of them may consume another's produce (the node law, {?} TicksAsCircuits); move 'first' to an earlier Tick, or 'second' to a later one
+
+======================================================================
+ERROR: test_the_same_binding_in_a_later_tick_is_fine (tests.test_parallel.NodeLaw.test_the_same_binding_in_a_later_tick_is_fine)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 333, in test_the_same_binding_in_a_later_tick_is_fine
+    self.assertFalse(pcr.tick("t1").chained())
+                     ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Tick' object has no attribute 'chained'
+
+======================================================================
+FAIL: test_a_read_of_a_later_sibling_is_refused (tests.test_parallel.NodeLaw.test_a_read_of_a_later_sibling_is_refused)
+The sequence runs in declared order, so a Part a later sibling produces is not there yet.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_parallel.py", line 341, in test_a_read_of_a_later_sibling_is_refused
+    with self.assertRaises(ValueError) as caught:
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_07_8_what_not_to_do (tests.test_use.UseMarkdownIsExecuted.test_07_8_what_not_to_do)
+USE.md section '8. What not to do', block 7.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/57/pyto/tests/test_use.py", line 169, in check
+    self.assertEqual(
+AssertionError: "1: C[139 chars]ns)\n3: PxC: 'px.receipt.order.Sum.sum' is und[139 chars]))\n" != "1: C[139 chars]ns)\n2: PCR 'order' calculation 'sum' produces[430 chars]))\n"
+  1: Calculation address must start with 'fn.' (pure) or with 'oc.' (an OperationalCalculation: the syscall table, the only place an effect happens)
++ 2: PCR 'order' calculation 'sum' produces 'px.order.subtotal', which its sibling 'double' in Tick 'Sum' reads as 'subtotal': a Calculation may read what an earlier sibling produced, not a later one (the sequence runs in declared order, {?} ChainsInsideATick); declare 'sum' before 'double'
+  3: PxC: 'px.receipt.order.Sum.sum' is under the reserved 'px.receipt.' segment, which only a run may write (pyto.pcr, or inside receipt_writes_allowed(), or set(..., _from_run=True))
+ : USE.md section '8. What not to do' block 7 prints something other than the text block under it
+
+----------------------------------------------------------------------
+Ran 70 tests in 3.326s
+
+FAILED (failures=2, errors=6)

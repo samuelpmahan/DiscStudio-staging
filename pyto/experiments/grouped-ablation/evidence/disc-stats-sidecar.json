@@ -28,7 +28,7 @@
     "pyto": {
       "modules": {
         "core.py": "877e0218b19f54685b7580618c8cfec23e5dcc28acb119efb33e98d7de05598d",
-        "pcr.py": "2dda66e57131d33067b4cc3dfbc3e6eb4629df1d61e6472bcb3f9d3dfa40b427"
+        "pcr.py": "38135faee8107a4e47df4a4842a41c5d56fcad0952e496b105abdadce8e2e825"
       },
       "package": "pyto-lab",
       "version": "0.1.0"
