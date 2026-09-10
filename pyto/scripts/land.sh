@@ -337,7 +337,12 @@ if [ "$(printf '%s\n' "$NOW" | grep -v '^$' | sort -u)" != "$(printf '%s\n' "$DI
   delta="$(diff <(printf '%s\n' "$DIRTY" | grep -v '^$' | sort -u) <(printf '%s\n' "$NOW" | grep -v '^$' | sort -u) | grep '^[<>]' | sed 's/^</ gone:/; s/^>/ new:/' | tr '\n' ' ')"
   fail "the tree changed while the suites ran (someone is writing); nothing committed. Changed:$delta"
 fi
-while IFS= read -r f; do [ -n "$f" ] && git add -A -- "$f"; done <<< "$DIRTY"
+# A path the candidate deleted and now ignores makes `git add -A -- path` fatal (task 75's landing
+# passed every suite and died here); a deletion is staged as a removal from the index instead.
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  if [ -e "$f" ]; then git add -A -- "$f"; else git rm -q --cached --ignore-unmatch -- "$f"; fi
+done <<< "$DIRTY"
 git add -A -- "$LAND_DIR"
 LINE="${MESSAGE:-verified candidate}"
 board "**landed** \`$PACKAGE\`$SCORE_BOARD: $LINE ($(printf '%s\n' "$CHANGED" | grep -c . || true) files since ${BASE_SHA:0:7}, suites green${GATE_LINE}, receipt $ID)"

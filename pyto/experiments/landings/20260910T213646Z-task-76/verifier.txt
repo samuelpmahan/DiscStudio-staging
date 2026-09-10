@@ -1,0 +1,18 @@
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+selftest new: pass
+selftest packet sections: pass
+selftest landing commit: pass
+selftest origin branch removal: pass
+selftest board: pass
+selftest score: pass
+selftest undo clean: pass
+selftest an undone id is not reused: pass
+selftest owner note without a reason: pass
+selftest owner note with a reason: pass
+selftest land from a remote: pass
+selftest remote board line and temporary ref: pass
+selftest remote desk graded here: pass
+selftest a deleted and ignored file lands: pass
+selftest gate closed by a rejection: pass
+selftest gate opened by a stub, recorded untrusted: pass

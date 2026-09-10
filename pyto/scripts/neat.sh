@@ -602,6 +602,19 @@ cmd_selftest() {
   else
     echo "selftest remote desk graded here: FAIL"; failures=$((failures + 1))
   fi
+  # A candidate that deletes a file and starts ignoring it still lands (task 76): the stage step
+  # removes the deletion from the index instead of `git add`ing an ignored path.
+  if bash "$tools_dir/neat.sh" new "delete and ignore" --verify true --allow "gone.txt .gitignore" >"$tmp/gone-new.txt" 2>&1; then :; else failures=$((failures + 1)); fi
+  gone_id="$(ls "$clone/EXP" | sort -n | tail -1)"
+  printf 'gone\n' > "$clone/gone.txt"; git -C "$clone" add gone.txt; git -C "$clone" commit -q -m "a file to delete"; git -C "$clone" push -q origin HEAD 2>/dev/null || true
+  git -C "$clone/EXP/$gone_id" merge -q "$(git -C "$clone" rev-parse --abbrev-ref HEAD)" 2>/dev/null || true
+  git -C "$clone/EXP/$gone_id" rm -q gone.txt; printf 'gone.txt\n' >> "$clone/EXP/$gone_id/.gitignore"
+  if bash "$tools_dir/neat.sh" pack "$gone_id" >"$tmp/gone-pack.txt" 2>&1 && bash "$tools_dir/neat.sh" land "$gone_id" >"$tmp/gone-land.txt" 2>&1 &&
+     ! git -C "$clone" ls-files --error-unmatch gone.txt >/dev/null 2>&1; then
+    echo "selftest a deleted and ignored file lands: pass"
+  else
+    echo "selftest a deleted and ignored file lands: FAIL"; failures=$((failures + 1)); tail -4 "$tmp/gone-land.txt"
+  fi
   # The gate at the join (task 67): a stub event that approves the exact head lets a landing through
   # and the receipt records it as untrusted; a stub that rejects closes the join by name.
   printf '{"login":"selftest","disposition":"approve","selection":"<head>","text":"stub approve"}\n' > "$tmp/approve.json"
