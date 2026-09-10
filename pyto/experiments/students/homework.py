@@ -1,4 +1,4 @@
-"""The homework: a class's scores, five Ticks, one run record.
+"""The homework: a class's scores, four Ticks, one run record.
 
     python homework.py --out evidence/run-1     # rewrite the committed evidence
     python homework.py --out /tmp/look          # anywhere else
@@ -6,14 +6,18 @@
 What it computes, from one small CSV of names and scores held in a Part:
 
     Tick 1  Parse       the CSV text becomes a roster: one row per student, sorted by name
-    Tick 2  Mean        the class average, to two decimals
-    Tick 3  Median      the middle score (the mean of the two middle scores for an even class)
-    Tick 4  Letters     a letter for every student, from fixed cutoffs given as args
-    Tick 5  Histogram   a text bar chart, one line per letter, A first
+    Tick 2  Stats       the class average to two decimals, and the middle score
+                        (the mean of the two middle scores for an even class),
+                        as two Calculations side by side
+    Tick 3  Letters     a letter for every student, from fixed cutoffs given as args
+    Tick 4  Histogram   a text bar chart, one line per letter, A first
 
-Mean and median are separate Ticks on purpose: they are two independent readings
-of the same roster, and the record shows each one's own reads, writes, duration
-and result digest.
+Mean and median share the Stats Tick because neither needs the other: both bind
+the roster Parse produced and nothing else, so they are one step of the program.
+A receipt is per Calculation, not per Tick, so each of them still records its own
+reads, writes, duration and result digest exactly as it did when they were two
+Ticks -- what one Tick adds is the claim that they could run side by side, which
+`pyto/experiments/tick-laws` reads straight off this record.
 
 What it writes into `--out`:
 
@@ -179,11 +183,16 @@ SOURCE_OF = {
 
 
 def build_program() -> PCR:
-    """The five Ticks, in order. This is the whole program."""
+    """The four Ticks, in order. This is the whole program.
+
+    `Stats` names one Tick twice, which is how `PCR.calc` puts two Calculations in
+    one Tick: `mean` and `median` both bind ROSTER (Parse's result) and neither
+    binds the other, so the node law holds and the two are parallel branches.
+    """
     pcr = PCR(PCR_NAME)
     pcr.calc("Parse", PARSE, id="parse", into=ROSTER, text=SCORES_CSV)
-    pcr.calc("Mean", MEAN_OF, id="mean", into=MEAN, roster=ROSTER)
-    pcr.calc("Median", MEDIAN_OF, id="median", into=MEDIAN, roster=ROSTER)
+    pcr.calc("Stats", MEAN_OF, id="mean", into=MEAN, roster=ROSTER)
+    pcr.calc("Stats", MEDIAN_OF, id="median", into=MEDIAN, roster=ROSTER)
     pcr.calc(
         "Letters", LETTERS_OF, id="letters", into=LETTERS,
         roster=ROSTER, args={"cutoffs": [list(pair) for pair in CUTOFFS]},
@@ -212,7 +221,7 @@ def commit_sha() -> str | None:
 
 
 def run() -> dict:
-    """Seed the store, run the five Ticks with observation on, return the record.
+    """Seed the store, run the four Ticks with observation on, return the record.
 
     `observe=True` is what gives the run receipts, and `run_record` requires them:
     without receipts a document could not honestly carry the calculation identity,

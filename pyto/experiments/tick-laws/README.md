@@ -33,6 +33,6 @@ from tick_laws import analyze_record, analyze_records, load_record, validate_rec
 
 ## Worked students example
 
-The five singleton Ticks have total work and series latency of 0.132211 ms. Mean and Median both bind fn:parse and write distinct Parts px.students.mean and px.students.median; neither depends on the other, so they could share one Tick. That grouping keeps total work at 0.132211 ms and reduces ideal series latency to 0.112981 ms, excluding overhead.
+The students record now has four Ticks, one of them parallel: Parse, Stats, Letters, Histogram. Stats holds mean and median, which both bind fn:parse and write distinct Parts px.students.mean and px.students.median; neither depends on the other, so the node law passes and the two are branches of one Tick. Stats is therefore the only Tick in that record whose work exceeds its latency -- work is the sum of the two branches, latency is the longer of them -- and the three singleton Ticks have work equal to latency. In the committed `evidence/run-1` that reads as Tick 1 work_ms=0.040953 against latency_ms=0.025237, with run work_ms=0.110298 against critical_path_ms=0.094582; the exact microseconds move on every re-run, the inequality does not.
 
 A serial run's latency series is the sum of Tick latencies. If independent branches share a Tick, that Tick's latency is the maximum branch duration while its work remains the sum of branch durations.

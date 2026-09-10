@@ -91,7 +91,7 @@ COLD_READER_QUESTION = (
 # `python -I -B -c <snippet> <experiment dir>`: no site packages beyond the
 # interpreter's own, no bytecode read or written, no environment but PATH, and a
 # working directory outside this repository. The child imports `pyto` and this
-# experiment's `homework` and nothing else, runs the five Ticks, and writes the
+# experiment's `homework` and nothing else, runs the four Ticks, and writes the
 # record it produced to stdout as canonical JSON. It does not know what it is
 # being compared against; the parent does the comparing.
 CHILD_SNIPPET = """\

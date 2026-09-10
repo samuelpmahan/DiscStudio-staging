@@ -14,16 +14,19 @@
     "declared_produces": [
       "px.students.histogram"
     ],
-    "duration_ms": 0.021507999917957932,
+    "duration_ms": 0.022342999727698043,
     "effective_arg_keys": [
       "letters",
       "cutoffs",
       "bar"
     ],
     "invocation_id": "histogram",
+    "produce_sha256": {
+      "px.students.histogram": "0b10c417a9a0c1259099faf06d3771c4a766494a4a34c3394837e06b758ee78d"
+    },
     "result_sha256": "0b10c417a9a0c1259099faf06d3771c4a766494a4a34c3394837e06b758ee78d",
     "shadowed_inputs": [],
-    "started_ms": 2410505.965417,
+    "started_ms": 4976351.520155,
     "writes": [
       {
         "address": "px.students.histogram",
@@ -46,15 +49,18 @@
     "declared_produces": [
       "px.students.letters"
     ],
-    "duration_ms": 0.028363000183162512,
+    "duration_ms": 0.016751999282860197,
     "effective_arg_keys": [
       "roster",
       "cutoffs"
     ],
     "invocation_id": "letters",
+    "produce_sha256": {
+      "px.students.letters": "6bcd64ec55370df02f57986b8cf278abd53405686aab0a416d38706d1d9edee0"
+    },
     "result_sha256": "6bcd64ec55370df02f57986b8cf278abd53405686aab0a416d38706d1d9edee0",
     "shadowed_inputs": [],
-    "started_ms": 2410505.643131,
+    "started_ms": 4976351.207718001,
     "writes": [
       {
         "address": "px.students.letters",
@@ -77,14 +83,17 @@
     "declared_produces": [
       "px.students.mean"
     ],
-    "duration_ms": 0.03024099987669615,
+    "duration_ms": 0.025237000045308378,
     "effective_arg_keys": [
       "roster"
     ],
     "invocation_id": "mean",
+    "produce_sha256": {
+      "px.students.mean": "a1a9f34b0711500b5d41ed1f553bf9d04af30672d5850e7496b44b51482fff3a"
+    },
     "result_sha256": "a1a9f34b0711500b5d41ed1f553bf9d04af30672d5850e7496b44b51482fff3a",
     "shadowed_inputs": [],
-    "started_ms": 2410505.023226,
+    "started_ms": 4976350.724580999,
     "writes": [
       {
         "address": "px.students.mean",
@@ -107,14 +116,17 @@
     "declared_produces": [
       "px.students.median"
     ],
-    "duration_ms": 0.0192300003618584,
+    "duration_ms": 0.015716000234533567,
     "effective_arg_keys": [
       "roster"
     ],
     "invocation_id": "median",
+    "produce_sha256": {
+      "px.students.median": "848edcd4f2130990a2371124dff160e019f75ee61626eab42611d25c5b656e89"
+    },
     "result_sha256": "848edcd4f2130990a2371124dff160e019f75ee61626eab42611d25c5b656e89",
     "shadowed_inputs": [],
-    "started_ms": 2410505.3792089997,
+    "started_ms": 4976350.965343,
     "writes": [
       {
         "address": "px.students.median",
@@ -141,14 +153,17 @@
     "declared_produces": [
       "px.students.roster"
     ],
-    "duration_ms": 0.03286900027887896,
+    "duration_ms": 0.030250000236264896,
     "effective_arg_keys": [
       "text"
     ],
     "invocation_id": "parse",
+    "produce_sha256": {
+      "px.students.roster": "0be97ba80b4e28b0b2afee87ad31d65e32e8fd2d5da01b0f2a97e0edb2c41378"
+    },
     "result_sha256": "0be97ba80b4e28b0b2afee87ad31d65e32e8fd2d5da01b0f2a97e0edb2c41378",
     "shadowed_inputs": [],
-    "started_ms": 2410502.493612,
+    "started_ms": 4976348.682617,
     "writes": [
       {
         "address": "px.students.roster",
