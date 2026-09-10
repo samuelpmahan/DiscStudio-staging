@@ -1,0 +1,68 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T013659Z-task-33",
+  "package": "task-33",
+  "base_sha": "47210a7dd81658644e9c42b14032684c291d62e7",
+  "result": "verified",
+  "verifier": {
+    "command": "bash pyto/scripts/neat.sh selftest",
+    "exit": 0,
+    "output_sha256": "fc4fb1ed38d4309addf1a465f11b9943a4de76e4b043f056d724fe8463e3e9ae"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "b6c30bb257dfb04bd2221fba7d10fd8ad4c337adf6dff5041a8e93a5e66dd916",
+    "counts": {
+      "library": 193,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 248,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 11,
+      "experiments/tick-laws": 10,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 107,
+      "viewer-record-schema": 24
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/LANDING.md",
+      "bytes": 10581,
+      "sha256": "861081bbfbb21ead5603c4375bc001468b490dce4b3970aa93df8b34479d6993"
+    },
+    {
+      "path": "pyto/experiments/tasks/33/HANDOFF.md",
+      "bytes": 7804,
+      "sha256": "dfe43f055781ab733a2a95cdc1810019840993041853af4c2f73a20a77bd2268"
+    },
+    {
+      "path": "pyto/experiments/tasks/33/evidence/check_all.txt",
+      "bytes": 137355,
+      "sha256": "104a50c9f97b8a92af15a68e57285ead61f470254fd996b5c33ed39601fb47ac"
+    },
+    {
+      "path": "pyto/experiments/tasks/33/evidence/verify.txt",
+      "bytes": 387,
+      "sha256": "fc4fb1ed38d4309addf1a465f11b9943a4de76e4b043f056d724fe8463e3e9ae"
+    },
+    {
+      "path": "pyto/experiments/tasks/33/packet.md",
+      "bytes": 3407,
+      "sha256": "410043871fe1bca28ec3ec005462865d43b2c15b1e31732f6277d1bc3cd263ea"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 31023,
+      "sha256": "6d7ddd52e8067e777b4e52be3457256a8e0a89ece37916c2ddbedb549efb42b5"
+    }
+  ],
+  "unclaimed": [],
+  "landed_by": "session",
+  "at": "2026-09-10T01:37:41.224150Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
