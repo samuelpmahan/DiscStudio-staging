@@ -103,6 +103,6 @@ AssertionError: "1: C[139 chars]ns)\n3: PxC: 'px.receipt.order.Sum.sum' is und[1
  : USE.md section '8. What not to do' block 7 prints something other than the text block under it
 
 ----------------------------------------------------------------------
-Ran 70 tests in 3.330s
+Ran 70 tests in 3.365s
 
 FAILED (failures=2, errors=6)

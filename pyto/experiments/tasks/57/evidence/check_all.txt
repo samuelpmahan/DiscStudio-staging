@@ -1,6 +1,6 @@
 == check_all.sh v0
 pyto root:    /home/user/DiscStudio-staging/EXP/57/pyto
-logs:         /tmp/tmp.gqrk9P3ULO
+logs:         /tmp/tmp.NS2lCgIX8q
 python:       /home/user/DiscStudio-staging/EXP/57/.venv/bin/python (Python 3.11.15)
 pyto module:  /home/user/DiscStudio-staging/EXP/57/pyto/src/pyto/__init__.py
 
@@ -379,10 +379,12 @@ The claim behind the fixture: index is the position in that invocation's ... ok
 test_effects_tick_summarize (test_px.PxFixtures.test_effects_tick_summarize)
 `--tick` filters by Tick name: the pure Tick performed none, and says so. ... ok
 test_laws_ablation (test_px.PxFixtures.test_laws_ablation) ... ok
-test_laws_exits_one_on_a_violated_node_law (test_px.PxFixtures.test_laws_exits_one_on_a_violated_node_law)
-A sibling read inside one Tick: the node law's own example. ... ok
+test_laws_exits_one_on_a_backwards_read (test_px.PxFixtures.test_laws_exits_one_on_a_backwards_read)
+A read of a sibling declared after the reader is still a node-law ... ok
 test_laws_prints_no_path (test_px.PxFixtures.test_laws_prints_no_path)
 `tick_laws` echoes the path it was handed; `px` names the pcr instead. ... ok
+test_laws_reads_a_sibling_read_as_a_chain_not_a_violation (test_px.PxFixtures.test_laws_reads_a_sibling_read_as_a_chain_not_a_violation)
+A read of an earlier sibling inside one Tick is a chain: the Tick runs ... ok
 test_laws_students (test_px.PxFixtures.test_laws_students) ... ok
 test_laws_times_students (test_px.PxFixtures.test_laws_times_students) ... ok
 test_ls_ablation (test_px.PxFixtures.test_ls_ablation) ... ok
@@ -540,10 +542,10 @@ test_the_document_names_no_temp_dir (test_use.UseMarkdownIsPortable.test_the_doc
 test_the_sections_are_the_ones_the_page_promises (test_use.UseMarkdownIsPortable.test_the_sections_are_the_ones_the_page_promises) ... ok
 
 ----------------------------------------------------------------------
-Ran 329 tests in 9.445s
+Ran 330 tests in 9.754s
 
 OK
--- library: OK (ran 329)
+-- library: OK (ran 330)
 
 == suite: experiments/classroom  (cwd /home/user/DiscStudio-staging/EXP/57/pyto)
    $ /home/user/DiscStudio-staging/EXP/57/.venv/bin/python -m unittest discover -s experiments/classroom -p test_*.py -v
@@ -580,7 +582,7 @@ test_the_submission_landed_under_the_one_allowed_path (test_classroom.ClassroomT
 What the class got, and nothing beside it. ... ok
 
 ----------------------------------------------------------------------
-Ran 16 tests in 4.569s
+Ran 16 tests in 4.524s
 
 OK
 -- experiments/classroom: OK (ran 16)
@@ -605,7 +607,7 @@ test_shared_material_key_equals_ablation_committed_key (test_cross_project.Share
 Kills a mutation to SHARED_SOURCE/SHARED_SEED/SHARED_N in program.py: the ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 0.323s
+Ran 9 tests in 0.329s
 
 OK
 -- experiments/cross-project: OK (ran 9)
@@ -682,63 +684,124 @@ test_pxc_hit_does_not_touch_the_store_counters_beyond_requests_and_hits (test_ma
 Asking the SAME pxc twice: the second ask is a PxC hit, never a disk read. ... ok
 test_non_json_value_is_not_treated_as_a_hit_on_reload (test_materials.NonJSONValueSidecar.test_non_json_value_is_not_treated_as_a_hit_on_reload) ... ok
 test_non_json_value_is_written_to_a_sidecar_not_a_value_file (test_materials.NonJSONValueSidecar.test_non_json_value_is_written_to_a_sidecar_not_a_value_file) ... ok
-test_running_the_evidence_writing_suites_changes_no_committed_file (test_replay.CheckAllLeavesTheTreeClean.test_running_the_evidence_writing_suites_changes_no_committed_file) ... FAIL
-setUpClass (test_replay.ChildModuleTable) ... ERROR
-setUpClass (test_replay.DeterminismMatrix) ... ERROR
-setUpClass (test_replay.FreshProcessReplay) ... ERROR
+test_running_the_evidence_writing_suites_changes_no_committed_file (test_replay.CheckAllLeavesTheTreeClean.test_running_the_evidence_writing_suites_changes_no_committed_file) ... ok
+test_every_startup_resident_top_level_name_is_stdlib_or_named (test_replay.ChildModuleTable.test_every_startup_resident_top_level_name_is_stdlib_or_named)
+Kills: an environment that grew a new startup resident nobody looked at. ... ok
+test_nothing_outside_the_allowed_set_is_in_the_full_module_table (test_replay.ChildModuleTable.test_nothing_outside_the_allowed_set_is_in_the_full_module_table) ... ok
+test_the_experiment_modules_are_absent_from_sys_modules_before (test_replay.ChildModuleTable.test_the_experiment_modules_are_absent_from_sys_modules_before)
+The child started clean: nothing it is about to import was already there. ... ok
+test_the_full_table_check_is_strictly_stronger_than_the_old_difference (test_replay.ChildModuleTable.test_the_full_table_check_is_strictly_stronger_than_the_old_difference)
+The old check subtracted `sys_modules_before` wholesale; this proves that ... ok
+test_the_startup_resident_set_is_named_not_inferred (test_replay.ChildModuleTable.test_the_startup_resident_set_is_named_not_inferred) ... ok
+test_every_seed_is_reproducible_across_two_independent_processes (test_replay.DeterminismMatrix.test_every_seed_is_reproducible_across_two_independent_processes) ... ok
+test_log_was_written_as_lf (test_replay.DeterminismMatrix.test_log_was_written_as_lf) ... ok
+test_nonzero_seeds_do_not_report_hash_randomization_disabled (test_replay.DeterminismMatrix.test_nonzero_seeds_do_not_report_hash_randomization_disabled)
+Corrects the plan's 'confirmed not gaps' note for n != 0 (replay.py docstring). ... ok
+test_result_digests_are_identical_across_every_hashseed_row_and_the_baseline (test_replay.DeterminismMatrix.test_result_digests_are_identical_across_every_hashseed_row_and_the_baseline) ... ok
+test_seed_zero_reports_hash_randomization_disabled (test_replay.DeterminismMatrix.test_seed_zero_reports_hash_randomization_disabled) ... ok
+test_the_five_seeds_produce_five_distinct_hashes (test_replay.DeterminismMatrix.test_the_five_seeds_produce_five_distinct_hashes)
+Kills: a seed that stopped taking effect. ... ok
+test_the_matrix_sets_no_pythonpath (test_replay.DeterminismMatrix.test_the_matrix_sets_no_pythonpath)
+The LF-copy row, the only one needing a scratch PYTHONPATH, was moved out of ... ok
+test_the_produced_log_matches_the_committed_one (test_replay.DeterminismMatrix.test_the_produced_log_matches_the_committed_one)
+The hash values are seed-determined, so this log reproduces exactly. ... ok
+test_cwd_was_outside_the_repository (test_replay.FreshProcessReplay.test_cwd_was_outside_the_repository) ... ok
+test_env_was_stripped_to_path_only (test_replay.FreshProcessReplay.test_env_was_stripped_to_path_only) ... ok
+test_exactly_one_intra_repo_path_was_inserted_and_it_is_this_directory (test_replay.FreshProcessReplay.test_exactly_one_intra_repo_path_was_inserted_and_it_is_this_directory) ... ok
+test_log_carries_the_checks_the_child_makes_before_trusting_the_record (test_replay.FreshProcessReplay.test_log_carries_the_checks_the_child_makes_before_trusting_the_record)
+Kills: dropping any of the guards added in fixer rounds 1 and 3. ... ok
+test_log_was_written_with_the_command_line_and_module_dump (test_replay.FreshProcessReplay.test_log_was_written_with_the_command_line_and_module_dump) ... ok
+test_provider_identity_was_compared_and_agreed (test_replay.FreshProcessReplay.test_provider_identity_was_compared_and_agreed) ... ok
+test_the_child_neither_read_nor_wrote_bytecode (test_replay.FreshProcessReplay.test_the_child_neither_read_nor_wrote_bytecode)
+`python3 -B` plus the parent's __pycache__ purge: a stale .pyc whose ... ok
+test_the_child_read_the_same_module_sources_the_parent_sees_on_disk (test_replay.FreshProcessReplay.test_the_child_read_the_same_module_sources_the_parent_sees_on_disk) ... ok
+test_the_produced_log_matches_the_committed_one_line_for_line (test_replay.FreshProcessReplay.test_the_produced_log_matches_the_committed_one_line_for_line)
+The oracle (fixer round 3, finding 1): this run wrote into a temp dir, and ... ok
+test_the_terminal_line_is_the_verdict_and_it_accepted_this_record (test_replay.FreshProcessReplay.test_the_terminal_line_is_the_verdict_and_it_accepted_this_record)
+`child failed checks: []` is NOT the verdict (fixer round 2, finding 3). ... ok
 test_a_record_that_preseeds_an_address_the_program_computes_is_refused (test_replay.HiddenStateAuditor.test_a_record_that_preseeds_an_address_the_program_computes_is_refused)
-Kills: dropping the external-vs-into check in retain.check_record. ... FAIL
+Kills: dropping the external-vs-into check in retain.check_record. ... ok
 test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused (test_replay.HiddenStateAuditor.test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused)
-Kills: dropping the results-keys check in retain.check_record. ... FAIL
+Kills: dropping the results-keys check in retain.check_record. ... ok
 test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it (test_replay.HiddenStateAuditor.test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it)
-The whole point of the fresh-process boundary: a forged record that reproduces ... FAIL
-test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child (test_replay.HiddenStateAuditor.test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child) ... FAIL
+The whole point of the fresh-process boundary: a forged record that reproduces ... ok
+test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child (test_replay.HiddenStateAuditor.test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child) ... ok
 test_the_honest_record_is_accepted_after_the_forgery_tests (test_replay.HiddenStateAuditor.test_the_honest_record_is_accepted_after_the_forgery_tests)
-The forged records were written to temp paths and logged to temp files; ... FAIL
-setUpClass (test_replay.LaneCCrossVerification) ... ERROR
+The forged records were written to temp paths and logged to temp files; ... ok
+test_each_child_reproduced_its_own_committed_comparison_and_digests (test_replay.LaneCCrossVerification.test_each_child_reproduced_its_own_committed_comparison_and_digests) ... ok
+test_each_childs_receipt_digests_match_that_runs_committed_receipts (test_replay.LaneCCrossVerification.test_each_childs_receipt_digests_match_that_runs_committed_receipts)
+Finding 2, over every retained record and not only run-1. ... ok
+test_each_produced_log_matches_the_committed_one (test_replay.LaneCCrossVerification.test_each_produced_log_matches_the_committed_one) ... ok
+test_each_run_has_its_own_log_ending_in_an_accepted_verdict (test_replay.LaneCCrossVerification.test_each_run_has_its_own_log_ending_in_an_accepted_verdict) ... ok
+test_every_lane_c_run_was_replayed (test_replay.LaneCCrossVerification.test_every_lane_c_run_was_replayed) ... ok
+test_run_4_declares_a_different_external_boundary_than_runs_1_to_3 (test_replay.LaneCCrossVerification.test_run_4_declares_a_different_external_boundary_than_runs_1_to_3)
+run-4 replays from a retained split, so its declared inputs are not ... ok
 test_log_is_lf_and_names_the_pythonpath_it_used (test_replay.LfSourceDriftProbe.test_log_is_lf_and_names_the_pythonpath_it_used) ... ok
 test_module_sources_drifted_by_construction_while_digests_did_not (test_replay.LfSourceDriftProbe.test_module_sources_drifted_by_construction_while_digests_did_not) ... ok
 test_no_test_module_in_this_directory_calls_the_probe (test_replay.LfSourceDriftProbe.test_no_test_module_in_this_directory_calls_the_probe)
 The needles are assembled at run time so this file does not match itself. ... ok
 test_the_log_was_produced_against_the_current_retained_record (test_replay.LfSourceDriftProbe.test_the_log_was_produced_against_the_current_retained_record)
-A stale log (someone regenerated retained.json without re-running the probe) ... FAIL
-setUpClass (test_replay.ParentSideRefusals) ... ERROR
-test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider (test_replay.ProviderIdentityIsModuleGranular.test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider) ... FAIL
-test_the_corrupted_registry_produces_a_byte_identical_provider_block (test_replay.ProviderIdentityIsModuleGranular.test_the_corrupted_registry_produces_a_byte_identical_provider_block) ... FAIL
-test_the_impostor_is_a_different_function_of_the_declared_module (test_replay.ProviderIdentityIsModuleGranular.test_the_impostor_is_a_different_function_of_the_declared_module) ... FAIL
-test_the_limitation_is_stated_in_the_docstring (test_replay.ProviderIdentityIsModuleGranular.test_the_limitation_is_stated_in_the_docstring) ... FAIL
-test_verify_provider_agrees_with_the_corrupted_registry (test_replay.ProviderIdentityIsModuleGranular.test_verify_provider_agrees_with_the_corrupted_registry) ... FAIL
-setUpClass (test_replay.ReceiptDigestsFromTheChild) ... ERROR
-test_removing_a_used_address_raises_keyerror_naming_it_before_execution (test_replay.RegistryHole.test_removing_a_used_address_raises_keyerror_naming_it_before_execution) ... FAIL
+A stale log (someone regenerated retained.json without re-running the probe) ... ok
+test_a_module_outside_the_allowed_set_is_refused (test_replay.ParentSideRefusals.test_a_module_outside_the_allowed_set_is_refused)
+Kills: dropping `if leaked`. ... ok
+test_a_parent_child_source_sha_mismatch_is_refused (test_replay.ParentSideRefusals.test_a_parent_child_source_sha_mismatch_is_refused)
+Kills: dropping the `parent_source_sha256 != report['source_sha256']` raise. ... ok
+test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests (test_replay.ParentSideRefusals.test_a_record_whose_retained_digest_is_forged_is_refused_on_the_digests)
+Kills: dropping `if not digests_equal`. Rows still match, so nothing else fires. ... ok
+test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows (test_replay.ParentSideRefusals.test_a_value_forged_record_with_recomputed_digests_is_refused_on_the_rows)
+Kills: dropping `if not rows_equal`. The child accepts this record. ... ok
+test_every_named_scenario_has_a_committed_log (test_replay.ParentSideRefusals.test_every_named_scenario_has_a_committed_log) ... ok
+test_the_honest_record_is_still_accepted_after_all_of_the_above (test_replay.ParentSideRefusals.test_the_honest_record_is_still_accepted_after_all_of_the_above) ... ok
+test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider (test_replay.ProviderIdentityIsModuleGranular.test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider) ... ok
+test_the_corrupted_registry_produces_a_byte_identical_provider_block (test_replay.ProviderIdentityIsModuleGranular.test_the_corrupted_registry_produces_a_byte_identical_provider_block) ... ok
+test_the_impostor_is_a_different_function_of_the_declared_module (test_replay.ProviderIdentityIsModuleGranular.test_the_impostor_is_a_different_function_of_the_declared_module) ... ok
+test_the_limitation_is_stated_in_the_docstring (test_replay.ProviderIdentityIsModuleGranular.test_the_limitation_is_stated_in_the_docstring) ... ok
+test_verify_provider_agrees_with_the_corrupted_registry (test_replay.ProviderIdentityIsModuleGranular.test_verify_provider_agrees_with_the_corrupted_registry) ... ok
+test_a_receipt_digest_mismatch_is_refused (test_replay.ReceiptDigestsFromTheChild.test_a_receipt_digest_mismatch_is_refused)
+Kills: dropping either receipt raise. The record's results are forged in a ... ok
+test_a_stale_committed_receipts_file_is_refused (test_replay.ReceiptDigestsFromTheChild.test_a_stale_committed_receipts_file_is_refused)
+Kills: dropping the receipts.json comparison. The record is honest; only ... ok
+test_both_lines_are_in_the_log (test_replay.ReceiptDigestsFromTheChild.test_both_lines_are_in_the_log) ... ok
+test_receipt_digests_equal_the_committed_receipts_json (test_replay.ReceiptDigestsFromTheChild.test_receipt_digests_equal_the_committed_receipts_json) ... ok
+test_receipt_digests_equal_the_records_results (test_replay.ReceiptDigestsFromTheChild.test_receipt_digests_equal_the_records_results) ... ok
+test_the_child_reported_a_receipt_for_every_invocation (test_replay.ReceiptDigestsFromTheChild.test_the_child_reported_a_receipt_for_every_invocation) ... ok
+test_removing_a_used_address_raises_keyerror_naming_it_before_execution (test_replay.RegistryHole.test_removing_a_used_address_raises_keyerror_naming_it_before_execution) ... ok
 test_requested_address_from_the_brief_is_not_actually_in_the_registry (test_replay.RegistryHole.test_requested_address_from_the_brief_is_not_actually_in_the_registry)
 Documents why the log substitutes an address (see replay.py docstring). ... ok
 test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone (test_replay.ReplayDoesNotMutateTheRecord.test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone)
-Fixer round 2, finding 5: `args` were shallow-copied all the way down. ... FAIL
-test_the_seeded_value_is_not_the_records_own_object (test_replay.ReplayDoesNotMutateTheRecord.test_the_seeded_value_is_not_the_records_own_object) ... FAIL
-test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical (test_replay.ReplayDoesNotMutateTheRecord.test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical) ... FAIL
-test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation (test_replay.ReplayObserveSeam.test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation) ... FAIL
-test_receipt_digests_equal_the_records_result_digests (test_replay.ReplayObserveSeam.test_receipt_digests_equal_the_records_result_digests) ... FAIL
+Fixer round 2, finding 5: `args` were shallow-copied all the way down. ... ok
+test_the_seeded_value_is_not_the_records_own_object (test_replay.ReplayDoesNotMutateTheRecord.test_the_seeded_value_is_not_the_records_own_object) ... ok
+test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical (test_replay.ReplayDoesNotMutateTheRecord.test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical) ... ok
+test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation (test_replay.ReplayObserveSeam.test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation) ... ok
+test_receipt_digests_equal_the_records_result_digests (test_replay.ReplayObserveSeam.test_receipt_digests_equal_the_records_result_digests) ... ok
 test_testimony_bytes_are_identical_with_observe_on_and_off (test_replay.ReplayObserveSeam.test_testimony_bytes_are_identical_with_observe_on_and_off)
-The day's hard rule, re-asserted through the replay path. ... FAIL
-test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf (test_replay.RetainedRecordIsDeterministic.test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf) ... FAIL
-test_result_digests_agree_with_the_committed_comparison (test_replay.RetainedRecordIsDeterministic.test_result_digests_agree_with_the_committed_comparison) ... FAIL
+The day's hard rule, re-asserted through the replay path. ... ok
+test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf (test_replay.RetainedRecordIsDeterministic.test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf) ... ok
+test_result_digests_agree_with_the_committed_comparison (test_replay.RetainedRecordIsDeterministic.test_result_digests_agree_with_the_committed_comparison) ... ok
 test_retained_program_ticks_equal_the_committed_day1_testimony_ticks (test_replay.RetainedRecordIsDeterministic.test_retained_program_ticks_equal_the_committed_day1_testimony_ticks)
-evidence/run-1/testimony.json needs no conversion to become the program (gap 18d). ... FAIL
+evidence/run-1/testimony.json needs no conversion to become the program (gap 18d). ... ok
 test_the_committed_stamp_names_a_commit_git_knows (test_replay.RetainedRecordIsDeterministic.test_the_committed_stamp_names_a_commit_git_knows)
-The one field the oracle blanks is checked on its own terms. ... FAIL
+The one field the oracle blanks is checked on its own terms. ... ok
 test_the_oracle_fails_when_the_record_really_differs (test_replay.RetainedRecordIsDeterministic.test_the_oracle_fails_when_the_record_really_differs)
-Kills: an `ensure_retained_record` that compares nothing. ... FAIL
+Kills: an `ensure_retained_record` that compares nothing. ... ok
 test_the_shallow_escape_hatch_is_shut_in_this_checkout (test_replay.RetainedRecordIsDeterministic.test_the_shallow_escape_hatch_is_shut_in_this_checkout)
 Kills a `repository_is_shallow` that always says yes. ... ok
 test_two_independent_builds_are_byte_identical (test_replay.RetainedRecordIsDeterministic.test_two_independent_builds_are_byte_identical) ... ok
 test_the_intra_repo_insert_is_inside_this_repository (test_replay.SysPathDiscipline.test_the_intra_repo_insert_is_inside_this_repository) ... ok
-setUpClass (test_replay.Tamper) ... ERROR
+test_only_the_tampered_variant_and_compare_changed (test_replay.Tamper.test_only_the_tampered_variant_and_compare_changed) ... ok
+test_record_holds_no_code (test_replay.Tamper.test_record_holds_no_code) ... ok
+test_report_was_written_as_lf_and_matches_the_committed_report (test_replay.Tamper.test_report_was_written_as_lf_and_matches_the_committed_report) ... ok
+test_the_baseline_replay_left_the_record_byte_identical (test_replay.Tamper.test_the_baseline_replay_left_the_record_byte_identical)
+Fixer round 1, finding 2: the two sides of this report must be independent. ... ok
+test_the_flag_is_false_when_the_baseline_replay_does_mutate (test_replay.Tamper.test_the_flag_is_false_when_the_baseline_replay_does_mutate)
+Fixer round 2, finding 4: the flag used to be unfalsifiable. ... ok
+test_untouched_variants_kept_their_digests (test_replay.Tamper.test_untouched_variants_kept_their_digests) ... ok
 test_a_bare_replay_py_refuses_to_overwrite_committed_evidence (test_replay.VerificationWritesNoEvidence.test_a_bare_replay_py_refuses_to_overwrite_committed_evidence)
 Only `--force` may write under evidence/ (mirrors run.py:316-329). ... ok
-test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record) ... FAIL
+test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record) ... ok
 test_owned_evidence_lists_every_committed_artifact_this_script_writes (test_replay.VerificationWritesNoEvidence.test_owned_evidence_lists_every_committed_artifact_this_script_writes)
 `replay.py --force` must be able to regenerate everything under its ownership; ... ok
-test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree) ... FAIL
+test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree) ... ok
 test_candidates_define_no_lambda (test_retain.CandidateRecord.test_candidates_define_no_lambda)
 CAPTURE.md rule 2: Calculations are named module-level functions. ... ok
 test_candidates_readme_matches_a_fresh_lens_run (test_retain.CandidateRecord.test_candidates_readme_matches_a_fresh_lens_run) ... ok
@@ -897,430 +960,11 @@ test_split_digest_different_for_run_3_reinput (test_second_experiment.SplitDiges
 test_split_digest_equal_between_run_1_and_run_2_regroup (test_second_experiment.SplitDigestByGrouping.test_split_digest_equal_between_run_1_and_run_2_regroup) ... ok
 test_sys_path_insert_is_intra_repo (test_second_experiment.SysPathDiscipline.test_sys_path_insert_is_intra_repo) ... ok
 
-======================================================================
-ERROR: setUpClass (test_replay.ChildModuleTable)
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 441, in setUpClass
-    cls.record = replay.ensure_retained_record()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-0v8__9hu/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
+Ran 250 tests in 23.622s
 
-======================================================================
-ERROR: setUpClass (test_replay.DeterminismMatrix)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 1087, in setUpClass
-    cls.record = replay.ensure_retained_record()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-1gejqlvg/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-ERROR: setUpClass (test_replay.FreshProcessReplay)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 344, in setUpClass
-    cls.record = replay.ensure_retained_record()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-euyz51ob/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-ERROR: setUpClass (test_replay.LaneCCrossVerification)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 851, in setUpClass
-    cls.reports = replay.cross_verify_lane_c_runs(log_dir=cls.tmp)
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 657, in cross_verify_lane_c_runs
-    reports[label] = run_fresh_process_replay(
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 619, in run_fresh_process_replay
-    raise AssertionError(
-AssertionError: fresh-process replay refused /home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/evidence/run-2-regroup/retained.json: child failed checks ['provider_agrees']; child returncode 3 (see /tmp/lane-c-d5jn2ved/fresh-process-run-2-regroup.log)
-
-======================================================================
-ERROR: setUpClass (test_replay.ParentSideRefusals)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 705, in setUpClass
-    cls.record = replay.ensure_retained_record()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-wybl0ak8/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-ERROR: setUpClass (test_replay.ReceiptDigestsFromTheChild)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 516, in setUpClass
-    cls.record = replay.ensure_retained_record()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-99p1yn_7/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-ERROR: setUpClass (test_replay.Tamper)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 980, in setUpClass
-    cls.record = replay.ensure_retained_record()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-hxb8mckj/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_running_the_evidence_writing_suites_changes_no_committed_file (test_replay.CheckAllLeavesTheTreeClean.test_running_the_evidence_writing_suites_changes_no_committed_file)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 1260, in test_running_the_evidence_writing_suites_changes_no_committed_file
-    self.assertEqual(
-AssertionError: 1 != 0 : the nested suite run failed:
-
-mitted = replay.ensure_retained_record()
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-dp7vvt91/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_oracle_fails_when_the_record_really_differs (test_replay.RetainedRecordIsDeterministic.test_the_oracle_fails_when_the_record_really_differs)
-Kills: an `ensure_retained_record` that compares nothing.
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 220, in test_the_oracle_fails_when_the_record_really_differs
-    forged = copy.deepcopy(replay.ensure_retained_record())
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-t8ei05wz/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 114, in test_ensure_retained_record_does_not_touch_the_committed_record
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-vywoqy3l/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 122, in test_the_default_destinations_are_all_outside_the_evidence_tree
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-mc64nxuj/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-----------------------------------------------------------------------
-Ran 82 tests in 6.301s
-
-FAILED (failures=25, errors=7, skipped=1)
-
-
-======================================================================
-FAIL: test_a_record_that_preseeds_an_address_the_program_computes_is_refused (test_replay.HiddenStateAuditor.test_a_record_that_preseeds_an_address_the_program_computes_is_refused)
-Kills: dropping the external-vs-into check in retain.check_record.
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 615, in test_a_record_that_preseeds_an_address_the_program_computes_is_refused
-    forged = copy.deepcopy(replay.ensure_retained_record())
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-9c7ni7gi/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused (test_replay.HiddenStateAuditor.test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused)
-Kills: dropping the results-keys check in retain.check_record.
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 626, in test_a_record_whose_results_keys_are_not_the_programs_ids_is_refused
-    forged = copy.deepcopy(replay.ensure_retained_record())
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-pklkqiyz/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it (test_replay.HiddenStateAuditor.test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it)
-The whole point of the fresh-process boundary: a forged record that reproduces
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 640, in test_a_step_deleted_record_replays_in_process_but_the_fresh_child_refuses_it
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-k9lg0t9r/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child (test_replay.HiddenStateAuditor.test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 592, in test_mutating_this_process_registry_after_retain_does_not_affect_a_fresh_child
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-k9cly8o6/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_honest_record_is_accepted_after_the_forgery_tests (test_replay.HiddenStateAuditor.test_the_honest_record_is_accepted_after_the_forgery_tests)
-The forged records were written to temp paths and logged to temp files;
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 683, in test_the_honest_record_is_accepted_after_the_forgery_tests
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-q2hwzj0z/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_log_was_produced_against_the_current_retained_record (test_replay.LfSourceDriftProbe.test_the_log_was_produced_against_the_current_retained_record)
-A stale log (someone regenerated retained.json without re-running the probe)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 1212, in test_the_log_was_produced_against_the_current_retained_record
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-lmnpgnim/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider (test_replay.ProviderIdentityIsModuleGranular.test_a_registry_forged_record_is_refused_by_the_digests_not_the_provider)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 791, in setUp
-    self.record = replay.ensure_retained_record()
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-4clx91ab/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_corrupted_registry_produces_a_byte_identical_provider_block (test_replay.ProviderIdentityIsModuleGranular.test_the_corrupted_registry_produces_a_byte_identical_provider_block)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 791, in setUp
-    self.record = replay.ensure_retained_record()
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-ixxr_1l4/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_impostor_is_a_different_function_of_the_declared_module (test_replay.ProviderIdentityIsModuleGranular.test_the_impostor_is_a_different_function_of_the_declared_module)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 791, in setUp
-    self.record = replay.ensure_retained_record()
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-xafn__28/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_limitation_is_stated_in_the_docstring (test_replay.ProviderIdentityIsModuleGranular.test_the_limitation_is_stated_in_the_docstring)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 791, in setUp
-    self.record = replay.ensure_retained_record()
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-23yetu4r/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_verify_provider_agrees_with_the_corrupted_registry (test_replay.ProviderIdentityIsModuleGranular.test_verify_provider_agrees_with_the_corrupted_registry)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 791, in setUp
-    self.record = replay.ensure_retained_record()
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-orxjec5d/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_removing_a_used_address_raises_keyerror_naming_it_before_execution (test_replay.RegistryHole.test_removing_a_used_address_raises_keyerror_naming_it_before_execution)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 1061, in test_removing_a_used_address_raises_keyerror_naming_it_before_execution
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-rhsfi0uh/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone (test_replay.ReplayDoesNotMutateTheRecord.test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone)
-Fixer round 2, finding 5: `args` were shallow-copied all the way down.
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 951, in test_a_calculation_that_mutates_its_args_in_place_leaves_the_record_alone
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-hdo4s9sv/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_seeded_value_is_not_the_records_own_object (test_replay.ReplayDoesNotMutateTheRecord.test_the_seeded_value_is_not_the_records_own_object)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 965, in test_the_seeded_value_is_not_the_records_own_object
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-6urr1ayc/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical (test_replay.ReplayDoesNotMutateTheRecord.test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 939, in test_two_replays_of_one_record_object_agree_and_leave_it_byte_identical
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-m1vnl6r0/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation (test_replay.ReplayObserveSeam.test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 311, in test_observe_off_yields_no_receipts_and_observe_on_covers_every_invocation
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-vxflriu2/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_receipt_digests_equal_the_records_result_digests (test_replay.ReplayObserveSeam.test_receipt_digests_equal_the_records_result_digests)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 318, in test_receipt_digests_equal_the_records_result_digests
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-8qeq5wr3/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_testimony_bytes_are_identical_with_observe_on_and_off (test_replay.ReplayObserveSeam.test_testimony_bytes_are_identical_with_observe_on_and_off)
-The day's hard rule, re-asserted through the replay path.
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 328, in test_testimony_bytes_are_identical_with_observe_on_and_off
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-dgfomme_/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf (test_replay.RetainedRecordIsDeterministic.test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 203, in test_a_fresh_build_matches_the_committed_record_and_is_written_as_lf
-    committed = replay.ensure_retained_record(out_dir=scratch)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-4s2saf5h/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_result_digests_agree_with_the_committed_comparison (test_replay.RetainedRecordIsDeterministic.test_result_digests_agree_with_the_committed_comparison)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 292, in test_result_digests_agree_with_the_committed_comparison
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-hh1vrj7_/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_retained_program_ticks_equal_the_committed_day1_testimony_ticks (test_replay.RetainedRecordIsDeterministic.test_retained_program_ticks_equal_the_committed_day1_testimony_ticks)
-evidence/run-1/testimony.json needs no conversion to become the program (gap 18d).
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 283, in test_retained_program_ticks_equal_the_committed_day1_testimony_ticks
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-v_gv8ps2/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_committed_stamp_names_a_commit_git_knows (test_replay.RetainedRecordIsDeterministic.test_the_committed_stamp_names_a_commit_git_knows)
-The one field the oracle blanks is checked on its own terms.
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 246, in test_the_committed_stamp_names_a_commit_git_knows
-    committed = replay.ensure_retained_record()
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-wr05qawy/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_oracle_fails_when_the_record_really_differs (test_replay.RetainedRecordIsDeterministic.test_the_oracle_fails_when_the_record_really_differs)
-Kills: an `ensure_retained_record` that compares nothing.
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 220, in test_the_oracle_fails_when_the_record_really_differs
-    forged = copy.deepcopy(replay.ensure_retained_record())
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-slpq476h/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_ensure_retained_record_does_not_touch_the_committed_record (test_replay.VerificationWritesNoEvidence.test_ensure_retained_record_does_not_touch_the_committed_record)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 114, in test_ensure_retained_record_does_not_touch_the_committed_record
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-w5qp7fim/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-======================================================================
-FAIL: test_the_default_destinations_are_all_outside_the_evidence_tree (test_replay.VerificationWritesNoEvidence.test_the_default_destinations_are_all_outside_the_evidence_tree)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/test_replay.py", line 122, in test_the_default_destinations_are_all_outside_the_evidence_tree
-    record = replay.ensure_retained_record()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/replay.py", line 273, in ensure_retained_record
-    raise AssertionError(
-AssertionError: a fresh build of the Day 1 record does not match the committed evidence/run-1/retained.json (ignoring retained.commit). Fresh copy left at /tmp/retained-oracle-qz5kusce/retained.json. Regenerate the evidence with `python3 experiments/grouped-ablation/replay.py --force` if the change is intended.
-
-----------------------------------------------------------------------
-Ran 203 tests in 15.092s
-
-FAILED (failures=26, errors=7)
--- experiments/grouped-ablation: FAILED (exit 1, ran 203)
+OK
+-- experiments/grouped-ablation: OK (ran 250)
 
 == suite: experiments/hiding-primitives  (cwd /home/user/DiscStudio-staging/EXP/57/pyto)
    $ /home/user/DiscStudio-staging/EXP/57/.venv/bin/python -m unittest discover -s experiments/hiding-primitives -p test_*.py -v
@@ -1338,7 +982,7 @@ ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ok
 
 ----------------------------------------------------------------------
-Ran 6 tests in 5.760s
+Ran 6 tests in 5.623s
 
 OK
 -- experiments/hiding-primitives: OK (ran 6)
@@ -1358,7 +1002,7 @@ test_sys_path_insert_is_intra_repo (test_s3_synthetic.S3SyntheticSnapshot.test_s
 The only sys.path insert points inside this repository (CAPTURE.md sys.path rule). ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.001s
+Ran 5 tests in 0.002s
 
 OK
 -- experiments/s3-synthetic: OK (ran 5)
@@ -1403,33 +1047,39 @@ test_the_stats_tick_does_more_work_than_it_takes_time (test_students.TickLaws.te
 tick-laws/tick_laws.py:analyze_record -- the claim HANDOFF.md makes about Stats. ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 1.087s
+Ran 17 tests in 1.094s
 
 OK
 -- experiments/students: OK (ran 17)
 
 == suite: experiments/tick-laws  (cwd /home/user/DiscStudio-staging/EXP/57/pyto)
    $ /home/user/DiscStudio-staging/EXP/57/.venv/bin/python -m unittest discover -s experiments/tick-laws -p test_*.py -v
-test_a_result_read_of_a_sibling_is_a_node_law_violation (test_tick_laws.TickLawTests.test_a_result_read_of_a_sibling_is_a_node_law_violation)
-A result read is a read (pyto/questions.md, ResultReadsAreReads): binding a sibling's ... ok
+test_a_backwards_read_is_a_node_law_violation (test_tick_laws.TickLawTests.test_a_backwards_read_is_a_node_law_violation)
+A Calculation that reads a Part a sibling declared *after* it produces reads ... ok
+test_a_chain_takes_the_sum_and_a_parallel_tick_the_longest_branch (test_tick_laws.TickLawTests.test_a_chain_takes_the_sum_and_a_parallel_tick_the_longest_branch)
+A chain runs in order, so its latency is the sum through the chain; a Tick with ... ok
+test_a_consume_of_an_earlier_sibling_is_a_chain_not_a_violation (test_tick_laws.TickLawTests.test_a_consume_of_an_earlier_sibling_is_a_chain_not_a_violation)
+Inside a Tick the Calculations are a sequence in declared order: a Calculation ... ok
+test_a_result_read_of_an_earlier_sibling_is_a_chain (test_tick_laws.TickLawTests.test_a_result_read_of_an_earlier_sibling_is_a_chain)
+A result read is a read (pyto/questions.md, ResultReadsAreReads): binding an earlier ... ok
 test_a_tick_with_no_name_reads_as_unnamed_not_as_a_crash (test_tick_laws.TickLawTests.test_a_tick_with_no_name_reads_as_unnamed_not_as_a_crash)
 Brief: the record contract requires a Tick name, so the reporter never ... ok
 test_check_cli_exit_matrix_and_text_receipt (test_tick_laws.TickLawTests.test_check_cli_exit_matrix_and_text_receipt)
 Brief: --check reports clean, law, schema, and mixed outcomes exactly. ... LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
-/tmp/tmpq6lqyxp1/invalid.json
+/tmp/tmpfu3swhcm/invalid.json
 Summary: work_ms=None critical_path_ms=None
 no parallel execution exists yet
 VIOLATION: pyto-run-record@1 document: missing required field(s) counters, parts, pcr, source, ticks; RECORD.md: missing fields are null, never absent
 LIMITATION: reads are every input binding: px: bindings are store reads, fn: bindings are result reads resolved through the producer's into (pyto/questions.md, ResultReadsAreReads); writes are actual_produces plus the declared into; no parallel execution exists yet, these numbers are what parallel would buy.
-/tmp/tmpq6lqyxp1/clean.json
-Tick 0 Tick 0: work_ms=0.1 latency_ms=0.1
+/tmp/tmpfu3swhcm/clean.json
+Tick 0 Tick 0: work_ms=0.1 latency_ms=0.1 mode=parallel
 Summary: work_ms=0.1 critical_path_ms=0.1
 no parallel execution exists yet
-/tmp/tmpq6lqyxp1/law.json
-Tick 0 Tick 0: work_ms=0.2 latency_ms=0.1
-Summary: work_ms=0.2 critical_path_ms=0.1
+/tmp/tmpfu3swhcm/law.json
+Tick 0 Tick 0: work_ms=0.2 latency_ms=0.2 mode=chain
+Summary: work_ms=0.2 critical_path_ms=0.2
 no parallel execution exists yet
-VIOLATION: node law violation: consumer reads sibling-produced px.bad in Tick 0 producers=['producer']
+VIOLATION: node law violation: consumer reads a sibling declared after it: px.bad from producer in Tick 0 producers=['producer']
 ok
 test_committed_students_records_are_clean (test_tick_laws.TickLawTests.test_committed_students_records_are_clean)
 Brief: both committed student records are valid reference witnesses. ... ok
@@ -1439,22 +1089,20 @@ test_empty_and_invalid_durations_have_explicit_metrics (test_tick_laws.TickLawTe
 Brief: empty Ticks cost zero; missing durations produce null metrics. ... ok
 test_late_actual_producer_loop_is_reported (test_tick_laws.TickLawTests.test_late_actual_producer_loop_is_reported)
 Brief: an actual consumer cannot precede the producer across Ticks. ... ok
-test_mutation_actual_consume_is_killed (test_tick_laws.TickLawTests.test_mutation_actual_consume_is_killed)
-Mutation: adding actual_consumes to a sibling kills the clean result. ... ok
+test_mutation_actual_consume_turns_parallel_into_chain (test_tick_laws.TickLawTests.test_mutation_actual_consume_turns_parallel_into_chain)
+Mutation: adding actual_consumes of an earlier sibling's Part turns the parallel ... ok
 test_mutation_duplicate_producer_is_killed (test_tick_laws.TickLawTests.test_mutation_duplicate_producer_is_killed)
 Mutation: adding a second actual producer kills the clean result. ... ok
-test_sibling_actual_consume_names_calculation_and_part (test_tick_laws.TickLawTests.test_sibling_actual_consume_names_calculation_and_part)
-Brief: a calculation may not consume a Part produced by a sibling in its Tick. ... ok
 test_ticks_are_reported_by_name_in_json_and_in_text (test_tick_laws.TickLawTests.test_ticks_are_reported_by_name_in_json_and_in_text)
 Brief: a Tick is a step the program named, so the report says the name. ... ok
 test_tiny_durations_are_valid (test_tick_laws.TickLawTests.test_tiny_durations_are_valid)
 Brief: duration checks must work for very small positive runtimes. ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 0.009s
+Ran 14 tests in 0.011s
 
 OK
--- experiments/tick-laws: OK (ran 12)
+-- experiments/tick-laws: OK (ran 14)
 
 == suite: consumer  (cwd /home/user/DiscStudio-staging/EXP/57/pyto/consumers/discstudio-card)
    $ /home/user/DiscStudio-staging/EXP/57/.venv/bin/python -m unittest discover -s . -p test_*.py -v
@@ -1535,7 +1183,7 @@ test_rejects_bad_input_origin_and_traversal (test_sandbox.SandboxTest.test_rejec
 test_root_only_serves_index (test_sandbox.SandboxTest.test_root_only_serves_index) ... ok
 
 ----------------------------------------------------------------------
-Ran 61 tests in 2.881s
+Ran 61 tests in 3.016s
 
 OK
 -- consumer: OK (ran 61)
@@ -1548,7 +1196,7 @@ test_membership_gap_and_censoring (test_stats.StatsTests.test_membership_gap_and
 test_mold_identity_dedupe_and_conflict (test_stats.StatsTests.test_mold_identity_dedupe_and_conflict) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 0.000s
+Ran 4 tests in 0.001s
 
 OK
 -- disc-stats: OK (ran 4)
@@ -1569,793 +1217,793 @@ TAP version 13
 # Subtest: the pyto fixture is the Python materializer output byte for byte
 ok 1 - the pyto fixture is the Python materializer output byte for byte
   ---
-  duration_ms: 2.149827
+  duration_ms: 2.210381
   type: 'test'
   ...
 # Subtest: every adapter output passes validate
 ok 2 - every adapter output passes validate
   ---
-  duration_ms: 7.14304
+  duration_ms: 7.076407
   type: 'test'
   ...
 # Subtest: fromPytoRecord is a validating pass-through, from an object or a string
 ok 3 - fromPytoRecord is a validating pass-through, from an object or a string
   ---
-  duration_ms: 3.288861
+  duration_ms: 3.329396
   type: 'test'
   ...
 # Subtest: deriveHit: a px: binding not produced earlier in the run is a hit
 ok 4 - deriveHit: a px: binding not produced earlier in the run is a hit
   ---
-  duration_ms: 0.136628
+  duration_ms: 0.135889
   type: 'test'
   ...
 # Subtest: deriveHit: an address this run overwrote is not a hit, however it started life
 ok 5 - deriveHit: an address this run overwrote is not a hit, however it started life
   ---
-  duration_ms: 0.108563
+  duration_ms: 0.109875
   type: 'test'
   ...
 # Subtest: pyto record: hits are exactly the invocations that read a preexisting Part
 ok 6 - pyto record: hits are exactly the invocations that read a preexisting Part
   ---
-  duration_ms: 0.307856
+  duration_ms: 1.260477
   type: 'test'
   ...
 # Subtest: DiscStudio: reused === true makes every invocation of the second run a hit
 ok 7 - DiscStudio: reused === true makes every invocation of the second run a hit
   ---
-  duration_ms: 2.136578
+  duration_ms: 1.439502
   type: 'test'
   ...
 # Subtest: DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
 ok 8 - DiscStudio: material identity, memo revision and the SVG wrapper survive the mapping
   ---
-  duration_ms: 0.66839
+  duration_ms: 0.720131
   type: 'test'
   ...
 # Subtest: DiscStudio adapter also accepts a live run of src/runtime.js
 ok 9 - DiscStudio adapter also accepts a live run of src/runtime.js
   ---
-  duration_ms: 47.50903
+  duration_ms: 35.659402
   type: 'test'
   ...
 # Subtest: ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
 ok 10 - ChessLab: one invocation per frozen Calculation, values omitted, divergence preserved
   ---
-  duration_ms: 0.672483
+  duration_ms: 0.68955
   type: 'test'
   ...
 # Subtest: Wumpus: values are present and the SVG Part is classified as svg
 ok 11 - Wumpus: values are present and the SVG Part is classified as svg
   ---
-  duration_ms: 0.409655
+  duration_ms: 0.423098
   type: 'test'
   ...
 # Subtest: materialize classifies text, svg, png data URLs and JSON
 ok 12 - materialize classifies text, svg, png data URLs and JSON
   ---
-  duration_ms: 0.132186
+  duration_ms: 0.143531
   type: 'test'
   ...
 # Subtest: materialize honours RECORD.md size and array caps
 ok 13 - materialize honours RECORD.md size and array caps
   ---
-  duration_ms: 0.520339
+  duration_ms: 0.757422
   type: 'test'
   ...
 # Subtest: materialize truncates nested arrays exactly as the Python materializer does
 ok 14 - materialize truncates nested arrays exactly as the Python materializer does
   ---
-  duration_ms: 0.645713
+  duration_ms: 3.394459
   type: 'test'
   ...
 # Subtest: materialize still reaches omitted for a cycle hidden past the array cap
 ok 15 - materialize still reaches omitted for a cycle hidden past the array cap
   ---
-  duration_ms: 0.256467
+  duration_ms: 0.34243
   type: 'test'
   ...
 # Subtest: materialize counts UTF-8 bytes, not characters
 ok 16 - materialize counts UTF-8 bytes, not characters
   ---
-  duration_ms: 1.562858
+  duration_ms: 1.374264
   type: 'test'
   ...
 # Subtest: derivePartIndex names the writer, the readers and what preexisted
 ok 17 - derivePartIndex names the writer, the readers and what preexisted
   ---
-  duration_ms: 0.380788
+  duration_ms: 0.422717
   type: 'test'
   ...
 # Subtest: bareAddress strips only the testimony marker
 ok 18 - bareAddress strips only the testimony marker
   ---
-  duration_ms: 0.075244
+  duration_ms: 0.087918
   type: 'test'
   ...
 # Subtest: validate rejects schema and names schema
 ok 19 - validate rejects schema and names schema
   ---
-  duration_ms: 0.694162
+  duration_ms: 0.632211
   type: 'test'
   ...
 # Subtest: validate rejects pcr and names pcr
 ok 20 - validate rejects pcr and names pcr
   ---
-  duration_ms: 0.494443
+  duration_ms: 0.456486
   type: 'test'
   ...
 # Subtest: validate rejects source.runtime and names source.runtime
 ok 21 - validate rejects source.runtime and names source.runtime
   ---
-  duration_ms: 0.437526
+  duration_ms: 0.380115
   type: 'test'
   ...
 # Subtest: validate rejects source.commit and names source.commit
 ok 22 - validate rejects source.commit and names source.commit
   ---
-  duration_ms: 1.179169
+  duration_ms: 0.465925
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.index and names ticks[0].index
 ok 23 - validate rejects ticks.0.index and names ticks[0].index
   ---
-  duration_ms: 0.677344
+  duration_ms: 1.121101
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.name and names ticks[0].name
 ok 24 - validate rejects ticks.0.name and names ticks[0].name
   ---
-  duration_ms: 0.478775
+  duration_ms: 0.393178
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
 ok 25 - validate rejects ticks.0.invocations.0.id and names ticks[0].invocations[0].id
   ---
-  duration_ms: 0.506173
+  duration_ms: 0.499143
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
 ok 26 - validate rejects ticks.0.invocations.0.calculation.identity_scope and names ticks[0].invocations[0].calculation.identity_scope
   ---
-  duration_ms: 0.356875
+  duration_ms: 0.34327
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
 ok 27 - validate rejects ticks.0.invocations.0.inputs.groups and names ticks[0].invocations[0].inputs.groups
   ---
-  duration_ms: 0.38085
+  duration_ms: 0.334387
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
 ok 28 - validate rejects ticks.0.invocations.0.declared_consumes.0 and names ticks[0].invocations[0].declared_consumes[0]
   ---
-  duration_ms: 0.33519
+  duration_ms: 0.341515
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
 ok 29 - validate rejects ticks.0.invocations.0.actual_consumes and names ticks[0].invocations[0].actual_consumes
   ---
-  duration_ms: 0.48193
+  duration_ms: 0.314956
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
 ok 30 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
   ---
-  duration_ms: 0.349767
+  duration_ms: 0.762942
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
 ok 31 - validate rejects ticks.0.invocations.0.writes.0.kind and names ticks[0].invocations[0].writes[0].kind
   ---
-  duration_ms: 1.195137
+  duration_ms: 1.412341
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
 ok 32 - validate rejects ticks.0.invocations.0.duration_ms and names ticks[0].invocations[0].duration_ms
   ---
-  duration_ms: 0.440128
+  duration_ms: 0.476537
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
 ok 33 - validate rejects ticks.0.invocations.0.hit and names ticks[0].invocations[0].hit
   ---
-  duration_ms: 0.363332
+  duration_ms: 0.338877
   type: 'test'
   ...
 # Subtest: validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
 ok 34 - validate rejects ticks.0.invocations.0.value.kind and names ticks[0].invocations[0].value.kind
   ---
-  duration_ms: 0.322673
+  duration_ms: 0.389604
   type: 'test'
   ...
 # Subtest: validate rejects counters.invocations and names counters.invocations
 ok 35 - validate rejects counters.invocations and names counters.invocations
   ---
-  duration_ms: 1.7225
+  duration_ms: 1.654791
   type: 'test'
   ...
 # Subtest: validate rejects counters.hits and names counters.hits
 ok 36 - validate rejects counters.hits and names counters.hits
   ---
-  duration_ms: 0.51401
+  duration_ms: 0.565547
   type: 'test'
   ...
 # Subtest: validate rejects counters.computed and names counters.computed
 ok 37 - validate rejects counters.computed and names counters.computed
   ---
-  duration_ms: 0.409067
+  duration_ms: 0.383894
   type: 'test'
   ...
 # Subtest: validate rejects counters.wall_ms and names counters.wall_ms
 ok 38 - validate rejects counters.wall_ms and names counters.wall_ms
   ---
-  duration_ms: 0.356013
+  duration_ms: 0.439651
   type: 'test'
   ...
 # Subtest: validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
 ok 39 - validate rejects ticks.3.invocations.0.value.data in the value-kinds record and names ticks[3].invocations[0].value.data
   ---
-  duration_ms: 0.396413
+  duration_ms: 0.352272
   type: 'test'
   ...
 # Subtest: validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
 ok 40 - validate rejects ticks.3.invocations.1.value.data in the value-kinds record and names ticks[3].invocations[1].value.data
   ---
-  duration_ms: 0.227344
+  duration_ms: 0.209918
   type: 'test'
   ...
 # Subtest: validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
 ok 41 - validate rejects ticks.4.invocations.0.value.note in the value-kinds record and names ticks[4].invocations[0].value.note
   ---
-  duration_ms: 0.191426
+  duration_ms: 0.266336
   type: 'test'
   ...
 # Subtest: validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
 ok 42 - validate rejects ticks.4.invocations.0.value.data in the value-kinds record and names ticks[4].invocations[0].value.data
   ---
-  duration_ms: 0.234315
+  duration_ms: 0.20352
   type: 'test'
   ...
 # Subtest: the synthetic record carries the four value kinds the real run never produces
 ok 43 - the synthetic record carries the four value kinds the real run never produces
   ---
-  duration_ms: 0.290362
+  duration_ms: 0.282553
   type: 'test'
   ...
 # Subtest: validate rejects a declared_consumes entry spelled fn:, naming the path
 ok 44 - validate rejects a declared_consumes entry spelled fn:, naming the path
   ---
-  duration_ms: 0.689815
+  duration_ms: 0.605217
   type: 'test'
   ...
 # Subtest: validate rejects a declared_consumes entry that inputs does not carry, naming the path
 ok 45 - validate rejects a declared_consumes entry that inputs does not carry, naming the path
   ---
-  duration_ms: 0.532059
+  duration_ms: 0.505911
   type: 'test'
   ...
 # Subtest: validate rejects a duplicate invocation id, because ids anchor annotations
 ok 46 - validate rejects a duplicate invocation id, because ids anchor annotations
   ---
-  duration_ms: 0.533294
+  duration_ms: 0.546303
   type: 'test'
   ...
 # Subtest: validate rejects a malformed parts entry with the address in the path
 ok 47 - validate rejects a malformed parts entry with the address in the path
   ---
-  duration_ms: 0.56671
+  duration_ms: 0.595645
   type: 'test'
   ...
 # Subtest: validate rejects a non-object document
 ok 48 - validate rejects a non-object document
   ---
-  duration_ms: 0.1134
+  duration_ms: 0.117902
   type: 'test'
   ...
 # Subtest: the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
 ok 49 - the record pyto.materialize wrote for grouped-ablation run-1 validates unchanged
   ---
-  duration_ms: 1.678265
+  duration_ms: 1.743779
   type: 'test'
   ...
 # Subtest: a Part address named __proto__ or constructor is an ordinary row, not a prototype write
 ok 50 - a Part address named __proto__ or constructor is an ordinary row, not a prototype write
   ---
-  duration_ms: 0.483683
+  duration_ms: 0.395858
   type: 'test'
   ...
 # Subtest: validate accepts an array `into` and the produce-qualified binding spelling
 ok 51 - validate accepts an array `into` and the produce-qualified binding spelling
   ---
-  duration_ms: 0.221421
+  duration_ms: 0.215791
   type: 'test'
   ...
 # Subtest: derivePartIndex credits the produce an fn: binding names, and only that one
 ok 52 - derivePartIndex credits the produce an fn: binding names, and only that one
   ---
-  duration_ms: 0.157059
+  duration_ms: 0.131789
   type: 'test'
   ...
 # Subtest: parseBinding reads both spellings and prefers a known invocation id
 ok 53 - parseBinding reads both spellings and prefers a known invocation id
   ---
-  duration_ms: 0.082404
+  duration_ms: 0.082031
   type: 'test'
   ...
 # Subtest: validate refuses the malformed shapes of the multi-produce clauses
 ok 54 - validate refuses the malformed shapes of the multi-produce clauses
   ---
-  duration_ms: 0.422327
+  duration_ms: 0.511043
   type: 'test'
   ...
 # Subtest: validate rejects a png-data-url whose data is not a PNG data URL
 ok 55 - validate rejects a png-data-url whose data is not a PNG data URL
   ---
-  duration_ms: 3.311233
+  duration_ms: 3.202426
   type: 'test'
   ...
 # Subtest: materialize never classifies a string as png-data-url that validate would refuse
 ok 56 - materialize never classifies a string as png-data-url that validate would refuse
   ---
-  duration_ms: 1.284703
+  duration_ms: 1.351495
   type: 'test'
   ...
 # Subtest: every committed fixture reads as a serial, unbudgeted run
 ok 57 - every committed fixture reads as a serial, unbudgeted run
   ---
-  duration_ms: 1.61188
+  duration_ms: 1.595919
   type: 'test'
   ...
 # Subtest: tickLatencyMsFromRecord falls back to the sum of the Tick durations, and to null
 ok 58 - tickLatencyMsFromRecord falls back to the sum of the Tick durations, and to null
   ---
-  duration_ms: 1.693877
+  duration_ms: 1.696201
   type: 'test'
   ...
 # Subtest: a scheduled record validates and reads back through both accessors
 ok 59 - a scheduled record validates and reads back through both accessors
   ---
-  duration_ms: 1.953602
+  duration_ms: 1.905841
   type: 'test'
   ...
 # Subtest: a null placement is a serial invocation, not a violation
 ok 60 - a null placement is a serial invocation, not a violation
   ---
-  duration_ms: 1.767411
+  duration_ms: 1.759126
   type: 'test'
   ...
 # Subtest: validate rejects a placement that is not one, naming the path
 ok 61 - validate rejects a placement that is not one, naming the path
   ---
-  duration_ms: 6.763753
+  duration_ms: 6.480292
   type: 'test'
   ...
 # Subtest: validate rejects a budget that contradicts itself, naming the path
 ok 62 - validate rejects a budget that contradicts itself, naming the path
   ---
-  duration_ms: 10.304343
+  duration_ms: 10.640138
   type: 'test'
   ...
 # Subtest: the adapters for the other runtimes still write no schedule at all
 ok 63 - the adapters for the other runtimes still write no schedule at all
   ---
-  duration_ms: 4.266523
+  duration_ms: 3.856925
   type: 'test'
   ...
 # Subtest: an array into publishes several Parts from one invocation, each a write and each indexed
 ok 64 - an array into publishes several Parts from one invocation, each a write and each indexed
   ---
-  duration_ms: 0.401267
+  duration_ms: 0.325544
   type: 'test'
   ...
 # Subtest: the four schedule fields come from the run and only when the run reported one
 ok 65 - the four schedule fields come from the run and only when the run reported one
   ---
-  duration_ms: 0.546082
+  duration_ms: 0.342336
   type: 'test'
   ...
 # Subtest: the effects-demo record draws three effect rows on its oc card, with the kinds, the paths and the digests it carries
 ok 66 - the effects-demo record draws three effect rows on its oc card, with the kinds, the paths and the digests it carries
   ---
-  duration_ms: 7.797288
+  duration_ms: 5.721938
   type: 'test'
   ...
 # Subtest: an effect the record could not digest prints no digest, and an unknown kind is shown unstyled
 ok 67 - an effect the record could not digest prints no digest, and an unknown kind is shown unstyled
   ---
-  duration_ms: 1.55031
+  duration_ms: 0.996366
   type: 'test'
   ...
 # Subtest: an oc. Calculation that performed no effect is still drawn as an oc card
 ok 68 - an oc. Calculation that performed no effect is still drawn as an oc card
   ---
-  duration_ms: 1.455537
+  duration_ms: 1.359428
   type: 'test'
   ...
 # Subtest: the students record carries no effects key at all, and renders byte for byte what it rendered before effects existed
 ok 69 - the students record carries no effects key at all, and renders byte for byte what it rendered before effects existed
   ---
-  duration_ms: 1.880396
+  duration_ms: 2.008196
   type: 'test'
   ...
 # Subtest: rendering the effects-demo record twice is byte-identical, and rendering never mutates the record
 ok 70 - rendering the effects-demo record twice is byte-identical, and rendering never mutates the record
   ---
-  duration_ms: 5.994497
+  duration_ms: 3.102534
   type: 'test'
   ...
 # Subtest: the standalone page keeps the effects the record carries and is the same bytes twice
 ok 71 - the standalone page keeps the effects the record carries and is the same bytes twice
   ---
-  duration_ms: 3.52321
+  duration_ms: 2.719942
   type: 'test'
   ...
 # Subtest: renderEffects returns nothing for an empty list, a missing key and a list of non-objects
 ok 72 - renderEffects returns nothing for an empty list, a missing key and a list of non-objects
   ---
-  duration_ms: 0.575278
+  duration_ms: 0.536054
   type: 'test'
   ...
 # Subtest: coerceToRecord accepts a record and every raw runtime document
 ok 73 - coerceToRecord accepts a record and every raw runtime document
   ---
-  duration_ms: 12.055949
+  duration_ms: 11.685878
   type: 'test'
   ...
 # Subtest: readEmbeddedRecord reads the block, and returns null when it is empty
 ok 74 - readEmbeddedRecord reads the block, and returns null when it is empty
   ---
-  duration_ms: 5.328134
+  duration_ms: 5.224042
   type: 'test'
   ...
 # Subtest: embeddableJson escapes every character that could end the script element
 ok 75 - embeddableJson escapes every character that could end the script element
   ---
-  duration_ms: 0.335108
+  duration_ms: 0.288524
   type: 'test'
   ...
 # Subtest: buildPage inlines the viewer and embeds the record, with no module graph left
 ok 76 - buildPage inlines the viewer and embeds the record, with no module graph left
   ---
-  duration_ms: 13.64382
+  duration_ms: 11.207231
   type: 'test'
   ...
 # Subtest: embedFile converts a raw runtime document on the way in
 ok 77 - embedFile converts a raw runtime document on the way in
   ---
-  duration_ms: 10.033963
+  duration_ms: 8.145984
   type: 'test'
   ...
 # Subtest: embedFile refuses a document that is not a record and not a known runtime shape
 ok 78 - embedFile refuses a document that is not a record and not a known runtime shape
   ---
-  duration_ms: 4.411603
+  duration_ms: 1.105372
   type: 'test'
   ...
 # Subtest: buildPage fails loudly when the page and the embedder drift apart
 ok 79 - buildPage fails loudly when the page and the embedder drift apart
   ---
-  duration_ms: 5.389984
+  duration_ms: 4.405798
   type: 'test'
   ...
 # Subtest: node embed.mjs record.json > page.html writes the same page from the command line
 ok 80 - node embed.mjs record.json > page.html writes the same page from the command line
   ---
-  duration_ms: 144.929855
+  duration_ms: 120.083626
   type: 'test'
   ...
 # Subtest: the CLI exits 2 with a usage line when no record is named
 ok 81 - the CLI exits 2 with a usage line when no record is named
   ---
-  duration_ms: 47.782111
+  duration_ms: 52.912711
   type: 'test'
   ...
 # Subtest: the inlined bundle is valid module syntax with no duplicate top-level bindings
 ok 82 - the inlined bundle is valid module syntax with no duplicate top-level bindings
   ---
-  duration_ms: 37.900749
+  duration_ms: 37.048704
   type: 'test'
   ...
 # Subtest: a record carrying $&, $` and $' is embedded literally, not expanded
 ok 83 - a record carrying $&, $` and $' is embedded literally, not expanded
   ---
-  duration_ms: 4.277024
+  duration_ms: 3.440569
   type: 'test'
   ...
 # Subtest: loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
 ok 84 - loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason
   ---
-  duration_ms: 2.31472
+  duration_ms: 1.615155
   type: 'test'
   ...
 # Subtest: buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
 ok 85 - buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side
   ---
-  duration_ms: 12.542038
+  duration_ms: 12.639919
   type: 'test'
   ...
 # Subtest: a bad input becomes a world entry naming the failure, never a blank page or an aborted build
 ok 86 - a bad input becomes a world entry naming the failure, never a blank page or an aborted build
   ---
-  duration_ms: 2.349532
+  duration_ms: 1.907115
   type: 'test'
   ...
 # Subtest: node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
 ok 87 - node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line
   ---
-  duration_ms: 53.941941
+  duration_ms: 53.772758
   type: 'test'
   ...
 # Subtest: --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
 ok 88 - --worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record
   ---
-  duration_ms: 82.172548
+  duration_ms: 82.359409
   type: 'test'
   ...
 # Subtest: the students record draws Stats as two side-by-side branches and the other three Ticks as one card each
 ok 89 - the students record draws Stats as two side-by-side branches and the other three Ticks as one card each
   ---
-  duration_ms: 11.185688
+  duration_ms: 7.832801
   type: 'test'
   ...
 # Subtest: a record that carries no placement, latency, parallel or budget field renders none of them
 ok 90 - a record that carries no placement, latency, parallel or budget field renders none of them
   ---
-  duration_ms: 1.909634
+  duration_ms: 5.118357
   type: 'test'
   ...
 # Subtest: the parallel-demo record prints its worker labels, its budget banner and its header numbers exactly
 ok 91 - the parallel-demo record prints its worker labels, its budget banner and its header numbers exactly
   ---
-  duration_ms: 2.781604
+  duration_ms: 2.990855
   type: 'test'
   ...
 # Subtest: a Tick prints the latency the record recorded, not the longest branch, when the two differ
 ok 92 - a Tick prints the latency the record recorded, not the longest branch, when the two differ
   ---
-  duration_ms: 2.637392
+  duration_ms: 4.530911
   type: 'test'
   ...
 # Subtest: a budget the run completed is not a banner; an incomplete one always names where it stopped
 ok 93 - a budget the run completed is not a banner; an incomplete one always names where it stopped
   ---
-  duration_ms: 1.357767
+  duration_ms: 2.181145
   type: 'test'
   ...
-# Subtest: a Tick whose Calculation reads a sibling's produce is drawn serially, never side by side
-ok 94 - a Tick whose Calculation reads a sibling's produce is drawn serially, never side by side
+# Subtest: a Tick whose Calculation reads a sibling's produce is a chain: drawn in order, never side by side
+ok 94 - a Tick whose Calculation reads a sibling's produce is a chain: drawn in order, never side by side
   ---
-  duration_ms: 1.377935
+  duration_ms: 4.809977
   type: 'test'
   ...
 # Subtest: composePage is a pure function of its sources: the same record twice is the same bytes
 ok 95 - composePage is a pure function of its sources: the same record twice is the same bytes
   ---
-  duration_ms: 5.193716
+  duration_ms: 12.240228
   type: 'test'
   ...
 # Subtest: rendering the same record twice builds the same tree, and rendering never mutates the record
 ok 96 - rendering the same record twice builds the same tree, and rendering never mutates the record
   ---
-  duration_ms: 3.432362
+  duration_ms: 1.945767
   type: 'test'
   ...
 # Subtest: the standalone page keeps the contract fields and its inlined bundle is one valid module
 ok 97 - the standalone page keeps the contract fields and its inlined bundle is one valid module
   ---
-  duration_ms: 35.887732
+  duration_ms: 36.141256
   type: 'test'
   ...
 # Subtest: computeSchedule orders events exactly as the record does: Tick order, then invocation order
 ok 98 - computeSchedule orders events exactly as the record does: Tick order, then invocation order
   ---
-  duration_ms: 2.461804
+  duration_ms: 3.360128
   type: 'test'
   ...
 # Subtest: at 1x, Ticks add and a parallel Tick's branches share one timestamp
 ok 99 - at 1x, Ticks add and a parallel Tick's branches share one timestamp
   ---
-  duration_ms: 1.834001
+  duration_ms: 0.599851
   type: 'test'
   ...
 # Subtest: the last event lands on the run critical path, not on its total work
 ok 100 - the last event lands on the run critical path, not on its total work
   ---
-  duration_ms: 0.412937
+  duration_ms: 0.567142
   type: 'test'
   ...
 # Subtest: speed scales every event proportionally, not just the last one
 ok 101 - speed scales every event proportionally, not just the last one
   ---
-  duration_ms: 0.228102
+  duration_ms: 0.281988
   type: 'test'
   ...
 # Subtest: a run with no durations recorded plays at a fixed 400 ms a step, a parallel Tick being one step
 ok 102 - a run with no durations recorded plays at a fixed 400 ms a step, a parallel Tick being one step
   ---
-  duration_ms: 1.054851
+  duration_ms: 1.764771
   type: 'test'
   ...
 # Subtest: scheduleFrame reveals Ticks in order, a parallel Tick as one whole row
 ok 103 - scheduleFrame reveals Ticks in order, a parallel Tick as one whole row
   ---
-  duration_ms: 1.733592
+  duration_ms: 1.188947
   type: 'test'
   ...
 # Subtest: scheduleFrame keeps counters and the Part index honest for the partial record
 ok 104 - scheduleFrame keeps counters and the Part index honest for the partial record
   ---
-  duration_ms: 0.375559
+  duration_ms: 0.269363
   type: 'test'
   ...
 # Subtest: the real record renders as four Tick sections and fifteen invocation rows
 ok 105 - the real record renders as four Tick sections and fifteen invocation rows
   ---
-  duration_ms: 11.909104
+  duration_ms: 11.679517
   type: 'test'
   ...
 # Subtest: one section per Tick, in order, with index, name and invocation count
 ok 106 - one section per Tick, in order, with index, name and invocation count
   ---
-  duration_ms: 5.590371
+  duration_ms: 6.56783
   type: 'test'
   ...
 # Subtest: an invocation row carries id, address, short implementation hash, pill, duration and digest
 ok 107 - an invocation row carries id, address, short implementation hash, pill, duration and digest
   ---
-  duration_ms: 2.598145
+  duration_ms: 3.219464
   type: 'test'
   ...
 # Subtest: hit and computed pills follow the record, never the renderer
 ok 108 - hit and computed pills follow the record, never the renderer
   ---
-  duration_ms: 2.4848
+  duration_ms: 2.704004
   type: 'test'
   ...
 # Subtest: reads show declared beside actual and highlight a divergence
 ok 109 - reads show declared beside actual and highlight a divergence
   ---
-  duration_ms: 1.380696
+  duration_ms: 1.419681
   type: 'test'
   ...
 # Subtest: a fn: binding is shown as an earlier invocation result, not as a store read
 ok 110 - a fn: binding is shown as an earlier invocation result, not as a store read
   ---
-  duration_ms: 0.250221
+  duration_ms: 0.225026
   type: 'test'
   ...
 # Subtest: writes carry their kind
 ok 111 - writes carry their kind
   ---
-  duration_ms: 0.204423
+  duration_ms: 0.269611
   type: 'test'
   ...
 # Subtest: an invocation that records no writes says so instead of rendering an empty list
 ok 112 - an invocation that records no writes says so instead of rendering an empty list
   ---
-  duration_ms: 0.209609
+  duration_ms: 0.21535
   type: 'test'
   ...
 # Subtest: an svg value containing <script> renders as an <img> data URL and creates no script node
 ok 113 - an svg value containing <script> renders as an <img> data URL and creates no script node
   ---
-  duration_ms: 0.541889
+  duration_ms: 0.481035
   type: 'test'
   ...
 # Subtest: a whole record whose Parts are hostile SVG still produces no script node
 ok 114 - a whole record whose Parts are hostile SVG still produces no script node
   ---
-  duration_ms: 4.301436
+  duration_ms: 7.838753
   type: 'test'
   ...
 # Subtest: json is collapsible, text is a pre, png-data-url is an img, omitted is the note
 ok 115 - json is collapsible, text is a pre, png-data-url is an img, omitted is the note
   ---
-  duration_ms: 0.357558
+  duration_ms: 0.381186
   type: 'test'
   ...
 # Subtest: a png-data-url that is not a PNG data URL never reaches an <img src>
 ok 116 - a png-data-url that is not a PNG data URL never reaches an <img src>
   ---
-  duration_ms: 1.026493
+  duration_ms: 1.014689
   type: 'test'
   ...
 # Subtest: a note is rendered beside the material it qualifies
 ok 117 - a note is rendered beside the material it qualifies
   ---
-  duration_ms: 0.118607
+  duration_ms: 0.111045
   type: 'test'
   ...
 # Subtest: toBase64 and svgDataUrl survive non-Latin1 text
 ok 118 - toBase64 and svgDataUrl survive non-Latin1 text
   ---
-  duration_ms: 0.136009
+  duration_ms: 0.105521
   type: 'test'
   ...
 # Subtest: an empty filter keeps every row
 ok 119 - an empty filter keeps every row
   ---
-  duration_ms: 0.096647
+  duration_ms: 0.08044
   type: 'test'
   ...
 # Subtest: a substring filter narrows rows to the matching addresses
 ok 120 - a substring filter narrows rows to the matching addresses
   ---
-  duration_ms: 0.522633
+  duration_ms: 0.645303
   type: 'test'
   ...
 # Subtest: a trailing * filters by address prefix, the way PQL.prefix describes itself
 ok 121 - a trailing * filters by address prefix, the way PQL.prefix describes itself
   ---
-  duration_ms: 0.225158
+  duration_ms: 0.383688
   type: 'test'
   ...
 # Subtest: the filter matches calculation addresses and tick names too, case-insensitively
 ok 122 - the filter matches calculation addresses and tick names too, case-insensitively
   ---
-  duration_ms: 1.087945
+  duration_ms: 1.282961
   type: 'test'
   ...
 # Subtest: matchesFilter and searchTerms agree on what an invocation can be found by
 ok 123 - matchesFilter and searchTerms agree on what an invocation can be found by
   ---
-  duration_ms: 0.14392
+  duration_ms: 0.224187
   type: 'test'
   ...
 # Subtest: renderRecord reports what the filter narrowed and says so when nothing matches
 ok 124 - renderRecord reports what the filter narrowed and says so when nothing matches
   ---
-  duration_ms: 1.837703
+  duration_ms: 1.991051
   type: 'test'
   ...
 # Subtest: the header shows pcr, source and counters
 ok 125 - the header shows pcr, source and counters
   ---
-  duration_ms: 3.187642
+  duration_ms: 3.071347
   type: 'test'
   ...
 # Subtest: the Part index lists every address with its writer, readers and preexisting flag
 ok 126 - the Part index lists every address with its writer, readers and preexisting flag
   ---
-  duration_ms: 0.350372
+  duration_ms: 0.304675
   type: 'test'
   ...
 # Subtest: an empty Part index says so
 ok 127 - an empty Part index says so
   ---
-  duration_ms: 0.084307
+  duration_ms: 0.080059
   type: 'test'
   ...
 # Subtest: renderRecord validates before it renders
 ok 128 - renderRecord validates before it renders
   ---
-  duration_ms: 0.464782
+  duration_ms: 0.52622
   type: 'test'
   ...
 # Subtest: a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
 ok 129 - a world that fails validation renders a loud UNKNOWN panel naming the reason, not a blank
   ---
-  duration_ms: 0.112118
+  duration_ms: 0.117836
   type: 'test'
   ...
 # Subtest: a world with no input at all is a labelled empty slot, never a faked record
 ok 130 - a world with no input at all is a labelled empty slot, never a faked record
   ---
-  duration_ms: 0.061719
+  duration_ms: 0.061515
   type: 'test'
   ...
 # Subtest: the page carries a playback toggle and its control bar, wired to mount()
 ok 131 - the page carries a playback toggle and its control bar, wired to mount()
   ---
-  duration_ms: 0.349875
+  duration_ms: 0.378298
   type: 'test'
   ...
 # Subtest: the page carries a hidden world picker and an empty records block for embed.mjs --worlds
 ok 132 - the page carries a hidden world picker and an empty records block for embed.mjs --worlds
   ---
-  duration_ms: 0.16185
+  duration_ms: 0.177595
   type: 'test'
   ...
 1..132
@@ -2366,7 +2014,7 @@ ok 132 - the page carries a hidden world picker and an empty records block for e
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 556.923686
+# duration_ms 505.839615
 -- viewer: OK (ran 132)
 
 == suite: viewer-record-schema  (cwd /home/user/DiscStudio-staging/EXP/57/pyto/viewer)
@@ -2413,21 +2061,21 @@ test_the_unmutated_record_passes (test_record_schema.TheValidatorActuallyRejects
 test_the_value_kind_rules_of_RECORD_md_59_to_63 (test_record_schema.TheValidatorActuallyRejects.test_the_value_kind_rules_of_RECORD_md_59_to_63) ... ok
 
 ----------------------------------------------------------------------
-Ran 36 tests in 0.892s
+Ran 36 tests in 0.881s
 
 OK
 -- viewer-record-schema: OK (ran 36)
 
 == per-suite counts
 suite                         tests  status
-library                         329  OK
+library                         330  OK
 experiments/classroom            16  OK
 experiments/cross-project         9  OK
-experiments/grouped-ablation    203  FAIL
+experiments/grouped-ablation    250  OK
 experiments/hiding-primitives      6  OK
 experiments/s3-synthetic          5  OK
 experiments/students             17  OK
-experiments/tick-laws            12  OK
+experiments/tick-laws            14  OK
 consumer                         61  OK
 disc-stats                        4  OK
 examples                          3  OK
@@ -2435,4 +2083,4 @@ art-registry-md                   -  OK
 viewer                          132  OK
 viewer-record-schema             36  OK
 
-SOME SUITES FAILED (logs in /tmp/tmp.gqrk9P3ULO)
+ALL SUITES PASSED (logs in /tmp/tmp.NS2lCgIX8q)

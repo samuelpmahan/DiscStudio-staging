@@ -4,14 +4,42 @@ Intent: chains inside a Tick: the owner, 2026-09-10: 'Calculations inside a Tick
 Starting point: 97f318d4ddc4d9b52162e1736171de2d7caafce5 (land(task-56): the frontier says what the second wave landed: FRONTIER.md's Landed adds gains one line each for tasks 48 (the JS runtime speaks the same schedule), 49 (oc, effects with receipts), 50 (effects on the page), 51 (CI runs to completion), 52 (USE.md, executed) and 55 (green on macOS and Windows), each named by the task's own intent line, so the one file that says what got built is complete at the end of the sprint)
 Verify: cd pyto && python -m unittest tests.test_parallel tests.test_multi_into tests.test_use
 Allow: pyto/src/pyto/pcr.py pyto/tests pyto/USE.md pyto/questions.md pyto/CHANGES.md pyto/experiments/grouped-ablation/evidence pyto/experiments/tasks
-Candidate: 6 files, see below
-Evidence: suite exit 1, see below
+Candidate: 34 files, see below
+Evidence: suite exit 0, see below
 
 ## Candidate
 
 - M  pyto/CHANGES.md
 - M  pyto/USE.md
 - M  pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json
+- M  pyto/experiments/grouped-ablation/evidence/lf-source-drift.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/forged-record-refused.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-2-regroup.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-3-reinput.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process-run-4-from-retained.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/fresh-process.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/digest-forged.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/module-leak.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/registry-forged.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/source-sha-mismatch.log
+- M  pyto/experiments/grouped-ablation/evidence/replay/refusals/value-forged-rows.log
+- M  pyto/experiments/grouped-ablation/evidence/run-1/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/commit.txt
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/receipts.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-2-regroup/timings.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/commit.txt
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/receipts.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-3-reinput/timings.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/commit.txt
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/receipts.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/retained.json
+- M  pyto/experiments/grouped-ablation/evidence/run-4-from-retained/timings.json
+- M  pyto/experiments/grouped-ablation/evidence/run-6-cached/interpretation.md
+- M  pyto/experiments/grouped-ablation/evidence/run-6-cached/reuse-ledger.json
+- M  pyto/experiments/grouped-ablation/evidence/tamper/mutating-baseline-refused-record.json
+- M  pyto/experiments/grouped-ablation/evidence/tamper/retained-tampered.json
 - M  pyto/questions.md
 - M  pyto/src/pyto/pcr.py
 - M  pyto/tests/test_parallel.py
@@ -20,25 +48,53 @@ Evidence: suite exit 1, see below
 pyto/CHANGES.md                                    |  16 +++
  pyto/USE.md                                        |  21 ++--
  .../evidence/disc-stats-sidecar.json               |   2 +-
+ .../grouped-ablation/evidence/lf-source-drift.log  |   8 +-
+ .../evidence/replay/forged-record-refused.log      |  18 +--
+ .../replay/fresh-process-run-2-regroup.log         |  18 +--
+ .../replay/fresh-process-run-3-reinput.log         |  18 +--
+ .../replay/fresh-process-run-4-from-retained.log   |  18 +--
+ .../evidence/replay/fresh-process.log              |  18 +--
+ .../evidence/replay/refusals/digest-forged.log     |  18 +--
+ .../evidence/replay/refusals/module-leak.log       |  18 +--
+ .../evidence/replay/refusals/registry-forged.log   |  18 +--
+ .../replay/refusals/source-sha-mismatch.log        |  18 +--
+ .../evidence/replay/refusals/value-forged-rows.log |  18 +--
+ .../grouped-ablation/evidence/run-1/retained.json  |   4 +-
+ .../evidence/run-2-regroup/commit.txt              |   2 +-
+ .../evidence/run-2-regroup/receipts.json           |  44 ++++----
+ .../evidence/run-2-regroup/retained.json           |   4 +-
+ .../evidence/run-2-regroup/timings.json            |   4 +-
+ .../evidence/run-3-reinput/commit.txt              |   2 +-
+ .../evidence/run-3-reinput/receipts.json           |  60 +++++-----
+ .../evidence/run-3-reinput/retained.json           |   4 +-
+ .../evidence/run-3-reinput/timings.json            |   6 +-
+ .../evidence/run-4-from-retained/commit.txt        |   2 +-
+ .../evidence/run-4-from-retained/receipts.json     |  56 ++++-----
+ .../evidence/run-4-from-retained/retained.json     |   4 +-
+ .../evidence/run-4-from-retained/timings.json      |   2 +-
+ .../evidence/run-6-cached/interpretation.md        |   6 +-
+ .../evidence/run-6-cached/reuse-ledger.json        |  16 +--
+ .../tamper/mutating-baseline-refused-record.json   |   4 +-
+ .../evidence/tamper/retained-tampered.json         |   4 +-
  pyto/questions.md                                  |  43 +++++++
  pyto/src/pyto/pcr.py                               | 125 +++++++++++++--------
  pyto/tests/test_parallel.py                        | 103 +++++++++++------
- 6 files changed, 221 insertions(+), 89 deletions(-)
+ 34 files changed, 427 insertions(+), 295 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python -m unittest tests.test_parallel tests.test_multi_into tests.test_use` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.gqrk9P3ULO) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.NS2lCgIX8q) (evidence/check_all.txt)
     suite                         tests  status
-    library                         329  OK
+    library                         330  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
-    experiments/grouped-ablation    203  FAIL
+    experiments/grouped-ablation    250  OK
     experiments/hiding-primitives      6  OK
     experiments/s3-synthetic          5  OK
     experiments/students             17  OK
-    experiments/tick-laws            12  OK
+    experiments/tick-laws            14  OK
     consumer                         61  OK
     disc-stats                        4  OK
     examples                          3  OK
