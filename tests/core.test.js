@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSeed } from '../src/seed.js';
 import { createStudioRuntime } from '../src/runtime.js';
-import { createExecBoard, invokePql, invokePqlAsync, pxFn, queryPrefix, readPql } from '../src/core/exec.js';
+import { classifyTick, createExecBoard, invokePql, invokePqlAsync, pxFn, queryPrefix, readPql } from '../src/core/exec.js';
 import { discoverFields, materialFor, currentBattle, clone, validateWorld } from '../src/domain.js';
 import { fieldNode } from '../src/presentation.js';
 import { readFileSync } from 'node:fs';
@@ -368,12 +368,14 @@ test('the run record lists the undo invocations, push and pop alike', () => {
 /* (src/core/exec.js, pyto/viewer/RECORD.md "Placement and budget")    */
 /* ------------------------------------------------------------------ */
 
-// Kills: dropping refuseUnparallelTick from invokePqlAsync (exec.js:130) makes
-// the sibling read and the duplicate `into` run instead of being refused;
-// moving the publish loop inside the Promise.all wrapper (exec.js:141-147) lets
-// the board hold half a Tick; checking the budget inside a Tick instead of at
-// the boundary (exec.js:118, `overBudget`) stops mid-Tick and the board keeps a
-// Part of the Tick the record says never ran.
+// Kills: dropping classifyTick from invokePqlAsync (exec.js `mode`) makes the
+// backwards read and the duplicate `into` run instead of being refused, and
+// runs a chain at once, so its later Calculation reads a missing address;
+// moving a parallel Tick's publish loop inside the Promise.all wrapper lets the
+// board hold half a Tick; publishing a chain only after the Tick starves its
+// later Calculation of the earlier sibling's value; checking the budget inside
+// a Tick instead of at the boundary (`overBudget`) stops mid-Tick and the board
+// keeps a Part of the Tick the record says never ran.
 
 const SLEEP_MS = 40;
 const parse = document => readPql(JSON.stringify(document), JSON.parse);
@@ -413,33 +415,91 @@ test('a Tick of four timer-awaiting Calculations runs at once: latency under the
   assert.ok(fan.latency_ms < work * 0.75, `latency ${fan.latency_ms}ms is not under the ${work}ms of work`);
   assert.ok(serialElapsed >= work * 0.75, `the serial run took ${serialElapsed}ms, which is not the work`);
   assert.deepEqual(parallel.schedule.ticks[0].placements.map(p => p.worker), [0], 'the one branch of a one-Calculation Tick is worker 0');
+  assert.deepEqual(parallel.schedule.ticks.map(tick => tick.mode), ['parallel', 'parallel', 'parallel'], 'no Tick of this document reads a sibling, so every Tick ran at once');
   assert.deepEqual(serialBoard.get('px.leg.2'), parallelBoard.get('px.leg.2'));
   console.log(`# parallel Fan Tick: work ${work}ms (4 x ${SLEEP_MS}ms), latency ${fan.latency_ms}ms; the same run serially: ${serialElapsed}ms`);
 });
 
-test('a Calculation that reads a sibling produce in the same Tick is refused by name, before the Tick runs', async () => {
+// Inside a Tick the Calculations are a sequence in declared order, and a later
+// one may read what an earlier sibling produced (the owner, 2026-09-10: the
+// ChainSpot program deliberately chains dependent Calculations inside a Tick;
+// the Tick boundary is where the sequence becomes inspectable).
+const chainDocument = {
+  PrincipleComponentRender: 'chain-demo',
+  Ticks: [
+    { name: 'Seed', Calculations: [{ call: 'fn.seed', args: { n: 1 }, into: 'px.a' }] },
+    { name: 'Chain', Calculations: [
+      { call: 'fn.seed', args: { n: 2 }, into: 'px.b' },
+      { call: 'fn.slow', with: { base: 'px.b' }, args: { n: 3 }, into: 'px.c' },
+      { call: 'fn.join', with: { a: 'px.a', b: 'px.b', c: 'px.c' }, into: 'px.d' }
+    ] }
+  ]
+};
+
+test('a Tick whose Calculation reads an earlier sibling is a chain: under parallel: true it runs in declared order and each later Calculation sees the earlier value', async () => {
   const board = timerBoard();
-  const document = { PrincipleComponentRender: 'sibling-read', Ticks: [{ name: 'Fan', Calculations: [
-    { call: 'fn.seed', args: { n: 1 }, into: 'px.a' },
-    { call: 'fn.join', with: { a: 'px.a' }, into: 'px.b' }
+  const run = await invokePqlAsync(parse(chainDocument), board, { parallel: true });
+  assert.equal(board.get('px.c'), 23, 'the second Calculation read px.b, which its earlier sibling produced in the same Tick');
+  assert.equal(board.get('px.d'), '1+2+23', 'the third read both earlier siblings and the earlier Tick');
+  assert.deepEqual(run.Ticks[1].Calculations.map(calculation => calculation.inputs), [{}, { base: 2 }, { a: 1, b: 2, c: 23 }], 'the testimony records the values each Calculation actually read');
+  // A prefix query reads every address under it, so it reads an earlier sibling's produce too: a chain as well.
+  const query = { PrincipleComponentRender: 'chain-query', Ticks: [{ name: 'Chain', Calculations: [
+    { call: 'fn.seed', args: { n: 1 }, into: 'px.leaf.one' },
+    { call: 'fn.join', with: { all: 'px.leaf.*' }, into: 'px.q' }
+  ] }] };
+  const queried = await invokePqlAsync(parse(query), timerBoard(), { parallel: true });
+  assert.deepEqual(queried.Ticks[0].Calculations[1].inputs, { all: { 'px.leaf.one': 1 } });
+  assert.equal(classifyTick(parse(query).Ticks[0]), 'chain');
+});
+
+test('a chain under parallel: true and the same document serially write byte-identical testimony', async () => {
+  const serialBoard = timerBoard(), parallelBoard = timerBoard();
+  const serial = await invokePqlAsync(parse(chainDocument), serialBoard, { parallel: false });
+  const parallel = await invokePqlAsync(parse(chainDocument), parallelBoard, { parallel: true });
+  assert.equal(testimony(serial), testimony(parallel), 'the schedule is not the program: a chain testifies exactly as the serial run does');
+  assert.deepEqual(serialBoard.keys().sort(), parallelBoard.keys().sort());
+  for (const address of serialBoard.keys().filter(address => !address.startsWith('px.pql.'))) assert.deepEqual(serialBoard.get(address), parallelBoard.get(address), address);
+  assert.equal(serial.schedule, undefined, 'a serial, unbudgeted run still reports no schedule at all');
+});
+
+test('the schedule marks a Tick with sibling reads mode chain, on one worker in sequence, and a Tick without them mode parallel', async () => {
+  const run = await invokePqlAsync(parse(chainDocument), timerBoard(), { parallel: true });
+  assert.deepEqual(run.schedule.ticks.map(tick => [tick.name, tick.mode]), [['Seed', 'parallel'], ['Chain', 'chain']]);
+  assert.deepEqual(classifyTick(parse(chainDocument).Ticks[0]), 'parallel');
+  assert.deepEqual(classifyTick(parse(chainDocument).Ticks[1]), 'chain');
+  const chain = run.schedule.ticks[1];
+  assert.deepEqual(chain.placements.map(placement => placement.worker), [0, 0, 0], 'a chain runs on worker 0 throughout');
+  const starts = chain.placements.map(placement => placement.started_ms);
+  assert.ok(starts.every((start, index) => index === 0 || start >= starts[index - 1]), `started offsets are in sequence: ${starts}`);
+  assert.ok(starts[2] - starts[1] >= SLEEP_MS * 0.75, `the third Calculation started after the slow second one finished: ${starts}`);
+  assert.ok(chain.latency_ms >= SLEEP_MS * 0.75, `the chain's latency is its work: ${chain.latency_ms}ms`);
+  assert.equal(run.schedule.parallel, true);
+  assert.deepEqual(run.schedule.budget, { limit_ms: null, stopped_after_tick: null, completed: true });
+  // A serial, budgeted run reports a schedule but no mode: absent means serial, as for placement.
+  const budgeted = await invokePqlAsync(parse(chainDocument), timerBoard(), { parallel: false, budgetMs: 10_000 });
+  assert.deepEqual(budgeted.schedule.ticks.map(tick => 'mode' in tick), [false, false]);
+});
+
+test('a Calculation that reads a LATER sibling produce is a backwards read, refused by name before the Tick runs', async () => {
+  const board = timerBoard();
+  const document = { PrincipleComponentRender: 'backwards-read', Ticks: [{ name: 'Fan', Calculations: [
+    { call: 'fn.join', with: { a: 'px.a' }, into: 'px.b' },
+    { call: 'fn.seed', args: { n: 1 }, into: 'px.a' }
   ] }] };
   await assert.rejects(() => invokePqlAsync(parse(document), board, { parallel: true }), error => {
     assert.match(error.message, /parallel refused/);
-    assert.match(error.message, /Calculations\[1\] 'fn\.join' -> px\.b reads 'px\.a'/);
-    assert.match(error.message, /sibling Calculations\[0\] 'fn\.seed' -> px\.a/);
+    assert.match(error.message, /Calculations\[0\] 'fn\.join' -> px\.b reads 'px\.a', which its sibling Calculations\[1\] 'fn\.seed' -> px\.a produces later in the same Tick/);
     return true;
   });
   assert.equal(board.has('px.a'), false, 'a refused Tick publishes nothing at all');
   assert.equal(board.has('px.b'), false);
-  // A prefix query reads every address under it, so it reads a sibling's produce too.
-  const query = { PrincipleComponentRender: 'sibling-query', Ticks: [{ name: 'Fan', Calculations: [
-    { call: 'fn.seed', args: { n: 1 }, into: 'px.leaf.one' },
-    { call: 'fn.join', with: { all: 'px.leaf.*' }, into: 'px.b' }
+  // A prefix query over a later sibling's address is the same backwards read.
+  const query = { PrincipleComponentRender: 'backwards-query', Ticks: [{ name: 'Fan', Calculations: [
+    { call: 'fn.join', with: { all: 'px.leaf.*' }, into: 'px.b' },
+    { call: 'fn.seed', args: { n: 1 }, into: 'px.leaf.one' }
   ] }] };
-  await assert.rejects(() => invokePqlAsync(parse(query), board, { parallel: true }), /reads 'px\.leaf\.one'/);
-  // The same document is not refused serially: the sibling read is a schedule question.
-  const serial = await invokePqlAsync(parse(document), board, { parallel: false });
-  assert.equal(serial.Ticks[0].Calculations.length, 2);
+  await assert.rejects(() => invokePqlAsync(parse(query), board, { parallel: true }), /reads 'px\.leaf\.one', which its sibling .* produces later in the same Tick/);
+  assert.throws(() => classifyTick(parse(document).Ticks[0]), /produces later in the same Tick/);
 });
 
 test('two Calculations of one Tick declaring one into are refused by name', async () => {
