@@ -707,6 +707,17 @@ own records (what they retry, where they write `{?}`, what they undo, how long a
 never from a profile.
 Owner, 2026-09-09 evening, on why any of this exists when ChainSpot and DiscStudio do not need it: "Workspace. Educational." and, of Homeroom Heroes, "this would be a good reason why". So the workspace is not a side effect; it is the product for that audience, and the studio is its first tenant.
 
+### {?} DeterministicInterrupts
+The owner, 2026-09-10, on the board page: "Holy shit the interrupt accumulation is gooooood. Is this all
+deterministic?" Answer: the accounting is (every Today line is written by a script from a verifier exit
+code, the suite table, digests, a tree check or a merge result; the page is a pure function of BOARD.md and
+the open-copies list); the judgment is not (which task opens, its intent, the defaults taken at the root,
+the cold reader's explanation, the session's notes), and each judgment leaves a line before it has effect
+and is undoable with a receipt. What is still only a habit: the three-reason interrupt rule. Default: a
+note addressed to the owner must carry which of the three reasons it is (broke and cannot be fixed without
+you; a decision with no safe default; something you asked to be told), and land.sh --note refuses an
+"**owner**" line without one; everything else is a note, not an interrupt.
+
 ### {?} TicksAsCircuits
 The owner, 2026-09-10: "Let's take this seriously. In electric circuits connections connect in serial
 or parallel. If we allow parallel ticks like that how could that map to the actual properties of
