@@ -64,11 +64,6 @@ die() { echo "make_class: $*" >&2; exit 1; }
 usage() { sed -n '3,6p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 step() { echo; echo "=== $*"; }
 
-git_here() { # <repo> <args...>  -- git in a repo, with an identity that is nobody
-  local repo="$1"; shift
-  git -C "$repo" "$@"
-}
-
 configure() { # <repo>  -- a scratch repo needs a name to commit under
   git -C "$1" config user.email "class@example.invalid"
   git -C "$1" config user.name "neat class"

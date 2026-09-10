@@ -125,7 +125,6 @@ def receipts(desk: str) -> list[dict]:
             "total": score.get("total"),
             "verifier": (data.get("verifier") or {}).get("command"),
             "reason": "",
-            "claimed": [entry["path"] for entry in data.get("claimed", [])],
             "path": relative(desk, path),
         })
     for path in sorted(glob.glob(os.path.join(desk, ".neat", "landings", "failed", "*.json"))):
@@ -138,7 +137,6 @@ def receipts(desk: str) -> list[dict]:
             "total": None,
             "verifier": None,
             "reason": scrub(desk, data.get("reason", "")),
-            "claimed": [],
             "path": relative(desk, path),
         })
     found.sort(key=lambda entry: (entry["id"], entry["path"]))
@@ -294,26 +292,31 @@ def undone(data: dict) -> list[dict]:
 
 def scored(data: dict) -> list[dict]:
     """Every score on the desk: which package, which verdict, which verifier."""
-    commands = {}
-    for receipt in data["receipts"]:
-        if receipt["verifier"]:
-            commands[receipt["id"]] = receipt["verifier"]
     out = []
     for entry in data["board"]:
         if entry["passed"] is None:
             continue
-        receipt = next(
-            (r for r in data["receipts"]
-             if r["package"] == entry["package"]
-             and str(r["passed"]) == entry["passed"]),
-            None,
-        )
+        # A refusal leaves a failed receipt with no score in it (land.sh writes the
+        # score onto the board and the reason into the receipt), so the two verdicts
+        # are matched to their receipts by different keys on purpose.
+        if entry["kind"] == "refused":
+            receipt = next(
+                (r for r in data["receipts"]
+                 if r["package"] == entry["package"] and r["result"] == "failed"),
+                None,
+            )
+        else:
+            receipt = next(
+                (r for r in data["receipts"]
+                 if r["package"] == entry["package"] and str(r["passed"]) == entry["passed"]),
+                None,
+            )
         out.append({
             "package": entry["package"],
             "kind": entry["kind"],
             "passed": int(entry["passed"]),
             "total": int(entry["total"]),
-            "verifier": receipt["verifier"] if receipt else None,
+            "verifier": (receipt["verifier"] or receipt["reason"]) if receipt else None,
             "receipt": receipt["path"] if receipt else None,
             "text": entry["text"],
         })
@@ -471,13 +474,15 @@ def render(data: dict) -> str:
     if not scores:
         write('<p class="empty">No verifier on this desk printed a score.</p>')
     else:
-        write("<table><tr><th>package</th><th>score</th><th>verdict</th><th>verifier</th></tr>")
+        write("<table><tr><th>package</th><th>score</th><th>verdict</th>"
+              "<th>verifier, and the receipt it left</th></tr>")
         for item in scores:
             write('<tr><td class="mono">%s</td><td class="num">%d/%d</td>'
-                  '<td><span class="tag %s">%s</span></td><td class="mono">%s</td></tr>'
+                  '<td><span class="tag %s">%s</span></td>'
+                  '<td class="mono">%s<br><span class="where">%s</span></td></tr>'
                   % (esc(item["package"]), item["passed"], item["total"],
                      esc(item["kind"]), esc(item["kind"]),
-                     esc(item["verifier"] or "-")))
+                     esc(item["verifier"] or "-"), esc(item["receipt"] or "no receipt")))
         write("</table>")
 
     write("<h2>The tasks this desk holds</h2>")
