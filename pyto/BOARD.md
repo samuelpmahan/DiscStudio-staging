@@ -68,6 +68,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 03:51 **killed** `task-53`: nothing landed; exp/53 is kept
 - 2026-09-10 03:36 **killed** `task-54`: nothing landed; exp/54 is kept
 - 2026-09-10 03:35 **landed** `task-52`: the surface a person uses: pyto/USE.md is a quickstart for PxC, Parts, Calculations, PCR and PQL that a test executes block by block and compares printed output byte for byte, so the document is true or the suite is red; the ergonomics gaps it exposes in pql.py and the top-level exports are fixed or written down; the students homework is its worked example (11 files since b028f87, suites green, receipt 20260910T033411Z-task-52)
 - 2026-09-10 03:33 **measured** on MAIN after `task-49` landed, by the session: 24 effects tests green; `px effects` on the test record lists one write, one clock read, one seed and two draws with their digests; a fresh process replays them from the record and a tampered digest is refused by invocation and index. An OS with no effects was a calculator; this one records its effects.
