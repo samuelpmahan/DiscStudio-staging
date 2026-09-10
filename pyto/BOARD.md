@@ -37,8 +37,10 @@ bash pyto/scripts/check_all.sh                                   # every suite, 
 node pyto/viewer/embed.mjs pyto/viewer/fixtures/pyto-grouped-ablation.json --out /d/pyto-hit/ticks.html   # open in a browser
 ```
 
-For Astra or Codex, the owner reuses one sentence forever: "Pull the branch, read the newest file
-in mailbox/to-gpt, do what it says."
+For Astra or Codex, the owner reuses one sentence forever: "Pull the branch, read the newest
+entries on pyto/questions.md, and continue." Every answer to an agent's question is written there,
+in the owner's words and in the technical words side by side; the owner never carries the technical
+half (owner, 2026-09-10: "Can't you translate between OSspeak and Samspeak").
 
 ## Interrupts
 
