@@ -707,6 +707,25 @@ own records (what they retry, where they write `{?}`, what they undo, how long a
 never from a profile.
 Owner, 2026-09-09 evening, on why any of this exists when ChainSpot and DiscStudio do not need it: "Workspace. Educational." and, of Homeroom Heroes, "this would be a good reason why". So the workspace is not a side effect; it is the product for that audience, and the studio is its first tenant.
 
+### {?} TicksAsCircuits
+The owner, 2026-09-10: "Let's take this seriously. In electric circuits connections connect in serial
+or parallel. If we allow parallel ticks like that how could that map to the actual properties of
+serial and parallel." The mapping, taken as the default: a sequence of Ticks is series (the same
+store passes through every Tick, durations add, one failure stops the run, the receipt chain is the
+wire); the Calculations inside one Tick are parallel (each sees the store as it stood when the Tick
+began, work adds while time is the longest branch, a failing branch leaves its siblings' receipts and
+shows as a hole downstream). Two laws, both checkable from receipts today: the node law, within a
+Tick no Calculation consumes a sibling's produce and no two siblings produce the same Part (else a
+short); the loop law, nothing consumes a Part produced later in the run (the store already refuses
+this). Free consequences: a Tick reduces to one composite receipt as a series-parallel network
+reduces to one element, with the composite Part's loss of one fingerprint per group; a run record
+can report total work and the critical path from existing durations, so "what would parallel buy" is
+a number before any parallel execution exists. Limit: bridge circuits are not series-parallel and
+neither is every dependency graph; Ticks are the author's series-parallel drawing over the true graph
+the reads and writes define, and the node law is the test of whether the drawing is honest. Default:
+one check over any run record that applies both laws and reports work versus critical path per Tick;
+no kernel change; parallel execution stays a `{?}`.
+
 ### {?} WhatIsATick
 The first question asked under the stopping rule, 2026-09-10, from pyto/experiments/students/HANDOFF.md:
 "why does reading the same roster twice require separate Ticks if each Calculation already records
