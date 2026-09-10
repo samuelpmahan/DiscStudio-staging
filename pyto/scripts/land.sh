@@ -169,8 +169,10 @@ while IFS= read -r f; do
   in_scope "$f" || fail "dirty file outside allowed paths: $f  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- $f  then land, then git stash pop)"
 done <<< "$DIRTY"
 
-# 3. Verify.
+# 3. Verify. The repository's own venv goes first on PATH so a bare `python3` or `python` in a
+#    Verify line resolves the same way here as inside a copy, where the venv was active.
 mkdir -p "$WORK"
+for _bin in "$ROOT/.venv/bin" "$ROOT/.venv/Scripts"; do [ -d "$_bin" ] && export PATH="$_bin:$PATH"; done
 VERIFY_EXIT=0
 if [ -n "$VERIFY" ]; then
   echo "== verifier: $VERIFY"

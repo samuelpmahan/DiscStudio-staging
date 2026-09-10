@@ -1,0 +1,78 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T010844Z-task-28",
+  "package": "task-28",
+  "base_sha": "f2954cc2f053fae8f5b01f6f7ea200773457b317",
+  "result": "verified",
+  "verifier": {
+    "command": "bash pyto/scripts/neat.sh selftest",
+    "exit": 0,
+    "output_sha256": "09cbe9350c813f077ea743a805251a9fb5349a3142b9103d8689a63950820cbb"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "bc891e8852040093dc30445bcbd96fa7ff9d3412aa5b0ecc1c77d1798b8e721b",
+    "counts": {
+      "library": 193,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 244,
+      "experiments/hiding-primitives": 6,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 10,
+      "experiments/tick-laws": 10,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 107,
+      "viewer-record-schema": 24
+    }
+  },
+  "claimed": [
+    {
+      "path": "pyto/LANDING.md",
+      "bytes": 9656,
+      "sha256": "b3841058b24142d1470ffc53e57c665aa2fff63690ffab60b7755f97609757be"
+    },
+    {
+      "path": "pyto/experiments/tasks/28/HANDOFF.md",
+      "bytes": 6247,
+      "sha256": "20cd5f353bde286adaccc48a8bc3c4cc93c42f02464ff97a0f12826a5ddd1d5b"
+    },
+    {
+      "path": "pyto/experiments/tasks/28/evidence/check_all.txt",
+      "bytes": 135929,
+      "sha256": "e2d909baf34ff8c0a58e269250eef004a48f35c304cbfed0fd8a694a211c3c6c"
+    },
+    {
+      "path": "pyto/experiments/tasks/28/evidence/verify.txt",
+      "bytes": 281,
+      "sha256": "09cbe9350c813f077ea743a805251a9fb5349a3142b9103d8689a63950820cbb"
+    },
+    {
+      "path": "pyto/experiments/tasks/28/packet.md",
+      "bytes": 1976,
+      "sha256": "e9c1903ae866549487542b7841ed64da5bfe24e2b642f4a121a6bea4a7912ff2"
+    },
+    {
+      "path": "pyto/scripts/land.sh",
+      "bytes": 14474,
+      "sha256": "3eb1bca826593b2fe9b889391b957f5a33ca5b3898ffba53679c8147521fce20"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 24956,
+      "sha256": "88f21aaeee05fe436b45a6454885fd7fffc05fdee37355eb2a8092069ce31f37"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 41391,
+      "sha256": "ef83d0334ab66bfdbd910c4f677f72ca32b878afc208731162bbd8dc0a083f4d"
+    }
+  ],
+  "landed_by": "session",
+  "at": "2026-09-10T01:09:25.166377Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit"
+}
