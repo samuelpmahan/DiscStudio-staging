@@ -125,6 +125,46 @@ class PxFixtures(unittest.TestCase):
         record = json.loads(ABLATION.read_text(encoding="utf-8"))
         self.assertEqual(set(record["parts"]) - set(addresses), set())
 
+    def test_ls_shows_a_receipt_address_the_record_lists(self):
+        """"every address the record knows" includes receipt addresses.
+
+        Neither committed record lists one -- `run_record`'s part index is built
+        from the testimony and the receipts, never from the store, so a pyto
+        record names no receipt of its own (RECORD.md, "Receipts as Parts") --
+        but another runtime's record may, and `parts` is where it would appear.
+
+        Mutation: px.py `cmd_ls`, drop the union with `record["parts"]` -- the
+        receipt row below disappears and the KIND column has nothing to say.
+        """
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        record["parts"]["px.receipt.students-homework.Parse.parse"] = {
+            "written_by": None, "read_by": [], "preexisting": False
+        }
+        record["parts"]["px.receipt.earlier-run.Tick.id"] = {
+            "written_by": None, "read_by": [], "preexisting": True
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "with-receipts.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            rows = [line.split() for line in run_px("ls", str(path)).stdout.splitlines()]
+        self.assertIn(
+            ["px.receipt.students-homework.Parse.parse", "receipt", "unknown"], rows
+        )
+        self.assertIn(["px.receipt.earlier-run.Tick.id", "receipt", "preexisting"], rows)
+        self.assertIn(["px.students.roster", "part", "parse"], rows)
+
+    def test_ls_prefix_is_a_filter_over_the_same_index(self):
+        """The prefix narrows which rows print; column widths follow the rows that
+        remain, which is why the fixtures are compared to files and not to each
+        other."""
+        addresses = lambda out: [line.split()[0] for line in out.splitlines()[1:]]
+        full = addresses(run_px("ls", str(ABLATION)).stdout)
+        filtered = addresses(run_px("ls", str(ABLATION), "scratch.ablation.score").stdout)
+        self.assertEqual(len(filtered), 6)
+        self.assertEqual(
+            filtered, [a for a in full if a.startswith("scratch.ablation.score")]
+        )
+
     # --- cat ------------------------------------------------------------------
 
     def test_cat_students_mean(self):
@@ -159,6 +199,35 @@ class PxFixtures(unittest.TestCase):
             result = run_px("cat", str(path), "px.students.mean")
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout, "not carried: the runtime did not retain values\n")
+
+    def test_cat_of_a_multi_produce_invocation_names_the_one_part(self):
+        """A Calculation may publish several Parts (`{?} WhatIsATick`, owner
+        2026-09-10), and then `value.data` is the mapping it returned, so `cat`
+        must take the entry the address names and not print the whole mapping.
+
+        Mutation: px.py `cmd_cat`, drop the `len(declared) > 1` branch -- this
+        fails, and `px cat <a>` and `px cat <b>` print the same two-key object.
+        """
+        record = json.loads(STUDENTS.read_text(encoding="utf-8"))
+        stats = record["ticks"][1]["invocations"][0]
+        stats["into"] = ["px.students.mean", "px.students.n"]
+        stats["actual_produces"] = ["px.students.mean", "px.students.n"]
+        stats["writes"] = [
+            {"address": "px.students.mean", "kind": "new-address"},
+            {"address": "px.students.n", "kind": "new-address"},
+        ]
+        stats["value"] = {
+            "kind": "json", "data": {"px.students.mean": 80.5, "px.students.n": 12}, "note": None
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "multi.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            mean = run_px("cat", str(path), "px.students.mean")
+            n = run_px("cat", str(path), "px.students.n")
+            listed = run_px("ls", str(path)).stdout
+        self.assertEqual(mean.stdout, "80.5\n")
+        self.assertEqual(n.stdout, "12\n")
+        self.assertIn("px.students.n", listed)
 
     def test_cat_refuses_an_address_no_invocation_produced(self):
         result = run_px("cat", str(STUDENTS), "px.students.scores_csv")

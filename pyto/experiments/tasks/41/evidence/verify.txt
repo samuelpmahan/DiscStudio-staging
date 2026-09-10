@@ -1,6 +1,8 @@
 test_cat_ablation_comparison (tests.test_px.PxFixtures.test_cat_ablation_comparison) ... ok
 test_cat_is_canonical_json_the_record_carries (tests.test_px.PxFixtures.test_cat_is_canonical_json_the_record_carries)
 `px cat` reads the record's `value` field and re-spells it canonically. ... ok
+test_cat_of_a_multi_produce_invocation_names_the_one_part (tests.test_px.PxFixtures.test_cat_of_a_multi_produce_invocation_names_the_one_part)
+A Calculation may publish several Parts (`{?} WhatIsATick`, owner ... ok
 test_cat_refuses_an_address_no_invocation_produced (tests.test_px.PxFixtures.test_cat_refuses_an_address_no_invocation_produced) ... ok
 test_cat_says_not_carried_when_the_record_omits_the_value (tests.test_px.PxFixtures.test_cat_says_not_carried_when_the_record_omits_the_value)
 The `omitted` kind is a real record state (RECORD.md `value.kind`). ... ok
@@ -23,6 +25,10 @@ test_ls_ablation (tests.test_px.PxFixtures.test_ls_ablation) ... ok
 test_ls_is_sorted_and_carries_every_address_the_record_knows (tests.test_px.PxFixtures.test_ls_is_sorted_and_carries_every_address_the_record_knows)
 Sorted, and a superset of the record's own `parts` block. ... ok
 test_ls_prefix_ablation (tests.test_px.PxFixtures.test_ls_prefix_ablation) ... ok
+test_ls_prefix_is_a_filter_over_the_same_index (tests.test_px.PxFixtures.test_ls_prefix_is_a_filter_over_the_same_index)
+The prefix narrows which rows print; column widths follow the rows that ... ok
+test_ls_shows_a_receipt_address_the_record_lists (tests.test_px.PxFixtures.test_ls_shows_a_receipt_address_the_record_lists)
+"every address the record knows" includes receipt addresses. ... ok
 test_ls_students (tests.test_px.PxFixtures.test_ls_students) ... ok
 test_ps_ablation (tests.test_px.PxFixtures.test_ps_ablation) ... ok
 test_ps_students (tests.test_px.PxFixtures.test_ps_students) ... ok
@@ -154,6 +160,6 @@ test_testimony_into_values_are_published_addresses (tests.test_first_class.Share
 CalculationTestimony.into is the into Part's address (pcr.py:172). ... ok
 
 ----------------------------------------------------------------------
-Ran 92 tests in 2.613s
+Ran 95 tests in 3.012s
 
 OK

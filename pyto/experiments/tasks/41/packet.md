@@ -179,7 +179,7 @@ Three claims, each mutated and the named test watched to fail, then restored
 ## Evidence
 
 - verify: `cd pyto && python3 -m unittest tests.test_px tests.test_pql tests.test_semantics tests.test_first_class` exit 0 (evidence/verify.txt)
-    Ran 92 tests in 2.613s
+    Ran 95 tests in 3.012s
     
     OK
 - the six commands' first line of stdout on the students record (`experiments/students/evidence/run-1/record.json`), copied from the committed fixtures:
@@ -193,7 +193,7 @@ Three claims, each mutated and the named test watched to fail, then restored
     ```
 - suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
     suite                         tests  status
-    library                         245  OK
+    library                         248  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    248  OK
     experiments/hiding-primitives      6  OK
