@@ -4,8 +4,40 @@ Intent: a score in the receipt: a verifier can print one line 'score: <passed> o
 Starting point: 06337e2f044e30990a8f749f0ae538e40847980c (land(task-30): every reader handles several produces: compare_local.py and pql_document.py in grouped-ablation stop assuming one into per invocation; tests for both)
 Verify: bash pyto/scripts/neat.sh selftest && bash pyto/scripts/check_receipts.sh
 Allow: pyto/scripts/neat.sh pyto/scripts/land.sh pyto/scripts/check_receipts.sh pyto/LANDING.md pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 4 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/LANDING.md
+- M  pyto/scripts/check_receipts.sh
+- M  pyto/scripts/land.sh
+- M  pyto/scripts/neat.sh
+
+```
+pyto/LANDING.md                |  4 ++++
+ pyto/scripts/check_receipts.sh | 25 ++++++++++++++++++++++++-
+ pyto/scripts/land.sh           | 23 +++++++++++++++++++----
+ pyto/scripts/neat.sh           | 32 ++++++++++++++++++++++++++++----
+ 4 files changed, 75 insertions(+), 9 deletions(-)
+```
+
+## Evidence
+
+- verify: `bash pyto/scripts/neat.sh selftest && bash pyto/scripts/check_receipts.sh` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (evidence/check_all.txt)
+    suite                         tests  status
+    library                         193  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    248  OK
+    experiments/hiding-primitives      6  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             11  OK
+    experiments/tick-laws            10  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
+    examples                          3  OK
+    art-registry-md                   -  OK
 
 ## Uncertain
 
