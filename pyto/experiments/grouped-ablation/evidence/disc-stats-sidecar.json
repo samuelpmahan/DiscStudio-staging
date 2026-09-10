@@ -27,7 +27,7 @@
   "provider": {
     "pyto": {
       "modules": {
-        "core.py": "48071a5f25abcb17503b5f93411626426daf7dc2d83df3ac2a676d958258f072",
+        "core.py": "f62689e276478730b093976d15650743eb026ae2f6f8d59746a8dd3cccc07f78",
         "pcr.py": "791df4563141353f43217c40d2b56487a40f46c263f13573f731b46cdef62d3a"
       },
       "package": "pyto-lab",

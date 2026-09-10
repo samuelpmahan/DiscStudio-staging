@@ -1,0 +1,7 @@
+ADDRESS                         KIND  PRODUCED-BY
+scratch.ablation.model.all      part  fit.all
+scratch.ablation.model.drop_g0  part  fit.drop_g0
+scratch.ablation.model.drop_g1  part  fit.drop_g1
+scratch.ablation.model.drop_g2  part  fit.drop_g2
+scratch.ablation.model.drop_g3  part  fit.drop_g3
+scratch.ablation.model.drop_g4  part  fit.drop_g4
