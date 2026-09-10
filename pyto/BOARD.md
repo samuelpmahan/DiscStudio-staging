@@ -68,6 +68,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-10 03:55 **started** `task-55`: green on macOS and Windows: the three failures at a9e3b1a were the tests, not the kernel. test_use.py compares CRLF stdout on Windows to LF text; test_classroom.py spells bash so Windows resolves WSL's instead of Git's; test_parallel's overlap check gave four threads 50 ms to start and a slow macOS runner took 114. Each test is made true on the platform it runs on without loosening what it proves (copy EXP/55; it lands only on green, with a receipt, or is killed)
 - 2026-09-10 03:51 **killed** `task-53`: nothing landed; exp/53 is kept
 - 2026-09-10 03:36 **killed** `task-54`: nothing landed; exp/54 is kept
 - 2026-09-10 03:35 **landed** `task-52`: the surface a person uses: pyto/USE.md is a quickstart for PxC, Parts, Calculations, PCR and PQL that a test executes block by block and compares printed output byte for byte, so the document is true or the suite is red; the ergonomics gaps it exposes in pql.py and the top-level exports are fixed or written down; the students homework is its worked example (11 files since b028f87, suites green, receipt 20260910T033411Z-task-52)
