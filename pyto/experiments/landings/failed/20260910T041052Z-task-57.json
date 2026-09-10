@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260910T041052Z-task-57",
+  "package": "task-57",
+  "base_sha": "adc6db6f5ef3cadaa35938cb8acfadb7f0133a93",
+  "result": "failed",
+  "reason": "dirty file outside allowed paths: pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json  then land, then git stash pop)",
+  "at": "2026-09-10T04:10:53.509362Z"
+}
