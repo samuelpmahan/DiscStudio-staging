@@ -113,9 +113,21 @@ export function isParallelTick(tick) {
   return true;
 }
 
-/** A Tick's work: the sum of its branches' durations, or null when none was recorded. */
+/**
+ * A Tick's work: the sum of its branches' durations, or null when the runtime
+ * recorded none. Unrounded, unlike adapters.js `tickDurationMs`, so that adding
+ * Ticks up gives the run total tick_laws.py reports and not a rounded-per-Tick one.
+ */
 export function tickWorkMs(tick) {
-  return tickDurationMs(tick);
+  let total = 0;
+  let saw = false;
+  for (const invocation of tick.invocations) {
+    if (typeof invocation.duration_ms === 'number' && Number.isFinite(invocation.duration_ms)) {
+      total += invocation.duration_ms;
+      saw = true;
+    }
+  }
+  return saw ? total : null;
 }
 
 /**
@@ -131,9 +143,14 @@ export function tickLatencyMs(tick) {
       longest = longest === null ? invocation.duration_ms : Math.max(longest, invocation.duration_ms);
     }
   }
-  return longest === null ? null : scheduleRound3(longest);
+  return longest;
 }
 
+/**
+ * Add one number per Tick over the whole run, rounding once at the end: a Tick's
+ * own reported work is rounded to the microsecond for display, and adding the
+ * rounded numbers would print a run total that disagrees with tick_laws.py's.
+ */
 function sumOverTicks(record, per) {
   let total = 0;
   for (const tick of record.ticks) {
