@@ -1,0 +1,40 @@
+........./home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:137: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp59r3esx5/receipt.json' mode='w' encoding='utf-8'>
+  json.dump({"schema": "pyto-landing-receipt@1", "package": "task-65"}, open(receipt, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:141: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp59r3esx5/receipt.json' mode='r' encoding='utf-8'>
+  written = json.load(open(receipt))["gate"]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:145: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp59r3esx5/gate.json' mode='r' encoding='utf-8'>
+  validate_record(json.load(open(record)))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:146: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp59r3esx5/gate.json' mode='r' encoding='utf-8'>
+  self.assertEqual(json.load(open(record))["ticks"][0]["invocations"][0]["calculation"]["address"],
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:152: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp9w4zkfp7/approve.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "approve", "selection": "<head>", "text": "stub approve"},
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/pyto/tests/test_neat_gate.py:159: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp9w4zkfp7/reject.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "reject", "selection": "<head>", "text": "no"}, open(reject, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..
+----------------------------------------------------------------------
+Ran 12 tests in 0.374s
+
+OK
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+selftest new: pass
+selftest packet sections: pass
+selftest landing commit: pass
+selftest origin branch removal: pass
+selftest board: pass
+selftest score: pass
+selftest undo clean: pass
+selftest an undone id is not reused: pass
+selftest owner note without a reason: pass
+selftest owner note with a reason: pass
+selftest land from a remote: pass
+selftest remote board line and temporary ref: pass
+selftest remote desk graded here: pass
+selftest gate closed by a rejection: pass
+selftest gate opened by a stub, recorded untrusted: pass
