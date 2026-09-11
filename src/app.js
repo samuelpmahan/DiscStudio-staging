@@ -22,7 +22,7 @@ const ui = {
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
   lastCascade: null, instanceProjection: savedView.instanceProjection || 'single',
-  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, photoTarget: 'disc'
+  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc'
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -156,7 +156,11 @@ function courseCenter(result) {
 }
 function layoutControls() {
   const l = w().layout;
-  return `<section class="control-section"><h3>DiscComp arrangement <span>VIEW</span></h3><label class="control"><span>Layout</span>${select('arrangement', l.arrangement, [['row', 'Across the screen'], ['stack', 'Down the screen'], ['grid', 'Two-column grid']])}</label><label class="control"><span>Place on screen</span></label><div class="anchor-pad">${[['top-left', '↖'], ['center', '◎'], ['top-right', '↗'], ['bottom-left', '↙'], ['bottom-right', '↘']].map(([value, label]) => button(label, 'anchor', { value }, l.anchor === value ? 'active' : '', `aria-label="Place ${value}"`)).join('')}</div>${input('Overlay scale', 'scale', l.scale, 'range', 'min="0.25" max="2" step="0.05"')}<span class="tiny muted">${Math.round(l.scale * 100)}% requested · always fitted inside frame</span>${input('Gap between cards (px)', 'gap', l.gap, 'number', 'min="0" max="100"')}</section>`;
+  return `<section class="control-section"><h3>DiscComp arrangement <span>VIEW</span></h3><label class="control"><span>Layout</span>${select('arrangement', l.arrangement, [['row', 'Across the screen'], ['stack', 'Down the screen'], ['grid', 'Two-column grid'], ['course', 'At the holes of your course']])}</label>${l.arrangement === 'course' ? `<p class="tiny muted">Anchored on <span class="mono">${esc(courseAnchorHint())}</span> — the holes the Stages read off your capture. ${button('Open Course ↗', 'go-course-build', {}, 'quiet small')}</p>` : ''}<label class="control"><span>Place on screen</span></label><div class="anchor-pad">${[['top-left', '↖'], ['center', '◎'], ['top-right', '↗'], ['bottom-left', '↙'], ['bottom-right', '↘']].map(([value, label]) => button(label, 'anchor', { value }, l.anchor === value ? 'active' : '', `aria-label="Place ${value}"`)).join('')}</div>${input('Overlay scale', 'scale', l.scale, 'range', 'min="0.25" max="2" step="0.05"')}<span class="tiny muted">${Math.round(l.scale * 100)}% requested · always fitted inside frame</span>${input('Gap between cards (px)', 'gap', l.gap, 'number', 'min="0" max="100"')}</section>`;
+}
+/** Which Stage Part the course arrangement is standing the cards on, or what is missing. */
+function courseAnchorHint() {
+  try { return runtime.lab.anchorAddress(); } catch { return 'no course built yet'; }
 }
 function courseInspector() {
   const { disc, mold, maker } = discInfo();
@@ -188,26 +192,39 @@ function courseBuildSidebar() {
     return `<article class="lab-stage-row ${status}" data-lab-stage="${esc(row.key)}" data-status="${esc(status)}">${button(`<span class="lab-stage-name"><b>${esc(row.stage)}</b> ${esc(row.title)}</span><span class="lab-stage-status">${esc(labStatus(row))}</span>`, 'lab-select-stage', { key: row.key }, 'lab-stage-pick')}
     <p class="tiny muted">${esc(row.about)}</p>
     <div class="lab-stage-parts">${row.produced.map(part => button(`${esc(part.address.replace('px.exp.lab.', ''))}${part.count === null ? '' : ` · ${part.count}`}`, 'inspect-part', { value: part.address }, 'part-link mono')).join('') || `<span class="tiny mono muted">${esc(row.composition)}</span>`}</div>
-    ${row.status === 'refused' ? `<p class="tiny lab-refused">${esc(row.reason)}</p>` : ''}${row.ms === null ? '' : `<span class="tiny muted">${row.ms} ms</span>`}</article>`;
+    ${row.status === 'refused' ? `<p class="tiny lab-refused">${esc(row.reason)}</p>` : ''}<div class="lab-stage-foot">${row.ms === null ? '<span></span>' : `<span class="tiny muted">${row.ms} ms</span>`}${row.status === 'produced' && runtime.lab.views().some(view => view.key === row.key && (view.objects.length || view.legs || view.cells)) ? button(ui.labHidden.has(row.key) ? '◌ show' : '◉ hide', 'lab-toggle', { key: row.key }, 'quiet small', `aria-pressed="${!ui.labHidden.has(row.key)}"`) : ''}</div></article>`;
   }).join('')}</div>
   <footer class="sidebar-footer"><p class="tiny muted">Each Stage is one composition — <span class="mono">lab-s0</span> … — run on the studio's own board. Every run leaves a receipt and a run record.</p></footer></aside>`;
 }
-/** Every produced Stage's view, drawn over the raster in raster coordinates. */
-function labOverlaySvg(raster) {
-  const marks = runtime.lab.views().map(view => {
-    const selected = object => ui.labSelected?.key === view.key && ui.labSelected?.id === object.id;
-    if (view.kind === 'path') {
-      const legs = (view.legs || []).map(leg => `<line class="lab-leg ${esc(leg.kind)}" x1="${leg.from[0]}" y1="${leg.from[1]}" x2="${leg.to[0]}" y2="${leg.to[1]}" vector-effect="non-scaling-stroke"><title>${esc(leg.kind)} · hole ${esc(leg.hole)} · ${esc(leg.lengthPx)} px</title></line>`).join('');
-      const points = (view.points || []).map(point => `<circle class="lab-waypoint" cx="${point.at[0]}" cy="${point.at[1]}" r="5"/>`).join('');
-      const holes = view.objects.filter(object => object.at).map(object => `<g class="lab-mark tone-${esc(view.tone)} ${selected(object) ? 'is-selected' : ''}" data-action="lab-select" data-key="${esc(view.key)}" data-id="${esc(object.id)}"><circle cx="${object.at[0]}" cy="${object.at[1]}" r="13" vector-effect="non-scaling-stroke"/><text x="${object.at[0]}" y="${object.at[1] - 18}" text-anchor="middle">${esc(object.label)}</text></g>`).join('');
-      return `<g class="lab-view lab-round">${legs}${points}${holes}</g>`;
-    }
-    if (view.kind !== 'boxes') return '';
-    return `<g class="lab-view">${view.objects.map(object => {
-      const [x, y, width, height] = object.bbox;
-      return `<g class="lab-mark tone-${esc(view.tone)} ${selected(object) ? 'is-selected' : ''}" data-action="lab-select" data-key="${esc(view.key)}" data-id="${esc(object.id)}"><rect x="${x}" y="${y}" width="${width}" height="${height}" rx="2" vector-effect="non-scaling-stroke"/><text x="${x}" y="${y - 5}">${esc(object.label)}</text></g>`;
-    }).join('')}</g>`;
+/**
+ * Every produced Stage's view, drawn over the one raster in raster coordinates.
+ * A view contributes whichever of four things it has -- obstacle cells, legs,
+ * waypoints, and objects placed by a bbox or by a point -- so a Stage that lands
+ * later draws itself by describing its produce (src/lab/stages.js `view`), with
+ * no new drawing code here.
+ */
+function labViewMarks(view) {
+  const selected = object => ui.labSelected?.key === view.key && ui.labSelected?.id === object.id;
+  const size = view.cells?.size ?? 0;
+  const cells = view.cells ? `<path class="lab-cells" d="${view.cells.centres.map(([x, y]) => `M${x - size / 2} ${y - size / 2}h${size}v${size}h-${size}z`).join('')}"><title>${view.cells.centres.length} obstacle cells</title></path>` : '';
+  const legs = (view.legs ?? []).map(leg => `<line class="lab-leg ${esc(leg.kind)}" x1="${leg.from[0]}" y1="${leg.from[1]}" x2="${leg.to[0]}" y2="${leg.to[1]}" vector-effect="non-scaling-stroke"><title>${esc(leg.kind)} · hole ${esc(leg.hole)} · ${esc(leg.lengthPx)} px</title></line>`).join('');
+  const points = (view.points ?? []).map(point => `<circle class="lab-waypoint" cx="${point.at[0]}" cy="${point.at[1]}" r="5"><title>${esc(point.id)}</title></circle>`).join('');
+  const objects = view.objects.map(object => {
+    const shape = object.bbox ? `<rect x="${object.bbox[0]}" y="${object.bbox[1]}" width="${object.bbox[2]}" height="${object.bbox[3]}" rx="2" vector-effect="non-scaling-stroke"/>` : object.at ? `<circle cx="${object.at[0]}" cy="${object.at[1]}" r="13" vector-effect="non-scaling-stroke"/>` : '';
+    if (!shape) return '';
+    // A view whose boxes sit under someone else's label says so, rather than every
+    // Stage writing over the one before it.
+    const label = object.bbox
+      ? `<text x="${object.bbox[0]}" y="${view.labelBelow ? object.bbox[1] + object.bbox[3] + 14 : object.bbox[1] - 5}">${esc(object.label)}</text>`
+      : `<text x="${object.at[0]}" y="${object.at[1] - 18}" text-anchor="middle">${esc(object.label)}</text>`;
+    return `<g class="lab-mark tone-${esc(view.tone)} ${selected(object) ? 'is-selected' : ''}" data-action="lab-select" data-key="${esc(view.key)}" data-id="${esc(object.id)}">${shape}${label}</g>`;
   }).join('');
+  // A Stage whose boxes enclose another Stage's objects is grabbed by its outline,
+  // so the badge inside a hole is still the thing a click on the badge selects.
+  return `<g class="lab-view tone-${esc(view.tone)}" data-lab-view="${esc(view.key)}" ${view.hitOutline ? 'data-hit="outline"' : ''}>${cells}${legs}${points}${objects}</g>`;
+}
+function labOverlaySvg(raster) {
+  const marks = runtime.lab.views().filter(view => !ui.labHidden.has(view.key)).map(labViewMarks).join('');
   return `<svg class="lab-overlay" viewBox="0 0 ${raster.widthPx} ${raster.heightPx}" role="img" aria-label="What each Stage produced, on the canonical raster">${marks}</svg>`;
 }
 function courseBuildCenter() {
@@ -255,7 +272,7 @@ const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => setTi
 async function runLabPipeline() {
   if (!ui.labCapture) throw new Error('Load the sample capture or your own photo first.');
   if (ui.labBusy) return;
-  ui.labBusy = true; ui.labSelected = null; ui.labRun = null;
+  ui.labBusy = true; ui.labSelected = null; ui.labRun = null; ui.labHidden.clear();
   runtime.lab.begin(ui.labCapture);
   try {
     const specs = runtime.lab.specs();
@@ -508,6 +525,7 @@ async function action(name, el) {
     case 'lab-photo': ui.photoTarget = 'lab'; document.querySelector('#photo-file').click(); return;
     case 'lab-run': await runLabPipeline(); break;
     case 'lab-select': ui.labSelected = { key: d.key, id: d.id }; break;
+    case 'lab-toggle': if (ui.labHidden.has(d.key)) ui.labHidden.delete(d.key); else ui.labHidden.add(d.key); break;
     case 'lab-select-stage': ui.labSelected = { key: d.key, id: null }; break;
     case 'lab-open-run': {
       const row = runtime.lab.state().stages.find(stage => stage.key === d.key);

@@ -35,7 +35,9 @@ export function createStudioRuntime(initial) {
   register('fn.disc.art', prepareDiscArt);
   register('fn.card.compose', composeCard);
   register('fn.card.svg', cardSvg);
-  register('fn.comparison.layout', ({ layout, ...cards }) => composeOverlay({ cards, layout }));
+  // `course` is bound only by the course arrangement (sceneComposition below);
+  // every other arrangement composes from the cards and the layout alone, as it always did.
+  register('fn.comparison.layout', ({ layout, course = null, ...cards }) => composeOverlay({ cards, layout, course }));
   register('fn.overlay.svg', materializeOverlay);
   register('fn.constraint.bagLimit', bagLimit);
   register('fn.constraint.oneMold', oneMold);
@@ -164,6 +166,7 @@ export function createStudioRuntime(initial) {
     if (!state) throw new Error('Comparison state is missing.');
     const entries = mode === 'card' ? [{ discId, id: 'single' }] : w.battle.entries;
     const ticks = [], inputs = { layout: 'px.comparison.layout' };
+    if (world().layout.arrangement === 'course') inputs.course = labCourseAddress();
     entries.forEach((entry, i) => {
       const info = mode === 'card' ? null : { ...entry, score: state.scores[entry.id] ?? null, highlighted: state.highlight === entry.id, winner: state.winners.includes(entry.id) };
       const built = cardSteps(entry.discId, presetId || w.layout.presetId, { bagId, competitionId, roundId }, info, `course.${entry.id}`, 'competition');
@@ -343,7 +346,11 @@ export function createStudioRuntime(initial) {
     run(name, composition) { const receipt = execute(name, composition.Ticks); return { run: receipt, receipt }; }
   };
   registerLabCalculations(labBoard);
+  // A Stage that carries its own Calculations registers them as it joins, the
+  // same hook `addStage` calls, so a landed Stage and one still being built
+  // reach the board by exactly one path.
   const labSpecs = labStageSpecs().map(validateStage);
+  for (const spec of labSpecs) spec.register?.(labBoard);
   const LAB_PIPELINE = 'px.exp.lab.pipeline';
   let labCapture = null;
   /** How many things one produce Part holds, for a reader counting them. */
@@ -411,6 +418,18 @@ export function createStudioRuntime(initial) {
     }
     return labRun;
   }
+  /**
+   * The Part the course arrangement stands cards on, in the order a reader would
+   * want it: S4's holes if the Stage has run, else the round's own waypoints,
+   * else S5's course graph. Each is a produce Part of a Stage this board ran --
+   * there is no second place the hole positions live.
+   */
+  const LAB_COURSE_ANCHORS = ['px.exp.lab.holes.objects', `px.exp.lab.route.${LAB_COURSE}`, 'px.exp.lab.course.graph'];
+  function labCourseAddress() {
+    const address = LAB_COURSE_ANCHORS.find(candidate => pxc.has(candidate));
+    if (!address) throw new Error('No course has been built yet. Open Course, give it a capture and run the pipeline; then this arrangement stands your cards at its holes.');
+    return address;
+  }
   /** Which composition, which Tick and which Calculation published this Part: read off the receipts. */
   function labProvenance(address) {
     for (const key of [...addresses].filter(a => a.startsWith('px.receipt.lab-'))) {
@@ -445,12 +464,15 @@ export function createStudioRuntime(initial) {
     cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
     lab: {
       course: LAB_COURSE, address: LAB_PIPELINE,
-      sample: () => fixtureCapture(),
+      // The sample is the LAB fixture at its fullest: three badges (one hole whose
+      // basket is missing, so S4 names what it could not place), and a region of
+      // terrain, so S5's obstacle map is something a reader can see.
+      sample: () => fixtureCapture(20260911, { hole11: true, obstacle: true }),
       specs: () => labSpecs.map(spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', produces: [...spec.produces], needs: [...(spec.needs ?? [])] })),
       begin: labBegin, stage: labStage, pipeline: labPipeline, addStage: labAddStage,
       state: () => pxc.get(LAB_PIPELINE),
       view: labView, views: () => labSpecs.map((spec, index) => labView(index)).filter(Boolean),
-      provenance: labProvenance,
+      provenance: labProvenance, anchorAddress: labCourseAddress,
       capture: () => labCapture,
       raster: () => { const spec = labSpecs[0]; return spec.raster && pxc.has(spec.raster) && labRun.stages[0].status === 'produced' ? pxc.get(spec.raster) : labCapture; }
     },

@@ -25,6 +25,8 @@ import { S0_ADDRESSES, registerS0, s0Document } from './s0.js';
 import { S1_ADDRESSES, registerS1, s1YamlDocument, digitModel, asMaskRaster } from './s1.js';
 import { S2_ADDRESSES, registerS2, s2Document } from './s2.js';
 import { S3_ADDRESSES, registerS3, s3Document } from './s3.js';
+import { S4_ADDRESSES, s4Spec } from './s4.js';
+import { S5_ADDRESSES, s5Spec, cellCenter } from './s5.js';
 import { ROUTE_ADDRESSES, registerRoute, routeDocument } from './route.js';
 import { labAddress, labDocument } from './address.js';
 import { parseYaml } from './yaml.js';
@@ -47,7 +49,7 @@ export function registerLabCalculations(lab) {
 const box = (bbox, extra) => ({ bbox, at: [bbox[0] + bbox[2] / 2, bbox[1] + bbox[3] / 2], ...extra });
 
 /**
- * The five Stages that are landed. Order is load-bearing: S3's family vote only
+ * The Stages that are landed. Order is load-bearing: S3's family vote only
  * sees a clean pair because S1's badge mute already ran (proposal.lab.s3.badgemute),
  * and the round has no anchors until S1, S2 and S3 have published theirs.
  */
@@ -95,7 +97,7 @@ export function labStageSpecs() {
       produces: [S2_ADDRESSES.fields, S2_ADDRESSES.family, S2_ADDRESSES.shellFamily, S2_ADDRESSES.objects],
       ticks: lab => s2Document(lab).Ticks,
       view(lab) {
-        return { kind: 'boxes', tone: 'basket', objects: lab.get(S2_ADDRESSES.objects).map((basket, index) => box(basket.bbox, {
+        return { kind: 'boxes', tone: 'basket', labelBelow: true, objects: lab.get(S2_ADDRESSES.objects).map((basket, index) => box(basket.bbox, {
           id: `basket-${index + 1}`, label: `basket ${index + 1}`, part: S2_ADDRESSES.objects, index,
           detail: { whitePx: basket.whitePx, blackPx: basket.blackPx, px: basket.px.length }
         })) };
@@ -112,6 +114,43 @@ export function labStageSpecs() {
           id: `tee-${index + 1}`, label: `tee ${index + 1}`, part: S3_ADDRESSES.objects, index,
           at: tee.center, detail: { center: tee.center, px: tee.px.length, angleRad: tee.angleRad }
         })) };
+      }
+    },
+    {
+      // S4 and S5 arrive as their own modules' specs (src/lab/s4.js `s4Spec`,
+      // src/lab/s5.js `s5Spec`): the Stage says what it consumes, produces, and
+      // runs, and only what a reader sees of it is added here.
+      ...s4Spec(),
+      view(lab) {
+        const holes = lab.get(S4_ADDRESSES.objects);
+        return { kind: 'boxes', tone: 'hole', labelBelow: true, hitOutline: true, objects: holes.map((hole, index) => {
+          const anchors = [hole.badge.at, hole.tee?.at, hole.basket?.at].filter(Boolean);
+          const xs = anchors.map(at => at[0]), ys = anchors.map(at => at[1]), pad = 14;
+          const bbox = [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + pad * 2, Math.max(...ys) - Math.min(...ys) + pad * 2];
+          return {
+            id: `hole-${hole.number}`, label: hole.complete ? `hole ${hole.number}` : `hole ${hole.number} · missing ${hole.missing.join(' + ')}`,
+            bbox, part: S4_ADDRESSES.objects, index,
+            detail: { number: hole.number, tee: hole.tee?.id ?? null, basket: hole.basket?.id ?? null, confidence: hole.confidence, missing: hole.missing }
+          };
+        }) };
+      }
+    },
+    {
+      ...s5Spec(),
+      view(lab) {
+        const graph = lab.get(S5_ADDRESSES.graph), frame = graph.frame;
+        const at = id => graph.nodes.find(node => node.id === id)?.at ?? null;
+        return {
+          kind: 'cells', tone: 'obstacle',
+          // The obstacle map, as the cells it is: one square per terrain cell, in raster coordinates.
+          cells: { size: frame.cellPx, centres: graph.obstacles.terrainCells.map(cell => cellCenter(frame, cell)) },
+          legs: graph.edges.map(edge => ({ kind: edge.straightIsBlocked ? 'blocked' : edge.kind, hole: edge.hole, from: at(edge.from), to: at(edge.to), lengthPx: edge.straightLengthPx })).filter(edge => edge.from && edge.to),
+          objects: graph.holes.map((hole, index) => ({
+            id: `course-hole-${hole.number}`, label: `${hole.lengthPx} px`, part: S5_ADDRESSES.graph, index,
+            at: [(hole.tee.at[0] + hole.basket.at[0]) / 2, (hole.tee.at[1] + hole.basket.at[1]) / 2],
+            detail: { number: hole.number, lengthPx: hole.lengthPx, bearingDeg: hole.bearingDeg, confidence: hole.confidence }
+          }))
+        };
       }
     },
     {
