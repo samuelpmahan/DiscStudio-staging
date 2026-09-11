@@ -43,6 +43,26 @@ def harness():
     return H
 
 
+#: the keys of a run record that are a stopwatch reading rather than a fact about the run.
+TIMING_KEYS = ("wall_ms", "duration_ms", "latency_ms", "tick_latency_ms")
+
+
+def settle(record):
+    """the same record with every wall-clock reading blanked, so the file is a function of the run.
+
+    a record whose bytes change on every run cannot be committed: two branches that
+    both re-ran the same program conflict on it, and a suite that regenerates it
+    leaves the tree dirty behind every landing. the timings that are a claim live in
+    the benchmark Parts, which say how many runs they are the median of; the timings
+    in a record are one unrepeatable sample and are not worth a merge conflict.
+    """
+    if isinstance(record, dict):
+        return {k: (None if k in TIMING_KEYS else settle(v)) for k, v in record.items()}
+    if isinstance(record, list):
+        return [settle(one) for one in record]
+    return record
+
+
 class Store(H.Store):
     """the harness store, plus the three things this vertical asks of it."""
 
@@ -76,7 +96,7 @@ class Store(H.Store):
         import os
 
         os.makedirs(self.records_dir, exist_ok=True)
-        record = run_record(run, self.pxc, preexisting=preexisting)
+        record = settle(run_record(run, self.pxc, preexisting=preexisting))
         path = os.path.join(self.records_dir, f"{record_name or name}.json")
         write_record(record, path)
         self.records.append(path)
