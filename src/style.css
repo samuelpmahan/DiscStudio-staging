@@ -46,3 +46,59 @@
 .chip-instance{background:#f4ecd6;color:#8a6d2c}
 .cascade-receipt{background:#edf2e5;border-radius:6px;padding:10px 12px;margin:16px 0 4px;line-height:1.6;overflow-wrap:anywhere}
 @media(max-width:560px){.cards-preview-grid{gap:10px}.card-preview-tile{padding:10px}}
+
+/* The Course route (#/course-build): one capture, the LAB Stages, the course.
+   The centre is the canonical raster drawn once into a canvas with every Stage's
+   produce laid over it in raster coordinates; the panes either side are the
+   studio's ordinary sidebar and inspector. */
+.lab-capture{border:1px solid var(--line);border-radius:8px;background:var(--white);padding:12px;margin-bottom:12px}
+.lab-capture p+p{margin-top:6px}
+.lab-sources,.lab-actions{gap:6px;margin-bottom:10px;flex-wrap:nowrap}
+.lab-sources button,.lab-actions button{flex:1;white-space:nowrap}
+.lab-stage-list{display:flex;flex-direction:column;gap:8px}
+.lab-stage-row{border:1px solid var(--line);border-left:3px solid #c8d2bd;border-radius:8px;padding:10px 11px;background:var(--white)}
+.lab-stage-row p{margin:7px 0 8px}
+.lab-stage-row.produced{border-left-color:#7b9b58;background:#f4f8ee}
+.lab-stage-row.refused{border-left-color:var(--danger);background:#f8e9e4}
+.lab-stage-row.running{border-left-color:#c1a455;background:#f6f1de}
+.lab-stage-pick{display:flex;flex-direction:column;align-items:flex-start;gap:5px;width:100%;border:0;background:transparent;padding:0;text-align:left}
+.lab-stage-name{font-size:12px}
+.lab-stage-name b{font-family:'Courier New',monospace;margin-right:7px;color:#4f7940}
+.lab-stage-status{font-size:10px;color:var(--muted);letter-spacing:.3px;overflow-wrap:anywhere}
+.lab-stage-row.produced .lab-stage-status{color:#4b6f35}
+.lab-stage-row.refused .lab-stage-status{color:#994a38}
+.lab-stage-parts{display:flex;flex-wrap:wrap;gap:4px 10px}
+.lab-refused{color:#994a38;overflow-wrap:anywhere}
+.lab-frame{background:#eef1e7;padding-bottom:0}
+.lab-stage-frame{position:relative;margin:0 auto;max-height:min(62vh,760px);max-width:100%;background:#dfe5d8}
+.lab-stage-frame canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}
+.lab-overlay{position:absolute;inset:0;width:100%;height:100%;display:block}
+.lab-empty{padding:54px 26px;text-align:center;color:#84957a}
+.lab-empty h2{font-family:Georgia,serif;font-size:25px;font-weight:400;margin:10px 0}
+.lab-empty p{font-size:12px;max-width:390px;margin:0 auto 14px}
+.lab-empty .button-row{justify-content:center}
+.lab-mark rect,.lab-mark circle{fill:none;stroke-width:1.6}
+.lab-mark text{font:15px 'Courier New',monospace;fill:#f6f4ec;paint-order:stroke;stroke:#1c2c25;stroke-width:3px;stroke-linejoin:round}
+.lab-mark{cursor:pointer}
+.lab-mark rect,.lab-mark circle,.lab-mark text{pointer-events:all}
+.lab-leg,.lab-waypoint{pointer-events:none}
+.lab-mark.is-selected rect,.lab-mark.is-selected circle{stroke-width:3.2}
+.lab-mark.tone-badge rect,.lab-mark.tone-badge circle{stroke:#e8a33d}
+.lab-mark.tone-badge text{fill:#ffdda8}
+.lab-mark.tone-basket rect,.lab-mark.tone-basket circle{stroke:#7fd096}
+.lab-mark.tone-basket text{fill:#c8f0d3}
+.lab-mark.tone-tee rect,.lab-mark.tone-tee circle{stroke:#c79bea}
+.lab-mark.tone-tee text{fill:#e6d2f7}
+.lab-mark.tone-round circle{stroke:#ff8a66}
+.lab-mark.tone-round text{fill:#ffd0c0}
+.lab-mark.tone-hole rect,.lab-mark.tone-hole circle{stroke:#79c7e8}
+.lab-mark.tone-hole text{fill:#cdeaf7}
+.lab-mark.tone-obstacle rect{stroke:#d8c98a}
+.lab-leg{stroke:#ff8a66;stroke-width:2.4}
+.lab-leg.walk{stroke:#ffd8a8;stroke-dasharray:7 6;stroke-width:1.8}
+.lab-waypoint{fill:#ff8a66;fill-opacity:.85}
+.lab-value{font:10px/1.6 'Courier New',monospace;white-space:pre-wrap;overflow:auto;max-height:210px;margin:0;color:#42574c}
+.lab-ticks{display:flex;flex-wrap:wrap;gap:4px 8px;margin:8px 0}
+.lab-ticks span{background:#eaf0df;border-radius:4px;padding:2px 6px;color:#4c6b3a}
+@media(max-width:900px){.lab-stage-frame{max-height:70vh}}
+@media(max-width:560px){.lab-sources,.lab-actions{flex-wrap:wrap}.lab-empty{padding:34px 16px}.lab-empty h2{font-size:20px}}
