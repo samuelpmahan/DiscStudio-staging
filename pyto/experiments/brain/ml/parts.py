@@ -9,6 +9,11 @@ PCR built from a python callable instead of a ticks table.
 
 from __future__ import annotations
 
+import atexit
+import os
+import shutil
+import tempfile
+
 try:  # as experiments.brain.ml.parts
     from .. import harness as H
 except ImportError:  # as ml.parts, under `unittest discover -s experiments/brain`
@@ -64,9 +69,23 @@ def settle(record):
 
 
 class Store(H.Store):
-    """the harness store, plus the three things this vertical asks of it."""
+    """the harness store, plus the three things this vertical asks of it.
 
-    def __init__(self, vertical="ml", pxc=None, **kw):
+    `commit` says whether this store may write the tracked store/ and records/.
+    it is false unless asked, because a run record holds wall-clock durations: a
+    test that writes one rewrites a committed file, MAIN goes dirty, and land.sh
+    refuses the NEXT landing, whoever's it is. only the explicit record run --
+    `python -m experiments.brain.ml.build`, or BRAIN_RECORDS=commit -- commits.
+    reading is unchanged: load_store() always reads the committed store/.
+    """
+
+    def __init__(self, vertical="ml", pxc=None, commit=None, **kw):
+        if commit is None:
+            commit = os.environ.get("BRAIN_RECORDS", "").strip().lower() == "commit"
+        self.commit = bool(commit)
+        if not self.commit and not kw.get("records_dir"):
+            kw["records_dir"] = tempfile.mkdtemp(prefix="brain-ml-records-")
+            atexit.register(shutil.rmtree, kw["records_dir"], True)
         super().__init__(pxc=pxc, **kw)
         self.vertical = vertical
 
@@ -85,6 +104,9 @@ class Store(H.Store):
         return {address: self.pxc.get(address) for address in self.brain_addresses()}
 
     def save(self, vertical=None, path=None):
+        """the store document on disk. a store that may not commit writes beside its records."""
+        if not self.commit and path is None:
+            path = os.path.join(self.records_dir, f"{vertical or self.vertical}.json")
         return super().save(vertical or self.vertical, path)
 
     # --- a PCR from a callable, for programs that are easier to write than to tabulate ---
