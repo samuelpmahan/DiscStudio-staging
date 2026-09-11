@@ -102,3 +102,9 @@
 .lab-ticks span{background:#eaf0df;border-radius:4px;padding:2px 6px;color:#4c6b3a}
 @media(max-width:900px){.lab-stage-frame{max-height:70vh}}
 @media(max-width:560px){.lab-sources,.lab-actions{flex-wrap:wrap}.lab-empty{padding:34px 16px}.lab-empty h2{font-size:20px}}
+.lab-cells{fill:#c9b878;fill-opacity:.42;stroke:none}
+.lab-view.tone-obstacle .lab-leg{stroke:#79c7e8}
+.lab-view.tone-obstacle .lab-leg.blocked{stroke:#e06a4a;stroke-dasharray:5 4}
+.lab-stage-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.lab-stage-foot button{font-size:10px;padding:3px 7px;color:#6d7d70}
+.lab-view[data-hit="outline"] .lab-mark rect{pointer-events:stroke;stroke-width:3}

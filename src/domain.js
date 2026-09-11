@@ -105,7 +105,7 @@ export function validateWorld(world) {
     if (!Array.isArray(s.winners) || s.winners.some(key => !world.battle.entries.some(e => e.id === key))) throw new Error('Winner references a missing participant.');
   }
   const l = world.layout;
-  if (!l || !world.presets[l.presetId] || !['row', 'stack', 'grid'].includes(l.arrangement) || !['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'].includes(l.anchor) || !Number.isFinite(l.scale) || l.scale < .25 || l.scale > 2 || !Number.isFinite(l.gap) || l.gap < 0 || l.gap > 100) throw new Error('Invalid comparison layout.');
+  if (!l || !world.presets[l.presetId] || !['row', 'stack', 'grid', 'course'].includes(l.arrangement) || !['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'].includes(l.anchor) || !Number.isFinite(l.scale) || l.scale < .25 || l.scale > 2 || !Number.isFinite(l.gap) || l.gap < 0 || l.gap > 100) throw new Error('Invalid comparison layout.');
   for (const comp of Object.values(world.objects.Competition ?? {})) {
     if (!['all', 'any'].includes(comp.combine) || !Array.isArray(comp.constraints) || !Array.isArray(comp.teamIds) || !Array.isArray(comp.roundIds)) throw new Error('Invalid competition composition.');
     for (const rule of comp.constraints) if (!['bagLimit', 'oneMold', 'teamThrows'].includes(rule.kind) || !safeKey(rule.id) || typeof rule.enabled !== 'boolean' || !Number.isInteger(rule.value) || rule.value < 1 || rule.value > 100) throw new Error('Constraint values must be whole numbers from 1 to 100.');
