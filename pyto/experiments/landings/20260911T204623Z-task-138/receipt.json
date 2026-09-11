@@ -1,0 +1,76 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T204623Z-task-138",
+  "package": "task-138",
+  "base_sha": "3a5bfb371e2373d1372abec98cf2d88db88d71ac",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test",
+    "exit": 0,
+    "output_sha256": "5f19a9c7762fa9a01c2c70394ecab19f21064a82c555f94de3b5b6b80c908516"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "9a19048e39f8b323e2e98e38bc00b90a984848d187147461a874adb6e830864f",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/138/HANDOFF.md",
+      "bytes": 6167,
+      "sha256": "635b71d8adf23886c732d55b5df039bc09e9586d740148fbf92e961faf6a7f7f"
+    },
+    {
+      "path": "pyto/experiments/tasks/138/evidence/check_all.txt",
+      "bytes": 293452,
+      "sha256": "73271cc20b781e6e9e9edb6e1f47381789f28bc67abb78d4b0f52b360f5b2a30"
+    },
+    {
+      "path": "pyto/experiments/tasks/138/evidence/verify.txt",
+      "bytes": 48630,
+      "sha256": "4350f99bd9049abebc70f2fbf59d1a8866d74421d20e205483796aadb99cd46c"
+    },
+    {
+      "path": "pyto/experiments/tasks/138/packet.md",
+      "bytes": 1994,
+      "sha256": "eaea8f7759dc4e6f8e93e0a6d6526516efe825d4828112bdae6cb0f14d4600f0"
+    },
+    {
+      "path": "src/cards.js",
+      "bytes": 12172,
+      "sha256": "6512e541f2ae81cc0bc4ee5ea8651b7c99b90e302353c8084884b71e1b2f26bb"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T20:48:54.233713Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

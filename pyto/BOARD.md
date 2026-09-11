@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 20:48 **landed** `task-138`: the card cascade's header says which preset each projection composes with, and it now says the true one: single composes with layout.singlePresetId (OnTheCourse's Single Disc mode), competition with layout.presetId (5 files since 3a5bfb3, suites green, receipt 20260911T204623Z-task-138)
 - 2026-09-11 20:43 **landed** `task-134`: finding the RIGHT disc: one fn.shelf.query Calculation over the whole shelf, ranked search across every field including plastic, disc type and the flight numbers ('buzzz 177', 'midrange -1'), the quick filters (in this bag, in no bag, has photo), the sorts (recently added, maker, mold, disc type, speed, weight) and grouping by maker or disc type, with a compact and a card view that both keep every disc's own art (12 files since 5b4c38a, suites green, receipt 20260911T204102Z-task-134)
 - 2026-09-11 20:37 **started** `task-138`: the card cascade's header says which preset each projection composes with, and it now says the true one: single composes with layout.singlePresetId (OnTheCourse's Single Disc mode), competition with layout.presetId (copy EXP/138; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 20:37 **refused** `task-134`: merge conflict with exp/134 in: src/app.js 
