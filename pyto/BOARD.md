@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 16:29 **started** `task-129`: the wedge: the Course route off the demo path, and the tease-then-razzle storyboard as a test that screenshots every beat (copy EXP/129; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 16:29 **killed** `task-128`: nothing landed; exp/128 is kept
 - 2026-09-11 16:27 **started** `task-128`: the demo's sample gets the second pointing tee: two straight holes, so the round the studio draws is play, walk, play (copy EXP/128; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 16:25 **landed** `task-127`: S7 plays the holes S6 resolved: the course graph binds px.holes.straight and reports px.holes.unresolved as unplayed doglegs, a second pointing tee gives the round more than one leg, and the comparison with the straight-leg route is re-run on that binding (32 files since c48e19f, suites green, receipt 20260911T162238Z-task-127)
