@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 14:47 **started** `task-121`: renumber the invented Stages to the owner's S4-S7: the nearest-anchor hole assembly becomes the HolesByNearestAnchor fallback, the course graph and the A* round become S7 Pathfinding, and S4/S5/S6 are freed for recovery, the tee-to-badge ray and the straight holes (copy EXP/121; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 14:44 **landed** `task-119`: S6 Round: a deterministic search over S5's walkable cells from each tee to its basket and on to the next tee, legs that never cross an obstacle cell, unreachable reported rather than straightened, and the difference from the straight-leg route as a Part (14 files since d0f0ca2, suites green, receipt 20260911T144103Z-task-119)
 - 2026-09-11 14:33 **started** `task-120`: your discs on the course the studio just built: S4 and S5 in the pipeline and on the raster, and an arrangement that stands the bag's DisplayCards at the holes (copy EXP/120; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 14:32 **started** `task-119`: S6 Round: a deterministic search over S5's walkable cells from each tee to its basket and on to the next tee, legs that never cross an obstacle cell, unreachable reported rather than straightened, and the difference from the straight-leg route as a Part (copy EXP/119; it lands only on green, with a receipt, or is killed)
