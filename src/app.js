@@ -21,7 +21,8 @@ const ui = {
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
-  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single'
+  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single',
+  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, photoTarget: 'disc'
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -110,7 +111,7 @@ function cascadeResetButton(scope, token) { return button('Reset to inherited', 
 function navigate(route) { location.hash = `/${route}`; }
 function syncRoute() {
   const [path, query] = location.hash.slice(1).split('?'), params = new URLSearchParams(query);
-  ui.route = ['shelf', 'course', 'components', 'competition'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
+  ui.route = ['shelf', 'course', 'course-build', 'components', 'competition'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
   if (params.has('node')) { ui.nodeId = params.get('node'); ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; }
   if (params.has('trace')) ui.traceOpen = true;
   render();
@@ -118,7 +119,7 @@ function syncRoute() {
 window.addEventListener('hashchange', syncRoute);
 const safeThumb = (discId, preset = 'discImage', projection = 'bag') => { try { return runtime.card(discId, preset, context(), null, projection).svg; } catch { return '<span class="missing">Missing disc</span>'; } };
 function header() {
-  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a><a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
+  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a><a href="#/course-build" class="${ui.route === 'course-build' ? 'active' : ''}">Course</a><a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
 }
 function bagSelect(control = 'bag') { return select(control, ui.bagId, all(w(), 'Bag').map(b => [b.id, `${b.name} · ${b.discIds.length}`])); }
 function shelfSidebar() {
@@ -160,6 +161,137 @@ function layoutControls() {
 function courseInspector() {
   const { disc, mold, maker } = discInfo();
   return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE & CUSTOMIZE</span><h2>Make it your own.</h2><section class="export-section">${button(ui.busy ? 'Preparing export…' : 'Save overlay PNG ↓', 'export-png', {}, 'primary wide', ui.busy ? 'disabled' : '')}${button('Save editable SVG ↓', 'export-svg', {}, 'wide quiet')}<p class="tiny muted">Transparent 1920 × 1080. The actual PxC-produced scene. No footage, editor outlines or motion baked in.</p>${ui.latestReceipt ? `<p class="tiny mono">PNG SHA-256<br>${esc(ui.latestReceipt.pngHash.slice(0, 24))}…</p>` : ''}</section><section class="control-section"><label class="control"><span>Shared DisplayCard design</span>${select('course-preset', w().layout.presetId, Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]))}</label>${button('Edit this design ↗', 'go-editor', {}, 'wide secondary')}<p class="tiny muted">Photo, manufacturer, mold, every field. No fixed identity text hiding outside your design.</p></section>${layoutControls()}<section class="control-section"><h3>Selected physical disc <span>DOMAIN</span></h3><div class="selected-summary"><span class="disc-thumb">${disc ? safeThumb(disc.id) : ''}</span><div><strong>${esc(mold?.name || 'None')}</strong><small>${esc(maker?.name)}</small></div></div><p class="tiny muted">${esc(disc?.nickname || '')}</p>${button('Edit facts & exact photo ↗', 'go-shelf', {}, 'wide')}</section><div class="subtle-box"><span class="eyebrow">PLAY BY YOUR RULES</span><p>Compose PutterWarz from reusable constraints.</p>${button('Open competition sandbox ↗', 'go-competition', {}, 'quiet small')}</div></aside>`;
+}
+/* ------------------------------------------------------------------ */
+/* the Course route: a capture, the Stages, the course                  */
+/* ------------------------------------------------------------------ */
+/**
+ * One capture becomes a course by running the LAB Stages, and this route is the
+ * three panes that show it happening: the capture and the Stage list on the
+ * left, the canonical raster drawn once in the centre with each Stage's produce
+ * laid over it as it lands, and on the right the selected object's Part with the
+ * Calculation that published it. Nothing here renders a card or holds state a
+ * Part could hold: the Stage list IS `px.exp.lab.pipeline`, the marks ARE the
+ * produce Parts (runtime.lab.views), and the run below is the same tracePanel
+ * every other route opens.
+ */
+const labStatus = row => row.status === 'refused' ? `refused · ${row.reason}` : row.status === 'produced' ? `produced ${row.produced.length} Part${row.produced.length === 1 ? '' : 's'}` : ui.labRunning === row.key ? 'running…' : 'not run';
+const labStageState = row => ui.labRunning === row.key ? 'running' : row.status;
+function courseBuildSidebar() {
+  const state = runtime.lab.state(), capture = ui.labCapture;
+  return `<aside class="sidebar" data-scroll="lab"><div class="sidebar-heading"><div><span class="eyebrow">THE CAPTURE</span><h2>Course build</h2></div></div>
+  <div class="lab-capture">${capture ? `<p class="tiny mono">${esc(capture.imageId)}</p><p class="tiny muted">${capture.widthPx} × ${capture.heightPx} · ${(capture.rgba.length / 4).toLocaleString('en-US')} pixels${ui.labCaptureName ? ` · ${esc(ui.labCaptureName)}` : ''}</p>` : '<p class="tiny muted">A capture is a photograph of a course map. Start with the LAB fixture, or use your own photo — it is decoded in this browser and never leaves it.</p>'}</div>
+  <div class="button-row lab-sources">${button('Sample capture', 'lab-sample', {}, 'wide secondary small')}${button('↑ Your photo', 'lab-photo', {}, 'wide small')}</div>
+  <div class="button-row lab-actions">${button(ui.labBusy ? 'Building…' : 'Run the pipeline ▸', 'lab-run', {}, 'wide primary small', ui.labBusy || !capture ? 'disabled' : '')}</div>
+  <div class="lab-stage-list">${state.stages.map((row, index) => {
+    const status = labStageState(row);
+    return `<article class="lab-stage-row ${status}" data-lab-stage="${esc(row.key)}" data-status="${esc(status)}">${button(`<span class="lab-stage-name"><b>${esc(row.stage)}</b> ${esc(row.title)}</span><span class="lab-stage-status">${esc(labStatus(row))}</span>`, 'lab-select-stage', { key: row.key }, 'lab-stage-pick')}
+    <p class="tiny muted">${esc(row.about)}</p>
+    <div class="lab-stage-parts">${row.produced.map(part => button(`${esc(part.address.replace('px.exp.lab.', ''))}${part.count === null ? '' : ` · ${part.count}`}`, 'inspect-part', { value: part.address }, 'part-link mono')).join('') || `<span class="tiny mono muted">${esc(row.composition)}</span>`}</div>
+    ${row.status === 'refused' ? `<p class="tiny lab-refused">${esc(row.reason)}</p>` : ''}${row.ms === null ? '' : `<span class="tiny muted">${row.ms} ms</span>`}</article>`;
+  }).join('')}</div>
+  <footer class="sidebar-footer"><p class="tiny muted">Each Stage is one composition — <span class="mono">lab-s0</span> … — run on the studio's own board. Every run leaves a receipt and a run record.</p></footer></aside>`;
+}
+/** Every produced Stage's view, drawn over the raster in raster coordinates. */
+function labOverlaySvg(raster) {
+  const marks = runtime.lab.views().map(view => {
+    const selected = object => ui.labSelected?.key === view.key && ui.labSelected?.id === object.id;
+    if (view.kind === 'path') {
+      const legs = (view.legs || []).map(leg => `<line class="lab-leg ${esc(leg.kind)}" x1="${leg.from[0]}" y1="${leg.from[1]}" x2="${leg.to[0]}" y2="${leg.to[1]}" vector-effect="non-scaling-stroke"><title>${esc(leg.kind)} · hole ${esc(leg.hole)} · ${esc(leg.lengthPx)} px</title></line>`).join('');
+      const points = (view.points || []).map(point => `<circle class="lab-waypoint" cx="${point.at[0]}" cy="${point.at[1]}" r="5"/>`).join('');
+      const holes = view.objects.filter(object => object.at).map(object => `<g class="lab-mark tone-${esc(view.tone)} ${selected(object) ? 'is-selected' : ''}" data-action="lab-select" data-key="${esc(view.key)}" data-id="${esc(object.id)}"><circle cx="${object.at[0]}" cy="${object.at[1]}" r="13" vector-effect="non-scaling-stroke"/><text x="${object.at[0]}" y="${object.at[1] - 18}" text-anchor="middle">${esc(object.label)}</text></g>`).join('');
+      return `<g class="lab-view lab-round">${legs}${points}${holes}</g>`;
+    }
+    if (view.kind !== 'boxes') return '';
+    return `<g class="lab-view">${view.objects.map(object => {
+      const [x, y, width, height] = object.bbox;
+      return `<g class="lab-mark tone-${esc(view.tone)} ${selected(object) ? 'is-selected' : ''}" data-action="lab-select" data-key="${esc(view.key)}" data-id="${esc(object.id)}"><rect x="${x}" y="${y}" width="${width}" height="${height}" rx="2" vector-effect="non-scaling-stroke"/><text x="${x}" y="${y - 5}">${esc(object.label)}</text></g>`;
+    }).join('')}</g>`;
+  }).join('');
+  return `<svg class="lab-overlay" viewBox="0 0 ${raster.widthPx} ${raster.heightPx}" role="img" aria-label="What each Stage produced, on the canonical raster">${marks}</svg>`;
+}
+function courseBuildCenter() {
+  const raster = runtime.lab.raster(), state = runtime.lab.state();
+  const produced = state.stages.filter(row => row.status === 'produced');
+  const frame = raster
+    ? `<div class="preview-frame lab-frame"><div class="preview-meta"><span><i class="status-dot"></i> ${state.stages[0].status === 'produced' ? 'CANONICAL RASTER' : 'CAPTURE'} <small>${raster.widthPx} × ${raster.heightPx}</small></span><span class="mono">${esc(runtime.lab.specs()[0].produces[1])}</span></div><div class="lab-stage-frame" style="aspect-ratio:${raster.widthPx}/${raster.heightPx}"><canvas data-lab-canvas width="${raster.widthPx}" height="${raster.heightPx}" aria-label="The capture, drawn once"></canvas>${labOverlaySvg(raster)}</div><div class="preview-meta bottom"><span>${produced.length} of ${state.stages.length} Stages produced</span><span>${runtime.lab.views().flatMap(view => view.kind === 'raster' ? [] : view.objects).length} objects on the raster</span></div></div>`
+    : `<div class="preview-frame lab-frame"><div class="lab-empty"><span class="empty-disc">◌</span><h2>Give it a capture.</h2><p>The sample is the LAB's own fixture. Your own photo of a course map works too, and stays in this browser.</p><div class="button-row">${button('Sample capture', 'lab-sample', {}, 'secondary')}${button('↑ Your photo', 'lab-photo', {})}</div></div></div>`;
+  const run = ui.labRun;
+  return `<section class="center course-build-center" data-scroll="center"><div class="section-heading compact"><div><span class="eyebrow">ONE CAPTURE. ONE COURSE.</span><h1>Watch the course get built.</h1><p>Each Stage is a composition; each one reads the Parts the one before it published.</p></div>${button(ui.labBusy ? 'Building…' : 'Run the pipeline ▸', 'lab-run', {}, 'primary', ui.labBusy || !ui.labCapture ? 'disabled' : '')}</div>${frame}<div class="pxc-strip"><span class="mono">${esc(run?.composition?.PrincipleComponentRender ? `px.receipt.${run.composition.PrincipleComponentRender}` : runtime.lab.address)}</span><span>${run ? `${run.computed} computed · ${run.reused} reused` : `${state.stages.filter(row => row.status === 'produced').length} produced`}</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${produced.length === state.stages.length ? `<div class="principle-strip"><span>THE COURSE IS THE CAPTURE, READ.</span><p>Take it OnTheCourse with the layout set to <b>the course</b> and your bag's cards stand at the holes.</p>${button('See it OnTheCourse ↗', 'lab-to-course', {}, 'secondary small')}</div>` : ''}${tracePanel(run)}</section>`;
+}
+function courseBuildInspector() {
+  const state = runtime.lab.state(), views = runtime.lab.views();
+  const key = ui.labSelected?.key ?? null;
+  const view = views.find(item => item.key === key) ?? null;
+  const object = view?.objects.find(item => item.id === ui.labSelected?.id) ?? null;
+  const row = state.stages.find(stage => stage.key === key) ?? null;
+  const receipt = row && runtime.pxc.has(`px.receipt.${row.composition}`) ? runtime.pxc.get(`px.receipt.${row.composition}`) : null;
+  const provenance = object ? runtime.lab.provenance(object.part) : null;
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">THE OBJECT & ITS PART</span><span class="live-tag">LIVE · PxC</span></div><h2>${esc(object?.label || row?.title || 'Select an object')}</h2>
+  ${object ? `<p class="binding-path mono">${esc(object.part)}</p><div class="value-box"><span class="eyebrow">VALUE</span><pre class="lab-value">${esc(summaryValue(object.detail))}</pre></div>
+  ${provenance ? `<section class="control-section"><h3>Provenance <span>ON THE RECORD</span></h3><p class="tiny">Stage <b>${esc(row?.stage || '')}</b> · composition <span class="mono">${esc(provenance.composition)}</span></p><p class="tiny">Tick <b>${esc(provenance.tick)}</b> · Calculation <span class="mono">${esc(provenance.call)}</span></p><div class="lab-stage-parts">${provenance.inputs.map(address => button(esc(address.replace('px.exp.lab.', '')), 'inspect-part', { value: address }, 'part-link mono')).join('')}</div></section>` : ''}` : '<p class="muted">Click a badge, a basket, a tee or a hole on the raster. Its Part, its value and the Calculation that published it appear here.</p>'}
+  ${row ? `<section class="control-section"><h3>${esc(row.stage)} receipt <span>${esc(row.status.toUpperCase())}</span></h3><p class="tiny mono">px.receipt.${esc(row.composition)}</p>${receipt ? `<p class="tiny">${receipt.trace.length} invocation${receipt.trace.length === 1 ? '' : 's'} · ${receipt.computed} computed · ${receipt.reused} reused</p><div class="lab-ticks">${receipt.composition.Ticks.map(tick => `<span class="tiny mono">${esc(tick.name)}</span>`).join('')}</div>` : `<p class="tiny muted">${esc(row.status === 'refused' ? row.reason : 'This Stage has not run yet.')}</p>`}<div class="lab-stage-parts">${row.produced.map(part => button(esc(part.address.replace('px.exp.lab.', '')), 'inspect-part', { value: part.address }, 'part-link mono')).join('')}</div>${button('Open this run in Inspect ↗', 'lab-open-run', { key: row.key }, 'wide quiet small', receipt ? '' : 'disabled')}</section>` : ''}
+  <div class="subtle-box"><span class="eyebrow">YOUR DISCS ON THIS COURSE</span><p>When the round exists, the comparison can stand your bag's DisplayCards at its holes.</p>${button('Open OnTheCourse ↗', 'lab-to-course', {}, 'wide secondary small')}</div></aside>`;
+}
+/** The capture as one canvas, painted once per raster: the Parts are pixels, not markup. */
+function paintLabRaster(canvas) {
+  const raster = runtime.lab.raster();
+  if (!raster) return;
+  const key = `${raster.imageId ?? 'raster'}:${raster.widthPx}x${raster.heightPx}`;
+  if (canvas.dataset.painted === key) return;
+  const context = canvas.getContext('2d'), image = context.createImageData(raster.widthPx, raster.heightPx);
+  image.data.set(raster.rgba);
+  context.putImageData(image, 0, 0);
+  canvas.dataset.painted = key;
+}
+/** One animation frame, so the Stage the studio is about to run is painted as running first. */
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+/**
+ * S0 through the last Stage, one at a time, with a paint between: this is what
+ * "watch the course get built" means. A refusal stops the run, stays on
+ * `px.exp.lab.pipeline` and is said in the notice bar; the Stages after it stay
+ * not-run, because each one reads what the one before publishes.
+ */
+async function runLabPipeline() {
+  if (!ui.labCapture) throw new Error('Load the sample capture or your own photo first.');
+  if (ui.labBusy) return;
+  ui.labBusy = true; ui.labSelected = null; ui.labRun = null;
+  runtime.lab.begin(ui.labCapture);
+  try {
+    const specs = runtime.lab.specs();
+    for (let index = 0; index < specs.length; index++) {
+      ui.labRunning = specs[index].key; render(); await nextFrame();
+      try {
+        const result = runtime.lab.stage(index);
+        ui.labRun = result.receipt; ui.lastResult = { part: result.produced[0]?.address ?? runtime.lab.address, run: result.receipt };
+        ui.labSelected = null; ui.labRunning = null;
+        message(`${result.stage} produced ${result.produced.length} Part${result.produced.length === 1 ? '' : 's'} in ${result.ms} ms · px.receipt.${result.composition}`);
+      } catch (error) {
+        ui.labRunning = null;
+        message(`${specs[index].stage} refused: ${error.cause?.message || error.message}`, true);
+        return;
+      }
+      render(); await nextFrame();
+    }
+    const round = runtime.lab.views().find(view => view.kind === 'path');
+    message(round ? `The course is built: ${round.objects.length} hole${round.objects.length === 1 ? '' : 's'} in badge order, every anchor out of a Stage's produce Part.` : 'Every Stage produced.');
+  } finally { ui.labBusy = false; ui.labRunning = null; }
+}
+/**
+ * A photograph becomes a capture the way S0 wants one: RGBA samples, with the
+ * long side held to 1024 so a phone's 12 megapixels do not become 48 million
+ * numbers on the board. Decoding happens in this browser; nothing is uploaded.
+ */
+async function captureFromPhoto(file) {
+  const data = await photoData(file), image = new Image();
+  image.src = data; await image.decode();
+  const scale = Math.min(1, 1024 / Math.max(image.naturalWidth, image.naturalHeight));
+  const widthPx = Math.max(1, Math.round(image.naturalWidth * scale)), heightPx = Math.max(1, Math.round(image.naturalHeight * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = widthPx; canvas.height = heightPx;
+  canvas.getContext('2d').drawImage(image, 0, 0, widthPx, heightPx);
+  const { data: rgba } = canvas.getContext('2d').getImageData(0, 0, widthPx, heightPx);
+  return { imageId: `photo:${await sha256(data)}`.slice(0, 28), widthPx, heightPx, rgba: Array.from(rgba), sourceByteLength: rgba.length };
 }
 function componentTabs() { return `<div class="component-tabs">${[['DiscImage', 'Disc'], ['DisplayCard', 'DisplayCard'], ['DiscComp', 'DiscComp'], ['AllCards', 'All cards'], ['Competition', 'Competition']].map(([value, label]) => button(label, 'component', { value }, (ui.route === 'competition' ? value === 'Competition' : ui.component === value) ? 'active' : '')).join('')}</div>`; }
 function componentSidebar(result) {
@@ -249,7 +381,13 @@ function competitionInspector() {
   const comp = get(w(), 'Competition', ui.competitionId);
   return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPETITION OBJECTS</span><h2>Teams & bags</h2>${input('Competition name', 'competition-name', comp.name)}${comp.teamIds.map(key => { const team = get(w(), 'Team', key); return `<section class="control-section">${input('Team name', 'team-name', team?.name, 'text', `data-id="${esc(key)}"`)}<label class="control"><span>Referenced bag</span>${select('team-bag', team?.bagId, all(w(), 'Bag').map(b => [b.id, b.name]), `data-id="${esc(key)}"`)}</label>${button('Edit this bag ↗', 'team-bag-open', { id: team?.bagId }, 'wide quiet')}</section>`; }).join('')}${button('Use these discs OnTheCourse ↗', 'competition-course', {}, 'wide primary')}<p class="tiny muted">Adds the team bags’ physical discs to your current comparison. It does not infer points or replace authored states.</p><div class="subtle-box"><span class="eyebrow">LOCAL INSTRUMENTATION</span><p>${w().events.length} recorded edits<br>${w().exports.length} actual PNG exports<br>${all(w(), 'Throw').length} recorded throws</p>${button('Export local activity ↓', 'activity-export', {}, 'quiet small')}<p class="tiny muted">Nothing is transmitted. Sample objects are not usage, sales, reach or performance evidence.</p></div></aside>`;
 }
-function summaryValue(value) { return JSON.stringify(value, (key, v) => key === 'signature' ? '[full input signature retained in PxC; omitted here]' : typeof v === 'string' && v.startsWith('data:image/') ? `[embedded photo: ${v.length} characters]` : key === 'svg' && typeof v === 'string' && v.length > 1000 ? `${v.slice(0, 600)}… [${v.length} characters, full value in Part]` : v, 2); }
+/**
+ * A Part is now sometimes a raster: `px.exp.lab.course.canonicalpixels` holds
+ * nearly two million samples, and printing them would be neither readable nor
+ * survivable. A long run of numbers is reported by its length; everything else
+ * is printed exactly as it always was.
+ */
+function summaryValue(value) { return JSON.stringify(value, (key, v) => key === 'signature' ? '[full input signature retained in PxC; omitted here]' : Array.isArray(v) && v.length > 256 && v.every(entry => typeof entry === 'number') ? `[${v.length} numeric samples, full value in Part]` : typeof v === 'string' && v.startsWith('data:image/') ? `[embedded photo: ${v.length} characters]` : key === 'svg' && typeof v === 'string' && v.length > 1000 ? `${v.slice(0, 600)}… [${v.length} characters, full value in Part]` : v, 2); }
 /**
  * The studio's own receipts, read back through PQL: `fn.studio.receipts` binds
  * the prefix query `px.receipt.*` and publishes the rows and their summary as
@@ -284,6 +422,10 @@ function render() {
     } else if (ui.route === 'course') {
       ui.lastResult = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() });
       body = `${shelfSidebar()}${courseCenter(ui.lastResult)}${courseInspector()}`;
+    } else if (ui.route === 'course-build') {
+      // The last Stage's own receipt is the run this route shows; nothing is
+      // re-rendered here, because a Stage is run by a person pressing a button.
+      body = `${courseBuildSidebar()}${courseBuildCenter()}${courseBuildInspector()}`;
     } else if (ui.route === 'components') {
       let result, cascade = null;
       if (ui.component === 'DiscComp') result = { ...runtime.scene({ mode: 'battle', ...context() }), fields: runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single').fields };
@@ -315,6 +457,8 @@ function render() {
     const target = [...app.querySelectorAll('input,select,textarea')].find(e => (focus.search ? e.dataset.search === focus.search : e.dataset.control === focus.control && e.getAttribute('aria-label') === focus.label));
     if (target) { target.focus({ preventScroll: true }); try { if (focus.start != null) target.setSelectionRange(focus.start, focus.end); } catch { /* Number/range controls have no selection. */ } }
   }
+  const labCanvas = app.querySelector('[data-lab-canvas]');
+  if (labCanvas) paintLabRaster(labCanvas);
   const video = document.querySelector('#footage-video');
   if (video) video.addEventListener('loadedmetadata', () => { video.currentTime = Math.min(ui.footageTime, video.duration || 0); if (playing) video.play().catch(() => {}); }, { once: true });
   if (ui.motionEntry && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -359,6 +503,19 @@ async function action(name, el) {
     case 'go-shelf': navigate('shelf'); return;
     case 'go-course': navigate('course'); return;
     case 'go-competition': navigate('competition'); return;
+    case 'go-course-build': navigate('course-build'); return;
+    case 'lab-sample': ui.labCapture = runtime.lab.sample(); ui.labCaptureName = 'LAB fixture'; runtime.lab.begin(ui.labCapture); ui.labRun = null; ui.labSelected = null; message('The LAB fixture is loaded: a deterministic synthetic capture with badges, baskets and tees drawn to the Stages own knobs.'); break;
+    case 'lab-photo': ui.photoTarget = 'lab'; document.querySelector('#photo-file').click(); return;
+    case 'lab-run': await runLabPipeline(); break;
+    case 'lab-select': ui.labSelected = { key: d.key, id: d.id }; break;
+    case 'lab-select-stage': ui.labSelected = { key: d.key, id: null }; break;
+    case 'lab-open-run': {
+      const row = runtime.lab.state().stages.find(stage => stage.key === d.key);
+      ui.lastResult = { part: row.produced[0]?.address ?? runtime.lab.address, run: runtime.pxc.get(`px.receipt.${row.composition}`) };
+      ui.labRun = ui.lastResult.run; ui.traceOpen = true; ui.inspectAddress = '';
+      break;
+    }
+    case 'lab-to-course': navigate('course'); return;
     case 'go-editor': ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; navigate('components'); return;
     case 'cascade-reset': cascadeSet(d.layer, d.token, null, { projection: d.projection || undefined, discId: d.disc || undefined, presetId: d.preset || undefined }); break;
     case 'dismiss': ui.message = ''; break;
@@ -374,7 +531,7 @@ async function action(name, el) {
     case 'bag-add': { const name = prompt('Name this bag', 'New bag'); if (name?.trim()) { const key = id('bag'); execute({ type: 'entity.add', record: { id: key, type: 'Bag', name: name.trim(), discIds: [], notes: '' } }); ui.bagId = key; } break; }
     case 'bag-rename': { const name = prompt('Bag name', get(w(), 'Bag', ui.bagId)?.name || ''); if (name?.trim()) execute({ type: 'entity.set', entityType: 'Bag', id: ui.bagId, path: 'name', value: name.trim() }); break; }
     case 'bag-remove': if (confirm('Delete this bag? Physical discs remain on your shelf.')) execute({ type: 'bag.remove', id: ui.bagId }); break;
-    case 'photo': ui.photoDiscId = d.id || ui.discId; document.querySelector('#photo-file').click(); return;
+    case 'photo': ui.photoTarget = 'disc'; ui.photoDiscId = d.id || ui.discId; document.querySelector('#photo-file').click(); return;
     case 'photo-remove': execute({ type: 'entity.set', entityType: 'Disc', id: ui.discId, path: 'photo', value: null }); break;
     case 'mode': ui.mode = d.value; break;
     case 'lineup-add': addLineup(d.id); break;
@@ -551,7 +708,14 @@ window.addEventListener('keydown', event => {
 for (const name of ['photo', 'footage', 'draft', 'preset']) document.querySelector(`#${name}-file`).addEventListener('change', async event => {
   const file = event.target.files?.[0]; if (!file) return;
   try {
-    if (name === 'photo') { const targetDisc = ui.photoDiscId || ui.discId, data = await photoData(file); execute({ type: 'entity.set', entityType: 'Disc', id: targetDisc, path: 'photo', value: data }); message('Exact photo saved locally. Every bound presentation now uses it.'); }
+    if (name === 'photo' && ui.photoTarget === 'lab') {
+      // The same file input, the same local-only decode: a photograph of a course
+      // map is a capture for S0 instead of a disc's exact photo.
+      ui.labCapture = await captureFromPhoto(file); ui.labCaptureName = file.name; ui.labRun = null; ui.labSelected = null;
+      runtime.lab.begin(ui.labCapture); ui.photoTarget = 'disc';
+      message(`Your photo is decoded in this browser as a ${ui.labCapture.widthPx} × ${ui.labCapture.heightPx} capture. Run the pipeline to read a course off it.`);
+    }
+    else if (name === 'photo') { const targetDisc = ui.photoDiscId || ui.discId, data = await photoData(file); execute({ type: 'entity.set', entityType: 'Disc', id: targetDisc, path: 'photo', value: data }); message('Exact photo saved locally. Every bound presentation now uses it.'); }
     if (name === 'footage') {
       if (!/^(image\/(png|jpeg|webp)|video\/(mp4|webm|quicktime))$/.test(file.type)) throw new Error('Choose a PNG/JPEG/WebP still or MP4/WebM/MOV video.');
       if (ui.footage) URL.revokeObjectURL(ui.footage); ui.footage = URL.createObjectURL(file); ui.footageKind = file.type.startsWith('video') ? 'video' : 'image'; ui.footageName = file.name; ui.footageTime = 0; message('Footage is preview context only. It is not uploaded, saved in your draft, or included in your overlay export.');
@@ -566,5 +730,5 @@ review.setAttribute('data-checklist', JSON.stringify(reviewItems));
 review.setAttribute('checkpoint-id', 'discstudio-pxc-02'); review.setAttribute('subject-commit', 'local-development');
 fetch(new URL('../build-info.json', import.meta.url)).then(r => r.ok ? r.json() : null).then(info => { if (info) { ui.build = info; review.setAttribute('submission-id', `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`); review.setAttribute('checkpoint-id', info.fingerprint); review.setAttribute('subject-commit', info.commit); render(); } }).catch(() => {});
 // Explicit developer inspection/command surface. UI and programmatic commands use the same registered Calculations.
-window.discStudio = { runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode }; }, cards: () => ui.lastCascade };
+window.discStudio = { lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode }; }, cards: () => ui.lastCascade };
 syncRoute();

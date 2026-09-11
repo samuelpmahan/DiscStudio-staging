@@ -347,7 +347,7 @@ export function createStudioRuntime(initial) {
   const LAB_PIPELINE = 'px.exp.lab.pipeline';
   let labCapture = null;
   /** How many things one produce Part holds, for a reader counting them. */
-  const partCount = value => Array.isArray(value) ? value.length : value && typeof value === 'object' ? Object.keys(value).length : null;
+  const partCount = value => Array.isArray(value) ? value.length : null;
   const labRow = spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', status: 'not-run', produced: [], reason: null, ms: null });
   function freshLabRun(capture) {
     return {

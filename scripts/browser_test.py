@@ -220,16 +220,69 @@ with sync_playwright() as p:
     assert page.evaluate('discStudio.runtime.pxc.get("px.studio.receipts.summary").receipts')==len(names)
     page.locator('[data-action="toggle-trace"]').first.click()
     record('Inspect lists the studio own receipts through the px.receipt.* PQL query, one row per receipt with its consumes, produces and result digest; an Undo taken in the browser restores the exact previous value and is itself a listed receipt')
+    # The Course route (#/course-build): one capture through the LAB Stages, one
+    # composition per Stage on the studio's own board. What is asserted is what
+    # the record says -- px.exp.lab.pipeline, the produce Parts, the receipts --
+    # and then that the raster carries a mark for every object the Stages found.
+    route(page,'course-build')
+    stages=page.evaluate('discStudio.lab().state.stages')
+    assert len(stages)>=5,stages
+    assert all(s['status']=='not-run' for s in stages),stages
+    assert page.locator('[data-lab-stage]').count()==len(stages)
+    page.locator('[data-action="lab-sample"]').first.click()
+    page.wait_for_function('!!document.querySelector("[data-lab-canvas]")?.dataset.painted')
+    page.locator('[data-action="lab-run"]').first.click()
+    page.wait_for_function('!discStudio.lab().state.stages.some(s=>s.status==="not-run")',timeout=120000)
+    state=page.evaluate('discStudio.lab().state')
+    assert all(s['status']=='produced' for s in state['stages']),[(s['stage'],s['status'],s['reason']) for s in state['stages']]
+    assert [s['composition'] for s in state['stages']][:5]==['lab-s0','lab-s1','lab-s2','lab-s3','lab-route']
+    for stage in state['stages']:
+        assert stage['produced'],stage
+        for part in stage['produced']:
+            assert page.evaluate('a=>discStudio.runtime.pxc.has(a)',part['address']),part
+    assert page.locator('[data-lab-stage][data-status="produced"]').count()==len(state['stages'])
+    # every Stage's produce is on the one raster: badges read, baskets, tees, the round's holes
+    views=page.evaluate('discStudio.lab().views.map(v=>({key:v.key,kind:v.kind,tone:v.tone,n:v.objects.length,labels:v.objects.map(o=>o.label)}))')
+    by_key={v['key']:v for v in views}
+    assert set(by_key)>= {'s0','s1','s2','s3','route'},list(by_key)
+    assert by_key['s1']['labels']==['hole 10','hole 1'],by_key['s1']
+    assert by_key['route']['labels']==['hole 1','hole 10'],by_key['route']  # the order is the badge reading, not the position
+    for key in ['s1','s2','s3']:
+        assert page.locator('.lab-mark.tone-%s'%by_key[key]['tone']).count()==by_key[key]['n'],key
+    assert page.locator('.lab-leg').count()==len(page.evaluate('discStudio.lab().views.find(v=>v.kind==="path").legs'))
+    assert page.locator('.lab-overlay').get_attribute('viewBox')=='0 0 %d %d'%tuple(page.evaluate('[discStudio.runtime.lab.raster().widthPx,discStudio.runtime.lab.raster().heightPx]'))
+    record('The Course route runs one capture through every landed Stage as lab-s0 … lab-route, each producing its Parts, and draws every produced object on the one canonical raster')
+    # The selected object's Part, with the Calculation that published it, read off the receipts.
+    page.locator('.lab-mark.tone-badge').first.click()
+    assert page.locator('.inspector h2').inner_text().startswith('hole')
+    assert page.locator('.inspector .binding-path').inner_text()=='px.exp.lab.badges.objects'
+    provenance=page.evaluate('discStudio.runtime.lab.provenance("px.exp.lab.badges.objects")')
+    assert provenance['composition']=='lab-s1' and provenance['call']=='fn.lab.s1.badges.declareownership',provenance
+    assert provenance['tick'] in page.locator('.inspector').inner_text()
+    # and the same Inspect panel every other route opens, now listing the Stage receipts
+    page.locator('[data-action="toggle-trace"]').first.click()
+    listed=page.evaluate('discStudio.runtime.pxc.get("px.studio.receipts").map(r=>r.name)')
+    for name in ['lab-s0','lab-s1','lab-s2','lab-s3','lab-route']:
+        assert name in listed,listed
+        assert page.locator('.receipts-row[data-receipt="%s"]'%name).count()==1,name
+    record('The inspector names the Part a selected object came from and the composition, Tick and Calculation that published it; Inspect lists every Stage receipt beside the studio\'s own')
+    with page.expect_download() as d: page.locator('[data-action="record-export"]').click()
+    d.value.save_as(str(out/'lab-run-record.json'));lab_record=json.loads((out/'lab-run-record.json').read_text())
+    assert lab_record['schema']=='pyto-run-record@1' and lab_record['pcr'].startswith('lab-'),lab_record['pcr']
+    assert [t['name'] for t in lab_record['ticks']]==page.evaluate('discStudio.runtime.pxc.get("px.pql.%s").Ticks.map(t=>t.name)'%lab_record['pcr'])
+    page.locator('[data-action="toggle-trace"]').first.click()
+    page.screenshot(path=str(out/'course-build.png'))
+    record('A Stage run exports a validated pyto-run-record@1 the Tick viewer draws, Tick for Tick with its PQL document')
     # Reset screenshot state without erasing the verified export/review artifacts.
     page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:"state-1"})')
-    for name in ['shelf','course','components','competition']:
+    for name in ['shelf','course','course-build','components','competition']:
         route(page,name);page.screenshot(path=str(out/(name+'.png')))
         assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),name
     page.set_viewport_size({'width':390,'height':844})
-    for name in ['shelf','course','components','competition']:
+    for name in ['shelf','course','course-build','components','competition']:
         route(page,name);assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),name+' mobile overflow'
     page.screenshot(path=str(out/'mobile.png'))
-    record('Four routes render at desktop and mobile widths without horizontal page overflow')
+    record('Five routes render at desktop and mobile widths without horizontal page overflow')
     page.set_viewport_size({'width':1536,'height':960})
     # Card cascade editor (task 79: the preset IS the projection layer, folded into
     # the Component Editor's "All cards" tab plus the DisplayCard inspector's "The
