@@ -137,7 +137,7 @@ def synthetic_blobs(args):
     spread = float(args.get("spread", 0.6))
     separation = float(args.get("separation", 6.0))
     rng = core.stream(seed)
-    centres = [[rng.normal(0.0, separation) for _ in range(d)] for _ in range(k)]
+    centres = _separated_centres(rng, k, d, separation, float(args.get("min_gap", 6.0)) * spread)
     rows = []
     for i in range(n):
         which = i % k
@@ -150,6 +150,28 @@ def synthetic_blobs(args):
     out["truth"] = {"centres": centres, "k": k, "spread": spread}
     out["seed"] = int(seed)
     return out
+
+
+def _separated_centres(rng, k, d, separation, min_gap, tries=200):
+    """centres no closer than min_gap, drawn from the same seeded stream.
+
+    drawing k centres from one normal and hoping is how a clustering fixture ends up
+    testing the fixture: two centres land half a standard deviation apart and the
+    clustering is blamed. this redraws until they are apart, and says so if it cannot.
+    """
+    best, best_gap = None, -1.0
+    for _ in range(tries):
+        centres = [[rng.normal(0.0, separation) for _ in range(d)] for _ in range(k)]
+        gap = min(
+            (core.euclidean(centres[i], centres[j]) for i in range(k) for j in range(i + 1, k)),
+            default=float("inf"),
+        )
+        if gap > best_gap:
+            best, best_gap = centres, gap
+        if gap >= min_gap:
+            return centres
+    scale = (min_gap / best_gap) if best_gap > 0 else 1.0
+    return [[v * scale for v in centre] for centre in best]
 
 
 def synthetic_classification(args):
