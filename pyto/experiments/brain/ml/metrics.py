@@ -198,7 +198,7 @@ def silhouette(args):
     labels = args["labels"]
     labels = labels["labels"] if isinstance(labels, dict) else labels
     rows = core.as_rows(data)
-    backend = distance.backend_of(args)
+    backend = distance.backend_of(args, calc="silhouette")
     n = len(rows)
     groups = {}
     for i, label in enumerate(labels):

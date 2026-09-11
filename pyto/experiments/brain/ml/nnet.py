@@ -31,7 +31,7 @@ def lasso_fit(args):
     on raw columns penalises whichever column happens to be measured in small units.
     """
     data, target = args["data"], args["target"]
-    backend = core.backend_of(args)
+    backend = core.backend_of(args, calc="lasso_fit")
     alpha = float(args.get("alpha", 0.1))
     max_iter = int(args.get("max_iter", 1000))
     tol = float(args.get("tol", 1e-10))

@@ -20,6 +20,25 @@ VERTICAL = "backend"
 ADDRESS = "px.exp.brain.bench.kerchoo"
 
 
+def store_of():
+    """the committed store, loaded once: where a case's dataset Part comes from."""
+    global _STORE
+    if _STORE is None:
+        _STORE = harness.Store()
+        _STORE.load_store()
+    return _STORE
+
+
+def core_choice(calc: str) -> str:
+    """the engine the ml facade will now take for this calc with no engine named."""
+    import ml.core as ml_core
+
+    return ml_core.chosen(calc, ml_core.BACKENDS)
+
+
+_STORE = None
+
+
 def _time(fn, n=5) -> float:
     samples = []
     for _ in range(n):
@@ -62,6 +81,23 @@ def targets():
         calc = timeseries_cases.CALCS[case["calc"]]
         out.append(("px.exp.brain.bench.data.expanding.np.n=4000", "data.expanding np n=4000",
                     (lambda calc=calc, make=case["make_args"]: calc(make())), "np"))
+
+    # the ml vertical's two slowest calculations, run the way a caller runs them:
+    # no engine named, so the facade takes the one the plan chose.
+    import ml.calcs as ml_calcs
+
+    classification = {"seed": 31, "n": 600, "d": 8, "k": 2, "spread": 2.0}
+    knn_data = ml_calcs.call("synthetic_classification", classification)
+    knn_model = ml_calcs.call("knn_fit", {"data": knn_data, "target": "label", "k": 7})
+    out.append(("px.exp.brain.bench.ml.knn_predict.py.n600_d8_k7", "ml.knn_predict (was py) n600_d8_k7",
+                (lambda: ml_calcs.call("knn_predict", {"model": knn_model, "data": knn_data})),
+                core_choice("knn_predict")))
+
+    softmax_data = store_of().get("px.exp.brain.data.ml.classification")
+    out.append(("px.exp.brain.bench.ml.softmax_fit.py.n300_d4_k3_400epochs",
+                "ml.softmax_fit (was py) n300_d4_k3_400epochs",
+                (lambda: ml_calcs.call("softmax_fit", {"data": softmax_data, "target": "label", "epochs": 400})),
+                core_choice("softmax_fit")))
 
     for op, size in (("svd", 128), ("pinv", 96), ("matrix_rank", 96)):
         args = backend_cases.bench_inputs(op, size)
@@ -119,6 +155,21 @@ def main() -> int:
                    "other three verticals still need an engine named by hand",
         proposal="one shared dispatcher in harness.py - choose(op, args, plan) - that every vertical's facade calls, so "
                  "'which engine' is answered in one place from the benchmark Parts for all of them",
+    )
+    harness.finding(
+        store, VERTICAL, "a_plan_may_only_name_an_engine_the_facade_has", "friction",
+        "the plan is built from every benchmark Part, and some of those were written by tournaments whose branches are "
+        "not engines their facade can be asked for: ml.logreg_fit's fastest recorded name is 'newton-np' (207x its "
+        "slowest branch) and ml.pairwise's is 'gram', neither of which is in the engine list the facade validates. The "
+        "chooser ignores a name the caller's facade cannot run rather than obeying it, so those calcs stay on py and "
+        "the two fastest things measured tonight are not reachable by default. ml.tree_fit and ml.kmeans are the same "
+        "shape. Nothing here is wrong; it is unreachable.",
+        for_="the benchmark Parts already know the answer for four more calculations, and the default cannot use it",
+        workaround="the facade validates the plan's answer against its own engine list and falls back to py; a caller "
+                   "can still name newton-np or gram by hand",
+        proposal="a tournament branch that wins should be promoted into its facade's engine list under its own name, "
+                 "or the bracket Part should say which engine name a winning branch becomes - so 'the fastest thing we "
+                 "measured' and 'the thing a caller can ask for' are the same set",
     )
     store.save(VERTICAL)
     print(f"{ADDRESS}: {len(part['rows'])} calcs")

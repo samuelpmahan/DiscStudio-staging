@@ -22,8 +22,58 @@ def numpy():
     return np
 
 
-def backend_of(args, default="py"):
-    backend = (args or {}).get("backend", default)
+_PLAN = None
+_PLAN_READ = False
+
+
+def plan():
+    """the committed plan Part, read once as module data and never inside a call.
+
+    it is the same Part `fn.brain.backend.<op>` defaults to, written by
+    `experiments.brain.backend.choose` out of the benchmark Parts every vertical
+    already had. Reading it here keeps a Calculation a pure function of its inputs
+    plus a constant table; nothing is read per call.
+    """
+    global _PLAN, _PLAN_READ
+    if not _PLAN_READ:
+        _PLAN_READ = True
+        try:
+            import json
+            import os
+
+            brain = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            with open(os.path.join(brain, "store", "backend.json"), encoding="utf-8") as handle:
+                _PLAN = json.load(handle).get("px.exp.brain.result.backend.plan")
+        except Exception:  # no store, no plan: py is the reference and is always there
+            _PLAN = None
+    return _PLAN
+
+
+def chosen(calc, engines, default="py"):
+    """the engine the plan names for this calc, or `default`.
+
+    this is what makes "which engine" a thing the benchmark Parts answer instead
+    of a thing each calculation hard-codes. py stays the reference and stays
+    selectable by name; a calc the plan says nothing about stays on py.
+    """
+    if calc is None:
+        return default
+    try:
+        from experiments.brain.backend import choose
+    except Exception:
+        return default
+    return choose.engine_for_calc(plan(), "ml", calc, engines) or default
+
+
+def backend_of(args, default="py", calc=None):
+    """the engine for this invocation: the one named, else the one the plan chose.
+
+    `calc` is the benchmark Parts' name for this calculation. Passing it is what
+    opts a calculation into the plan; leaving it out keeps the old default, which
+    is why `backend_of({})` is still "py".
+    """
+    named = (args or {}).get("backend")
+    backend = named if named is not None else chosen(calc, BACKENDS, default)
     if backend not in BACKENDS:
         raise ValueError(f"unknown backend {backend!r}: the ml vertical has {BACKENDS}")
     return backend
