@@ -165,3 +165,29 @@
 .disc-list.as-cards .row-add{position:absolute;right:5px;top:5px;background:#ffffffc0;border-radius:50%;width:24px;height:24px;padding:0;font-size:15px;line-height:1}
 .empty-note{font-size:11px;color:var(--muted);line-height:1.6;padding:14px 4px}
 @media(max-width:560px){.sidebar .disc-list.as-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.shelf-order{flex-wrap:wrap}.shelf-order select{flex:1 1 45%}}
+
+/* Bags: simple, intuitive, and never the thing that says no (task 139). The bag
+   is named in place, ordered by its grip or its arrows, and an empty one invites. */
+.bag-title{font-family:Georgia,serif;font-size:25px;font-weight:600;border:1px solid transparent;background:transparent;padding:4px 8px;border-radius:7px;flex:1;min-width:0}
+.bag-title:hover{border-color:var(--line);background:var(--white)}
+.bag-title:focus{border-color:#96ae7a;background:var(--white)}
+.bag-description{align-items:center}
+.bag-card-order{display:flex;align-items:center;gap:2px;padding:0 9px 11px;color:#7c8c70}
+.bag-grip{cursor:grab;font-size:14px;color:#a3b096;padding:2px 5px;touch-action:none;user-select:none}
+.bag-card-order .step{border:0;background:transparent;padding:3px 5px;font-size:11px}
+.bag-card-order .step[disabled]{opacity:.3}
+.bag-card.is-dragging{opacity:.45}
+.bag-card.is-drop-target{border-color:#96ae7a;box-shadow:0 0 0 2px #b7ca9c88}
+.also-in{display:flex;flex-wrap:wrap;gap:4px;align-items:center;padding:0 12px 8px}
+.bag-tag{font-size:9px;padding:2px 6px;border-radius:20px;background:#eef1e7;border:1px solid #dde3d3;color:#63755b;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.bag-tag.here{background:#dfead5;border-color:#9db884;color:#3f6030}
+.row-bags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.invite-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:22px;text-align:left}
+.invite-disc{display:flex;align-items:center;gap:9px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--white);min-width:0}
+.invite-art{width:36px;height:36px;flex:0 0 36px}
+.invite-art svg{display:block;width:100%;height:100%}
+.invite-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;text-align:left}
+.invite-copy strong{font-size:12px}
+.invite-copy small{font-size:9px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.invite-plus{font-size:16px;color:#8ca573}
+@media(max-width:560px){.invite-row{grid-template-columns:1fr 1fr}.bag-title{font-size:20px}.bag-card-order{padding:0 6px 9px}}

@@ -1,0 +1,115 @@
+{
+  "for": "the demo as a storyboard that runs: tease first, razzle after",
+  "acts": [
+    "tease",
+    "razzle"
+  ],
+  "beats": [
+    {
+      "beat": "tease-01-your-shelf",
+      "act": "tease",
+      "title": "Your discs, in the bag you actually throw",
+      "assertion": "bag cards on screen == discs in the bag",
+      "value": 6,
+      "screenshot": "tease-01-your-shelf.png"
+    },
+    {
+      "beat": "tease-01b-the-right-disc",
+      "act": "tease",
+      "title": "Say it the way you would say it out loud; the right disc comes first",
+      "assertion": "first result for \"buzzz 177\", and what it matched on",
+      "value": "buzzz-mint \u2014 Buzzz \u00b7 177 g",
+      "screenshot": "tease-01b-the-right-disc.png"
+    },
+    {
+      "beat": "tease-01c-one-disc-many-bags",
+      "act": "tease",
+      "title": "One tap, and the same disc is in two bags \u2014 not copied, not moved",
+      "assertion": "the bags this disc is in",
+      "value": "Everyday bag \u00b7 Luna squad",
+      "screenshot": "tease-01c-one-disc-many-bags.png"
+    },
+    {
+      "beat": "tease-02-your-photo",
+      "act": "tease",
+      "title": "Your own photo replaces the sample art in every projection at once",
+      "assertion": "projections showing the uploaded photo",
+      "value": "4 of 4",
+      "screenshot": "tease-02-your-photo.png"
+    },
+    {
+      "beat": "tease-03-on-the-course",
+      "act": "tease",
+      "title": "The bag, on the screen, over your own footage",
+      "assertion": "cards in the overlay, one carrying your photo",
+      "value": 7,
+      "screenshot": "tease-03-on-the-course.png"
+    },
+    {
+      "beat": "tease-03b-vertical",
+      "act": "tease",
+      "title": "The same comparison, on the canvas a phone wants, framed and titled",
+      "assertion": "preview canvas",
+      "value": "1080 x 1920",
+      "screenshot": "tease-03b-vertical.png"
+    },
+    {
+      "beat": "tease-04-the-score-moves",
+      "act": "tease",
+      "title": "Change the score; the card that owns it moves",
+      "assertion": "entry-1 score",
+      "value": 1,
+      "screenshot": "tease-04-the-score-moves.png"
+    },
+    {
+      "beat": "tease-05-one-token-every-card",
+      "act": "tease",
+      "title": "One design token; all four cards recompose in front of you",
+      "assertion": "projections marked recomposed",
+      "value": "4 of 4",
+      "screenshot": "tease-05-one-token-every-card.png"
+    },
+    {
+      "beat": "razzle-01-the-receipt",
+      "act": "razzle",
+      "title": "That edit had a receipt: which cards recomposed, and what ran",
+      "assertion": "cascade receipt line",
+      "value": "global.radius -> 40 recomposed: shelf, bag, single, competition",
+      "screenshot": "razzle-01-the-receipt.png"
+    },
+    {
+      "beat": "razzle-02-undo-on-the-record",
+      "act": "razzle",
+      "title": "Undo restores the exact previous value, and is itself on the record",
+      "assertion": "global radius after undo, restored from px.undo.studio",
+      "value": 16,
+      "screenshot": "razzle-02-undo-on-the-record.png"
+    },
+    {
+      "beat": "razzle-03-the-tick-page",
+      "act": "razzle",
+      "title": "The run, drawn Tick by Tick, in a page that opens with no server",
+      "assertion": "Ticks drawn == Ticks in the record",
+      "value": 22,
+      "screenshot": "razzle-03-the-tick-page.png"
+    },
+    {
+      "beat": "razzle-04-receipts-as-a-query",
+      "act": "razzle",
+      "title": "Every receipt, listed by the query px.receipt.* -- including the undo",
+      "assertion": "receipts listed by the query",
+      "value": 11,
+      "screenshot": "razzle-04-receipts-as-a-query.png"
+    },
+    {
+      "beat": "razzle-05-the-brain-on-the-shelf",
+      "act": "razzle",
+      "title": "The same record shape over the shelf's own numbers: describe, correlate, cluster, regress",
+      "assertion": "Ticks of brain_shelf (python -m experiments.brain.shelf), drawn by the studio viewer",
+      "value": "4 Ticks, 5 invocations",
+      "screenshot": "razzle-05-the-brain-on-the-shelf.png"
+    }
+  ],
+  "count": 13,
+  "errors": []
+}

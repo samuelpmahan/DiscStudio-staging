@@ -223,6 +223,16 @@ export function applyCommand({ world: previous, command }) {
       delete w.objects.Disc[c.id]; break;
     }
     case 'bag.membership': { const b = required('Bag', c.bagId); required('Disc', c.discId); b.discIds = c.include ? [...new Set([...b.discIds, c.discId])] : b.discIds.filter(x => x !== c.discId); break; }
+    case 'bag.reorder': {
+      // A bag is an order as well as a set: the order a person packed it in, which is
+      // the order the cards stand in. Nothing about size is checked here; a cap is a
+      // competition's constraint (src/constraints.js), never the bag's own business.
+      const b = required('Bag', c.bagId), from = b.discIds.indexOf(c.discId);
+      if (from < 0) throw new Error('That disc is not in this bag.');
+      const to = Math.max(0, Math.min(b.discIds.length - 1, Math.trunc(c.toIndex)));
+      const next = [...b.discIds]; next.splice(from, 1); next.splice(to, 0, c.discId); b.discIds = next; break;
+    }
+    case 'bag.duplicate': { const b = required('Bag', c.id); if (!safeKey(c.newId) || get(w, 'Bag', c.newId)) throw new Error('Invalid new bag.'); w.objects.Bag[c.newId] = { ...clone(b), id: c.newId, name: String(c.name ?? '').trim() || `${b.name} · copy` }; break; }
     case 'bag.remove': { if (all(w, 'Team').some(t => t.bagId === c.id)) throw new Error('This bag belongs to a competition team. Reassign the team first.'); delete w.objects.Bag[c.id]; break; }
     case 'battle.add': {
       required('Disc', c.discId); if (w.battle.entries.some(e => e.discId === c.discId)) throw new Error('That physical disc is already in the comparison.');
