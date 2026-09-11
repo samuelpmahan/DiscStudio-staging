@@ -1,0 +1,46 @@
+flowchart TD
+    holes["px.holes.objects"]
+    unplacedHoles["px.holes.unplaced"]
+    canonical["px.course.canonicalPixels"]
+    remaining["px.remaining.afterBadges"]
+    components["px.components"]
+    baskets["px.baskets"]
+    tees["px.tees"]
+
+    subgraph S5["PCR: S5"]
+        subgraph HoleGeometry["Tick: Course.holeGeometry"]
+            holeGeometry["fn.Course.holeGeometry"]
+        end
+        subgraph ObstacleMap["Tick: Course.obstacleMap"]
+            obstacleMap["fn.Course.obstacleMap"]
+        end
+        subgraph Walkable["Tick: Course.walkable"]
+            walkable["fn.Course.walkable"]
+        end
+        subgraph Graph["Tick: Course.graph"]
+            graph["fn.Course.graph"]
+        end
+        subgraph Summary["Tick: Course.summary"]
+            summary["fn.Course.summary"]
+        end
+    end
+
+    holes -->|holes| holeGeometry
+    canonical -->|raster| holeGeometry
+    holeGeometry --> geometry["px.course.holes"]
+    remaining -->|remaining| obstacleMap
+    components -->|fields| obstacleMap
+    baskets -->|baskets| obstacleMap
+    tees -->|tees| obstacleMap
+    canonical -->|raster| obstacleMap
+    obstacleMap --> obstacles["px.course.obstacles"]
+    obstacles -->|obstacles| walkable
+    walkable --> walkableCells["px.course.walkable"]
+    geometry -->|geometry| graph
+    obstacles -->|obstacles| graph
+    walkableCells -->|walkable| graph
+    graph --> courseGraph["px.course.graph"]
+    courseGraph -->|graph| summary
+    geometry -->|geometry| summary
+    unplacedHoles -->|unplaced| summary
+    summary --> courseSummary["px.course.summary"]
