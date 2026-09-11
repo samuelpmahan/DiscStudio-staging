@@ -16,7 +16,10 @@ import hashlib
 import json
 import math
 import os
+import atexit
+import shutil
 import statistics
+import tempfile
 import time
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -26,6 +29,21 @@ from pyto.materialize import run_record, write_record
 BRAIN_DIR = os.path.dirname(os.path.abspath(__file__))
 STORE_DIR = os.path.join(BRAIN_DIR, "store")
 RECORDS_DIR = os.path.join(BRAIN_DIR, "records")
+
+# A run record holds wall-clock durations and a benchmark Part holds wall_ms, so anything
+# that writes one into a tracked path rewrites it on every suite run: MAIN goes dirty, and
+# `land.sh` refuses to land into a dirty tree. So a `Store` writes into a temporary
+# directory unless it is told otherwise, and only an explicit record run - `Store(commit=True)`
+# or `BRAIN_RECORDS=commit python -m ...` - writes the committed store and records.
+# Reading is not affected: `load_store()` reads the committed `store/` either way.
+COMMIT_ENV = "BRAIN_RECORDS"
+
+
+def committing(flag: bool | None = None) -> bool:
+    """whether writes land in the repository. a flag wins; otherwise the environment."""
+    if flag is not None:
+        return bool(flag)
+    return os.environ.get(COMMIT_ENV, "").strip().lower() == "commit"
 
 PX = "px.exp.brain."
 DATA = PX + "data."
@@ -144,13 +162,36 @@ class Store:
     vertical's parts outlive the process and how the map sees every vertical.
     """
 
-    def __init__(self, pxc: PxC | None = None, store_dir: str | None = None, records_dir: str | None = None) -> None:
+    def __init__(
+        self,
+        pxc: PxC | None = None,
+        store_dir: str | None = None,
+        records_dir: str | None = None,
+        commit: bool | None = None,
+    ) -> None:
         self.pxc = pxc if pxc is not None else PxC()
-        self.store_dir = store_dir or STORE_DIR
-        self.records_dir = records_dir or RECORDS_DIR
+        self.read_store_dir = store_dir or STORE_DIR
+        self.commit = committing(commit)
+        if store_dir or records_dir or self.commit:
+            self.scratch = None
+            self.store_dir = store_dir or STORE_DIR
+            self.records_dir = records_dir or RECORDS_DIR
+        else:
+            # the default: read the committed store, write nothing the repository tracks.
+            # mkdtemp plus atexit rather than TemporaryDirectory, so a Store that is simply
+            # dropped does not warn about an implicit cleanup in the middle of a suite.
+            self.scratch = tempfile.mkdtemp(prefix="brain-scratch-")
+            atexit.register(shutil.rmtree, self.scratch, True)
+            self.store_dir = os.path.join(self.scratch, "store")
+            self.records_dir = os.path.join(self.scratch, "records")
         self.written: list[str] = []
         self.loaded: dict[str, int] = {}
         self.records: list[str] = []
+
+    @property
+    def writes_into_the_repository(self) -> bool:
+        """true only for an explicit record run: `Store(commit=True)` or BRAIN_RECORDS=commit."""
+        return os.path.abspath(self.records_dir).startswith(os.path.abspath(BRAIN_DIR))
 
     # -- parts
     def put(self, address: Any, value: Any) -> str:
@@ -181,10 +222,14 @@ class Store:
 
     # -- persistence
     def save(self, vertical: str, path: str | None = None) -> str:
-        """persist this process's brain parts to `store/<vertical>.json`.
+        """persist this process's brain parts to `<store_dir>/<vertical>.json`.
 
         what a vertical wrote this process is merged over whatever the file
         already held, so a second run adds to the store instead of truncating it.
+        `store_dir` is the repository's `store/` only for an explicit record run
+        (`Store(commit=True)`, or `BRAIN_RECORDS=commit`); by default it is a
+        temporary directory, so a test can save a store without dirtying MAIN.
+        The path it wrote is returned - read it rather than assuming.
         """
         vertical = token(vertical, "vertical")
         path = path or os.path.join(self.store_dir, f"{vertical}.json")
@@ -202,8 +247,12 @@ class Store:
         return path
 
     def load_store(self, store_dir: str | None = None) -> dict[str, int]:
-        """merge every `store/*.json` into this store. how a vertical sees the rest."""
-        directory = store_dir or self.store_dir
+        """merge every `store/*.json` into this store. how a vertical sees the rest.
+
+        reading is always from the committed `store/` (or from an explicit
+        `store_dir`): only writing defaults to a temporary directory.
+        """
+        directory = store_dir or self.read_store_dir
         loaded: dict[str, int] = {}
         if not os.path.isdir(directory):
             self.loaded = loaded

@@ -142,6 +142,58 @@ class TheStore(unittest.TestCase):
         self.assertEqual(sorted(held), ["px.exp.brain.data.kept", "px.exp.brain.data.kept2"])
 
 
+
+class WhereAStoreWrites(unittest.TestCase):
+    """a test must not dirty the repository.
+
+    a run record holds wall-clock durations, so a suite that rewrites a tracked
+    record leaves MAIN dirty and `land.sh` refuses the next landing - for every
+    vertical, not only the one whose test wrote it. so the default `Store` reads
+    the committed store and writes into a temporary directory, and only an
+    explicit record run writes what git tracks.
+    """
+
+    def test_the_default_store_writes_nowhere_the_repository_tracks(self):
+        store = harness.Store()
+        self.assertFalse(store.commit)
+        self.assertFalse(store.writes_into_the_repository)
+        for directory in (store.store_dir, store.records_dir):
+            self.assertFalse(
+                os.path.abspath(directory).startswith(os.path.abspath(harness.BRAIN_DIR)),
+                directory,
+            )
+
+    def test_the_default_store_still_reads_the_committed_store(self):
+        self.assertEqual(harness.Store().read_store_dir, harness.STORE_DIR)
+
+    def test_an_explicit_record_run_writes_the_committed_paths(self):
+        store = harness.Store(commit=True)
+        self.assertEqual(store.store_dir, harness.STORE_DIR)
+        self.assertEqual(store.records_dir, harness.RECORDS_DIR)
+        self.assertTrue(store.writes_into_the_repository)
+
+    def test_the_environment_says_it_too(self):
+        self.assertFalse(harness.committing())
+        os.environ["BRAIN_RECORDS"] = "commit"
+        self.addCleanup(os.environ.pop, "BRAIN_RECORDS", None)
+        self.assertTrue(harness.committing())
+        self.assertTrue(harness.Store().writes_into_the_repository)
+        self.assertFalse(harness.committing(False), "an explicit flag beats the environment")
+
+    def test_a_default_store_running_a_program_leaves_the_repository_alone(self):
+        before = sorted(os.listdir(harness.RECORDS_DIR)) if os.path.isdir(harness.RECORDS_DIR) else []
+        store = harness.Store()
+        store.run(
+            "brain_untracked",
+            [("one", [{"id": "one", "calc": ADD_ROWS, "into": "px.exp.brain.result.backend.demo.total",
+                       "args": {"data": {"rows": [[1.0], [2.0]]}}}])],
+        )
+        self.assertTrue(os.path.exists(os.path.join(store.records_dir, "brain_untracked.json")))
+        after = sorted(os.listdir(harness.RECORDS_DIR)) if os.path.isdir(harness.RECORDS_DIR) else []
+        self.assertEqual(before, after)
+        self.assertNotIn("brain_untracked.json", after)
+
+
 class TheEvidenceParts(unittest.TestCase):
     def setUp(self):
         self.store, self.tmp = fresh("evidence")

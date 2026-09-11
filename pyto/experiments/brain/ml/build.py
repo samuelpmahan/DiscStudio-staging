@@ -335,7 +335,9 @@ FINDINGS = {
 
 
 def build(store=None, save=True):
-    store = store or parts.Store(VERTICAL)
+    # save=True is the explicit record run (`python -m experiments.brain.ml.build`);
+    # save=False is a test, and a test writes neither the store nor the records.
+    store = store or parts.Store(VERTICAL, commit=save)
     for fn in SECTIONS:
         fn(store)
     map_and_findings(store)
