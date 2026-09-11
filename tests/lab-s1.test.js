@@ -42,13 +42,13 @@ test('the masks and components are the fixture badges, at the geometry the knobs
 });
 
 test('every badge is assembled and read, and the reading keeps the LAB shape', () => {
-  const { lab } = stage();
+  const { lab, capture } = stage();
   const candidates = lab.get(labAddress('px.s1.exp.badgeAssembly.badgeCandidates'));
   assert.equal(candidates.candidates.length, 2);
   assert.deepEqual(candidates.incomplete, []);
   const recognized = lab.get(labAddress('px.s1.whiteDigits.recognizedBadges'));
   assert.deepEqual(recognized.candidates.map(badge => badge.reading.status), ['read', 'read']);
-  assert.deepEqual(recognized.candidates.map(badge => badge.reading.value), ['10', '10']);
+  assert.deepEqual(recognized.candidates.map(badge => badge.reading.value), capture.badges.map(badge => badge.reading));
   assert.equal(recognized.candidates[0].reading.digits[0].rankings[0].label, '1');
 });
 

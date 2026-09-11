@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 13:40 **landed** `task-114`: port S2 (baskets) and S3 (visible tees) onto the studio core as the documents their OperationSpecs declare, with the Python analogue's ring balance as S3's oracle, and redefine pathfinding on the Stage outputs: the round in badge order, tee to basket to the next tee (21 files since 6eebd23, suites green, receipt 20260911T133722Z-task-114)
 - 2026-09-11 13:24 **started** `task-114`: port S2 basket detection onto the studio core: the PQL document its OperationSpec composition implies, fn.lab.basket.* Calculations, the LAB basket sprite, and a fixture drawn to the S2 knobs (copy EXP/114; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 05:53 **landed** `task-113`: run the LAB's own S1 PrincipleComponentRender.yaml on the studio core, and land the port's map and findings as Parts (12 files since c40960a, suites green, receipt 20260911T055157Z-task-113)
 - 2026-09-11 05:46 **started** `task-113`: run the LAB's own S1 PrincipleComponentRender.yaml on the studio core, and land the port's map and findings as Parts (copy EXP/113; it lands only on green, with a receipt, or is killed)

@@ -1,0 +1,156 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T133722Z-task-114",
+  "package": "task-114",
+  "base_sha": "6eebd23e2a7c11e80352336c728578a9f18aa2fd",
+  "result": "verified",
+  "verifier": {
+    "command": "node --test tests/*.test.js",
+    "exit": 0,
+    "output_sha256": "3acb5ff12166b5cab6f6ddd49c1b617c2ecbf26ee4c0d54d143dd6eafa5eb9dc"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "6da823bf32ae18c5db3cf04904932d9bfb3a4872ef2717fac3b31619350e5054",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/114/HANDOFF.md",
+      "bytes": 7447,
+      "sha256": "67ed9d459995f7a4322ca2673281c1603f9e93fe9a74e97259cabe38db754746"
+    },
+    {
+      "path": "pyto/experiments/tasks/114/evidence/check_all.txt",
+      "bytes": 293454,
+      "sha256": "d042c43dcc4a4e8cc99bae39f2b695aec7578d0434c7b078b5f92bd90eb1049b"
+    },
+    {
+      "path": "pyto/experiments/tasks/114/evidence/verify.txt",
+      "bytes": 24304,
+      "sha256": "1ac643d9c574eab69384b2b43389f9f98489476ec0c8ae2cbcf425443a8ae820"
+    },
+    {
+      "path": "pyto/experiments/tasks/114/packet.md",
+      "bytes": 3151,
+      "sha256": "a6c55de234b5bd8b4ffe9d4840c10e29d1054dd3c6106d958116a3e20ac4427c"
+    },
+    {
+      "path": "src/lab/fixtures.js",
+      "bytes": 5413,
+      "sha256": "68b2a6fbdc1cbff47abda3cc90f4222f54aaa3f901b2316db586dd0ba594f2a8"
+    },
+    {
+      "path": "src/lab/map.js",
+      "bytes": 14020,
+      "sha256": "df019dc68e61f7bda4cb9b839b07e63d687137501c1035a37e7934ee0e9b8cbd"
+    },
+    {
+      "path": "src/lab/route.js",
+      "bytes": 7903,
+      "sha256": "3f76f6331c88afaac768ef504fdf1b2f5e508c26db5612e9a5f94950e6f98298"
+    },
+    {
+      "path": "src/lab/s2.js",
+      "bytes": 12753,
+      "sha256": "207f23c68fc2b5782a7e0255c02b687e9c3b6f6dd0dc5af4182e66d17cea1d5f"
+    },
+    {
+      "path": "src/lab/s3.js",
+      "bytes": 15326,
+      "sha256": "7cd5df4dfa31403aa70391cfd5b67d6eabb15947eae6c351adfbff1182c59fed"
+    },
+    {
+      "path": "src/lab/source/basket-sprite.json",
+      "bytes": 3234,
+      "sha256": "c2867340d477a5e2f88e83b78516fc89005004a4aa279b6b9bc86a6f98e3598f"
+    },
+    {
+      "path": "src/lab/store/lab.json",
+      "bytes": 181355,
+      "sha256": "6c2daf124da59b7dd9ef14613a1a521f0693d717156ed2e86dcf95d45f6ee424"
+    },
+    {
+      "path": "src/lab/store/records/S0.json",
+      "bytes": 10157,
+      "sha256": "5077a12648400d8270b01f298b9899e67ec14ae76615b4c1a839daa0278b4412"
+    },
+    {
+      "path": "src/lab/store/records/S1.json",
+      "bytes": 166533,
+      "sha256": "d82796bb3866493e8227520875ec0631fd7aabbb67c1ec3352d7723cb796d77f"
+    },
+    {
+      "path": "src/lab/store/records/S2.json",
+      "bytes": 22807,
+      "sha256": "b28b2e2533e3db2ef34e6038c1a855a3f067d02df37195627ed4a34bcaa3c508"
+    },
+    {
+      "path": "src/lab/store/records/S3.json",
+      "bytes": 19559,
+      "sha256": "4e3b09c2bd9e5c5410dc8d59b03d690302629f675a32e7c12e842a7d70aff178"
+    },
+    {
+      "path": "src/lab/store/records/S3.quick-anno.json",
+      "bytes": 4211,
+      "sha256": "f5a50e92639abeddf4f3613dafbfa8d113a69843dc8910d6457fc812cc7aaaa1"
+    },
+    {
+      "path": "src/lab/store/records/route-labfixture.json",
+      "bytes": 15949,
+      "sha256": "2b01e1e980193c038df28b59a700d7bf5bcb9542fb44968d1a13d96ab0bd3d1b"
+    },
+    {
+      "path": "tests/lab-route.test.js",
+      "bytes": 5867,
+      "sha256": "1103cd2e029295d870d8a8cb1c7ae13f3a393fd113857ba2fb621a923ee3312b"
+    },
+    {
+      "path": "tests/lab-s1.test.js",
+      "bytes": 5302,
+      "sha256": "312aff3e099fdd50970bff77288da3ae203b8180b03bec40e8f2210180a2b54d"
+    },
+    {
+      "path": "tests/lab-s2.test.js",
+      "bytes": 5619,
+      "sha256": "decb1c43dcb10e5cc3fa2df93dfaaba29d71f0f6ef9d971df1abb378b5a9866a"
+    },
+    {
+      "path": "tests/lab-s3.test.js",
+      "bytes": 5316,
+      "sha256": "bb30c3ca1ebf7580d7155d89b3305f9d4f986d3e11b1bf714ec149987cc58f2d"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T13:40:49.613688Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
