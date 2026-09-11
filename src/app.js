@@ -186,6 +186,7 @@ function courseBuildSidebar() {
   return `<aside class="sidebar" data-scroll="lab"><div class="sidebar-heading"><div><span class="eyebrow">THE CAPTURE</span><h2>Course build</h2></div></div>
   <div class="lab-capture">${capture ? `<p class="tiny mono">${esc(capture.imageId)}</p><p class="tiny muted">${capture.widthPx} × ${capture.heightPx} · ${(capture.rgba.length / 4).toLocaleString('en-US')} pixels${ui.labCaptureName ? ` · ${esc(ui.labCaptureName)}` : ''}</p>` : '<p class="tiny muted">A capture is a photograph of a course map. Start with the LAB fixture, or use your own photo — it is decoded in this browser and never leaves it.</p>'}</div>
   <div class="button-row lab-sources">${button('Sample capture', 'lab-sample', {}, 'wide secondary small')}${button('↑ Your photo', 'lab-photo', {}, 'wide small')}</div>
+  <div class="button-row lab-sources">${button('Sample · objects overlapped', 'lab-sample', { overlaps: 1 }, 'wide quiet small')}</div>
   <div class="button-row lab-actions">${button(ui.labBusy ? 'Building…' : 'Run the pipeline ▸', 'lab-run', {}, 'wide primary small', ui.labBusy || !capture ? 'disabled' : '')}</div>
   <div class="lab-stage-list">${state.stages.map((row, index) => {
     const status = labStageState(row);
@@ -522,7 +523,7 @@ async function action(name, el) {
     case 'go-course': navigate('course'); return;
     case 'go-competition': navigate('competition'); return;
     case 'go-course-build': navigate('course-build'); return;
-    case 'lab-sample': ui.labCapture = runtime.lab.sample(); ui.labCaptureName = 'LAB fixture'; runtime.lab.begin(ui.labCapture); ui.labRun = null; ui.labSelected = null; message('The LAB fixture is loaded: a deterministic synthetic capture with badges, baskets and tees drawn to the Stages own knobs.'); break;
+    case 'lab-sample': ui.labCapture = runtime.lab.sample(d.overlaps ? { overlaps: true } : {}); ui.labCaptureName = d.overlaps ? 'LAB fixture · overlapped' : 'LAB fixture'; runtime.lab.begin(ui.labCapture); ui.labRun = null; ui.labSelected = null; message('The LAB fixture is loaded: a deterministic synthetic capture with badges, baskets and tees drawn to the Stages own knobs.'); break;
     case 'lab-photo': ui.photoTarget = 'lab'; document.querySelector('#photo-file').click(); return;
     case 'lab-run': await runLabPipeline(); break;
     case 'lab-select': ui.labSelected = { key: d.key, id: d.id }; break;

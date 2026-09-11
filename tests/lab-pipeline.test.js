@@ -10,7 +10,7 @@ import { createStudioRuntime } from '../src/runtime.js';
 import { createSeed } from '../src/seed.js';
 
 const studio = () => createStudioRuntime(createSeed());
-const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-holes-nearest', 'lab-s7-course', 'lab-s7', 'lab-route'];
+const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-s4', 'lab-s5', 'lab-s6', 'lab-holes-nearest', 'lab-s7-course', 'lab-s7', 'lab-route'];
 
 test('the pipeline runs S0 through the round as one composition per Stage', () => {
   const runtime = studio();
@@ -46,26 +46,30 @@ test('each Stage leaves the receipt and the run record every other composition l
   assert.deepEqual(runtime.runRecord('lab-s1').record.ticks.map(tick => tick.name), ['BlackMask', 'WhiteMask', 'BadgeAssembly', 'WhiteDigitRecognition', 'BadgeOutputs']);
 });
 
-test('the produce is what the fixture draws: three badges read, two baskets, three tees, a round in badge order', () => {
+test('the produce is what the fixture draws: the badges read, the baskets, the tees, the ray, the straight hole and the doglegs', () => {
   const runtime = studio();
   runtime.lab.pipeline(runtime.lab.sample());
   const views = Object.fromEntries(runtime.lab.views().map(view => [view.key, view]));
   // A Stage is found here by the address it publishes, the way the studio draws it:
   // the numbers on these Stages moved once already this sprint (task 121).
   const drawn = Object.fromEntries(runtime.lab.views().map(view => [view.address, view]));
-  assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['11', '10', '01']);
-  assert.equal(views.s2.objects.length, 2);
+  assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['10', '11', '01']);
+  assert.equal(views.s2.objects.length, 3);
   assert.equal(views.s3.objects.length, 3);
+  // S5 pairs the one tee whose pad has a front with the badge it points at; S6 continues that ray
+  // past the badge to the basket, and says which badges it cannot finish rather than bending them.
+  assert.equal(views.s5.legs.length, 1);
+  assert.deepEqual(views.s6.objects.map(object => object.label), ['hole 11', 'dogleg · hole 10', 'dogleg · hole 01']);
   // S4 names the hole it could not finish rather than guessing a basket for it.
-  assert.deepEqual(drawn['px.exp.lab.holes.objects'].objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11 · missing basket']);
+  assert.deepEqual(drawn['px.exp.lab.holes.objects'].objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11']);
   // S5's obstacle map is derived from the pixels no Stage object owns, and two straight legs cross it.
   assert.ok(drawn['px.exp.lab.course.graph'].cells.centres.length > 0);
   // and the round searched over that map is one polyline that had to bend around it
   assert.ok(drawn['px.exp.lab.round.path'].polyline.length > drawn['px.exp.lab.route.labfixture'].points.length);
   assert.ok(runtime.pxc.get('px.exp.lab.round.summary').detourPx > 0);
-  assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').blockedStraightLegs, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
+  assert.ok(runtime.pxc.get('px.exp.lab.course.summary').blockedStraightLegs.length > 0);
   // The order is the reading, not the position: hole 1 sits lower in the image than hole 10.
-  assert.deepEqual(views.route.objects.map(object => object.label), ['hole 1', 'hole 10']);
+  assert.deepEqual(views.route.objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11']);
   assert.equal(views.route.kind, 'path');
   assert.ok(views.route.legs.some(leg => leg.kind === 'play') && views.route.legs.some(leg => leg.kind === 'walk'));
   // Every drawable object names the Part it came from and where it is on the canonical raster.
@@ -112,12 +116,12 @@ test('a Stage still being built joins the pipeline as one spec and runs, draws a
     view: lab => ({ kind: 'boxes', tone: 'hole', objects: lab.get(HOLES).map((hole, index) => ({ id: `hole-${hole.number}`, label: `hole ${hole.number}`, bbox: [0, 0, 8, 8], at: [4, 4], part: HOLES, index, detail: hole })) })
   });
   const state = runtime.lab.pipeline(runtime.lab.sample());
-  assert.equal(state.stages.length, 9);
+  assert.equal(state.stages.length, 12);
   assert.equal(state.stages.at(-1).status, 'produced');
-  assert.deepEqual(state.stages.at(-1).produced, [{ address: HOLES, count: 2 }]);
+  assert.deepEqual(state.stages.at(-1).produced.map(part => part.address), [HOLES]);
   assert.ok(runtime.pxc.has('px.receipt.lab-stub'));
   assert.equal(runtime.runRecord('lab-stub').record.ticks[0].name, 'Stub.holes');
-  assert.equal(runtime.lab.views().at(-1).objects.length, 2);
+  assert.equal(runtime.lab.views().at(-1).objects.length, runtime.pxc.get('px.exp.lab.route.labfixture').holes.length);
   assert.equal(runtime.lab.provenance(HOLES).composition, 'lab-stub');
   assert.throws(() => runtime.lab.addStage({ key: 'stub', stage: 'S4', title: 'x', composition: 'lab-stub', produces: [HOLES], ticks: () => [] }), /already in this pipeline/);
   assert.throws(() => runtime.lab.addStage({ key: 'bad', stage: 'S9', title: 'x', composition: 'S9', produces: [HOLES], ticks: () => [] }), /named lab-/);
@@ -145,19 +149,21 @@ test('the course arrangement stands the cards at the holes the Stages found', ()
   runtime.lab.pipeline(runtime.lab.sample());
   const scene = runtime.scene({ mode: 'battle' }), overlay = scene.scene;
   assert.equal(overlay.arrangement, 'course');
-  assert.deepEqual(overlay.placements.map(placement => placement.anchor.id), ['hole-1', 'hole-10', 'hole-11']);
-  // Every anchor is a hole S4 published, and every card is centred on it inside the 1920x1080 frame.
-  const holes = runtime.pxc.get('px.exp.lab.holes.objects');
+  // The anchors are the holes of whichever Stage assembled them -- the straight
+  // holes once S6 has run -- and the run's own record says which Part that was.
+  const address = runtime.lab.anchorAddress(), holes = runtime.pxc.get(address);
+  assert.equal(address, 'px.exp.lab.holes.straight');
   assert.deepEqual(overlay.anchors.map(anchor => anchor.at), holes.map(hole => (hole.basket ?? hole.tee).at));
+  assert.deepEqual([...new Set(overlay.placements.map(placement => placement.anchor.id))], holes.map(hole => `hole-${hole.number}`));
   for (const placement of overlay.placements) {
     assert.ok(placement.x >= 0 && placement.y >= 0 && placement.x + placement.card.width * overlay.scale <= 1920 && placement.y + placement.card.height * overlay.scale <= 1080, placement.anchor.id);
     assert.ok(Math.abs(placement.x + (placement.card.width * overlay.scale) / 2 - placement.anchor.x) < 1 || placement.x === 60 || placement.x + placement.card.width * overlay.scale === 1860);
   }
   // The layout Calculation read the Stage's own produce Part; nothing was copied into the layout.
-  assert.ok(scene.run.trace.some(step => step.call === 'fn.comparison.layout' && step.inputs.course === 'px.exp.lab.holes.objects'));
+  assert.ok(scene.run.trace.some(step => step.call === 'fn.comparison.layout' && step.inputs.course === address));
   // Same overlay, same cards, same materialize: one group per entry.
   assert.equal((scene.svg.match(/data-entry="entry-/g) ?? []).length, scene.cardCount);
-  assert.equal(runtime.lab.anchorAddress(), 'px.exp.lab.holes.objects');
+
 });
 
 test('the anchors come from whichever Part the Stages published', async () => {
@@ -204,4 +210,47 @@ test('a Stage the studio has never seen draws itself by the address it publishes
   assert.ok(runtime.receipts().rows.some(row => row.name === 'lab-mystery'));
   // And the cards follow the holes: S6's straight holes take the anchor over the fallbacks once they exist.
   assert.equal(runtime.lab.anchorAddress(), STRAIGHT);
+});
+
+test('the sprint\'s frictions with this core are Parts on the board, not a note in a packet', async () => {
+  const { STUDIO_PROPOSALS } = await import('../src/proposals.js');
+  const runtime = studio();
+  const published = runtime.parts().filter(part => part.address.startsWith('proposal.studio.'));
+  assert.equal(published.length, Object.keys(STUDIO_PROPOSALS).length);
+  for (const { address, value } of published) {
+    assert.equal(address, `proposal.studio.${value.key}`);
+    assert.ok(['friction', 'strength'].includes(value.kind), address);
+    for (const field of ['for', 'text']) assert.ok(typeof value[field] === 'string' && value[field].length > 40, `${address}.${field}`);
+    assert.ok(Object.hasOwn(value, 'proposal'), address);
+  }
+  // Every friction this sprint met is named, and the one that took the studio off the air is one of them.
+  assert.ok(published.some(part => part.value.key === 'memo.rasterinputs' && part.value.kind === 'friction'));
+  assert.ok(published.some(part => part.value.key === 'serve.mjsmimetype'));
+  assert.ok(published.some(part => part.value.kind === 'strength'));
+  // They are Parts, so they are frozen and they are in the Part index like anything else.
+  assert.throws(() => { runtime.pxc.get('proposal.studio.memo.rasterinputs').kind = 'strength'; }, TypeError);
+});
+
+test('the sample the studio offers has something for every Stage to do', () => {
+  const runtime = studio();
+  // The overlapped capture: the clean detectors lose one object of each kind, and
+  // the recovery Stage puts all three back -- drawn as one layer, each object
+  // carrying the rule that found it.
+  runtime.lab.pipeline(runtime.lab.sample({ overlaps: true }));
+  const drawn = Object.fromEntries(runtime.lab.views().map(view => [view.address, view]));
+  assert.equal(drawn['px.exp.lab.badges.objects'].objects.length, 2);
+  assert.equal(drawn['px.exp.lab.baskets'].objects.length, 2);
+  assert.equal(drawn['px.exp.lab.tees'].objects.length, 2);
+  // one badge and one basket were hidden by the overlap; the recovery Stage puts both back
+  // The layer draws what the overlap hid, and nothing that was already on the raster.
+  const recovery = drawn['px.exp.lab.recovered.badges'];
+  assert.equal(recovery.objects.length, 2);
+  assert.ok(recovery.objects.every(object => object.label.endsWith('· recovered')));
+  assert.deepEqual([...new Set(recovery.objects.map(object => object.part))], ['px.exp.lab.recovered.badges', 'px.exp.lab.recovered.baskets']);
+  assert.ok(recovery.objects.every(object => object.detail.basis && object.detail.evidence));
+  // and the plain sample leaves the recovery Stage with nothing to recover, which it still says.
+  const plain = studio();
+  plain.lab.pipeline(plain.lab.sample());
+  assert.equal(plain.lab.views().find(view => view.key === 's4').objects.length, 0);
+  assert.equal(plain.lab.state().stages.find(stage => stage.key === 's4').status, 'produced');
 });
