@@ -187,7 +187,7 @@ def holt(args):
     horizon = int(args.get("horizon", 3))
     if horizon < 0:
         raise ValueError("horizon must not be negative")
-    level = values[0]
+    level = values[1]
     trend = values[1] - values[0]
     fitted = [None, None]
     sse = 0.0

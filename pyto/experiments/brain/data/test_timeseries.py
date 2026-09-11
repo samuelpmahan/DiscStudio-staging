@@ -105,9 +105,15 @@ class TestSmoothers(unittest.TestCase):
         got = timeseries.ses({"values": SHORT, "alpha": 1.0})
         self.assertAlmostEqual(got["level"], SHORT[-1], delta=1e-12)
 
-    def test_a_smaller_alpha_lags_more(self):
-        slow = timeseries.ses({"values": SHORT, "alpha": 0.05})["sse"]
-        fast = timeseries.ses({"values": SHORT, "alpha": 0.6})["sse"]
+    def test_a_smaller_alpha_smooths_a_flat_noisy_series_better(self):
+        slow = timeseries.ses({"values": FLATISH, "alpha": 0.05})["sse"]
+        fast = timeseries.ses({"values": FLATISH, "alpha": 0.9})["sse"]
+        self.assertLess(slow, fast)
+
+    def test_a_bigger_alpha_follows_a_trend_better(self):
+        trending = [3.0 * i for i in range(30)]
+        slow = timeseries.ses({"values": trending, "alpha": 0.05})["sse"]
+        fast = timeseries.ses({"values": trending, "alpha": 0.9})["sse"]
         self.assertGreater(slow, fast)
 
     def test_holt_carries_a_straight_line_forward(self):
