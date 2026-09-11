@@ -102,8 +102,6 @@ export function labStageSpecs() {
       produces: [S3_ADDRESSES.rings, S3_ADDRESSES.family, S3_ADDRESSES.objects],
       ticks: lab => s3Document(lab).Ticks
     },
-    // S4 recovery, S5 the tee-to-badge ray, S6 the straight holes: each brings its
-    // own Calculations and its own document, and S7 below plays what S6 resolved.
     s4Spec(),
     s5Spec(),
     s6Spec(),

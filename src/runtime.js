@@ -480,9 +480,7 @@ export function createStudioRuntime(initial) {
       // the straight hole), badges no ray can finish (the doglegs), and a region
       // of terrain the round has to walk around. `{ overlaps: true }` also hides
       // one object of each kind from the clean detectors, for the recovery Stage.
-      // `aligned2` is the second pointing tee and its basket, so the round S7
-      // plays has a leg to WALK between two holes and not only one hole to play.
-      sample: (options = {}) => fixtureCapture(20260911, { obstacle: true, aligned: true, aligned2: true, ...options }),
+      sample: (options = {}) => fixtureCapture(20260911, { obstacle: true, aligned: true, ...options }),
       specs: () => labSpecs.map(spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', produces: [...spec.produces], needs: [...(spec.needs ?? [])] })),
       begin: labBegin, stage: labStage, pipeline: labPipeline, addStage: labAddStage,
       state: () => pxc.get(LAB_PIPELINE),

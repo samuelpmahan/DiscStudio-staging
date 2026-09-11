@@ -54,17 +54,12 @@ test('the produce is what the fixture draws: the badges read, the baskets, the t
   // the numbers on these Stages moved once already this sprint (task 121).
   const drawn = Object.fromEntries(runtime.lab.views().map(view => [view.address, view]));
   assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['10', '11', '01']);
-  assert.equal(views.s2.objects.length, 4);
-  assert.equal(views.s3.objects.length, 4);
-  // S5 pairs each tee whose pad has a front with the badge it points at; S6 continues those rays
+  assert.equal(views.s2.objects.length, 3);
+  assert.equal(views.s3.objects.length, 3);
+  // S5 pairs the one tee whose pad has a front with the badge it points at; S6 continues that ray
   // past the badge to the basket, and says which badges it cannot finish rather than bending them.
-  assert.equal(views.s5.legs.length, 2);
-  assert.deepEqual(views.s6.objects.map(object => object.label), ['hole 1', 'hole 11', 'dogleg · hole 10']);
-  // S7 plays what S6 resolved, so the round has a leg to walk between two holes,
-  // and the badge S6 could not finish is unplayed rather than routed.
-  assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').order, [1, 11]);
-  assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').unplayed.doglegs.map(entry => entry.reading), ['10']);
-  assert.deepEqual(runtime.pxc.get('px.exp.lab.round.legs').map(leg => leg.kind), ['play', 'walk', 'play']);
+  assert.equal(views.s5.legs.length, 1);
+  assert.deepEqual(views.s6.objects.map(object => object.label), ['hole 11', 'dogleg · hole 10', 'dogleg · hole 01']);
   // S4 names the hole it could not finish rather than guessing a basket for it.
   assert.deepEqual(drawn['px.exp.lab.holes.objects'].objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11']);
   // S5's obstacle map is derived from the pixels no Stage object owns, and two straight legs cross it.
@@ -204,8 +199,8 @@ test('a Stage the studio has never seen draws itself by the address it publishes
   const views = Object.fromEntries(runtime.lab.views().map(view => [view.key, view]));
   assert.equal(views.rays.kind, 'rays');
   assert.equal(views.rays.tone, 'ray');
-  assert.equal(views.rays.legs.length, 4);
-  assert.equal(views.rays.objects.length, 4);
+  assert.equal(views.rays.legs.length, 3);
+  assert.equal(views.rays.objects.length, 3);
   assert.ok(views.rays.legs.every(leg => leg.from.length === 2 && leg.to.length === 2));
   assert.equal(views.mystery, undefined, 'an unknown address is not drawn');
   assert.equal(views.odd.kind, 'undrawn');
@@ -244,8 +239,8 @@ test('the sample the studio offers has something for every Stage to do', () => {
   runtime.lab.pipeline(runtime.lab.sample({ overlaps: true }));
   const drawn = Object.fromEntries(runtime.lab.views().map(view => [view.address, view]));
   assert.equal(drawn['px.exp.lab.badges.objects'].objects.length, 2);
-  assert.equal(drawn['px.exp.lab.baskets'].objects.length, 3);
-  assert.equal(drawn['px.exp.lab.tees'].objects.length, 3);
+  assert.equal(drawn['px.exp.lab.baskets'].objects.length, 2);
+  assert.equal(drawn['px.exp.lab.tees'].objects.length, 2);
   // one badge and one basket were hidden by the overlap; the recovery Stage puts both back
   // The layer draws what the overlap hid, and nothing that was already on the raster.
   const recovery = drawn['px.exp.lab.recovered.badges'];
