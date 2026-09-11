@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 16:27 **started** `task-128`: the demo's sample gets the second pointing tee: two straight holes, so the round the studio draws is play, walk, play (copy EXP/128; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 16:25 **landed** `task-127`: S7 plays the holes S6 resolved: the course graph binds px.holes.straight and reports px.holes.unresolved as unplayed doglegs, a second pointing tee gives the round more than one leg, and the comparison with the straight-leg route is re-run on that binding (32 files since c48e19f, suites green, receipt 20260911T162238Z-task-127)
 - 2026-09-11 16:18 **refused** `task-127`: dirty file outside allowed paths: src/runtime.js  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- src/runtime.js  then land, then git stash pop)
 - 2026-09-11 16:11 **refused** `task-127`: merge conflict with exp/127 in: src/lab/stages.js src/runtime.js tests/lab-pipeline.test.js 
