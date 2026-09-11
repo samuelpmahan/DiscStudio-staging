@@ -1,0 +1,886 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "path-dashstrack-h1-h9",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Anchors",
+      "invocations": [
+        {
+          "id": "px.exp.lab.path.dashstrack.h1-h9.anchors",
+          "calculation": {
+            "address": "fn.lab.path.anchors",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "course": "px:px.exp.lab.course.dashstrack"
+          },
+          "args": {},
+          "into": "px.exp.lab.path.dashstrack.h1-h9.anchors",
+          "declared_consumes": [
+            "px:px.exp.lab.course.dashstrack"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.course.dashstrack"
+          ],
+          "actual_produces": [
+            "px.exp.lab.path.dashstrack.h1-h9.anchors"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.path.dashstrack.h1-h9.anchors",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "course": "DashsTrack",
+              "radiusPx": 75,
+              "anchors": {
+                "h1": [
+                  698.1,
+                  446.2
+                ],
+                "h2": [
+                  608.2,
+                  575.6
+                ],
+                "h3": [
+                  613.4,
+                  671.6
+                ],
+                "h4": [
+                  445.1,
+                  753.95
+                ],
+                "h5": [
+                  585.05,
+                  818.7
+                ],
+                "h6": [
+                  557.3,
+                  880.9
+                ],
+                "h7": [
+                  492.4,
+                  965.3
+                ],
+                "h8": [
+                  465.6,
+                  1093.3
+                ],
+                "h9": [
+                  339.4,
+                  1296.1000000000001
+                ],
+                "h10": [
+                  210,
+                  1547.1000000000001
+                ],
+                "h11": [
+                  255.25,
+                  1816.7
+                ],
+                "h12": [
+                  379.9,
+                  1647.85
+                ],
+                "h13": [
+                  566.4,
+                  1529.8
+                ],
+                "h14": [
+                  745.5,
+                  1410.05
+                ],
+                "h15": [
+                  951.8,
+                  1223.95
+                ],
+                "h16": [
+                  1080,
+                  969.85
+                ],
+                "h17": [
+                  970.25,
+                  916.5
+                ],
+                "h18": [
+                  894.85,
+                  641.15
+                ]
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Start",
+      "invocations": [
+        {
+          "id": "px.exp.lab.path.dashstrack.h1-h9.state0",
+          "calculation": {
+            "address": "fn.lab.path.start",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "anchors": "px:px.exp.lab.path.dashstrack.h1-h9.anchors"
+          },
+          "args": {
+            "name": "route",
+            "from": "h1"
+          },
+          "into": "px.exp.lab.path.dashstrack.h1-h9.state0",
+          "declared_consumes": [
+            "px:px.exp.lab.path.dashstrack.h1-h9.anchors"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.path.dashstrack.h1-h9.anchors"
+          ],
+          "actual_produces": [
+            "px.exp.lab.path.dashstrack.h1-h9.state0"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.path.dashstrack.h1-h9.state0",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "schemaVersion": 2,
+              "nextEventId": 2,
+              "page": "scratch",
+              "course": "DashsTrack",
+              "trails": {
+                "route": {
+                  "name": "route",
+                  "page": "scratch",
+                  "course": "DashsTrack",
+                  "color": 0,
+                  "points": [
+                    {
+                      "id": 1,
+                      "point": [
+                        698.1,
+                        446.2
+                      ]
+                    }
+                  ],
+                  "visiblePointIds": [
+                    1
+                  ],
+                  "nextPointId": 2
+                }
+              },
+              "traversals": {
+                "route": {
+                  "name": "route",
+                  "page": "scratch",
+                  "course": "DashsTrack",
+                  "radiusPx": 75,
+                  "trailName": "route"
+                }
+              },
+              "events": [
+                {
+                  "id": 1,
+                  "op": "traverse-start",
+                  "page": "scratch",
+                  "traversal": "route",
+                  "trail": "route",
+                  "point": [
+                    698.1,
+                    446.2
+                  ],
+                  "detail": "radius=75"
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Search",
+      "invocations": [
+        {
+          "id": "px.exp.lab.path.dashstrack.h1-h9.state",
+          "calculation": {
+            "address": "fn.lab.path.search",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "state": "px:px.exp.lab.path.dashstrack.h1-h9.state0",
+            "anchors": "px:px.exp.lab.path.dashstrack.h1-h9.anchors"
+          },
+          "args": {
+            "name": "route",
+            "to": "h9"
+          },
+          "into": [
+            "px.exp.lab.path.dashstrack.h1-h9.state",
+            "px.exp.lab.path.dashstrack.h1-h9.found"
+          ],
+          "declared_consumes": [
+            "px:px.exp.lab.path.dashstrack.h1-h9.state0",
+            "px:px.exp.lab.path.dashstrack.h1-h9.anchors"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.path.dashstrack.h1-h9.state0",
+            "px.exp.lab.path.dashstrack.h1-h9.anchors"
+          ],
+          "actual_produces": [
+            "px.exp.lab.path.dashstrack.h1-h9.state",
+            "px.exp.lab.path.dashstrack.h1-h9.found"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.path.dashstrack.h1-h9.state",
+              "kind": "new-address"
+            },
+            {
+              "address": "px.exp.lab.path.dashstrack.h1-h9.found",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "schemaVersion": 2,
+                "nextEventId": 16,
+                "page": "scratch",
+                "course": "DashsTrack",
+                "trails": {
+                  "route": {
+                    "name": "route",
+                    "page": "scratch",
+                    "course": "DashsTrack",
+                    "color": 0,
+                    "points": [
+                      {
+                        "id": 1,
+                        "point": [
+                          698.1,
+                          446.2
+                        ]
+                      },
+                      {
+                        "id": 2,
+                        "point": [
+                          698.1,
+                          521.2
+                        ]
+                      },
+                      {
+                        "id": 3,
+                        "point": [
+                          698.1,
+                          596.2
+                        ]
+                      },
+                      {
+                        "id": 4,
+                        "point": [
+                          698.1,
+                          671.2
+                        ]
+                      },
+                      {
+                        "id": 5,
+                        "point": [
+                          698.1,
+                          746.2
+                        ]
+                      },
+                      {
+                        "id": 6,
+                        "point": [
+                          633.1480947161672,
+                          783.7
+                        ]
+                      },
+                      {
+                        "id": 7,
+                        "point": [
+                          633.1480947161672,
+                          858.7
+                        ]
+                      },
+                      {
+                        "id": 8,
+                        "point": [
+                          568.1961894323342,
+                          896.2
+                        ]
+                      },
+                      {
+                        "id": 9,
+                        "point": [
+                          568.1961894323342,
+                          971.2
+                        ]
+                      },
+                      {
+                        "id": 10,
+                        "point": [
+                          503.2442841485013,
+                          1008.7
+                        ]
+                      },
+                      {
+                        "id": 11,
+                        "point": [
+                          503.2442841485013,
+                          1083.7
+                        ]
+                      },
+                      {
+                        "id": 12,
+                        "point": [
+                          438.2923788646684,
+                          1121.2
+                        ]
+                      },
+                      {
+                        "id": 13,
+                        "point": [
+                          438.2923788646684,
+                          1196.2
+                        ]
+                      },
+                      {
+                        "id": 14,
+                        "point": [
+                          373.3404735808355,
+                          1233.7
+                        ]
+                      },
+                      {
+                        "id": 15,
+                        "point": [
+                          373.3404735808355,
+                          1308.7
+                        ]
+                      }
+                    ],
+                    "visiblePointIds": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15
+                    ],
+                    "nextPointId": 16
+                  }
+                },
+                "traversals": {
+                  "route": {
+                    "name": "route",
+                    "page": "scratch",
+                    "course": "DashsTrack",
+                    "radiusPx": 75,
+                    "trailName": "route"
+                  }
+                },
+                "events": [
+                  {
+                    "id": 1,
+                    "op": "traverse-start",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "point": [
+                      698.1,
+                      446.2
+                    ],
+                    "detail": "radius=75"
+                  },
+                  {
+                    "id": 2,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 2,
+                    "point": [
+                      698.1,
+                      521.2
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 3,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 3,
+                    "point": [
+                      698.1,
+                      596.2
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 4,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 4,
+                    "point": [
+                      698.1,
+                      671.2
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 5,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 5,
+                    "point": [
+                      698.1,
+                      746.2
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 6,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 6,
+                    "point": [
+                      633.1480947161672,
+                      783.7
+                    ],
+                    "detail": "hex 5 150deg r=75"
+                  },
+                  {
+                    "id": 7,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 7,
+                    "point": [
+                      633.1480947161672,
+                      858.7
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 8,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 8,
+                    "point": [
+                      568.1961894323342,
+                      896.2
+                    ],
+                    "detail": "hex 5 150deg r=75"
+                  },
+                  {
+                    "id": 9,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 9,
+                    "point": [
+                      568.1961894323342,
+                      971.2
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 10,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 10,
+                    "point": [
+                      503.2442841485013,
+                      1008.7
+                    ],
+                    "detail": "hex 5 150deg r=75"
+                  },
+                  {
+                    "id": 11,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 11,
+                    "point": [
+                      503.2442841485013,
+                      1083.7
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 12,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 12,
+                    "point": [
+                      438.2923788646684,
+                      1121.2
+                    ],
+                    "detail": "hex 5 150deg r=75"
+                  },
+                  {
+                    "id": 13,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 13,
+                    "point": [
+                      438.2923788646684,
+                      1196.2
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  },
+                  {
+                    "id": 14,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 14,
+                    "point": [
+                      373.3404735808355,
+                      1233.7
+                    ],
+                    "detail": "hex 5 150deg r=75"
+                  },
+                  {
+                    "id": 15,
+                    "op": "traverse-move",
+                    "page": "scratch",
+                    "traversal": "route",
+                    "trail": "route",
+                    "pointId": 15,
+                    "point": [
+                      373.3404735808355,
+                      1308.7
+                    ],
+                    "detail": "hex 4 90deg r=75"
+                  }
+                ]
+              },
+              {
+                "reached": true,
+                "moves": [
+                  4,
+                  4,
+                  4,
+                  4,
+                  5,
+                  4,
+                  5,
+                  4,
+                  5,
+                  4,
+                  5,
+                  4,
+                  5,
+                  4
+                ],
+                "cost": 14,
+                "expanded": 82,
+                "finalPoint": [
+                  373.3404735808355,
+                  1308.7
+                ],
+                "gap": 36.20380845838451,
+                "from": [
+                  698.1,
+                  446.2
+                ],
+                "to": [
+                  339.4,
+                  1296.1000000000001
+                ],
+                "objective": "fewest hex moves of one radius to within tolerance of the target anchor, inside the raster"
+              }
+            ],
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Settle",
+      "invocations": [
+        {
+          "id": "px.exp.lab.path.dashstrack.h1-h9",
+          "calculation": {
+            "address": "fn.lab.path.receipt",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "state": "px:px.exp.lab.path.dashstrack.h1-h9.state",
+            "found": "px:px.exp.lab.path.dashstrack.h1-h9.found",
+            "anchors": "px:px.exp.lab.path.dashstrack.h1-h9.anchors"
+          },
+          "args": {
+            "name": "route",
+            "from": "h1",
+            "to": "h9"
+          },
+          "into": "px.exp.lab.path.dashstrack.h1-h9",
+          "declared_consumes": [
+            "px:px.exp.lab.path.dashstrack.h1-h9.state",
+            "px:px.exp.lab.path.dashstrack.h1-h9.found",
+            "px:px.exp.lab.path.dashstrack.h1-h9.anchors"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.path.dashstrack.h1-h9.state",
+            "px.exp.lab.path.dashstrack.h1-h9.found",
+            "px.exp.lab.path.dashstrack.h1-h9.anchors"
+          ],
+          "actual_produces": [
+            "px.exp.lab.path.dashstrack.h1-h9"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.path.dashstrack.h1-h9",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "a path found by the ported LAB traversal, as a Part a receipt can point at",
+              "course": "DashsTrack",
+              "from": "h1",
+              "to": "h9",
+              "radiusPx": 75,
+              "objective": "fewest hex moves of one radius to within tolerance of the target anchor, inside the raster",
+              "reached": true,
+              "steps": 14,
+              "expanded": 82,
+              "gapPx": 36.204,
+              "moves": [
+                4,
+                4,
+                4,
+                4,
+                5,
+                4,
+                5,
+                4,
+                5,
+                4,
+                5,
+                4,
+                5,
+                4
+              ],
+              "replay": [
+                "lab set DashsTrack",
+                "lab traverse start route --start h1 --radius 75",
+                "lab traverse move 4",
+                "lab traverse move 4",
+                "lab traverse move 4",
+                "lab traverse move 4",
+                "lab traverse move 5",
+                "lab traverse move 4",
+                "lab traverse move 5",
+                "lab traverse move 4",
+                "lab traverse move 5",
+                "lab traverse move 4",
+                "lab traverse move 5",
+                "lab traverse move 4",
+                "lab traverse move 5",
+                "lab traverse move 4"
+              ],
+              "points": [
+                [
+                  698.1,
+                  446.2
+                ],
+                [
+                  698.1,
+                  521.2
+                ],
+                [
+                  698.1,
+                  596.2
+                ],
+                [
+                  698.1,
+                  671.2
+                ],
+                [
+                  698.1,
+                  746.2
+                ],
+                [
+                  633.148,
+                  783.7
+                ],
+                [
+                  633.148,
+                  858.7
+                ],
+                [
+                  568.196,
+                  896.2
+                ],
+                [
+                  568.196,
+                  971.2
+                ],
+                [
+                  503.244,
+                  1008.7
+                ],
+                [
+                  503.244,
+                  1083.7
+                ],
+                [
+                  438.292,
+                  1121.2
+                ],
+                [
+                  438.292,
+                  1196.2
+                ],
+                [
+                  373.34,
+                  1233.7
+                ],
+                [
+                  373.34,
+                  1308.7
+                ]
+              ],
+              "events": [
+                "traverse-start",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move",
+                "traverse-move"
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.course.dashstrack": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.path.dashstrack.h1-h9.anchors"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.path.dashstrack.h1-h9.anchors": {
+      "written_by": "px.exp.lab.path.dashstrack.h1-h9.anchors",
+      "read_by": [
+        "px.exp.lab.path.dashstrack.h1-h9.state0",
+        "px.exp.lab.path.dashstrack.h1-h9.state",
+        "px.exp.lab.path.dashstrack.h1-h9"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.path.dashstrack.h1-h9.state0": {
+      "written_by": "px.exp.lab.path.dashstrack.h1-h9.state0",
+      "read_by": [
+        "px.exp.lab.path.dashstrack.h1-h9.state"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.path.dashstrack.h1-h9.state": {
+      "written_by": "px.exp.lab.path.dashstrack.h1-h9.state",
+      "read_by": [
+        "px.exp.lab.path.dashstrack.h1-h9"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.path.dashstrack.h1-h9.found": {
+      "written_by": "px.exp.lab.path.dashstrack.h1-h9.state",
+      "read_by": [
+        "px.exp.lab.path.dashstrack.h1-h9"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.path.dashstrack.h1-h9": {
+      "written_by": "px.exp.lab.path.dashstrack.h1-h9",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 4,
+    "hits": 1,
+    "computed": 3,
+    "wall_ms": null
+  }
+}
