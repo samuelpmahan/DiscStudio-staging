@@ -85,7 +85,7 @@ pyto/USE.md                                        |  16 +
 ## Evidence
 
 - verify: `cd pyto && python -m unittest tests.test_neat_delta` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.QC6sUFNtQU) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.lTUteDuJah) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/classroom            16  OK
