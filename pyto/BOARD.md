@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 05:46 **started** `task-113`: run the LAB's own S1 PrincipleComponentRender.yaml on the studio core, and land the port's map and findings as Parts (copy EXP/113; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 05:45 **landed** `task-112`: port ChainSpot's S0 and S1 stage documents to the studio's PxC core as fn.lab.* Calculations run through readPql/invokePql (29 files since bf04bc0, suites green, receipt 20260911T054327Z-task-112)
 - 2026-09-11 05:29 **started** `task-112`: port ChainSpot's S0 and S1 stage documents to the studio's PxC core as fn.lab.* Calculations run through readPql/invokePql (copy EXP/112; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 04:53 **landed** `task-111`: the brain on the disc shelf: one PxC program over the studio's own material, the seven molds' flight numbers and the twelve discs' weights as dataset Parts, four Ticks (describe, correlate, cluster, regress) through the brain's Calculations, observed, with the record the Tick viewer draws (7 files since 085138c, suites green, receipt 20260911T045056Z-task-111)
