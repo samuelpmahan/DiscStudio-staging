@@ -4,8 +4,46 @@ Intent: neat delta <a> <b>: the capability delta against cost of two landings, c
 Starting point: 4916d2b18d4163e9a8e62c3f727f9da8ee5a2130 (board: **started** `task-79`: the preset is the projection layer: the card casc)
 Verify: cd pyto && python -m unittest tests.test_neat_delta
 Allow: pyto/src/pyto/neat pyto/scripts/neat.sh pyto/tests pyto/experiments/review/deltas pyto/experiments/delta pyto/experiments/tasks pyto/USE.md
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 7 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/USE.md
+- A  pyto/experiments/delta/patterns.json
+- A  pyto/experiments/review/deltas/.gitkeep
+- M  pyto/scripts/neat.sh
+- M  pyto/src/pyto/neat/__init__.py
+- A  pyto/src/pyto/neat/delta.py
+- A  pyto/tests/test_neat_delta.py
+
+```
+pyto/USE.md                             |  16 ++
+ pyto/experiments/delta/patterns.json    |  14 ++
+ pyto/experiments/review/deltas/.gitkeep |   0
+ pyto/scripts/neat.sh                    |  13 +-
+ pyto/src/pyto/neat/__init__.py          |   3 +-
+ pyto/src/pyto/neat/delta.py             | 365 ++++++++++++++++++++++++++++++++
+ pyto/tests/test_neat_delta.py           | 136 ++++++++++++
+ 7 files changed, 544 insertions(+), 3 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_neat_delta` exit 1 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.kQWOjjnjN1) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
+    disc-stats                        4  OK
 
 ## Uncertain
 
