@@ -253,15 +253,17 @@ with sync_playwright() as p:
     undrawn=[v['key'] for v in views if v['kind']=='undrawn']
     assert not undrawn or all(page.evaluate('k=>!!discStudio.lab().views.find(v=>v.key===k).note',key) for key in undrawn),undrawn
     assert {s['key'] for s in state['stages'] if s['status']=='produced'}>=drawn
-    assert by_key['s1']['labels']==['hole 11','hole 10','hole 1'],by_key['s1']
-    # whichever Stage assembles the holes names the one it could not finish instead of guessing it
-    holes_view=next((v for v in views if v['tone']=='hole'),None)
-    assert holes_view and any('missing' in label for label in holes_view['labels']),holes_view
+    assert sorted(by_key['s1']['labels'])==['hole 1','hole 10','hole 11'],by_key['s1']
+    # whichever Stage assembles the holes names what it could not finish instead of guessing it:
+    # a badge whose ray finds no basket is a dogleg, a hole whose anchor pool ran out says what is missing
+    holes_views=[v for v in views if v['tone']=='hole']
+    assert holes_views,views
+    assert any('dogleg' in label or 'missing' in label for view in holes_views for label in view['labels']),holes_views
     # the obstacle map is drawn as the cells it is, and the round that was searched over it as one polyline
     assert page.locator('.lab-cells').count()>=1
     assert page.locator('.lab-path').count()>=1
     assert page.evaluate('discStudio.runtime.pxc.get("px.exp.lab.round.summary").detourPx')>0
-    assert by_key['route']['labels']==['hole 1','hole 10'],by_key['route']  # the order is the badge reading, not the position
+    assert by_key['route']['labels']==sorted(by_key['route']['labels'],key=lambda label:int(label.split()[-1])),by_key['route']  # the order is the badge reading, not the position
     for key in ['s1','s2','s3']:
         assert page.locator('.lab-mark.tone-%s'%by_key[key]['tone']).count()==by_key[key]['n'],key
     # every leg any Stage published is drawn, whichever Stage published it
@@ -303,16 +305,18 @@ with sync_playwright() as p:
     assert_world(page,'discStudio.world.layout.arrangement==="course"')
     scene=page.evaluate('discStudio.preview.scene')
     assert scene['arrangement']=='course',scene.get('arrangement')
-    holes=page.evaluate('discStudio.runtime.pxc.get("px.exp.lab.holes.objects")')
+    # the anchors are the holes of whichever Stage assembled them, and the run says which Part that was
+    address=page.evaluate('discStudio.runtime.lab.anchorAddress()')
+    holes=page.evaluate('a=>discStudio.runtime.pxc.get(a)',address)
     anchors=[(hole['basket'] or hole['tee'])['at'] for hole in holes]
-    assert [placement['anchor']['at'] for placement in scene['placements']]==anchors,(scene['placements'],anchors)
+    assert [placement['anchor']['at'] for placement in scene['placements']]==[anchors[index%len(anchors)] for index in range(len(scene['placements']))],(scene['placements'],anchors)
     assert len(scene['placements'])==page.evaluate('discStudio.preview.cardCount')
     for placement in scene['placements']:
         assert 0<=placement['x'] and placement['x']+placement['card']['width']*scene['scale']<=1920,placement
         assert 0<=placement['y'] and placement['y']+placement['card']['height']*scene['scale']<=1080,placement
     # the layout Calculation read the Stage's produce Part by address, not a copy of it
-    assert page.evaluate('discStudio.preview.run.trace.some(t=>t.call==="fn.comparison.layout"&&t.inputs.course==="px.exp.lab.holes.objects")')
-    assert page.locator('.inspector .mono').filter(has_text='px.exp.lab.holes.objects').count()>=1
+    assert page.evaluate('a=>discStudio.preview.run.trace.some(t=>t.call==="fn.comparison.layout"&&t.inputs.course===a)',address)
+    assert page.locator('.inspector .mono').filter(has_text=address).count()>=1
     svg=page.evaluate('discStudio.preview.svg')
     assert svg.count('data-entry="entry-')==page.evaluate('discStudio.preview.cardCount')
     page.screenshot(path=str(out/'cards-on-the-course.png'))

@@ -33,10 +33,10 @@ import { S3_ADDRESSES, registerS3, s3Document } from './s3.js';
 // changes exactly these import lines -- as task 121's renumbering did, from
 // s4/s5/s6 to holes-nearest/s7course/s7round -- because every other thing the
 // studio knows about a Stage is an address it publishes, and those did not move.
-import { holesNearestSpec } from './holes-nearest.js';
 import { s4Spec } from './s4.js';
 import { s5Spec } from './s5.js';
 import { s6Spec } from './s6.js';
+import { holesNearestSpec } from './holes-nearest.js';
 import { s7CourseSpec, cellCenter } from './s7course.js';
 import { s7Spec } from './s7round.js';
 import { ROUTE_ADDRESSES, registerRoute, routeDocument } from './route.js';
@@ -135,6 +135,25 @@ export function pointOf(value) {
   return null;
 }
 const firstList = value => Array.isArray(value) ? value : Object.values(value ?? {}).find(Array.isArray) ?? [];
+/**
+ * The list a Part of things means. A Stage writes either the list itself, or a
+ * document around it -- `{ for, from, rule, rays: [...] }` -- and the property
+ * that holds the things is named by the last segment of the Part's own address
+ * (`px.exp.lab.teebadge.rays` -> `rays`). That convention, then `objects`, then
+ * the first list in the document: never a guess that silently picks `from`.
+ */
+export function listOf(value, address = '') {
+  if (Array.isArray(value)) return value;
+  const tail = address.slice(address.lastIndexOf('.') + 1);
+  if (Array.isArray(value?.[tail])) return value[tail];
+  if (Array.isArray(value?.objects)) return value.objects;
+  return firstList(value);
+}
+const objectList = value => Array.isArray(value?.objects) ? value.objects : firstList(value);
+/** The three lists a recovery Stage publishes, drawn as one layer. */
+const RECOVERED = ['px.exp.lab.recovered.badges', 'px.exp.lab.recovered.baskets', 'px.exp.lab.recovered.tees'];
+/** Only the objects a recovery actually recovered: `recovered` if the Part names it, else what no family found. */
+const recoveredOnly = value => Array.isArray(value?.recovered) ? value.recovered : objectList(value).filter(item => item.basis && !/family/.test(item.basis));
 const numbered = (item, index, what) => item.number ?? item.hole ?? item.id ?? `${what}-${index + 1}`;
 
 /**
@@ -175,30 +194,44 @@ export const DRAWINGS = [
   {
     // S4, recovery: objects that overlapped and were taken apart again.
     prefix: 'px.exp.lab.recovered.', kind: 'boxes', tone: 'recovered',
-    build: (lab, address) => ({ objects: firstList(lab.get(address)).map((item, index) => {
+    // A recovery Part is `{ kind, clean, recovered, objects, rejected }`. Only what
+    // was RECOVERED is drawn here: the clean objects are already on the raster,
+    // drawn by the Stage that found them, and this layer is what the overlap hid.
+    build: (lab, address) => ({ objects: RECOVERED.filter(candidate => lab.has(candidate)).flatMap(candidate => recoveredOnly(lab.get(candidate)).map((item, index) => {
       const bbox = item.bbox ?? item.box, at = pointOf(item);
       if (!bbox && !at) throw new Error('a recovered object carries neither a bbox nor a point');
-      return { ...(bbox ? box(bbox, {}) : { at }), id: `recovered-${numbered(item, index, 'object')}`, label: `recovered ${item.kind ?? ''} ${numbered(item, index, 'object')}`.replace(/\s+/g, ' ').trim(), part: address, index, detail: item };
-    }) })
+      const what = candidate.slice(candidate.lastIndexOf('.') + 1).replace(/s$/, '');
+      return {
+        ...(bbox ? box(bbox, {}) : { at }), id: `${what}-${numbered(item, index, what)}`,
+        label: `${what} ${numbered(item, index, what)} · recovered`, part: candidate, index, detail: item
+      };
+    })) })
   },
   {
     // S5, Tee -> Badge: the ray each tee points along, at the badge it names.
     address: 'px.exp.lab.teebadge.rays', kind: 'rays', tone: 'ray',
     build: (lab, address) => {
-      const rays = firstList(lab.get(address));
-      const legs = rays.map((ray, index) => {
-        const from = pointOf(ray.from ?? ray.tee ?? ray.origin), to = pointOf(ray.to ?? ray.badge ?? ray.target);
+      const rays = listOf(lab.get(address), address);
+      const paired = rays.filter(ray => pointOf(ray.badge ?? ray.to) || ray.entryAt);
+      const legs = paired.map((ray, index) => {
+        const from = pointOf(ray.from ?? ray.origin ?? ray.tee), to = pointOf(ray.badge ?? ray.to) ?? pointOf(ray.entryAt);
         if (!from || !to) throw new Error(`a ray carries no tee-to-badge points (keys: ${Object.keys(ray).join(', ')})`);
-        return { kind: 'ray', hole: numbered(ray, index, 'ray'), from, to, lengthPx: ray.lengthPx ?? null };
+        return { kind: 'ray', hole: ray.badge?.reading ?? numbered(ray, index, 'ray'), from, to, lengthPx: ray.distancePx ?? null };
       });
-      return { legs, objects: legs.map((leg, index) => ({ id: `ray-${leg.hole}`, label: `tee → badge ${leg.hole}`, at: [(leg.from[0] + leg.to[0]) / 2, (leg.from[1] + leg.to[1]) / 2], part: address, index, detail: rays[index] })) };
+      return {
+        legs,
+        objects: legs.map((leg, index) => ({
+          id: `ray-${paired[index].tee ?? index}`, label: `${paired[index].tee ?? 'tee'} → ${paired[index].badge?.id ?? 'badge'}`,
+          at: [(leg.from[0] + leg.to[0]) / 2, (leg.from[1] + leg.to[1]) / 2], part: address, index, detail: paired[index]
+        }))
+      };
     }
   },
   {
     // S6, straight holes: tee, badge and basket on one line; what the ray could not resolve is a dogleg.
-    address: 'px.exp.lab.holes.straight', kind: 'holes', tone: 'hole', labelBelow: true,
+    address: 'px.exp.lab.holes.straight', kind: 'holes', tone: 'hole', labelBelow: true, hitOutline: true,
     build: (lab, address) => {
-      const holes = firstList(lab.get(address)), unresolvedAddress = 'px.exp.lab.holes.unresolved';
+      const holes = listOf(lab.get(address), address), unresolvedAddress = 'px.exp.lab.holes.unresolved';
       const legs = [], objects = [];
       holes.forEach((hole, index) => {
         const tee = pointOf(hole.tee), basket = pointOf(hole.basket), badge = pointOf(hole.badge);
@@ -206,9 +239,10 @@ export const DRAWINGS = [
         legs.push({ kind: 'play', hole: numbered(hole, index, 'hole'), from: tee, to: basket, lengthPx: hole.lengthPx ?? null });
         objects.push({ id: `hole-${numbered(hole, index, 'hole')}`, label: `hole ${numbered(hole, index, 'hole')}`, at: badge ?? [(tee[0] + basket[0]) / 2, (tee[1] + basket[1]) / 2], part: address, index, detail: hole });
       });
-      if (lab.has(unresolvedAddress)) firstList(lab.get(unresolvedAddress)).forEach((item, index) => {
+      if (lab.has(unresolvedAddress)) listOf(lab.get(unresolvedAddress), unresolvedAddress).forEach((item, index) => {
         const at = pointOf(item.badge ?? item);
-        if (at) objects.push({ id: `dogleg-${numbered(item, index, 'badge')}`, label: `dogleg · ${numbered(item, index, 'badge')}`, at, part: unresolvedAddress, index, detail: item });
+        const where = at ?? (item.bbox ? [item.bbox[0] + item.bbox[2] / 2, item.bbox[1] + item.bbox[3] / 2] : null);
+        if (where) objects.push({ id: `dogleg-${numbered(item, index, 'badge')}`, label: `dogleg · ${item.reading ? `hole ${item.reading}` : numbered(item, index, 'badge')}`, at: where, part: unresolvedAddress, index, detail: item });
       });
       return { legs, objects };
     }
