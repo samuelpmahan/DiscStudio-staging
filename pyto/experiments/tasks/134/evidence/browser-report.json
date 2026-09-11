@@ -18,6 +18,8 @@
     "The inspector names the Part a selected object came from and the composition, Tick and Calculation that published it; Inspect lists every Stage receipt beside the studio's own",
     "A Stage run exports a validated pyto-run-record@1 the Tick viewer draws, Tick for Tick with its PQL document",
     "OnTheCourse gains one arrangement: the bag's DisplayCards stand at the holes the Stages read off the capture, through the same fn.comparison.layout and the same card chain",
+    "OnTheCourse composes on a 1080x1920 vertical canvas beside the 1920x1080 one: a frame preset (fill, safe area, title strip, sponsor lockup on the cascade's global tokens) is one fn.overlay.frame Calculation, the cards are fitted inside its safe area by the same fn.comparison.layout, and the exported PNG is actually 1080x1920 with its hash on the receipt",
+    "A DiscComp is composed from reusable Constraints: the 5-disc cap template composes discCap, placesPoints and tieRule, the cap refuses a sixth disc by name without changing anything, a hole is entered with one tap per disc (or the number keys), and fn.battle.standings scores ranks, points and a running total once for both the standings panel and the cards",
     "Five routes render at desktop and mobile widths without horizontal page overflow",
     "Editing the global radius recomposes all four projections; the preview grid marks every one \"recomposed\" and every composed SVG carries the new value",
     "A global edit stops at an instance override: shelf keeps buzzz-mint's own accent and the other three recompose",
@@ -27,6 +29,6 @@
     "The Component Editor's All cards and DisplayCard tabs render at desktop and mobile widths without horizontal page overflow",
     "No browser JavaScript errors"
   ],
-  "count": 25,
+  "count": 27,
   "errors": []
 }
