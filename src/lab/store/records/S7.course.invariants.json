@@ -1,6 +1,6 @@
 {
   "schema": "pyto-run-record@1",
-  "pcr": "S5.invariants",
+  "pcr": "S7.course.invariants",
   "source": {
     "runtime": "discstudio",
     "version": null,
@@ -12,9 +12,9 @@
       "name": "AccountCourse",
       "invocations": [
         {
-          "id": "px.exp.lab.s5.courseledger",
+          "id": "px.exp.lab.s7.courseledger",
           "calculation": {
-            "address": "fn.lab.s5.accountcourse",
+            "address": "fn.lab.s7.accountcourse",
             "implementation_sha256": null,
             "identity_scope": "registered-address-and-revision:1"
           },
@@ -25,7 +25,7 @@
             "geometry": "px:px.exp.lab.course.holes"
           },
           "args": {},
-          "into": "px.exp.lab.s5.courseledger",
+          "into": "px.exp.lab.s7.courseledger",
           "declared_consumes": [
             "px:px.exp.lab.course.obstacles",
             "px:px.exp.lab.course.walkable",
@@ -39,11 +39,11 @@
             "px.exp.lab.course.holes"
           ],
           "actual_produces": [
-            "px.exp.lab.s5.courseledger"
+            "px.exp.lab.s7.courseledger"
           ],
           "writes": [
             {
-              "address": "px.exp.lab.s5.courseledger",
+              "address": "px.exp.lab.s7.courseledger",
               "kind": "new-address"
             }
           ],
@@ -80,38 +80,38 @@
       "name": "CheckCourse",
       "invocations": [
         {
-          "id": "px.exp.lab.s5.coursecheck",
+          "id": "px.exp.lab.s7.coursecheck",
           "calculation": {
-            "address": "fn.lab.s5.checkcourse",
+            "address": "fn.lab.s7.checkcourse",
             "implementation_sha256": null,
             "identity_scope": "registered-address-and-revision:1"
           },
           "inputs": {
-            "ledger": "px:px.exp.lab.s5.courseledger",
+            "ledger": "px:px.exp.lab.s7.courseledger",
             "graph": "px:px.exp.lab.course.graph",
             "holes": "px:px.exp.lab.holes.objects",
             "obstacles": "px:px.exp.lab.course.obstacles"
           },
           "args": {},
-          "into": "px.exp.lab.s5.coursecheck",
+          "into": "px.exp.lab.s7.coursecheck",
           "declared_consumes": [
-            "px:px.exp.lab.s5.courseledger",
+            "px:px.exp.lab.s7.courseledger",
             "px:px.exp.lab.course.graph",
             "px:px.exp.lab.holes.objects",
             "px:px.exp.lab.course.obstacles"
           ],
           "actual_consumes": [
-            "px.exp.lab.s5.courseledger",
+            "px.exp.lab.s7.courseledger",
             "px.exp.lab.course.graph",
             "px.exp.lab.holes.objects",
             "px.exp.lab.course.obstacles"
           ],
           "actual_produces": [
-            "px.exp.lab.s5.coursecheck"
+            "px.exp.lab.s7.coursecheck"
           ],
           "writes": [
             {
-              "address": "px.exp.lab.s5.coursecheck",
+              "address": "px.exp.lab.s7.coursecheck",
               "kind": "new-address"
             }
           ],
@@ -157,49 +157,49 @@
     "px.exp.lab.course.obstacles": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s5.courseledger",
-        "px.exp.lab.s5.coursecheck"
+        "px.exp.lab.s7.courseledger",
+        "px.exp.lab.s7.coursecheck"
       ],
       "preexisting": true
     },
     "px.exp.lab.course.walkable": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s5.courseledger"
+        "px.exp.lab.s7.courseledger"
       ],
       "preexisting": true
     },
     "px.exp.lab.course.graph": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s5.courseledger",
-        "px.exp.lab.s5.coursecheck"
+        "px.exp.lab.s7.courseledger",
+        "px.exp.lab.s7.coursecheck"
       ],
       "preexisting": true
     },
     "px.exp.lab.course.holes": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s5.courseledger"
+        "px.exp.lab.s7.courseledger"
       ],
       "preexisting": true
     },
-    "px.exp.lab.s5.courseledger": {
-      "written_by": "px.exp.lab.s5.courseledger",
+    "px.exp.lab.s7.courseledger": {
+      "written_by": "px.exp.lab.s7.courseledger",
       "read_by": [
-        "px.exp.lab.s5.coursecheck"
+        "px.exp.lab.s7.coursecheck"
       ],
       "preexisting": false
     },
     "px.exp.lab.holes.objects": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s5.coursecheck"
+        "px.exp.lab.s7.coursecheck"
       ],
       "preexisting": true
     },
-    "px.exp.lab.s5.coursecheck": {
-      "written_by": "px.exp.lab.s5.coursecheck",
+    "px.exp.lab.s7.coursecheck": {
+      "written_by": "px.exp.lab.s7.coursecheck",
       "read_by": [],
       "preexisting": false
     }

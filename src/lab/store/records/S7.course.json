@@ -1,6 +1,6 @@
 {
   "schema": "pyto-run-record@1",
-  "pcr": "S5",
+  "pcr": "S7.course",
   "source": {
     "runtime": "discstudio",
     "version": null,

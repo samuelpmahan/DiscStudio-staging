@@ -30,11 +30,12 @@ import { S1_ADDRESSES, registerS1, s1YamlDocument, digitModel, asMaskRaster } fr
 import { S2_ADDRESSES, registerS2, s2Document } from './s2.js';
 import { S3_ADDRESSES, registerS3, s3Document } from './s3.js';
 // The Stages after S3 are each their own module's spec. A module that is renamed
-// (S4..S7 were renumbered mid-sprint) changes exactly these import lines: every
-// other thing the studio knows about a Stage is an address it publishes.
-import { s4Spec } from './s4.js';
-import { s5Spec, cellCenter } from './s5.js';
-import { s6Spec } from './s6.js';
+// changes exactly these import lines -- as task 121's renumbering did, from
+// s4/s5/s6 to holes-nearest/s7course/s7round -- because every other thing the
+// studio knows about a Stage is an address it publishes, and those did not move.
+import { holesNearestSpec } from './holes-nearest.js';
+import { s7CourseSpec, cellCenter } from './s7course.js';
+import { s7Spec } from './s7round.js';
 import { ROUTE_ADDRESSES, registerRoute, routeDocument } from './route.js';
 import { labAddress, labDocument } from './address.js';
 import { parseYaml } from './yaml.js';
@@ -98,9 +99,9 @@ export function labStageSpecs() {
       produces: [S3_ADDRESSES.rings, S3_ADDRESSES.family, S3_ADDRESSES.objects],
       ticks: lab => s3Document(lab).Ticks
     },
-    s4Spec(),
-    s5Spec(),
-    s6Spec(),
+    holesNearestSpec(),
+    s7CourseSpec(),
+    s7Spec(),
     {
       key: 'route', stage: 'Straight round', title: 'The round, measured straight', composition: 'lab-route',
       about: 'the holes in the order S1 read off the badges, each tee to its basket and on to the next tee in a straight line: the measure a searched round is compared against.',

@@ -10,7 +10,7 @@ import { createStudioRuntime } from '../src/runtime.js';
 import { createSeed } from '../src/seed.js';
 
 const studio = () => createStudioRuntime(createSeed());
-const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-s4', 'lab-s5', 'lab-s6', 'lab-route'];
+const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-holes-nearest', 'lab-s7-course', 'lab-s7', 'lab-route'];
 
 test('the pipeline runs S0 through the round as one composition per Stage', () => {
   const runtime = studio();

@@ -1,4 +1,4 @@
-/** S5 (invented here): the Course as a graph over the canonical raster, and the obstacle map under it. */
+/** S7 Pathfinding, the course half: the Course as a graph over the canonical raster, and the obstacle map under it. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -12,50 +12,50 @@ import { registerS0, runS0 } from '../src/lab/s0.js';
 import { registerS1, runS1, s1YamlDocument } from '../src/lab/s1.js';
 import { registerS2, runS2 } from '../src/lab/s2.js';
 import { registerS3, runS3 } from '../src/lab/s3.js';
-import { registerS4, runS4 } from '../src/lab/s4.js';
-import { registerS5, runS5, s5Document, compiledS5, holeGeometry, checkCourse, grid, cellOf, straightIsBlocked, S5_ADDRESSES, S5_CONTRACT, CLASSES, CELL_PX } from '../src/lab/s5.js';
+import { registerHolesNearest, runHolesNearest } from '../src/lab/holes-nearest.js';
+import { registerCourse, runCourse, courseDocument, compiledCourse, holeGeometry, checkCourse, grid, cellOf, straightIsBlocked, COURSE_ADDRESSES, COURSE_CONTRACT, CLASSES, CELL_PX } from '../src/lab/s7course.js';
 import { fixtureCapture, OBSTACLE } from '../src/lab/fixtures.js';
 
 function course(options = { hole11: true, obstacle: true }) {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerS5(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerCourse(lab);
   const s0 = runS0(lab, { decoded: fixtureCapture(20260911, options), label: 'fixture' });
   runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
-  const s2 = runS2(lab), s3 = runS3(lab), s4 = runS4(lab);
-  return { lab, s0, s2, s3, s4, s5: runS5(lab) };
+  const s2 = runS2(lab), s3 = runS3(lab), s4 = runHolesNearest(lab);
+  return { lab, s0, s2, s3, s4, s5: runCourse(lab) };
 }
 
-test('S5 runs the document its contract declares, over S4 holes and the Stage masks', () => {
+test('the course runs the document its contract declares, over the holes and the Stage masks', () => {
   const { lab, s5 } = course();
-  assert.deepEqual(s5.composition.Ticks.map(tick => tick.name), S5_CONTRACT.ticks);
-  assert.deepEqual(S5_CONTRACT.produces, ['px.exp.lab.course.graph', 'px.exp.lab.course.summary']);
+  assert.deepEqual(s5.composition.Ticks.map(tick => tick.name), COURSE_CONTRACT.ticks);
+  assert.deepEqual(COURSE_CONTRACT.produces, ['px.exp.lab.course.graph', 'px.exp.lab.course.summary']);
   assert.deepEqual(s5.composition.Ticks[1].Calculations[0].with, {
     remaining: labAddress('px.remaining.afterBadges'), fields: labAddress('px.components'),
     baskets: labAddress('px.baskets'), tees: labAddress('px.tees'), raster: labAddress('px.course.canonicalPixels')
   });
   assert.deepEqual(s5.run.Ticks.map(tick => tick.Calculations[0].call), ['fn.lab.course.holegeometry', 'fn.lab.course.obstaclemap', 'fn.lab.course.walkable', 'fn.lab.course.graph', 'fn.lab.course.summary']);
-  for (const address of S5_CONTRACT.produces) assert.ok(lab.has(address), address);
+  for (const address of COURSE_CONTRACT.produces) assert.ok(lab.has(address), address);
 });
 
-test('S5.mmd compiles to the same document S5 runs, and the embedded flowcharts are the files', () => {
-  const lab = createLab(); registerS5(lab);
-  const { document, local } = compiledS5();
+test('S7.course.mmd compiles to the same document the course runs, and the embedded flowcharts are the files', () => {
+  const lab = createLab(); registerCourse(lab);
+  const { document, local } = compiledCourse();
   assert.deepEqual(local, []);
-  assert.equal(structuralDigest(document), structuralDigest(s5Document(lab)));
+  assert.equal(structuralDigest(document), structuralDigest(courseDocument(lab)));
   assert.deepEqual(Object.keys(STAGE_TEXT).sort(), readdirSync(STAGES).sort());
   for (const name of Object.keys(STAGE_TEXT)) assert.equal(readStageSource(name), readFileSync(join(STAGES, name), 'utf8'), name);
   assert.throws(() => readStageSource('S9.mmd'), /not an embedded stage document/);
 });
 
 test('no invented Stage module reaches for node at import time', () => {
-  for (const name of ['s4.js', 's5.js', 'stage-sources.js']) {
+  for (const name of ['holes-nearest.js', 's7course.js', 'stage-sources.js']) {
     const source = readFileSync(join(STAGES, '..', name), 'utf8');
     const statics = [...source.matchAll(/^\s*import\s[^\n]*?from\s*'([^']+)'/gm)].map(match => match[1]);
     assert.deepEqual(statics.filter(specifier => specifier.startsWith('node:')), [], `${name} imports node at module scope`);
   }
 });
 
-test('a hole is a tee-to-basket vector and a length in raster px, and the play order is S4s', () => {
+test('a hole is a tee-to-basket vector and a length in raster px, and the play order is the holes order', () => {
   const { s4, s5 } = course();
   assert.deepEqual(s5.graph.order, [1, 10]);
   assert.deepEqual(s5.graph.order, s4.holes.filter(hole => hole.complete).map(hole => hole.number));
@@ -102,7 +102,7 @@ test('the walkable cells are every class but terrain, and the rule says why', ()
   for (const node of s5.graph.nodes) assert.equal(s5.walkable.walkable[node.cell], 1, node.id);
 });
 
-test('S5 says which straight legs cannot be walked, and does not route around them', () => {
+test('the course says which straight legs cannot be walked, and does not route around them', () => {
   const { s5 } = course();
   assert.deepEqual(s5.graph.edges.map(edge => `${edge.kind}:${edge.from}->${edge.to}`), ['play:tee-3->basket-2', 'walk:basket-2->tee-2', 'play:tee-2->basket-1']);
   assert.deepEqual(s5.graph.edges.map(edge => edge.straightIsBlocked), [false, true, true]);
@@ -124,9 +124,9 @@ test('with no obstacle drawn, the same course has no terrain and no blocked leg'
 test('the invariants balance, and a map that is not a partition is refused', () => {
   const { lab, s4, s5 } = course();
   assert.deepEqual(s5.invariants.Ticks.map(tick => tick.name), ['AccountCourse', 'CheckCourse']);
-  assert.deepEqual(Object.keys(s5.check.checks), S5_CONTRACT.invariants);
+  assert.deepEqual(Object.keys(s5.check.checks), COURSE_CONTRACT.invariants);
   assert.equal(s5.check.balanced, true);
-  assert.ok(lab.has(S5_ADDRESSES.check));
+  assert.ok(lab.has(COURSE_ADDRESSES.check));
   const broken = { ...s5.graph, walkable: { ...s5.graph.walkable, cells: s5.graph.walkable.cells.map(() => 1) } };
   assert.equal(checkCourse({ ledger: s5.ledger, graph: broken, holes: s4.holes, obstacles: s5.obstacles }).checks.theMapIsAPartition, false);
   const reordered = { ...s5.graph, order: [10, 1] };
@@ -140,8 +140,8 @@ test('a straight line is blocked when it crosses an obstacle cell, and the sampl
   assert.equal(straightIsBlocked(frame, walkable, [8, 40], [56, 40]), false);
 });
 
-test('both S5 runs are pyto-run-record@1 records', () => {
+test('both course runs are pyto-run-record@1 records', () => {
   const { lab } = course();
-  assert.deepEqual(lab.runRecord('S5').record.ticks.map(tick => tick.name), S5_CONTRACT.ticks);
-  assert.equal(lab.runRecord('S5.invariants').record.ticks[1].invocations[0].actual_produces[0], S5_ADDRESSES.check);
+  assert.deepEqual(lab.runRecord('S7.course').record.ticks.map(tick => tick.name), COURSE_CONTRACT.ticks);
+  assert.equal(lab.runRecord('S7.course.invariants').record.ticks[1].invocations[0].actual_produces[0], COURSE_ADDRESSES.check);
 });
