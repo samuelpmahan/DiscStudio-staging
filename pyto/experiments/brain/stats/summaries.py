@@ -201,7 +201,51 @@ def histogram(args):
     return {"counts": counts, "edges": edges, "density": density}
 
 
+def ecdf(args):
+    """the empirical distribution function: the distinct values and the step at each.
+
+    ``{"x", "cdf", "sf", "n"}`` where ``cdf[i]`` is the share of the sample at or
+    below ``x[i]``. reference: scipy.stats.ecdf. with ``q`` it also answers the
+    inverse: the smallest observed value whose cdf reaches each quantile.
+    """
+    values = _sample(args)
+    _backend(args, ("py", "sp"))
+    if _backend(args, ("py", "sp")) == "sp":
+        from scipy import stats as sp_stats
+
+        out = sp_stats.ecdf(values).cdf
+        x = [float(v) for v in out.quantiles]
+        cdf = [float(v) for v in out.probabilities]
+    else:
+        ordered = sorted(values)
+        x = []
+        cdf = []
+        for index, value in enumerate(ordered):
+            if x and value == x[-1]:
+                cdf[-1] = (index + 1) / len(ordered)
+            else:
+                x.append(value)
+                cdf.append((index + 1) / len(ordered))
+    answer = {"x": x, "cdf": cdf, "sf": [1.0 - v for v in cdf], "n": len(values)}
+    q = args.get("q")
+    if q is not None:
+        many = isinstance(q, (list, tuple))
+        qs = [float(v) for v in (q if many else [q])]
+        for one in qs:
+            if not 0.0 < one <= 1.0:
+                raise ValueError("an empirical quantile needs q in (0, 1], got %r" % (one,))
+        picked = []
+        for one in qs:
+            place = 0
+            while place < len(cdf) - 1 and cdf[place] < one - 1e-12:
+                place += 1
+            picked.append(x[place])
+        answer["quantiles"] = picked if many else picked[0]
+    return answer
+
+
 TRIMMED_MEAN = Calculation("fn.brain.stats.trimmed_mean", trimmed_mean)
+ECDF = Calculation("fn.brain.stats.ecdf", ecdf)
 WINSORIZE = Calculation("fn.brain.stats.winsorize", winsorize)
 MEDIAN_ABS_DEVIATION = Calculation("fn.brain.stats.median_abs_deviation", median_abs_deviation)
 GMEAN = Calculation("fn.brain.stats.gmean", gmean)
@@ -209,5 +253,5 @@ HMEAN = Calculation("fn.brain.stats.hmean", hmean)
 ENTROPY = Calculation("fn.brain.stats.entropy", entropy)
 HISTOGRAM = Calculation("fn.brain.stats.histogram", histogram)
 
-CALCS = {c.address: c for c in (TRIMMED_MEAN, WINSORIZE, MEDIAN_ABS_DEVIATION, GMEAN,
-                                HMEAN, ENTROPY, HISTOGRAM)}
+CALCS = {c.address: c for c in (TRIMMED_MEAN, ECDF, WINSORIZE, MEDIAN_ABS_DEVIATION,
+                                GMEAN, HMEAN, ENTROPY, HISTOGRAM)}

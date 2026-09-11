@@ -28,6 +28,13 @@
     "kind": "strength",
     "text": "oc.brain.data.load reads csv and json through args['effects'].read_text, so the bytes it read land on the ledger. a dataset that came off disk is therefore as replayable as one written out in a module, and the record says which file it came from."
   },
+  "proposal.brain.data.the_signal_processing_this_vertical_does_not_have": {
+    "for": "every time-series calculation that is missing tonight -- stl, arima, a periodogram, a resample -- is missing the same four primitives",
+    "kind": "friction",
+    "proposal": "fn.brain.backend.convolve, .correlate, .interpolate and .rfft/.irfft over the same engine argument. with those four the data vertical's next four calculations are compositions rather than implementations",
+    "text": "a seasonal decomposition is a convolution, an autocorrelation is a correlation, an as-of join is an interpolation problem with a rule, and a spectral view of a series is an rfft. this vertical writes the first two out by hand (a centred moving average as an explicit weighted window; an acf as a python loop or a numpy slice product) and does not have the last two at all, because the backend facade has no convolve, no correlate, no interpolate and no real-input fft.",
+    "workaround": "the hand-written forms are covered by oracle Parts against numpy.convolve and numpy.correlate, so they are right; they are just each one-off"
+  },
   "proposal.brain.data.the_window_did_not_have_to_be_a_window": {
     "for": "a facade with a backend argument is what let a third engine be added and measured without touching a single caller or a single oracle case",
     "kind": "strength",
@@ -40,8 +47,8 @@
     "inputs_sha256": "2cb34fcdb08eacc04ecaacce20436b30804f42b904c839a8f09b4c954a8c0cea",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 0.78586500058,
-    "wall_ms_min": 0.768908999817
+    "wall_ms_median": 0.792970000475,
+    "wall_ms_min": 0.768329000493
   },
   "px.exp.brain.bench.data.acf.np.n=600": {
     "backend": "np",
@@ -50,8 +57,8 @@
     "inputs_sha256": "144c2fb6baf6b50861fc8582f54aa68cf42f4c9a3ee9659e090e8d2f8709129f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.179194999873,
-    "wall_ms_min": 0.175097000465
+    "wall_ms_median": 0.185123999472,
+    "wall_ms_min": 0.177945999894
   },
   "px.exp.brain.bench.data.acf.py.n=4000": {
     "backend": "py",
@@ -60,8 +67,8 @@
     "inputs_sha256": "2cb34fcdb08eacc04ecaacce20436b30804f42b904c839a8f09b4c954a8c0cea",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 10.7233119998,
-    "wall_ms_min": 10.7141920016
+    "wall_ms_median": 10.9775760011,
+    "wall_ms_min": 10.8375119999
   },
   "px.exp.brain.bench.data.acf.py.n=600": {
     "backend": "py",
@@ -70,8 +77,8 @@
     "inputs_sha256": "144c2fb6baf6b50861fc8582f54aa68cf42f4c9a3ee9659e090e8d2f8709129f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 1.58544199985,
-    "wall_ms_min": 1.53225999929
+    "wall_ms_median": 1.57583300097,
+    "wall_ms_min": 1.52912599879
   },
   "px.exp.brain.bench.data.ar_fit.np.n=4000": {
     "backend": "np",
@@ -80,8 +87,8 @@
     "inputs_sha256": "5f3a0a8b10a9d25528ed5390f3bee750086962ca413df7832d86ee80bce9068d",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 23.9575439991,
-    "wall_ms_min": 19.8695220006
+    "wall_ms_median": 7.34380500035,
+    "wall_ms_min": 7.28295299996
   },
   "px.exp.brain.bench.data.ar_fit.np.n=600": {
     "backend": "np",
@@ -90,8 +97,8 @@
     "inputs_sha256": "79eaa578e198c217605bf1c6211b6d1d3db95ce43d61198cecdd98ab4994bfb3",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 1.09764900117,
-    "wall_ms_min": 1.05929500023
+    "wall_ms_median": 1.08967600136,
+    "wall_ms_min": 1.0519919997
   },
   "px.exp.brain.bench.data.ar_fit.py.n=4000": {
     "backend": "py",
@@ -100,8 +107,8 @@
     "inputs_sha256": "5f3a0a8b10a9d25528ed5390f3bee750086962ca413df7832d86ee80bce9068d",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 16.0864280006,
-    "wall_ms_min": 16.0667380005
+    "wall_ms_median": 17.676589001,
+    "wall_ms_min": 17.163337001
   },
   "px.exp.brain.bench.data.ar_fit.py.n=600": {
     "backend": "py",
@@ -110,8 +117,8 @@
     "inputs_sha256": "79eaa578e198c217605bf1c6211b6d1d3db95ce43d61198cecdd98ab4994bfb3",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 2.37519799884,
-    "wall_ms_min": 2.36012499954
+    "wall_ms_median": 2.42241600063,
+    "wall_ms_min": 2.33609899988
   },
   "px.exp.brain.bench.data.ewma.np.n=4000": {
     "backend": "np",
@@ -120,8 +127,8 @@
     "inputs_sha256": "6798d08087c3412251e445b0eb09fcd0d37b9776dce352cb90570c1213b5693d",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.7029160008,
-    "wall_ms_min": 1.68525200024
+    "wall_ms_median": 1.71837000016,
+    "wall_ms_min": 1.69145500149
   },
   "px.exp.brain.bench.data.ewma.np.n=600": {
     "backend": "np",
@@ -130,8 +137,8 @@
     "inputs_sha256": "1d5d4e6e20ef71bc05396477c89a8d91e03c901ce8b12d675e7b7ac3d41fa07a",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.266384999122,
-    "wall_ms_min": 0.254026999755
+    "wall_ms_median": 0.266131000899,
+    "wall_ms_min": 0.256940000327
   },
   "px.exp.brain.bench.data.ewma.py.n=4000": {
     "backend": "py",
@@ -140,8 +147,8 @@
     "inputs_sha256": "6798d08087c3412251e445b0eb09fcd0d37b9776dce352cb90570c1213b5693d",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.72381399898,
-    "wall_ms_min": 1.71674800004
+    "wall_ms_median": 2.15058399954,
+    "wall_ms_min": 2.01136500073
   },
   "px.exp.brain.bench.data.ewma.py.n=600": {
     "backend": "py",
@@ -150,8 +157,8 @@
     "inputs_sha256": "1d5d4e6e20ef71bc05396477c89a8d91e03c901ce8b12d675e7b7ac3d41fa07a",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.285934000203,
-    "wall_ms_min": 0.25350299984
+    "wall_ms_median": 0.260175000221,
+    "wall_ms_min": 0.259205000475
   },
   "px.exp.brain.bench.data.expanding.cumsum.n=4000": {
     "backend": "cumsum",
@@ -160,8 +167,8 @@
     "inputs_sha256": "e3826dc9f93139704f3915406ae148417453347c74bac603dd41aba6c329a1fb",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 3.33438199959,
-    "wall_ms_min": 3.27872199887
+    "wall_ms_median": 3.45754599948,
+    "wall_ms_min": 3.39673300005
   },
   "px.exp.brain.bench.data.expanding.cumsum.n=600": {
     "backend": "cumsum",
@@ -170,8 +177,8 @@
     "inputs_sha256": "bcb9798b890e0cdc8dc4decf5cd566faf6643b61013b901f4aab0a836c0ffe92",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.46204300088,
-    "wall_ms_min": 0.450247000117
+    "wall_ms_median": 0.500083999214,
+    "wall_ms_min": 0.473349999083
   },
   "px.exp.brain.bench.data.expanding.np.n=4000": {
     "backend": "np",
@@ -180,8 +187,8 @@
     "inputs_sha256": "e3826dc9f93139704f3915406ae148417453347c74bac603dd41aba6c329a1fb",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 321.989435,
-    "wall_ms_min": 321.599001001
+    "wall_ms_median": 323.191366,
+    "wall_ms_min": 319.638836001
   },
   "px.exp.brain.bench.data.expanding.np.n=600": {
     "backend": "np",
@@ -190,8 +197,8 @@
     "inputs_sha256": "bcb9798b890e0cdc8dc4decf5cd566faf6643b61013b901f4aab0a836c0ffe92",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 9.89186200059,
-    "wall_ms_min": 9.77555299869
+    "wall_ms_median": 9.89431400012,
+    "wall_ms_min": 9.7108530008
   },
   "px.exp.brain.bench.data.expanding.py.n=4000": {
     "backend": "py",
@@ -200,8 +207,8 @@
     "inputs_sha256": "e3826dc9f93139704f3915406ae148417453347c74bac603dd41aba6c329a1fb",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 246.539643,
-    "wall_ms_min": 243.984221999
+    "wall_ms_median": 247.003229,
+    "wall_ms_min": 245.863265
   },
   "px.exp.brain.bench.data.expanding.py.n=600": {
     "backend": "py",
@@ -210,8 +217,8 @@
     "inputs_sha256": "bcb9798b890e0cdc8dc4decf5cd566faf6643b61013b901f4aab0a836c0ffe92",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 6.29730200126,
-    "wall_ms_min": 6.26082400049
+    "wall_ms_median": 6.33181900048,
+    "wall_ms_min": 6.06065699867
   },
   "px.exp.brain.bench.data.group_by.np.rows=400": {
     "backend": "np",
@@ -220,8 +227,8 @@
     "inputs_sha256": "9f5e5a3b3ade02a92c5464e9c840c25e5da9c25734f8fad2f15d27ac2d00ff25",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 2.02979099959,
-    "wall_ms_min": 1.99070999952
+    "wall_ms_median": 2.10242299909,
+    "wall_ms_min": 2.0240599988
   },
   "px.exp.brain.bench.data.group_by.np.rows=4000": {
     "backend": "np",
@@ -230,8 +237,8 @@
     "inputs_sha256": "02636d0e30f4ed6dbd7ede9b8c6ec66c5ef839459838feec1f5e15d5a5e8e6b4",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 7.20421900041,
-    "wall_ms_min": 7.14221299859
+    "wall_ms_median": 7.30443499924,
+    "wall_ms_min": 7.20642499982
   },
   "px.exp.brain.bench.data.group_by.npsort.rows=400": {
     "backend": "npsort",
@@ -240,8 +247,8 @@
     "inputs_sha256": "9f5e5a3b3ade02a92c5464e9c840c25e5da9c25734f8fad2f15d27ac2d00ff25",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.568218998524,
-    "wall_ms_min": 0.550745999135
+    "wall_ms_median": 0.59759099895,
+    "wall_ms_min": 0.56679500085
   },
   "px.exp.brain.bench.data.group_by.npsort.rows=4000": {
     "backend": "npsort",
@@ -250,8 +257,8 @@
     "inputs_sha256": "02636d0e30f4ed6dbd7ede9b8c6ec66c5ef839459838feec1f5e15d5a5e8e6b4",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 4.11251399964,
-    "wall_ms_min": 4.00519700088
+    "wall_ms_median": 4.05161999879,
+    "wall_ms_min": 4.02545199904
   },
   "px.exp.brain.bench.data.group_by.py.rows=400": {
     "backend": "py",
@@ -260,8 +267,8 @@
     "inputs_sha256": "9f5e5a3b3ade02a92c5464e9c840c25e5da9c25734f8fad2f15d27ac2d00ff25",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.81729699923,
-    "wall_ms_min": 0.777794999522
+    "wall_ms_median": 0.831502000437,
+    "wall_ms_min": 0.803445000201
   },
   "px.exp.brain.bench.data.group_by.py.rows=4000": {
     "backend": "py",
@@ -270,8 +277,8 @@
     "inputs_sha256": "02636d0e30f4ed6dbd7ede9b8c6ec66c5ef839459838feec1f5e15d5a5e8e6b4",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 5.9119610014,
-    "wall_ms_min": 5.88571200024
+    "wall_ms_median": 7.36869100001,
+    "wall_ms_min": 6.85021199934
   },
   "px.exp.brain.bench.data.outliers.np.rows=400": {
     "backend": "np",
@@ -280,8 +287,8 @@
     "inputs_sha256": "99faa6ee03d76764feb02e1033cef01d39d9d6b32323673e58cda3ca7e944fea",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.40845500007,
-    "wall_ms_min": 0.390122000681
+    "wall_ms_median": 0.389245000406,
+    "wall_ms_min": 0.363400000424
   },
   "px.exp.brain.bench.data.outliers.np.rows=4000": {
     "backend": "np",
@@ -290,8 +297,8 @@
     "inputs_sha256": "e8a56e742889dd28e4297ca0215f338de838c6b06a7806f409852d7d701edadc",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 2.98553100038,
-    "wall_ms_min": 2.86858200161
+    "wall_ms_median": 2.98932700025,
+    "wall_ms_min": 2.87476799895
   },
   "px.exp.brain.bench.data.outliers.py.rows=400": {
     "backend": "py",
@@ -300,8 +307,8 @@
     "inputs_sha256": "99faa6ee03d76764feb02e1033cef01d39d9d6b32323673e58cda3ca7e944fea",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.282435999907,
-    "wall_ms_min": 0.273339001069
+    "wall_ms_median": 0.293712999337,
+    "wall_ms_min": 0.275594000414
   },
   "px.exp.brain.bench.data.outliers.py.rows=4000": {
     "backend": "py",
@@ -310,8 +317,8 @@
     "inputs_sha256": "e8a56e742889dd28e4297ca0215f338de838c6b06a7806f409852d7d701edadc",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 2.89999199958,
-    "wall_ms_min": 2.66013499822
+    "wall_ms_median": 2.95447200006,
+    "wall_ms_min": 2.75360400155
   },
   "px.exp.brain.bench.data.pivot.np.rows=400": {
     "backend": "np",
@@ -320,8 +327,8 @@
     "inputs_sha256": "5096df0d9470702f7b7209fc297ad36d5eab3d6ca1d1992088cc7b1e34ccb9ee",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 1.25612400007,
-    "wall_ms_min": 1.20723700093
+    "wall_ms_median": 1.24832999973,
+    "wall_ms_min": 1.23781599905
   },
   "px.exp.brain.bench.data.pivot.np.rows=4000": {
     "backend": "np",
@@ -330,8 +337,8 @@
     "inputs_sha256": "4405cb39991deabdefa3cf63a2e9550218af45bd2769082eb44716e64dbe29c0",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 5.70531399899,
-    "wall_ms_min": 5.6561170004
+    "wall_ms_median": 5.72160299998,
+    "wall_ms_min": 5.64924699938
   },
   "px.exp.brain.bench.data.pivot.py.rows=400": {
     "backend": "py",
@@ -340,8 +347,8 @@
     "inputs_sha256": "5096df0d9470702f7b7209fc297ad36d5eab3d6ca1d1992088cc7b1e34ccb9ee",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.659818000713,
-    "wall_ms_min": 0.654744000713
+    "wall_ms_median": 0.824786000521,
+    "wall_ms_min": 0.8051779987
   },
   "px.exp.brain.bench.data.pivot.py.rows=4000": {
     "backend": "py",
@@ -350,8 +357,8 @@
     "inputs_sha256": "4405cb39991deabdefa3cf63a2e9550218af45bd2769082eb44716e64dbe29c0",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 5.03207200018,
-    "wall_ms_min": 5.0085999992
+    "wall_ms_median": 5.47908299995,
+    "wall_ms_min": 5.06607900024
   },
   "px.exp.brain.bench.data.rank_column.np.rows=400": {
     "backend": "np",
@@ -360,8 +367,8 @@
     "inputs_sha256": "23297b4c4f93b6c5ed8503c8a76a31caa94ff55805c21a2966ff7a9a8e7c530e",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.366823998775,
-    "wall_ms_min": 0.336903000061
+    "wall_ms_median": 0.359703999493,
+    "wall_ms_min": 0.336166000125
   },
   "px.exp.brain.bench.data.rank_column.np.rows=4000": {
     "backend": "np",
@@ -370,8 +377,8 @@
     "inputs_sha256": "ecd2276b0f67190a570414e192d3d913b1d68e31e404c661aa294c9ad6678171",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 3.25169600001,
-    "wall_ms_min": 3.16809300057
+    "wall_ms_median": 3.21537999844,
+    "wall_ms_min": 3.14177799919
   },
   "px.exp.brain.bench.data.rank_column.py.rows=400": {
     "backend": "py",
@@ -380,8 +387,8 @@
     "inputs_sha256": "23297b4c4f93b6c5ed8503c8a76a31caa94ff55805c21a2966ff7a9a8e7c530e",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.349036001353,
-    "wall_ms_min": 0.339487000019
+    "wall_ms_median": 0.358191999112,
+    "wall_ms_min": 0.345782000295
   },
   "px.exp.brain.bench.data.rank_column.py.rows=4000": {
     "backend": "py",
@@ -390,8 +397,8 @@
     "inputs_sha256": "ecd2276b0f67190a570414e192d3d913b1d68e31e404c661aa294c9ad6678171",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 3.38102200112,
-    "wall_ms_min": 3.11663199864
+    "wall_ms_median": 3.3917360015,
+    "wall_ms_min": 3.26449500062
   },
   "px.exp.brain.bench.data.rolling.cumsum.n=4000": {
     "backend": "cumsum",
@@ -400,8 +407,8 @@
     "inputs_sha256": "f676cfdff14e3dfb22c3d7a265054f47baeaab003c2d9fb9aa98a2b9010c8f3c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 2.90503500037,
-    "wall_ms_min": 2.88087399895
+    "wall_ms_median": 2.95501000073,
+    "wall_ms_min": 2.89403399984
   },
   "px.exp.brain.bench.data.rolling.cumsum.n=600": {
     "backend": "cumsum",
@@ -410,8 +417,8 @@
     "inputs_sha256": "1b50a5bdfa0c21d1a65de6627799a955b1481f75c7345f901f9fc25b3ca03d2f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.402416000725,
-    "wall_ms_min": 0.380712001061
+    "wall_ms_median": 0.416111000959,
+    "wall_ms_min": 0.406619999922
   },
   "px.exp.brain.bench.data.rolling.np.n=4000": {
     "backend": "np",
@@ -420,8 +427,8 @@
     "inputs_sha256": "f676cfdff14e3dfb22c3d7a265054f47baeaab003c2d9fb9aa98a2b9010c8f3c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 20.5824169989,
-    "wall_ms_min": 20.3403480009
+    "wall_ms_median": 21.5140050004,
+    "wall_ms_min": 20.0206810005
   },
   "px.exp.brain.bench.data.rolling.np.n=600": {
     "backend": "np",
@@ -430,8 +437,8 @@
     "inputs_sha256": "1b50a5bdfa0c21d1a65de6627799a955b1481f75c7345f901f9fc25b3ca03d2f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 2.92713800081,
-    "wall_ms_min": 2.89534900003
+    "wall_ms_median": 3.1173669995,
+    "wall_ms_min": 2.9428279995
   },
   "px.exp.brain.bench.data.rolling.py.n=4000": {
     "backend": "py",
@@ -440,8 +447,8 @@
     "inputs_sha256": "f676cfdff14e3dfb22c3d7a265054f47baeaab003c2d9fb9aa98a2b9010c8f3c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 7.28938099928,
-    "wall_ms_min": 7.25459599926
+    "wall_ms_median": 8.65188399985,
+    "wall_ms_min": 8.36626199998
   },
   "px.exp.brain.bench.data.rolling.py.n=600": {
     "backend": "py",
@@ -450,8 +457,8 @@
     "inputs_sha256": "1b50a5bdfa0c21d1a65de6627799a955b1481f75c7345f901f9fc25b3ca03d2f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 1.08714500129,
-    "wall_ms_min": 1.08609500057
+    "wall_ms_median": 1.12566799908,
+    "wall_ms_min": 1.05815700044
   },
   "px.exp.brain.bench.data.standardize.np.rows=400": {
     "backend": "np",
@@ -460,8 +467,8 @@
     "inputs_sha256": "540409dae83516325053149a046d97def141dd5988cbe5143ed717e366206292",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.300383999274,
-    "wall_ms_min": 0.278288998743
+    "wall_ms_median": 0.301779000438,
+    "wall_ms_min": 0.285240999801
   },
   "px.exp.brain.bench.data.standardize.np.rows=4000": {
     "backend": "np",
@@ -470,8 +477,8 @@
     "inputs_sha256": "8b73868a6feb5695e8d34ca9ab13ff46e34613e545463525c768b337413bba52",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 2.77559699862,
-    "wall_ms_min": 2.53996200081
+    "wall_ms_median": 2.75509499988,
+    "wall_ms_min": 2.5565019987
   },
   "px.exp.brain.bench.data.standardize.py.rows=400": {
     "backend": "py",
@@ -480,8 +487,8 @@
     "inputs_sha256": "540409dae83516325053149a046d97def141dd5988cbe5143ed717e366206292",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.342626000929,
-    "wall_ms_min": 0.288302999252
+    "wall_ms_median": 0.303610999254,
+    "wall_ms_min": 0.287541999569
   },
   "px.exp.brain.bench.data.standardize.py.rows=4000": {
     "backend": "py",
@@ -490,8 +497,8 @@
     "inputs_sha256": "8b73868a6feb5695e8d34ca9ab13ff46e34613e545463525c768b337413bba52",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 2.8497409985,
-    "wall_ms_min": 2.78233300014
+    "wall_ms_median": 2.95737100168,
+    "wall_ms_min": 2.89149199853
   },
   "px.exp.brain.bracket.data.group_by_aggregation": {
     "candidates": [
@@ -539,31 +546,31 @@
       {
         "candidate": "py",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (5.9120 ms median), aggregation body 32 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (7.3687 ms median), aggregation body 32 lines",
         "scores": {
           "clarity": 32.0,
           "correctness": 1.0,
-          "speed": 5.9119610014
+          "speed": 7.36869100001
         }
       },
       {
         "candidate": "np",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (7.2042 ms median), aggregation body 24 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (7.3044 ms median), aggregation body 24 lines",
         "scores": {
           "clarity": 24.0,
           "correctness": 1.0,
-          "speed": 7.20421900041
+          "speed": 7.30443499924
         }
       },
       {
         "candidate": "npsort",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (4.1125 ms median), aggregation body 65 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (4.0516 ms median), aggregation body 65 lines",
         "scores": {
           "clarity": 65.0,
           "correctness": 1.0,
-          "speed": 4.11251399964
+          "speed": 4.05161999879
         }
       }
     ],
@@ -579,9 +586,9 @@
         "py": 1.0
       },
       "speed": {
-        "np": 7.20421900041,
-        "npsort": 4.11251399964,
-        "py": 5.9119610014
+        "np": 7.30443499924,
+        "npsort": 4.05161999879,
+        "py": 7.36869100001
       }
     },
     "problem": "group_by_aggregation",
@@ -591,9 +598,9 @@
       "note": "winner 'npsort'; fn.brain.data.group_by defaults to 'py' (data.frame.DEFAULT_GROUP_BY_BACKEND), so the facade does NOT follow it: data.frame.DEFAULT_GROUP_BY_BACKEND is 'py', because the bracket's speed criterion reads the LARGEST benchmark and the engines cross over on the way there -- 'py' wins at 400 rows and 'npsort' at 4000. every engine keeps its own oracle and benchmark Parts and stays reachable by naming args['backend'], so nothing is deleted and the bracket re-runs against all three."
     },
     "totals": {
-      "np": 4.0,
+      "np": 4.03874261404,
       "npsort": 5.0,
-      "py": 4.64082973155
+      "py": 3.80487804878
     },
     "winner": "npsort"
   },
@@ -643,31 +650,31 @@
       {
         "candidate": "py",
         "judge": "referee",
-        "note": "read 14 oracle Part(s) (14 passed), benchmark n=4000 (7.2894 ms median), engine body 61 lines",
+        "note": "read 14 oracle Part(s) (14 passed), benchmark n=4000 (8.6519 ms median), engine body 61 lines",
         "scores": {
           "clarity": 61.0,
           "correctness": 1.0,
-          "speed": 7.28938099928
+          "speed": 8.65188399985
         }
       },
       {
         "candidate": "np",
         "judge": "referee",
-        "note": "read 14 oracle Part(s) (14 passed), benchmark n=4000 (20.5824 ms median), engine body 61 lines",
+        "note": "read 14 oracle Part(s) (14 passed), benchmark n=4000 (21.5140 ms median), engine body 61 lines",
         "scores": {
           "clarity": 61.0,
           "correctness": 1.0,
-          "speed": 20.5824169989
+          "speed": 21.5140050004
         }
       },
       {
         "candidate": "cumsum",
         "judge": "referee",
-        "note": "read 10 oracle Part(s) (10 passed), benchmark n=4000 (2.9050 ms median), engine body 41 lines",
+        "note": "read 10 oracle Part(s) (10 passed), benchmark n=4000 (2.9550 ms median), engine body 41 lines",
         "scores": {
           "clarity": 41.0,
           "correctness": 1.0,
-          "speed": 2.90503500037
+          "speed": 2.95501000073
         }
       }
     ],
@@ -683,9 +690,9 @@
         "py": 1.0
       },
       "speed": {
-        "cumsum": 2.90503500037,
-        "np": 20.5824169989,
-        "py": 7.28938099928
+        "cumsum": 2.95501000073,
+        "np": 21.5140050004,
+        "py": 8.65188399985
       }
     },
     "problem": "rolling_window",
@@ -697,7 +704,7 @@
     "totals": {
       "cumsum": 6.0,
       "np": 3.0,
-      "py": 4.50395980589
+      "py": 4.3860794726
     },
     "winner": "cumsum"
   },
@@ -3232,6 +3239,7 @@
       "proposal.brain.data.missing_is_none_because_json_cannot_hold_nan",
       "proposal.brain.data.numpy_does_not_pay_on_small_groups",
       "proposal.brain.data.the_loader_is_an_effect_and_that_is_the_point",
+      "proposal.brain.data.the_signal_processing_this_vertical_does_not_have",
       "proposal.brain.data.the_window_did_not_have_to_be_a_window",
       "px.exp.brain.bench.data.acf.np.n=4000",
       "px.exp.brain.bench.data.acf.np.n=600",

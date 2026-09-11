@@ -325,6 +325,21 @@ def findings(store):
         for_="a facade with a backend argument is what let a third engine be added and "
              "measured without touching a single caller or a single oracle case")
     store.finding(
+        VERTICAL, "the_signal_processing_this_vertical_does_not_have", "friction",
+        "a seasonal decomposition is a convolution, an autocorrelation is a correlation, an "
+        "as-of join is an interpolation problem with a rule, and a spectral view of a series "
+        "is an rfft. this vertical writes the first two out by hand (a centred moving average "
+        "as an explicit weighted window; an acf as a python loop or a numpy slice product) and "
+        "does not have the last two at all, because the backend facade has no convolve, no "
+        "correlate, no interpolate and no real-input fft.",
+        for_="every time-series calculation that is missing tonight -- stl, arima, a "
+             "periodogram, a resample -- is missing the same four primitives",
+        workaround="the hand-written forms are covered by oracle Parts against numpy.convolve "
+                   "and numpy.correlate, so they are right; they are just each one-off",
+        proposal="fn.brain.backend.convolve, .correlate, .interpolate and .rfft/.irfft over "
+                 "the same engine argument. with those four the data vertical's next four "
+                 "calculations are compositions rather than implementations")
+    store.finding(
         VERTICAL, "the_loader_is_an_effect_and_that_is_the_point", "strength",
         "oc.brain.data.load reads csv and json through args['effects'].read_text, so the bytes "
         "it read land on the ledger. a dataset that came off disk is therefore as replayable as "
