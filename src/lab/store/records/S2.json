@@ -85,6 +85,20 @@
                   },
                   {
                     "label": 2,
+                    "area": 176,
+                    "cx": 247.5,
+                    "cy": 152.54545454545453,
+                    "bboxX": 240,
+                    "bboxY": 138,
+                    "bboxW": 16,
+                    "bboxH": 30,
+                    "major": 30,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36666666666666664
+                  },
+                  {
+                    "label": 3,
                     "area": 252,
                     "cx": 387.54761904761904,
                     "cy": 157.5,
@@ -98,7 +112,7 @@
                     "fill": 0.252
                   },
                   {
-                    "label": 3,
+                    "label": 4,
                     "area": 252,
                     "cx": 431.45238095238096,
                     "cy": 157.5,
@@ -112,7 +126,7 @@
                     "fill": 0.252
                   },
                   {
-                    "label": 4,
+                    "label": 5,
                     "area": 120,
                     "cx": 394.5,
                     "cy": 157.5,
@@ -126,7 +140,7 @@
                     "fill": 1
                   },
                   {
-                    "label": 5,
+                    "label": 6,
                     "area": 120,
                     "cx": 410.5,
                     "cy": 157.5,
@@ -140,7 +154,7 @@
                     "fill": 1
                   },
                   {
-                    "label": 6,
+                    "label": 7,
                     "area": 132,
                     "cx": 67.5,
                     "cy": 222.3181818181818,
@@ -154,7 +168,7 @@
                     "fill": 0.3173076923076923
                   },
                   {
-                    "label": 7,
+                    "label": 8,
                     "area": 564,
                     "cx": 149.5,
                     "cy": 277.5,
@@ -168,7 +182,21 @@
                     "fill": 0.235
                   },
                   {
-                    "label": 8,
+                    "label": 9,
+                    "area": 564,
+                    "cx": 247.5,
+                    "cy": 277.5,
+                    "bboxX": 218,
+                    "bboxY": 258,
+                    "bboxW": 60,
+                    "bboxH": 40,
+                    "major": 60,
+                    "minor": 40,
+                    "angle": 0,
+                    "fill": 0.235
+                  },
+                  {
+                    "label": 10,
                     "area": 120,
                     "cx": 134.5,
                     "cy": 277.5,
@@ -182,7 +210,7 @@
                     "fill": 1
                   },
                   {
-                    "label": 9,
+                    "label": 11,
                     "area": 156,
                     "cx": 153.5,
                     "cy": 277.5,
@@ -196,7 +224,49 @@
                     "fill": 0.65
                   },
                   {
-                    "label": 10,
+                    "label": 12,
+                    "area": 120,
+                    "cx": 232.5,
+                    "cy": 277.5,
+                    "bboxX": 230,
+                    "bboxY": 268,
+                    "bboxW": 6,
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
+                  },
+                  {
+                    "label": 13,
+                    "area": 120,
+                    "cx": 248.5,
+                    "cy": 277.5,
+                    "bboxX": 246,
+                    "bboxY": 268,
+                    "bboxW": 6,
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
+                  },
+                  {
+                    "label": 14,
+                    "area": 1746,
+                    "cx": 247.5,
+                    "cy": 405.31500572737684,
+                    "bboxX": 227,
+                    "bboxY": 378,
+                    "bboxW": 42,
+                    "bboxH": 66,
+                    "major": 66,
+                    "minor": 42,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.6298701298701299
+                  },
+                  {
+                    "label": 15,
                     "area": 1746,
                     "cx": 170.5,
                     "cy": 455.31500572737684,
@@ -210,7 +280,7 @@
                     "fill": 0.6298701298701299
                   },
                   {
-                    "label": 11,
+                    "label": 16,
                     "area": 152,
                     "cx": 427.5,
                     "cy": 530.5,
@@ -224,7 +294,7 @@
                     "fill": 0.36538461538461536
                   },
                   {
-                    "label": 12,
+                    "label": 17,
                     "area": 564,
                     "cx": 329.5,
                     "cy": 597.5,
@@ -238,7 +308,7 @@
                     "fill": 0.235
                   },
                   {
-                    "label": 13,
+                    "label": 18,
                     "area": 156,
                     "cx": 317.5,
                     "cy": 597.5,
@@ -252,7 +322,7 @@
                     "fill": 0.65
                   },
                   {
-                    "label": 14,
+                    "label": 19,
                     "area": 120,
                     "cx": 330.5,
                     "cy": 597.5,
@@ -266,7 +336,7 @@
                     "fill": 1
                   },
                   {
-                    "label": 15,
+                    "label": 20,
                     "area": 1786,
                     "cx": 349.91769316909296,
                     "cy": 785.5431131019037,
@@ -369,6 +439,20 @@
                   },
                   {
                     "label": 6,
+                    "area": 1296,
+                    "cx": 248.7962962962963,
+                    "cy": 277.5,
+                    "bboxX": 224,
+                    "bboxY": 262,
+                    "bboxW": 48,
+                    "bboxH": 32,
+                    "major": 48,
+                    "minor": 32,
+                    "angle": 0,
+                    "fill": 0.84375
+                  },
+                  {
+                    "label": 7,
                     "area": 84,
                     "cx": 153.5,
                     "cy": 277.5,
@@ -382,7 +466,7 @@
                     "fill": 1
                   },
                   {
-                    "label": 7,
+                    "label": 8,
                     "area": 4224,
                     "cx": 131.5,
                     "cy": 345.5,
@@ -396,7 +480,21 @@
                     "fill": 1
                   },
                   {
-                    "label": 8,
+                    "label": 9,
+                    "area": 1954,
+                    "cx": 247.5,
+                    "cy": 415.13306038894575,
+                    "bboxX": 223,
+                    "bboxY": 374,
+                    "bboxW": 50,
+                    "bboxH": 74,
+                    "major": 74,
+                    "minor": 50,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.5281081081081082
+                  },
+                  {
+                    "label": 10,
                     "area": 1954,
                     "cx": 170.5,
                     "cy": 465.13306038894575,
@@ -410,7 +508,7 @@
                     "fill": 0.5281081081081082
                   },
                   {
-                    "label": 9,
+                    "label": 11,
                     "area": 1176,
                     "cx": 331.8469387755102,
                     "cy": 597.5,
@@ -424,7 +522,7 @@
                     "fill": 0.7656249999999997
                   },
                   {
-                    "label": 10,
+                    "label": 12,
                     "area": 84,
                     "cx": 317.5,
                     "cy": 597.5,
@@ -438,7 +536,7 @@
                     "fill": 1
                   },
                   {
-                    "label": 11,
+                    "label": 13,
                     "area": 1938,
                     "cx": 350.68988648090817,
                     "cy": 795.1300309597523,
@@ -503,7 +601,25 @@
               "members": [
                 {
                   "body": {
-                    "label": 10,
+                    "label": 14,
+                    "area": 1746,
+                    "cx": 247.5,
+                    "cy": 405.31500572737684,
+                    "bboxX": 227,
+                    "bboxY": 378,
+                    "bboxW": 42,
+                    "bboxH": 66,
+                    "major": 66,
+                    "minor": 42,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.6298701298701299
+                  },
+                  "areaRatio": 1,
+                  "whiteCoverage": 1
+                },
+                {
+                  "body": {
+                    "label": 15,
                     "area": 1746,
                     "cx": 170.5,
                     "cy": 455.31500572737684,
@@ -581,7 +697,38 @@
                 {
                   "candidate": {
                     "body": {
-                      "label": 10,
+                      "label": 14,
+                      "area": 1746,
+                      "cx": 247.5,
+                      "cy": 405.31500572737684,
+                      "bboxX": 227,
+                      "bboxY": 378,
+                      "bboxW": 42,
+                      "bboxH": 66,
+                      "major": 66,
+                      "minor": 42,
+                      "angle": 1.5707963267948966,
+                      "fill": 0.6298701298701299
+                    },
+                    "areaRatio": 1,
+                    "whiteCoverage": 1
+                  },
+                  "bbox": [
+                    223,
+                    374,
+                    50,
+                    74
+                  ],
+                  "blackPx": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "cb016a4f5994ccf97b9c0ad13ab00d0ed2145d5f309770b25c4bab123a19cffe"
+                  }
+                },
+                {
+                  "candidate": {
+                    "body": {
+                      "label": 15,
                       "area": 1746,
                       "cx": 170.5,
                       "cy": 455.31500572737684,
@@ -611,7 +758,7 @@
                 }
               ]
             },
-            "note": "2 array(s) truncated to the first 200 entries; original lengths: [1954, 1954]"
+            "note": "3 array(s) truncated to the first 200 entries; original lengths: [1954, 1954, 1954]"
           }
         }
       ]
@@ -658,6 +805,53 @@
             "data": [
               {
                 "bbox": [
+                  223,
+                  374,
+                  50,
+                  74
+                ],
+                "px": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "cb016a4f5994ccf97b9c0ad13ab00d0ed2145d5f309770b25c4bab123a19cffe"
+                },
+                "whitePx": 1746,
+                "blackPx": 1954,
+                "has": {
+                  "detectFamily": {
+                    "fn": "fn.lab.basket.detectfamily",
+                    "body": {
+                      "polarity": "bright",
+                      "label": 14,
+                      "bbox": [
+                        227,
+                        378,
+                        42,
+                        66
+                      ]
+                    }
+                  },
+                  "findShellFamily": {
+                    "fn": "fn.lab.basket.findshellfamily",
+                    "margins": [
+                      4,
+                      4,
+                      4,
+                      4
+                    ],
+                    "blackPx": 1954
+                  },
+                  "findPx": {
+                    "fn": "fn.lab.basket.findpx",
+                    "body": {
+                      "polarity": "bright",
+                      "label": 14
+                    }
+                  }
+                }
+              },
+              {
+                "bbox": [
                   146,
                   424,
                   50,
@@ -675,7 +869,7 @@
                     "fn": "fn.lab.basket.detectfamily",
                     "body": {
                       "polarity": "bright",
-                      "label": 10,
+                      "label": 15,
                       "bbox": [
                         150,
                         428,
@@ -698,13 +892,13 @@
                     "fn": "fn.lab.basket.findpx",
                     "body": {
                       "polarity": "bright",
-                      "label": 10
+                      "label": 15
                     }
                   }
                 }
               }
             ],
-            "note": "1 array(s) truncated to the first 200 entries; original lengths: [3700]"
+            "note": "2 array(s) truncated to the first 200 entries; original lengths: [3700, 3700]"
           }
         }
       ]

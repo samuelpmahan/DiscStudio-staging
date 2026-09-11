@@ -11,6 +11,8 @@ import { registerS2, runS2 } from './s2.js';
 import { registerS3, runS3 } from './s3.js';
 import { registerHolesNearest, runHolesNearest } from './holes-nearest.js';
 import { registerS4, runS4 } from './s4.js';
+import { registerS5, runS5 } from './s5.js';
+import { registerS6, runS6 } from './s6.js';
 import { registerCourse, runCourse } from './s7course.js';
 import { registerRound, runRound } from './s7round.js';
 import { registerRoute, runRoute } from './route.js';
@@ -19,25 +21,27 @@ import { fixtureCapture, fixtureBasis } from './fixtures.js';
 
 export function buildMap() {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerS4(lab); registerCourse(lab); registerRound(lab); registerRoute(lab); registerPath(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerS4(lab); registerS5(lab); registerS6(lab); registerCourse(lab); registerRound(lab); registerRoute(lab); registerPath(lab);
   // The course fixture: the S0..S3 capture plus the two elements the later Stages
   // need -- a hole whose basket is missing, and structure no Stage object owns.
-  const fixture = { hole11: true, obstacle: true, overlaps: true };
+  const fixture = { hole11: true, obstacle: true, overlaps: true, aligned: true };
   lab.put('px.exp.lab.fixture.basis', fixtureBasis(fixture));
   const s0 = runS0(lab, { decoded: fixtureCapture(20260911, fixture), label: 'lab course fixture capture' });
   const s1 = runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
   const s2 = runS2(lab);
   const s3 = runS3(lab);
   const s4 = runS4(lab);
+  const s5 = runS5(lab);
+  const s6 = runS6(lab);
   const holes = runHolesNearest(lab);
-  const s5 = runCourse(lab);
+  const courseGraph = runCourse(lab);
   // The straight round first, so the searched round can be compared against what it replaces.
   const round = runRoute(lab, { course: 'labfixture' });
-  const s6 = runRound(lab, { compareWith: 'labfixture' });
+  const searched = runRound(lab, { compareWith: 'labfixture' });
   putCourses(lab, ['DashsTrack']);
   const path = pathDocument(lab, { course: 'dashstrack', name: 'route', from: 'h1', to: 'h9' });
   lab.run(path.composition.PrincipleComponentRender, path.composition);
-  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'S4', 'S4.invariants', 'HolesByNearestAnchor', 'HolesByNearestAnchor.invariants', 'S7.course', 'S7.course.invariants', 'S7.round', 'S7.round.invariants', 'S7.vs-straight', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
+  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'S4', 'S4.invariants', 'S5', 'S5.invariants', 'S6', 'S6.invariants', 'HolesByNearestAnchor', 'HolesByNearestAnchor.invariants', 'S7.course', 'S7.course.invariants', 'S7.round', 'S7.round.invariants', 'S7.vs-straight', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
 
   lab.put('px.exp.lab.map', {
     for: 'what the ChainSpot S0..S3 port and the Stages invented on top of it reached in one sprint, and what they did not',
@@ -48,6 +52,8 @@ export function buildMap() {
       { what: 'S2', document: 'the document its three OperationSpecs declare, on S1 produce', evidence: 'tests/lab-s2.test.js' },
       { what: 'S3', document: 'the document its three OperationSpecs declare, plus the Python analogue\'s two-Tick accounting PCR', evidence: 'tests/lab-s3.test.js' },
       { what: 'S4 Recovery (invented)', document: "Recover.unclaimed -> Recover.badges -> Recover.baskets -> Recover.tees -> Recover.ledger: the LAB's own dark-plate recovery ported knob for knob, plus the shell recovery and component fallback its S2 and S3 receipts mark NOT RUN; px.recovered.* is what S5 onward read", evidence: 'tests/lab-s4.test.js' },
+      { what: 'S5 Tee -> Badge (invented)', document: "Tee.pointing -> Tee.castRay -> TeeBadge.pair: the pointing end read off the pad's own bright material about its ring, then a ray; a symmetric pad is refused rather than paired by distance", evidence: 'tests/lab-s5.test.js' },
+      { what: 'S6 Straight holes (invented)', document: 'Hole.continueRay -> Hole.straight -> Hole.unresolved: the tee-to-badge ray continued past the badge until it enters a basket, with the perpendicular residual as the proof the three points are on a line, and the badges it cannot finish listed as doglegs', evidence: 'tests/lab-s6.test.js' },
       { what: 'HolesByNearestAnchor (invented, a fallback)', document: 'Hole.readNumbers -> Hole.bindAnchors -> Hole.assemble -> Hole.unplaced over the S1/S2/S3 produce Parts, plus its invariants PCR; superseded by the tee-to-badge ray the owner set as S5/S6, kept because a course where no ray resolves still has to say something', evidence: 'tests/lab-holes-nearest.test.js' },
       { what: 'S7 Pathfinding, the course half (invented)', document: 'Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S7.course.mmd compiles to the same document', evidence: 'tests/lab-s7course.test.js' },
       { what: 'S7 Pathfinding, the round half (invented)', document: "Round.legs -> Round.path -> Round.summary, an A* over the course's walkable cells (integer costs 10/14, octile heuristic, no corner cutting, ties by (f, g, cell), no clock and no random), plus S7.round.invariants and the S7.vs-straight comparison with the route task 114 landed; stages/S7.round.mmd compiles to the same document", evidence: 'tests/lab-s7round.test.js' },
@@ -106,6 +112,9 @@ export function buildMap() {
   finding(lab, 's4.recoveryisadd-only', { kind: 'strength', for: 'the rule that makes recovery safe rather than generous', text: "Recovery searches only px.recovered.unclaimed -- the components of either mask that no clean Badge, Basket or Tee owns a pixel of -- so it cannot take an object away from a Stage, move one, or disagree with one. It only adds, only where the clean path found nothing, and every object it adds carries the rule that found it (`basis`) and the measurement that admitted it (`evidence`). Two invariants hold the line: everyCleanObjectSurvivesUnchanged compares against the raw S1/S2/S3 Parts rather than S4's copy of them, and noRecoveredObjectSitsOnACleanOne refuses an object on top of one that was already found." });
   finding(lab, 's4.thelabhadonerecoveryandnamedtwomore', { kind: 'finding', for: 'where the three recovery rules came from', text: "S1 has a recovery and it is implemented: recoverDarkPlateBadges finds a badge whose bright border never formed, from the dark plate alone, and the object records basis 'dark-plate-recovery' beside 'bright-family' and 'unresolved'. S2's and S3's receipts NAME two more and run neither: 'recovery: NOT RUN' (S2/contract.ts:19) and 'recovery: NOT RUN' / 'component fallback: NOT RUN' (S3/contract.ts:25-26). So the port did not invent a scheme; it ported the one that exists and wrote the two the LAB had already given names to, in the same shape: a shell that survives the body it holds, and a frame that is still a frame after its hole leaks." });
   finding(lab, 's4.everyoverlapbreaksonepredicate', { kind: 'finding', for: 'what an overlap actually does to a detector', text: "Each clean detector has one thing it cannot survive, and it is not noise -- it is a predicate. S1 needs a white component whose bbox encloses the plate, so cutting the border ring twice loses the badge while leaving the plate untouched. S2 needs the body component to be the sprite's bbox EXACTLY, so a 10x4 white tab fused to it loses the basket while leaving the shell untouched. S3 needs an enclosed hole, and it dilates by up to 3 to close gaps, so a notch 10px wide loses the tee while leaving the frame's bbox untouched. In all three the object's other half is still there, which is why recovery is possible at all and why each rule reads the half the overlap did not touch." });
+  finding(lab, 's5.directionisameasurement', { kind: 'strength', for: 'the difference between an axis and a direction', text: "A tee's major axis (the LAB's own majorAxisOf, already in the component stats S2 publishes) gives a line and two ends, and nothing about an axis says which end is the front. S5 measures it: the centroid of the pad's bright material against the centre of the RING S3 detected -- the one landmark a nose does not move -- and takes the end the material leans toward, provided it leans at least half a pixel. A pad balanced about its own ring has no front and is reported that way. The bbox centre will NOT do as the reference: a nose grows the bbox by about as much as it shifts the material, and on the fixture the two cancel to 0.045px, which is how the first version of this Stage came out pointing at nothing." });
+  finding(lab, 's6.theresidualiswhatmakesitaclaim', { kind: 'strength', for: 'why a ray beats a nearest-basket rule even when they agree', text: "Continuing the tee-to-badge ray gives the basket AND a number that can refute it: the perpendicular distance from the basket centre to the ray. On the fixture's aligned hole that residual is 0.5px. A nearest-basket rule produces an answer for every badge and no number at all; this produces an answer only where three points really are on a line, and says `this hole bends` everywhere else. Two of the fixture's three badges come out as doglegs, which is the correct answer for a course drawn with tees that do not point." });
+  finding(lab, 's6.doglegsarethework', { kind: 'finding', for: 'what the straight-hole rule leaves for whoever comes next', text: "px.holes.unresolved is not an error list. It carries, per badge, the reason the straight rule could not finish it (no tee points at it, the ray left the raster, the basket found was off the line, or the basket was already taken), plus the tees and baskets left over. That is the exact inheritance of a stage that can follow a bend: which badges, which anchors, and what was already ruled out." });
   finding(lab, 's1.recognition', { kind: 'friction', for: 'the one Calculation of S1 that is reduced rather than ported', text: 'fn.s1.whiteDigits.prepare/match segment glyphs with knobs and score them with a logistic model asset (digits/logisticInference, assets/logistic.json). The port normalizes to the same digitW x digitH grid and scores against template Parts; the reading shape (value, status, per-digit rankings) is the LAB\'s.' });
   lab.save('lab');
   return lab;

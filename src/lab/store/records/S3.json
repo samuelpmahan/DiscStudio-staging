@@ -62,6 +62,19 @@
                   "kind": "tee-rect"
                 },
                 {
+                  "cx": 247.5,
+                  "cy": 150.5,
+                  "holeArea": 264,
+                  "bboxX": 242,
+                  "bboxY": 140,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6583333333333333,
+                  "kind": "tee-rect"
+                },
+                {
                   "cx": 153.5,
                   "cy": 277.5,
                   "holeArea": 84,
@@ -113,6 +126,19 @@
                   "angle": 1.5707963267948966,
                   "elongation": 1.837830889288342,
                   "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 247.5,
+                  "cy": 150.5,
+                  "holeArea": 264,
+                  "bboxX": 242,
+                  "bboxY": 140,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6583333333333333,
                   "kind": "tee-rect"
                 },
                 {
@@ -195,6 +221,19 @@
                   "angle": 1.5707963267948966,
                   "elongation": 1.837830889288342,
                   "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 247.5,
+                  "cy": 150.5,
+                  "holeArea": 264,
+                  "bboxX": 242,
+                  "bboxY": 140,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6583333333333333,
                   "kind": "tee-rect"
                 },
                 {
@@ -289,6 +328,35 @@
                 },
                 {
                   "ring": {
+                    "cx": 247.5,
+                    "cy": 150.5,
+                    "holeArea": 264,
+                    "bboxX": 242,
+                    "bboxY": 140,
+                    "bboxW": 12,
+                    "bboxH": 22,
+                    "angle": 1.5707963267948966,
+                    "elongation": 1.837830889288342,
+                    "ringFrac": 0.6583333333333333,
+                    "kind": "tee-rect"
+                  },
+                  "frame": {
+                    "label": 2,
+                    "area": 176,
+                    "cx": 247.5,
+                    "cy": 152.54545454545453,
+                    "bboxX": 240,
+                    "bboxY": 138,
+                    "bboxW": 16,
+                    "bboxH": 30,
+                    "major": 30,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36666666666666664
+                  }
+                },
+                {
+                  "ring": {
                     "cx": 427.5,
                     "cy": 530.5,
                     "holeArea": 264,
@@ -302,7 +370,7 @@
                     "kind": "tee-rect"
                   },
                   "frame": {
-                    "label": 11,
+                    "label": 16,
                     "area": 152,
                     "cx": 427.5,
                     "cy": 530.5,
@@ -350,6 +418,35 @@
                 },
                 {
                   "ring": {
+                    "cx": 247.5,
+                    "cy": 150.5,
+                    "holeArea": 264,
+                    "bboxX": 242,
+                    "bboxY": 140,
+                    "bboxW": 12,
+                    "bboxH": 22,
+                    "angle": 1.5707963267948966,
+                    "elongation": 1.837830889288342,
+                    "ringFrac": 0.6583333333333333,
+                    "kind": "tee-rect"
+                  },
+                  "frame": {
+                    "label": 2,
+                    "area": 176,
+                    "cx": 247.5,
+                    "cy": 152.54545454545453,
+                    "bboxX": 240,
+                    "bboxY": 138,
+                    "bboxW": 16,
+                    "bboxH": 30,
+                    "major": 30,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36666666666666664
+                  }
+                },
+                {
+                  "ring": {
                     "cx": 427.5,
                     "cy": 530.5,
                     "holeArea": 264,
@@ -363,7 +460,7 @@
                     "kind": "tee-rect"
                   },
                   "frame": {
-                    "label": 11,
+                    "label": 16,
                     "area": 152,
                     "cx": 427.5,
                     "cy": 530.5,
@@ -525,6 +622,76 @@
               },
               {
                 "center": [
+                  247.5,
+                  150.5
+                ],
+                "innerBbox": [
+                  242,
+                  140,
+                  12,
+                  22
+                ],
+                "bbox": [
+                  240,
+                  138,
+                  16,
+                  30
+                ],
+                "angleRad": 1.5707963267948966,
+                "px": {
+                  "kind": "numbers",
+                  "length": 176,
+                  "sha256": "60a5da1830e61f76eea2d4c3c57bb931efdc536e51d7981e84103b5e47f7171f"
+                },
+                "has": {
+                  "detectRings": {
+                    "fn": "fn.lab.tee.detectrings",
+                    "hole": {
+                      "cx": 247.5,
+                      "cy": 150.5,
+                      "holeArea": 264,
+                      "bboxX": 242,
+                      "bboxY": 140,
+                      "bboxW": 12,
+                      "bboxH": 22,
+                      "angle": 1.5707963267948966,
+                      "elongation": 1.837830889288342,
+                      "ringFrac": 0.6583333333333333,
+                      "kind": "tee-rect"
+                    }
+                  },
+                  "findFamily": {
+                    "fn": "fn.lab.tee.findfamily",
+                    "frame": {
+                      "polarity": "bright",
+                      "label": 2,
+                      "bbox": [
+                        240,
+                        138,
+                        16,
+                        30
+                      ]
+                    }
+                  },
+                  "findPx": {
+                    "fn": "fn.lab.tee.findpx",
+                    "parts": [
+                      {
+                        "polarity": "bright",
+                        "label": 2,
+                        "bbox": [
+                          240,
+                          138,
+                          16,
+                          30
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "center": [
                   427.5,
                   530.5
                 ],
@@ -567,7 +734,7 @@
                     "fn": "fn.lab.tee.findfamily",
                     "frame": {
                       "polarity": "bright",
-                      "label": 11,
+                      "label": 16,
                       "bbox": [
                         420,
                         518,
@@ -581,7 +748,7 @@
                     "parts": [
                       {
                         "polarity": "bright",
-                        "label": 11,
+                        "label": 16,
                         "bbox": [
                           420,
                           518,

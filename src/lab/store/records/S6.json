@@ -1,0 +1,415 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S6",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Hole.continueRay",
+      "invocations": [
+        {
+          "id": "px.exp.lab.holes.rayhits",
+          "calculation": {
+            "address": "fn.lab.hole.continueray",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "rays": "px:px.exp.lab.teebadge.rays",
+            "baskets": "px:px.exp.lab.recovered.baskets"
+          },
+          "args": {
+            "stepPx": 1,
+            "maxResidualPx": 12
+          },
+          "into": "px.exp.lab.holes.rayhits",
+          "declared_consumes": [
+            "px:px.exp.lab.teebadge.rays",
+            "px:px.exp.lab.recovered.baskets"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.teebadge.rays",
+            "px.exp.lab.recovered.baskets"
+          ],
+          "actual_produces": [
+            "px.exp.lab.holes.rayhits"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.holes.rayhits",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "rule": "the tee-to-badge ray, continued past the badge; the first basket it enters is the hole basket",
+              "maxResidualPx": 12,
+              "stepPx": 1,
+              "targets": [
+                {
+                  "id": "basket-1",
+                  "bbox": [
+                    223,
+                    374,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    248,
+                    411
+                  ],
+                  "basis": "body-family"
+                },
+                {
+                  "id": "basket-2",
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "basis": "body-family"
+                },
+                {
+                  "id": "basket-3",
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    351,
+                    791
+                  ],
+                  "basis": "shell-recovery"
+                }
+              ],
+              "hits": [
+                {
+                  "tee": "tee-2",
+                  "badge": "badge-2",
+                  "reading": "11",
+                  "basket": "basket-1",
+                  "basketAt": [
+                    248,
+                    411
+                  ],
+                  "basketBasis": "body-family",
+                  "entryAt": [
+                    247.5,
+                    374.5
+                  ],
+                  "distancePx": 224,
+                  "residualPx": 0.5,
+                  "straight": true,
+                  "why": null
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Hole.straight",
+      "invocations": [
+        {
+          "id": "px.exp.lab.holes.straight",
+          "calculation": {
+            "address": "fn.lab.hole.straight",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "hits": "px:px.exp.lab.holes.rayhits",
+            "rays": "px:px.exp.lab.teebadge.rays"
+          },
+          "args": {},
+          "into": "px.exp.lab.holes.straight",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.rayhits",
+            "px:px.exp.lab.teebadge.rays"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.rayhits",
+            "px.exp.lab.teebadge.rays"
+          ],
+          "actual_produces": [
+            "px.exp.lab.holes.straight"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.holes.straight",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "number": 11,
+                "reading": "11",
+                "tee": {
+                  "id": "tee-2",
+                  "at": [
+                    247.5,
+                    150.5
+                  ],
+                  "basis": "ring-family"
+                },
+                "badge": {
+                  "id": "badge-2",
+                  "at": [
+                    248,
+                    278
+                  ],
+                  "basis": "bright-family"
+                },
+                "basket": {
+                  "id": "basket-1",
+                  "at": [
+                    248,
+                    411
+                  ],
+                  "basis": "body-family"
+                },
+                "direction": [
+                  0,
+                  1
+                ],
+                "teeToBadgePx": 108,
+                "teeToBasketPx": 224,
+                "residualPx": 0.5,
+                "basis": "tee-badge-ray-continued",
+                "has": {
+                  "pointing": {
+                    "fn": "fn.lab.tee.pointing",
+                    "lean": {
+                      "offset": [
+                        0,
+                        2.045
+                      ],
+                      "alongAxisPx": 2.045,
+                      "brightPx": 176
+                    }
+                  },
+                  "castRay": {
+                    "fn": "fn.lab.tee.castray",
+                    "axisAngleDeg": 90
+                  },
+                  "continueRay": {
+                    "fn": "fn.lab.hole.continueray",
+                    "residualPx": 0.5,
+                    "entryAt": [
+                      247.5,
+                      374.5
+                    ]
+                  }
+                }
+              }
+            ],
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Hole.unresolved",
+      "invocations": [
+        {
+          "id": "px.exp.lab.holes.unresolved",
+          "calculation": {
+            "address": "fn.lab.hole.unresolved",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "hits": "px:px.exp.lab.holes.rayhits",
+            "rays": "px:px.exp.lab.teebadge.rays",
+            "badges": "px:px.exp.lab.recovered.badges",
+            "baskets": "px:px.exp.lab.recovered.baskets",
+            "holes": "px:px.exp.lab.holes.straight"
+          },
+          "args": {},
+          "into": "px.exp.lab.holes.unresolved",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.rayhits",
+            "px:px.exp.lab.teebadge.rays",
+            "px:px.exp.lab.recovered.badges",
+            "px:px.exp.lab.recovered.baskets",
+            "px:px.exp.lab.holes.straight"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.rayhits",
+            "px.exp.lab.teebadge.rays",
+            "px.exp.lab.recovered.badges",
+            "px.exp.lab.recovered.baskets",
+            "px.exp.lab.holes.straight"
+          ],
+          "actual_produces": [
+            "px.exp.lab.holes.unresolved"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.holes.unresolved",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "the badges the straight-line rule cannot finish -- the doglegs -- and what is left over with them, so that a stage that can follow a bend knows exactly what it inherits",
+              "doglegs": [
+                {
+                  "badge": "badge-1",
+                  "reading": "10",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ],
+                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                },
+                {
+                  "badge": "badge-3",
+                  "reading": "01",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ],
+                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                },
+                {
+                  "badge": "badge-4",
+                  "reading": "11",
+                  "bbox": [
+                    382,
+                    138,
+                    56,
+                    40
+                  ],
+                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                }
+              ],
+              "baskets": [
+                {
+                  "id": "basket-2",
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "why": "no straight ray entered it"
+                },
+                {
+                  "id": "basket-3",
+                  "at": [
+                    351,
+                    791
+                  ],
+                  "why": "no straight ray entered it"
+                }
+              ],
+              "tees": [
+                {
+                  "id": "tee-1",
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "id": "tee-3",
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "id": "tee-4",
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                }
+              ],
+              "counts": {
+                "badges": 4,
+                "straight": 1,
+                "doglegs": 3
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.teebadge.rays": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.holes.rayhits",
+        "px.exp.lab.holes.straight",
+        "px.exp.lab.holes.unresolved"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.holes.rayhits",
+        "px.exp.lab.holes.unresolved"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.rayhits": {
+      "written_by": "px.exp.lab.holes.rayhits",
+      "read_by": [
+        "px.exp.lab.holes.straight",
+        "px.exp.lab.holes.unresolved"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.holes.straight": {
+      "written_by": "px.exp.lab.holes.straight",
+      "read_by": [
+        "px.exp.lab.holes.unresolved"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.recovered.badges": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.holes.unresolved"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.unresolved": {
+      "written_by": "px.exp.lab.holes.unresolved",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 3,
+    "hits": 3,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

@@ -47,7 +47,7 @@
               "rule": "badge order is the reading, not the position in the raster",
               "numbered": [
                 {
-                  "id": "badge-2",
+                  "id": "badge-3",
                   "bbox": [
                     300,
                     578,
@@ -77,6 +77,22 @@
                   "reading": "10",
                   "status": "read",
                   "number": 10
+                },
+                {
+                  "id": "badge-2",
+                  "bbox": [
+                    218,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    248,
+                    278
+                  ],
+                  "reading": "11",
+                  "status": "read",
+                  "number": 11
                 }
               ],
               "unreadable": []
@@ -135,7 +151,7 @@
               "bound": [
                 {
                   "badge": {
-                    "id": "badge-2",
+                    "id": "badge-3",
                     "bbox": [
                       300,
                       578,
@@ -151,7 +167,7 @@
                     "number": 1
                   },
                   "tee": {
-                    "id": "tee-2",
+                    "id": "tee-3",
                     "at": [
                       427.5,
                       530.5
@@ -167,16 +183,16 @@
                   "basket": {
                     "id": "basket-1",
                     "at": [
-                      171,
-                      461
+                      248,
+                      411
                     ],
                     "bbox": [
-                      146,
-                      424,
+                      223,
+                      374,
                       50,
                       74
                     ],
-                    "gapFromBadgePx": 209.881
+                    "gapFromBadgePx": 204.189
                   }
                 },
                 {
@@ -197,6 +213,52 @@
                     "number": 10
                   },
                   "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ],
+                    "bbox": [
+                      240,
+                      138,
+                      16,
+                      30
+                    ],
+                    "gapFromBadgePx": 160.507
+                  },
+                  "basket": {
+                    "id": "basket-2",
+                    "at": [
+                      171,
+                      461
+                    ],
+                    "bbox": [
+                      146,
+                      424,
+                      50,
+                      74
+                    ],
+                    "gapFromBadgePx": 184.201
+                  }
+                },
+                {
+                  "badge": {
+                    "id": "badge-2",
+                    "bbox": [
+                      218,
+                      258,
+                      60,
+                      40
+                    ],
+                    "at": [
+                      248,
+                      278
+                    ],
+                    "reading": "11",
+                    "status": "read",
+                    "number": 11
+                  },
+                  "tee": {
                     "id": "tee-1",
                     "at": [
                       477.5,
@@ -208,7 +270,7 @@
                       16,
                       26
                     ],
-                    "gapFromBadgePx": 377.376
+                    "gapFromBadgePx": 296.355
                   },
                   "basket": null
                 }
@@ -228,10 +290,24 @@
                       477.5,
                       90.5
                     ],
-                    "boundTo": 10
+                    "boundTo": 11
                   },
                   {
                     "id": "tee-2",
+                    "bbox": [
+                      240,
+                      138,
+                      16,
+                      30
+                    ],
+                    "at": [
+                      247.5,
+                      150.5
+                    ],
+                    "boundTo": 10
+                  },
+                  {
+                    "id": "tee-3",
                     "bbox": [
                       420,
                       518,
@@ -249,6 +325,20 @@
                   {
                     "id": "basket-1",
                     "bbox": [
+                      223,
+                      374,
+                      50,
+                      74
+                    ],
+                    "at": [
+                      248,
+                      411
+                    ],
+                    "boundTo": 1
+                  },
+                  {
+                    "id": "basket-2",
+                    "bbox": [
                       146,
                       424,
                       50,
@@ -258,7 +348,7 @@
                       171,
                       461
                     ],
-                    "boundTo": 1
+                    "boundTo": 10
                   }
                 ]
               }
@@ -308,7 +398,7 @@
               {
                 "number": 1,
                 "badge": {
-                  "id": "badge-2",
+                  "id": "badge-3",
                   "reading": "01",
                   "bbox": [
                     300,
@@ -322,7 +412,7 @@
                   ]
                 },
                 "tee": {
-                  "id": "tee-2",
+                  "id": "tee-3",
                   "at": [
                     427.5,
                     530.5
@@ -338,16 +428,16 @@
                 "basket": {
                   "id": "basket-1",
                   "at": [
-                    171,
-                    461
+                    248,
+                    411
                   ],
                   "bbox": [
-                    146,
-                    424,
+                    223,
+                    374,
                     50,
                     74
                   ],
-                  "gapFromBadgePx": 209.881
+                  "gapFromBadgePx": 204.189
                 },
                 "confidence": {
                   "value": 1,
@@ -369,7 +459,7 @@
                   "bindAnchors": {
                     "fn": "fn.lab.hole.bindanchors",
                     "rule": "nearest-free-in-badge-order",
-                    "tee": "tee-2",
+                    "tee": "tee-3",
                     "basket": "basket-1"
                   },
                   "assemble": {
@@ -395,6 +485,79 @@
                   ]
                 },
                 "tee": {
+                  "id": "tee-2",
+                  "at": [
+                    247.5,
+                    150.5
+                  ],
+                  "bbox": [
+                    240,
+                    138,
+                    16,
+                    30
+                  ],
+                  "gapFromBadgePx": 160.507
+                },
+                "basket": {
+                  "id": "basket-2",
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "gapFromBadgePx": 184.201
+                },
+                "confidence": {
+                  "value": 1,
+                  "basis": {
+                    "badgeRead": 0.5,
+                    "tee": 0.25,
+                    "basket": 0.25
+                  },
+                  "of": "badge read 0.5 + tee 0.25 + basket 0.25"
+                },
+                "missing": [],
+                "complete": true,
+                "has": {
+                  "readNumbers": {
+                    "fn": "fn.lab.hole.readnumbers",
+                    "reading": "10",
+                    "status": "read"
+                  },
+                  "bindAnchors": {
+                    "fn": "fn.lab.hole.bindanchors",
+                    "rule": "nearest-free-in-badge-order",
+                    "tee": "tee-2",
+                    "basket": "basket-2"
+                  },
+                  "assemble": {
+                    "fn": "fn.lab.hole.assemble",
+                    "missing": []
+                  }
+                }
+              },
+              {
+                "number": 11,
+                "badge": {
+                  "id": "badge-2",
+                  "reading": "11",
+                  "bbox": [
+                    218,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    248,
+                    278
+                  ]
+                },
+                "tee": {
                   "id": "tee-1",
                   "at": [
                     477.5,
@@ -406,7 +569,7 @@
                     16,
                     26
                   ],
-                  "gapFromBadgePx": 377.376
+                  "gapFromBadgePx": 296.355
                 },
                 "basket": null,
                 "confidence": {
@@ -425,7 +588,7 @@
                 "has": {
                   "readNumbers": {
                     "fn": "fn.lab.hole.readnumbers",
-                    "reading": "10",
+                    "reading": "11",
                     "status": "read"
                   },
                   "bindAnchors": {
@@ -494,11 +657,11 @@
               "baskets": [],
               "incomplete": [
                 {
-                  "number": 10,
+                  "number": 11,
                   "missing": [
                     "basket"
                   ],
-                  "why": "the basket pool was empty when hole 10 took its turn"
+                  "why": "the basket pool was empty when hole 11 took its turn"
                 }
               ]
             },

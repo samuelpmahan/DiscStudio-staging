@@ -1,0 +1,29 @@
+flowchart TD
+    tees["px.recovered.tees"]
+    badges["px.recovered.badges"]
+    components["px.components"]
+    canonical["px.course.canonicalPixels"]
+
+    subgraph S5["PCR: S5"]
+        subgraph Pointing["Tick: Tee.pointing"]
+            pointing["fn.Tee.pointing"]
+        end
+        subgraph CastRay["Tick: Tee.castRay"]
+            castRay["fn.Tee.castRay"]
+        end
+        subgraph Pair["Tick: TeeBadge.pair"]
+            pair["fn.TeeBadge.pair"]
+        end
+    end
+
+    tees -->|tees| pointing
+    components -->|fields| pointing
+    pointing --> pointingPart["px.teebadge.pointing"]
+    pointingPart -->|pointing| castRay
+    badges -->|badges| castRay
+    canonical -->|raster| castRay
+    castRay --> hits["px.teebadge.hits"]
+    pointingPart -->|pointing| pair
+    hits -->|hits| pair
+    badges -->|badges| pair
+    pair --> rays["px.teebadge.rays"]

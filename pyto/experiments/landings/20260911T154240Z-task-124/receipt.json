@@ -1,0 +1,226 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T154240Z-task-124",
+  "package": "task-124",
+  "base_sha": "896d1d3cfdb5e60f602892d53467672a4617d6cc",
+  "result": "verified",
+  "verifier": {
+    "command": "node --test tests/*.test.js",
+    "exit": 0,
+    "output_sha256": "913f9b12b374dfc95119c1da0e1922d7b37b05990e6c510e7222f19cfccba1bb"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "bc929b9b46c2e3c34d187d1994897faece339279e51f9db7f7b12b92e7e21c59",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/124/HANDOFF.md",
+      "bytes": 9124,
+      "sha256": "53a1822c89dd41b96959d0eab86f18e47a3d5c7e26a52d7c29faa81eb0da2507"
+    },
+    {
+      "path": "pyto/experiments/tasks/124/evidence/check_all.txt",
+      "bytes": 293462,
+      "sha256": "8686eac5dde4552c4742d0458a6fd199049cc2c14a369c7e2df2fcb295f7f5af"
+    },
+    {
+      "path": "pyto/experiments/tasks/124/evidence/verify.txt",
+      "bytes": 40482,
+      "sha256": "5430794d1383b882c81a0ebb9a4b029ce959a4fa503cbfbebd6cf2e6a3bd7add"
+    },
+    {
+      "path": "pyto/experiments/tasks/124/packet.md",
+      "bytes": 4810,
+      "sha256": "4f5c217fd4bbed47f97865dcacd9b1abab9288ede3e85d876e64c1ac7bbc4557"
+    },
+    {
+      "path": "src/lab/fixtures.js",
+      "bytes": 15308,
+      "sha256": "71e17eb3838eabe90139ed612a444e69b63d13d76e473893cdf5fb21338961c2"
+    },
+    {
+      "path": "src/lab/map.js",
+      "bytes": 31827,
+      "sha256": "78b3868ee94488b262f710f747d148d7c1a63244a1ec4ff888440e212c803a69"
+    },
+    {
+      "path": "src/lab/s5.js",
+      "bytes": 12497,
+      "sha256": "faf1cd11ffdf001f5ed767aab174545b876a3832911fa9a93726884879764c33"
+    },
+    {
+      "path": "src/lab/s6.js",
+      "bytes": 11793,
+      "sha256": "08702f57a44a063a8a4cdf02ff5e3e02f3a94b2eef192a1d3f79733ca1007993"
+    },
+    {
+      "path": "src/lab/stage-sources.js",
+      "bytes": 10098,
+      "sha256": "8097aa24d56a3416601b59af5b7ec932e3c90f9a968c99d43828e4b630875190"
+    },
+    {
+      "path": "src/lab/stages/S5.args.json",
+      "bytes": 69,
+      "sha256": "b16c83e3bd19b765013983ec6bae8dbd8d2ca9a8af7f2f1e8ca4cfd86e16183b"
+    },
+    {
+      "path": "src/lab/stages/S5.mmd",
+      "bytes": 868,
+      "sha256": "eb34731584b376c2c93e29b1c1421a9dc842ca5096414cc6fb9ce27fba4db82c"
+    },
+    {
+      "path": "src/lab/stages/S6.args.json",
+      "bytes": 58,
+      "sha256": "b9dfba9d397f729db9e8db5beb2e98f7fa658d3c019570e8742f2196631040b2"
+    },
+    {
+      "path": "src/lab/stages/S6.mmd",
+      "bytes": 923,
+      "sha256": "66a4572d76d4cb76299bdedc52794a592f1c507907656eb32cc5da24179bc6c1"
+    },
+    {
+      "path": "src/lab/store/lab.json",
+      "bytes": 518499,
+      "sha256": "b3812887f3ba51bbdc2401d18d059d4cf7bf886c0157b68d342556e316cee095"
+    },
+    {
+      "path": "src/lab/store/records/HolesByNearestAnchor.invariants.json",
+      "bytes": 5493,
+      "sha256": "6e8ced5a79ee2c5903b20173583b8cfba5ce30921d6314d24ce26d6c4bee08c3"
+    },
+    {
+      "path": "src/lab/store/records/HolesByNearestAnchor.json",
+      "bytes": 20062,
+      "sha256": "482e59eb6ae72fb16b9528b5b5037e3ccba1ef5ec0de33d9ee578a0f6b25a7e0"
+    },
+    {
+      "path": "src/lab/store/records/S0.json",
+      "bytes": 14844,
+      "sha256": "cd0476b5edf680e4e93ba6d75fee7bb933c6bd890e0d9b854d07581caaf9067d"
+    },
+    {
+      "path": "src/lab/store/records/S1.json",
+      "bytes": 263515,
+      "sha256": "a824a491f38fb62a4b25ae2635c2067eda805f70b5f27a5a9b43927856b37d6d"
+    },
+    {
+      "path": "src/lab/store/records/S2.json",
+      "bytes": 30634,
+      "sha256": "62d9095275efb29d6dd928f7d14f8013f8fd323bff1e77bae0902c2224694807"
+    },
+    {
+      "path": "src/lab/store/records/S3.json",
+      "bytes": 25090,
+      "sha256": "a30f875e90bcc7a0b756d820e529727b11c5da0038a949239f536f62e8eafde5"
+    },
+    {
+      "path": "src/lab/store/records/S3.quick-anno.json",
+      "bytes": 4211,
+      "sha256": "3a0570a6fe80eb3fe64c7ddacab5011f951fb4fe8b0b37017c8ee27edfdb2546"
+    },
+    {
+      "path": "src/lab/store/records/S4.invariants.json",
+      "bytes": 4478,
+      "sha256": "0b0058cd5c845eac1fbbe4c749b942dbe0fb0b89992b9b42c3bd90af67e898c0"
+    },
+    {
+      "path": "src/lab/store/records/S4.json",
+      "bytes": 146966,
+      "sha256": "78f5a89483d188e83a1bd4d43f9a2cba42bd5a9c3f7dbe2810ade19cdd31dff3"
+    },
+    {
+      "path": "src/lab/store/records/S5.invariants.json",
+      "bytes": 2743,
+      "sha256": "83bf54bf30ccae7b505995f836dac48ea5b4f0406e1069795e9e821ad18e0bf0"
+    },
+    {
+      "path": "src/lab/store/records/S5.json",
+      "bytes": 18551,
+      "sha256": "66a7ee7a6dba9672a816a990e0ac2faa829c5512e7a8a3c6b10ee9fefb928830"
+    },
+    {
+      "path": "src/lab/store/records/S6.invariants.json",
+      "bytes": 3460,
+      "sha256": "f2c84784992fa2231340ffec3eb50c6fe575b271e6b99722400bcae1d81491e8"
+    },
+    {
+      "path": "src/lab/store/records/S6.json",
+      "bytes": 12189,
+      "sha256": "e56e894b1e17ca5d03147af7a0ffcb91843a02010764ba1ba44671691109435d"
+    },
+    {
+      "path": "src/lab/store/records/S7.course.invariants.json",
+      "bytes": 5894,
+      "sha256": "fe5d3a2bce1d8c100948bd565320878d9050c9090c54941d1a6e46a02fe899a9"
+    },
+    {
+      "path": "src/lab/store/records/S7.course.json",
+      "bytes": 30046,
+      "sha256": "1c95d8e54cf92bda546df4b9949152ad1addd8eabd45dd18abe499a992ec46ce"
+    },
+    {
+      "path": "src/lab/store/records/S7.round.invariants.json",
+      "bytes": 4980,
+      "sha256": "ad9cae6c3ca0be54322d3984b56b4019a8fe6a6132a65073d51486a811e3ae41"
+    },
+    {
+      "path": "src/lab/store/records/S7.round.json",
+      "bytes": 20682,
+      "sha256": "1efca8a68d74524e929fb81c00e9862bd4702d49dcb7c7da52dac89269a592fb"
+    },
+    {
+      "path": "src/lab/store/records/S7.vs-straight.json",
+      "bytes": 4715,
+      "sha256": "7dbeb54016ae3b8dd3b24fe03faf45efaef77e5336045864172f1d7c538b3e61"
+    },
+    {
+      "path": "src/lab/store/records/route-labfixture.json",
+      "bytes": 17287,
+      "sha256": "fd4eda3af46039efb1d7b497433a644de4dfdc435168c3999c5abcddd30307b3"
+    },
+    {
+      "path": "tests/lab-s5.test.js",
+      "bytes": 6222,
+      "sha256": "c0ae87c1e2f85aa8fb78e359a9e99b8912957f1727a92e739220d376d731f377"
+    },
+    {
+      "path": "tests/lab-s6.test.js",
+      "bytes": 6547,
+      "sha256": "1259ace636b48009ebafd2945b0d509d1b44d9172e29c0210c77c9bd10c804df"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T15:45:55.057419Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

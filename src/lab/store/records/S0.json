@@ -44,7 +44,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "imageId": "lab-fixture-20260911-h11-obs-ovl",
+              "imageId": "lab-fixture-20260911-h11-obs-ovl-aln",
               "widthPx": 512,
               "heightPx": 1024,
               "rgba": {
@@ -153,6 +153,36 @@
                     ]
                   ],
                   "loop": null
+                },
+                {
+                  "reading": "11",
+                  "border": [
+                    218,
+                    300,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    224,
+                    304,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      230,
+                      310,
+                      6,
+                      20
+                    ],
+                    [
+                      246,
+                      310,
+                      6,
+                      20
+                    ]
+                  ],
+                  "loop": null
                 }
               ],
               "baskets": [
@@ -183,6 +213,20 @@
                     50,
                     74
                   ]
+                },
+                {
+                  "body": [
+                    227,
+                    420,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    223,
+                    416,
+                    50,
+                    74
+                  ]
                 }
               ],
               "tees": [
@@ -198,7 +242,9 @@
                     252,
                     12,
                     22
-                  ]
+                  ],
+                  "nose": null,
+                  "points": null
                 },
                 {
                   "frame": [
@@ -212,7 +258,9 @@
                     562,
                     12,
                     22
-                  ]
+                  ],
+                  "nose": null,
+                  "points": null
                 },
                 {
                   "frame": [
@@ -226,6 +274,32 @@
                     122,
                     12,
                     22
+                  ],
+                  "nose": null,
+                  "points": null
+                },
+                {
+                  "frame": [
+                    240,
+                    180,
+                    16,
+                    30
+                  ],
+                  "hole": [
+                    242,
+                    182,
+                    12,
+                    22
+                  ],
+                  "nose": [
+                    245,
+                    206,
+                    6,
+                    4
+                  ],
+                  "points": [
+                    0,
+                    1
                   ]
                 }
               ],
@@ -269,7 +343,23 @@
                   ],
                   "how": "a notch through the top wall wider than the detector can dilate closed, so the hole leaks to the background; the frame component keeps its bbox"
                 }
-              ]
+              ],
+              "aligned": {
+                "tee": [
+                  240,
+                  180
+                ],
+                "badge": [
+                  218,
+                  300
+                ],
+                "basket": [
+                  227,
+                  420
+                ],
+                "reading": "11",
+                "axisX": 248
+              }
             },
             "note": "1 array(s) truncated to the first 200 entries; original lengths: [2097152]"
           }
@@ -360,7 +450,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "imageId": "composite:015562229f57133a5a",
+              "imageId": "composite:54813ee8f534f8a061",
               "widthPx": 512,
               "heightPx": 920,
               "rgba": {
@@ -411,7 +501,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "cached": "lab-fixture-20260911-h11-obs-ovl",
+              "cached": "lab-fixture-20260911-h11-obs-ovl-aln",
               "at": "last",
               "widthPx": 512,
               "heightPx": 1024

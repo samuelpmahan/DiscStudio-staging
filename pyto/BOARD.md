@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 15:45 **landed** `task-124`: S5 Tee->Badge and S6 straight holes: a tee's pointing end read off its own pixels, the ray cast at the badge it points at, and the basket found by continuing that ray past the badge -- three points on a line, with the badges whose ray finds nothing reported as doglegs (35 files since 896d1d3, suites green, receipt 20260911T154240Z-task-124)
 - 2026-09-11 15:33 **started** `task-125`: what the Stages asked of the studio's PxC that it could not say: the sprint's frictions as proposal.studio.* Parts, and the last Stages wired as they land (copy EXP/125; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 15:32 **started** `task-124`: S5 Tee->Badge and S6 straight holes: a tee's pointing end read off its own pixels, the ray cast at the badge it points at, and the basket found by continuing that ray past the badge -- three points on a line, with the badges whose ray finds nothing reported as doglegs (copy EXP/124; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 15:32 **landed** `task-122`: draw a Stage by the addresses it publishes, not by its number: the Course overlay becomes an address table, the searched round joins the pipeline, and the renumbered S4-S7 draw themselves as they land (10 files since 1bb683a, suites green, receipt 20260911T152912Z-task-122)

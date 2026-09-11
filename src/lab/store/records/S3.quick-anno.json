@@ -47,15 +47,15 @@
           "value": {
             "kind": "json",
             "data": {
-              "enclosed": 4,
+              "enclosed": 5,
               "diamondDropped": 0,
-              "elongated": 4,
+              "elongated": 5,
               "excludedByBadge": 2,
-              "candidates": 2,
-              "measured": 2,
+              "candidates": 3,
+              "measured": 3,
               "unframed": 0,
               "votedOutOfFamily": 0,
-              "familyMembers": 2
+              "familyMembers": 3
             },
             "note": null
           }
@@ -102,17 +102,17 @@
           "value": {
             "kind": "json",
             "data": {
-              "enclosed": 4,
+              "enclosed": 5,
               "diamondDropped": 0,
-              "elongated": 4,
+              "elongated": 5,
               "excludedByBadge": 2,
-              "candidates": 2,
-              "measured": 2,
+              "candidates": 3,
+              "measured": 3,
               "unframed": 0,
               "votedOutOfFamily": 0,
-              "familyMembers": 2,
-              "tees": 2,
-              "teePx": 304,
+              "familyMembers": 3,
+              "tees": 3,
+              "teePx": 480,
               "balanced": true
             },
             "note": null
