@@ -1,0 +1,217 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.25396599994564895
+  },
+  "parts": {
+    "px.exp.brain.data.backend_interp_clamped_fp": {
+      "preexisting": true,
+      "read_by": [
+        "clamped_np",
+        "clamped_py",
+        "clamped_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_interp_clamped_x": {
+      "preexisting": true,
+      "read_by": [
+        "clamped_np",
+        "clamped_py",
+        "clamped_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_interp_clamped_xp": {
+      "preexisting": true,
+      "read_by": [
+        "clamped_np",
+        "clamped_py",
+        "clamped_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.interp.clamped_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "clamped_np"
+    },
+    "px.exp.brain.result.backend.interp.clamped_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "clamped_py"
+    },
+    "px.exp.brain.result.backend.interp.clamped_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "clamped_sp"
+    }
+  },
+  "pcr": "brain_backend_interp",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_interp_clamped_x",
+            "px.exp.brain.data.backend_interp_clamped_xp",
+            "px.exp.brain.data.backend_interp_clamped_fp"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.interp.clamped_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.interp",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_interp_clamped_x",
+            "px:px.exp.brain.data.backend_interp_clamped_xp",
+            "px:px.exp.brain.data.backend_interp_clamped_fp"
+          ],
+          "duration_ms": 0.056677999964449555,
+          "hit": true,
+          "id": "clamped_np",
+          "inputs": {
+            "fp": "px:px.exp.brain.data.backend_interp_clamped_fp",
+            "x": "px:px.exp.brain.data.backend_interp_clamped_x",
+            "xp": "px:px.exp.brain.data.backend_interp_clamped_xp"
+          },
+          "into": "px.exp.brain.result.backend.interp.clamped_np",
+          "result_sha256": "b098bf46402f242cc5b61884437884f18acc2f721ae08fbe43f9c0cfb2980126",
+          "value": {
+            "data": [
+              0.0,
+              2.5,
+              7.5,
+              5.0,
+              5.0
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.interp.clamped_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_interp_clamped_x",
+            "px.exp.brain.data.backend_interp_clamped_xp",
+            "px.exp.brain.data.backend_interp_clamped_fp"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.interp.clamped_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.interp",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_interp_clamped_x",
+            "px:px.exp.brain.data.backend_interp_clamped_xp",
+            "px:px.exp.brain.data.backend_interp_clamped_fp"
+          ],
+          "duration_ms": 0.028792999728466384,
+          "hit": true,
+          "id": "clamped_py",
+          "inputs": {
+            "fp": "px:px.exp.brain.data.backend_interp_clamped_fp",
+            "x": "px:px.exp.brain.data.backend_interp_clamped_x",
+            "xp": "px:px.exp.brain.data.backend_interp_clamped_xp"
+          },
+          "into": "px.exp.brain.result.backend.interp.clamped_py",
+          "result_sha256": "b098bf46402f242cc5b61884437884f18acc2f721ae08fbe43f9c0cfb2980126",
+          "value": {
+            "data": [
+              0.0,
+              2.5,
+              7.5,
+              5.0,
+              5.0
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.interp.clamped_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_interp_clamped_x",
+            "px.exp.brain.data.backend_interp_clamped_xp",
+            "px.exp.brain.data.backend_interp_clamped_fp"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.interp.clamped_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.interp",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_interp_clamped_x",
+            "px:px.exp.brain.data.backend_interp_clamped_xp",
+            "px:px.exp.brain.data.backend_interp_clamped_fp"
+          ],
+          "duration_ms": 0.168495000252733,
+          "hit": true,
+          "id": "clamped_sp",
+          "inputs": {
+            "fp": "px:px.exp.brain.data.backend_interp_clamped_fp",
+            "x": "px:px.exp.brain.data.backend_interp_clamped_x",
+            "xp": "px:px.exp.brain.data.backend_interp_clamped_xp"
+          },
+          "into": "px.exp.brain.result.backend.interp.clamped_sp",
+          "result_sha256": "b098bf46402f242cc5b61884437884f18acc2f721ae08fbe43f9c0cfb2980126",
+          "value": {
+            "data": [
+              0.0,
+              2.5,
+              7.5,
+              5.0,
+              5.0
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.interp.clamped_sp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "interp"
+    }
+  ]
+}
