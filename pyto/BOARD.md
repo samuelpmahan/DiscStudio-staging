@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 17:10 **started** `task-130`: every disc looked the same: the painter port (2026-09-09) replaced the per-disc hue with one fixed base and accent for every disc that has no authored art colours, so twelve discs painted one wind-rose in one grey-green; a disc's sample hue is its colours again (base and accent derived from sampleHue when artBase/artAccent are not authored, exactly the original prepareDiscArt's rule), the sanitised-colour test expects the disc's own defaults, and the two art-bearing fixtures are regenerated from the real runtime (copy EXP/130; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 16:54 **landed** `task-129`: the wedge: the Course route off the demo path, and the tease-then-razzle storyboard as a test that screenshots every beat (6 files since 4c60678, suites green, receipt 20260911T165149Z-task-129)
 - 2026-09-11 16:29 **started** `task-129`: the wedge: the Course route off the demo path, and the tease-then-razzle storyboard as a test that screenshots every beat (copy EXP/129; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 16:29 **killed** `task-128`: nothing landed; exp/128 is kept
