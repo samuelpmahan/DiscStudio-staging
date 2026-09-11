@@ -15,6 +15,9 @@ px = "pyto.px:main"
 
 [project.optional-dependencies]
 drawing = ["Pillow>=10"]
+# the brain: every statistics, machine learning and data-science capability as
+# Calculations, on a backend fast enough to deserve them (experiments/brain).
+brain = ["numpy", "scipy"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
