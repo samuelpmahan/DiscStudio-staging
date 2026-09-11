@@ -125,10 +125,11 @@ export function validateWorld(world) {
   // 1920x1080 canvas, no frame -- rather than refused, and a new object is made
   // only when one is actually missing (validateWorld also runs over frozen Parts).
   let layout = world.layout;
-  if (layout && (typeof layout.orientation !== 'string' || !layout.frame)) layout = { ...layout, orientation: typeof layout.orientation === 'string' ? layout.orientation : 'landscape', frame: layout.frame ?? { presetId: 'none', title: '' } };
+  if (layout && (typeof layout.orientation !== 'string' || !layout.frame || typeof layout.singlePresetId !== 'string')) layout = { ...layout, orientation: typeof layout.orientation === 'string' ? layout.orientation : 'landscape', frame: layout.frame ?? { presetId: 'none', title: '' }, singlePresetId: typeof layout.singlePresetId === 'string' ? layout.singlePresetId : (world.presets.spotlight ? 'spotlight' : layout.presetId) };
   const l = layout;
   if (!l || !world.presets[l.presetId] || !['row', 'stack', 'grid', 'course'].includes(l.arrangement) || !['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'].includes(l.anchor) || !Number.isFinite(l.scale) || l.scale < .25 || l.scale > 2 || !Number.isFinite(l.gap) || l.gap < 0 || l.gap > 100) throw new Error('Invalid comparison layout.');
   if (!orientations.includes(l.orientation)) throw new Error('A comparison is composed on the landscape or the vertical canvas.');
+  if (!world.presets[l.singlePresetId] || world.presets[l.singlePresetId].kind !== 'DisplayCard') throw new Error('Single Disc mode composes with a saved DisplayCard design.');
   if (!l.frame || !framePresets[l.frame.presetId] || typeof l.frame.title !== 'string' || l.frame.title.length > 80) throw new Error('Invalid overlay frame: pick a frame preset and a title of at most 80 characters.');
   for (const comp of Object.values(world.objects.Competition ?? {})) {
     if (!['all', 'any'].includes(comp.combine) || !Array.isArray(comp.constraints) || !Array.isArray(comp.teamIds) || !Array.isArray(comp.roundIds)) throw new Error('Invalid competition composition.');

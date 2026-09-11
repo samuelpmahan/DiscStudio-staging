@@ -208,19 +208,22 @@ export function createStudioRuntime(initial) {
     const run = execute('display-card', ticks);
     return { ...pxc.get(`${prefix}.svg`), card: pxc.get(`${prefix}.card`), fields: pxc.get(`${prefix}.fields`), part: `${prefix}.svg`, run };
   }
-  function sceneComposition({ mode = 'battle', discId, bagId, competitionId, roundId, stateId, presetId } = {}) {
+  function sceneComposition({ mode = 'battle', discId, bagId, competitionId, roundId, stateId, presetId, orientation } = {}) {
     const w = world(), state = stateId ? w.battle.states.find(s => s.id === stateId) : currentBattle(w);
     if (!state) throw new Error('Comparison state is missing.');
     const entries = mode === 'card' ? [{ discId, id: 'single' }] : w.battle.entries;
-    const ticks = [], inputs = { layout: 'px.comparison.layout' };
+    // An export may ask for the other canvas without changing the workspace: the
+    // layout it composes with is then a Part of its own, and the run names it.
+    const layout = orientation && orientation !== w.layout.orientation ? { ...w.layout, orientation } : w.layout;
+    const ticks = [], inputs = { layout: layout === w.layout ? 'px.comparison.layout' : source('px.export.layout', layout) };
     // The frame first: the canvas (1920x1080 or the vertical 1080x1920), the
     // safe area the cards are then fitted into, the title strip and the sponsor
     // lockup -- composed from the layout's own frame and the cards cascade's
     // global tokens, so the frame and the cards on it are one design.
-    const spec = source('px.overlay.frame.spec', { orientation: w.layout.orientation, presetId: w.layout.frame.presetId, title: w.layout.frame.title || w.battle.name });
+    const spec = source('px.overlay.frame.spec', { orientation: layout.orientation, presetId: layout.frame.presetId, title: layout.frame.title || w.battle.name });
     ticks.push(step('Frame', 'fn.overlay.frame', { spec, tokens: 'px.discstudio.cards.global' }, 'px.overlay.frame'));
     inputs.frame = 'px.overlay.frame';
-    if (world().layout.arrangement === 'course') inputs.course = labCourseAddress();
+    if (layout.arrangement === 'course') inputs.course = labCourseAddress();
     // The standings before any card: ranks from the scores, points from the places
     // Constraint, the running total through this state. Each card's BattleEntry is
     // then read off them by fn.battle.entry, so the number on a card and the number
@@ -233,7 +236,7 @@ export function createStudioRuntime(initial) {
       const entryId = mode === 'card' ? lineup?.id ?? null : entry.id;
       const address = `px.render.course.${entry.id}.entry`;
       if (entryId) ticks.push(step(`Entry:${entry.id}`, 'fn.battle.entry', { standings: 'px.battle.standings', battle: 'px.comparison.states' }, address, { entryId, stateId: state.id }));
-      const built = cardSteps(entry.discId, presetId || w.layout.presetId, { bagId, competitionId, roundId }, entryId ? address : null, `course.${entry.id}`, 'competition');
+      const built = cardSteps(entry.discId, presetId || (mode === 'card' ? w.layout.singlePresetId : w.layout.presetId), { bagId, competitionId, roundId }, entryId ? address : null, `course.${entry.id}`, mode === 'card' ? 'single' : 'competition');
       ticks.push(...built.ticks); inputs[`card${i}`] = `${built.prefix}.card`;
     });
     ticks.push(step('ArrangeComparison', 'fn.comparison.layout', inputs, 'px.course.scene'));
@@ -346,7 +349,10 @@ export function createStudioRuntime(initial) {
    */
   function presetFor(projection) {
     if (projection === 'shelf' || projection === 'bag') return 'discImage';
-    if (projection === 'single' || projection === 'competition') return world().layout.presetId;
+    // `single` IS OnTheCourse's Single Disc mode, so it composes with the design
+    // that mode composes with; `competition` is the shared comparison design.
+    if (projection === 'single') return world().layout.singlePresetId;
+    if (projection === 'competition') return world().layout.presetId;
     throw new Error(`Unknown card projection '${projection}'.`);
   }
   const cardsCascadeTick = (label, projection, discId, presetId) => {

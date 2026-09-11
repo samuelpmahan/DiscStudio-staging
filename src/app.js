@@ -8,6 +8,7 @@ import { framePresets, canvasFor } from './frames.js';
 import { reviewItems } from './review.js';
 import { SORTS, GROUPS, FILTERS } from './shelf.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
+import { planExports, queueProgress } from './exports.js';
 import { composePage, fetchPageSources } from '../pyto/viewer/embed.mjs';
 
 const DATA_KEY = 'discstudio.pxc.staging.world.v2', VIEW_KEY = 'discstudio.pxc.staging.view.v2';
@@ -25,7 +26,7 @@ const ui = {
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
-  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single', battleRules: null,
+  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single', battleRules: null, queue: [], queueRunning: false,
   labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null
 };
 const w = () => runtime.world();
@@ -185,6 +186,26 @@ function discInspector() {
   const primitiveFields = Object.entries(fields).filter(([, d]) => ['text', 'number', 'boolean'].includes(d.type));
   return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & CHANGE</span><span class="live-tag">LIVE · PxC</span></div><h2>${esc(mold?.name || 'Disc')}</h2><div class="inspector-art">${safeThumb(disc.id)}</div>${button(disc.photo ? 'Replace exact disc photo' : '↑ Add exact disc photo', 'photo', { id: disc.id }, 'wide')}${disc.photo ? button('Remove photo', 'photo-remove', {}, 'quiet small') : '<p class="tiny muted">Sample illustration, not your disc. No photo leaves this browser.</p>'}<section class="control-section"><h3>Disc identity <span>DOMAIN</span></h3>${input('Manufacturer', 'identity-maker', maker?.name || '')}${input('Mold / disc name', 'identity-mold', mold?.name || '')}<p class="tiny muted">These fields link this specimen to its product identity. Re-identifying it does not rename other discs.</p>${primitiveFields.map(([key, def]) => def.type === 'boolean' ? check(def.label, 'disc-field', disc[key], `data-key="${esc(key)}"`) : input(def.label + (def.unit ? ` (${def.unit})` : ''), 'disc-field', disc[key], def.type === 'number' ? 'number' : 'text', `data-key="${esc(key)}" data-kind="${def.type}"`)).join('')}<div class="four-inputs">${Object.entries(w().schemas.Mold.fields.flight.fields).map(([key, def]) => input(def.label, 'flight', mold?.flight?.[key], 'number', `data-key="${key}" step="0.5"`)).join('')}</div><p class="tiny muted">Flight numbers are optional product facts. Blank means unknown, not zero.</p><div class="button-row">${button('Another specimen', 'disc-duplicate', {}, 'quiet')}${button('Remove disc', 'disc-remove', {}, 'quiet danger')}</div><div class="undo-row">${button(`↶ Undo last change`, 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p></section><div class="subtle-box"><span class="eyebrow">PRESENTATION IS SEPARATE</span><p>Want a bigger photo or a different layout?</p>${button('Open Component Editor ↗', 'go-editor', {}, 'wide secondary')}</div></aside>`;
 }
+/**
+ * Single Disc mode. One disc, the design made for one disc, and the same state a
+ * lineup row gives a card -- score, highlight, winner, and the standing the
+ * battle's own Calculation produced -- when that disc is in the battle. When it
+ * is not, the sentence says so and offers the one gesture that changes it.
+ */
+function singleCardPanel(result) {
+  const { disc, mold, maker } = discInfo(), state = currentBattle(w());
+  const entry = w().battle.entries.find(e => e.discId === ui.discId) ?? null;
+  const standing = result.standings?.table.find(row => row.entryId === entry?.id) ?? null;
+  const designs = Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]);
+  return `<section class="single-panel"><div class="section-toolbar"><div><span class="eyebrow">ONE DISC IS THE SAME PRIMITIVE</span><h2>${esc(mold?.name || 'Select a disc')}</h2><p class="tiny muted">${esc([maker?.name, disc?.nickname].filter(Boolean).join(' · ')) || 'Pick a disc on the shelf.'}</p></div><label class="inline-control">Single-disc design ${select('single-preset', w().layout.singlePresetId, designs)}</label></div>${entry ? `<div class="lineup-entry single ${state.highlight === entry.id ? 'highlighted' : ''}"><span class="tiny">In the battle${standing?.standing ? ` · standing ${standing.standing}${standing.total == null ? '' : ` on ${standing.total} pt`}` : ''}</span><div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', 'aria-label="Decrease score"')}<input aria-label="Score" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', 'aria-label="Increase score"')}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★ Winner', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-pressed="${state.winners.includes(entry.id)}"`)}</div>` : `<p class="empty-note">This disc is not in the battle, so its card shows the facts and no score. ${button('+ Put it in the battle', 'lineup-add', { id: ui.discId }, 'secondary small')}</p>`}<p class="tiny muted">The single card is the same card chain the comparison uses, composed with its own saved design. ${button('Edit this design ↗', 'go-editor-single', {}, 'quiet small')}</p></section>`;
+}
+/** A filename that names what is in the picture: the disc in Single Disc mode, the state otherwise. */
+const exportSlug = text => String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+function exportName(result, mode) {
+  if (mode !== 'card') return result.stateId;
+  const { disc, mold } = discInfo();
+  return exportSlug(`${mold?.name || ''} ${disc?.nickname || ''}`) || exportSlug(ui.discId) || 'single-disc';
+}
 function coursePreview(result, editor = false) {
   const background = ui.footage ? (ui.footageKind === 'video' ? `<video id="footage-video" src="${esc(ui.footage)}" muted playsinline preload="metadata"></video>` : `<img src="${esc(ui.footage)}" alt="Your local footage context">`) : `<div class="footage-placeholder"><span class="empty-disc">◌</span><h2>The flight gets the screen.</h2><p>Your discs get the credit.</p>${button('+ Try your footage behind the graphic', 'footage', {}, 'quiet')}</div>`;
   const canvas = canvasFor(w().layout.orientation), vertical = canvas.height > canvas.width;
@@ -195,7 +216,7 @@ function courseCenter(result) {
   const battle = w().battle, state = currentBattle(w()), standings = result.standings ?? null;
   return `<section class="center course-center" data-scroll="center"><div class="section-heading compact"><div><span class="eyebrow">ON THE COURSE</span><h1>Your discs. Your screen.</h1></div>${modeTabs()}</div>${coursePreview(result)}<div class="pxc-strip"><span class="mono">${result.part}</span><span>${result.run.computed} computed · ${result.run.reused} reused</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${ui.mode === 'battle' ? `<div class="section-toolbar"><div><h2>On screen <small>${battle.entries.length} / 12</small></h2><p class="tiny muted">Edit scores. Highlight any disc. Mark your winner.</p></div>${button('Clear highlight', 'highlight', { id: '' }, 'quiet')}${button('Clear lineup', 'lineup-clear', {}, 'quiet danger')}</div><div class="lineup">${battle.entries.map((entry, index) => {
     const { disc, mold } = discInfo(entry.discId); return `<div class="lineup-entry ${state.highlight === entry.id ? 'highlighted' : ''}"><button class="lineup-disc" data-action="disc-select" data-id="${esc(entry.discId)}"><span class="disc-thumb">${safeThumb(entry.discId)}</span><span><strong>${esc(mold?.name || 'Missing disc')}</strong><small>${esc(disc?.nickname)}</small></span></button>${orderButton(entry, index, standings)}<div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', `aria-label="Decrease score: ${esc(disc?.nickname)}"`)}<input aria-label="Score: ${esc(disc?.nickname)}" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', `aria-label="Increase score: ${esc(disc?.nickname)}"`)}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-label="Mark winner: ${esc(disc?.nickname)}" aria-pressed="${state.winners.includes(entry.id)}"`)}<div class="ordering">${button('↑', 'lineup-move', { id: entry.id, value: -1 }, 'quiet', `aria-label="Move participant up" ${index === 0 ? 'disabled' : ''}`)}${button('↓', 'lineup-move', { id: entry.id, value: 1 }, 'quiet', `aria-label="Move participant down" ${index === battle.entries.length - 1 ? 'disabled' : ''}`)}</div>${button('×', 'lineup-remove', { id: entry.id }, 'quiet', `aria-label="Remove participant: ${esc(disc?.nickname)}"`)}</div>`;
-  }).join('') || '<div class="empty-note">Add physical discs from the shelf to start a comparison.</div>'}</div>${battleRulesSection(ui.battleRules)}${standingsSection(standings)}<section class="states-section"><div class="section-toolbar"><div><span class="eyebrow">ONE COMPARISON. MANY STATES.</span><h2>The next moment.</h2></div>${button('+ Duplicate current state', 'state-add', {}, 'secondary')}</div><div class="state-tabs">${battle.states.map((s, i) => button(`<small>${String(i + 1).padStart(2, '0')}</small> ${esc(s.name)}`, 'state-select', { id: s.id }, s.id === state.id ? 'active' : '')).join('')}</div><div class="button-row">${button('Rename current', 'state-rename', {}, 'quiet small')}${button('Delete current', 'state-remove', {}, 'quiet small danger')}${button('Export SVG state bundle ↓', 'states-export', {}, 'quiet small')}</div><p class="tiny muted">States are editable snapshots. PNG exports are still images; the motion preview is not a video export.</p></section>` : '<div class="principle-strip"><span>A SINGLE DISC IS THE SAME PRIMITIVE.</span><p>The selected shelf disc uses exactly the same saved presentation as your comparison.</p></div>'}${tracePanel(result.run)}</section>`;
+  }).join('') || '<div class="empty-note">Add physical discs from the shelf to start a comparison.</div>'}</div>${battleRulesSection(ui.battleRules)}${standingsSection(standings)}<section class="states-section"><div class="section-toolbar"><div><span class="eyebrow">ONE COMPARISON. MANY STATES.</span><h2>The next moment.</h2></div>${button('+ Duplicate current state', 'state-add', {}, 'secondary')}</div><div class="state-tabs">${battle.states.map((s, i) => button(`<small>${String(i + 1).padStart(2, '0')}</small> ${esc(s.name)}`, 'state-select', { id: s.id }, s.id === state.id ? 'active' : '')).join('')}</div><div class="button-row">${button('Rename current', 'state-rename', {}, 'quiet small')}${button('Delete current', 'state-remove', {}, 'quiet small danger')}${button('Export SVG state bundle ↓', 'states-export', {}, 'quiet small')}</div><p class="tiny muted">States are editable snapshots. PNG exports are still images; the motion preview is not a video export.</p></section>` : singleCardPanel(result)}${tracePanel(result.run)}</section>`;
 }
 /**
  * The battle's own rules. A template is one gesture; what it composed is three
@@ -259,7 +280,7 @@ function courseAnchorHint() {
 }
 function courseInspector() {
   const { disc, mold, maker } = discInfo();
-  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE & CUSTOMIZE</span><h2>Make it your own.</h2><section class="export-section">${button(ui.busy ? 'Preparing export…' : 'Save overlay PNG ↓', 'export-png', {}, 'primary wide', ui.busy ? 'disabled' : '')}${button('Save editable SVG ↓', 'export-svg', {}, 'wide quiet')}<p class="tiny muted">${esc(canvasFor(w().layout.orientation).name)}. The actual PxC-produced scene. No footage, editor outlines or motion baked in.</p>${ui.latestReceipt ? `<p class="tiny mono">PNG SHA-256<br>${esc(ui.latestReceipt.pngHash.slice(0, 24))}…</p>` : ''}</section><section class="control-section"><label class="control"><span>Shared DisplayCard design</span>${select('course-preset', w().layout.presetId, Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]))}</label>${button('Edit this design ↗', 'go-editor', {}, 'wide secondary')}<p class="tiny muted">Photo, manufacturer, mold, every field. No fixed identity text hiding outside your design.</p></section>${layoutControls()}${frameControls()}<section class="control-section"><h3>Selected physical disc <span>DOMAIN</span></h3><div class="selected-summary"><span class="disc-thumb">${disc ? safeThumb(disc.id) : ''}</span><div><strong>${esc(mold?.name || 'None')}</strong><small>${esc(maker?.name)}</small></div></div><p class="tiny muted">${esc(disc?.nickname || '')}</p>${button('Edit facts & exact photo ↗', 'go-shelf', {}, 'wide')}</section><div class="subtle-box"><span class="eyebrow">PLAY BY YOUR RULES</span><p>Compose PutterWarz from reusable constraints.</p>${button('Open competition sandbox ↗', 'go-competition', {}, 'quiet small')}</div></aside>`;
+  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE & CUSTOMIZE</span><h2>Make it your own.</h2><section class="export-section">${button('Save overlay PNG ↓', 'export-png', {}, 'primary wide')}${button('Save editable SVG ↓', 'export-svg', {}, 'wide quiet')}<div class="button-row queue-taps">${ui.mode === 'battle' ? `${button('Export all states ↓', 'export-all-states', {}, 'secondary small')}${button('This battle, vertical ↓', 'export-vertical', {}, 'secondary small')}` : button('Every disc in the battle ↓', 'export-each-disc', {}, 'secondary small')}</div>${queuePanel()}<p class="tiny muted">${esc(canvasFor(w().layout.orientation).name)}. The actual PxC-produced scene. No footage, editor outlines or motion baked in.</p>${ui.latestReceipt ? `<p class="tiny mono">${esc(ui.latestReceipt.type)} SHA-256<br>${esc((ui.latestReceipt.pngHash ?? ui.latestReceipt.svgHash).slice(0, 24))}…</p>` : ''}</section><section class="control-section"><label class="control"><span>Shared DisplayCard design</span>${select('course-preset', w().layout.presetId, Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]))}</label>${button('Edit this design ↗', 'go-editor', {}, 'wide secondary')}<p class="tiny muted">Photo, manufacturer, mold, every field. No fixed identity text hiding outside your design.</p></section>${layoutControls()}${frameControls()}<section class="control-section"><h3>Selected physical disc <span>DOMAIN</span></h3><div class="selected-summary"><span class="disc-thumb">${disc ? safeThumb(disc.id) : ''}</span><div><strong>${esc(mold?.name || 'None')}</strong><small>${esc(maker?.name)}</small></div></div><p class="tiny muted">${esc(disc?.nickname || '')}</p>${button('Edit facts & exact photo ↗', 'go-shelf', {}, 'wide')}</section><div class="subtle-box"><span class="eyebrow">PLAY BY YOUR RULES</span><p>Compose PutterWarz from reusable constraints.</p>${button('Open competition sandbox ↗', 'go-competition', {}, 'quiet small')}</div></aside>`;
 }
 /* ------------------------------------------------------------------ */
 /* the Course route: a capture, the Stages, the course                  */
@@ -493,7 +514,7 @@ function competitionCenter(result) {
 }
 function competitionInspector() {
   const comp = get(w(), 'Competition', ui.competitionId);
-  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPETITION OBJECTS</span><h2>Teams & bags</h2>${input('Competition name', 'competition-name', comp.name)}${comp.teamIds.map(key => { const team = get(w(), 'Team', key); return `<section class="control-section">${input('Team name', 'team-name', team?.name, 'text', `data-id="${esc(key)}"`)}<label class="control"><span>Referenced bag</span>${select('team-bag', team?.bagId, all(w(), 'Bag').map(b => [b.id, b.name]), `data-id="${esc(key)}"`)}</label>${button('Edit this bag ↗', 'team-bag-open', { id: team?.bagId }, 'wide quiet')}</section>`; }).join('')}${button('Use these discs OnTheCourse ↗', 'competition-course', {}, 'wide primary')}<p class="tiny muted">Adds the team bags’ physical discs to your current comparison. It does not infer points or replace authored states.</p><div class="subtle-box"><span class="eyebrow">LOCAL INSTRUMENTATION</span><p>${w().events.length} recorded edits<br>${w().exports.length} actual PNG exports<br>${all(w(), 'Throw').length} recorded throws</p>${button('Export local activity ↓', 'activity-export', {}, 'quiet small')}<p class="tiny muted">Nothing is transmitted. Sample objects are not usage, sales, reach or performance evidence.</p></div></aside>`;
+  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPETITION OBJECTS</span><h2>Teams & bags</h2>${input('Competition name', 'competition-name', comp.name)}${comp.teamIds.map(key => { const team = get(w(), 'Team', key); return `<section class="control-section">${input('Team name', 'team-name', team?.name, 'text', `data-id="${esc(key)}"`)}<label class="control"><span>Referenced bag</span>${select('team-bag', team?.bagId, all(w(), 'Bag').map(b => [b.id, b.name]), `data-id="${esc(key)}"`)}</label>${button('Edit this bag ↗', 'team-bag-open', { id: team?.bagId }, 'wide quiet')}</section>`; }).join('')}${button('Use these discs OnTheCourse ↗', 'competition-course', {}, 'wide primary')}<p class="tiny muted">Adds the team bags’ physical discs to your current comparison. It does not infer points or replace authored states.</p><div class="subtle-box"><span class="eyebrow">LOCAL INSTRUMENTATION</span><p>${w().events.length} recorded edits<br>${w().exports.length} recorded exports<br>${all(w(), 'Throw').length} recorded throws</p>${button('Export local activity ↓', 'activity-export', {}, 'quiet small')}<p class="tiny muted">Nothing is transmitted. Sample objects are not usage, sales, reach or performance evidence.</p></div></aside>`;
 }
 /**
  * A Part is now sometimes a raster: `px.exp.lab.course.canonicalpixels` holds
@@ -592,26 +613,72 @@ function openComposer() {
   ui.adding = { key: id('disc'), maker: maker?.name || '', mold: '', category: '', plastic: '', weight: '', color: '', nickname: '', photo: null, toBag: !!ui.bagId, focus: true };
 }
 function addLineup(discId) { if (!w().battle.entries.some(e => e.discId === discId)) execute({ type: 'battle.add', discId, id: id('entry') }); }
-async function exportPng() {
-  const result = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() });
-  if (!result.cardCount) throw new Error('Add at least one disc before exporting.');
+/**
+ * The export queue. A tap makes jobs (src/exports.js decides which); the queue
+ * runs them one at a time through the same runtime.scene, hashes what it
+ * actually produced, files an export.record receipt for each and hands over the
+ * file. A job that fails keeps its sentence and the queue carries on with the
+ * rest; the queue itself lives in this session, so navigating away and back
+ * finds it exactly where it was.
+ */
+function enqueue(intent, kind = 'png') {
+  const jobs = planExports({ intent, kind, world: w(), discId: ui.discId, mode: ui.mode });
+  ui.queue = [...ui.queue, ...jobs.map((job, index) => ({ ...job, id: `${job.id}-${ui.queue.length + index}` }))];
+  message(`${jobs.length} export${jobs.length === 1 ? '' : 's'} queued. They run in order and each one leaves a receipt.`);
+  runQueue();
+}
+async function runQueue() {
+  if (ui.queueRunning) return;
+  ui.queueRunning = true;
+  try {
+    for (let job = ui.queue.find(j => j.status === 'queued'); job; job = ui.queue.find(j => j.status === 'queued')) {
+      job.status = 'running'; render();
+      try { await runExportJob(job); job.status = 'done'; }
+      catch (error) { job.status = 'failed'; job.message = error.cause?.message || error.message; }
+      render();
+    }
+  } finally {
+    ui.queueRunning = false;
+    const progress = queueProgress(ui.queue);
+    if (progress.total) message(progress.failed ? `${progress.sentence} Nothing was lost: the jobs that failed are still listed with their reason.` : progress.sentence, !!progress.failed);
+    render();
+  }
+}
+/** One job: the scene it names, rendered by the same chain, recorded, downloaded. */
+async function runExportJob(job) {
+  const result = runtime.scene({ mode: job.mode, discId: job.discId, ...context(), stateId: job.stateId, orientation: job.orientation });
+  if (!result.cardCount) throw new Error('Nothing to export: add at least one disc to the battle first.');
   // Capture the exact scene and source data BEFORE async conversion; later edits cannot relabel the export.
-  const mode = ui.mode;
-  const sourceSnapshot = clone({ layout: w().layout, frame: result.frame ?? null, preset: w().presets[w().layout.presetId], state: currentBattle(w()), entryDiscIds: mode === 'card' ? [ui.discId] : w().battle.entries.map(e => e.discId), objects: {} });
-  // Retain immutable facts and asset hashes, not another complete copy of every local photo per export.
+  const state = w().battle.states.find(s => s.id === result.stateId) ?? currentBattle(w());
+  const sourceSnapshot = clone({ layout: w().layout, orientation: job.orientation, frame: result.frame ?? null, preset: w().presets[job.mode === 'card' ? w().layout.singlePresetId : w().layout.presetId], state, entryDiscIds: job.mode === 'card' ? [job.discId] : w().battle.entries.map(e => e.discId), objects: {} });
   for (const discId of sourceSnapshot.entryDiscIds) {
     const disc = clone(get(w(), 'Disc', discId)), mold = clone(get(w(), 'Mold', disc.moldId)), maker = clone(get(w(), 'Manufacturer', mold.manufacturerId));
     sourceSnapshot.objects[discId] = { disc, mold, maker };
   }
-  ui.busy = true; render();
-  try {
-    const blob = await pngFromSvg(result.svg, result.width, result.height), pngHash = await sha256(blob), svgHash = await sha256(result.svg);
+  const svgHash = await sha256(result.svg);
+  const common = { id: id('export'), time: new Date().toISOString(), stateId: result.stateId, mode: job.mode, name: job.name, svgHash, width: result.width, height: result.height, orientation: result.orientation, framePresetId: result.frame?.presetId ?? 'none', sourceSnapshot };
+  const file = `discstudio-${job.name}-${result.width}x${result.height}-${svgHash.slice(0, 8)}`;
+  let record;
+  if (job.kind === 'svg') {
+    const blob = new Blob([result.svg], { type: 'image/svg+xml' });
+    record = { ...common, type: 'SVG', byteLength: blob.size };
+    downloadBlob(blob, `${file}.svg`);
+  } else {
+    const blob = await pngFromSvg(result.svg, result.width, result.height), pngHash = await sha256(blob);
     for (const item of Object.values(sourceSnapshot.objects)) if (item.disc.photo) { item.disc.photoSha256 = await sha256(item.disc.photo); delete item.disc.photo; }
     sourceSnapshot.assetPolicy = 'Photo data-URL hashes retained; original photo bytes remain in the draft, not duplicated per export. Keep exported SVGs for self-contained graphics.';
-    const record = { id: id('export'), type: 'PNG', time: new Date().toISOString(), stateId: result.stateId, mode, pngHash, svgHash, width: result.width, height: result.height, orientation: result.orientation, framePresetId: result.frame?.presetId ?? 'none', sourceSnapshot, byteLength: blob.size };
-    execute({ type: 'export.record', record }); ui.latestReceipt = record;
-    downloadBlob(blob, `discstudio-${result.stateId}-${result.width}x${result.height}-${svgHash.slice(0, 8)}.png`); message(`PNG exported from the actual SVG Part at ${result.width} × ${result.height}. Footage and editor controls are excluded.`);
-  } finally { ui.busy = false; }
+    record = { ...common, type: 'PNG', pngHash, byteLength: blob.size };
+    downloadBlob(blob, `${file}.png`);
+  }
+  execute({ type: 'export.record', record });
+  ui.latestReceipt = record; job.receiptId = record.id;
+  job.message = `${record.type} ${result.width} × ${result.height} · ${(record.pngHash ?? record.svgHash).slice(0, 12)}…`;
+}
+/** The queue on screen: where it is, then every job with its own sentence. */
+function queuePanel() {
+  if (!ui.queue.length) return '<p class="tiny muted">One tap queues a job per state or per disc. Jobs run in order, each leaves a receipt, and the queue stays put while you work elsewhere.</p>';
+  const progress = queueProgress(ui.queue);
+  return `<div class="export-queue" data-queue="${esc(progress.complete ? 'complete' : 'running')}"><div class="queue-head"><strong>Export queue</strong>${progress.complete ? button('Clear', 'queue-clear', {}, 'quiet small') : ''}</div><p class="tiny" data-queue-progress>${esc(progress.sentence)}</p><ol class="queue-list">${ui.queue.map(job => `<li data-job="${esc(job.id)}" data-status="${esc(job.status)}"><span class="queue-dot"></span><span class="queue-label">${esc(job.label)}</span><span class="tiny muted">${esc(job.message || job.status)}</span></li>`).join('')}</ol></div>`;
 }
 async function action(name, el) {
   const d = el.dataset, { disc, mold, maker } = discInfo();
@@ -620,6 +687,7 @@ async function action(name, el) {
     case 'go-course': navigate('course'); return;
     case 'go-competition': navigate('competition'); return;
     case 'go-course-build': navigate('course-build'); return;
+    case 'go-editor-single': ui.presetId = w().layout.singlePresetId; ui.component = 'DisplayCard'; navigate('components'); return;
     case 'lab-sample': ui.labCapture = runtime.lab.sample(d.overlaps ? { overlaps: true } : {}); ui.labCaptureName = d.overlaps ? 'LAB fixture · overlapped' : 'LAB fixture'; runtime.lab.begin(ui.labCapture); ui.labRun = null; ui.labSelected = null; message('The LAB fixture is loaded: a deterministic synthetic capture with badges, baskets and tees drawn to the Stages own knobs.'); break;
     case 'lab-photo': ui.photoTarget = 'lab'; document.querySelector('#photo-file').click(); return;
     case 'lab-run': await runLabPipeline(); break;
@@ -696,8 +764,12 @@ async function action(name, el) {
     case 'footage': document.querySelector('#footage-file').click(); return;
     case 'footage-clear': if (ui.footage) URL.revokeObjectURL(ui.footage); Object.assign(ui, { footage: null, footageKind: null, footageName: '', footageTime: 0 }); break;
     case 'footage-play': { const video = document.querySelector('#footage-video'); if (video) { if (video.paused) await video.play(); else video.pause(); } return; }
-    case 'export-png': await exportPng(); break;
-    case 'export-svg': { const result = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() }); downloadBlob(new Blob([result.svg], { type: 'image/svg+xml' }), `discstudio-${result.stateId}-${result.width}x${result.height}.svg`); message(`SVG scene downloaded at ${result.width} × ${result.height}. This is not recorded as a PNG export.`); break; }
+    case 'export-png': enqueue('current', 'png'); return;
+    case 'export-all-states': enqueue('all-states', 'png'); return;
+    case 'export-vertical': enqueue('vertical', 'png'); return;
+    case 'export-each-disc': enqueue('each-disc', 'png'); return;
+    case 'queue-clear': ui.queue = []; message('Queue cleared. The receipts it wrote are still on the record.'); break;
+    case 'export-svg': enqueue('current', 'svg'); return;
     case 'states-export': {
       const files = [];
       for (const [index, state] of w().battle.states.entries()) { const result = runtime.scene({ mode: 'battle', ...context(), stateId: state.id }); files.push({ filename: `${String(index + 1).padStart(2, '0')}-${state.name.replace(/[^a-z0-9_-]+/ig, '-')}.svg`, svg: result.svg, stateId: state.id }); }
@@ -784,6 +856,7 @@ function controlChange(el) {
     case 'flight': execute({ type: 'entity.set', entityType: 'Mold', id: mold.id, path: `flight.${d.key}`, value: number() }); break;
     case 'score': execute({ type: 'battle.score', id: d.id, score: number() }); ui.motionEntry = d.id; break;
     case 'course-preset': ui.presetId = value; execute({ type: 'layout.set', patch: { presetId: value } }); break;
+    case 'single-preset': execute({ type: 'layout.set', patch: { singlePresetId: value } }); message(`Single Disc mode composes with ${esc(w().presets[value].name)}. The comparison keeps its own design.`); break;
     case 'battle-template': { execute({ type: 'battle.template', id: value }); const template = battleTemplates[value]; message(`${template.name}. ${template.about}`); break; }
     case 'battle-rule-enabled': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { enabled: el.checked } }); break;
     case 'battle-rule-value': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { value: number() } }); break;
@@ -901,5 +974,5 @@ review.setAttribute('data-checklist', JSON.stringify(reviewItems));
 review.setAttribute('checkpoint-id', 'discstudio-pxc-02'); review.setAttribute('subject-commit', 'local-development');
 fetch(new URL('../build-info.json', import.meta.url)).then(r => r.ok ? r.json() : null).then(info => { if (info) { ui.build = info; review.setAttribute('submission-id', `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`); review.setAttribute('checkpoint-id', info.fingerprint); review.setAttribute('subject-commit', info.commit); render(); } }).catch(() => {});
 // Explicit developer inspection/command surface. UI and programmatic commands use the same registered Calculations.
-window.discStudio = { lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get shelf() { return runtime.shelf(shelfRequest()); }, get view() { return { route: ui.route, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode, adding: ui.adding && { ...ui.adding } }; }, cards: () => ui.lastCascade };
+window.discStudio = { queue: () => ({ jobs: ui.queue, progress: queueProgress(ui.queue), running: ui.queueRunning }), lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get shelf() { return runtime.shelf(shelfRequest()); }, get view() { return { route: ui.route, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode, adding: ui.adding && { ...ui.adding } }; }, cards: () => ui.lastCascade };
 syncRoute();

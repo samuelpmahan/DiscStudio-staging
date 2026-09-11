@@ -116,6 +116,18 @@ with sync_playwright() as p:
     beat(page, 'tease', 'tease-03-on-the-course', 'The bag, on the screen, over your own footage',
          'cards in the overlay, one carrying your photo', count)
 
+    # 3b. The same discs, on the canvas a phone actually wants.
+    page.locator('[data-action="orientation"][data-value="portrait"]').click()
+    page.locator('[data-control="frame-preset"]').select_option('filled')
+    page.locator('[data-control="frame-title"]').fill('PutterWarz')
+    page.locator('[data-control="frame-title"]').dispatch_event('change')
+    size = page.evaluate('[discStudio.preview.width, discStudio.preview.height]')
+    assert size == [1080, 1920] and 'data-frame="filled"' in page.evaluate('discStudio.preview.svg'), size
+    beat(page, 'tease', 'tease-03b-vertical', 'The same comparison, on the canvas a phone wants, framed and titled',
+         'preview canvas', ' x '.join(str(n) for n in size))
+    page.locator('[data-control="frame-preset"]').select_option('none')
+    page.locator('[data-action="orientation"][data-value="landscape"]').click()
+
     # 4. A score moves and the card that owns it pulses.
     before = page.evaluate('discStudio.world.battle.states[0].scores["entry-1"] ?? 0')
     page.locator('[data-action="score-step"][data-id="entry-1"][data-value="1"]').click()
