@@ -10,7 +10,7 @@ import { createStudioRuntime } from '../src/runtime.js';
 import { createSeed } from '../src/seed.js';
 
 const studio = () => createStudioRuntime(createSeed());
-const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-s4', 'lab-s5', 'lab-route'];
+const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-holes-nearest', 'lab-s7-course', 'lab-route'];
 
 test('the pipeline runs S0 through the round as one composition per Stage', () => {
   const runtime = studio();
@@ -53,10 +53,10 @@ test('the produce is what the fixture draws: three badges read, two baskets, thr
   assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['11', '10', '01']);
   assert.equal(views.s2.objects.length, 2);
   assert.equal(views.s3.objects.length, 3);
-  // S4 names the hole it could not finish rather than guessing a basket for it.
-  assert.deepEqual(views.s4.objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11 · missing basket']);
-  // S5's obstacle map is derived from the pixels no Stage object owns, and two straight legs cross it.
-  assert.ok(views.s5.cells.centres.length > 0);
+  // The nearest-anchor fallback names the hole it could not finish rather than guessing a basket for it.
+  assert.deepEqual(views['holes-nearest'].objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11 · missing basket']);
+  // S7's obstacle map is derived from the pixels no Stage object owns, and two straight legs cross it.
+  assert.ok(views['s7-course'].cells.centres.length > 0);
   assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').blockedStraightLegs, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
   // The order is the reading, not the position: hole 1 sits lower in the image than hole 10.
   assert.deepEqual(views.route.objects.map(object => object.label), ['hole 1', 'hole 10']);

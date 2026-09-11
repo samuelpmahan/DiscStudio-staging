@@ -25,8 +25,8 @@ import { S0_ADDRESSES, registerS0, s0Document } from './s0.js';
 import { S1_ADDRESSES, registerS1, s1YamlDocument, digitModel, asMaskRaster } from './s1.js';
 import { S2_ADDRESSES, registerS2, s2Document } from './s2.js';
 import { S3_ADDRESSES, registerS3, s3Document } from './s3.js';
-import { S4_ADDRESSES, s4Spec } from './s4.js';
-import { S5_ADDRESSES, s5Spec, cellCenter } from './s5.js';
+import { HOLES_ADDRESSES, holesNearestSpec } from './holes-nearest.js';
+import { COURSE_ADDRESSES, s7CourseSpec, cellCenter } from './s7course.js';
 import { ROUTE_ADDRESSES, registerRoute, routeDocument } from './route.js';
 import { labAddress, labDocument } from './address.js';
 import { parseYaml } from './yaml.js';
@@ -117,28 +117,32 @@ export function labStageSpecs() {
       }
     },
     {
-      // S4 and S5 arrive as their own modules' specs (src/lab/s4.js `s4Spec`,
-      // src/lab/s5.js `s5Spec`): the Stage says what it consumes, produces, and
-      // runs, and only what a reader sees of it is added here.
-      ...s4Spec(),
+      // These two arrive as their own modules' specs (src/lab/holes-nearest.js
+      // `holesNearestSpec`, src/lab/s7course.js `s7CourseSpec`): the Stage says
+      // what it consumes, produces and runs, and only what a reader sees of it
+      // is added here. The numbering is the owner's (2026-09-11): S4 is
+      // recovery, S5 the tee-to-badge ray, S6 the straight holes, S7
+      // pathfinding, so the nearest-anchor hole assembly is a fallback with no
+      // number and the course graph is the first half of S7.
+      ...holesNearestSpec(),
       view(lab) {
-        const holes = lab.get(S4_ADDRESSES.objects);
+        const holes = lab.get(HOLES_ADDRESSES.objects);
         return { kind: 'boxes', tone: 'hole', labelBelow: true, hitOutline: true, objects: holes.map((hole, index) => {
           const anchors = [hole.badge.at, hole.tee?.at, hole.basket?.at].filter(Boolean);
           const xs = anchors.map(at => at[0]), ys = anchors.map(at => at[1]), pad = 14;
           const bbox = [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + pad * 2, Math.max(...ys) - Math.min(...ys) + pad * 2];
           return {
             id: `hole-${hole.number}`, label: hole.complete ? `hole ${hole.number}` : `hole ${hole.number} · missing ${hole.missing.join(' + ')}`,
-            bbox, part: S4_ADDRESSES.objects, index,
+            bbox, part: HOLES_ADDRESSES.objects, index,
             detail: { number: hole.number, tee: hole.tee?.id ?? null, basket: hole.basket?.id ?? null, confidence: hole.confidence, missing: hole.missing }
           };
         }) };
       }
     },
     {
-      ...s5Spec(),
+      ...s7CourseSpec(),
       view(lab) {
-        const graph = lab.get(S5_ADDRESSES.graph), frame = graph.frame;
+        const graph = lab.get(COURSE_ADDRESSES.graph), frame = graph.frame;
         const at = id => graph.nodes.find(node => node.id === id)?.at ?? null;
         return {
           kind: 'cells', tone: 'obstacle',
@@ -146,7 +150,7 @@ export function labStageSpecs() {
           cells: { size: frame.cellPx, centres: graph.obstacles.terrainCells.map(cell => cellCenter(frame, cell)) },
           legs: graph.edges.map(edge => ({ kind: edge.straightIsBlocked ? 'blocked' : edge.kind, hole: edge.hole, from: at(edge.from), to: at(edge.to), lengthPx: edge.straightLengthPx })).filter(edge => edge.from && edge.to),
           objects: graph.holes.map((hole, index) => ({
-            id: `course-hole-${hole.number}`, label: `${hole.lengthPx} px`, part: S5_ADDRESSES.graph, index,
+            id: `course-hole-${hole.number}`, label: `${hole.lengthPx} px`, part: COURSE_ADDRESSES.graph, index,
             at: [(hole.tee.at[0] + hole.basket.at[0]) / 2, (hole.tee.at[1] + hole.basket.at[1]) / 2],
             detail: { number: hole.number, lengthPx: hole.lengthPx, bearingDeg: hole.bearingDeg, confidence: hole.confidence }
           }))
