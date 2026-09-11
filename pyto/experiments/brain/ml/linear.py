@@ -7,6 +7,8 @@ predicted from without ever refitting.
 
 from __future__ import annotations
 
+import math
+
 from . import core
 
 
@@ -58,7 +60,7 @@ def fit_gd_py(matrix, targets, fit_intercept=True, l2=0.0, lr=0.01, epochs=200):
     width = len(design[0]) if design else 0
     weights = [0.0] * width
     for _ in range(epochs):
-        residual = [sum(w * v for w, v in zip(weights, row)) - y for row, y in zip(design, targets)]
+        residual = [math.fsum(w * v for w, v in zip(weights, row)) - y for row, y in zip(design, targets)]
         gradient = [0.0] * width
         for row, r in zip(design, residual):
             for j in range(width):
@@ -101,7 +103,7 @@ def fit_sgd(matrix, targets, seed, fit_intercept=True, l2=0.0, lr=0.01, epochs=2
     for _ in range(epochs):
         for i in rng.permutation(n):
             row = design[i]
-            residual = sum(w * v for w, v in zip(weights, row)) - targets[i]
+            residual = math.fsum(w * v for w, v in zip(weights, row)) - targets[i]
             for j in range(width):
                 grad = 2.0 * residual * row[j]
                 if l2 and not (fit_intercept and j == 0):
@@ -171,5 +173,5 @@ def predict(args):
         values = np.asarray(rows, dtype=float) @ np.asarray(coef, dtype=float) + intercept
         predictions = [float(v) for v in values]
     else:
-        predictions = [intercept + sum(c * v for c, v in zip(coef, row)) for row in rows]
+        predictions = [intercept + math.fsum(c * v for c, v in zip(coef, row)) for row in rows]
     return {"for": args.get("for", "predictions from " + model["model"]), "predictions": predictions}

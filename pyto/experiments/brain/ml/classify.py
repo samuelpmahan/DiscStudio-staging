@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 
-from . import core
+from . import core, distance
 
 # --- logistic regression -----------------------------------------------------
 
@@ -33,7 +33,7 @@ def _binary_gd(design, labels, l2, lr, epochs):
     for _ in range(epochs):
         gradient = [0.0] * width
         for row, y in zip(design, labels):
-            error = sigmoid(sum(w * v for w, v in zip(weights, row))) - y
+            error = sigmoid(math.fsum(w * v for w, v in zip(weights, row))) - y
             for j in range(width):
                 gradient[j] += error * row[j] / n
         for j in range(width):
@@ -71,7 +71,7 @@ def _binary_newton(design, labels, l2, epochs, tol):
     taken = 0
     for step in range(epochs):
         taken = step + 1
-        p = [sigmoid(sum(w * v for w, v in zip(weights, row))) for row in design]
+        p = [sigmoid(math.fsum(w * v for w, v in zip(weights, row))) for row in design]
         gradient = [0.0] * width
         for row, pi, y in zip(design, p, labels):
             for j in range(width):
@@ -184,11 +184,11 @@ def logreg_proba(args):
     scores = []
     for row in rows:
         raw = [
-            sigmoid(b + sum(c * v for c, v in zip(coef, row)))
+            sigmoid(b + math.fsum(c * v for c, v in zip(coef, row)))
             for b, coef in zip(model["intercepts"], model["coefs"])
         ]
         if model["one_vs_rest"]:
-            total = sum(raw) or 1.0
+            total = math.fsum(raw) or 1.0
             scores.append([p / total for p in raw])
         else:
             scores.append([1.0 - raw[0], raw[0]])
@@ -235,37 +235,26 @@ def knn_fit(args):
 
 
 def _distances(model, rows, backend):
-    train = model["rows"]
-    metric = model["metric"]
-    if backend == "np" and core.numpy() is not None:
-        np = core.numpy()
-        a, b = np.asarray(rows, dtype=float), np.asarray(train, dtype=float)
-        if metric == "manhattan":
-            return np.abs(a[:, None, :] - b[None, :, :]).sum(-1).tolist()
-        # the identity |a-b|^2 = |a|^2 - 2ab + |b|^2: one matmul instead of a cube of subtractions
-        squared = (a * a).sum(1)[:, None] - 2.0 * (a @ b.T) + (b * b).sum(1)[None, :]
-        return np.sqrt(np.maximum(squared, 0.0)).tolist()
-    if metric == "manhattan":
-        return [[sum(abs(x - y) for x, y in zip(r, t)) for t in train] for r in rows]
-    return [[core.euclidean(r, t) for t in train] for r in rows]
+    """one line, because the matrix is not knn's to own: see ml/distance.py."""
+    return distance.pairwise(rows, model["rows"], model["metric"], backend)
 
 
 def knn_predict(args):
     """fn.brain.ml.knn_predict -- vote (or average) over the k closest training rows."""
     model, data = args["model"], args["data"]
-    backend = core.backend_of(args)
+    backend = distance.backend_of(args)
     rows = _rows_for(model, data)
-    distance = _distances(model, rows, backend)
+    matrix = _distances(model, rows, backend)
     k = model["k"]
     labels, votes = [], []
-    for d in distance:
+    for d in matrix:
         order = sorted(range(len(d)), key=lambda i: (d[i], i))[:k]
         if model["weights"] == "distance":
             weights = [1.0 / (d[i] + 1e-12) for i in order]
         else:
             weights = [1.0] * len(order)
         if model["task"] == "regress":
-            total = sum(weights) or 1.0
+            total = math.fsum(weights) or 1.0
             labels.append(sum(model["labels"][i] * w for i, w in zip(order, weights)) / total)
             votes.append(None)
         else:
@@ -352,8 +341,8 @@ def multinomial_nb_fit(args):
     for label in classes:
         members = [row for row, t in zip(matrix, targets) if t == label]
         priors.append(len(members) / len(matrix))
-        counts = [sum(row[j] for row in members) + alpha for j in range(len(features))]
-        total = sum(counts)
+        counts = [math.fsum(row[j] for row in members) + alpha for j in range(len(features))]
+        total = math.fsum(counts)
         log_prob.append([math.log(c / total) for c in counts])
     return {
         "for": args.get("for", "a multinomial naive bayes model of " + target),
@@ -382,7 +371,7 @@ def multinomial_nb_predict(args):
         scores = (x @ w.T + np.asarray(log_priors)).tolist()
     else:
         scores = [
-            [lp + sum(v * p for v, p in zip(row, probabilities))
+            [lp + math.fsum(v * p for v, p in zip(row, probabilities))
              for lp, probabilities in zip(log_priors, model["log_prob"])]
             for row in rows
         ]

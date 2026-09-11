@@ -21,9 +21,13 @@ VERTICAL = "ml"
 CRITERIA = [
     {"name": "correct", "weight": 3.0, "direction": "higher",
      "note": "1 when this candidate's oracle part passed against the reference, 0 otherwise"},
-    {"name": "log2_wall_ms", "weight": 1.5, "direction": "lower",
-     "note": "log2 of the median of the candidate's benchmark part, on inputs the whole bracket shares; "
-             "the log is the point -- on a linear scale one slow branch decides how close the fast ones look"},
+    {"name": "speed_band", "weight": 1.5, "direction": "lower",
+     "note": "the candidate's band, from the fastest sample of every benchmark part in this bracket: sorted, then "
+             "cut wherever the next is more than BAND times the fastest in the band, and numbered "
+             "from the fastest. a band rather than a time because a linear score lets one slow branch "
+             "compress the fast ones into nothing, and because two branches within 40% of each other are "
+             "the same speed on this machine tonight -- letting that decide a winner makes the bracket "
+             "un-re-runnable, which is the one thing a bracket has to be"},
     {"name": "source_lines", "weight": 0.5, "direction": "lower",
      "note": "lines of the function the candidate runs: the clarity the contract asks for"},
     {"name": "documented", "weight": 0.5, "direction": "higher",
@@ -31,6 +35,27 @@ CRITERIA = [
 ]
 
 JUDGE = "recorded-criteria-scorer"
+
+#: two medians within this factor of each other are the same speed, and share a band.
+BAND = 1.4
+
+
+def speed_bands(store, candidates):
+    """every candidate's band index, from the benchmark parts this bracket recorded.
+
+    the minimum of the samples, not the median: interference only ever makes a run
+    slower, so the fastest sample is the least contaminated estimate of the branch,
+    and the median moves under a machine that is also running someone else's suite.
+    """
+    medians = {c["branch"]: float(store.get(c["bench"])["wall_ms_min"]) for c in candidates}
+    order = sorted(medians, key=lambda branch: (medians[branch], branch))
+    bands, band, floor_ms = {}, 0, medians[order[0]]
+    for branch in order:
+        if medians[branch] > floor_ms * BAND:
+            band += 1
+            floor_ms = medians[branch]
+        bands[branch] = band
+    return bands
 
 
 def source_size(fn):
@@ -43,14 +68,13 @@ def source_size(fn):
     return len(lines), 1 if (fn.__doc__ or "").strip() else 0
 
 
-def score(store, candidate):
+def score(store, candidate, bands):
     """every number a judge is allowed to use, read back out of the store."""
     oracle = store.get(candidate["oracle"]) if store.has(candidate["oracle"]) else {"pass": False}
-    bench = store.get(candidate["bench"])
     lines, documented = source_size(candidate["fn"])
     return {
         "correct": 1.0 if oracle.get("pass") else 0.0,
-        "log2_wall_ms": math.log2(max(float(bench["wall_ms_median"]), 1e-6)),
+        "speed_band": float(bands[candidate["branch"]]),
         "source_lines": float(lines),
         "documented": float(documented),
     }
@@ -63,8 +87,10 @@ def hold(store, problem, for_, candidates, note_for):
         [{"branch": c["branch"], "calc": c["calc"], "address": c["bench"], "note": c["note"]} for c in candidates],
         for_,
     )
+    bands = speed_bands(store, candidates)
     for candidate in candidates:
-        parts.judge(store, VERTICAL, problem, JUDGE, candidate["branch"], score(store, candidate), candidate["note"])
+        parts.judge(store, VERTICAL, problem, JUDGE, candidate["branch"],
+                    score(store, candidate, bands), candidate["note"])
     decided = parts.decide(store, VERTICAL, problem)
     parts.refine(store, VERTICAL, problem, note_for(decided["winner"]), decided["candidates"][0]["address"])
     return decided
@@ -308,6 +334,77 @@ def kmeans_assignment(store):
             f"{winner} wins on the recorded criteria and is what fn.brain.ml.kmeans should default to; "
             "the py branch stays as the reference every oracle here is written against, and the same "
             "identity belongs in a shared pairwise-distance calculation rather than in three verticals"
+        ),
+    )
+
+
+@bracket_builder
+def pairwise_spelling(store):
+    """the one n-by-n matrix four calculations need, five ways.
+
+    three of the branches are this vertical's own (a python loop, a broadcast
+    subtraction, the squared-distance identity) and two are the backend vertical's
+    facade, fn.brain.backend.pairwise, on its np and its scipy engines. the oracle
+    for every branch is scipy's cdist, which only one of them calls.
+    """
+    from scipy.spatial import distance as sp_distance
+
+    import numpy as np
+
+    from . import distance
+
+    blobs = calcs.call("synthetic_blobs", {"seed": 121, "n": 300, "k": 5, "d": 8, "spread": 0.9})
+    rows = [row[:-1] for row in core.as_rows(blobs)]
+    store.put("px.exp.brain.data.ml.pairwise_bracket", {
+        "for": "the one matrix every branch of the pairwise bracket computes",
+        "recipe": {"calc": "fn.brain.ml.synthetic_blobs",
+                   "args": {"seed": 121, "n": 300, "k": 5, "d": 8, "spread": 0.9}},
+        "columns": core.columns_of(blobs)[:-1],
+        "shape": [len(rows), len(rows[0])],
+    })
+    reference = sp_distance.cdist(np.asarray(rows), np.asarray(rows), metric="euclidean").tolist()
+    notes = {
+        "py": "one python loop per pair, with fsum: the reference, and the only one with no array in it",
+        "np": "one broadcast subtraction: an n by n by d array in memory, so 300 rows is 720 thousand floats",
+        "gram": "the squared-distance identity: one matmul, no cube, and the diagonal pinned to the zero it is",
+        "backend_np": "fn.brain.backend.pairwise on its np engine: the same shape, owned by the backend vertical",
+        "backend_sp": "fn.brain.backend.pairwise on its scipy engine: cdist, which is the oracle's own routine",
+    }
+    candidates = []
+    for branch in distance.BACKENDS:
+        got = distance.pairwise(rows, metric="euclidean", backend=branch)
+        case = f"bracket_{branch}"
+        parts.result(store, VERTICAL, "pairwise", case, {
+            "for": f"what the {branch} spelling computed",
+            "backend": branch, "shape": [len(got), len(got[0])],
+            "first_row": got[0][:8], "trace": math.fsum(got[i][i] for i in range(len(got))),
+        })
+        parts.oracle(
+            store, VERTICAL, "pairwise", case,
+            got[:40], [row[:len(got)] for row in reference[:40]],
+            "scipy.spatial.distance.cdist on the same rows", 1e-9,
+            "four calculations read this matrix; a spelling that is off by 1e-7 moves a k=1 vote",
+        )
+        parts.bench(
+            store, VERTICAL, "pairwise", branch, "bracket_n300_d8",
+            lambda branch=branch: distance.pairwise(rows, metric="euclidean", backend=branch), 5,
+            "300 rows and 8 columns: the same ninety thousand pairs, five times, for every branch",
+        )
+        candidates.append({
+            "branch": branch, "calc": "fn.brain.ml.pairwise", "fn": getattr(distance, "_" + branch, distance.pairwise),
+            "oracle": parts.H.oracle_address(VERTICAL, "pairwise", case),
+            "bench": parts.H.bench_address(VERTICAL, "pairwise", branch, "bracket_n300_d8"),
+            "note": notes[branch],
+        })
+    return hold(
+        store, "pairwise_spelling",
+        "knn, silhouette, k-means and dbscan all read one n-by-n matrix; this decides which spelling computes it",
+        candidates,
+        lambda winner: (
+            f"{winner} wins on the recorded criteria. the ml vertical keeps py as its default because it is "
+            "the reference every oracle here is written against, and fn.brain.ml.pairwise reaches every other "
+            "branch through args['backend'] -- including the backend vertical's own engines, which is the point: "
+            "this vertical no longer owns the primitive, it calls it"
         ),
     )
 

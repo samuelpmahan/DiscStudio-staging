@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import math
 
-from . import core
+from . import core, distance
 
 
 #: the keys a part may carry its numbers under: a column, a regression, a classifier.
@@ -48,11 +48,11 @@ def regression(args):
         explained = float((residual**2).sum())
     else:
         residual = [a - b for a, b in zip(truth, guess)]
-        mse = sum(r * r for r in residual) / n
-        mae = sum(abs(r) for r in residual) / n
+        mse = math.fsum(r * r for r in residual) / n
+        mae = math.fsum(abs(r) for r in residual) / n
         mu = core.mean(truth)
-        total = sum((a - mu) ** 2 for a in truth)
-        explained = sum(r * r for r in residual)
+        total = math.fsum((a - mu) ** 2 for a in truth)
+        explained = math.fsum(r * r for r in residual)
     r2 = 1.0 - explained / total if total > 0 else 0.0
     return {
         "for": args.get("for", "how far the predictions were"),
@@ -115,7 +115,7 @@ def classification(args):
         macro = {"precision": correct / n, "recall": correct / n, "f1": correct / n}
     elif average == "weighted":
         macro = {
-            k: sum(per_class[str(l)][k] * s for l, s in zip(labels, supports)) / total_support
+            k: math.fsum(per_class[str(l)][k] * s for l, s in zip(labels, supports)) / total_support
             for k in ("precision", "recall", "f1")
         }
     else:
@@ -157,7 +157,7 @@ def roc_auc(args):
     if n_pos == 0 or n_neg == 0:
         auc = 0.5
     else:
-        auc = (sum(positives) - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
+        auc = (math.fsum(positives) - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
     return {
         "for": args.get("for", "how well the score separates the two classes"),
         "auc": auc,
@@ -198,27 +198,21 @@ def silhouette(args):
     labels = args["labels"]
     labels = labels["labels"] if isinstance(labels, dict) else labels
     rows = core.as_rows(data)
-    backend = core.backend_of(args)
+    backend = distance.backend_of(args)
     n = len(rows)
     groups = {}
     for i, label in enumerate(labels):
         groups.setdefault(label, []).append(i)
-    if backend == "np" and core.numpy() is not None:
-        np = core.numpy()
-        x = np.asarray(rows, dtype=float)
-        distance = np.sqrt(np.maximum(((x[:, None, :] - x[None, :, :]) ** 2).sum(-1), 0.0))
-        distance = distance.tolist()
-    else:
-        distance = [[core.euclidean(a, b) for b in rows] for a in rows]
+    matrix = distance.pairwise(rows, backend=backend)
     scores = []
     for i in range(n):
         own = groups[labels[i]]
         if len(own) <= 1:
             scores.append(0.0)
             continue
-        a = sum(distance[i][j] for j in own if j != i) / (len(own) - 1)
+        a = math.fsum(matrix[i][j] for j in own if j != i) / (len(own) - 1)
         b = min(
-            sum(distance[i][j] for j in members) / len(members)
+            math.fsum(matrix[i][j] for j in members) / len(members)
             for label, members in groups.items()
             if label != labels[i]
         )

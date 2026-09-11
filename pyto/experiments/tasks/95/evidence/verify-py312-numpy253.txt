@@ -1,0 +1,20 @@
+.............E....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_the_py_engine_of_eig_refuses_a_non_symmetric_matrix (backend.test_ops.TheStubsSayWhy.test_the_py_engine_of_eig_refuses_a_non_symmetric_matrix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/95/pyto/experiments/brain/backend/test_ops.py", line 123, in test_the_py_engine_of_eig_refuses_a_non_symmetric_matrix
+    got = ops.call("eig", {"a": [[0.0, 1.0], [2.0, 0.0]], "backend": "np"})
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/95/pyto/experiments/brain/backend/ops.py", line 60, in call
+    return _OPS[op][backend](args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/95/pyto/experiments/brain/backend/ops.py", line 495, in _eig_np
+    raise ValueError("brain: eig returns real spectra only; this matrix has a complex one")
+ValueError: brain: eig returns real spectra only; this matrix has a complex one
+
+----------------------------------------------------------------------
+Ran 498 tests in 28.973s
+
+FAILED (errors=1)
+exit 1
