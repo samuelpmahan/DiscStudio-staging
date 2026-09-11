@@ -1,0 +1,146 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T013338Z-task-83",
+  "package": "task-83",
+  "base_sha": "41923bd85d425a4ec7fff62caa1f0ddfc077045f",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'",
+    "exit": 0,
+    "output_sha256": "88139f26cfa4bda5c8445642e8d44a473077e157e5af0d43c4fe0b71fcd25822"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "7cb559db3e2b68d7e27c1b719f1ea784c13641ab52c1479246e806e51d0fe22b",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 117,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/brain/ml/__init__.py",
+      "bytes": 85,
+      "sha256": "0b28e0869402bd7b21a8833dd8fece5411668318160ff5d939593da56f4e1ab0"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/build.py",
+      "bytes": 19237,
+      "sha256": "ed5fc64dd11c221f026d438c53fd1c21139dcf2ac60d675267cee8f9c5fddc2f"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/calcs.py",
+      "bytes": 1854,
+      "sha256": "3379740be76e1e65c40b859b59bc4aa823dd87672b38255002a3e57a538d8b69"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/core.py",
+      "bytes": 7628,
+      "sha256": "a3762a0e969ba2112a55e3d86c73f1d5e53ef6311f830d4b66ad039152939e65"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/linear.py",
+      "bytes": 6569,
+      "sha256": "5347496507028a489a4df2ef46684d3c6c341e09ccf9ebed4b2f604c94ca907c"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/metrics.py",
+      "bytes": 7956,
+      "sha256": "0c4be72697fe5335b37ca47b7e86baf016ec5468cda26c950b5af9131f05cdb7"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/parts.py",
+      "bytes": 9004,
+      "sha256": "a1d679c6fee11928e384123256a64ab64e5b32ed204ecc1f896dd6bc92b3a5e5"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/resample.py",
+      "bytes": 7309,
+      "sha256": "8482f37f56ad54c5edd053ca223bb4848932ab8453fa4edcc4f916cbff1760c0"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/test_core.py",
+      "bytes": 2881,
+      "sha256": "bece941c91592a36f427614a881618db3bb376faef5f77ad1438c1238a3af15e"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/test_linear.py",
+      "bytes": 5691,
+      "sha256": "c0914a6f443db860f035307769f1e63c06e6f68cb79289a5e899512eb99f5ee0"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/test_metrics.py",
+      "bytes": 6304,
+      "sha256": "0650d0338c264972b920ca1b7797ab92114321829bcf906c138e8fa909022b49"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/test_resample.py",
+      "bytes": 5127,
+      "sha256": "a857e9579cae2ff8338c0aba1bd1c34c38100720bb46fdabd1bedf0353aa059b"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/test_store.py",
+      "bytes": 3562,
+      "sha256": "9cc0a5a7e49ea3c09d9a120be11157150374b15ef9cfc07a30aa498e931cbed1"
+    },
+    {
+      "path": "pyto/experiments/brain/records/ml.regression.json",
+      "bytes": 130433,
+      "sha256": "ab5485d33e69215ebfec366d6ea06da8cddde6dfe5e24b0760892d4b2f3f28cd"
+    },
+    {
+      "path": "pyto/experiments/brain/store/ml.json",
+      "bytes": 140494,
+      "sha256": "ada6a413c0740e5318a3e8df6232975b3dcc21f134d6c4ac7ec019beb59d033a"
+    },
+    {
+      "path": "pyto/experiments/tasks/83/HANDOFF.md",
+      "bytes": 7784,
+      "sha256": "f82ec7b24dfbe3967b0e9a1b1deaf4fdd93751da73a9a0cf794efead708dfb7a"
+    },
+    {
+      "path": "pyto/experiments/tasks/83/evidence/check_all.txt",
+      "bytes": 209074,
+      "sha256": "52ef1e9e4256e9889e222df47fd688ae156ff97689252ac8081bd287b434afc0"
+    },
+    {
+      "path": "pyto/experiments/tasks/83/evidence/verify.txt",
+      "bytes": 217,
+      "sha256": "e50e074896d80e253e5c562aa386e74310f9b6e7dfeee477d3b546178c2dd1ca"
+    },
+    {
+      "path": "pyto/experiments/tasks/83/packet.md",
+      "bytes": 3353,
+      "sha256": "5aff7b67db5db828b00c096b6d274acffd0803ff376ef1c59aaf921923def084"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T01:34:55.366937Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
