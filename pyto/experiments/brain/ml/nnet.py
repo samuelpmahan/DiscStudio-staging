@@ -42,7 +42,7 @@ def lasso_fit(args):
     n, d = len(scaled), len(features)
     weights = [0.0] * d
     columns = core.transpose(scaled)
-    norms = [sum(v * v for v in column) for column in columns]
+    norms = [math.fsum(v * v for v in column) for column in columns]
     if backend == "np" and core.numpy() is not None:
         np = core.numpy()
         x = np.asarray(scaled, dtype=float)
@@ -76,7 +76,7 @@ def lasso_fit(args):
             for j in range(d):
                 if norms[j] == 0.0:
                     continue
-                rho = sum(columns[j][i] * (residual[i] + columns[j][i] * weights[j]) for i in range(n))
+                rho = math.fsum(columns[j][i] * (residual[i] + columns[j][i] * weights[j]) for i in range(n))
                 updated = _soft_threshold(rho, alpha * n) / norms[j]
                 change = updated - weights[j]
                 if change:
@@ -87,7 +87,7 @@ def lasso_fit(args):
             if biggest < tol:
                 break
     raw = [w / sd for w, sd in zip(weights, sds)]
-    intercept = centre - sum(w * m for w, m in zip(raw, means))
+    intercept = centre - math.fsum(w * m for w, m in zip(raw, means))
     return {
         "for": args.get("for", "a linear model with most of its coefficients at exactly zero"),
         "model": "lasso",
@@ -129,7 +129,7 @@ def perceptron_fit(args):
         wrong = 0
         for i in rng.permutation(len(matrix)):
             row, sign = matrix[i], signs[i]
-            if sign * (bias + sum(w * v for w, v in zip(weights, row))) <= 0.0:
+            if sign * (bias + math.fsum(w * v for w, v in zip(weights, row))) <= 0.0:
                 wrong += 1
                 bias += rate * sign
                 weights = [w + rate * sign * v for w, v in zip(weights, row)]
@@ -157,7 +157,7 @@ def perceptron_predict(args):
     model, data = args["model"], args["data"]
     rows = _rows_for(model, data)
     classes = model["classes"]
-    scores = [model["intercept"] + sum(w * v for w, v in zip(model["coef"], row)) for row in rows]
+    scores = [model["intercept"] + math.fsum(w * v for w, v in zip(model["coef"], row)) for row in rows]
     return {
         "for": args.get("for", "the side of the boundary"),
         "classes": classes,

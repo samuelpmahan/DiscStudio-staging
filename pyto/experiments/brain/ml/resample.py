@@ -7,6 +7,8 @@ split part stays small enough to sit in a record.
 
 from __future__ import annotations
 
+import math
+
 from . import core
 
 
@@ -116,7 +118,7 @@ def synthetic_regression(args):
     rows = []
     for _ in range(n):
         x = [rng.normal(0.0, 1.0) for _ in range(d)]
-        y = intercept + sum(w * v for w, v in zip(weights, x)) + rng.normal(0.0, noise)
+        y = math.fsum([intercept] + [w * v for w, v in zip(weights, x)] + [rng.normal(0.0, noise)])
         rows.append(x + [y])
     out = core.dataset(
         args.get("for", "a regression problem whose true weights are known"),
@@ -211,7 +213,7 @@ def synthetic_counts(args):
     profiles = []
     for c in range(k):
         weights = [rng.uniform() + (2.0 if (i % k) == c else 0.0) for i in range(vocabulary)]
-        total = sum(weights)
+        total = math.fsum(weights)
         profiles.append([w / total for w in weights])
     rows = []
     for i in range(n):

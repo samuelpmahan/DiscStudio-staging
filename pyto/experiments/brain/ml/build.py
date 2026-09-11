@@ -13,10 +13,9 @@ import numpy as np
 from pyto import Part
 from scipy import optimize, stats
 from scipy.cluster import hierarchy
-from scipy.spatial import distance
 from scipy.spatial import distance as sp_distance
 
-from . import calcs, core, linear, metrics, nnet, parts, resample, tournament, trees, unsup, validate
+from . import calcs, core, distance, linear, metrics, nnet, parts, resample, tournament, trees, unsup, validate
 
 VERTICAL = "ml"
 SECTIONS = []
@@ -354,7 +353,7 @@ def classification_pipeline(store):
     test = store.get("px.exp.brain.data.ml.classification_test")
     rows, _, _ = core.xy(test, "label")
     knn = store.get("px.exp.brain.result.ml.knn.classification")
-    d = distance.cdist(np.asarray(rows), np.asarray(knn["rows"]), metric="euclidean")
+    d = sp_distance.cdist(np.asarray(rows), np.asarray(knn["rows"]), metric="euclidean")
     want = []
     for row in d:
         order = sorted(range(len(row)), key=lambda i: (row[i], i))[: knn["k"]]
@@ -884,6 +883,63 @@ def validation(store):
     )
 
 
+@section
+def distances(store):
+    """the one matrix four calculations read, and the proof that the spelling does not move them."""
+    from . import distance
+
+    blobs = store.get("px.exp.brain.data.ml.blobs")
+    rows = [row[:-1] for row in core.as_rows(blobs)]
+    features = core.dataset("the blob features alone", core.columns_of(blobs)[:-1], rows)
+    reference = sp_distance.cdist(np.asarray(rows), np.asarray(rows), metric="euclidean").tolist()
+    for backend in distance.BACKENDS:
+        got = distance.pairwise(rows, backend=backend)
+        parts.oracle(
+            store, VERTICAL, "pairwise", backend,
+            got[:30], [row[:len(got)] for row in reference[:30]],
+            "scipy.spatial.distance.cdist on the same rows", 1e-9,
+            "the ml vertical stopped owning this matrix; every spelling of it still has to be the same matrix",
+        )
+    parts.result(store, VERTICAL, "pairwise", "worst_difference_between_spellings",
+                 {"for": "how far apart the five spellings of the same matrix are",
+                  "worst": distance.worst_difference(rows)})
+
+    # the diagonal is where the identity spelling is at its weakest, so it is checked on its own.
+    identity = distance.pairwise(rows, backend="gram")
+    parts.oracle(
+        store, VERTICAL, "pairwise", "gram_diagonal_is_zero",
+        [identity[i][i] for i in range(len(rows))], [0.0] * len(rows),
+        "a point's distance to itself, which is zero by definition", 0.0,
+        "|x|^2 - 2|x|^2 + |x|^2 cancels to rounding and the square root turns 1e-14 into 1e-7; "
+        "k=1 neighbour votes and dbscan's eps both read that number",
+    )
+
+    # the four calculations, each run through every spelling: the answers must be identical.
+    labels = [int(row[-1]) for row in core.as_rows(blobs)]
+    classification = store.get("px.exp.brain.data.ml.classification")
+    knn = calcs.call("knn_fit", {"data": classification, "target": "label", "k": 5})
+    for name, call in (
+        ("kmeans", lambda b: calcs.call("kmeans", {"data": features, "k": 3, "seed": 131, "backend": b})["labels"]),
+        ("silhouette", lambda b: calcs.call("silhouette", {"data": features, "labels": labels, "backend": b})["scores"]),
+        ("knn_predict", lambda b: calcs.call("knn_predict", {"model": knn, "data": classification, "backend": b})["labels"]),
+        ("dbscan", lambda b: calcs.call("dbscan", {"data": features, "eps": 2.0, "min_samples": 5, "backend": b})["labels"]),
+    ):
+        reference_answer = call("py")
+        for backend in distance.BACKENDS[1:]:
+            parts.oracle(
+                store, VERTICAL, name, f"unmoved_by_{backend}",
+                call(backend), reference_answer,
+                f"the same calculation on the py spelling of the same distances", 1e-9,
+                "routing a calculation through a faster matrix is a backend change; if the answer moves it is a rewrite",
+            )
+    for backend in distance.BACKENDS:
+        parts.bench(
+            store, VERTICAL, "pairwise", backend, "n90_d2",
+            lambda backend=backend: distance.pairwise(rows, backend=backend), 5,
+            "the small case: where the python loop is still competitive and the array spellings pay their setup",
+        )
+
+
 # --- the map and the findings ------------------------------------------------
 
 
@@ -909,8 +965,10 @@ STUBBED = [
 ]
 
 NEXT = [
-    {"what": "a pairwise-distance calculation in the backend vertical, with knn, silhouette, k-means and dbscan routed through it",
-     "for": "four calculations here build the same n-by-n matrix in three different spellings; one primitive and one oracle would cover all four"},
+    {"what": "the same facade treatment for sort/select-k and for the histogram, both of which exist in the backend vertical already",
+     "for": "knn re-sorts a row it could select-k, and the tree's binned split search is a histogram; both are primitives this vertical still owns copies of"},
+    {"what": "a chosen default per calculation, read off the brackets rather than set by hand",
+     "for": "four brackets now name a winner and every calculation still defaults to the py reference; the gap between what the evidence says and what the code does is the next honest thing to close"},
     {"what": "elastic net, and the same path treatment for ridge and for the tree depth",
      "for": "the lasso path made the choice readable; every other model here still takes its hyper-parameter on faith"},
     {"what": "a softmax (multinomial) logistic regression beside the one-vs-rest one",
@@ -924,6 +982,25 @@ NEXT = [
 ]
 
 FINDINGS = {
+    "python-3-12-changed-sum-so-pure-python-data-is-not-portable": {
+        "kind": "friction",
+        "text": "the owner's machine (python 3.12.3, numpy 2.5.3) failed this vertical's committed-store test, and the measured 1.8e-15 difference was blamed on numpy's accumulation order. it was not numpy. python 3.12 changed the built-in sum() to neumaier compensated summation, so every pure-python float sum in this vertical -- including the one line that builds a synthetic target, y = intercept + sum(w*x) + noise -- returns a different last ulp on 3.11 and on 3.12. that ulp then chooses a different split threshold in a tree, and a cross-validated forest score moved in its third significant digit.",
+        "for": "every seeded dataset in the brain is built in pure python precisely so it is reproducible; an interpreter upgrade silently took that away, and the failure surfaced two verticals downstream as a store that would not match itself",
+        "workaround": "every float sum that feeds stored data, a model coefficient or a metric is math.fsum, which is exactly rounded and therefore the same number on any interpreter; the two stacks now produce byte-identical store documents",
+        "proposal": "the contract should say it: a Calculation that sums floats uses math.fsum, and the harness's own helpers do too. a reference implementation whose answer depends on the interpreter's summation strategy is not a reference",
+    },
+    "a-part-has-to-be-canonical-or-it-records-the-machine": {
+        "kind": "strength",
+        "text": "Store.document() rounds every float to twelve significant digits, an oracle Part's numbers to eight, and anything a thousand times below an oracle's own declared tolerance to the zero that oracle already said it was. what is left is a document that is a function of the calculation: the same bytes under python 3.11 with numpy 2.4 and under python 3.12.3 with numpy 2.5.3, which is what makes 'the committed store matches a fresh build' a test anyone can run rather than a test that passes on one machine.",
+        "for": "a store that differs by a last ulp between two builds of numpy turns every landing on another machine red, and the receipt says nothing about which half was wrong",
+    },
+    "a-store-file-is-merged-over-so-nothing-can-be-withdrawn": {
+        "kind": "friction",
+        "text": "harness.Store.save merges what this process wrote over what the file already holds. rename a finding or drop a Part and the old address stays in store/ml.json forever, with nothing in the code that produces it; the vertical's own test that the committed store matches a fresh build is what caught it, and only because the rename happened to be in the same landing.",
+        "for": "a store nobody can retract from is an append-only log pretending to be a state, and the map reads it as state",
+        "workaround": "this vertical writes its own file whole, because it never loads another vertical's parts, so its document is the complete set",
+        "proposal": "harness.Store.save(vertical, merge=False) for a vertical that owns its file outright, or a save that drops any address under this vertical's own prefixes that this process did not write",
+    },
     "a-record-inlines-values-that-are-already-parts": {
         "kind": "friction",
         "text": "run_record renders every produced value into the record, so a 300-row dataset Part is written twice: once in store/ml.json and again, in full, inside records/ml.classification.json. this vertical's records are 200kb each and the duplication is all of it. the address and the digest are already in the record; the value is not new information.",
@@ -974,15 +1051,29 @@ FINDINGS = {
         "kind": "friction",
         "text": "scored on raw milliseconds, the bracket's winner flipped: min-max normalising wall time across candidates lets one slow branch compress the fast ones into a rounding difference, and a docstring then decided a 22x speed gap.",
         "for": "a tournament whose verdict is an artefact of its normalisation teaches the wrong lesson and is worse than no tournament",
-        "workaround": "the criterion recorded in the bracket is log2 of the median, so a constant factor is a constant distance whatever the spread of the field",
-        "proposal": "harness.decide should offer a log or a rank normalisation per criterion, declared in the criterion next to its direction and weight, so timing criteria are not silently linear",
+        "workaround": "the criterion recorded in the bracket is a speed band computed from every candidate's median, so a constant factor is a constant distance whatever the spread of the field, and a difference inside the machine's noise is no distance at all",
+        "proposal": "harness.decide should offer a log or a banded normalisation per criterion, declared in the criterion next to its direction and weight, so timing criteria are not silently linear",
     },
-    "one-pairwise-distance-is-recomputed-by-three-calculations": {
+    "one-pairwise-distance-was-recomputed-by-four-calculations": {
         "kind": "friction",
-        "text": "knn_predict, silhouette and (next) k-means each build the same n-by-n euclidean matrix, each with their own np spelling of it. the identity |a-b|^2 = |a|^2 - 2ab + |b|^2 is written twice already in this vertical.",
-        "for": "it is the single hottest kernel in the unsupervised half, and three copies means three places for a backend to change semantics",
-        "workaround": "knn_predict uses the matmul identity, silhouette uses the broadcast subtraction; both are oracled against scipy cdist so at least they agree",
-        "proposal": "fn.brain.backend.pairwise(metric) as one calculation in the backend vertical, with knn, silhouette, k-means and dbscan routed through it and one oracle against scipy.spatial.distance.cdist covering all four",
+        "text": "knn_predict, silhouette, k-means and dbscan each built the same n-by-n euclidean matrix, each with their own np spelling of it: the identity |a-b|^2 = |a|^2 - 2ab + |b|^2 was written twice in this vertical and once more in the backend vertical. this is resolved: ml/distance.py is the one facade, and two of its five spellings are fn.brain.backend.pairwise on the backend vertical's own engines. the bracket px.exp.brain.bracket.ml.pairwise_spelling says the scipy engine wins, and all four calculations are oracled as unmoved by the change.",
+        "for": "it is the hottest kernel in the unsupervised half, and four copies meant four places for a backend to change semantics quietly",
+        "workaround": "none needed now; the route to it was to build the facade, oracle every spelling against scipy cdist, and oracle every one of the four calculations as giving the same answer through each",
+        "proposal": "the same treatment for the other primitives the verticals are each re-spelling: sort/select-k (knn and the tree split search both want it) and the histogram (the tree's binned search is one, and so is every distribution fit in the stats vertical)",
+    },
+    "a-bracket-decided-inside-its-own-timing-noise-is-not-re-runnable": {
+        "kind": "friction",
+        "text": "the pairwise bracket's top two branches were within a few percent of each other, and the winner flipped between runs of the same code on the same machine: the store said one, the re-run said the other, and the test that re-runs every bracket caught it. a tournament whose verdict is not reproducible is a coin toss with a receipt.",
+        "for": "the whole value of a bracket is that someone else can re-run it and get the same answer; a flipping winner discredits every bracket in the store, not just this one",
+        "workaround": "the speed criterion recorded in the bracket is a band, not a time: the medians are sorted and cut wherever the next is more than 1.4 times the fastest in the band, so two branches within 40 percent share a band and harness.decide breaks the tie by name, deterministically. rounding the log was not enough -- two branches 4 percent apart still fell either side of a rounding boundary",
+        "proposal": "harness.bench should record the spread it saw (min, median and max, or an interquartile range) and harness.decide should refuse to separate two candidates whose intervals overlap -- a tie is an honest verdict and the current decide cannot express one",
+    },
+    "the-fastest-spelling-of-a-distance-is-the-least-accurate-one": {
+        "kind": "friction",
+        "text": "the squared-distance identity is the fastest way to an n-by-n matrix and the only one that is wrong on its own diagonal: |x|^2 - 2|x|^2 + |x|^2 cancels to about 1e-14 of rounding, and the square root turns that into 1e-7. seven digits. k=1 neighbour votes read exactly that number, and so does dbscan's eps comparison.",
+        "for": "a tournament that scores speed and correctness separately will hand the win to a spelling that is quietly wrong in the one place nobody benchmarks",
+        "workaround": "the facade pins the diagonal of a self-matrix to the zero it is and clamps the rest at zero, and an oracle Part checks the diagonal on its own, separately from the matrix",
+        "proposal": "fn.brain.backend.pairwise should do the same clamp and diagonal pin in its np engine, and its oracle should include the self-matrix diagonal; the scipy engine already does",
     },
     "seed-in-args-makes-one-oracle-cover-two-backends": {
         "kind": "strength",

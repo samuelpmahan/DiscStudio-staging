@@ -23,7 +23,7 @@ def _impurity(counts, total, criterion):
     if total <= 0:
         return 0.0
     if criterion == "gini":
-        return 1.0 - sum((c / total) ** 2 for c in counts)
+        return 1.0 - math.fsum((c / total) ** 2 for c in counts)
     return -sum((c / total) * math.log2(c / total) for c in counts if c > 0)
 
 
@@ -58,8 +58,8 @@ def _best_split_sort(rows, targets, feature_index, criterion, min_leaf, classes)
         values = [rows[i][feature] for i in order]
         if criterion == "mse":
             left_sum = left_sq = 0.0
-            total_sum = sum(targets)
-            total_sq = sum(y * y for y in targets)
+            total_sum = math.fsum(targets)
+            total_sq = math.fsum(y * y for y in targets)
             for at in range(n - 1):
                 y = targets[order[at]]
                 left_sum += y
@@ -123,7 +123,7 @@ def _best_split_hist(rows, targets, feature_index, criterion, min_leaf, classes,
                 bin_n[b] += 1
                 bin_sum[b] += y
                 bin_sq[b] += y * y
-            total_n, total_sum, total_sq = n, sum(bin_sum), sum(bin_sq)
+            total_n, total_sum, total_sq = n, math.fsum(bin_sum), math.fsum(bin_sq)
             left_n = left_sum = left_sq = 0.0
             for b, edge in enumerate(edges):
                 left_n += bin_n[b]
@@ -373,7 +373,7 @@ def gbm_fit(args):
         step = tree_predict({"model": tree, "data": stump_data})["labels"]
         working = [f + rate * s for f, s in zip(working, step)]
         trees.append(tree)
-        losses.append(sum((y - f) ** 2 for y, f in zip(targets, working)) / len(rows))
+        losses.append(math.fsum((y - f) ** 2 for y, f in zip(targets, working)) / len(rows))
     return {
         "for": args.get("for", "a sum of small corrections"),
         "model": "gbm",

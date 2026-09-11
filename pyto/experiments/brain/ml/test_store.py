@@ -110,3 +110,47 @@ class TheCommittedStore(unittest.TestCase):
             record = json.load(handle)
         self.assertEqual(record["pcr"], "brain-ml-regression")
         self.assertTrue(record["ticks"])
+
+
+class ADocumentIsAFunctionOfTheCalculation(unittest.TestCase):
+    """not of which numpy built it.
+
+    the owner's report: on python 3.12 with numpy 2.5.3 the committed store did not
+    match a fresh build, and every differing address was downstream of one seeded
+    regression whose rows differed by 1.78e-15 -- the accumulation order of a matmul.
+    a store document that records that is recording the machine, not the model.
+    """
+
+    def test_a_last_ulp_difference_documents_identically(self):
+        store = scratch_store(self)
+        store.put("px.exp.brain.result.ml.canonical.case", {"for": "a value", "x": 1.0, "rows": [[2.0, 3.0]]})
+        first = store.document()["px.exp.brain.result.ml.canonical.case"]
+        store.put("px.exp.brain.result.ml.canonical.case",
+                  {"for": "a value", "x": 1.0 + 1.8e-15, "rows": [[2.0 - 4e-16, 3.0 + 2e-15]]})
+        self.assertEqual(store.document()["px.exp.brain.result.ml.canonical.case"], first)
+
+    def test_a_difference_anyone_measured_survives(self):
+        store = scratch_store(self)
+        store.put("px.exp.brain.result.ml.canonical.case", {"for": "a value", "x": 1.0})
+        first = store.document()["px.exp.brain.result.ml.canonical.case"]
+        store.put("px.exp.brain.result.ml.canonical.case", {"for": "a value", "x": 1.0 + 1e-11})
+        self.assertNotEqual(store.document()["px.exp.brain.result.ml.canonical.case"], first)
+
+    def test_canonical_leaves_everything_that_is_not_a_float_alone(self):
+        value = {"a": 1, "b": True, "c": None, "d": "text", "e": [1, "two", False]}
+        self.assertEqual(parts.canonical(value), value)
+        self.assertIsInstance(parts.canonical({"n": 3})["n"], int)
+
+    def test_it_is_twelve_significant_digits_not_twelve_decimal_places(self):
+        self.assertEqual(parts.canonical(1.2345678901234e-9), 1.23456789012e-09)
+        self.assertEqual(parts.canonical(1.2345678901234e9), 1234567890.12)
+
+    def test_negative_zero_documents_as_zero(self):
+        self.assertEqual(repr(parts.canonical(-0.0)), repr(0.0))
+
+    def test_the_record_is_canonical_too(self):
+        record = {"ticks": [{"duration_ms": 1.25, "value": {"data": [1.0 + 1.8e-15]}}], "wall_ms": 3.0}
+        settled = parts.settle(record)
+        self.assertIsNone(settled["wall_ms"])
+        self.assertIsNone(settled["ticks"][0]["duration_ms"])
+        self.assertEqual(settled["ticks"][0]["value"]["data"], [1.0])

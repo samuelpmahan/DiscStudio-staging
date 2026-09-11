@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 
-from . import core
+from . import core, distance
 
 # --- k-means -----------------------------------------------------------------
 
@@ -66,7 +66,29 @@ def _assign_gram(rows, centres):
     return [int(v) for v in labels], inertia
 
 
-ASSIGNMENTS = {"py": _assign_py, "np": _assign_np, "gram": _assign_gram}
+def _assign_through(backend):
+    """the assignment step over the shared facade: the matrix is not k-means' to own."""
+
+    def assign(rows, centres, backend=backend):
+        squared = distance.squared(rows, centres, "euclidean", backend)
+        labels, inertia = [], 0.0
+        for row in squared:
+            at = min(range(len(row)), key=lambda i: row[i])
+            labels.append(at)
+            inertia += row[at]
+        return labels, inertia
+
+    assign.__doc__ = f"lloyd's assignment over fn.brain.backend.pairwise ({backend})"
+    return assign
+
+
+ASSIGNMENTS = {
+    "py": _assign_py,
+    "np": _assign_np,
+    "gram": _assign_gram,
+    "backend_np": _assign_through("backend_np"),
+    "backend_sp": _assign_through("backend_sp"),
+}
 
 
 def kmeans(args):
@@ -204,7 +226,7 @@ def _pca_py(rows, n_components, args):
         if vector[at] < 0:
             vector = [-v for v in vector]
         components.append(vector)
-    total = sum(values)
+    total = math.fsum(values)
     return {
         "for": args.get("for", "the directions the data actually varies in"),
         "model": "pca",
@@ -289,7 +311,7 @@ def hierarchical(args):
                 elif linkage == "complete":
                     d = max(pairs)
                 else:
-                    d = sum(pairs) / len(pairs)
+                    d = math.fsum(pairs) / len(pairs)
                 if best is None or d < best[0]:
                     best = (d, i, j)
         d, i, j = best
@@ -341,16 +363,10 @@ def dbscan(args):
         rows = [row[:-1] for row in rows]
     eps = float(args["eps"])
     min_samples = int(args.get("min_samples", 4))
-    backend = args.get("backend", "py")
+    backend = distance.backend_of(args)
     n = len(rows)
-    if backend == "np" and core.numpy() is not None:
-        np = core.numpy()
-        x = np.asarray(rows, dtype=float)
-        squared = (x * x).sum(1)[:, None] - 2.0 * (x @ x.T) + (x * x).sum(1)[None, :]
-        near = np.sqrt(np.maximum(squared, 0.0)) <= eps
-        neighbours = [[int(j) for j in np.flatnonzero(row)] for row in near]
-    else:
-        neighbours = [[j for j in range(n) if core.euclidean(rows[i], rows[j]) <= eps] for i in range(n)]
+    matrix = distance.pairwise(rows, backend=backend)
+    neighbours = [[j for j in range(n) if matrix[i][j] <= eps] for i in range(n)]
     labels = [-1] * n
     core_points = [i for i in range(n) if len(neighbours[i]) >= min_samples]
     is_core = set(core_points)

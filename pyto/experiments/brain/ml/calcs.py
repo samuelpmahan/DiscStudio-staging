@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pyto import Calculation
 
-from . import classify, linear, metrics, nnet, resample, trees, unsup, validate
+from . import classify, distance, linear, metrics, nnet, resample, trees, unsup, validate
 
 _FUNCTIONS = {
     # supervised: linear
@@ -26,6 +26,8 @@ _FUNCTIONS = {
     "gaussian_nb_predict": classify.gaussian_nb_predict,
     "multinomial_nb_fit": classify.multinomial_nb_fit,
     "multinomial_nb_predict": classify.multinomial_nb_predict,
+    # the shared primitive
+    "pairwise": distance.calculation,
     # evaluation: the loops, as parts
     "cross_validate": validate.cross_validate,
     "lasso_path": validate.lasso_path,

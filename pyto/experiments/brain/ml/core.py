@@ -64,7 +64,7 @@ class Stream:
 
     def choice(self, weights):
         """an index drawn proportionally to non-negative weights."""
-        total = sum(weights)
+        total = math.fsum(weights)
         if total <= 0:
             return self.randint(len(weights))
         target = self.uniform() * total
@@ -143,11 +143,11 @@ def transpose(matrix):
 
 def matmul(a, b):
     bt = transpose(b)
-    return [[sum(ai * bj for ai, bj in zip(row, col)) for col in bt] for row in a]
+    return [[math.fsum(ai * bj for ai, bj in zip(row, col)) for col in bt] for row in a]
 
 
 def matvec(a, v):
-    return [sum(ai * vi for ai, vi in zip(row, v)) for row in a]
+    return [math.fsum(ai * vi for ai, vi in zip(row, v)) for row in a]
 
 
 def add_bias(matrix):
@@ -175,28 +175,28 @@ def solve(a, b):
                     m[r][c] -= factor * m[col][c]
     x = [0.0] * n
     for col in range(n - 1, -1, -1):
-        total = m[col][n] - sum(m[col][c] * x[c] for c in range(col + 1, n))
+        total = m[col][n] - math.fsum(m[col][c] * x[c] for c in range(col + 1, n))
         x[col] = total / m[col][col]
     return x
 
 
 def mean(values):
-    return sum(values) / len(values) if values else 0.0
+    return math.fsum(values) / len(values) if values else 0.0
 
 
 def variance(values):
     if len(values) < 2:
         return 0.0
     mu = mean(values)
-    return sum((v - mu) ** 2 for v in values) / len(values)
+    return math.fsum((v - mu) ** 2 for v in values) / len(values)
 
 
 def euclidean(a, b):
-    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))
+    return math.sqrt(math.fsum((ai - bi) ** 2 for ai, bi in zip(a, b)))
 
 
 def sq_euclidean(a, b):
-    return sum((ai - bi) ** 2 for ai, bi in zip(a, b))
+    return math.fsum((ai - bi) ** 2 for ai, bi in zip(a, b))
 
 
 def standardize(matrix):
