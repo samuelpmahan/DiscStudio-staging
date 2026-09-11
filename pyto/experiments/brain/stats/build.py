@@ -35,6 +35,8 @@ import stats.nonparametric_cases as nonparametric_cases  # noqa: E402
 import stats.referee as referee  # noqa: E402
 from stats.tolerance import canonical  # noqa: E402
 import stats.regression as regression  # noqa: E402
+import stats.robust as robust  # noqa: E402
+import stats.robust_cases as robust_cases  # noqa: E402
 import stats.summaries as summaries  # noqa: E402
 import stats.summaries_cases as summaries_cases  # noqa: E402
 import stats.regression_cases as regression_cases  # noqa: E402
@@ -51,6 +53,7 @@ CASE_MODULES = (
     ("nonparametric", nonparametric_cases, nonparametric.CALCS),
     ("comparisons", comparisons_cases, comparisons.CALCS),
     ("summaries", summaries_cases, summaries.CALCS),
+    ("robust", robust_cases, robust.CALCS),
 )
 
 CALCS = {}
@@ -321,8 +324,10 @@ def the_map(store, decided):
          "why": "same table, same reason: scipy's method='approx' is the one both backends meet"},
     ]
     next_ = [
-        {"what": "weighted and robust least squares on the winning solver (%s)" % decided["winner"],
-         "for": "every real regression in a consumer has weights or outliers"},
+        {"what": "weighted least squares on the winning solver (%s), and a huber m-estimator "
+                 "for the multi-predictor case" % decided["winner"],
+         "for": "theil-sen and siegel cover one predictor; every real regression in a consumer "
+                "has weights, several predictors, or both"},
         {"what": "the exact small-sample nulls: kstwo, wilcoxon and mann-whitney under n=20",
          "for": "small-sample work is exactly where an asymptotic p-value is most wrong, and "
                 "every one of them is now a tail away from a calculation that already exists"},

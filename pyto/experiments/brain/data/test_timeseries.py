@@ -164,6 +164,72 @@ class TestEwmaAndCrossCorrelation(unittest.TestCase):
             timeseries.cross_correlation({"x": SERIES, "y": SERIES[:-1]})
 
 
+class TestTheSeriesTransforms(unittest.TestCase):
+    def test_pct_change_and_difference_are_the_same_shape(self):
+        changed = timeseries.pct_change({"values": SHORT})
+        differenced = timeseries.difference({"values": SHORT})
+        self.assertEqual(len(changed), len(differenced))
+        self.assertIsNone(changed[0])
+        for value, delta, base in zip(changed[1:], differenced[1:], SHORT[:-1]):
+            self.assertAlmostEqual(value, delta / base, delta=1e-12)
+
+    def test_a_zero_base_has_no_proportional_change(self):
+        self.assertEqual(timeseries.pct_change({"values": [0.0, 5.0, 10.0]}),
+                         [None, None, 1.0])
+
+    def test_pct_change_needs_a_positive_period(self):
+        with self.assertRaises(ValueError):
+            timeseries.pct_change({"values": SHORT, "periods": 0})
+
+    def test_an_expanding_window_is_a_rolling_window_as_wide_as_the_series(self):
+        for kind in ("count", "sum", "mean", "var", "std"):
+            with self.subTest(fn=kind):
+                self.assertTrue(agrees(
+                    timeseries.expanding({"values": SHORT, "fn": kind}),
+                    timeseries.rolling({"values": SHORT, "window": len(SHORT), "fn": kind,
+                                        "min_periods": 1}), 1e-12))
+
+    def test_every_engine_expands_the_same_way(self):
+        for kind in ("count", "sum", "mean", "var", "std"):
+            base = timeseries.expanding({"values": SERIES, "fn": kind})
+            for backend in ("np", "cumsum"):
+                with self.subTest(fn=kind, backend=backend):
+                    self.assertTrue(agrees(
+                        timeseries.expanding({"values": SERIES, "fn": kind,
+                                              "backend": backend}), base, 1e-9))
+
+    def test_the_last_expanding_value_is_the_whole_series(self):
+        import math
+
+        self.assertAlmostEqual(timeseries.expanding({"values": SHORT, "fn": "mean"})[-1],
+                               math.fsum(SHORT) / len(SHORT), delta=1e-12)
+
+    def test_interpolation_fills_the_inside_and_leaves_the_ends(self):
+        holes = [1.0, None, None, 4.0, None, 6.0, None]
+        self.assertEqual(timeseries.interpolate({"values": holes}),
+                         [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, None])
+
+    def test_the_ends_can_be_carried_out(self):
+        holes = [None, 2.0, None, 4.0, None]
+        self.assertEqual(timeseries.interpolate({"values": holes, "limit_direction": "both"}),
+                         [2.0, 2.0, 3.0, 4.0, 4.0])
+        self.assertIsNone(timeseries.interpolate({"values": holes,
+                                                  "limit_direction": "forward"})[0])
+
+    def test_it_interpolates_along_the_positions_it_is_given(self):
+        self.assertEqual(timeseries.interpolate({"values": [0.0, None, 10.0],
+                                                 "x": [0.0, 9.0, 10.0]}),
+                         [0.0, 9.0, 10.0])
+
+    def test_a_series_of_nothing_but_holes_is_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.interpolate({"values": [None, None]})
+
+    def test_an_unknown_limit_direction_is_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.interpolate({"values": [1.0, None, 3.0], "limit_direction": "outward"})
+
+
 class TestDifferencing(unittest.TestCase):
     def test_difference_and_integrate_are_inverses(self):
         differenced = timeseries.difference({"values": SHORT})

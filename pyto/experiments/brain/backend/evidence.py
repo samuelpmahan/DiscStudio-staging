@@ -119,7 +119,14 @@ def build(store, benchmarks: bool = True) -> dict:
     produced = build_results(store)
     verdicts = build_oracles(store, produced)
     benches = build_benchmarks(store) if benchmarks else []
-    return {"results": len(produced), "oracles": verdicts, "benches": len(benches)}
+    plan = None
+    if benches:
+        # the benchmark Parts are not decoration: folded into one Part, they are what
+        # `backend="auto"` reads to pick an engine at the size the caller actually has.
+        from experiments.brain.backend import choose
+
+        plan = choose.build(store)
+    return {"results": len(produced), "oracles": verdicts, "benches": len(benches), "plan": plan}
 
 
 def main() -> int:
@@ -129,6 +136,13 @@ def main() -> int:
     failed = [key for key, ok in built["oracles"].items() if not ok]
     store.save(VERTICAL)
     print(f"results {built['results']}  oracles {len(built['oracles'])} ({len(failed)} failed)  benchmarks {built['benches']}")
+    if built.get("plan"):
+        from experiments.brain.backend import choose
+
+        plan = store.get(built["plan"])
+        print(f"plan at {built['plan']}: {len(plan['ops'])} ops")
+        for op in plan["ops"]:
+            print("  " + choose.explain(plan, op))
     for key in failed:
         print("  FAILED", key)
     return 1 if failed else 0
