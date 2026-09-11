@@ -1,0 +1,262 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.1164759996754583
+  },
+  "parts": {
+    "px.exp.brain.data.backend_outer_4_by_3_a": {
+      "preexisting": true,
+      "read_by": [
+        "4_by_3_np",
+        "4_by_3_py",
+        "4_by_3_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_outer_4_by_3_b": {
+      "preexisting": true,
+      "read_by": [
+        "4_by_3_np",
+        "4_by_3_py",
+        "4_by_3_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.outer.4_by_3_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "4_by_3_np"
+    },
+    "px.exp.brain.result.backend.outer.4_by_3_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "4_by_3_py"
+    },
+    "px.exp.brain.result.backend.outer.4_by_3_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "4_by_3_sp"
+    }
+  },
+  "pcr": "brain_backend_outer",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_outer_4_by_3_a",
+            "px.exp.brain.data.backend_outer_4_by_3_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.outer.4_by_3_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.outer",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_outer_4_by_3_a",
+            "px:px.exp.brain.data.backend_outer_4_by_3_b"
+          ],
+          "duration_ms": 0.057364000895177014,
+          "hit": true,
+          "id": "4_by_3_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_outer_4_by_3_a",
+            "b": "px:px.exp.brain.data.backend_outer_4_by_3_b"
+          },
+          "into": "px.exp.brain.result.backend.outer.4_by_3_np",
+          "result_sha256": "3d79bb4e023ac2f36e860295ab577783403fbebb1d7190e8f187b39c5b27ae9b",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                3
+              ],
+              "values": [
+                [
+                  0.39106329722524735,
+                  -0.5100656909361454,
+                  0.6738273109375941
+                ],
+                [
+                  -0.5100656909361454,
+                  0.6652810706506026,
+                  -0.8788761189395493
+                ],
+                [
+                  0.6738273109375941,
+                  -0.8788761189395493,
+                  1.161047963813045
+                ],
+                [
+                  0.44029808810002596,
+                  -0.5742828593685382,
+                  0.7586620345619338
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.outer.4_by_3_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_outer_4_by_3_a",
+            "px.exp.brain.data.backend_outer_4_by_3_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.outer.4_by_3_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.outer",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_outer_4_by_3_a",
+            "px:px.exp.brain.data.backend_outer_4_by_3_b"
+          ],
+          "duration_ms": 0.022428999727708288,
+          "hit": true,
+          "id": "4_by_3_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_outer_4_by_3_a",
+            "b": "px:px.exp.brain.data.backend_outer_4_by_3_b"
+          },
+          "into": "px.exp.brain.result.backend.outer.4_by_3_py",
+          "result_sha256": "3d79bb4e023ac2f36e860295ab577783403fbebb1d7190e8f187b39c5b27ae9b",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                3
+              ],
+              "values": [
+                [
+                  0.39106329722524735,
+                  -0.5100656909361454,
+                  0.6738273109375941
+                ],
+                [
+                  -0.5100656909361454,
+                  0.6652810706506026,
+                  -0.8788761189395493
+                ],
+                [
+                  0.6738273109375941,
+                  -0.8788761189395493,
+                  1.161047963813045
+                ],
+                [
+                  0.44029808810002596,
+                  -0.5742828593685382,
+                  0.7586620345619338
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.outer.4_by_3_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_outer_4_by_3_a",
+            "px.exp.brain.data.backend_outer_4_by_3_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.outer.4_by_3_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.outer",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_outer_4_by_3_a",
+            "px:px.exp.brain.data.backend_outer_4_by_3_b"
+          ],
+          "duration_ms": 0.036682999052572995,
+          "hit": true,
+          "id": "4_by_3_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_outer_4_by_3_a",
+            "b": "px:px.exp.brain.data.backend_outer_4_by_3_b"
+          },
+          "into": "px.exp.brain.result.backend.outer.4_by_3_sp",
+          "result_sha256": "3d79bb4e023ac2f36e860295ab577783403fbebb1d7190e8f187b39c5b27ae9b",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                3
+              ],
+              "values": [
+                [
+                  0.39106329722524735,
+                  -0.5100656909361454,
+                  0.6738273109375941
+                ],
+                [
+                  -0.5100656909361454,
+                  0.6652810706506026,
+                  -0.8788761189395493
+                ],
+                [
+                  0.6738273109375941,
+                  -0.8788761189395493,
+                  1.161047963813045
+                ],
+                [
+                  0.44029808810002596,
+                  -0.5742828593685382,
+                  0.7586620345619338
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.outer.4_by_3_sp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "outer"
+    }
+  ]
+}

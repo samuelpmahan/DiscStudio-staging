@@ -183,6 +183,14 @@ def map_part(store) -> str:
                     "the real part (proposal.brain.backend.json_has_no_complex_number)"},
             {"address": "fn.brain.backend.fft (py, non-power-of-two)",
              "why": "the py engine is radix-2; bluestein's algorithm is the honest fix and np/sp already answer"},
+            {"address": "fn.brain.backend.matrix_rank and pinv (py, near a rank boundary)",
+             "why": "the py svd takes square roots of the eigenvalues of a^T a, which squares the condition number: a "
+                    "truly zero singular value comes back at about sqrt(eps) times the largest, far above numpy's rank "
+                    "tolerance and far below anything this engine can resolve. It refuses that band by name and np and "
+                    "sp answer; a py svd worth trusting there is a one-sided jacobi, which is its own task"},
+            {"address": "fn.brain.backend.lu",
+             "why": "numpy has no lu, so an 'np' engine would be scipy wearing numpy's name. It waits for the day the "
+                    "facade lets an op declare two engines instead of three"},
             {"address": "fn.brain.backend.qr (the full factorisation, and column pivoting)",
              "why": "the reduced qr is what a least squares needs and it is built; the full q and a rank-revealing "
                     "pivot are a different job and would want their own oracle"},
@@ -197,7 +205,8 @@ def map_part(store) -> str:
                      "and PQL answering 'what shape is it' without decoding. fn.brain.backend.pack/unpack is the vertical "
                      "half and it is built; a packed Part is still a string to everything above it",
              "for": "the ml vertical, whose Parts are matrices and whose records are the deliverable"},
-            {"what": "lu, matrix_rank, pinv, einsum-lite, and the sparse forms of solve and matmul",
+            {"what": "einsum-lite, kron, and the sparse forms of solve and matmul; and an op that may declare fewer "
+                     "than three engines, which is what lu needs",
              "for": "the stats and ml verticals, whose next layer is bigger than the dense ops reach"},
             {"what": "cholesky, qr, lu, matrix_inverse, matrix_rank, norm, einsum-lite over the same facade",
              "for": "the stats vertical's regression and covariance work, which is doing it by hand today"},

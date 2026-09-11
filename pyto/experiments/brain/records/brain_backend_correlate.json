@@ -1,0 +1,730 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 6,
+    "invocations": 6,
+    "wall_ms": 0.5756690006819554
+  },
+  "parts": {
+    "px.exp.brain.data.backend_correlate_full_64_by_8_a": {
+      "preexisting": true,
+      "read_by": [
+        "full_64_by_8_np",
+        "full_64_by_8_py",
+        "full_64_by_8_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_correlate_full_64_by_8_v": {
+      "preexisting": true,
+      "read_by": [
+        "full_64_by_8_np",
+        "full_64_by_8_py",
+        "full_64_by_8_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_correlate_valid_64_by_8_a": {
+      "preexisting": true,
+      "read_by": [
+        "valid_64_by_8_np",
+        "valid_64_by_8_py",
+        "valid_64_by_8_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_correlate_valid_64_by_8_v": {
+      "preexisting": true,
+      "read_by": [
+        "valid_64_by_8_np",
+        "valid_64_by_8_py",
+        "valid_64_by_8_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.correlate.full_64_by_8_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "full_64_by_8_np"
+    },
+    "px.exp.brain.result.backend.correlate.full_64_by_8_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "full_64_by_8_py"
+    },
+    "px.exp.brain.result.backend.correlate.full_64_by_8_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "full_64_by_8_sp"
+    },
+    "px.exp.brain.result.backend.correlate.valid_64_by_8_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "valid_64_by_8_np"
+    },
+    "px.exp.brain.result.backend.correlate.valid_64_by_8_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "valid_64_by_8_py"
+    },
+    "px.exp.brain.result.backend.correlate.valid_64_by_8_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "valid_64_by_8_sp"
+    }
+  },
+  "pcr": "brain_backend_correlate",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.correlate.valid_64_by_8_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.correlate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "px:px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          ],
+          "duration_ms": 0.12356000115687493,
+          "hit": true,
+          "id": "valid_64_by_8_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "v": "px:px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          },
+          "into": "px.exp.brain.result.backend.correlate.valid_64_by_8_np",
+          "result_sha256": "16ca277f7c4e6a8954e28556e597c93718b25cdbf61b6c7a25e4e306d95447c2",
+          "value": {
+            "data": [
+              4.143994786599372,
+              -0.9442857713773,
+              1.016782923947865,
+              -0.2761445159518399,
+              1.6284677757414787,
+              2.0487808110966133,
+              -2.6654530994085026,
+              3.7266657379755035,
+              1.0508309466380883,
+              1.654474829744268,
+              -1.1931771375831557,
+              1.0248811942690774,
+              4.738133779421031,
+              -2.179228418763155,
+              0.8678999100485739,
+              -1.2750485147255495,
+              -0.1731280566804399,
+              -0.7952042991864486,
+              -0.4518627850194632,
+              -0.5883760139344489,
+              -1.9596508984989656,
+              1.1392128673325967,
+              -4.621763484714587,
+              -1.8492137228424923,
+              -0.3704699743354857,
+              -0.46659721909452095,
+              -1.1506307694409572,
+              -4.493318605998478,
+              1.9075248093171067,
+              -4.119565398637452,
+              2.3101899659089247,
+              -1.9079876694503195,
+              -1.6476185330858,
+              0.15133556335622017,
+              -1.5925759124373051,
+              1.6012655854737918,
+              -1.1159209622163824,
+              0.9821055624648245,
+              -1.6606510629228355,
+              -0.8103944630357329,
+              1.999894757406718,
+              -0.6849501886702388,
+              -2.2780662752316623,
+              0.6351931836021041,
+              -0.8807556751281508,
+              -3.768004760307302,
+              -2.4796582351275487,
+              2.4208710895195056,
+              -2.2705622630260724,
+              -2.7115517842276464,
+              -0.10443366566815648,
+              -0.10006160882605875,
+              -1.1615541994733007,
+              -2.9779021827313907,
+              3.000201952959238,
+              -2.6552619365189454,
+              -2.041964030347195
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.correlate.valid_64_by_8_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.correlate.valid_64_by_8_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.correlate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "px:px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          ],
+          "duration_ms": 0.13864299944543745,
+          "hit": true,
+          "id": "valid_64_by_8_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "v": "px:px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          },
+          "into": "px.exp.brain.result.backend.correlate.valid_64_by_8_py",
+          "result_sha256": "a761452b50c51c6c0799f0768e0569d1e65978e4bb7b0cb71b2dcc5e89945c4b",
+          "value": {
+            "data": [
+              4.143994786599372,
+              -0.9442857713773,
+              1.016782923947865,
+              -0.27614451595183986,
+              1.628467775741479,
+              2.0487808110966133,
+              -2.665453099408503,
+              3.726665737975504,
+              1.0508309466380885,
+              1.6544748297442682,
+              -1.1931771375831555,
+              1.0248811942690776,
+              4.738133779421031,
+              -2.1792284187631545,
+              0.8678999100485739,
+              -1.2750485147255495,
+              -0.17312805668044,
+              -0.7952042991864487,
+              -0.4518627850194632,
+              -0.588376013934449,
+              -1.9596508984989656,
+              1.1392128673325967,
+              -4.621763484714587,
+              -1.8492137228424923,
+              -0.37046997433548556,
+              -0.4665972190945209,
+              -1.1506307694409572,
+              -4.493318605998478,
+              1.9075248093171064,
+              -4.119565398637452,
+              2.3101899659089247,
+              -1.9079876694503193,
+              -1.6476185330858002,
+              0.15133556335622017,
+              -1.5925759124373051,
+              1.6012655854737916,
+              -1.1159209622163822,
+              0.9821055624648246,
+              -1.6606510629228357,
+              -0.8103944630357329,
+              1.999894757406718,
+              -0.6849501886702388,
+              -2.2780662752316623,
+              0.6351931836021041,
+              -0.880755675128151,
+              -3.7680047603073015,
+              -2.479658235127549,
+              2.4208710895195056,
+              -2.2705622630260724,
+              -2.7115517842276464,
+              -0.10443366566815665,
+              -0.10006160882605883,
+              -1.1615541994733005,
+              -2.9779021827313916,
+              3.000201952959238,
+              -2.655261936518945,
+              -2.041964030347195
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.correlate.valid_64_by_8_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.correlate.valid_64_by_8_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.correlate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "px:px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          ],
+          "duration_ms": 0.06573399878107011,
+          "hit": true,
+          "id": "valid_64_by_8_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_correlate_valid_64_by_8_a",
+            "v": "px:px.exp.brain.data.backend_correlate_valid_64_by_8_v"
+          },
+          "into": "px.exp.brain.result.backend.correlate.valid_64_by_8_sp",
+          "result_sha256": "16ca277f7c4e6a8954e28556e597c93718b25cdbf61b6c7a25e4e306d95447c2",
+          "value": {
+            "data": [
+              4.143994786599372,
+              -0.9442857713773,
+              1.016782923947865,
+              -0.2761445159518399,
+              1.6284677757414787,
+              2.0487808110966133,
+              -2.6654530994085026,
+              3.7266657379755035,
+              1.0508309466380883,
+              1.654474829744268,
+              -1.1931771375831557,
+              1.0248811942690774,
+              4.738133779421031,
+              -2.179228418763155,
+              0.8678999100485739,
+              -1.2750485147255495,
+              -0.1731280566804399,
+              -0.7952042991864486,
+              -0.4518627850194632,
+              -0.5883760139344489,
+              -1.9596508984989656,
+              1.1392128673325967,
+              -4.621763484714587,
+              -1.8492137228424923,
+              -0.3704699743354857,
+              -0.46659721909452095,
+              -1.1506307694409572,
+              -4.493318605998478,
+              1.9075248093171067,
+              -4.119565398637452,
+              2.3101899659089247,
+              -1.9079876694503195,
+              -1.6476185330858,
+              0.15133556335622017,
+              -1.5925759124373051,
+              1.6012655854737918,
+              -1.1159209622163824,
+              0.9821055624648245,
+              -1.6606510629228355,
+              -0.8103944630357329,
+              1.999894757406718,
+              -0.6849501886702388,
+              -2.2780662752316623,
+              0.6351931836021041,
+              -0.8807556751281508,
+              -3.768004760307302,
+              -2.4796582351275487,
+              2.4208710895195056,
+              -2.2705622630260724,
+              -2.7115517842276464,
+              -0.10443366566815648,
+              -0.10006160882605875,
+              -1.1615541994733007,
+              -2.9779021827313907,
+              3.000201952959238,
+              -2.6552619365189454,
+              -2.041964030347195
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.correlate.valid_64_by_8_sp",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.correlate.full_64_by_8_np"
+          ],
+          "args": {
+            "backend": "np",
+            "mode": "full"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.correlate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "px:px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          ],
+          "duration_ms": 0.035043000025325455,
+          "hit": true,
+          "id": "full_64_by_8_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "v": "px:px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          },
+          "into": "px.exp.brain.result.backend.correlate.full_64_by_8_np",
+          "result_sha256": "75603b1e637cd5330910cbbbbf7f127cc0d3071791b5426eceb40962bb81be19",
+          "value": {
+            "data": [
+              0.5665105873226361,
+              -0.6782423669974903,
+              0.6624436199234276,
+              1.4724818696525033,
+              0.16563732020610605,
+              0.2923052163431324,
+              -0.3556458144300946,
+              4.143994786599372,
+              -0.9442857713773,
+              1.016782923947865,
+              -0.2761445159518399,
+              1.6284677757414787,
+              2.0487808110966133,
+              -2.6654530994085026,
+              3.7266657379755035,
+              1.0508309466380883,
+              1.654474829744268,
+              -1.1931771375831557,
+              1.0248811942690774,
+              4.738133779421031,
+              -2.179228418763155,
+              0.8678999100485739,
+              -1.2750485147255495,
+              -0.1731280566804399,
+              -0.7952042991864486,
+              -0.4518627850194632,
+              -0.5883760139344489,
+              -1.9596508984989656,
+              1.1392128673325967,
+              -4.621763484714587,
+              -1.8492137228424923,
+              -0.3704699743354857,
+              -0.46659721909452095,
+              -1.1506307694409572,
+              -4.493318605998478,
+              1.9075248093171067,
+              -4.119565398637452,
+              2.3101899659089247,
+              -1.9079876694503195,
+              -1.6476185330858,
+              0.15133556335622017,
+              -1.5925759124373051,
+              1.6012655854737918,
+              -1.1159209622163824,
+              0.9821055624648245,
+              -1.6606510629228355,
+              -0.8103944630357329,
+              1.999894757406718,
+              -0.6849501886702388,
+              -2.2780662752316623,
+              0.6351931836021041,
+              -0.8807556751281508,
+              -3.768004760307302,
+              -2.4796582351275487,
+              2.4208710895195056,
+              -2.2705622630260724,
+              -2.7115517842276464,
+              -0.10443366566815648,
+              -0.10006160882605875,
+              -1.1615541994733007,
+              -2.9779021827313907,
+              3.000201952959238,
+              -2.6552619365189454,
+              -2.041964030347195,
+              2.5333321759151586,
+              -1.2632500585459796,
+              1.460800566604868,
+              -3.7671159627626443,
+              1.617939509477791,
+              -0.3981429972157876,
+              -0.36454289139427376
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.correlate.full_64_by_8_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.correlate.full_64_by_8_py"
+          ],
+          "args": {
+            "backend": "py",
+            "mode": "full"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.correlate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "px:px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          ],
+          "duration_ms": 0.1574950001668185,
+          "hit": true,
+          "id": "full_64_by_8_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "v": "px:px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          },
+          "into": "px.exp.brain.result.backend.correlate.full_64_by_8_py",
+          "result_sha256": "b65d0060423ee66085db16c6e83680a360da86c08a475975f9f287f2ec1d2026",
+          "value": {
+            "data": [
+              0.5665105873226361,
+              -0.6782423669974903,
+              0.6624436199234275,
+              1.472481869652503,
+              0.16563732020610616,
+              0.29230521634313233,
+              -0.3556458144300945,
+              4.143994786599372,
+              -0.9442857713773,
+              1.016782923947865,
+              -0.27614451595183986,
+              1.628467775741479,
+              2.0487808110966133,
+              -2.665453099408503,
+              3.726665737975504,
+              1.0508309466380885,
+              1.6544748297442682,
+              -1.1931771375831555,
+              1.0248811942690776,
+              4.738133779421031,
+              -2.1792284187631545,
+              0.8678999100485739,
+              -1.2750485147255495,
+              -0.17312805668044,
+              -0.7952042991864487,
+              -0.4518627850194632,
+              -0.588376013934449,
+              -1.9596508984989656,
+              1.1392128673325967,
+              -4.621763484714587,
+              -1.8492137228424923,
+              -0.37046997433548556,
+              -0.4665972190945209,
+              -1.1506307694409572,
+              -4.493318605998478,
+              1.9075248093171064,
+              -4.119565398637452,
+              2.3101899659089247,
+              -1.9079876694503193,
+              -1.6476185330858002,
+              0.15133556335622017,
+              -1.5925759124373051,
+              1.6012655854737916,
+              -1.1159209622163822,
+              0.9821055624648246,
+              -1.6606510629228357,
+              -0.8103944630357329,
+              1.999894757406718,
+              -0.6849501886702388,
+              -2.2780662752316623,
+              0.6351931836021041,
+              -0.880755675128151,
+              -3.7680047603073015,
+              -2.479658235127549,
+              2.4208710895195056,
+              -2.2705622630260724,
+              -2.7115517842276464,
+              -0.10443366566815665,
+              -0.10006160882605883,
+              -1.1615541994733005,
+              -2.9779021827313916,
+              3.000201952959238,
+              -2.655261936518945,
+              -2.041964030347195,
+              2.5333321759151586,
+              -1.2632500585459794,
+              1.4608005666048678,
+              -3.7671159627626443,
+              1.6179395094777913,
+              -0.3981429972157876,
+              -0.36454289139427376
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.correlate.full_64_by_8_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.correlate.full_64_by_8_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "mode": "full"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.correlate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "px:px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          ],
+          "duration_ms": 0.055194001106428914,
+          "hit": true,
+          "id": "full_64_by_8_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_correlate_full_64_by_8_a",
+            "v": "px:px.exp.brain.data.backend_correlate_full_64_by_8_v"
+          },
+          "into": "px.exp.brain.result.backend.correlate.full_64_by_8_sp",
+          "result_sha256": "75603b1e637cd5330910cbbbbf7f127cc0d3071791b5426eceb40962bb81be19",
+          "value": {
+            "data": [
+              0.5665105873226361,
+              -0.6782423669974903,
+              0.6624436199234276,
+              1.4724818696525033,
+              0.16563732020610605,
+              0.2923052163431324,
+              -0.3556458144300946,
+              4.143994786599372,
+              -0.9442857713773,
+              1.016782923947865,
+              -0.2761445159518399,
+              1.6284677757414787,
+              2.0487808110966133,
+              -2.6654530994085026,
+              3.7266657379755035,
+              1.0508309466380883,
+              1.654474829744268,
+              -1.1931771375831557,
+              1.0248811942690774,
+              4.738133779421031,
+              -2.179228418763155,
+              0.8678999100485739,
+              -1.2750485147255495,
+              -0.1731280566804399,
+              -0.7952042991864486,
+              -0.4518627850194632,
+              -0.5883760139344489,
+              -1.9596508984989656,
+              1.1392128673325967,
+              -4.621763484714587,
+              -1.8492137228424923,
+              -0.3704699743354857,
+              -0.46659721909452095,
+              -1.1506307694409572,
+              -4.493318605998478,
+              1.9075248093171067,
+              -4.119565398637452,
+              2.3101899659089247,
+              -1.9079876694503195,
+              -1.6476185330858,
+              0.15133556335622017,
+              -1.5925759124373051,
+              1.6012655854737918,
+              -1.1159209622163824,
+              0.9821055624648245,
+              -1.6606510629228355,
+              -0.8103944630357329,
+              1.999894757406718,
+              -0.6849501886702388,
+              -2.2780662752316623,
+              0.6351931836021041,
+              -0.8807556751281508,
+              -3.768004760307302,
+              -2.4796582351275487,
+              2.4208710895195056,
+              -2.2705622630260724,
+              -2.7115517842276464,
+              -0.10443366566815648,
+              -0.10006160882605875,
+              -1.1615541994733007,
+              -2.9779021827313907,
+              3.000201952959238,
+              -2.6552619365189454,
+              -2.041964030347195,
+              2.5333321759151586,
+              -1.2632500585459796,
+              1.460800566604868,
+              -3.7671159627626443,
+              1.617939509477791,
+              -0.3981429972157876,
+              -0.36454289139427376
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.correlate.full_64_by_8_sp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "correlate"
+    }
+  ]
+}
