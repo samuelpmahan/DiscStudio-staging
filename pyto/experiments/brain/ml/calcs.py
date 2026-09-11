@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pyto import Calculation
 
-from . import linear, metrics, resample
+from . import linear, metrics, resample, trees, unsup
 
 _FUNCTIONS = {
     # supervised: linear
@@ -32,6 +32,20 @@ _FUNCTIONS = {
     "synthetic_blobs": resample.synthetic_blobs,
     "synthetic_classification": resample.synthetic_classification,
     "synthetic_counts": resample.synthetic_counts,
+    # supervised: trees
+    "tree_fit": trees.tree_fit,
+    "tree_predict": trees.tree_predict,
+    "forest_fit": trees.forest_fit,
+    "forest_predict": trees.forest_predict,
+    "gbm_fit": trees.gbm_fit,
+    "gbm_predict": trees.gbm_predict,
+    "learning_curve": trees.learning_curve,
+    # unsupervised
+    "kmeans": unsup.kmeans,
+    "kmeans_predict": unsup.kmeans_predict,
+    "pca": unsup.pca,
+    "hierarchical": unsup.hierarchical,
+    "dbscan": unsup.dbscan,
 }
 
 
