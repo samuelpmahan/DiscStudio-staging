@@ -1,0 +1,730 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S4",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Hole.readNumbers",
+      "invocations": [
+        {
+          "id": "px.exp.lab.holes.numbers",
+          "calculation": {
+            "address": "fn.lab.hole.readnumbers",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "badges": "px:px.exp.lab.badges.objects"
+          },
+          "args": {},
+          "into": "px.exp.lab.holes.numbers",
+          "declared_consumes": [
+            "px:px.exp.lab.badges.objects"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.badges.objects"
+          ],
+          "actual_produces": [
+            "px.exp.lab.holes.numbers"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.holes.numbers",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "rule": "badge order is the reading, not the position in the raster",
+              "numbered": [
+                {
+                  "id": "badge-3",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    330,
+                    598
+                  ],
+                  "reading": "01",
+                  "status": "read",
+                  "number": 1
+                },
+                {
+                  "id": "badge-2",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    150,
+                    278
+                  ],
+                  "reading": "10",
+                  "status": "read",
+                  "number": 10
+                },
+                {
+                  "id": "badge-1",
+                  "bbox": [
+                    380,
+                    138,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    410,
+                    158
+                  ],
+                  "reading": "11",
+                  "status": "read",
+                  "number": 11
+                }
+              ],
+              "unreadable": []
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Hole.bindAnchors",
+      "invocations": [
+        {
+          "id": "px.exp.lab.holes.binding",
+          "calculation": {
+            "address": "fn.lab.hole.bindanchors",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "numbers": "px:px.exp.lab.holes.numbers",
+            "tees": "px:px.exp.lab.tees",
+            "baskets": "px:px.exp.lab.baskets"
+          },
+          "args": {
+            "rule": "nearest-free-in-badge-order"
+          },
+          "into": "px.exp.lab.holes.binding",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.numbers",
+            "px:px.exp.lab.tees",
+            "px:px.exp.lab.baskets"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.numbers",
+            "px.exp.lab.tees",
+            "px.exp.lab.baskets"
+          ],
+          "actual_produces": [
+            "px.exp.lab.holes.binding"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.holes.binding",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "rule": "nearest-free-in-badge-order",
+              "bound": [
+                {
+                  "badge": {
+                    "id": "badge-3",
+                    "bbox": [
+                      300,
+                      578,
+                      60,
+                      40
+                    ],
+                    "at": [
+                      330,
+                      598
+                    ],
+                    "reading": "01",
+                    "status": "read",
+                    "number": 1
+                  },
+                  "tee": {
+                    "id": "tee-3",
+                    "at": [
+                      427.5,
+                      530.5
+                    ],
+                    "bbox": [
+                      420,
+                      518,
+                      16,
+                      26
+                    ],
+                    "gapFromBadgePx": 118.585
+                  },
+                  "basket": {
+                    "id": "basket-2",
+                    "at": [
+                      351,
+                      791
+                    ],
+                    "bbox": [
+                      326,
+                      754,
+                      50,
+                      74
+                    ],
+                    "gapFromBadgePx": 194.139
+                  }
+                },
+                {
+                  "badge": {
+                    "id": "badge-2",
+                    "bbox": [
+                      120,
+                      258,
+                      60,
+                      40
+                    ],
+                    "at": [
+                      150,
+                      278
+                    ],
+                    "reading": "10",
+                    "status": "read",
+                    "number": 10
+                  },
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      67.5,
+                      220.5
+                    ],
+                    "bbox": [
+                      60,
+                      208,
+                      16,
+                      26
+                    ],
+                    "gapFromBadgePx": 100.561
+                  },
+                  "basket": {
+                    "id": "basket-1",
+                    "at": [
+                      171,
+                      461
+                    ],
+                    "bbox": [
+                      146,
+                      424,
+                      50,
+                      74
+                    ],
+                    "gapFromBadgePx": 184.201
+                  }
+                },
+                {
+                  "badge": {
+                    "id": "badge-1",
+                    "bbox": [
+                      380,
+                      138,
+                      60,
+                      40
+                    ],
+                    "at": [
+                      410,
+                      158
+                    ],
+                    "reading": "11",
+                    "status": "read",
+                    "number": 11
+                  },
+                  "tee": {
+                    "id": "tee-1",
+                    "at": [
+                      477.5,
+                      90.5
+                    ],
+                    "bbox": [
+                      470,
+                      78,
+                      16,
+                      26
+                    ],
+                    "gapFromBadgePx": 95.459
+                  },
+                  "basket": null
+                }
+              ],
+              "unreadable": [],
+              "pools": {
+                "tees": [
+                  {
+                    "id": "tee-1",
+                    "bbox": [
+                      470,
+                      78,
+                      16,
+                      26
+                    ],
+                    "at": [
+                      477.5,
+                      90.5
+                    ],
+                    "boundTo": 11
+                  },
+                  {
+                    "id": "tee-2",
+                    "bbox": [
+                      60,
+                      208,
+                      16,
+                      26
+                    ],
+                    "at": [
+                      67.5,
+                      220.5
+                    ],
+                    "boundTo": 10
+                  },
+                  {
+                    "id": "tee-3",
+                    "bbox": [
+                      420,
+                      518,
+                      16,
+                      26
+                    ],
+                    "at": [
+                      427.5,
+                      530.5
+                    ],
+                    "boundTo": 1
+                  }
+                ],
+                "baskets": [
+                  {
+                    "id": "basket-1",
+                    "bbox": [
+                      146,
+                      424,
+                      50,
+                      74
+                    ],
+                    "at": [
+                      171,
+                      461
+                    ],
+                    "boundTo": 10
+                  },
+                  {
+                    "id": "basket-2",
+                    "bbox": [
+                      326,
+                      754,
+                      50,
+                      74
+                    ],
+                    "at": [
+                      351,
+                      791
+                    ],
+                    "boundTo": 1
+                  }
+                ]
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Hole.assemble",
+      "invocations": [
+        {
+          "id": "px.exp.lab.holes.objects",
+          "calculation": {
+            "address": "fn.lab.hole.assemble",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "binding": "px:px.exp.lab.holes.binding"
+          },
+          "args": {},
+          "into": "px.exp.lab.holes.objects",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.binding"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.binding"
+          ],
+          "actual_produces": [
+            "px.exp.lab.holes.objects"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.holes.objects",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "number": 1,
+                "badge": {
+                  "id": "badge-3",
+                  "reading": "01",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    330,
+                    598
+                  ]
+                },
+                "tee": {
+                  "id": "tee-3",
+                  "at": [
+                    427.5,
+                    530.5
+                  ],
+                  "bbox": [
+                    420,
+                    518,
+                    16,
+                    26
+                  ],
+                  "gapFromBadgePx": 118.585
+                },
+                "basket": {
+                  "id": "basket-2",
+                  "at": [
+                    351,
+                    791
+                  ],
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "gapFromBadgePx": 194.139
+                },
+                "confidence": {
+                  "value": 1,
+                  "basis": {
+                    "badgeRead": 0.5,
+                    "tee": 0.25,
+                    "basket": 0.25
+                  },
+                  "of": "badge read 0.5 + tee 0.25 + basket 0.25"
+                },
+                "missing": [],
+                "complete": true,
+                "has": {
+                  "readNumbers": {
+                    "fn": "fn.lab.hole.readnumbers",
+                    "reading": "01",
+                    "status": "read"
+                  },
+                  "bindAnchors": {
+                    "fn": "fn.lab.hole.bindanchors",
+                    "rule": "nearest-free-in-badge-order",
+                    "tee": "tee-3",
+                    "basket": "basket-2"
+                  },
+                  "assemble": {
+                    "fn": "fn.lab.hole.assemble",
+                    "missing": []
+                  }
+                }
+              },
+              {
+                "number": 10,
+                "badge": {
+                  "id": "badge-2",
+                  "reading": "10",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    150,
+                    278
+                  ]
+                },
+                "tee": {
+                  "id": "tee-2",
+                  "at": [
+                    67.5,
+                    220.5
+                  ],
+                  "bbox": [
+                    60,
+                    208,
+                    16,
+                    26
+                  ],
+                  "gapFromBadgePx": 100.561
+                },
+                "basket": {
+                  "id": "basket-1",
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "gapFromBadgePx": 184.201
+                },
+                "confidence": {
+                  "value": 1,
+                  "basis": {
+                    "badgeRead": 0.5,
+                    "tee": 0.25,
+                    "basket": 0.25
+                  },
+                  "of": "badge read 0.5 + tee 0.25 + basket 0.25"
+                },
+                "missing": [],
+                "complete": true,
+                "has": {
+                  "readNumbers": {
+                    "fn": "fn.lab.hole.readnumbers",
+                    "reading": "10",
+                    "status": "read"
+                  },
+                  "bindAnchors": {
+                    "fn": "fn.lab.hole.bindanchors",
+                    "rule": "nearest-free-in-badge-order",
+                    "tee": "tee-2",
+                    "basket": "basket-1"
+                  },
+                  "assemble": {
+                    "fn": "fn.lab.hole.assemble",
+                    "missing": []
+                  }
+                }
+              },
+              {
+                "number": 11,
+                "badge": {
+                  "id": "badge-1",
+                  "reading": "11",
+                  "bbox": [
+                    380,
+                    138,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    410,
+                    158
+                  ]
+                },
+                "tee": {
+                  "id": "tee-1",
+                  "at": [
+                    477.5,
+                    90.5
+                  ],
+                  "bbox": [
+                    470,
+                    78,
+                    16,
+                    26
+                  ],
+                  "gapFromBadgePx": 95.459
+                },
+                "basket": null,
+                "confidence": {
+                  "value": 0.75,
+                  "basis": {
+                    "badgeRead": 0.5,
+                    "tee": 0.25,
+                    "basket": 0
+                  },
+                  "of": "badge read 0.5 + tee 0.25 + basket 0.25"
+                },
+                "missing": [
+                  "basket"
+                ],
+                "complete": false,
+                "has": {
+                  "readNumbers": {
+                    "fn": "fn.lab.hole.readnumbers",
+                    "reading": "11",
+                    "status": "read"
+                  },
+                  "bindAnchors": {
+                    "fn": "fn.lab.hole.bindanchors",
+                    "rule": "nearest-free-in-badge-order",
+                    "tee": "tee-1",
+                    "basket": null
+                  },
+                  "assemble": {
+                    "fn": "fn.lab.hole.assemble",
+                    "missing": [
+                      "basket"
+                    ]
+                  }
+                }
+              }
+            ],
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Hole.unplaced",
+      "invocations": [
+        {
+          "id": "px.exp.lab.holes.unplaced",
+          "calculation": {
+            "address": "fn.lab.hole.unplaced",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "binding": "px:px.exp.lab.holes.binding",
+            "holes": "px:px.exp.lab.holes.objects"
+          },
+          "args": {},
+          "into": "px.exp.lab.holes.unplaced",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.binding",
+            "px:px.exp.lab.holes.objects"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.binding",
+            "px.exp.lab.holes.objects"
+          ],
+          "actual_produces": [
+            "px.exp.lab.holes.unplaced"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.holes.unplaced",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "what S4 could not put in a hole, so that nothing is silently dropped between the Stages and the course",
+              "badges": [],
+              "tees": [],
+              "baskets": [],
+              "incomplete": [
+                {
+                  "number": 11,
+                  "missing": [
+                    "basket"
+                  ],
+                  "why": "the basket pool was empty when hole 11 took its turn"
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.badges.objects": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.holes.numbers"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.numbers": {
+      "written_by": "px.exp.lab.holes.numbers",
+      "read_by": [
+        "px.exp.lab.holes.binding"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.holes.binding"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.holes.binding"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.binding": {
+      "written_by": "px.exp.lab.holes.binding",
+      "read_by": [
+        "px.exp.lab.holes.objects",
+        "px.exp.lab.holes.unplaced"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.holes.objects": {
+      "written_by": "px.exp.lab.holes.objects",
+      "read_by": [
+        "px.exp.lab.holes.unplaced"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.holes.unplaced": {
+      "written_by": "px.exp.lab.holes.unplaced",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 4,
+    "hits": 2,
+    "computed": 2,
+    "wall_ms": null
+  }
+}

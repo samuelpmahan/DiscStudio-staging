@@ -1,0 +1,196 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S4.invariants",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "AccountHoles",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s4.holeledger",
+          "calculation": {
+            "address": "fn.lab.s4.accountholes",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "numbers": "px:px.exp.lab.holes.numbers",
+            "binding": "px:px.exp.lab.holes.binding",
+            "holes": "px:px.exp.lab.holes.objects",
+            "unplaced": "px:px.exp.lab.holes.unplaced"
+          },
+          "args": {},
+          "into": "px.exp.lab.s4.holeledger",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.numbers",
+            "px:px.exp.lab.holes.binding",
+            "px:px.exp.lab.holes.objects",
+            "px:px.exp.lab.holes.unplaced"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.numbers",
+            "px.exp.lab.holes.binding",
+            "px.exp.lab.holes.objects",
+            "px.exp.lab.holes.unplaced"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s4.holeledger"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s4.holeledger",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "badgesIn": 3,
+              "numbered": 3,
+              "unreadable": 0,
+              "holes": 3,
+              "teesIn": 3,
+              "teesBound": 3,
+              "teesFree": 0,
+              "basketsIn": 2,
+              "basketsBound": 2,
+              "basketsFree": 0,
+              "complete": 2,
+              "incomplete": 1
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "CheckHoles",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s4.holesummary",
+          "calculation": {
+            "address": "fn.lab.s4.checkholes",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "ledger": "px:px.exp.lab.s4.holeledger",
+            "holes": "px:px.exp.lab.holes.objects",
+            "binding": "px:px.exp.lab.holes.binding"
+          },
+          "args": {},
+          "into": "px.exp.lab.s4.holesummary",
+          "declared_consumes": [
+            "px:px.exp.lab.s4.holeledger",
+            "px:px.exp.lab.holes.objects",
+            "px:px.exp.lab.holes.binding"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s4.holeledger",
+            "px.exp.lab.holes.objects",
+            "px.exp.lab.holes.binding"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s4.holesummary"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s4.holesummary",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "badgesIn": 3,
+              "numbered": 3,
+              "unreadable": 0,
+              "holes": 3,
+              "teesIn": 3,
+              "teesBound": 3,
+              "teesFree": 0,
+              "basketsIn": 2,
+              "basketsBound": 2,
+              "basketsFree": 0,
+              "complete": 2,
+              "incomplete": 1,
+              "rule": "nearest-free-in-badge-order",
+              "checks": {
+                "everyBadgeOnce": true,
+                "everyTeeOnce": true,
+                "everyBasketOnce": true,
+                "missingIsNotGuessed": true,
+                "confidenceIsStated": true,
+                "orderIsTheReading": true
+              },
+              "balanced": true
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.holes.numbers": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.holeledger"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.binding": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.holeledger",
+        "px.exp.lab.s4.holesummary"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.objects": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.holeledger",
+        "px.exp.lab.s4.holesummary"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.unplaced": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.holeledger"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s4.holeledger": {
+      "written_by": "px.exp.lab.s4.holeledger",
+      "read_by": [
+        "px.exp.lab.s4.holesummary"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s4.holesummary": {
+      "written_by": "px.exp.lab.s4.holesummary",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 2,
+    "hits": 2,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

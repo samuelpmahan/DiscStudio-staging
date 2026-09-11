@@ -44,7 +44,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "imageId": "lab-fixture-20260911",
+              "imageId": "lab-fixture-20260911-h11-obs",
               "widthPx": 512,
               "heightPx": 1024,
               "rgba": {
@@ -123,6 +123,36 @@
                     6,
                     14
                   ]
+                },
+                {
+                  "reading": "11",
+                  "border": [
+                    380,
+                    180,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    386,
+                    184,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      392,
+                      190,
+                      6,
+                      20
+                    ],
+                    [
+                      408,
+                      190,
+                      6,
+                      20
+                    ]
+                  ],
+                  "loop": null
                 }
               ],
               "baskets": [
@@ -183,8 +213,28 @@
                     12,
                     22
                   ]
+                },
+                {
+                  "frame": [
+                    470,
+                    120,
+                    16,
+                    26
+                  ],
+                  "hole": [
+                    472,
+                    122,
+                    12,
+                    22
+                  ]
                 }
-              ]
+              ],
+              "obstacle": {
+                "x": 0,
+                "y": 380,
+                "width": 264,
+                "height": 16
+              }
             },
             "note": "1 array(s) truncated to the first 200 entries; original lengths: [2097152]"
           }
@@ -275,7 +325,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "imageId": "composite:fe5b20263d8a371792",
+              "imageId": "composite:5ff5aac6a0ea0aaf99",
               "widthPx": 512,
               "heightPx": 920,
               "rgba": {
@@ -326,7 +376,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "cached": "lab-fixture-20260911",
+              "cached": "lab-fixture-20260911-h11-obs",
               "at": "last",
               "widthPx": 512,
               "heightPx": 1024
