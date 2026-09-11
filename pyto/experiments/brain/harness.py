@@ -62,6 +62,30 @@ DEFAULT_TOLERANCE = 1e-9
 # big it is, what it digests to, its shape, where it starts). The comparison itself always runs on
 # the full value, never on the outline.
 ORACLE_VALUE_CAP = 65536
+# A committed store must not be bit-exact to one machine's BLAS: the last few bits of a float64
+# differ between numpy builds, and a document that pins them makes every other environment's suite
+# red for no reason anyone can act on. Twelve significant digits is far past any tolerance an
+# oracle here uses (1e-7 at the loosest) and far short of the bits that move.
+SAVE_DIGITS = 12
+
+
+def canonical(value: Any, digits: int = SAVE_DIGITS) -> Any:
+    """`value` with every float rounded to `digits` significant digits.
+
+    applied where a store is written to disk, never to what a Calculation returned:
+    the comparison an oracle makes is on the full value, and only the file is canonical.
+    """
+    if isinstance(value, bool) or value is None or isinstance(value, (int, str)):
+        return value
+    if isinstance(value, float):
+        if value != value or value in (float("inf"), float("-inf")):
+            return value
+        return float(f"%.{digits}g" % value)
+    if isinstance(value, Mapping):
+        return {key: canonical(inner, digits) for key, inner in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [canonical(inner, digits) for inner in value]
+    return value
 
 
 # --- addresses -----------------------------------------------------------------
@@ -270,6 +294,8 @@ class Store:
 
         what a vertical wrote this process is merged over whatever the file
         already held, so a second run adds to the store instead of truncating it.
+        Floats are rounded to `SAVE_DIGITS` significant digits on the way out, so a
+        committed store is not bit-exact to one machine's BLAS.
         `store_dir` is the repository's `store/` only for an explicit record run
         (`Store(commit=True)`, or `BRAIN_RECORDS=commit`); by default it is a
         temporary directory, so a test can save a store without dirtying MAIN.
@@ -284,7 +310,7 @@ class Store:
                 held = json.load(handle)
         for address in self.written:
             if self.pxc.has(address):
-                held[address] = jsonable(self.pxc.get(address))
+                held[address] = canonical(jsonable(self.pxc.get(address)))
         with open(path, "w", encoding="utf-8", newline="\n") as handle:
             json.dump(held, handle, indent=2, sort_keys=True)
             handle.write("\n")
