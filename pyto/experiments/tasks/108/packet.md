@@ -4,8 +4,42 @@ Intent: brain kerchoo: the owner's speed pass across all four verticals - the lo
 Starting point: 7e2e2cf6c9056a67cea6287ed628f55b8975c2e3 (land(task-107): brain/stats and brain/data close the night: the empirical cdf and its quantile inverse against scipy.stats.ecdf, and the two findings this vertical owes the backend vertical -- what stats and data each had to do by hand because the facade has no op for it, with the workaround taken and the op proposed)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 5 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- A  pyto/experiments/brain/backend/kerchoo.py
+- M  pyto/experiments/brain/backend/ops.py
+- M  pyto/experiments/brain/data/timeseries.py
+- M  pyto/experiments/brain/stats/distributions.py
+- M  pyto/experiments/brain/store/backend.json
+
+```
+pyto/experiments/brain/backend/kerchoo.py     | 133 ++++++++++++++++++++++++++
+ pyto/experiments/brain/backend/ops.py         |  40 +++++++-
+ pyto/experiments/brain/data/timeseries.py     |   7 ++
+ pyto/experiments/brain/stats/distributions.py |  17 +++-
+ pyto/experiments/brain/store/backend.json     |  99 +++++++++++++++++++
+ 5 files changed, 293 insertions(+), 3 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.dP1QXpL21u) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
