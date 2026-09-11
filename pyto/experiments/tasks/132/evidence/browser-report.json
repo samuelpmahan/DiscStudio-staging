@@ -1,0 +1,30 @@
+{
+  "mode": "embedded DOM; memory storage double; run-record block on a real local origin and file://",
+  "checks": [
+    "Manufacturer/mold first-class bindings; styling and pointer dragging edit the real preset",
+    "Schema-added field automatically appears in both fact editing and the customizer",
+    "Independent comparison states and scores reuse actual upstream PxC art",
+    "Exact uploaded photo reaches SVG/PNG; transparent 1920\u00d71080 export hash matches actual bytes; footage excluded",
+    "Specific neat comments export with inspected flags, context and checkpoint; no acceptance is fabricated",
+    "Workspace, uploaded photo, presets and item comments rehydrate (memory storage double)",
+    "Competition UI records real team throws and changes composed status from pending to pass to fail",
+    "The sample composition runs with parallel: true, its exported record validates and carries parallel, placement, latency_ms and budget, and the Tick page draws the parallel Tick side by side",
+    "Export run record writes a validated pyto-run-record@1 Part and file; its Tick render page opens over file:// with one section per Tick and no requests",
+    "Inspect lists the studio own receipts through the px.receipt.* PQL query, one row per receipt with its consumes, produces and result digest; an Undo taken in the browser restores the exact previous value and is itself a listed receipt",
+    "Adding a disc is one gesture: the shelf + opens a composer of the facts that matter, one disc.create writes the maker, the mold, the disc, its photo and its bag place, and one undo takes all of it back",
+    "The Course route runs one capture through every landed Stage as lab-s0 \u2026 lab-route, each producing its Parts, and draws every produced object on the one canonical raster",
+    "The inspector names the Part a selected object came from and the composition, Tick and Calculation that published it; Inspect lists every Stage receipt beside the studio's own",
+    "A Stage run exports a validated pyto-run-record@1 the Tick viewer draws, Tick for Tick with its PQL document",
+    "OnTheCourse gains one arrangement: the bag's DisplayCards stand at the holes the Stages read off the capture, through the same fn.comparison.layout and the same card chain",
+    "Five routes render at desktop and mobile widths without horizontal page overflow",
+    "Editing the global radius recomposes all four projections; the preview grid marks every one \"recomposed\" and every composed SVG carries the new value",
+    "A global edit stops at an instance override: shelf keeps buzzz-mint's own accent and the other three recompose",
+    "Editing the preset accent control on the DisplayCard tab reaches both single and competition (they compose with broadcast) and leaves shelf/bag alone; both SVGs carry the new accent, and the grid marks both recomposed",
+    "Reset to inherited clears the preset's own override; the control shows the global value again",
+    "An instance edit on single recomposes exactly that card, and window.discStudio.cards() carries the edit",
+    "The Component Editor's All cards and DisplayCard tabs render at desktop and mobile widths without horizontal page overflow",
+    "No browser JavaScript errors"
+  ],
+  "count": 23,
+  "errors": []
+}

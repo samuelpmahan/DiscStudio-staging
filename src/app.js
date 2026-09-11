@@ -1,7 +1,7 @@
 import { createSeed } from './seed.js';
 import { createStudioRuntime } from './runtime.js';
-import { get, all, currentBattle, clone, id, labelHash, validateWorld } from './domain.js';
-import { esc, fieldNode } from './presentation.js';
+import { get, all, currentBattle, clone, id, labelHash, sampleHueFor, validateWorld } from './domain.js';
+import { esc, fieldNode, sampleColors } from './presentation.js';
 import { constraintDefinitions } from './constraints.js';
 import { reviewItems } from './review.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
@@ -22,7 +22,7 @@ const ui = {
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
   lastCascade: null, instanceProjection: savedView.instanceProjection || 'single',
-  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc'
+  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -130,9 +130,27 @@ function shelfSidebar() {
     return `<div class="disc-row ${ui.discId === d.id ? 'selected' : ''}"><button class="disc-pick" data-action="disc-select" data-id="${esc(d.id)}"><span class="disc-thumb">${safeThumb(d.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(d.nickname)}</small></span></button>${button(ui.route === 'course' ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), ui.route === 'course' ? 'lineup-add' : 'membership', { id: d.id }, 'row-add', `aria-label="${ui.route === 'course' ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(d.nickname)}" ${ui.route === 'course' && inLineup ? 'disabled' : ''}`)}</div>`;
   }).join('') || '<p class="empty-note">No matching discs.</p>'}</div><footer class="sidebar-footer">${ui.route === 'course' ? button('+ Add bag to comparison', 'bag-lineup', {}, 'wide secondary') : button('+ New physical disc', 'disc-add', {}, 'wide secondary')}<p class="tiny muted">Sample art is labelled. Your photos stay on your device.</p></footer></aside>`;
 }
+/** The composer keeps its own typing in the DOM until a render needs it, exactly as the new-field panel does. */
+function captureComposer() { if (!ui.adding) return; for (const el of app.querySelectorAll('[data-compose]')) ui.adding[el.dataset.compose] = el.type === 'checkbox' ? el.checked : el.value; }
+const composeField = (label, key, type = 'text', attrs = '') => `<label class="control"><span>${esc(label)}</span><input aria-label="${esc(label)}" data-compose="${esc(key)}" type="${type}" value="${esc(ui.adding?.[key] ?? '')}" ${attrs}></label>`;
+const datalist = (key, values) => `<datalist id="suggest-${key}">${[...new Set(values.map(v => String(v ?? '').trim()).filter(Boolean))].sort().map(v => `<option value="${esc(v)}"></option>`).join('')}</datalist>`;
+/** Everything already on the shelf, offered back as suggestions: the second Buzzz is typed once. */
+function shelfSuggestions() { const molds = all(w(), 'Mold'), discs = all(w(), 'Disc'); return { maker: all(w(), 'Manufacturer').map(m => m.name), mold: molds.map(m => m.name), category: molds.map(m => m.category), plastic: discs.map(d => d.plastic), color: discs.map(d => d.color) }; }
+/**
+ * Adding a disc is one gesture: the facts a person has in their hand (maker, mold,
+ * plastic, weight, colour, photo), each suggested from what is already on the shelf,
+ * and one `disc.create` command that makes the maker, the mold, the disc and its bag
+ * membership together -- so one undo takes the whole thing back out again.
+ */
+function discComposer() {
+  const a = ui.adding, s = shelfSuggestions(), bag = get(w(), 'Bag', ui.bagId);
+  const [base, accent] = sampleColors(sampleHueFor(a.color, a.key));
+  const auto = [a.plastic.trim(), a.mold.trim(), a.weight === '' ? '' : `${a.weight} g`].filter(Boolean).join(' ') || 'your new disc';
+  return `<section class="composer" data-composer><div class="composer-head"><div><span class="eyebrow">ONE GESTURE</span><h2>Add a disc you own</h2><p class="tiny muted">Mold is the only thing this needs. Everything else is here because you usually know it while the disc is in your hand.</p></div>${button('×', 'compose-cancel', {}, 'circle', 'aria-label="Cancel adding a disc"')}</div><div class="composer-body"><div class="composer-art">${a.photo ? `<img src="${esc(a.photo)}" alt="The photo this disc will be added with">` : `<span class="composer-swatch" style="background:${esc(base)};border-color:${esc(accent)}"></span>`}<span class="tiny muted">${a.photo ? 'Your photo. It never leaves this browser.' : `Its own hue${a.color.trim() ? `, from “${esc(a.color.trim())}”` : ''} until you add a photo.`}</span><div class="button-row">${button(a.photo ? 'Replace photo' : '↑ Photo of this disc', 'compose-photo', {}, 'quiet small')}${a.photo ? button('Remove', 'compose-photo-clear', {}, 'quiet small') : ''}</div></div><div class="composer-grid">${composeField('Maker', 'maker', 'text', 'list="suggest-maker" placeholder="Discraft"')}${composeField('Mold', 'mold', 'text', 'list="suggest-mold" placeholder="Buzzz" required')}${composeField('Disc type', 'category', 'text', 'list="suggest-category" placeholder="Midrange"')}${composeField('Plastic', 'plastic', 'text', 'list="suggest-plastic" placeholder="ESP"')}${composeField('Weight (g)', 'weight', 'number', 'step="1" min="20" max="400" placeholder="177"')}${composeField('Colour', 'color', 'text', 'list="suggest-color" placeholder="Mint"')}</div></div>${datalist('maker', s.maker)}${datalist('mold', s.mold)}${datalist('category', s.category)}${datalist('plastic', s.plastic)}${datalist('color', s.color)}<div class="composer-foot">${composeField('Nickname', 'nickname', 'text', `placeholder="${esc(auto)}"`)}${bag ? `<label class="check"><input data-compose="toBag" type="checkbox" ${a.toBag ? 'checked' : ''}> Put it in ${esc(bag.name)}</label>` : ''}${button('Add to shelf', 'compose-add', {}, 'primary')}</div></section>`;
+}
 function shelfCenter() {
   const bag = get(w(), 'Bag', ui.bagId);
-  return `<section class="center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Rename', 'bag-rename', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description"><span class="eyebrow">${bag ? `${bag.discIds.length} PHYSICAL DISCS · SHARED REFERENCES` : 'CREATE YOUR FIRST BAG'}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${(bag?.discIds || []).map(key => {
+  return `<section class="center" data-scroll="center">${ui.adding ? discComposer() : ''}<div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Rename', 'bag-rename', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description"><span class="eyebrow">${bag ? `${bag.discIds.length} PHYSICAL DISCS · SHARED REFERENCES` : 'CREATE YOUR FIRST BAG'}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${(bag?.discIds || []).map(key => {
     const { disc, mold, maker } = discInfo(key); if (!disc) return `<div class="error-panel">Missing physical disc ${esc(key)}. Fix this reference before using the bag.</div>`;
     return `<article class="bag-card ${ui.discId === key ? 'is-selected' : ''}"><button class="bag-card-select" data-action="disc-select" data-id="${esc(key)}"><div class="bag-art">${safeThumb(key, undefined, 'shelf')}</div><div class="bag-card-caption"><span class="eyebrow">${esc(maker?.name)}</span><h3>${esc(mold?.name)}</h3><p>${esc(disc.nickname)}</p><span class="tiny">${[disc.plastic, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).map(esc).join(' · ')}</span></div></button>${button('−', 'membership', { id: key }, 'bag-remove', 'aria-label="Remove from this bag only"')}</article>`;
   }).join('') || '<div class="empty-state"><h2>Start with the discs you actually throw.</h2><p>Use the + beside any shelf disc to put it in this bag. One disc can belong to several bags.</p></div>'}</div><div class="principle-strip"><span>ONE DISC. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bound card sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
@@ -432,8 +450,9 @@ function tracePanel(run) {
 }
 let renderedRoute = null;
 function render() {
+  captureComposer();
   const active = document.activeElement;
-  const focus = active?.closest('#app') ? { control: active.dataset.control, search: active.dataset.search, label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : null;
+  const focus = active?.closest('#app') ? { control: active.dataset.control, search: active.dataset.search, compose: active.dataset.compose, label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : null;
   const scrolls = Object.fromEntries([...app.querySelectorAll('[data-scroll]')].map(e => [e.dataset.scroll, e.scrollTop]));
   const oldVideo = document.querySelector('#footage-video'), playing = oldVideo && !oldVideo.paused;
   if (oldVideo) ui.footageTime = oldVideo.currentTime;
@@ -480,9 +499,10 @@ function render() {
   for (const e of app.querySelectorAll('[data-scroll]')) e.scrollTop = renderedRoute === ui.route ? scrolls[e.dataset.scroll] ?? 0 : 0;
   renderedRoute = ui.route;
   if (focus) {
-    const target = [...app.querySelectorAll('input,select,textarea')].find(e => (focus.search ? e.dataset.search === focus.search : e.dataset.control === focus.control && e.getAttribute('aria-label') === focus.label));
+    const target = [...app.querySelectorAll('input,select,textarea')].find(e => (focus.compose ? e.dataset.compose === focus.compose : focus.search ? e.dataset.search === focus.search : e.dataset.control === focus.control && e.getAttribute('aria-label') === focus.label));
     if (target) { target.focus({ preventScroll: true }); try { if (focus.start != null) target.setSelectionRange(focus.start, focus.end); } catch { /* Number/range controls have no selection. */ } }
   }
+  if (ui.adding?.focus) { ui.adding.focus = false; app.querySelector('[data-compose="mold"]')?.focus(); }
   const labCanvas = app.querySelector('[data-lab-canvas]');
   if (labCanvas) paintLabRaster(labCanvas);
   const video = document.querySelector('#footage-video');
@@ -495,11 +515,10 @@ function render() {
   const review = document.querySelector('neat-review');
   review.getContext = () => ({ route: location.hash, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, stateId: w().battle.currentStateId, runRecordAddress: ui.recordAddress || null, worldLabel: labelHash({ objects: w().objects, presets: w().presets, battle: w().battle }) });
 }
-function freshDisc() {
-  if (!get(w(), 'Manufacturer', 'unknown')) execute({ type: 'entity.add', record: { id: 'unknown', type: 'Manufacturer', name: 'Unknown manufacturer', website: '' } });
-  if (!get(w(), 'Mold', 'unreleased')) execute({ type: 'entity.add', record: { id: 'unreleased', type: 'Mold', name: 'Unreleased / unknown', manufacturerId: 'unknown', category: '', flight: {} } });
-  const key = id('disc'); execute({ type: 'entity.add', record: { id: key, type: 'Disc', moldId: 'unreleased', nickname: 'My new disc', photo: null, plastic: '', weight: null, color: '', notes: '' } }); ui.discId = key;
-  message('New physical disc added. Give it its product identity and exact photo in the inspector.');
+/** The + on the shelf opens the composer instead of dropping a blank record named 'My new disc'. */
+function openComposer() {
+  const { maker } = discInfo();
+  ui.adding = { key: id('disc'), maker: maker?.name || '', mold: '', category: '', plastic: '', weight: '', color: '', nickname: '', photo: null, toBag: !!ui.bagId, focus: true };
 }
 function addLineup(discId) { if (!w().battle.entries.some(e => e.discId === discId)) execute({ type: 'battle.add', discId, id: id('entry') }); }
 async function exportPng() {
@@ -551,7 +570,21 @@ async function action(name, el) {
     case 'load-draft': document.querySelector('#draft-file').click(); return;
     case 'reset': if (confirm('Replace this local workspace with the labelled sample collection? Download a draft first to keep your work. Review comments are not deleted.')) { saveEnabled = true; runtime.replace(createSeed()); ui.discId = 'buzzz-mint'; ui.bagId = 'everyday'; ui.presetId = 'broadcast'; message('Sample workspace restored. Your review comments are unchanged.'); } break;
     case 'disc-select': ui.discId = d.id; break;
-    case 'disc-add': freshDisc(); break;
+    case 'disc-add': openComposer(); if (ui.route !== 'shelf') { persistView(); navigate('shelf'); return; } break;
+    case 'compose-cancel': ui.adding = null; break;
+    case 'compose-photo': document.querySelector('#compose-file').click(); return;
+    case 'compose-photo-clear': ui.adding.photo = null; break;
+    case 'compose-add': {
+      captureComposer();
+      const a = ui.adding, weight = a.weight === '' ? null : Number(a.weight);
+      if (!a.mold.trim()) throw new Error('Name the mold — the disc’s product name — and this disc goes on the shelf. Everything else can wait.');
+      if (weight !== null && !Number.isFinite(weight)) throw new Error('Weight is a number of grams, or blank when you have not weighed it.');
+      execute({ type: 'disc.create', id: a.key, manufacturer: a.maker, mold: a.mold, category: a.category, plastic: a.plastic, weight, color: a.color, nickname: a.nickname, photo: a.photo, bagId: a.toBag && ui.bagId ? ui.bagId : null });
+      const made = get(w(), 'Disc', a.key), bag = get(w(), 'Bag', ui.bagId);
+      ui.discId = a.key; ui.adding = null;
+      message(`${made.nickname} is on your shelf${a.toBag && bag ? ` and in ${bag.name}` : ''}. One undo takes the whole disc back out, maker and mold included.`);
+      break;
+    }
     case 'disc-duplicate': { const key = id('disc'); execute({ type: 'disc.duplicate', id: disc.id, newId: key }); ui.discId = key; break; }
     case 'disc-remove': if (confirm('Remove this physical disc from your shelf? Bag/lineup references must be removed first.')) execute({ type: 'disc.remove', id: disc.id }); break;
     case 'membership': if (!ui.bagId) throw new Error('Create a bag first.'); execute({ type: 'bag.membership', bagId: ui.bagId, discId: d.id, include: !get(w(), 'Bag', ui.bagId).discIds.includes(d.id) }); break;
@@ -732,7 +765,7 @@ window.addEventListener('keydown', event => {
   const offsets = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
   if (offsets[event.key]) { event.preventDefault(); const [dx, dy] = offsets[event.key], step = event.shiftKey ? 10 : 1; execute({ type: 'preset.set', id: ui.presetId, nodeId: node.id, patch: { x: node.x + dx * step, y: node.y + dy * step } }); render(); }
 });
-for (const name of ['photo', 'footage', 'draft', 'preset']) document.querySelector(`#${name}-file`).addEventListener('change', async event => {
+for (const name of ['photo', 'compose', 'footage', 'draft', 'preset']) document.querySelector(`#${name}-file`).addEventListener('change', async event => {
   const file = event.target.files?.[0]; if (!file) return;
   try {
     if (name === 'photo' && ui.photoTarget === 'lab') {
@@ -742,6 +775,7 @@ for (const name of ['photo', 'footage', 'draft', 'preset']) document.querySelect
       runtime.lab.begin(ui.labCapture); ui.photoTarget = 'disc';
       message(`Your photo is decoded in this browser as a ${ui.labCapture.widthPx} × ${ui.labCapture.heightPx} capture. Run the pipeline to read a course off it.`);
     }
+    else if (name === 'compose') { if (ui.adding) { ui.adding.photo = await photoData(file); message('Photo ready. It goes on the disc when you add it, and never leaves this browser.'); } }
     else if (name === 'photo') { const targetDisc = ui.photoDiscId || ui.discId, data = await photoData(file); execute({ type: 'entity.set', entityType: 'Disc', id: targetDisc, path: 'photo', value: data }); message('Exact photo saved locally. Every bound presentation now uses it.'); }
     if (name === 'footage') {
       if (!/^(image\/(png|jpeg|webp)|video\/(mp4|webm|quicktime))$/.test(file.type)) throw new Error('Choose a PNG/JPEG/WebP still or MP4/WebM/MOV video.');
@@ -757,5 +791,5 @@ review.setAttribute('data-checklist', JSON.stringify(reviewItems));
 review.setAttribute('checkpoint-id', 'discstudio-pxc-02'); review.setAttribute('subject-commit', 'local-development');
 fetch(new URL('../build-info.json', import.meta.url)).then(r => r.ok ? r.json() : null).then(info => { if (info) { ui.build = info; review.setAttribute('submission-id', `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`); review.setAttribute('checkpoint-id', info.fingerprint); review.setAttribute('subject-commit', info.commit); render(); } }).catch(() => {});
 // Explicit developer inspection/command surface. UI and programmatic commands use the same registered Calculations.
-window.discStudio = { lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode }; }, cards: () => ui.lastCascade };
+window.discStudio = { lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode, adding: ui.adding && { ...ui.adding } }; }, cards: () => ui.lastCascade };
 syncRoute();

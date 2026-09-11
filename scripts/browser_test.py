@@ -220,6 +220,37 @@ with sync_playwright() as p:
     assert page.evaluate('discStudio.runtime.pxc.get("px.studio.receipts.summary").receipts')==len(names)
     page.locator('[data-action="toggle-trace"]').first.click()
     record('Inspect lists the studio own receipts through the px.receipt.* PQL query, one row per receipt with its consumes, produces and result digest; an Undo taken in the browser restores the exact previous value and is itself a listed receipt')
+    # Adding a disc is one gesture (task 132): the shelf's + opens a composer with the
+    # facts a person has in their hand, and one disc.create writes the maker, the mold,
+    # the disc, its photo and its place in the open bag together -- so one undo, the same
+    # Calculation over px.undo.studio as everywhere else, takes the whole disc back out.
+    route(page,'shelf')
+    makers=page.evaluate('Object.keys(discStudio.world.objects.Manufacturer).length')
+    page.locator('[data-action="disc-add"]').first.click()
+    assert page.locator('.composer [data-compose="mold"]').count()==1
+    assert page.evaluate('document.activeElement.dataset.compose')=='mold','the composer opens on the one fact it needs'
+    for key,value in [('maker','Kastaplast'),('mold','Berg'),('category','Putter'),('plastic','K1'),('weight','174'),('color','Mint')]:
+        page.locator('[data-compose="%s"]'%key).fill(value)
+    page.locator('#compose-file').set_input_files({'name':'my-berg.png','mimeType':'image/png','buffer':base64.b64decode(data)})
+    page.wait_for_selector('.composer-art img')
+    page.locator('[data-action="compose-add"]').click()
+    made=page.evaluate('discStudio.view.discId')
+    disc=page.evaluate('d=>discStudio.world.objects.Disc[d]',made)
+    assert disc['nickname']=='K1 Berg 174 g',disc['nickname']
+    assert (disc['plastic'],disc['weight'],disc['color'])==('K1',174,'Mint'),disc
+    assert disc['photo'].startswith('data:image/webp'),disc['photo'][:24]
+    assert disc['sampleHue']==page.evaluate('discStudio.world.objects.Disc["buzzz-mint"].sampleHue'),'a disc its owner called Mint paints in the seeded Mint hue'
+    mold=page.evaluate('d=>discStudio.world.objects.Mold[discStudio.world.objects.Disc[d].moldId]',made)
+    assert (mold['name'],mold['category'])==('Berg','Putter'),mold
+    assert page.evaluate('m=>discStudio.world.objects.Manufacturer[m].name',mold['manufacturerId'])=='Kastaplast'
+    assert page.evaluate('d=>discStudio.world.objects.Bag[discStudio.view.bagId].discIds.includes(d)',made),'the composer put it in the open bag'
+    assert page.locator('.composer').count()==0
+    assert page.locator('.bag-card [data-action="disc-select"][data-id="%s"]'%made).count()==1
+    assert page.locator('.bag-card [data-action="disc-select"][data-id="%s"] svg'%made).count()>=1,'the new disc has its own art in the bag'
+    page.locator('[data-action="undo"]').click()
+    assert not page.evaluate('d=>!!discStudio.world.objects.Disc[d]',made),'one undo took the whole disc back out'
+    assert page.evaluate('Object.keys(discStudio.world.objects.Manufacturer).length')==makers,'no stray maker was left behind'
+    record('Adding a disc is one gesture: the shelf + opens a composer of the facts that matter, one disc.create writes the maker, the mold, the disc, its photo and its bag place, and one undo takes all of it back')
     # The Course route (#/course-build): one capture through the LAB Stages, one
     # composition per Stage on the studio's own board. What is asserted is what
     # the record says -- px.exp.lab.pipeline, the produce Parts, the receipts --

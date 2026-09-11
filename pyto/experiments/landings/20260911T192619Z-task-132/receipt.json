@@ -1,17 +1,17 @@
 {
   "schema": "pyto-landing-receipt@1",
-  "id": "20260911T190919Z-task-131",
-  "package": "task-131",
-  "base_sha": "467bbdc8b8a30516a9872a356ad8abbed8e046b0",
+  "id": "20260911T192619Z-task-132",
+  "package": "task-132",
+  "base_sha": "c0ee1b08d53898804afe4927f85f9e5a4b131085",
   "result": "verified",
   "verifier": {
     "command": "npm test",
     "exit": 0,
-    "output_sha256": "d1c99ab39f0fb9644409642b5729bd5733d9bfe9f4fb3adb88e12f50beae714f"
+    "output_sha256": "153a9dd2db1123ed0eb369ecfe97da4ade3bc6b1fe05e4a39752d6a64198fbd0"
   },
   "check_all": {
     "exit": 0,
-    "output_sha256": "d20d1f5a1863843c6f177464e91d8fe4971226d9798c87f732654cec6ef4e9ca",
+    "output_sha256": "25f7664dfb1d356090bbfc538b1bb648d717acf7f050a498003a857ef2550d89",
     "counts": {
       "library": 439,
       "experiments/brain": 756,
@@ -33,6 +33,11 @@
   "score": null,
   "claimed": [
     {
+      "path": "index.html",
+      "bytes": 989,
+      "sha256": "e0ca5c44505ba41b09942738370deda3f057d075b0a93f12649326db5a63771e"
+    },
+    {
       "path": "pyto/experiments/tasks/131/HANDOFF.md",
       "bytes": 7846,
       "sha256": "85c19acbb2c776487caf8c43c7a1f453d25992c71a6f1079569b3de2f035b035"
@@ -53,14 +58,49 @@
       "sha256": "d285fad9d66b63f6906c96b543f0edc8c73e16ce32be0e1f5943a298d404b7c1"
     },
     {
-      "path": "pyto/viewer/fixtures/discstudio-display-card.json",
-      "bytes": 298640,
-      "sha256": "7596ffb108a4c84569392b62895a0f0f151d01697b58f25b1c12406cb2d06a2a"
+      "path": "pyto/experiments/tasks/132/HANDOFF.md",
+      "bytes": 6527,
+      "sha256": "b026cfdbf974febaf0d49a585e414c03843e24d0523eddaede0572014417252c"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/evidence/browser-report.json",
+      "bytes": 3284,
+      "sha256": "c71ec0aa68695d1c0648e136801d1a2a1d283ca6db561e2519ecc044b2bb51f0"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/evidence/check_all.txt",
+      "bytes": 293450,
+      "sha256": "8dc100d2593c23c56540886825a7155d02ac6b1bc8534e71c70095cabef191f9"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/evidence/verify.txt",
+      "bytes": 41876,
+      "sha256": "4ad4043628072f617de5c3917babb4cfc2eaf7e211cef3807501cede14ae6c6b"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/packet.md",
+      "bytes": 2114,
+      "sha256": "b341c414703fb37f4b0074b1ec06039178cc276226394f6365f876fde69205fe"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 36961,
+      "sha256": "a5498541fb2b1688e91ad447940fd9fb1726ccf943865716ccd1c18496c01bcc"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 113807,
+      "sha256": "31c6e5ab17f2e1607483aabfd06d0df0aaa00b2c988d854f2952576842884e18"
     },
     {
       "path": "src/art.js",
       "bytes": 3817,
       "sha256": "dd15b42636dd67550e5042c5f5792d058146f8950661ac55ceb18e4040049d61"
+    },
+    {
+      "path": "src/domain.js",
+      "bytes": 22402,
+      "sha256": "ca2da94ac03606a77f4f35041552e7979cb6b7eb7834ad2f8bcdeb2b734cc327"
     },
     {
       "path": "src/presentation.js",
@@ -78,14 +118,19 @@
       "sha256": "a92b729c1351b838cbfe4021c575fa007c15ebdce41df53449993adedaa2bd5e"
     },
     {
+      "path": "src/style.css",
+      "bytes": 35420,
+      "sha256": "0f37b92beadad1dde57bd1a62ca8a4ea740a9b874187028105cb270154c929b5"
+    },
+    {
       "path": "tests/art.test.js",
       "bytes": 5678,
       "sha256": "fd345e40095b2bba452b196b05585a702f8f8e741cb864bd3209b5b19301ec78"
     },
     {
       "path": "tests/core.test.js",
-      "bytes": 41805,
-      "sha256": "8eb4464aabcbbbdc4b4d9a621f66309cd8e34fe3b6a04b391b3e984d971837ad"
+      "bytes": 43995,
+      "sha256": "c0c4060b4ad3c188d7f801c5e054cfab1c4c9356b3e86c7b7c9f7c08b0e55cd8"
     },
     {
       "path": "tests/fixtures/serial-run-record.json",
@@ -93,14 +138,25 @@
       "sha256": "8711f6e1527d8aed7d1e6926c9a95020cc11f355a97294c71a23651258a4c1fa"
     }
   ],
-  "unclaimed": [],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 153413,
+      "sha256": "936f253ca1316fa91fca6f36fa8fcca6a901e78750ff5c5d36854e0e11be4f0c"
+    },
+    {
+      "path": "pyto/viewer/fixtures/discstudio-display-card.json",
+      "bytes": 298640,
+      "sha256": "7596ffb108a4c84569392b62895a0f0f151d01697b58f25b1c12406cb2d06a2a"
+    }
+  ],
   "provisional": {
     "count": 0,
     "addresses": []
   },
   "landed_by": "session",
-  "at": "2026-09-11T19:12:15.743693Z",
-  "result_sha": "2487b379d17d28f07207414f51bdbe976958d8e1",
+  "at": "2026-09-11T19:28:58.192221Z",
+  "result_sha": null,
   "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
   "gate": {
     "mode": "none",
