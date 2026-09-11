@@ -11,15 +11,26 @@ import math
 from . import core
 
 
+#: the keys a part may carry its numbers under: a column, a regression, a classifier.
+CARRIERS = ("values", "predictions", "labels", "proba")
+
+
+def numbers_in(part):
+    """the list of numbers inside a part, whichever of the carriers it used."""
+    if not isinstance(part, dict):
+        return list(part)
+    for key in CARRIERS:
+        if key in part:
+            return list(part[key])
+    raise KeyError(f"this part carries no numbers under any of {CARRIERS}: {sorted(part)}")
+
+
 def _pair(args):
-    truth = args["y_true"]
-    guess = args["y_pred"]
-    truth = truth["values"] if isinstance(truth, dict) else truth
-    guess = guess["predictions"] if isinstance(guess, dict) and "predictions" in guess else guess
-    guess = guess["values"] if isinstance(guess, dict) else guess
+    truth = numbers_in(args["y_true"])
+    guess = numbers_in(args["y_pred"])
     if len(truth) != len(guess):
         raise ValueError(f"y_true has {len(truth)} rows and y_pred has {len(guess)}")
-    return list(truth), list(guess)
+    return truth, guess
 
 
 def regression(args):

@@ -9,13 +9,23 @@ from __future__ import annotations
 
 from pyto import Calculation
 
-from . import linear, metrics, resample, trees, unsup
+from . import classify, linear, metrics, resample, trees, unsup
 
 _FUNCTIONS = {
     # supervised: linear
     "linreg_fit": linear.fit,
     "ridge_fit": linear.fit,
     "linreg_predict": linear.predict,
+    # supervised: classifiers
+    "logreg_fit": classify.logreg_fit,
+    "logreg_proba": classify.logreg_proba,
+    "logreg_predict": classify.logreg_predict,
+    "knn_fit": classify.knn_fit,
+    "knn_predict": classify.knn_predict,
+    "gaussian_nb_fit": classify.gaussian_nb_fit,
+    "gaussian_nb_predict": classify.gaussian_nb_predict,
+    "multinomial_nb_fit": classify.multinomial_nb_fit,
+    "multinomial_nb_predict": classify.multinomial_nb_predict,
     # evaluation
     "regression_metrics": metrics.regression,
     "classification_metrics": metrics.classification,

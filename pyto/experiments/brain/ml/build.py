@@ -11,8 +11,10 @@ from __future__ import annotations
 
 import numpy as np
 from pyto import Part
+from scipy import optimize, stats
+from scipy.spatial import distance
 
-from . import calcs, core, linear, metrics, parts, resample
+from . import calcs, core, linear, metrics, parts, resample, tournament
 
 VERTICAL = "ml"
 SECTIONS = []
@@ -100,7 +102,7 @@ def regression_pipeline(store):
             args={"backend": "np", "for": "the held-out error of the closed-form fit"},
         )
 
-    store.run("brain-ml-regression", program, record_name="ml.regression")
+    store.run_program("brain-ml-regression", program, record_name="ml.regression")
 
     # the oracles: an independent route to the same numbers, never the same code.
     train = store.get("px.exp.brain.data.ml.regression_train")
@@ -261,11 +263,201 @@ def benchmarks(store):
         )
 
 
+@section
+def classification_pipeline(store):
+    """one program again, for the classifiers: data, split, four fits, four scores."""
+
+    def program(pcr):
+        pcr.calc(
+            "data", calcs.calc("synthetic_classification"), id="make",
+            into=D("classification"),
+            args={"seed": 29, "n": 300, "d": 4, "k": 3, "spread": 1.6,
+                  "for": "the three-class problem every classifier here is scored on"},
+        )
+        pcr.calc(
+            "split", calcs.calc("train_test_split"), id="split",
+            into=R("train_test_split", "classification"), data=D("classification"),
+            args={"seed": 29, "test_size": 0.3, "stratify": "label",
+                  "for": "a stratified split, so every class is in both halves"},
+        )
+        for which, name in (("train_index", "classification_train"), ("test_index", "classification_test")):
+            pcr.calc(
+                "split", calcs.calc("subset"), id=name,
+                into=D(name), data=D("classification"), index=R("train_test_split", "classification"),
+                args={"which": which, "for": f"the {which.split('_')[0]} half"},
+            )
+        pcr.calc(
+            "fit", calcs.calc("logreg_fit"), id="logreg",
+            into=R("logreg", "classification"), data=D("classification_train"),
+            args={"target": "label", "backend": "np", "method": "newton", "l2": 1.0,
+                  "for": "one-vs-rest logistic regression, by the step the bracket picked"},
+        )
+        pcr.calc(
+            "fit", calcs.calc("knn_fit"), id="knn",
+            into=R("knn", "classification"), data=D("classification_train"),
+            args={"target": "label", "k": 7, "for": "seven neighbours, uniform vote"},
+        )
+        pcr.calc(
+            "fit", calcs.calc("gaussian_nb_fit"), id="gnb",
+            into=R("gaussian_nb", "classification"), data=D("classification_train"),
+            args={"target": "label", "for": "a mean and a variance per feature per class"},
+        )
+        pcr.calc(
+            "predict", calcs.calc("column"), id="truth",
+            into=R("column", "classification_test_label"), data=D("classification_test"),
+            args={"name": "label", "for": "what those held-out rows really were"},
+        )
+        for id_, calc, model in (
+            ("logreg_p", "logreg_predict", R("logreg", "classification")),
+            ("knn_p", "knn_predict", R("knn", "classification")),
+            ("gnb_p", "gaussian_nb_predict", R("gaussian_nb", "classification")),
+        ):
+            pcr.calc(
+                "predict", calcs.calc(calc), id=id_,
+                into=R(calc, "classification_test"), model=model, data=D("classification_test"),
+                args={"backend": "np", "for": f"what {calc} says about rows it never saw"},
+            )
+        for id_, calc in (("logreg_s", "logreg_predict"), ("knn_s", "knn_predict"), ("gnb_s", "gaussian_nb_predict")):
+            pcr.calc(
+                "score", calcs.calc("classification_metrics"), id=id_,
+                into=R("classification_metrics", f"{calc}_test"),
+                y_true=R("column", "classification_test_label"), y_pred=R(calc, "classification_test"),
+                args={"for": f"the held-out accuracy, precision, recall and f1 of {calc}"},
+            )
+
+    store.run_program("brain-ml-classification", program, record_name="ml.classification")
+
+    # the oracles.
+    train = store.get("px.exp.brain.data.ml.classification_train")
+    matrix, targets, _ = core.xy(train, "label")
+    design = np.hstack([np.ones((len(matrix), 1)), np.asarray(matrix)])
+    model = store.get("px.exp.brain.result.ml.logreg.classification")
+    for index, label in enumerate(model["classes"]):
+        y = np.asarray([1.0 if t == label else 0.0 for t in targets])
+
+        def loss(w, y=y):
+            z = design @ w
+            return float(np.sum(np.logaddexp(0.0, z) - y * z) + 0.5 * float(w[1:] @ w[1:]))
+
+        reference = optimize.minimize(
+            loss, np.zeros(design.shape[1]), method="L-BFGS-B",
+            options={"ftol": 1e-16, "gtol": 1e-14, "maxiter": 20000},
+        ).x.tolist()
+        parts.oracle(
+            store, VERTICAL, "logreg_fit", f"one_vs_rest_class_{index}",
+            [model["intercepts"][index]] + model["coefs"][index], reference,
+            "scipy.optimize.minimize on the penalised negative log likelihood", 5e-3,
+            "one-vs-rest is only k independent fits if each one really is that fit",
+        )
+    test = store.get("px.exp.brain.data.ml.classification_test")
+    rows, _, _ = core.xy(test, "label")
+    knn = store.get("px.exp.brain.result.ml.knn.classification")
+    d = distance.cdist(np.asarray(rows), np.asarray(knn["rows"]), metric="euclidean")
+    want = []
+    for row in d:
+        order = sorted(range(len(row)), key=lambda i: (row[i], i))[: knn["k"]]
+        tally = {}
+        for i in order:
+            tally[knn["labels"][i]] = tally.get(knn["labels"][i], 0) + 1
+        want.append(max(sorted(tally), key=lambda label: tally[label]))
+    parts.oracle(
+        store, VERTICAL, "knn_predict", "against_cdist",
+        store.get("px.exp.brain.result.ml.knn_predict.classification_test")["labels"], want,
+        "scipy.spatial.distance.cdist and a vote written from scratch", 0.0,
+        "knn has no parameters to check, so the vote itself is the only thing an oracle can hold",
+    )
+    gnb = store.get("px.exp.brain.result.ml.gaussian_nb.classification")
+    got = store.get("px.exp.brain.result.ml.gaussian_nb_predict.classification_test")["log_posterior"]
+    want = [
+        [float(np.log(prior) + stats.norm.logpdf(row, loc=mu, scale=np.sqrt(var)).sum())
+         for prior, mu, var in zip(gnb["priors"], gnb["means"], gnb["variances"])]
+        for row in rows
+    ]
+    parts.oracle(
+        store, VERTICAL, "gaussian_nb_predict", "log_posterior",
+        got, want, "scipy.stats.norm.logpdf, summed per class", 1e-9,
+        "naive bayes is a sum of log densities; if the densities are wrong nothing downstream shows it",
+    )
+    counts = calcs.call("synthetic_counts", {"seed": 29, "n": 200, "k": 3, "vocabulary": 10, "length": 30})
+    store.put("px.exp.brain.data.ml.counts", counts)
+    mnb = calcs.call("multinomial_nb_fit", {"data": counts, "target": "label", "alpha": 1.0})
+    parts.result(store, VERTICAL, "multinomial_nb", "counts", mnb)
+    predicted = calcs.call("multinomial_nb_predict", {"model": mnb, "data": counts, "backend": "np"})
+    parts.result(store, VERTICAL, "multinomial_nb_predict", "counts", {k: predicted[k] for k in ("for", "classes", "labels")})
+    count_rows, count_labels, _ = core.xy(counts, "label")
+    reference = [
+        [float(np.log(prior) + np.dot(row, probabilities))
+         for prior, probabilities in zip(mnb["priors"], mnb["log_prob"])]
+        for row in count_rows
+    ]
+    parts.oracle(
+        store, VERTICAL, "multinomial_nb_predict", "log_posterior",
+        predicted["log_posterior"][:25], reference[:25],
+        "numpy, the log-count dot product written out longhand, on the first 25 rows", 1e-9,
+        "the np backend of a classifier must not quietly become a different classifier",
+    )
+    scored = calcs.call("classification_metrics", {"y_true": count_labels, "y_pred": predicted["labels"]})
+    parts.result(store, VERTICAL, "classification_metrics", "multinomial_nb_counts", scored)
+    parts.oracle(
+        store, VERTICAL, "multinomial_nb_predict", "recovers_the_profiles_it_was_drawn_from",
+        scored["accuracy"] > 0.85, True,
+        "the known per-class word profiles the counts were drawn from", 0.0,
+        "a generative model that cannot recover its own generator is not fitted, it is decorated",
+    )
+    # a binary problem, so roc auc has something to say.
+    binary = calcs.call("synthetic_classification", {"seed": 30, "n": 200, "d": 3, "k": 2, "spread": 2.4})
+    store.put("px.exp.brain.data.ml.binary", binary)
+    fitted = calcs.call("logreg_fit", {"data": binary, "target": "label", "backend": "np", "method": "newton", "l2": 1.0})
+    proba = calcs.call("logreg_proba", {"model": fitted, "data": binary})
+    truth = [row[-1] for row in core.as_rows(binary)]
+    auc = calcs.call("roc_auc", {"y_true": truth, "y_pred": [p[1] for p in proba["proba"]], "positive": 1.0})
+    parts.result(store, VERTICAL, "roc_auc", "logreg_binary", auc)
+    positives = [p[1] for p, t in zip(proba["proba"], truth) if t == 1.0]
+    negatives = [p[1] for p, t in zip(proba["proba"], truth) if t != 1.0]
+    u = float(stats.mannwhitneyu(positives, negatives, alternative="two-sided").statistic)
+    parts.oracle(
+        store, VERTICAL, "roc_auc", "logreg_binary",
+        auc["auc"], u / (len(positives) * len(negatives)),
+        "scipy.stats.mannwhitneyu on the fitted probabilities", 1e-12,
+        "a threshold-free score is what makes two classifiers comparable when the classes are uneven",
+    )
+    curve = calcs.call("roc_curve", {"y_true": truth, "y_pred": [p[1] for p in proba["proba"]], "positive": 1.0})
+    parts.result(store, VERTICAL, "roc_curve", "logreg_binary", curve)
+
+
+@section
+def classifier_benchmarks(store):
+    """the np backend against the reference, on the two calculations that carry the most arithmetic."""
+    data = calcs.call("synthetic_classification", {"seed": 31, "n": 600, "d": 8, "k": 2, "spread": 2.0})
+    for backend in ("py", "np"):
+        parts.bench(
+            store, VERTICAL, "logreg_fit", backend, "n600_d8_newton",
+            lambda backend=backend: calcs.call(
+                "logreg_fit", {"data": data, "target": "label", "backend": backend, "method": "newton", "l2": 1.0}
+            ), 3,
+            "newton builds an n-by-d-by-d hessian per step: the worst case for a python loop",
+        )
+    model = calcs.call("knn_fit", {"data": data, "target": "label", "k": 7})
+    for backend in ("py", "np"):
+        parts.bench(
+            store, VERTICAL, "knn_predict", backend, "n600_d8_k7",
+            lambda backend=backend: calcs.call("knn_predict", {"model": model, "data": data, "backend": backend}), 3,
+            "knn is one n-by-n distance matrix and nothing else",
+        )
+
+
+@section
+def tournaments(store):
+    """the brackets, rebuilt from their candidates every time this runs."""
+    for build_bracket in tournament.BRACKETS:
+        build_bracket(store)
+
+
 # --- the map and the findings ------------------------------------------------
 
 
 def map_and_findings(store):
-    built = [a for a in store.addresses("px.exp.brain.") if not a.startswith("px.receipt.")]
+    built = list(store.brain_addresses())
     stubbed = list(STUBBED)
     parts.map_part(
         store, VERTICAL, built, stubbed, NEXT,
@@ -277,13 +469,13 @@ def map_and_findings(store):
 
 
 STUBBED = [
-    {"address": "fn.brain.ml.lasso_fit", "why": "coordinate descent is written for the next slice; ridge covers the penalised case today"},
+    {"address": "fn.brain.ml.lasso_fit", "why": "coordinate descent is queued behind the classifiers; ridge covers the penalised case today"},
     {"address": "fn.brain.ml.dbscan", "why": "density clustering is behind k-means and the hierarchies in the queue"},
+    {"address": "fn.brain.ml.logreg_fit multinomial", "why": "multiclass is one-vs-rest, not a softmax; the softmax needs its own oracle and is not worth a half-checked one"},
+    {"address": "fn.brain.ml.knn_fit approximate", "why": "the exact vote is the reference; a kd-tree or ball-tree is a backend of it, and belongs after the shared pairwise-distance primitive"},
 ]
 
 NEXT = [
-    {"what": "logistic regression, knn and naive bayes on this same split and these same metrics",
-     "for": "classification is half the surface and every metric above is already oracled for it"},
     {"what": "cart, a small forest and small gradient boosting",
      "for": "the non-linear half; the split-search is the one place the py backend will really hurt"},
     {"what": "k-means with a seeded k-means++ init, and pca through svd",
@@ -293,6 +485,25 @@ NEXT = [
 ]
 
 FINDINGS = {
+    "newton-beats-descent-once-the-hessian-is-one-matmul": {
+        "kind": "strength",
+        "text": "the logistic bracket says it plainly: on 400 rows and 6 columns, newton/irls through numpy is about 22 times faster than the same steps in python and about 200 times faster than full-batch gradient descent, and all three land on scipy's penalised optimum. the cost of newton is a solve per step, and one weighted matmul pays for it.",
+        "for": "gradient descent is the default in most teaching code; on this shape it is the slowest correct answer, and the bracket is the evidence rather than the opinion",
+    },
+    "a-linear-speed-criterion-is-decided-by-its-slowest-branch": {
+        "kind": "friction",
+        "text": "scored on raw milliseconds, the bracket's winner flipped: min-max normalising wall time across candidates lets one slow branch compress the fast ones into a rounding difference, and a docstring then decided a 22x speed gap.",
+        "for": "a tournament whose verdict is an artefact of its normalisation teaches the wrong lesson and is worse than no tournament",
+        "workaround": "the criterion recorded in the bracket is log2 of the median, so a constant factor is a constant distance whatever the spread of the field",
+        "proposal": "harness.decide should offer a log or a rank normalisation per criterion, declared in the criterion next to its direction and weight, so timing criteria are not silently linear",
+    },
+    "one-pairwise-distance-is-recomputed-by-three-calculations": {
+        "kind": "friction",
+        "text": "knn_predict, silhouette and (next) k-means each build the same n-by-n euclidean matrix, each with their own np spelling of it. the identity |a-b|^2 = |a|^2 - 2ab + |b|^2 is written twice already in this vertical.",
+        "for": "it is the single hottest kernel in the unsupervised half, and three copies means three places for a backend to change semantics",
+        "workaround": "knn_predict uses the matmul identity, silhouette uses the broadcast subtraction; both are oracled against scipy cdist so at least they agree",
+        "proposal": "fn.brain.backend.pairwise(metric) as one calculation in the backend vertical, with knn, silhouette, k-means and dbscan routed through it and one oracle against scipy.spatial.distance.cdist covering all four",
+    },
     "seed-in-args-makes-one-oracle-cover-two-backends": {
         "kind": "strength",
         "text": "every seeded calculation here reads one deterministic Stream built from args['seed'], never random or numpy's generator. the py and np backends then return the same bytes, so a seeded calculation needs one oracle instead of one per backend, and a record replays exactly.",
@@ -348,11 +559,16 @@ def main():
     store = build()
     view = parts.navigate(store)
     print(f"ml vertical: {len(store.document())} parts")
-    for kind in ("data", "result", "oracle", "bench", "bracket", "map"):
-        print(f"  {kind:<8} {len(view[kind])}")
-    print(f"  oracles  {view['oracles_passing']} of {view['oracles_total']} passing")
-    print(f"  findings {len(view['findings'])}")
-    return 0 if view["oracles_passing"] == view["oracles_total"] else 1
+    for kind, row in sorted(view["counts"].items()):
+        if "ml" in row:
+            print(f"  {kind:<9} {row['ml']}")
+    failed = [one["address"] for one in view["oracles"]["failed"] if ".ml." in one["address"]]
+    print(f"  oracles   {view['oracles']['total'] - len(failed)} of {view['oracles']['total']} passing")
+    print(f"  findings  {len([f for f in view['findings'] if f['address'].startswith('proposal.brain.ml.')])}")
+    if failed:
+        for address in failed:
+            print(f"  FAILED    {address}")
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
