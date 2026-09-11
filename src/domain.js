@@ -1,8 +1,13 @@
 import { defaultCards, validateCards, applyCardsSet, validatePresetCascade } from './cards.js';
+import { validateBattleRule } from './constraints.js';
+import { battleTemplates, placeOrder } from './battle.js';
 import { framePresets, orientations } from './frames.js';
 /** Runtime domain definitions drive both fact editing and presentation discovery. */
 export const schema = {
-  BattleEntry: { label: 'Current comparison entry', fields: { score: { type: 'number', label: 'Score', optional: true }, highlighted: { type: 'boolean', label: 'Highlighted' }, winner: { type: 'boolean', label: 'Authored winner' } } },
+  // `place`, `points`, `total` and `standing` are produced by fn.battle.standings
+  // (src/battle.js) and nowhere else, so a preset can bind the standings the same
+  // way it binds a score, and the number on the card is the number in the panel.
+  BattleEntry: { label: 'Current comparison entry', fields: { score: { type: 'number', label: 'Score', optional: true }, place: { type: 'number', label: 'Place', optional: true }, points: { type: 'number', label: 'Points', optional: true }, total: { type: 'number', label: 'Running total', optional: true }, standing: { type: 'number', label: 'Standing', optional: true }, highlighted: { type: 'boolean', label: 'Highlighted' }, winner: { type: 'boolean', label: 'Authored winner' } } },
   Manufacturer: { label: 'Manufacturer', fields: { name: { type: 'text', label: 'Manufacturer', group: 'Disc identity', order: 1 }, website: { type: 'text', label: 'Website' } } },
   Mold: { label: 'Mold', fields: {
     name: { type: 'text', label: 'Mold name', group: 'Disc identity', order: 0 }, manufacturer: { type: 'ref', target: 'Manufacturer', key: 'manufacturerId', label: 'Manufacturer' },
@@ -98,6 +103,16 @@ export function validateWorld(world) {
       if (type === 'Bag' && (!Array.isArray(record.discIds) || new Set(record.discIds).size !== record.discIds.length)) throw new Error('A bag must contain unique physical-disc references.');
     }
   }
+  // A draft saved before a battle was composed of Constraints carries none, and
+  // opens as the open battle -- authored scores, no cap, no points -- rather than
+  // being refused. Same rule as the layout's canvas above: normalise, never guess.
+  let battle = world.battle;
+  if (!Array.isArray(battle.constraints) || typeof battle.combine !== 'string' || typeof battle.templateId !== 'string')
+    battle = { ...battle, constraints: Array.isArray(battle.constraints) ? battle.constraints : [], combine: typeof battle.combine === 'string' ? battle.combine : 'all', templateId: typeof battle.templateId === 'string' ? battle.templateId : 'open' };
+  if (!['all', 'any'].includes(battle.combine)) throw new Error('A battle composes its constraints with all or any.');
+  if (battle.templateId !== 'custom' && !battleTemplates[battle.templateId]) throw new Error(`Unknown battle template '${battle.templateId}'.`);
+  if (battle.constraints.length > 12 || new Set(battle.constraints.map(rule => rule.id)).size !== battle.constraints.length) throw new Error('Battle constraints must be distinct.');
+  for (const rule of battle.constraints) validateBattleRule(rule);
   if (!Array.isArray(world.battle.entries) || world.battle.entries.length > 12 || new Set(world.battle.entries.map(e => e.id)).size !== world.battle.entries.length) throw new Error('Invalid comparison lineup (maximum 12).');
   if (!Array.isArray(world.battle.states) || !currentBattle(world)) throw new Error('Comparison state is missing.');
   for (const s of world.battle.states) {
@@ -129,7 +144,7 @@ export function validateWorld(world) {
   let cards = world.cards;
   if (!cards) cards = defaultCards();
   else if (Object.hasOwn(cards, 'projections')) { const { projections, ...rest } = cards; cards = rest; }
-  const result = cards === world.cards && layout === world.layout ? world : { ...world, cards, layout };
+  const result = cards === world.cards && layout === world.layout && battle === world.battle ? world : { ...world, cards, layout, battle };
   validateCards(result.cards);
   return result;
 }
@@ -210,6 +225,10 @@ export function applyCommand({ world: previous, command }) {
     case 'bag.remove': { if (all(w, 'Team').some(t => t.bagId === c.id)) throw new Error('This bag belongs to a competition team. Reassign the team first.'); delete w.objects.Bag[c.id]; break; }
     case 'battle.add': {
       required('Disc', c.discId); if (w.battle.entries.some(e => e.discId === c.discId)) throw new Error('That physical disc is already in the comparison.');
+      // The cap is a Constraint of this battle, refused here by the same sentence
+      // the rules panel shows. Nothing is silently dropped to fit.
+      const cap = w.battle.constraints.find(rule => rule.enabled && rule.kind === 'discCap');
+      if (cap && w.battle.entries.length >= cap.value) throw new Error(`This battle caps the lineup at ${cap.value} discs and it is full. Remove one before adding another, or raise the cap.`);
       w.battle.entries.push({ id: c.id, discId: c.discId }); w.battle.states.forEach(s => { s.scores[c.id] = null; }); break;
     }
     case 'battle.remove': w.battle.entries = w.battle.entries.filter(e => e.id !== c.id); w.battle.states.forEach(s => { delete s.scores[c.id]; if (s.highlight === c.id) s.highlight = null; s.winners = s.winners.filter(x => x !== c.id); }); break;
@@ -221,6 +240,13 @@ export function applyCommand({ world: previous, command }) {
     case 'battle.state.select': if (!w.battle.states.some(s => s.id === c.id)) throw new Error('State is missing.'); w.battle.currentStateId = c.id; break;
     case 'battle.state.rename': state.name = c.name; break;
     case 'battle.state.remove': if (w.battle.states.length === 1) throw new Error('Keep at least one state.'); w.battle.states = w.battle.states.filter(s => s.id !== c.id); if (!w.battle.states.some(s => s.id === w.battle.currentStateId)) w.battle.currentStateId = w.battle.states[0].id; break;
+    case 'battle.template': { const template = battleTemplates[c.id]; if (!template) throw new Error(`Unknown battle template '${c.id}'.`); w.battle.templateId = template.id; w.battle.constraints = clone(template.constraints); break; }
+    case 'battle.rule.add': { if (w.battle.constraints.some(rule => rule.id === c.rule.id)) throw new Error('That constraint is already composed into this battle.'); w.battle.constraints.push(clone(c.rule)); w.battle.templateId = 'custom'; break; }
+    case 'battle.rule.set': { const rule = w.battle.constraints.find(r => r.id === c.ruleId); if (!rule) throw new Error('That battle constraint is missing.'); Object.assign(rule, c.patch); w.battle.templateId = 'custom'; break; }
+    case 'battle.rule.remove': w.battle.constraints = w.battle.constraints.filter(rule => rule.id !== c.ruleId); w.battle.templateId = 'custom'; break;
+    // Tapping the finishing order IS entering the scores: one command, one undo.
+    case 'battle.order': { if (!w.battle.entries.some(e => e.id === c.id)) throw new Error('Participant is missing.'); state.scores = placeOrder({ state, entries: w.battle.entries, entryId: c.id }); break; }
+    case 'battle.order.clear': for (const entry of w.battle.entries) state.scores[entry.id] = null; break;
     case 'preset.put': w.presets[c.preset.id] = clone(validatePreset(c.preset)); break;
     case 'preset.set': { const p = w.presets[c.id]; if (!p) throw new Error('Presentation is missing.'); if (c.nodeId) { const node = p.nodes.find(n => n.id === c.nodeId); if (!node) throw new Error('Element is missing.'); Object.assign(node, c.patch); } else Object.assign(p, c.patch); break; }
     case 'preset.node.add': w.presets[c.id].nodes.push(clone(c.node)); break;

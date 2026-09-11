@@ -228,10 +228,11 @@ test('the execution receipt reaches the run record: material digests and reuse a
   const r = seededScene(), first = r.runRecord('on-the-course').record;
   const digests = first.ticks.flatMap(t => t.invocations).map(i => i.result_sha256);
   assert.equal(digests.filter(d => typeof d === 'string' && d.includes(':')).length, digests.length);
-  // the Frame is the first Tick of the comparison now (the canvas and the safe
-  // area the cards are fitted into); the card chain's first step follows it
+  // the comparison starts with the Frame (the canvas and the safe area) and the
+  // Standings (the points every card then reads); the card chain follows them
+  assert.deepEqual(first.ticks.slice(0, 3).map(t => t.name.split(':')[0]), ['Frame', 'Standings', 'Entry']);
   assert.match(first.ticks[0].invocations[0].result_sha256, /^overlay\.frame:/);
-  assert.match(first.ticks[1].invocations[0].result_sha256, /^domain\.fields:/);
+  assert.match(first.ticks.find(t => t.name.startsWith('Fields:')).invocations[0].result_sha256, /^domain\.fields:/);
   r.scene({ mode: 'battle', ...context });
   const again = r.runRecord('on-the-course').record.ticks.flatMap(t => t.invocations);
   assert.ok(again.every(i => i.hit), 'a repeated render reads only material that already existed');
@@ -337,13 +338,13 @@ test('the Inspect receipts list is a PQL query over px.receipt.* publishing two 
   const first = r.receipts();
   // task 131: the shelf's art assignment is a run of its own (art-assignment, one invocation, one Part), listed beside the scene
   assert.deepEqual(first.rows.map(row => row.name), ['art-assignment', 'on-the-course']);
-  assert.deepEqual(first.summary, { receipts: 2, invocations: 22, produces: 22, digest: first.summary.digest });
+  assert.deepEqual(first.summary, { receipts: 2, invocations: 26, produces: 26, digest: first.summary.digest });
   assert.match(first.summary.digest, /^[0-9a-f]{8}$/);
   assert.deepEqual(r.pxc.get('px.studio.receipts'), first.rows);
   assert.deepEqual(r.pxc.get('px.studio.receipts.summary'), first.summary);
   const scene = first.rows.find(row => row.name === 'on-the-course');
   assert.equal(scene.address, 'px.receipt.on-the-course');
-  assert.equal(scene.invocations, 21); // task 78: each of the 3 lineup entries gains a Cascade Tick of 2 Calculations (14 + 3*2); the comparison's own Frame is one more
+  assert.equal(scene.invocations, 25); // 14 + 3*2 (each entry's Cascade Tick) + the comparison's own Frame and Standings + one fn.battle.entry per entry
   assert.ok(scene.consumes.includes('px.domain.Disc.buzzz-mint') && scene.consumes.includes('px.course.scene'));
   assert.ok(scene.produces.includes('px.course.svg') && scene.produces.includes('px.render.course.entry-1.card'));
   assert.deepEqual(scene.consumes, [...scene.consumes].sort());

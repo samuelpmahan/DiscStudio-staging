@@ -2,7 +2,8 @@ import { createSeed } from './seed.js';
 import { createStudioRuntime } from './runtime.js';
 import { get, all, currentBattle, clone, id, labelHash, sampleHueFor, validateWorld } from './domain.js';
 import { esc, fieldNode, sampleColors } from './presentation.js';
-import { constraintDefinitions } from './constraints.js';
+import { constraintDefinitions, battleConstraintDefinitions, TIE_MODES, SCORE_MODES, rulePoints } from './constraints.js';
+import { battleTemplates } from './battle.js';
 import { framePresets, canvasFor } from './frames.js';
 import { reviewItems } from './review.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
@@ -22,7 +23,7 @@ const ui = {
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
-  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single',
+  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single', battleRules: null,
   labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null
 };
 const w = () => runtime.world();
@@ -169,10 +170,45 @@ function coursePreview(result, editor = false) {
 }
 function modeTabs() { return `<div class="segmented">${button('Single Disc', 'mode', { value: 'card' }, ui.mode === 'card' ? 'active' : '')}${button('DiscBattle', 'mode', { value: 'battle' }, ui.mode === 'battle' ? 'active' : '')}</div>`; }
 function courseCenter(result) {
-  const battle = w().battle, state = currentBattle(w());
+  const battle = w().battle, state = currentBattle(w()), standings = result.standings ?? null;
   return `<section class="center course-center" data-scroll="center"><div class="section-heading compact"><div><span class="eyebrow">ON THE COURSE</span><h1>Your discs. Your screen.</h1></div>${modeTabs()}</div>${coursePreview(result)}<div class="pxc-strip"><span class="mono">${result.part}</span><span>${result.run.computed} computed · ${result.run.reused} reused</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${ui.mode === 'battle' ? `<div class="section-toolbar"><div><h2>On screen <small>${battle.entries.length} / 12</small></h2><p class="tiny muted">Edit scores. Highlight any disc. Mark your winner.</p></div>${button('Clear highlight', 'highlight', { id: '' }, 'quiet')}${button('Clear lineup', 'lineup-clear', {}, 'quiet danger')}</div><div class="lineup">${battle.entries.map((entry, index) => {
-    const { disc, mold } = discInfo(entry.discId); return `<div class="lineup-entry ${state.highlight === entry.id ? 'highlighted' : ''}"><button class="lineup-disc" data-action="disc-select" data-id="${esc(entry.discId)}"><span class="disc-thumb">${safeThumb(entry.discId)}</span><span><strong>${esc(mold?.name || 'Missing disc')}</strong><small>${esc(disc?.nickname)}</small></span></button><div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', `aria-label="Decrease score: ${esc(disc?.nickname)}"`)}<input aria-label="Score: ${esc(disc?.nickname)}" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', `aria-label="Increase score: ${esc(disc?.nickname)}"`)}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-label="Mark winner: ${esc(disc?.nickname)}" aria-pressed="${state.winners.includes(entry.id)}"`)}<div class="ordering">${button('↑', 'lineup-move', { id: entry.id, value: -1 }, 'quiet', `aria-label="Move participant up" ${index === 0 ? 'disabled' : ''}`)}${button('↓', 'lineup-move', { id: entry.id, value: 1 }, 'quiet', `aria-label="Move participant down" ${index === battle.entries.length - 1 ? 'disabled' : ''}`)}</div>${button('×', 'lineup-remove', { id: entry.id }, 'quiet', `aria-label="Remove participant: ${esc(disc?.nickname)}"`)}</div>`;
-  }).join('') || '<div class="empty-note">Add physical discs from the shelf to start a comparison.</div>'}</div><section class="states-section"><div class="section-toolbar"><div><span class="eyebrow">ONE COMPARISON. MANY STATES.</span><h2>The next moment.</h2></div>${button('+ Duplicate current state', 'state-add', {}, 'secondary')}</div><div class="state-tabs">${battle.states.map((s, i) => button(`<small>${String(i + 1).padStart(2, '0')}</small> ${esc(s.name)}`, 'state-select', { id: s.id }, s.id === state.id ? 'active' : '')).join('')}</div><div class="button-row">${button('Rename current', 'state-rename', {}, 'quiet small')}${button('Delete current', 'state-remove', {}, 'quiet small danger')}${button('Export SVG state bundle ↓', 'states-export', {}, 'quiet small')}</div><p class="tiny muted">States are editable snapshots. PNG exports are still images; the motion preview is not a video export.</p></section>` : '<div class="principle-strip"><span>A SINGLE DISC IS THE SAME PRIMITIVE.</span><p>The selected shelf disc uses exactly the same saved presentation as your comparison.</p></div>'}${tracePanel(result.run)}</section>`;
+    const { disc, mold } = discInfo(entry.discId); return `<div class="lineup-entry ${state.highlight === entry.id ? 'highlighted' : ''}"><button class="lineup-disc" data-action="disc-select" data-id="${esc(entry.discId)}"><span class="disc-thumb">${safeThumb(entry.discId)}</span><span><strong>${esc(mold?.name || 'Missing disc')}</strong><small>${esc(disc?.nickname)}</small></span></button>${orderButton(entry, index, standings)}<div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', `aria-label="Decrease score: ${esc(disc?.nickname)}"`)}<input aria-label="Score: ${esc(disc?.nickname)}" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', `aria-label="Increase score: ${esc(disc?.nickname)}"`)}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-label="Mark winner: ${esc(disc?.nickname)}" aria-pressed="${state.winners.includes(entry.id)}"`)}<div class="ordering">${button('↑', 'lineup-move', { id: entry.id, value: -1 }, 'quiet', `aria-label="Move participant up" ${index === 0 ? 'disabled' : ''}`)}${button('↓', 'lineup-move', { id: entry.id, value: 1 }, 'quiet', `aria-label="Move participant down" ${index === battle.entries.length - 1 ? 'disabled' : ''}`)}</div>${button('×', 'lineup-remove', { id: entry.id }, 'quiet', `aria-label="Remove participant: ${esc(disc?.nickname)}"`)}</div>`;
+  }).join('') || '<div class="empty-note">Add physical discs from the shelf to start a comparison.</div>'}</div>${battleRulesSection(ui.battleRules)}${standingsSection(standings)}<section class="states-section"><div class="section-toolbar"><div><span class="eyebrow">ONE COMPARISON. MANY STATES.</span><h2>The next moment.</h2></div>${button('+ Duplicate current state', 'state-add', {}, 'secondary')}</div><div class="state-tabs">${battle.states.map((s, i) => button(`<small>${String(i + 1).padStart(2, '0')}</small> ${esc(s.name)}`, 'state-select', { id: s.id }, s.id === state.id ? 'active' : '')).join('')}</div><div class="button-row">${button('Rename current', 'state-rename', {}, 'quiet small')}${button('Delete current', 'state-remove', {}, 'quiet small danger')}${button('Export SVG state bundle ↓', 'states-export', {}, 'quiet small')}</div><p class="tiny muted">States are editable snapshots. PNG exports are still images; the motion preview is not a video export.</p></section>` : '<div class="principle-strip"><span>A SINGLE DISC IS THE SAME PRIMITIVE.</span><p>The selected shelf disc uses exactly the same saved presentation as your comparison.</p></div>'}${tracePanel(result.run)}</section>`;
+}
+/**
+ * The battle's own rules. A template is one gesture; what it composed is three
+ * reusable Constraints with their parameters, each showing the status
+ * `fn.constraint.combine` gave it -- the same composition a Competition uses.
+ */
+function battleRulesSection(rules) {
+  const battle = w().battle, template = battleTemplates[battle.templateId];
+  const options = [...Object.values(battleTemplates).map(t => [t.id, t.name]), ...(template ? [] : [['custom', 'Custom · edited by hand']])];
+  return `<section class="battle-rules"><div class="section-toolbar"><div><span class="eyebrow">A BATTLE IS COMPOSED OF CONSTRAINTS</span><h2>The rules.</h2></div><label class="inline-control">Template ${select('battle-template', battle.templateId, options)}</label>${rules ? `<span class="result-status ${esc(rules.status)}">${rules.status === 'pending' ? 'In progress' : rules.status === 'unconstrained' ? 'No rules' : esc(rules.status)}</span>` : ''}</div><p class="tiny muted">${esc(template ? template.about : 'Edited by hand from the constraint library. Picking a template starts again from one.')}</p><div class="battle-rule-list">${battle.constraints.map(rule => battleRuleRow(rule, rules)).join('') || '<p class="empty-note">No constraints: the scores and the winner are exactly what you author.</p>'}</div>${battle.constraints.length ? `<p class="tiny muted"><span class="mono">px.battle.validation</span> · composed by <span class="mono">fn.constraint.combine</span>, the same Calculation a competition uses</p>` : ''}</section>`;
+}
+function battleRuleRow(rule, rules) {
+  const def = battleConstraintDefinitions[rule.kind], outcome = rules?.rules?.find(r => r.id === rule.id) ?? null;
+  const parameter = rule.kind === 'discCap'
+    ? `<input type="number" min="1" max="12" data-control="battle-rule-value" data-id="${esc(rule.id)}" aria-label="Discs in the battle" value="${rule.value}"><span>${esc(def.unit)}</span>`
+    : rule.kind === 'placesPoints'
+      ? `<input type="text" data-control="battle-rule-points" data-id="${esc(rule.id)}" aria-label="Points per place" value="${esc(rulePoints(rule).join(', '))}" size="9"><span>pt per place</span>${select('battle-rule-mode', rule.mode ?? 'low', Object.entries(SCORE_MODES), `data-id="${esc(rule.id)}"`)}`
+      : select('battle-rule-mode', rule.mode ?? 'share', Object.entries(TIE_MODES), `data-id="${esc(rule.id)}"`);
+  return `<article class="battle-rule" data-rule="${esc(rule.id)}" data-status="${esc(outcome?.status ?? 'off')}"><div class="battle-rule-heading"><label class="check"><input type="checkbox" data-control="battle-rule-enabled" data-id="${esc(rule.id)}" ${rule.enabled ? 'checked' : ''}><strong>${esc(def?.label || rule.kind)}</strong></label><span class="result-status ${esc(outcome?.status ?? 'disabled')}">${esc(outcome?.status ?? 'off')}</span></div><div class="rule-parameter">${parameter}${button('×', 'battle-rule-remove', { id: rule.id }, 'quiet small', `aria-label="Remove constraint: ${esc(def?.label || rule.kind)}"`)}</div><p class="tiny muted">${esc(outcome?.details?.[0]?.message ?? def?.description ?? '')}</p><span class="mono tiny">${esc(def?.call ?? '')}</span></article>`;
+}
+/** The standings as `fn.battle.standings` produced them: nothing here recomputes a number. */
+function standingsSection(standings) {
+  if (!standings) return '';
+  return `<section class="standings-section"><div class="section-toolbar"><div><span class="eyebrow">SCORED BY ONE CALCULATION, ON THE RECORD</span><h2>Standings.</h2></div>${button('Clear this state', 'order-clear', {}, 'quiet small')}</div><div class="table-scroll"><table class="standings-table"><thead><tr><th>#</th><th>Disc</th><th>This state</th><th>Points</th><th>Total</th></tr></thead><tbody>${standings.table.map(row => `<tr data-standing="${esc(row.entryId)}"><td>${row.standing ?? '—'}</td><td>${esc(row.name)}</td><td>${row.score ?? '—'}${row.tied ? ' · tied' : ''}</td><td data-points>${row.points ?? '—'}</td><td data-total>${row.total ?? '—'}</td></tr>`).join('')}</tbody></table></div><p class="tiny muted">${esc(standings.sentence)}</p><span class="mono tiny">px.battle.standings</span></section>`;
+}
+const ordinal = n => ['1st', '2nd', '3rd'][n - 1] ?? `${n}th`;
+/**
+ * One tap enters a result: the tapped disc takes the next free place and its
+ * score is that place. Tapping it again takes it back out. The number on the
+ * left is the key that does the same thing from the keyboard.
+ */
+function orderButton(entry, index, standings) {
+  const row = standings?.table.find(t => t.entryId === entry.id) ?? null, place = row?.place ?? null;
+  if (standings && standings.scheme.mode === 'high') return '';
+  return `<span class="key-hint" aria-hidden="true">${index < 9 ? index + 1 : '·'}</span>${button(place ? ordinal(place) : 'tap', 'battle-order', { id: entry.id }, `place-tap ${place ? 'active' : ''}`, `aria-label="Finishing order for this state: ${esc(entry.discId)}" aria-pressed="${!!place}"`)}`;
 }
 /**
  * The comparison's arrangements. `course` is offered only when a course exists to
@@ -478,6 +514,7 @@ function render() {
       body = `${shelfSidebar()}${shelfCenter()}${discInspector()}`;
     } else if (ui.route === 'course') {
       ui.lastResult = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() });
+      ui.battleRules = ui.mode === 'battle' ? runtime.battle() : null;
       body = `${shelfSidebar()}${courseCenter(ui.lastResult)}${courseInspector()}`;
     } else if (ui.route === 'course-build') {
       // The last Stage's own receipt is the run this route shows; nothing is
@@ -620,6 +657,9 @@ async function action(name, el) {
     case 'lineup-remove': execute({ type: 'battle.remove', id: d.id }); break;
     case 'lineup-clear': if (confirm('Clear the comparison lineup and its scores/highlights in every state? Your shelf and bags remain unchanged.')) for (const e of [...w().battle.entries]) execute({ type: 'battle.remove', id: e.id }); break;
     case 'lineup-move': execute({ type: 'battle.move', id: d.id, offset: +d.value }); break;
+    case 'battle-order': execute({ type: 'battle.order', id: d.id }); ui.motionEntry = d.id; break;
+    case 'order-clear': execute({ type: 'battle.order.clear' }); message('This state is clear. Tap the finishing order again, or type the scores.'); break;
+    case 'battle-rule-remove': execute({ type: 'battle.rule.remove', ruleId: d.id }); break;
     case 'score-step': execute({ type: 'battle.score', id: d.id, score: (currentBattle(w()).scores[d.id] ?? 0) + +d.value }); ui.motionEntry = d.id; break;
     case 'highlight': execute({ type: 'battle.highlight', id: d.id }); break;
     case 'winner': execute({ type: 'battle.winner', id: d.id }); break;
@@ -717,6 +757,11 @@ function controlChange(el) {
     case 'flight': execute({ type: 'entity.set', entityType: 'Mold', id: mold.id, path: `flight.${d.key}`, value: number() }); break;
     case 'score': execute({ type: 'battle.score', id: d.id, score: number() }); ui.motionEntry = d.id; break;
     case 'course-preset': ui.presetId = value; execute({ type: 'layout.set', patch: { presetId: value } }); break;
+    case 'battle-template': { execute({ type: 'battle.template', id: value }); const template = battleTemplates[value]; message(`${template.name}. ${template.about}`); break; }
+    case 'battle-rule-enabled': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { enabled: el.checked } }); break;
+    case 'battle-rule-value': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { value: number() } }); break;
+    case 'battle-rule-mode': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { mode: value } }); break;
+    case 'battle-rule-points': { const points = value.split(/[^0-9]+/).filter(Boolean).map(Number); execute({ type: 'battle.rule.set', ruleId: d.id, patch: { points, value: points.length } }); break; }
     case 'arrangement': execute({ type: 'layout.set', patch: { arrangement: value } }); break;
     case 'frame-preset': execute({ type: 'layout.set', patch: { frame: { ...w().layout.frame, presetId: value } } }); break;
     case 'frame-title': execute({ type: 'layout.set', patch: { frame: { ...w().layout.frame, title: value.slice(0, 80) } } }); break;
@@ -782,6 +827,21 @@ window.addEventListener('pointermove', event => {
 function flushDrag() { if (!pendingMove) return; const command = pendingMove; pendingMove = null; try { execute(command); render(); } catch (error) { message(error.message, true); } }
 window.addEventListener('pointerup', () => { cancelAnimationFrame(dragFrame); flushDrag(); drag = null; });
 window.addEventListener('pointercancel', () => { cancelAnimationFrame(dragFrame); pendingMove = null; drag = null; });
+/**
+ * Entering a hole from the keyboard: 1..9 taps that disc into the finishing
+ * order (the same command the button dispatches), 0 or Backspace clears the
+ * state. Nothing here writes a score the order does not imply.
+ */
+window.addEventListener('keydown', event => {
+  if (ui.route !== 'course' || ui.mode !== 'battle' || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+  const entries = w().battle.entries;
+  const command = /^[1-9]$/.test(event.key) && entries[+event.key - 1] ? { type: 'battle.order', id: entries[+event.key - 1].id }
+    : event.key === '0' || event.key === 'Backspace' ? { type: 'battle.order.clear' } : null;
+  if (!command) return;
+  event.preventDefault();
+  try { execute(command); ui.motionEntry = command.id ?? null; } catch (error) { message(error.cause?.message || error.message, true); }
+  render();
+});
 window.addEventListener('keydown', event => {
   if (ui.route !== 'components' || !ui.nodeId || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
   const node = w().presets[ui.presetId]?.nodes.find(n => n.id === ui.nodeId); if (!node) return;
