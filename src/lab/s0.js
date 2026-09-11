@@ -14,10 +14,8 @@
  * the single-image portrait-phone row-entropy chrome detector
  * (`g0/stripChrome.ts`), and the single-tile crop (`g0/composite.ts`).
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { digestOf } from './lab.js';
-import { SOURCE } from './source.js';
+import { readSource, readSourceJson } from './source-data.js';
 import { compileMermaidPcr, lowerToPql } from './mermaid.js';
 import { labDocument } from './address.js';
 
@@ -132,7 +130,7 @@ export function registerS0(lab, { cache = new Map() } = {}) {
 
 /** The compiled Mermaid S0, lowered and lowercased: the Ticks Decode and Crop. */
 export function compiledS0() {
-  const compiled = compileMermaidPcr(readFileSync(join(SOURCE, 'S0.mmd'), 'utf8'), JSON.parse(readFileSync(join(SOURCE, 'S0.args.json'), 'utf8')));
+  const compiled = compileMermaidPcr(readSource('S0.mmd'), readSourceJson('S0.args.json'));
   const { document, local } = lowerToPql(compiled);
   return { compiled, local, document: labDocument(document) };
 }

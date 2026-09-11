@@ -19,13 +19,11 @@
  * component, exact margins, no tolerance, ties refuse), the 75% shell consensus,
  * and the basket pixels (white body labels + agreed dark shell pixels).
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { labAddress } from './address.js';
-import { SOURCE } from './source.js';
+import { readSourceJson } from './source-data.js';
 import { labelComponents } from './s1.js';
 
-export const SPRITE = JSON.parse(readFileSync(join(SOURCE, 'basket-sprite.json'), 'utf8'));
+export const SPRITE = readSourceJson('basket-sprite.json');
 const templateWhiteOffsets = SPRITE.rows.flatMap((row, y) => [...row].flatMap((value, x) => (value === '1' ? [y * SPRITE.width + x] : [])));
 
 export const S2_ADDRESSES = {

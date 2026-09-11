@@ -1,5 +1,5 @@
 import { createExecBoard, pxFn, readPql, invokePql, invokePqlAsync } from './core/exec.js';
-import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materialFor, discoverFields, applyCommand, validateWorld, id } from './domain.js';
+import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materialFor, discoverFields, applyCommand, validateWorld, clone, id } from './domain.js';
 import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
 import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
@@ -7,6 +7,8 @@ import { shelfSheet } from './formats/shelf-sheet.js';
 import { receiptList } from './formats/receipt-list.js';
 import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
 import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
+import { labStageSpecs, registerLabCalculations, validateStage, LAB_COURSE } from './lab/stages.js';
+import { fixtureCapture } from './lab/fixtures.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
 export function createStudioRuntime(initial) {
@@ -304,6 +306,132 @@ export function createStudioRuntime(initial) {
     pxc.set(materialsAddress, materials);
     return { receipt, cards };
   }
+  /* ------------------------------------------------------------------ */
+  /* the LAB Stages: the same modules node runs, on this board            */
+  /* ------------------------------------------------------------------ */
+  /**
+   * `fn.lab.*` is registered here the way `createLab()` registers it (src/lab/lab.js):
+   * no memo and no freeze of the returned value. A Stage's inputs are rasters and
+   * pixel sets of a million samples; the studio's memo key is a stable stringify
+   * of the inputs, which would cost more than every Calculation in the Stage put
+   * together and could never hit twice on one capture. The invocation is still
+   * pushed onto `calls`, so `settle` files the same receipt for a Stage as for
+   * any other composition and the Inspect page lists it beside them.
+   */
+  const labCalculations = new Set();
+  function registerLabCalculation(address, calculate) {
+    if (!/^fn\.lab\.[a-z0-9.]+$/.test(address)) throw new Error(`lab: '${address}' is not a lowercase fn.lab.* address.`);
+    if (labCalculations.has(address)) return;
+    labCalculations.add(address);
+    pxc.register(pxFn(address), inputs => { counters.calls++; counters.computed++; calls.push({ call: address, reused: false, material: null, revision: 1 }); return calculate(inputs); });
+  }
+  /**
+   * What a Stage module is handed. It is the shape `createLab()` returns, reduced
+   * to what a Stage uses -- register, put, get, has, document, run -- so s0.js,
+   * s1.js, s2.js, s3.js and route.js are imported and called unchanged. `document`
+   * hands back the PQL document as written and `run` puts it through the studio's
+   * own `execute`, so a Stage leaves `px.pql.<name>`, `px.receipt.<name>` and a
+   * run record exactly like a card or a comparison does.
+   */
+  const labBoard = {
+    pxc,
+    register: registerLabCalculation,
+    put(address, value) { if (!address.startsWith('px.exp.lab.')) throw new Error(`lab: '${address}' is not a px.exp.lab.* address.`); pxc.set(address, value); return address; },
+    get: address => pxc.get(address),
+    has: address => pxc.has(address),
+    document: (name, ticks) => ({ PrincipleComponentRender: name, Ticks: ticks }),
+    run(name, composition) { const receipt = execute(name, composition.Ticks); return { run: receipt, receipt }; }
+  };
+  registerLabCalculations(labBoard);
+  const labSpecs = labStageSpecs().map(validateStage);
+  const LAB_PIPELINE = 'px.exp.lab.pipeline';
+  let labCapture = null;
+  /** How many things one produce Part holds, for a reader counting them. */
+  const partCount = value => Array.isArray(value) ? value.length : value && typeof value === 'object' ? Object.keys(value).length : null;
+  const labRow = spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', status: 'not-run', produced: [], reason: null, ms: null });
+  function freshLabRun(capture) {
+    return {
+      for: 'one capture through the LAB Stages on the studio board: what each Stage published, or why it refused',
+      course: LAB_COURSE,
+      capture: capture ? { imageId: capture.imageId, widthPx: capture.widthPx, heightPx: capture.heightPx, samples: capture.rgba.length } : null,
+      stages: labSpecs.map(labRow)
+    };
+  }
+  let labRun = freshLabRun(null);
+  /**
+   * The run as a Part, and the run as bookkeeping, are deliberately two values:
+   * a Part is frozen the moment it is published, so the pipeline publishes a
+   * copy of its running tally and keeps the tally itself mutable.
+   */
+  function publishLabRun() { const snapshot = clone(labRun); pxc.set(LAB_PIPELINE, snapshot); return snapshot; }
+  publishLabRun();
+  /** A new capture starts a new run: every Stage is not-run again, and stale produce cannot pass for this one. */
+  function labBegin(capture) {
+    if (!capture || !Array.isArray(capture.rgba)) throw new Error('lab: a capture is { imageId, widthPx, heightPx, rgba }.');
+    labCapture = capture; labRun = freshLabRun(capture); return publishLabRun();
+  }
+  /** Run one Stage: seed what it reads and nobody produces, then execute its document. */
+  function labStage(index, inputs = {}) {
+    const spec = labSpecs[index];
+    if (!spec) throw new Error(`lab: there is no Stage ${index}; this pipeline has ${labSpecs.length}.`);
+    const row = labRun.stages[index], previous = labRun.stages[index - 1];
+    const started = Date.now();
+    try {
+      if (index > 0 && previous.status !== 'produced') throw new Error(`lab ${spec.stage}: ${previous.stage} has not produced yet (${previous.status}), and ${spec.stage} reads what it publishes.`);
+      if (!labCapture && !inputs.capture) throw new Error('lab: load a capture before running a Stage.');
+      spec.seed?.(labBoard, { capture: labCapture, ...inputs });
+      for (const address of spec.needs ?? []) if (!pxc.has(address)) throw new Error(`lab ${spec.stage}: nothing has published '${address}' yet.`);
+      const receipt = execute(spec.composition, spec.ticks(labBoard));
+      row.produced = spec.produces.map(address => ({ address, count: partCount(pxc.get(address)) }));
+      row.status = 'produced'; row.reason = null; row.ms = Date.now() - started;
+      publishLabRun();
+      return { ...clone(row), receipt, view: labView(index) };
+    } catch (error) {
+      row.status = 'refused'; row.produced = []; row.reason = error.cause?.message || error.message; row.ms = Date.now() - started;
+      publishLabRun();
+      throw error;
+    }
+  }
+  /** What this Stage's produce looks like on the raster: boxes, a round, or the raster itself. */
+  function labView(index) {
+    const spec = labSpecs[index];
+    if (!spec?.view || labRun.stages[index]?.status !== 'produced') return null;
+    return { key: spec.key, stage: spec.stage, title: spec.title, ...spec.view(labBoard) };
+  }
+  /**
+   * S0 through the last landed Stage, in order, as one composition each. A Stage
+   * that refuses stops the run and leaves its reason on `px.exp.lab.pipeline`;
+   * the Stages after it stay not-run, because each reads what the one before
+   * publishes.
+   */
+  function labPipeline(capture, { upto = labSpecs.length - 1 } = {}) {
+    labBegin(capture);
+    for (let index = 0; index <= Math.min(upto, labSpecs.length - 1); index++) {
+      try { labStage(index); } catch { break; }
+    }
+    return labRun;
+  }
+  /** Which composition, which Tick and which Calculation published this Part: read off the receipts. */
+  function labProvenance(address) {
+    for (const key of [...addresses].filter(a => a.startsWith('px.receipt.lab-'))) {
+      const receipt = pxc.get(key), row = receipt?.trace?.find(step => (step.produces ?? [step.output]).includes(address));
+      if (row) return { composition: receipt.composition.PrincipleComponentRender, tick: row.tick, call: row.call, inputs: Object.values(row.inputs ?? {}) };
+    }
+    return null;
+  }
+  /**
+   * The Stage list the Course route draws. A Stage still being built joins with
+   * `addStage`: one spec, appended, and it runs, draws and inspects like the five
+   * that are landed (src/lab/stages.js).
+   */
+  function labAddStage(spec) {
+    validateStage(spec);
+    if (labSpecs.some(existing => existing.key === spec.key)) throw new Error(`lab: a Stage '${spec.key}' is already in this pipeline.`);
+    spec.register?.(labBoard);
+    labSpecs.push(spec); labRun.stages.push(labRow(spec)); publishLabRun();
+    return spec.key;
+  }
+
   /** Every PQL read the editor needs over the cascade, one Calculation, one Part per name. */
   function cardsQueryRun(name, args = {}) {
     const into = `px.discstudio.cards.query.${name}`;
@@ -315,6 +443,17 @@ export function createStudioRuntime(initial) {
     pxc, world, dispatch, card, scene, sceneParallel, constraints, counters, runRecord, execute, executeAsync,
     receipts,
     cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
+    lab: {
+      course: LAB_COURSE, address: LAB_PIPELINE,
+      sample: () => fixtureCapture(),
+      specs: () => labSpecs.map(spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', produces: [...spec.produces], needs: [...(spec.needs ?? [])] })),
+      begin: labBegin, stage: labStage, pipeline: labPipeline, addStage: labAddStage,
+      state: () => pxc.get(LAB_PIPELINE),
+      view: labView, views: () => labSpecs.map((spec, index) => labView(index)).filter(Boolean),
+      provenance: labProvenance,
+      capture: () => labCapture,
+      raster: () => { const spec = labSpecs[0]; return spec.raster && pxc.has(spec.raster) && labRun.stages[0].status === 'produced' ? pxc.get(spec.raster) : labCapture; }
+    },
     undo: { push, pop, stack: undoStack, depth: (scope = 'studio') => undoStack(scope).depth },
     onChange(fn) { listener = fn; },
     replace(next) { publishWorld(freeze(validateWorld(next))); listener(world(), { type: 'draft.import' }, null); },

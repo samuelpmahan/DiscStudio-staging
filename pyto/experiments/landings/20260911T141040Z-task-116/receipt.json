@@ -1,17 +1,17 @@
 {
   "schema": "pyto-landing-receipt@1",
-  "id": "20260911T140409Z-task-115",
-  "package": "task-115",
-  "base_sha": "b082fab12b6e72406f00c2ba9ede8df4af8d18d0",
+  "id": "20260911T141040Z-task-116",
+  "package": "task-116",
+  "base_sha": "c7f06cbe556cbbfc83fc7ad67ec0f0d3e172224a",
   "result": "verified",
   "verifier": {
-    "command": "node --test tests/*.test.js",
+    "command": "npm test",
     "exit": 0,
-    "output_sha256": "449ff7ce6fb5679e5f81c8460a27043073ed28966304032c58c633d78f2d933a"
+    "output_sha256": "16fdda8cc1a5229d85893e4f2ab8ae8b4ce0483196710b2b527e398a9ab4657b"
   },
   "check_all": {
     "exit": 0,
-    "output_sha256": "9e363b0e209a81cb1fe7df71f597b18a89ea866b77afef67f2ebfc1249fae63c",
+    "output_sha256": "3288e6b7458c7ab0cf9851ad64c7d1e9d07ad9727493e348d2b3eac6800ade7a",
     "counts": {
       "library": 439,
       "experiments/brain": 756,
@@ -53,9 +53,34 @@
       "sha256": "a946de40663ba2af3a025bcb0afec6b47e35b60045ecca08ff0f26d2bcfd3d6d"
     },
     {
+      "path": "pyto/experiments/tasks/116/HANDOFF.md",
+      "bytes": 6429,
+      "sha256": "297c918bcd69b05f2ffb1a2b37ccf91b0a01542ee2571812be7e4afdf59f8afa"
+    },
+    {
+      "path": "pyto/experiments/tasks/116/evidence/check_all.txt",
+      "bytes": 293460,
+      "sha256": "aafb483cc994095c5825c101a911ddd97d59e8d392b97e5f242ec22ad223e469"
+    },
+    {
+      "path": "pyto/experiments/tasks/116/evidence/verify.txt",
+      "bytes": 26464,
+      "sha256": "f6b114a26627119b199e21d67e33acb2a96a69f299e4a6ec2334bdd46b4c46d6"
+    },
+    {
+      "path": "pyto/experiments/tasks/116/packet.md",
+      "bytes": 2295,
+      "sha256": "a6ae822b331ce948a7a0d36f33d3a9528241d2af6ce09d77cea305db19a773ad"
+    },
+    {
       "path": "src/lab/fixtures.js",
-      "bytes": 9624,
-      "sha256": "bc27c2b0627677033954019c3f3f9a145bdf92f891ba6648ed69a8015396bea1"
+      "bytes": 9531,
+      "sha256": "40a05ab7e88a79d2ef5b9cd79e0e435840b4f9941446ed5ef544f5371b0cf811"
+    },
+    {
+      "path": "src/lab/lab.js",
+      "bytes": 6417,
+      "sha256": "31afea9597a24014bbc9f8cd1d46ee602a10defbfd1cc23c28f3e3e570eea1e9"
     },
     {
       "path": "src/lab/map.js",
@@ -63,14 +88,39 @@
       "sha256": "b483ee85699e2f7d8a6f0f558891090bfcc05fc10618ad28cacbf217783236c2"
     },
     {
+      "path": "src/lab/s0.js",
+      "bytes": 9006,
+      "sha256": "2597beb565f6b7d6609114cb15dbecd61636980ee0f1a67c2027c9f064cbe906"
+    },
+    {
+      "path": "src/lab/s1.js",
+      "bytes": 18402,
+      "sha256": "3c6cb21a68f65f33dcfc3e5eb579785eb787c4481469733ad701a212946de0a6"
+    },
+    {
+      "path": "src/lab/s2.js",
+      "bytes": 12660,
+      "sha256": "390d62506c6efdd7cc5d6ff3bec879100d3131ff58c06a7ab723b6510a7e245c"
+    },
+    {
       "path": "src/lab/s4.js",
       "bytes": 13558,
       "sha256": "c8d3155151d727e5d70d3ab766b37bb435fbc48fe01672a098da041fc5680561"
     },
     {
+      "path": "src/lab/source-data.js",
+      "bytes": 15800,
+      "sha256": "449cc17ce4646700114b0f8ede803eeddacf8bc8384a13d6aa4273123c94b1db"
+    },
+    {
       "path": "src/lab/source.js",
       "bytes": 741,
       "sha256": "d19a7abd9a45458c24a9d27845bb758754a29ec16b86b54b15813bcd23de1b42"
+    },
+    {
+      "path": "src/lab/stages.js",
+      "bytes": 9143,
+      "sha256": "5c6dd1faf7782d846d3f9d643366e7370a9da1f85904708a8f2b2d67fbbcaf28"
     },
     {
       "path": "src/lab/stages/S4.args.json",
@@ -128,19 +178,40 @@
       "sha256": "ee6e480567cc1542f31662e2bda2ef8f208f1bf0395d1dee261dd880c96e4abf"
     },
     {
+      "path": "src/runtime.js",
+      "bytes": 31258,
+      "sha256": "629cb9afa2234f937331adc3981004548fa2c2b1e4773de56d324a9fd64d131b"
+    },
+    {
+      "path": "tests/lab-pipeline.test.js",
+      "bytes": 7770,
+      "sha256": "d7479e0f33ed1b16f2fad3202c650a4c3295acf4958d99147969fa1ff001cae6"
+    },
+    {
       "path": "tests/lab-s4.test.js",
       "bytes": 8489,
       "sha256": "cff8596e3fd1c3547fe5baaf706f4314c3b0bb0aa694941cb2ee2cebf11e2abc"
+    },
+    {
+      "path": "tests/lab-source-data.test.js",
+      "bytes": 1672,
+      "sha256": "1757a4cc0f568e6078c37af50f4a3563d4832a55474f2377d407cad1891ea541"
     }
   ],
-  "unclaimed": [],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 140961,
+      "sha256": "3ef692fe42319273112769a2c5bb2d898657f45bd5e52019fed7a5909d709d09"
+    }
+  ],
   "provisional": {
     "count": 0,
     "addresses": []
   },
   "landed_by": "session",
-  "at": "2026-09-11T14:07:15.858386Z",
-  "result_sha": "0cce0c2391eb331c38295b0ede2125072d1f8b9a",
+  "at": "2026-09-11T14:13:38.407815Z",
+  "result_sha": null,
   "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
   "gate": {
     "mode": "none",

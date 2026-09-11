@@ -25,9 +25,7 @@
  * `fixtureBasis()` is the record of why each element is drawn the way it is and
  * which knob of which Stage it answers to; map.js publishes it as a Part.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { SOURCE } from './source.js';
+import { readSourceJson } from './source-data.js';
 
 export const CHROME_TOP = 40, CHROME_BOTTOM = 60, WIDTH = 512, HEIGHT = 1024;
 
@@ -112,7 +110,7 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
   // Two badges reading different hole numbers, so the route's order is the
   // reading and not the position: badge "01" is hole 1, badge "10" is hole 10.
   const badges = [badge(rgba, WIDTH, 120, 300, '10'), badge(rgba, WIDTH, 300, 620, '01')];
-  const sprite = JSON.parse(readFileSync(join(SOURCE, 'basket-sprite.json'), 'utf8'));
+  const sprite = readSourceJson('basket-sprite.json');
   const baskets = [basket(rgba, WIDTH, 150, 470, sprite), basket(rgba, WIDTH, 330, 800, sprite)];
   const tees = [tee(rgba, WIDTH, 60, 250), tee(rgba, WIDTH, 420, 560)];
   if (hole11) { badges.push(badge(rgba, WIDTH, ...HOLE11.badge, HOLE11.reading)); tees.push(tee(rgba, WIDTH, ...HOLE11.tee)); }
