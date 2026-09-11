@@ -19,17 +19,17 @@ Evidence: suite exit 0, see below
 ```
 scripts/browser_test.py    |  23 +++-
  src/app.js                 |   3 +-
- src/lab/stages.js          | 316 +++++++++++++++++++++++++++++++--------------
+ src/lab/stages.js          | 321 ++++++++++++++++++++++++++++++---------------
  src/runtime.js             |  23 ++--
  src/style.css              |  10 ++
- tests/lab-pipeline.test.js |  36 +++++-
- 6 files changed, 295 insertions(+), 116 deletions(-)
+ tests/lab-pipeline.test.js |  50 ++++++-
+ 6 files changed, 306 insertions(+), 124 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.zmK7OMmZEG) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.GUilrOLvER) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK

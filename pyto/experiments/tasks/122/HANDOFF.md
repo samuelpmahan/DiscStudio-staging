@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/122
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/122:pyto/experiments/tasks/122/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 10c512c origin/exp/122 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 1bb683a origin/exp/122 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ draw a Stage by the addresses it publishes, not by its number: the Course overla
 
 ## Starting point
 
-10c512c5e985964718dbc7aac45281b615182827 (land(task-120): your discs on the course the studio just built: S4 and S5 in the pipeline and on the raster, and an arrangement that stands the bag's DisplayCards at the holes). MAIN may have moved since: `git log --oneline 10c512c..origin/claude/os-sprint-st8hnu` shows how far.
+10c512c5e985964718dbc7aac45281b615182827 (land(task-120): your discs on the course the studio just built: S4 and S5 in the pipeline and on the raster, and an arrangement that stands the bag's DisplayCards at the holes). MAIN may have moved since: `git log --oneline 1bb683a..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -69,17 +69,17 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 ```
 scripts/browser_test.py    |  23 +++-
  src/app.js                 |   3 +-
- src/lab/stages.js          | 316 +++++++++++++++++++++++++++++++--------------
+ src/lab/stages.js          | 321 ++++++++++++++++++++++++++++++---------------
  src/runtime.js             |  23 ++--
  src/style.css              |  10 ++
- tests/lab-pipeline.test.js |  36 +++++-
- 6 files changed, 295 insertions(+), 116 deletions(-)
+ tests/lab-pipeline.test.js |  50 ++++++-
+ 6 files changed, 306 insertions(+), 124 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.zmK7OMmZEG) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.GUilrOLvER) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
