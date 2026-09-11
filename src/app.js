@@ -4,6 +4,7 @@ import { get, all, currentBattle, clone, id, labelHash, sampleHueFor, validateWo
 import { esc, fieldNode, sampleColors } from './presentation.js';
 import { constraintDefinitions } from './constraints.js';
 import { reviewItems } from './review.js';
+import { SORTS, GROUPS, FILTERS } from './shelf.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
 import { composePage, fetchPageSources } from '../pyto/viewer/embed.mjs';
 
@@ -17,7 +18,8 @@ let savedView = {}; try { savedView = JSON.parse(localStorage.getItem(VIEW_KEY) 
 const ui = {
   route: 'shelf', discId: savedView.discId || 'buzzz-mint', bagId: savedView.bagId || 'everyday', competitionId: 'putterwarz', roundId: 'hole-1',
   mode: savedView.mode || 'battle', presetId: savedView.presetId || 'broadcast', component: savedView.component || 'DisplayCard',
-  nodeId: 'mold', query: '', fieldQuery: '', library: 'fields', onlyBag: false, traceOpen: false, inspectAddress: '', previewState: 'idle',
+  nodeId: 'mold', query: '', fieldQuery: '', library: 'fields', onlyBag: false,
+  shelfSort: savedView.shelfSort || 'recent', shelfGroup: savedView.shelfGroup || 'none', shelfFilters: Array.isArray(savedView.shelfFilters) ? savedView.shelfFilters : [], shelfLayout: savedView.shelfLayout || 'compact', traceOpen: false, inspectAddress: '', previewState: 'idle',
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
@@ -54,7 +56,7 @@ function shownPcr() {
   if (!name) throw new Error('Render a composition before exporting its run record.');
   return name;
 }
-function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection })); } catch { /* Nonessential view state. */ } }
+function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout })); } catch { /* Nonessential view state. */ } }
 runtime.onChange(() => {
   if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
   catch (error) { ui.saved = 'Not saved · download a draft'; message('Browser storage is full or unavailable. Your current work is still open. Download a draft to keep it.', true); }
@@ -122,13 +124,33 @@ function header() {
   return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a>${ui.route === 'course-build' ? '<a href="#/course-build" class="active">Course</a>' : ''}<a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
 }
 function bagSelect(control = 'bag') { return select(control, ui.bagId, all(w(), 'Bag').map(b => [b.id, `${b.name} · ${b.discIds.length}`])); }
+/** What the shelf is asked for right now: the search box, the quick filters, the sort and the grouping. */
+function shelfRequest() {
+  const filters = [...ui.shelfFilters, ...(ui.route === 'course' && ui.onlyBag ? ['inBag'] : [])];
+  return { query: ui.query, sort: ui.shelfSort, group: ui.shelfGroup, filters, bagId: ui.bagId };
+}
+const flightLine = mold => ['speed', 'glide', 'turn', 'fade'].map(key => mold?.flight?.[key]).every(v => v == null) ? '' : ['speed', 'glide', 'turn', 'fade'].map(key => mold?.flight?.[key] ?? '·').join(' ').replace(/-/g, '−');
+/** The facts a person picks a disc by, on the row itself: plastic, weight, and the flight numbers. */
+function discFacts(disc, mold) {
+  return [disc.plastic, disc.weight == null ? '' : `${disc.weight} g`, flightLine(mold)].filter(Boolean).map(esc).join(' · ');
+}
+/** One shelf row. The same markup compact or card; the list decides which it is. */
+function shelfEntry(row) {
+  const disc = get(w(), 'Disc', row.id); if (!disc) return '';
+  const { mold, maker } = discInfo(row.id), bag = get(w(), 'Bag', ui.bagId);
+  const membership = bag?.discIds.includes(row.id), inLineup = w().battle.entries.some(e => e.discId === row.id), course = ui.route === 'course';
+  const matched = row.matched.length ? `<span class="match-row">${row.matched.map(m => `<span class="match">${esc(m)}</span>`).join('')}</span>` : '';
+  return `<div class="disc-row ${ui.discId === row.id ? 'selected' : ''}" data-disc-row="${esc(row.id)}"><button class="disc-pick" data-action="disc-select" data-id="${esc(row.id)}"><span class="disc-thumb">${safeThumb(row.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(disc.nickname)}</small><small class="disc-facts mono">${discFacts(disc, mold)}</small>${matched}</span></button>${button(course ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), course ? 'lineup-add' : 'membership', { id: row.id }, 'row-add', `aria-label="${course ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(disc.nickname)}" ${course && inLineup ? 'disabled' : ''}`)}</div>`;
+}
+/** Organising, in the sidebar itself: the quick filters, the sort, the grouping and the two densities. */
+function shelfControls(view) {
+  const filtering = view.filters.length || view.terms.length;
+  return `<div class="shelf-controls"><div class="chip-row">${FILTERS.map(([key, label]) => button(label, 'shelf-filter', { value: key }, `pill ${ui.shelfFilters.includes(key) ? 'active' : ''}`, `aria-pressed="${ui.shelfFilters.includes(key)}"`)).join('')}</div><div class="shelf-order">${select('shelf-sort', ui.shelfSort, SORTS.map(([key, label]) => [key, `↕ ${label}`]))}${select('shelf-group', ui.shelfGroup, GROUPS)}<div class="segmented">${button('▤', 'shelf-layout', { value: 'compact' }, ui.shelfLayout === 'compact' ? 'active' : '', 'aria-label="Compact list"')}${button('▦', 'shelf-layout', { value: 'cards' }, ui.shelfLayout === 'cards' ? 'active' : '', 'aria-label="Card grid"')}</div></div><p class="tiny muted shelf-count" data-shelf-count="${view.shown}">${view.shown} of ${view.total} disc${view.total === 1 ? '' : 's'}${filtering ? ` · ${button('show all', 'shelf-clear', {}, 'linky')}` : ''}</p></div>`;
+}
 function shelfSidebar() {
-  const bag = get(w(), 'Bag', ui.bagId), query = ui.query.toLowerCase();
-  const discs = all(w(), 'Disc').filter(d => { const { mold, maker } = discInfo(d.id); return `${d.nickname} ${mold?.name} ${maker?.name}`.toLowerCase().includes(query) && (!ui.onlyBag || bag?.discIds.includes(d.id)); });
-  return `<aside class="sidebar" data-scroll="shelf"><div class="sidebar-heading"><div><span class="eyebrow">YOUR RAW MATERIAL</span><h2>Disc shelf <small>${all(w(), 'Disc').length}</small></h2></div>${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div><input class="search" data-search="discs" aria-label="Find a disc" placeholder="⌕  Find a disc…" value="${esc(ui.query)}">${ui.route === 'course' ? `<div class="sidebar-bag"><label class="eyebrow">SOURCE BAG</label>${bagSelect()}${check('Show only this bag', 'only-bag', ui.onlyBag)}</div>` : ''}<div class="disc-list">${discs.map(d => {
-    const { mold, maker } = discInfo(d.id), membership = bag?.discIds.includes(d.id), inLineup = w().battle.entries.some(e => e.discId === d.id);
-    return `<div class="disc-row ${ui.discId === d.id ? 'selected' : ''}"><button class="disc-pick" data-action="disc-select" data-id="${esc(d.id)}"><span class="disc-thumb">${safeThumb(d.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(d.nickname)}</small></span></button>${button(ui.route === 'course' ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), ui.route === 'course' ? 'lineup-add' : 'membership', { id: d.id }, 'row-add', `aria-label="${ui.route === 'course' ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(d.nickname)}" ${ui.route === 'course' && inLineup ? 'disabled' : ''}`)}</div>`;
-  }).join('') || '<p class="empty-note">No matching discs.</p>'}</div><footer class="sidebar-footer">${ui.route === 'course' ? button('+ Add bag to comparison', 'bag-lineup', {}, 'wide secondary') : button('+ New physical disc', 'disc-add', {}, 'wide secondary')}<p class="tiny muted">Sample art is labelled. Your photos stay on your device.</p></footer></aside>`;
+  const view = runtime.shelf(shelfRequest());
+  const lists = view.groups.map(group => `${ui.shelfGroup === 'none' ? '' : `<h3 class="shelf-group" data-shelf-group="${esc(group.label)}">${esc(group.label)}<small>${group.discIds.length}</small></h3>`}<div class="disc-list ${ui.shelfLayout === 'cards' ? 'as-cards' : ''}">${group.discIds.map(discId => shelfEntry(view.rows.find(row => row.id === discId))).join('')}</div>`).join('');
+  return `<aside class="sidebar" data-scroll="shelf"><div class="sidebar-heading"><div><span class="eyebrow">YOUR RAW MATERIAL</span><h2>Disc shelf <small>${view.total}</small></h2></div>${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div><input class="search" data-search="discs" aria-label="Find a disc" placeholder="⌕  buzzz 177 · midrange -1" value="${esc(ui.query)}">${ui.route === 'course' ? `<div class="sidebar-bag"><label class="eyebrow">SOURCE BAG</label>${bagSelect()}${check('Show only this bag', 'only-bag', ui.onlyBag)}</div>` : ''}${shelfControls(view)}${view.shown ? lists : `<p class="empty-note">Nothing on the shelf matches${view.terms.length ? ` “${esc(ui.query.trim())}”` : ' these filters'}. Try a mold, a plastic, a colour, a weight or a flight number.</p>`}<footer class="sidebar-footer">${ui.route === 'course' ? button('+ Add bag to comparison', 'bag-lineup', {}, 'wide secondary') : button('+ New physical disc', 'disc-add', {}, 'wide secondary')}<p class="tiny muted">Every disc keeps its own art in both views. Your photos stay on your device.</p></footer></aside>`;
 }
 /** The composer keeps its own typing in the DOM until a render needs it, exactly as the new-field panel does. */
 function captureComposer() { if (!ui.adding) return; for (const el of app.querySelectorAll('[data-compose]')) ui.adding[el.dataset.compose] = el.type === 'checkbox' ? el.checked : el.value; }
@@ -570,6 +592,9 @@ async function action(name, el) {
     case 'load-draft': document.querySelector('#draft-file').click(); return;
     case 'reset': if (confirm('Replace this local workspace with the labelled sample collection? Download a draft first to keep your work. Review comments are not deleted.')) { saveEnabled = true; runtime.replace(createSeed()); ui.discId = 'buzzz-mint'; ui.bagId = 'everyday'; ui.presetId = 'broadcast'; message('Sample workspace restored. Your review comments are unchanged.'); } break;
     case 'disc-select': ui.discId = d.id; break;
+    case 'shelf-filter': ui.shelfFilters = ui.shelfFilters.includes(d.value) ? ui.shelfFilters.filter(key => key !== d.value) : [...ui.shelfFilters, d.value]; break;
+    case 'shelf-layout': ui.shelfLayout = d.value; break;
+    case 'shelf-clear': ui.query = ''; ui.shelfFilters = []; break;
     case 'disc-add': openComposer(); if (ui.route !== 'shelf') { persistView(); navigate('shelf'); return; } break;
     case 'compose-cancel': ui.adding = null; break;
     case 'compose-photo': document.querySelector('#compose-file').click(); return;
@@ -690,6 +715,8 @@ function controlChange(el) {
   switch (key) {
     case 'bag': ui.bagId = value; break;
     case 'only-bag': ui.onlyBag = el.checked; break;
+    case 'shelf-sort': ui.shelfSort = value; break;
+    case 'shelf-group': ui.shelfGroup = value; break;
     case 'identity-maker': execute({ type: 'disc.identity', id: disc.id, manufacturer: value, mold: mold?.name || '' }); break;
     case 'identity-mold': execute({ type: 'disc.identity', id: disc.id, manufacturer: maker?.name || '', mold: value }); break;
     case 'disc-field': execute({ type: 'entity.set', entityType: 'Disc', id: disc.id, path: d.key, value: el.type === 'checkbox' ? el.checked : d.kind === 'number' ? number() : value }); break;
@@ -791,5 +818,5 @@ review.setAttribute('data-checklist', JSON.stringify(reviewItems));
 review.setAttribute('checkpoint-id', 'discstudio-pxc-02'); review.setAttribute('subject-commit', 'local-development');
 fetch(new URL('../build-info.json', import.meta.url)).then(r => r.ok ? r.json() : null).then(info => { if (info) { ui.build = info; review.setAttribute('submission-id', `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`); review.setAttribute('checkpoint-id', info.fingerprint); review.setAttribute('subject-commit', info.commit); render(); } }).catch(() => {});
 // Explicit developer inspection/command surface. UI and programmatic commands use the same registered Calculations.
-window.discStudio = { lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get view() { return { route: ui.route, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode, adding: ui.adding && { ...ui.adding } }; }, cards: () => ui.lastCascade };
+window.discStudio = { lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get shelf() { return runtime.shelf(shelfRequest()); }, get view() { return { route: ui.route, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode, adding: ui.adding && { ...ui.adding } }; }, cards: () => ui.lastCascade };
 syncRoute();

@@ -84,6 +84,17 @@ with sync_playwright() as p:
     beat(page, 'tease', 'tease-01-your-shelf', 'Your discs, in the bag you actually throw',
          'bag cards on screen == discs in the bag', cards)
 
+    # 1b. Ask for a disc the way you would say it out loud, and it is the first one.
+    page.locator('[data-search="discs"]').fill('buzzz 177')
+    page.wait_for_timeout(150)
+    found = [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]
+    matched = page.locator('.disc-row[data-disc-row="%s"] .match' % found[0]).all_text_contents()
+    assert found[0] == 'buzzz-mint' and '177 g' in matched, (found, matched)
+    beat(page, 'tease', 'tease-01b-the-right-disc', 'Say it the way you would say it out loud; the right disc comes first',
+         'first result for "buzzz 177", and what it matched on', '%s — %s' % (found[0], ' · '.join(matched)))
+    page.locator('[data-action="shelf-clear"]').click()
+    page.wait_for_timeout(120)
+
     # 2. One exact photo, and every place that disc appears is your disc.
     disc = page.evaluate('discStudio.view.discId')
     page.locator(f'[data-action="disc-select"][data-id="{disc}"]').first.click()
