@@ -105,7 +105,11 @@ with sync_playwright() as p:
     record('Specific neat comments export with inspected flags, context and checkpoint; no acceptance is fabricated')
     # Rehydrate either actual origin storage or the explicitly disclosed memory double.
     if a.embedded:
-        saved=page.evaluate('Object.fromEntries(testStorage)');page.close();page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));mount(page,saved)
+        saved=page.evaluate('Object.fromEntries(testStorage)');page.close();page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
+        # the rehydrated page is a new page: without this it has no dialog handler, so every
+        # confirm() after this point is auto-dismissed and the action behind it silently does nothing
+        page.on('dialog',lambda d:d.accept('Test state' if d.type=='prompt' else None))
+        mount(page,saved)
     else:page.reload(wait_until='networkidle')
     assert_world(page,'discStudio.world.objects.Disc["buzzz-mint"].myRating===9 && discStudio.world.exports.length===1')
     review=page.locator('neat-review');review.locator('#open').click()
@@ -451,6 +455,71 @@ with sync_playwright() as p:
     assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'battle rules overflow'
     record('A DiscComp is composed from reusable Constraints: the 5-disc cap template composes discCap, placesPoints and tieRule, the cap refuses a sixth disc by name without changing anything, a hole is entered with one tap per disc (or the number keys), and fn.battle.standings scores ranks, points and a running total once for both the standings panel and the cards')
     page.locator('[data-control="battle-template"]').select_option('open')
+    # Single Disc mode: one disc, the design made for one disc, the state it has
+    # in the battle, and an export whose filename says which disc it is.
+    page.locator('[data-action="mode"][data-value="card"]').click()
+    assert page.locator('.single-panel').count()==1
+    assert_world(page,'discStudio.world.layout.singlePresetId==="spotlight"')
+    single=page.evaluate('discStudio.preview.scene.placements[0].card.presetId')
+    assert single=='spotlight',single
+    assert page.evaluate('discStudio.preview.cardCount')==1
+    disc=page.evaluate('discStudio.view.discId')
+    entry=page.evaluate('d=>discStudio.world.battle.entries.find(e=>e.discId===d)?.id??null',disc)
+    if entry is None:
+        page.locator('[data-action="lineup-add"]').first.click()
+        entry=page.evaluate('d=>discStudio.world.battle.entries.find(e=>e.discId===d).id',disc)
+    page.locator('.single-panel [data-action="winner"]').click()
+    assert page.evaluate('e=>discStudio.world.battle.states.find(s=>s.id===discStudio.world.battle.currentStateId).winners.includes(e)',entry)
+    assert 'Authored winner' in page.evaluate('discStudio.preview.svg')
+    with page.expect_download() as d: page.locator('[data-action="export-png"]').click()
+    name=d.value.suggested_filename
+    nickname=page.evaluate('d=>discStudio.world.objects.Disc[d].nickname',disc)
+    assert nickname.lower().split()[0] in name,(name,nickname)
+    assert page.evaluate('discStudio.world.exports.at(-1).mode')=='card'
+    page.locator('.single-panel [data-action="winner"]').click()
+    page.screenshot(path=str(out/'single-card.png'))
+    record('Single Disc mode composes one disc with its own spotlight design through the same card chain, carries the score, highlight and winner it has in the battle, and exports a file named after the disc')
+    page.locator('[data-action="mode"][data-value="battle"]').click()
+    # The export queue: one tap queues a job per state, they run in order, each
+    # leaves a receipt and a file, and the queue is still there after navigating away.
+    page.locator('[data-action="queue-clear"]').click()
+    exports_before=page.evaluate('discStudio.world.exports.length')
+    states=page.evaluate('discStudio.world.battle.states.map(s=>s.id)')
+    with page.expect_download() as d: page.locator('[data-action="export-vertical"]').click()
+    d.value.save_as(str(out/'queue-vertical.png'))
+    route(page,'shelf')
+    page.wait_for_function('discStudio.queue().progress.complete',timeout=120000)
+    route(page,'course')
+    jobs=page.evaluate('discStudio.queue().jobs')
+    assert len(jobs)==len(states) and all(j['status']=='done' for j in jobs),jobs
+    assert all(j['orientation']=='portrait' for j in jobs),jobs
+    assert page.locator('.queue-list li[data-status="done"]').count()==len(states)
+    assert 'All %d exported.'%len(states) in page.locator('[data-queue-progress]').inner_text()
+    receipts=page.evaluate('discStudio.world.exports.slice(-%d)'%len(states))
+    assert page.evaluate('discStudio.world.exports.length')==exports_before+len(states)
+    assert [r['stateId'] for r in receipts]==states,receipts
+    assert all(r['width']==1080 and r['height']==1920 and r['type']=='PNG' for r in receipts),receipts
+    assert_world(page,'discStudio.world.layout.orientation==="landscape"'),'a vertical export never changed the workspace'
+    png=(out/'queue-vertical.png').read_bytes()
+    assert struct.unpack('>II',png[16:24])==(1080,1920)
+    assert receipts[0]['pngHash']==hashlib.sha256(png).hexdigest()
+    # a failure is a sentence on the job, not silence, and the rest of the queue still runs
+    page.locator('[data-action="queue-clear"]').click()
+    page.locator('[data-action="lineup-clear"]').click()
+    page.wait_for_function('discStudio.world.battle.entries.length===0')
+    page.locator('[data-action="export-all-states"]').click()
+    page.wait_for_function('discStudio.queue().jobs.length>0')
+    page.wait_for_function('discStudio.queue().progress.complete',timeout=60000)
+    jobs=page.evaluate('discStudio.queue().jobs')
+    failed=[job for job in jobs if job['status']=='failed']
+    assert len(failed)==len(states),jobs
+    assert all('add at least one disc' in j['message'] for j in failed),failed
+    assert page.locator('.queue-list li[data-status="failed"]').count()==len(states)
+    assert 'failed' in page.locator('[data-queue-progress]').inner_text()
+    page.locator('[data-action="bag-lineup"]').click()
+    page.locator('[data-action="queue-clear"]').click()
+    page.screenshot(path=str(out/'export-queue.png'))
+    record('Exports are queued as jobs that run in order: one tap queues this battle vertical, every job leaves an export.record receipt and a 1080x1920 file, the queue survives navigating away and back, and a job that cannot render says why on its own line while the rest of the queue runs')
     # Reset screenshot state without erasing the verified export/review artifacts.
     page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:"state-1"})')
     for name in ['shelf','course','course-build','components','competition']:
@@ -488,19 +557,23 @@ with sync_playwright() as p:
     changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
     assert changed=={'shelf':'false','bag':'true','single':'true','competition':'true'},changed
     record('A global edit stops at an instance override: shelf keeps buzzz-mint\'s own accent and the other three recompose')
-    # DisplayCard tab: edit broadcast's own accent (the preset IS the projection layer),
-    # then back to All cards to see it land on exactly the projections that compose with it.
+    # DisplayCard tab: edit broadcast's own accent (the preset IS the projection layer), then back
+    # to All cards to see it land on exactly the projections that compose with THAT preset --
+    # `competition` composes with broadcast, `single` composes with the spotlight design
+    # OnTheCourse's Single Disc mode uses (layout.singlePresetId), and shelf/bag with discImage.
     page.locator('[data-action="component"][data-value="DisplayCard"]').click();page.wait_for_timeout(60)
     accent_preset='[data-control="preset-color"][data-key="accent"]'
     change(page,accent_preset,'#654321')
     assert_world(page,'discStudio.world.presets.broadcast.accent==="#654321"')
     ctx_js="{bagId:'everyday',competitionId:'putterwarz',roundId:'hole-1'}"
-    assert page.evaluate(f"discStudio.runtime.cards.effective('single','buzzz-mint',{ctx_js}).tokens.accent")=='#654321'
+    assert page.evaluate(f"discStudio.runtime.cards.effective('competition','buzzz-mint',{ctx_js}).tokens.accent")=='#654321'
+    assert page.evaluate(f"discStudio.runtime.cards.effective('single','buzzz-mint',{ctx_js}).tokens.accent")!='#654321'
+    assert page.evaluate("discStudio.runtime.cards.presetFor('single')")=='spotlight'
     page.locator('[data-action="component"][data-value="AllCards"]').click();page.wait_for_timeout(60)
     changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
-    assert changed=={'shelf':'false','bag':'false','single':'true','competition':'true'},changed
-    assert all('#654321' in page.locator(f'[data-projection-preview="{p}"] svg').first.evaluate('e=>e.outerHTML') for p in ['single','competition'])
-    record('Editing the preset accent control on the DisplayCard tab reaches both single and competition (they compose with broadcast) and leaves shelf/bag alone; both SVGs carry the new accent, and the grid marks both recomposed')
+    assert changed=={'shelf':'false','bag':'false','single':'false','competition':'true'},changed
+    assert '#654321' in page.locator('[data-projection-preview="competition"] svg').first.evaluate('e=>e.outerHTML')
+    record('Editing the preset accent control on the DisplayCard tab reaches exactly the projections composing with that preset: competition moves, single keeps the spotlight design Single Disc mode composes with, shelf/bag keep discImage, and the grid marks only the one that recomposed')
     # Reset to inherited, from the DisplayCard tab's "The whole card" section.
     page.locator('[data-action="component"][data-value="DisplayCard"]').click();page.wait_for_timeout(60)
     assert page.locator(accent_preset).input_value()=='#654321'
