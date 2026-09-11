@@ -83,7 +83,7 @@ pyto/experiments/brain/data/__init__.py           |   0
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.5kcPXS2rZH) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.J2XjyzXylF) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               218  OK
