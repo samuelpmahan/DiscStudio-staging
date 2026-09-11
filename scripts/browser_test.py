@@ -353,6 +353,45 @@ with sync_playwright() as p:
     page.screenshot(path=str(out/'cards-on-the-course.png'))
     record('OnTheCourse gains one arrangement: the bag\'s DisplayCards stand at the holes the Stages read off the capture, through the same fn.comparison.layout and the same card chain')
     page.locator('[data-control="arrangement"]').select_option('row')
+    # Vertical content: the same comparison on the 1080x1920 canvas, with a frame
+    # preset behind it -- one fn.overlay.frame Calculation, the same
+    # fn.comparison.layout fitting the cards into its safe area, the same
+    # fn.overlay.svg drawing it, and a PNG that is actually 1080x1920.
+    page.locator('[data-action="orientation"][data-value="portrait"]').click()
+    # one command: the vertical canvas, and the row of three cards taken down the screen with it
+    assert_world(page,'discStudio.world.layout.orientation==="portrait" && discStudio.world.layout.arrangement==="stack"')
+    page.locator('[data-control="frame-preset"]').select_option('filled')
+    change(page,'[data-control="frame-title"]','Vertical night')
+    assert_world(page,'discStudio.world.layout.frame.presetId==="filled" && discStudio.world.layout.frame.title==="Vertical night"')
+    assert page.evaluate('[discStudio.preview.width,discStudio.preview.height]')==[1080,1920]
+    svg=page.evaluate('discStudio.preview.svg')
+    assert 'data-frame="filled"' in svg and 'Vertical night' in svg and 'width="1080" height="1920"' in svg
+    frame=page.evaluate('discStudio.runtime.pxc.get("px.overlay.frame")')
+    assert frame['fill']==page.evaluate('discStudio.world.cards.global.background')
+    assert page.evaluate('discStudio.preview.run.trace.some(t=>t.call==="fn.overlay.frame"&&t.output==="px.overlay.frame")')
+    assert page.evaluate('discStudio.preview.run.trace.some(t=>t.call==="fn.comparison.layout"&&t.inputs.frame==="px.overlay.frame")')
+    scene=page.evaluate('discStudio.preview.scene')
+    for placement in scene['placements']:
+        assert placement['x']>=frame['safe']['x']-.5 and placement['y']>=frame['safe']['y']-.5,placement
+        assert placement['x']+placement['card']['width']*scene['scale']<=frame['safe']['x']+frame['safe']['width']+.5,placement
+        assert placement['y']+placement['card']['height']*scene['scale']<=frame['safe']['y']+frame['safe']['height']+.5,placement
+    exports_before=page.evaluate('discStudio.world.exports.length')
+    with page.expect_download() as d: page.locator('[data-action="export-png"]').click()
+    d.value.save_as(str(out/'vertical.png'))
+    png=(out/'vertical.png').read_bytes()
+    assert png[:8]==b'\x89PNG\r\n\x1a\n'
+    assert struct.unpack('>II',png[16:24])==(1080,1920)
+    receipt=page.evaluate('discStudio.world.exports.at(-1)')
+    assert page.evaluate('discStudio.world.exports.length')==exports_before+1
+    assert (receipt['width'],receipt['height'],receipt['orientation'],receipt['framePresetId'])==(1080,1920,'portrait','filled'),receipt
+    assert receipt['pngHash']==hashlib.sha256(png).hexdigest()
+    page.screenshot(path=str(out/'vertical-course.png'))
+    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'vertical canvas overflow'
+    record('OnTheCourse composes on a 1080x1920 vertical canvas beside the 1920x1080 one: a frame preset (fill, safe area, title strip, sponsor lockup on the cascade\'s global tokens) is one fn.overlay.frame Calculation, the cards are fitted inside its safe area by the same fn.comparison.layout, and the exported PNG is actually 1080x1920 with its hash on the receipt')
+    page.locator('[data-control="frame-preset"]').select_option('none')
+    page.locator('[data-action="orientation"][data-value="landscape"]').click()
+    assert_world(page,'discStudio.world.layout.orientation==="landscape" && discStudio.world.layout.frame.presetId==="none"')
+    page.locator('[data-control="arrangement"]').select_option('row')
     # Reset screenshot state without erasing the verified export/review artifacts.
     page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:"state-1"})')
     for name in ['shelf','course','course-build','components','competition']:

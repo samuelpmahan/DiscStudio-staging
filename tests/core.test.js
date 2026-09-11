@@ -122,6 +122,44 @@ test('all placement/layout combinations stay inside the 1920×1080 export frame'
     const { bounds: b } = r.scene(context); assert.ok(b.x >= 0 && b.y >= 0 && b.x + b.width <= 1920 && b.y + b.height <= 1080);
   }
 });
+test('the vertical canvas is 1080 x 1920 and every arrangement stands its cards inside the frame\'s safe area', () => {
+  const r = make();
+  r.dispatch({ type: 'layout.set', patch: { orientation: 'portrait', frame: { presetId: 'filled', title: 'Vertical night' } } });
+  for (const arrangement of ['row', 'stack', 'grid']) for (const anchor of ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center']) {
+    r.dispatch({ type: 'layout.set', patch: { arrangement, anchor, scale: 2 } });
+    const rendered = r.scene(context), { bounds: b, safe } = rendered.scene;
+    assert.equal(rendered.width, 1080); assert.equal(rendered.height, 1920);
+    assert.ok(b.x >= safe.x - .5 && b.y >= safe.y - .5, `${arrangement}/${anchor} starts inside the safe area`);
+    assert.ok(b.x + b.width <= safe.x + safe.width + .5 && b.y + b.height <= safe.y + safe.height + .5, `${arrangement}/${anchor} ends inside the safe area`);
+  }
+});
+test('the frame is one Calculation over the layout and the cascade\'s global tokens, drawn by the same fn.overlay.svg', () => {
+  const r = make();
+  r.dispatch({ type: 'cards.set', layer: 'global', token: 'sponsor', value: 'CHAINSPOT' });
+  r.dispatch({ type: 'layout.set', patch: { orientation: 'portrait', frame: { presetId: 'filled', title: 'PutterWarz' } } });
+  const rendered = r.scene(context), step = rendered.run.trace.find(t => t.call === 'fn.overlay.frame');
+  assert.deepEqual(step.inputs, { spec: 'px.overlay.frame.spec', tokens: 'px.discstudio.cards.global' });
+  assert.equal(step.output, 'px.overlay.frame');
+  assert.equal(rendered.run.trace.find(t => t.call === 'fn.comparison.layout').inputs.frame, 'px.overlay.frame');
+  const frame = r.pxc.get('px.overlay.frame');
+  assert.equal(frame.fill, r.world().cards.global.background, 'the frame is filled with the cascade\'s own background token');
+  assert.equal(frame.sponsor.text, 'CHAINSPOT');
+  assert.equal(frame.title.text, 'PutterWarz');
+  assert.ok(frame.safe.y >= frame.title.y + frame.title.h, 'the cards start below the title strip');
+  assert.ok(frame.safe.y + frame.safe.height <= frame.sponsor.y, 'the cards end above the sponsor lockup');
+  assert.ok(rendered.svg.includes('data-frame="filled"') && rendered.svg.includes('PutterWarz') && rendered.svg.includes('>CHAINSPOT<'));
+  assert.match(rendered.svg, /width="1080" height="1920"/);
+});
+test('a draft saved before the vertical canvas opens on the landscape one, unframed, byte for byte', () => {
+  const seed = createSeed(); delete seed.layout.orientation; delete seed.layout.frame;
+  const r = createStudioRuntime(seed);
+  assert.equal(r.world().layout.orientation, 'landscape');
+  assert.deepEqual(r.world().layout.frame, { presetId: 'none', title: '' });
+  const rendered = r.scene(context);
+  assert.equal(rendered.width, 1920); assert.equal(rendered.height, 1080);
+  assert.ok(!rendered.svg.includes('data-frame'), 'the None frame draws nothing at all');
+  assert.equal(rendered.svg, make().scene(context).svg);
+});
 test('untrusted SVG/text never becomes executable and malformed data cannot replace a valid world', () => {
   const r = make(); r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'nickname', value: '<script>alert(1)</script>' });
   const rendered = r.scene(context); assert.ok(!rendered.svg.includes('<script>')); assert.ok(rendered.svg.includes('&lt;script&gt;'));
@@ -190,7 +228,10 @@ test('the execution receipt reaches the run record: material digests and reuse a
   const r = seededScene(), first = r.runRecord('on-the-course').record;
   const digests = first.ticks.flatMap(t => t.invocations).map(i => i.result_sha256);
   assert.equal(digests.filter(d => typeof d === 'string' && d.includes(':')).length, digests.length);
-  assert.match(first.ticks[0].invocations[0].result_sha256, /^domain\.fields:/);
+  // the Frame is the first Tick of the comparison now (the canvas and the safe
+  // area the cards are fitted into); the card chain's first step follows it
+  assert.match(first.ticks[0].invocations[0].result_sha256, /^overlay\.frame:/);
+  assert.match(first.ticks[1].invocations[0].result_sha256, /^domain\.fields:/);
   r.scene({ mode: 'battle', ...context });
   const again = r.runRecord('on-the-course').record.ticks.flatMap(t => t.invocations);
   assert.ok(again.every(i => i.hit), 'a repeated render reads only material that already existed');
@@ -296,13 +337,13 @@ test('the Inspect receipts list is a PQL query over px.receipt.* publishing two 
   const first = r.receipts();
   // task 131: the shelf's art assignment is a run of its own (art-assignment, one invocation, one Part), listed beside the scene
   assert.deepEqual(first.rows.map(row => row.name), ['art-assignment', 'on-the-course']);
-  assert.deepEqual(first.summary, { receipts: 2, invocations: 21, produces: 21, digest: first.summary.digest });
+  assert.deepEqual(first.summary, { receipts: 2, invocations: 22, produces: 22, digest: first.summary.digest });
   assert.match(first.summary.digest, /^[0-9a-f]{8}$/);
   assert.deepEqual(r.pxc.get('px.studio.receipts'), first.rows);
   assert.deepEqual(r.pxc.get('px.studio.receipts.summary'), first.summary);
   const scene = first.rows.find(row => row.name === 'on-the-course');
   assert.equal(scene.address, 'px.receipt.on-the-course');
-  assert.equal(scene.invocations, 20); // task 78: each of the 3 lineup entries now gains a Cascade Tick of 2 Calculations (14 + 3*2)
+  assert.equal(scene.invocations, 21); // task 78: each of the 3 lineup entries gains a Cascade Tick of 2 Calculations (14 + 3*2); the comparison's own Frame is one more
   assert.ok(scene.consumes.includes('px.domain.Disc.buzzz-mint') && scene.consumes.includes('px.course.scene'));
   assert.ok(scene.produces.includes('px.course.svg') && scene.produces.includes('px.render.course.entry-1.card'));
   assert.deepEqual(scene.consumes, [...scene.consumes].sort());

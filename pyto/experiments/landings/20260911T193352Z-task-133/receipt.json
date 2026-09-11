@@ -1,0 +1,162 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T193352Z-task-133",
+  "package": "task-133",
+  "base_sha": "2487b379d17d28f07207414f51bdbe976958d8e1",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test",
+    "exit": 0,
+    "output_sha256": "f8994ab49b591bad6151a87e0b45ee162e3cdf1084bb80252979fea296648fbe"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "d97df29371c0e3b5fa8e5e62523c951cd0756135b479b9380eceaa752beb1333",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "index.html",
+      "bytes": 989,
+      "sha256": "e0ca5c44505ba41b09942738370deda3f057d075b0a93f12649326db5a63771e"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/HANDOFF.md",
+      "bytes": 6527,
+      "sha256": "b026cfdbf974febaf0d49a585e414c03843e24d0523eddaede0572014417252c"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/evidence/browser-report.json",
+      "bytes": 3284,
+      "sha256": "c71ec0aa68695d1c0648e136801d1a2a1d283ca6db561e2519ecc044b2bb51f0"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/evidence/check_all.txt",
+      "bytes": 293450,
+      "sha256": "8dc100d2593c23c56540886825a7155d02ac6b1bc8534e71c70095cabef191f9"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/evidence/verify.txt",
+      "bytes": 41876,
+      "sha256": "4ad4043628072f617de5c3917babb4cfc2eaf7e211cef3807501cede14ae6c6b"
+    },
+    {
+      "path": "pyto/experiments/tasks/132/packet.md",
+      "bytes": 2114,
+      "sha256": "b341c414703fb37f4b0074b1ec06039178cc276226394f6365f876fde69205fe"
+    },
+    {
+      "path": "pyto/experiments/tasks/133/HANDOFF.md",
+      "bytes": 8769,
+      "sha256": "88df779e0edefabc033f892dfd9293f2fab80f8061a41e30735647e16003d918"
+    },
+    {
+      "path": "pyto/experiments/tasks/133/evidence/check_all.txt",
+      "bytes": 293450,
+      "sha256": "1b274de755a1224744c0a8e65272a80a6c1b49db75c85ef09dba47cefff88d01"
+    },
+    {
+      "path": "pyto/experiments/tasks/133/evidence/verify.txt",
+      "bytes": 43393,
+      "sha256": "c4c37bde4a406c24f87a94d27c492b0c93c1cd3d602be9e3a089171da146b912"
+    },
+    {
+      "path": "pyto/experiments/tasks/133/packet.md",
+      "bytes": 4409,
+      "sha256": "2093ad64b72872d71a307aa0ef221972e2444b8e86b55442e6a19a92bd5bc901"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 40516,
+      "sha256": "a38a15205290ab85e9d7140087bdc38169629e14306cf76cb754352b80eccd14"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 117314,
+      "sha256": "e3e9f300565564c35ffcb8520355c97740756c97c2601914548518d219e1b78f"
+    },
+    {
+      "path": "src/domain.js",
+      "bytes": 23433,
+      "sha256": "17e5a6e2308a14fad3b8f8f17cca24a8e9bf36b415fa5ba24fc26b5a315a7c05"
+    },
+    {
+      "path": "src/frames.js",
+      "bytes": 5212,
+      "sha256": "3265af21f355b37ecf4ec2d7db1471b7c1f293a9f24aaaa0b8c5cc15b3313165"
+    },
+    {
+      "path": "src/media.js",
+      "bytes": 2117,
+      "sha256": "4fdf2db16d7965ed91619f2f6ddd171a0c09672d59ce6938217c110ea83ef753"
+    },
+    {
+      "path": "src/presentation.js",
+      "bytes": 20369,
+      "sha256": "e3cf98dd31e9301d6c7e4fdb7f4ff120c8076044f7ce1b7e671daada1d78d363"
+    },
+    {
+      "path": "src/runtime.js",
+      "bytes": 35548,
+      "sha256": "99ed7fe8a6ddcad8f1c55542f3656d62ad290c5045e31892dd749d406ad716ec"
+    },
+    {
+      "path": "src/seed.js",
+      "bytes": 4435,
+      "sha256": "a39248bccfa9d2fc6a8e713fb73b6bb3dfdbc57e6c1426a938f0f1193e891acb"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 35681,
+      "sha256": "2dbeb5ba59d974e785c8b697ff19ca5818378a28ba213daff2cdbf02beb1dbe3"
+    },
+    {
+      "path": "tests/core.test.js",
+      "bytes": 47256,
+      "sha256": "533b2e1871fe0d6f3052037e0aa61e072b717a222ba3f822d2a4e45b92e2ce09"
+    },
+    {
+      "path": "tests/fixtures/serial-run-record.json",
+      "bytes": 397183,
+      "sha256": "96798c23bdb4ad298a140785951aab76984d632b4acbbd14d608c60dcbf99405"
+    }
+  ],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 154392,
+      "sha256": "1c8a624be3f925805e067edceea8e8b8d14f60ed5b07f9012d459f52423e14fc"
+    }
+  ],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T19:36:35.050851Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

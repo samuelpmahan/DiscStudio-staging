@@ -1,5 +1,6 @@
 import { safeImage, id } from './domain.js';
 import { render as paintDisc, FAMILIES } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
+import { canvasFor, defaultSafe } from './frames.js';
 export const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const color = (value, fallback = '#203d36') => /^(#[0-9a-f]{3,8}|transparent)$/i.test(value ?? '') ? value : fallback;
 export const fonts = { sans: 'Arial, Helvetica, sans-serif', serif: 'Georgia, Times New Roman, serif', mono: 'Courier New, monospace' };
@@ -139,45 +140,77 @@ export function courseAnchors(course) {
   return { anchors, frame: { originX: 0, originY: 0, ...frame } };
 }
 /**
- * The course arrangement: the same cards, placed where the holes are. The frame
- * is fitted into the 1920x1080 overlay, each card is centred on its hole, and a
- * card past the last hole starts the holes again one card-height lower, so a
- * twelve-disc comparison on a nine-hole course is still every card, placed.
+ * The course arrangement: the same cards, placed where the holes are. The
+ * capture's frame is fitted into `safe` -- the box the overlay's own frame
+ * leaves for cards, which on an unframed 1920x1080 canvas is the 60px inset it
+ * always was -- each card is centred on its hole, and a card past the last hole
+ * starts the holes again one card-height lower, so a twelve-disc comparison on
+ * a nine-hole course is still every card, placed.
  */
-function courseScene({ items, layout, course, width, height, gap }) {
+function courseScene({ items, layout, course, width, height, gap, safe }) {
   const { anchors, frame } = courseAnchors(course);
   const maxW = Math.max(...items.map(card => card.width)), maxH = Math.max(...items.map(card => card.height));
-  const inset = 60, frameW = Math.max(1, frame.widthPx - frame.originX), frameH = Math.max(1, frame.heightPx - frame.originY);
-  const fit = Math.min((width - inset * 2) / frameW, (height - inset * 2) / frameH);
-  const scale = Math.min(Number(layout.scale) || 1, (width - inset * 2) / maxW, (height - inset * 2) / maxH);
-  const offsetX = (width - frameW * fit) / 2, offsetY = (height - frameH * fit) / 2;
+  const frameW = Math.max(1, frame.widthPx - frame.originX), frameH = Math.max(1, frame.heightPx - frame.originY);
+  const fit = Math.min(safe.width / frameW, safe.height / frameH);
+  const scale = Math.min(Number(layout.scale) || 1, safe.width / maxW, safe.height / maxH);
+  const offsetX = safe.x + (safe.width - frameW * fit) / 2, offsetY = safe.y + (safe.height - frameH * fit) / 2;
   const placements = items.map((card, index) => {
     const anchor = anchors[index % anchors.length], round = Math.floor(index / anchors.length);
     const centreX = offsetX + (anchor.at[0] - frame.originX) * fit, centreY = offsetY + (anchor.at[1] - frame.originY) * fit + round * (maxH + gap) * scale;
-    const x = Math.max(inset, Math.min(width - inset - card.width * scale, centreX - (card.width * scale) / 2));
-    const y = Math.max(inset, Math.min(height - inset - card.height * scale, centreY - (card.height * scale) / 2));
+    const x = Math.max(safe.x, Math.min(safe.x + safe.width - card.width * scale, centreX - (card.width * scale) / 2));
+    const y = Math.max(safe.y, Math.min(safe.y + safe.height - card.height * scale, centreY - (card.height * scale) / 2));
     return { card, x, y, anchor: { id: anchor.id, label: anchor.label, at: anchor.at, x: centreX, y: centreY } };
   });
   const xs = placements.map(placement => placement.x), ys = placements.map(placement => placement.y);
   return {
-    width, height, scale, arrangement: 'course', frame, anchors,
+    width, height, scale, arrangement: 'course', orientation: layout.orientation === 'portrait' ? 'portrait' : 'landscape', safe, frame, anchors,
     bounds: { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) + maxW * scale - Math.min(...xs), height: Math.max(...ys) + maxH * scale - Math.min(...ys) },
     cards: items, placements, warnings: items.flatMap(card => card.warnings)
   };
 }
-export function composeOverlay({ cards, layout, course = null }) {
-  const items = Object.values(cards), width = 1920, height = 1080, gap = Math.max(0, Math.min(100, Number(layout.gap) || 0));
-  if (!items.length) return { width, height, placements: [], bounds: { x: 0, y: 0, width: 0, height: 0 }, cards: items, empty: true };
-  if (layout.arrangement === 'course') return courseScene({ items, layout, course, width, height, gap });
+/**
+ * The comparison, on the canvas its layout names: 1920x1080 landscape, or the
+ * 1080x1920 vertical one a phone wants. `frame` is the frame Part
+ * (fn.overlay.frame) when one was composed; the cards are fitted into its safe
+ * area, and with no frame that area is the canvas inset by 60px -- which is
+ * exactly the box the landscape overlay always used, so an unframed landscape
+ * scene is placed byte for byte as it was before the vertical canvas existed.
+ */
+export function composeOverlay({ cards, layout, course = null, frame = null }) {
+  const items = Object.values(cards), canvas = canvasFor(layout.orientation), width = canvas.width, height = canvas.height;
+  const gap = Math.max(0, Math.min(100, Number(layout.gap) || 0)), safe = frame?.safe ?? defaultSafe(layout.orientation);
+  if (!items.length) return { width, height, orientation: canvas.id, safe, frame, placements: [], bounds: { x: 0, y: 0, width: 0, height: 0 }, cards: items, empty: true };
+  if (layout.arrangement === 'course') return { ...courseScene({ items, layout, course, width, height, gap, safe }), frame };
   const columns = layout.arrangement === 'stack' ? 1 : layout.arrangement === 'grid' ? Math.min(2, items.length) : items.length;
   const maxW = Math.max(...items.map(c => c.width)), maxH = Math.max(...items.map(c => c.height)), rows = Math.ceil(items.length / columns);
   const w = columns * maxW + (columns - 1) * gap, h = rows * maxH + (rows - 1) * gap;
-  const scale = Math.min(Number(layout.scale) || 1, 1800 / w, 960 / h);
-  const anchor = layout.anchor || 'bottom-left', x = anchor === 'center' ? (width - w * scale) / 2 : anchor.endsWith('right') ? width - 60 - w * scale : 60;
-  const y = anchor === 'center' ? (height - h * scale) / 2 : anchor.startsWith('top') ? 60 : height - 60 - h * scale;
-  return { width, height, scale, bounds: { x, y, width: w * scale, height: h * scale }, cards: items, placements: items.map((card, i) => ({ card, x: x + i % columns * (maxW + gap) * scale, y: y + Math.floor(i / columns) * (maxH + gap) * scale })), warnings: items.flatMap(c => c.warnings) };
+  const scale = Math.min(Number(layout.scale) || 1, safe.width / w, safe.height / h);
+  const anchor = layout.anchor || 'bottom-left', x = anchor === 'center' ? safe.x + (safe.width - w * scale) / 2 : anchor.endsWith('right') ? safe.x + safe.width - w * scale : safe.x;
+  const y = anchor === 'center' ? safe.y + (safe.height - h * scale) / 2 : anchor.startsWith('top') ? safe.y : safe.y + safe.height - h * scale;
+  return { width, height, orientation: canvas.id, safe, frame, scale, bounds: { x, y, width: w * scale, height: h * scale }, cards: items, placements: items.map((card, i) => ({ card, x: x + i % columns * (maxW + gap) * scale, y: y + Math.floor(i / columns) * (maxH + gap) * scale })), warnings: items.flatMap(c => c.warnings) };
 }
-export function materializeOverlay({ scene }) {
+/**
+ * The frame beneath the cards, drawn from the model `fn.overlay.frame`
+ * composed: its fill, its title strip and its sponsor lockup, every colour and
+ * font the cards cascade's own global tokens. An unframed scene draws nothing
+ * here, so its SVG is the transparent overlay it always was.
+ */
+export function frameMarkup(frame) {
+  if (!frame) return '';
+  let body = '';
+  if (frame.fill && frame.fill !== 'none') body += `<rect width="${frame.width}" height="${frame.height}" fill="${color(frame.fill)}"/>`;
+  if (frame.title) {
+    const t = frame.title, centred = t.align === 'center', x = centred ? t.x + t.w / 2 : t.x;
+    body += `<g font-family="${fonts[t.font] || fonts.sans}"><text x="${x}" y="${t.y + t.size}" text-anchor="${centred ? 'middle' : 'start'}" font-size="${t.size}" font-weight="700" fill="${color(t.color, '#fcfbf5')}">${esc(t.text)}</text><rect x="${t.rule.x + (centred ? (t.w - t.rule.w) / 2 : 0)}" y="${t.rule.y}" width="${t.rule.w}" height="${t.rule.h}" rx="2" fill="${color(t.rule.fill, '#b9d789')}"/></g>`;
+  }
+  if (frame.sponsor) {
+    const p = frame.sponsor;
+    body += `<text x="${p.x + p.w}" y="${p.y + p.size}" text-anchor="end" font-family="${fonts[p.font] || fonts.sans}" font-size="${p.size}" font-weight="700" letter-spacing="1.6" fill="${color(p.color, '#b9d789')}">${esc(p.text)}</text>`;
+  }
+  return body ? `<g data-frame="${esc(frame.presetId)}" aria-label="${esc(frame.note)}">${body}</g>` : '';
+}
+export function materializeOverlay({ scene, frame = null }) {
   const body = scene.placements.map((p, i) => `<g transform="translate(${p.x} ${p.y}) scale(${scene.scale})">${cardMarkup(p.card, `card-${i}`)}</g>`).join('');
-  return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${scene.width}" height="${scene.height}" viewBox="0 0 ${scene.width} ${scene.height}" role="img" aria-label="DiscStudio transparent overlay">${body}</svg>`, width: scene.width, height: scene.height, cardCount: scene.cards.length, bounds: scene.bounds, warnings: scene.warnings ?? [] };
+  const behind = frameMarkup(frame ?? scene.frame ?? null);
+  return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${scene.width}" height="${scene.height}" viewBox="0 0 ${scene.width} ${scene.height}" role="img" aria-label="DiscStudio transparent overlay">${behind}${body}</svg>`, width: scene.width, height: scene.height, orientation: scene.orientation ?? 'landscape', cardCount: scene.cards.length, bounds: scene.bounds, warnings: scene.warnings ?? [] };
 }
