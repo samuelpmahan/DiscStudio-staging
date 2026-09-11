@@ -50,13 +50,19 @@ test('the produce is what the fixture draws: three badges read, two baskets, thr
   const runtime = studio();
   runtime.lab.pipeline(runtime.lab.sample());
   const views = Object.fromEntries(runtime.lab.views().map(view => [view.key, view]));
+  // A Stage is found here by the address it publishes, the way the studio draws it:
+  // the numbers on these Stages moved once already this sprint (task 121).
+  const drawn = Object.fromEntries(runtime.lab.views().map(view => [view.address, view]));
   assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['11', '10', '01']);
   assert.equal(views.s2.objects.length, 2);
   assert.equal(views.s3.objects.length, 3);
   // S4 names the hole it could not finish rather than guessing a basket for it.
-  assert.deepEqual(views.s4.objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11 · missing basket']);
+  assert.deepEqual(drawn['px.exp.lab.holes.objects'].objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11 · missing basket']);
   // S5's obstacle map is derived from the pixels no Stage object owns, and two straight legs cross it.
-  assert.ok(views.s5.cells.centres.length > 0);
+  assert.ok(drawn['px.exp.lab.course.graph'].cells.centres.length > 0);
+  // and the round searched over that map is one polyline that had to bend around it
+  assert.ok(drawn['px.exp.lab.round.path'].polyline.length > drawn['px.exp.lab.route.labfixture'].points.length);
+  assert.ok(runtime.pxc.get('px.exp.lab.round.summary').detourPx > 0);
   assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').blockedStraightLegs, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
   // The order is the reading, not the position: hole 1 sits lower in the image than hole 10.
   assert.deepEqual(views.route.objects.map(object => object.label), ['hole 1', 'hole 10']);
