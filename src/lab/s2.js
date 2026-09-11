@@ -36,15 +36,58 @@ export const S2_ADDRESSES = {
   objects: labAddress('px.baskets')
 };
 
-/** `ComponentStats` as S2 reads it. The PCA fields (major, minor, angle) are computed by the LAB and never consulted here. */
-function statsOf(component) {
+/**
+ * The major axis of a component's second moments, as the LAB computes it:
+ * LAPACK's deflation test first (a symmetric glyph's ~1e-16 off-diagonal
+ * residue must give exact identity eigenvectors), then dlaev2's eigenvector of
+ * the larger eigenvalue, then the sign normalization. Ported verbatim, because
+ * S3's family vote compares major and minor extents across components and a
+ * mirrored axis changes which tees are a family (`components.ts majorAxisOf`).
+ */
+export function majorAxisOf(cxx, cxy, cyy) {
+  const EPS = 1.1102230246251565e-16, SAFMIN = 2.2250738585072014e-308;
+  let ax, ay;
+  if (cxy * cxy <= EPS * EPS * Math.abs(cxx) * Math.abs(cyy) + SAFMIN) {
+    if (cyy > cxx) { ax = 0; ay = 1; } else { ax = 1; ay = 0; }
+  } else {
+    const a = cxx, b = cxy, c = cyy, sm = a + c, df = a - c, adf = Math.abs(df), tb = b + b, ab = Math.abs(tb);
+    const rt = adf > ab ? adf * Math.sqrt(1 + (ab / adf) ** 2) : adf < ab ? ab * Math.sqrt(1 + (adf / ab) ** 2) : ab * Math.sqrt(2);
+    const sgn1 = sm < 0 ? -1 : 1;
+    const cs = df >= 0 ? df + rt : df - rt, sgn2 = df >= 0 ? 1 : -1, acs = Math.abs(cs);
+    let cs1, sn1;
+    if (acs > ab) { const ct = -tb / cs; sn1 = 1 / Math.sqrt(1 + ct * ct); cs1 = ct * sn1; }
+    else if (ab === 0) { cs1 = 1; sn1 = 0; }
+    else { const tn = -cs / tb; cs1 = 1 / Math.sqrt(1 + tn * tn); sn1 = tn * cs1; }
+    if (sgn1 === sgn2) { const tn = cs1; cs1 = -sn1; sn1 = tn; }
+    ax = cs1; ay = sn1;
+  }
+  if (ax < 0 || (Math.abs(ax) < 1e-9 && ay < 0)) { ax = -ax; ay = -ay; }
+  return { ax, ay };
+}
+
+/** `ComponentStats` for one component: bbox and area for S2, the PCA extents and angle for S3. */
+export function statsOf(component) {
   let minX = Infinity, minY = Infinity, maxX = -1, maxY = -1, sumX = 0, sumY = 0;
+  const xs = [], ys = [];
   for (const pixel of component.pixels) {
     const x = pixel % component.widthPx, y = Math.floor(pixel / component.widthPx);
-    minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y); sumX += x; sumY += y;
+    minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y); sumX += x; sumY += y; xs.push(x); ys.push(y);
   }
-  const area = component.pixels.length;
-  return { label: component.label, area, cx: sumX / area, cy: sumY / area, bboxX: minX, bboxY: minY, bboxW: maxX - minX + 1, bboxH: maxY - minY + 1 };
+  const area = component.pixels.length, cx = sumX / area, cy = sumY / area;
+  const base = { label: component.label, area, cx, cy, bboxX: minX, bboxY: minY, bboxW: maxX - minX + 1, bboxH: maxY - minY + 1 };
+  if (area < 2) return { ...base, major: 1, minor: 1, angle: 0, fill: 1 };
+  let cxx = 0, cxy = 0, cyy = 0;
+  for (let index = 0; index < area; index++) { const dx = xs[index] - cx, dy = ys[index] - cy; cxx += dx * dx; cxy += dx * dy; cyy += dy * dy; }
+  cxx /= area; cxy /= area; cyy /= area;
+  const { ax, ay } = majorAxisOf(cxx, cxy, cyy), mx = -ay, my = ax;
+  let uMin = Infinity, uMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (let index = 0; index < area; index++) {
+    const dx = xs[index] - cx, dy = ys[index] - cy, u = dx * ax + dy * ay, v = dx * mx + dy * my;
+    uMin = Math.min(uMin, u); uMax = Math.max(uMax, u); vMin = Math.min(vMin, v); vMax = Math.max(vMax, v);
+  }
+  let major = uMax - uMin + 1, minor = vMax - vMin + 1;
+  if (minor > major) { const swap = major; major = minor; minor = swap; }
+  return { ...base, major, minor, angle: Math.atan2(ay, ax), fill: area / Math.max(major * minor, 1) };
 }
 
 /** The LAB's `components.publish`: the inherited mask and component results as one generic substrate. */

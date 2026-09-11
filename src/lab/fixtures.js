@@ -55,7 +55,19 @@ function badge(rgba, width, x, y) {
   return { border: [x, y, 60, 40], plate: [x + 6, y + 4, 48, 32], digits: [[x + 12, y + 10, 6, 20], [x + 28, y + 10, 12, 20]], loop: [x + 31, y + 13, 6, 14] };
 }
 
-/** The fixture capture: `{ imageId, widthPx, heightPx, rgba, sourceByteLength, badges }`. */
+/**
+ * One visible tee, in the shape S3 looks for: a bright rectangular outline whose
+ * enclosed hole is small and elongated. The hole is what S3 detects (flood the
+ * background in from the border; what is left is enclosed), the outline is the
+ * frame the family vote measures.
+ */
+export const TEE_WALL = 2, TEE_W = 16, TEE_H = 26;
+function tee(rgba, width, x, y) {
+  ring(rgba, width, x, y, TEE_W, TEE_H, TEE_WALL, WHITE);
+  return { frame: [x, y, TEE_W, TEE_H], hole: [x + TEE_WALL, y + TEE_WALL, TEE_W - TEE_WALL * 2, TEE_H - TEE_WALL * 2] };
+}
+
+/** The fixture capture: `{ imageId, widthPx, heightPx, rgba, sourceByteLength, badges, baskets, tees }`. */
 export function fixtureCapture(seed = 20260911) {
   const random = lcg(seed), rgba = new Array(WIDTH * HEIGHT * 4).fill(0);
   for (let y = 0; y < HEIGHT; y++) {
@@ -65,7 +77,8 @@ export function fixtureCapture(seed = 20260911) {
   const badges = [badge(rgba, WIDTH, 120, 300), badge(rgba, WIDTH, 300, 620)];
   const sprite = JSON.parse(readFileSync(join(SOURCE, 'basket-sprite.json'), 'utf8'));
   const baskets = [basket(rgba, WIDTH, 150, 470, sprite), basket(rgba, WIDTH, 330, 800, sprite)];
-  return { imageId: `lab-fixture-${seed}`, widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length, badges, baskets };
+  const tees = [tee(rgba, WIDTH, 60, 250), tee(rgba, WIDTH, 420, 560)];
+  return { imageId: `lab-fixture-${seed}`, widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length, badges, baskets, tees };
 }
 
 /** The same capture already cropped, for an S1 run that does not need S0 first. */
