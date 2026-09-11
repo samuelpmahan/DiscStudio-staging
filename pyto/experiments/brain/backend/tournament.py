@@ -34,6 +34,14 @@ from experiments.brain.backend import ops
 VERTICAL = "backend"
 JUDGE = "evidence"
 
+# three points a million from the origin and a millionth of a unit apart: the input on which
+# |a|^2 + |b|^2 - 2 a.b has no significant digits left, by construction and not by luck.
+CANCELLING = [
+    [1_000_000.0, 1_000_000.0, 1_000_000.0],
+    [1_000_000.000001, 1_000_000.0, 1_000_000.0],
+    [1_000_000.0, 1_000_000.000002, 1_000_000.0],
+]
+
 CRITERIA = [
     {"name": "correctness", "how": "the branch's oracle Part passes against the reference", "direction": "higher", "weight": 3.0},
     {"name": "speed", "how": "wall_ms_median of the branch's benchmark Part at the largest size", "direction": "lower", "weight": 2.0},
@@ -207,11 +215,21 @@ def run_pairwise(store) -> str:
     branches = {"py_gram": pairwise_py_gram, "np_broadcast": pairwise_np, "sp_cdist": pairwise_sp}
     sizes = (16, 64, 192)
     inputs = {size: {"a": case_module.draw((size, 3), seed=case_module.SEED + size).tolist()} for size in sizes}
-    expected = {size: {"shape": [size, size], "values": cdist(np.asarray(args["a"]), np.asarray(args["a"])).tolist()} for size, args in inputs.items()}
-    for size in sizes:
+    # `cancelling` is not a draw: it is three points a million units from the origin and a
+    # millionth of a unit apart, which makes |a|^2 + |b|^2 - 2 a.b a subtraction of two numbers
+    # near 3e12 whose difference is near 1e-12. Float64 has no digits left there, whatever BLAS
+    # or numpy is underneath, so the unguarded expansion is wrong on it by construction rather
+    # than by luck - and the guard, which recomputes from the coordinates when what is left is
+    # small next to the norms that produced it, is right on it for the same reason.
+    inputs["cancelling"] = {"a": CANCELLING}
+    cases = tuple(sizes) + ("cancelling",)
+    expected = {case: {"shape": [len(args["a"]), len(args["a"])],
+                       "values": cdist(np.asarray(args["a"]), np.asarray(args["a"])).tolist()}
+                for case, args in inputs.items()}
+    for case in cases:
         harness.oracle(
-            store, VERTICAL, "pairwise_tournament", f"py_gram_unguarded_{size}",
-            got=pairwise_py_gram_unguarded(dict(inputs[size])), expected=expected[size],
+            store, VERTICAL, "pairwise_tournament", f"py_gram_unguarded_{case}",
+            got=pairwise_py_gram_unguarded(dict(inputs[case])), expected=expected[case],
             reference="scipy.spatial.distance.cdist", tolerance=1e-8,
             for_="the record of why the guard is there: the unguarded gram expansion is a failed backend",
         )
@@ -219,11 +237,11 @@ def run_pairwise(store) -> str:
     for branch, fn in branches.items():
         passed = all(
             harness.oracle(
-                store, VERTICAL, "pairwise_tournament", f"{branch}_{size}",
-                got=fn(dict(inputs[size])), expected=expected[size], reference="scipy.spatial.distance.cdist",
+                store, VERTICAL, "pairwise_tournament", f"{branch}_{case}",
+                got=fn(dict(inputs[case])), expected=expected[case], reference="scipy.spatial.distance.cdist",
                 tolerance=1e-8, for_="a candidate that is not correct cannot win on speed",
             )
-            for size in sizes
+            for case in cases
         )
         for size in sizes:
             harness.bench(

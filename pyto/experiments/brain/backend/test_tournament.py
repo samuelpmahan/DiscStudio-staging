@@ -67,13 +67,25 @@ class TheBrackets(unittest.TestCase):
                 self.assertEqual(judged["scores"]["correctness"], 1.0, f"{problem}/{judged['candidate']}")
 
     def test_the_unguarded_gram_expansion_is_a_failed_backend(self):
-        """the candidate that is not in the bracket, and the reason the guard exists."""
-        for size in (16, 64, 192):
-            part = self.store.get(harness.oracle_address("backend", "pairwise_tournament", f"py_gram_unguarded_{size}"))
-            self.assertFalse(part["pass"], size)
-            self.assertGreater(part["worst_relative_error"], part["tolerance"])
-            guarded = self.store.get(harness.oracle_address("backend", "pairwise_tournament", f"py_gram_{size}"))
-            self.assertTrue(guarded["pass"], size)
+        """the candidate that is not in the bracket, and the reason the guard exists.
+
+        the case is `cancelling`, which is built to have no digits left rather than
+        drawn and hoped over: points a million from the origin and a millionth of a
+        unit apart. Whether the unguarded expansion also fails on a random draw
+        depends on which BLAS is underneath - this does not.
+        """
+        failed = self.store.get(harness.oracle_address("backend", "pairwise_tournament", "py_gram_unguarded_cancelling"))
+        self.assertFalse(failed["pass"])
+        self.assertGreater(failed["worst_relative_error"], failed["tolerance"])
+        for branch in ("py_gram", "np_broadcast", "sp_cdist"):
+            guarded = self.store.get(harness.oracle_address("backend", "pairwise_tournament", f"{branch}_cancelling"))
+            self.assertTrue(guarded["pass"], f"{branch} must survive the case that kills the unguarded one")
+
+    def test_the_cancelling_case_is_the_one_the_bracket_was_decided_on(self):
+        part = self.part("pairwise")
+        self.assertEqual(part["winner"] in [one["branch"] for one in part["candidates"]], True)
+        for judged in part["judged"]:
+            self.assertEqual(judged["scores"]["correctness"], 1.0, judged["candidate"])
 
     def test_the_losers_are_still_in_the_store(self):
         for problem in self.built:

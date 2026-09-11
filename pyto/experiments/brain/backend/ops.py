@@ -493,9 +493,20 @@ def _eig_np(args):
     a = _np(args["a"])
     symmetric = bool(np.allclose(a, a.T, atol=1e-9))
     values, vectors = (np.linalg.eigh(a) if symmetric else np.linalg.eig(a))
-    if not symmetric and np.iscomplexobj(values):
-        raise ValueError("brain: eig returns real spectra only; this matrix has a complex one")
-    values = values.real
+    if np.iscomplexobj(values):
+        # A complex DTYPE is not a complex spectrum: numpy hands back complex128 for any
+        # non-symmetric input, with zero imaginary parts when the spectrum is real, and which
+        # numpy you have decides whether it bothers. So the guard asks the values, not the type.
+        scale = max(1.0, float(np.max(np.abs(values))))
+        largest = float(np.max(np.abs(values.imag)))
+        if largest > 1e-9 * scale:
+            raise ValueError(
+                "brain: eig returns real spectra only; this matrix has a complex one "
+                f"(largest imaginary part {largest:.3g} against a scale of {scale:.3g})"
+            )
+        values = values.real
+        vectors = np.real(vectors)
+    values = np.asarray(values, dtype="float64")
     order = np.lexsort((np.arange(values.size), values))
     return {
         "eigenvalues": values[order].tolist(),
