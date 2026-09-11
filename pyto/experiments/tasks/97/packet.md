@@ -4,8 +4,64 @@ Intent: brain/stats and brain/data, the third wave: kruskal-wallis, levene and b
 Starting point: e755e1ab96998f1a3b2b580500fe9e50bfc6e094 (board: **started** `task-96`: brain/backend five more ops, one of them the brac)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 16 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/data/build.py
+- M  pyto/experiments/brain/data/table.py
+- A  pyto/experiments/brain/data/test_canonical.py
+- A  pyto/experiments/brain/data/test_transform.py
+- A  pyto/experiments/brain/data/transform.py
+- A  pyto/experiments/brain/data/transform_cases.py
+- M  pyto/experiments/brain/records/data.pipeline.json
+- M  pyto/experiments/brain/records/stats.analysis.json
+- M  pyto/experiments/brain/stats/build.py
+- A  pyto/experiments/brain/stats/comparisons.py
+- A  pyto/experiments/brain/stats/comparisons_cases.py
+- A  pyto/experiments/brain/stats/test_comparisons.py
+- M  pyto/experiments/brain/stats/test_tolerance.py
+- M  pyto/experiments/brain/stats/tolerance.py
+- M  pyto/experiments/brain/store/data.json
+- M  pyto/experiments/brain/store/stats.json
+
+```
+pyto/experiments/brain/data/build.py               |   27 +-
+ pyto/experiments/brain/data/table.py               |   29 +
+ pyto/experiments/brain/data/test_canonical.py      |   27 +
+ pyto/experiments/brain/data/test_transform.py      |  228 +
+ pyto/experiments/brain/data/transform.py           |  324 +
+ pyto/experiments/brain/data/transform_cases.py     |  217 +
+ pyto/experiments/brain/records/data.pipeline.json  |   10 +-
+ pyto/experiments/brain/records/stats.analysis.json |   12 +-
+ pyto/experiments/brain/stats/build.py              |   13 +-
+ pyto/experiments/brain/stats/comparisons.py        |  282 +
+ pyto/experiments/brain/stats/comparisons_cases.py  |  140 +
+ pyto/experiments/brain/stats/test_comparisons.py   |  169 +
+ pyto/experiments/brain/stats/test_tolerance.py     |   28 +-
+ pyto/experiments/brain/stats/tolerance.py          |   29 +
+ pyto/experiments/brain/store/data.json             | 6634 ++++++++++++--------
+ pyto/experiments/brain/store/stats.json            | 6276 ++++++++++--------
+ 16 files changed, 9114 insertions(+), 5331 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.fAr3AclPeX) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               612  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
