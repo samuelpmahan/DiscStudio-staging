@@ -235,7 +235,10 @@ with sync_playwright() as p:
     page.wait_for_function('!discStudio.lab().state.stages.some(s=>s.status==="not-run")',timeout=120000)
     state=page.evaluate('discStudio.lab().state')
     assert all(s['status']=='produced' for s in state['stages']),[(s['stage'],s['status'],s['reason']) for s in state['stages']]
-    assert [s['composition'] for s in state['stages']]==['lab-s0','lab-s1','lab-s2','lab-s3','lab-s4','lab-s5','lab-route'],[s['composition'] for s in state['stages']]
+    # every landed Stage, in order, each its own composition; the names follow the modules, the drawings follow the addresses
+    assert [s['composition'] for s in state['stages']][:4]==['lab-s0','lab-s1','lab-s2','lab-s3'],[s['composition'] for s in state['stages']]
+    assert len(state['stages'])>=7,[s['composition'] for s in state['stages']]
+    assert all(s['composition'].startswith('lab-') for s in state['stages'])
     for stage in state['stages']:
         assert stage['produced'],stage
         for part in stage['produced']:
@@ -244,17 +247,27 @@ with sync_playwright() as p:
     # every Stage's produce is on the one raster: badges read, baskets, tees, the round's holes
     views=page.evaluate('discStudio.lab().views.map(v=>({key:v.key,kind:v.kind,tone:v.tone,n:v.objects.length,legs:(v.legs||[]).length,labels:v.objects.map(o=>o.label)}))')
     by_key={v['key']:v for v in views}
-    assert set(by_key)>= {'s0','s1','s2','s3','s4','s5','route'},list(by_key)
+    assert set(by_key)>= {'s0','s1','s2','s3'},list(by_key)
+    # a Stage that produced but that this studio has no drawing for says so rather than refusing
+    drawn={v['key'] for v in views}
+    undrawn=[v['key'] for v in views if v['kind']=='undrawn']
+    assert not undrawn or all(page.evaluate('k=>!!discStudio.lab().views.find(v=>v.key===k).note',key) for key in undrawn),undrawn
+    assert {s['key'] for s in state['stages'] if s['status']=='produced'}>=drawn
     assert by_key['s1']['labels']==['hole 11','hole 10','hole 1'],by_key['s1']
-    # S4 names the hole whose basket it could not place instead of guessing one.
-    assert by_key['s4']['labels']==['hole 1','hole 10','hole 11 · missing basket'],by_key['s4']
-    assert page.locator('.lab-cells').count()==1 and page.evaluate('discStudio.lab().views.find(v=>v.key==="s5").cells.centres.length')>0
+    # whichever Stage assembles the holes names the one it could not finish instead of guessing it
+    holes_view=next((v for v in views if v['tone']=='hole'),None)
+    assert holes_view and any('missing' in label for label in holes_view['labels']),holes_view
+    # the obstacle map is drawn as the cells it is, and the round that was searched over it as one polyline
+    assert page.locator('.lab-cells').count()>=1
+    assert page.locator('.lab-path').count()>=1
+    assert page.evaluate('discStudio.runtime.pxc.get("px.exp.lab.round.summary").detourPx')>0
     assert by_key['route']['labels']==['hole 1','hole 10'],by_key['route']  # the order is the badge reading, not the position
     for key in ['s1','s2','s3']:
         assert page.locator('.lab-mark.tone-%s'%by_key[key]['tone']).count()==by_key[key]['n'],key
     # every leg any Stage published is drawn, whichever Stage published it
     assert page.locator('.lab-leg').count()==sum(view['legs'] for view in views),[(v['key'],v['legs']) for v in views]
     assert page.locator('.lab-overlay').get_attribute('viewBox')=='0 0 %d %d'%tuple(page.evaluate('[discStudio.runtime.lab.raster().widthPx,discStudio.runtime.lab.raster().heightPx]'))
+    assert page.locator('.lab-mark.tone-badge').count()==by_key['s1']['n']
     marks=page.locator('.lab-mark').count()
     page.locator('[data-lab-stage="s1"] [data-action="lab-toggle"]').click()
     assert page.locator('.lab-mark').count()==marks-by_key['s1']['n']

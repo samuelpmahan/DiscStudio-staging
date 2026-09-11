@@ -7,7 +7,7 @@ import { shelfSheet } from './formats/shelf-sheet.js';
 import { receiptList } from './formats/receipt-list.js';
 import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
 import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
-import { labStageSpecs, registerLabCalculations, validateStage, LAB_COURSE } from './lab/stages.js';
+import { labStageSpecs, registerLabCalculations, validateStage, stageView, LAB_COURSE } from './lab/stages.js';
 import { fixtureCapture } from './lab/fixtures.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
@@ -399,11 +399,16 @@ export function createStudioRuntime(initial) {
       throw error;
     }
   }
-  /** What this Stage's produce looks like on the raster: boxes, a round, or the raster itself. */
+  /**
+   * What this Stage's produce looks like on the raster. A spec may carry its own
+   * `view`; otherwise the drawing is chosen by the addresses the Stage publishes
+   * (src/lab/stages.js `stageView`), so a Stage that is renumbered or renamed
+   * keeps its drawing and a new address is one row there.
+   */
   function labView(index) {
     const spec = labSpecs[index];
-    if (!spec?.view || labRun.stages[index]?.status !== 'produced') return null;
-    return { key: spec.key, stage: spec.stage, title: spec.title, ...spec.view(labBoard) };
+    if (!spec || labRun.stages[index]?.status !== 'produced') return null;
+    return spec.view ? { key: spec.key, stage: spec.stage, title: spec.title, ...spec.view(labBoard) } : stageView(spec, labBoard);
   }
   /**
    * S0 through the last landed Stage, in order, as one composition each. A Stage
@@ -420,11 +425,13 @@ export function createStudioRuntime(initial) {
   }
   /**
    * The Part the course arrangement stands cards on, in the order a reader would
-   * want it: S4's holes if the Stage has run, else the round's own waypoints,
-   * else S5's course graph. Each is a produce Part of a Stage this board ran --
-   * there is no second place the hole positions live.
+   * want it: the holes a Stage assembled if one has, else the round actually
+   * walked, else the straight round's own waypoints, else the course graph. Each
+   * is a produce Part of a Stage this board ran -- there is no second place the
+   * hole positions live, and which one was used is on the record as the `course`
+   * binding of that run's `fn.comparison.layout`.
    */
-  const LAB_COURSE_ANCHORS = ['px.exp.lab.holes.objects', `px.exp.lab.route.${LAB_COURSE}`, 'px.exp.lab.course.graph'];
+  const LAB_COURSE_ANCHORS = ['px.exp.lab.holes.straight', 'px.exp.lab.holes.objects', 'px.exp.lab.round.path', `px.exp.lab.route.${LAB_COURSE}`, 'px.exp.lab.course.graph'];
   function labCourseAddress() {
     const address = LAB_COURSE_ANCHORS.find(candidate => pxc.has(candidate));
     if (!address) throw new Error('No course has been built yet. Open Course, give it a capture and run the pipeline; then this arrangement stands your cards at its holes.');
