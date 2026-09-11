@@ -1,0 +1,465 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 5,
+    "invocations": 5,
+    "wall_ms": 62.17747900154791
+  },
+  "parts": {
+    "px.exp.brain.data.shelf_molds": {
+      "preexisting": true,
+      "read_by": [
+        "flight",
+        "kmeans",
+        "pca",
+        "fade"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.shelf_weights": {
+      "preexisting": true,
+      "read_by": [
+        "weights"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.shelf.describe_weights.sample": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "weights"
+    },
+    "px.exp.brain.result.shelf.fade_from_flight.sample": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "fade"
+    },
+    "px.exp.brain.result.shelf.flight_correlation.sample": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "flight"
+    },
+    "px.exp.brain.result.shelf.flight_pca.sample": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "pca"
+    },
+    "px.exp.brain.result.shelf.mold_clusters.sample": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "kmeans"
+    }
+  },
+  "pcr": "brain_shelf",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.shelf_weights"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.shelf.describe_weights.sample"
+          ],
+          "args": {
+            "for": "what the twelve discs weigh"
+          },
+          "calculation": {
+            "address": "fn.brain.stats.describe",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "ed437667d8453a6447ef78fcc79f8d667bd974c2f2bcf74a6dc4ea369ebd8ea9"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.shelf_weights"
+          ],
+          "duration_ms": 0.09074300032807514,
+          "hit": true,
+          "id": "weights",
+          "inputs": {
+            "values": "px:px.exp.brain.data.shelf_weights"
+          },
+          "into": "px.exp.brain.result.shelf.describe_weights.sample",
+          "result_sha256": "2eabc81d40d7ba819432a601e4f630076752f4fc849b6d4f527d40394627c3ee",
+          "value": {
+            "data": {
+              "iqr": 1.25,
+              "kurtosis": 1.0888385959146873,
+              "max": 180.0,
+              "mean": 173.91666666666666,
+              "median": 173.0,
+              "min": 170.0,
+              "n": 12,
+              "q25": 173.0,
+              "q75": 174.25,
+              "skewness": 1.071568525818026,
+              "stdev": 2.539088359425425,
+              "variance": 6.446969696969696
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.shelf.describe_weights.sample",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "describe"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.shelf_molds"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.shelf.flight_correlation.sample"
+          ],
+          "args": {
+            "for": "which flight numbers move together"
+          },
+          "calculation": {
+            "address": "fn.brain.stats.correlation_matrix",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "9cb50a664650c30469f381ca79fafa86b02235c3e7471ab9414b57ab80102c89"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.shelf_molds"
+          ],
+          "duration_ms": 0.16608300029474776,
+          "hit": true,
+          "id": "flight",
+          "inputs": {
+            "table": "px:px.exp.brain.data.shelf_molds"
+          },
+          "into": "px.exp.brain.result.shelf.flight_correlation.sample",
+          "result_sha256": "3121a45420479d041c85538f4b4a952cd899d92dda38d7326056cc8869fd5735",
+          "value": {
+            "data": {
+              "columns": [
+                "speed",
+                "glide",
+                "turn",
+                "fade"
+              ],
+              "matrix": [
+                [
+                  1.0,
+                  0.6529891153135794,
+                  -0.40820781975343257,
+                  0.1482914557092949
+                ],
+                [
+                  0.6529891153135794,
+                  1.0,
+                  -0.5717718748968657,
+                  -0.5880692365231933
+                ],
+                [
+                  -0.40820781975343257,
+                  -0.5717718748968657,
+                  1.0,
+                  0.2490677406933589
+                ],
+                [
+                  0.1482914557092949,
+                  -0.5880692365231933,
+                  0.2490677406933589,
+                  1.0
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.shelf.flight_correlation.sample",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "correlate"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.shelf_molds"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.shelf.mold_clusters.sample"
+          ],
+          "args": {
+            "for": "three families of flight",
+            "k": 3,
+            "seed": 7
+          },
+          "calculation": {
+            "address": "fn.brain.ml.kmeans",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "666480b7c542236a6cc9fb0b1e1de4a9928f65369d9fa70c84f7b65c4709fbd5"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.shelf_molds"
+          ],
+          "duration_ms": 0.2549250002630288,
+          "hit": true,
+          "id": "kmeans",
+          "inputs": {
+            "data": "px:px.exp.brain.data.shelf_molds"
+          },
+          "into": "px.exp.brain.result.shelf.mold_clusters.sample",
+          "result_sha256": "bcfdad231ff167c1484aaca699436016de822928abd247a804ce91da0fb73e48",
+          "value": {
+            "data": {
+              "backend": "py",
+              "centres": [
+                [
+                  12.0,
+                  5.0,
+                  -1.0,
+                  3.0
+                ],
+                [
+                  4.25,
+                  3.75,
+                  -0.25,
+                  1.75
+                ],
+                [
+                  7.5,
+                  4.5,
+                  -1.0,
+                  1.5
+                ]
+              ],
+              "for": "three families of flight",
+              "history": [
+                26.0,
+                22.04,
+                16.5,
+                16.5
+              ],
+              "inertia": 16.5,
+              "init": "kmeans++",
+              "iters": 3,
+              "k": 3,
+              "labels": [
+                1,
+                1,
+                0,
+                2,
+                1,
+                2,
+                1
+              ],
+              "model": "kmeans",
+              "n": 7,
+              "seed": 7,
+              "seeded_from": [
+                2,
+                0,
+                5
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.shelf.mold_clusters.sample",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.shelf_molds"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.shelf.flight_pca.sample"
+          ],
+          "args": {
+            "for": "the two directions flight numbers actually vary in",
+            "n_components": 2
+          },
+          "calculation": {
+            "address": "fn.brain.ml.pca",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "b634f72035d5c0cdd1518f0834a1943a824173f1450f529887930d2295f6aee6"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.shelf_molds"
+          ],
+          "duration_ms": 48.016955001003225,
+          "hit": true,
+          "id": "pca",
+          "inputs": {
+            "data": "px:px.exp.brain.data.shelf_molds"
+          },
+          "into": "px.exp.brain.result.shelf.flight_pca.sample",
+          "result_sha256": "03413cdff20e3443f730ab529b7da69fd4e72cca56f43d2a76a6a79f4c82bf88",
+          "value": {
+            "data": {
+              "backend": "np",
+              "components": [
+                [
+                  0.9730540724853022,
+                  0.19639801823975067,
+                  -0.1117012059472785,
+                  0.04600468499175672
+                ],
+                [
+                  0.07795800159886003,
+                  -0.45213568203968696,
+                  0.23685130711961336,
+                  0.8563862057091709
+                ]
+              ],
+              "explained_variance": [
+                9.736469846223649,
+                1.9312925143751294
+              ],
+              "explained_variance_ratio": [
+                0.8018269285125359,
+                0.15904761883089305
+              ],
+              "for": "the two directions flight numbers actually vary in",
+              "mean": [
+                6.285714285714286,
+                4.142857142857143,
+                -0.5714285714285714,
+                1.8571428571428572
+              ],
+              "model": "pca",
+              "n": 7,
+              "n_components": 2,
+              "scores": [
+                [
+                  -1.2706870232451677,
+                  -0.8711939268519883
+                ],
+                [
+                  -2.459830949933986,
+                  1.4526074721267939
+                ],
+                [
+                  5.829098872375211,
+                  0.9351488137186867
+                ],
+                [
+                  0.9835203459124657,
+                  -1.4042649128135687
+                ],
+                [
+                  -1.2319948959444524,
+                  -1.9428645074812327
+                ],
+                [
+                  1.5827786732552172,
+                  0.45591759077337607
+                ],
+                [
+                  -3.432885022419288,
+                  1.3746494705279337
+                ]
+              ],
+              "singular_values": [
+                7.643220465048872,
+                3.4040791833109254
+              ],
+              "total_variance": 12.14285714285714
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.shelf.flight_pca.sample",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "cluster"
+    },
+    {
+      "index": 3,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.shelf_molds"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.shelf.fade_from_flight.sample"
+          ],
+          "args": {
+            "for": "fade explained by speed, glide and turn",
+            "target": "fade"
+          },
+          "calculation": {
+            "address": "fn.brain.ml.linreg_fit",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f297fdfa24638152075b589c550a023a36da0a6e23d5ab4ce20ff7ba0b7b0d32"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.shelf_molds"
+          ],
+          "duration_ms": 13.648772999658831,
+          "hit": true,
+          "id": "fade",
+          "inputs": {
+            "data": "px:px.exp.brain.data.shelf_molds"
+          },
+          "into": "px.exp.brain.result.shelf.fade_from_flight.sample",
+          "result_sha256": "5e8382b482a2c63a1df1cd442f6f7e9961856d6e6dc41daf5b32879d0e62e192",
+          "value": {
+            "data": {
+              "backend": "np",
+              "coef": [
+                0.3689680772086118,
+                -1.6711210096510796,
+                -0.1262063845582784
+              ],
+              "columns": [
+                "speed",
+                "glide",
+                "turn"
+              ],
+              "fit_intercept": true,
+              "for": "fade explained by speed, glide and turn",
+              "intercept": 6.389012620638468,
+              "iters": 0,
+              "l2": 0.0,
+              "method": "closed",
+              "model": "linreg",
+              "n": 7,
+              "target": "fade"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.shelf.fade_from_flight.sample",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "regress"
+    }
+  ]
+}
