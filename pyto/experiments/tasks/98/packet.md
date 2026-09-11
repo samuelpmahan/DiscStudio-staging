@@ -4,8 +4,42 @@ Intent: brain/backend and harness, portable across numpy builds: eig's np engine
 Starting point: 772c8603cf7f3744f9edbd4c3a431d6f31700a3c (land(task-97): brain/stats and brain/data, the third wave: kruskal-wallis, levene and bartlett, the exact binomial test and fisher exact on a 2x2, and the multiple-comparison corrections (bonferroni, holm, benjamini-hochberg) as Calculations with scipy named as the reference; and the column transforms a real pipeline needs: standardise, normalise, rank and bin a column, crosstab two, drop duplicates, concatenate two tables, flag outliers by IQR and by z-score, and oc.brain.data.sample which draws its rows through the effects handle)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 5 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/backend/ops.py
+- M  pyto/experiments/brain/backend/test_tournament.py
+- M  pyto/experiments/brain/backend/tournament.py
+- M  pyto/experiments/brain/harness.py
+- M  pyto/experiments/brain/store/backend.json
+
+```
+pyto/experiments/brain/backend/ops.py             |    17 +-
+ pyto/experiments/brain/backend/test_tournament.py |    26 +-
+ pyto/experiments/brain/backend/tournament.py      |    32 +-
+ pyto/experiments/brain/harness.py                 |    28 +-
+ pyto/experiments/brain/store/backend.json         | 27016 ++++++++++----------
+ 5 files changed, 13703 insertions(+), 13416 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.uEml2hofxm) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               613  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
