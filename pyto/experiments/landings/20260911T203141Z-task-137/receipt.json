@@ -1,0 +1,136 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T203141Z-task-137",
+  "package": "task-137",
+  "base_sha": "36ee0cebabb62fa02f1f348f38d5cdcfc7107c79",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test",
+    "exit": 0,
+    "output_sha256": "08966e54a9ff0f20a768f59ffbc9877f83edf16d4544089cc081560e95b26777"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "c64fecda3396bb30bc16a0e4b1f84e7afde65b0aa69ae8090eb5f6eeb1c1e82f",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/137/HANDOFF.md",
+      "bytes": 9748,
+      "sha256": "884144b185bdf9722dcdcb341f7b637c81db755bdd0907a25178da953d589640"
+    },
+    {
+      "path": "pyto/experiments/tasks/137/evidence/check_all.txt",
+      "bytes": 294152,
+      "sha256": "b29500266afb976eb5a7b70e5b0fefd4842e4e3ac16cc8d870b63502b01eab77"
+    },
+    {
+      "path": "pyto/experiments/tasks/137/evidence/verify.txt",
+      "bytes": 46803,
+      "sha256": "fe3bf06a327953721a2164c0e90869a831cb005c37b8f3ff8be95cc9563b1080"
+    },
+    {
+      "path": "pyto/experiments/tasks/137/packet.md",
+      "bytes": 5064,
+      "sha256": "1425f402598357bfefd150b271a8e0a2a91202d474892be16de57c9a8ce9b1a6"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 51246,
+      "sha256": "62652175ee65dfd5bca3a6d88c07bfebfe1a1388472238fb08d2a61d1aefdda8"
+    },
+    {
+      "path": "scripts/demo_beats.py",
+      "bytes": 14015,
+      "sha256": "977ecec129b85ef744bed38d335f76f67b198d79e2f1905dcc165a307113177d"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 131198,
+      "sha256": "68b3c1235921867ab4b052badf0fe199ed4afabe89bc09843f7431a515775f1d"
+    },
+    {
+      "path": "src/cards.js",
+      "bytes": 12012,
+      "sha256": "f524ea1c5610d12d1c52c05c3837322cdeec771bd24ef5424a8ad178f9dc3509"
+    },
+    {
+      "path": "src/domain.js",
+      "bytes": 27313,
+      "sha256": "4d11762b3661a1f90abb015f98dd81f9e007020b61bf91b103633f527ebb223a"
+    },
+    {
+      "path": "src/exports.js",
+      "bytes": 3495,
+      "sha256": "0ded7f77f819b157357441fc57d7ec194b2ca0aee6f2a1471ba7a13478a4ff89"
+    },
+    {
+      "path": "src/presentation.js",
+      "bytes": 21892,
+      "sha256": "1c949cd706589f46173beac9b4e45e0a1f5c38667690876b2366fcb5d8672b85"
+    },
+    {
+      "path": "src/runtime.js",
+      "bytes": 39895,
+      "sha256": "1094818eebcf081d920ba4d7b7507b75da3de494f39f8e8328a05fc696a1241a"
+    },
+    {
+      "path": "src/seed.js",
+      "bytes": 4517,
+      "sha256": "c7af41c6e79e892a7d2e53d732999323bc1f3bce4888e16de39d29fd44d7926a"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 38333,
+      "sha256": "b014fea57cb6e1060e924de6ae138db7a5dd33811e908a3571bcc7af9a4930b8"
+    },
+    {
+      "path": "tests/cards.test.js",
+      "bytes": 15209,
+      "sha256": "e0e270c2c57f5361a4ea2dbc61b28f38265dde53d71057691f7e6e23c551b160"
+    },
+    {
+      "path": "tests/exports.test.js",
+      "bytes": 2733,
+      "sha256": "c24d2342db26c2b4b6a64572877da0c1fbe54fa1a4bc9a2a04c93cbd4eb96cb2"
+    },
+    {
+      "path": "tests/fixtures/serial-run-record.json",
+      "bytes": 421675,
+      "sha256": "6553b56c4f4cd0d990052240d16293ced76a4e91b9ca22757f2ffb95a7cacd7b"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T20:34:13.252325Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

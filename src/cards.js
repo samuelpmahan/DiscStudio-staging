@@ -169,7 +169,7 @@ export function cardsApply({ preset, effective }) {
 }
 
 /** The preset a projection composes with today: shelf/bag on the disc image, single/competition on the shared comparison design. */
-const presetIdFor = (projection, layout) => (projection === 'shelf' || projection === 'bag') ? 'discImage' : layout.presetId;
+const presetIdFor = (projection, layout) => (projection === 'shelf' || projection === 'bag') ? 'discImage' : projection === 'single' ? layout.singlePresetId : layout.presetId;
 
 /**
  * `fn.cards.query`: the three PQL reads the editor needs, all over prefix

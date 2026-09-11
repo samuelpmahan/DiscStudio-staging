@@ -180,8 +180,8 @@ test('query(\'inherits\', { token }) matches the world', () => {
   assert.equal(sponsor.presets.showcase, true);
   assert.equal(sponsor.presets.minimal, true);
   assert.equal(sponsor.presets.discImage, true);
-  assert.equal(sponsor.projections.single, false, 'single composes with broadcast');
-  assert.equal(sponsor.projections.competition, false, 'competition also composes with broadcast');
+  assert.equal(sponsor.projections.single, true, 'single composes with spotlight, which inherits sponsor');
+  assert.equal(sponsor.projections.competition, false, 'competition composes with broadcast, which overrides sponsor');
   assert.equal(sponsor.projections.shelf, true, 'shelf composes with discImage, which inherits sponsor');
   assert.equal(sponsor.projections.bag, true);
 
