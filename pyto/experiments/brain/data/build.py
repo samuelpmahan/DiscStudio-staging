@@ -21,6 +21,8 @@ import data.datasets as datasets_module  # noqa: E402
 import data.frame as frame  # noqa: E402
 import data.frame_cases as frame_cases  # noqa: E402
 import data.referee as referee  # noqa: E402
+import data.shaping as shaping  # noqa: E402
+import data.shaping_cases as shaping_cases  # noqa: E402
 import data.timeseries as timeseries  # noqa: E402
 import data.timeseries_cases as timeseries_cases  # noqa: E402
 
@@ -29,6 +31,7 @@ VERTICAL = "data"
 CASE_MODULES = (
     ("frame", frame_cases, frame.CALCS),
     ("timeseries", timeseries_cases, timeseries.CALCS),
+    ("shaping", shaping_cases, shaping.CALCS),
 )
 
 CALCS = {}
@@ -127,7 +130,8 @@ def oracles(store):
             expected = case["expected"]()
             if project:
                 got = project(got)
-                if group == "frame":
+                if group in ("frame", "shaping") and isinstance(expected, dict) \
+                        and "columns" in expected:
                     expected = project(expected)
             ok = store.oracle(
                 VERTICAL, _name_of(case["calc"]),
@@ -176,20 +180,31 @@ def group_by_tournament(store):
          "note": "math.fsum and sorted over plain lists, one pass per group"},
         {"branch": "np", "calc": "fn.brain.data.group_by",
          "note": "one numpy array per group per aggregate, reduced by numpy"},
+        {"branch": "npsort", "calc": "fn.brain.data.group_by",
+         "note": "sort once, then ONE numpy array per aggregated column for the whole "
+                 "table, reduced by cumsum and reduceat"},
     ]
     store.bracket(VERTICAL, problem, GROUP_BY_CRITERIA, candidates,
-                  for_="whether numpy pays for itself once a group-by has been split into "
-                       "small per-group arrays")
+                  for_="whether numpy pays for itself in a group-by, and if the per-group "
+                       "array is the thing that stops it paying, whether one array per column "
+                       "pays instead")
     for candidate in candidates:
         scores, note = referee.score_group_by(store, candidate["branch"])
         store.judge(VERTICAL, problem, referee.NAME, candidate["branch"], scores, note)
     decided = store.decide(VERTICAL, problem)
+    default = frame.DEFAULT_GROUP_BY_BACKEND
+    agrees = ("the facade already follows it" if default == decided["winner"] else
+              "the facade does NOT follow it: data.frame.DEFAULT_GROUP_BY_BACKEND is %r, "
+              "because the bracket's speed criterion reads the LARGEST benchmark and the "
+              "engines cross over on the way there -- %r wins at 400 rows and %r at 4000"
+              % (default, default, decided["winner"]))
     store.refine(
         VERTICAL, problem,
-        "the winner is what fn.brain.data.group_by does when args['backend'] is not given: "
-        "%r. the loser stays reachable by naming the other backend, and every oracle Part for "
-        "both backends stays in the store, so the bracket re-runs against both."
-        % decided["winner"],
+        "winner %r; fn.brain.data.group_by defaults to %r "
+        "(data.frame.DEFAULT_GROUP_BY_BACKEND), so %s. every engine keeps its own oracle and "
+        "benchmark Parts and stays reachable by naming args['backend'], so nothing is deleted "
+        "and the bracket re-runs against all three."
+        % (decided["winner"], default, agrees),
         address="fn.brain.data.group_by")
     return decided
 
@@ -213,16 +228,23 @@ def findings(store):
         for_="the store is the interface; a value it cannot hold is not a result")
     store.finding(
         VERTICAL, "numpy_does_not_pay_on_small_groups", "friction",
-        "the group-by bracket is the measurement: the np backend builds one array per group per "
-        "aggregate, and on real group sizes (tens of rows) the array construction costs more "
-        "than the reduction saves. numpy only starts paying when a single reduction is over "
-        "thousands of contiguous values.",
-        for_="a backend that is slower AND more code is a backend that should not be the default",
-        workaround="the bracket decides the default and the losing backend stays reachable by "
-                   "naming args['backend'], so nothing is deleted and the choice is a Part",
-        proposal="a group-by that sorts once and reduces with numpy's reduceat over the whole "
-                 "column would be a third candidate worth a branch: one array for the column "
-                 "instead of one per group")
+        "the group-by bracket measured it three ways. the 'np' engine builds one array per "
+        "group per aggregate and is SLOWER than plain python at every size tested: the array "
+        "construction costs more than the reduction saves when a group is tens of rows. the "
+        "third engine, 'npsort', was built to answer the obvious follow-up -- sort once, then "
+        "one array per COLUMN reduced by cumsum and reduceat -- and it wins at 4000 rows and "
+        "loses at 400. so the useful statement is not 'numpy is faster' but 'numpy is faster "
+        "per ARRAY, and a group-by's arrays are the thing you have to choose'.",
+        for_="a backend picked by reputation rather than by a benchmark Part is a guess, and "
+             "this one would have been the wrong guess twice over",
+        workaround="all three engines stay; args['backend'] names one, "
+                   "data.frame.DEFAULT_GROUP_BY_BACKEND records which one is the default and "
+                   "why, and the bracket re-runs against all three",
+        proposal="a benchmark Part that carries the SIZE it was measured at is already there, "
+                 "but harness.decide reads one number per criterion, so a bracket cannot say "
+                 "'this one wins above n=2000'. let a criterion name the bench size it scores "
+                 "on, or let decide return a winner per size, and a crossover stops being "
+                 "invisible to the tournament")
     store.finding(
         VERTICAL, "a_dataset_part_has_no_column_types", "friction",
         "{'for', 'columns', 'rows'} carries no declared type per column, so every calculation "
@@ -253,12 +275,9 @@ def built_addresses(store):
 
 def the_map(store, decided):
     stubbed = [
-        {"address": "fn.brain.data.group_by (reduceat branch)",
-         "why": "the third tournament candidate -- sort once, reduce the whole column with "
-                "numpy.reduceat -- is designed in proposal.brain.data.numpy_does_not_pay_on_small_groups "
-                "and not built"},
-        {"address": "fn.brain.data.melt",
-         "why": "pivot's inverse; pivot was the one the tournament and the oracles needed first"},
+        {"address": "fn.brain.data.group_by (median on the npsort engine)",
+         "why": "median has no whole-column reduction, so the third engine falls back to the "
+                "per-group path for it; a sorted-block median is the obvious next piece"},
         {"address": "fn.brain.data.resample",
          "why": "needs a time index with real calendar semantics, which no dataset Part carries yet"},
         {"address": "fn.brain.data.stl",
@@ -269,8 +288,11 @@ def the_map(store, decided):
                 "which needs an optimiser the brain does not have tonight"},
     ]
     next_ = [
-        {"what": "the reduceat group-by as a third branch of the bracket",
-         "for": "the bracket is re-runnable and a third candidate is the cheapest real win left"},
+        {"what": "a sorted-block median and quantile on the npsort engine",
+         "for": "it is the one aggregate the third engine still hands back to the per-group path"},
+        {"what": "a bracket criterion that names the benchmark size it scores on",
+         "for": "the group-by engines cross over between 400 and 4000 rows and the bracket "
+                "cannot currently say so"},
         {"what": "column kinds on the dataset Part (see proposal.brain.data.a_dataset_part_has_no_column_types)",
          "for": "every relational calculation re-derives them on every call"},
         {"what": "melt, resample and a calendar-aware time index",

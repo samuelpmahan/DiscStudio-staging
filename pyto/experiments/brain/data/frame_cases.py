@@ -195,8 +195,14 @@ AGGREGATES = [
     {"fn": "count", "as": "rows"},
 ]
 
+HOLE_AGGREGATES = [
+    {"column": "reading", "fn": kind}
+    for kind in ("mean", "sum", "min", "max", "std", "var", "count", "count_missing")
+]
+
 ORACLE_CASES = []
-for _backend in ("py", "np"):
+# group_by has three engines, and every one of them answers to the same reference.
+for _backend in ("py", "np", "npsort"):
     ORACLE_CASES.append(_case(
         "fn.brain.data.group_by", "orders.by.region.%s" % _backend, _backend,
         {"table": ORDERS, "by": ["region"], "aggregates": AGGREGATES},
@@ -207,6 +213,12 @@ for _backend in ("py", "np"):
         {"table": ORDERS, "by": ["region", "customer"], "aggregates": AGGREGATES},
         "numpy.mean/sum/median/min/max/std/var via data.frame_cases.brute_group_by",
         lambda: brute_group_by(ORDERS, ["region", "customer"], AGGREGATES), 1e-9, sorted_shape))
+    ORACLE_CASES.append(_case(
+        "fn.brain.data.group_by", "holes.%s" % _backend, _backend,
+        {"table": GAPPY, "by": ["label"], "aggregates": HOLE_AGGREGATES},
+        "numpy over the same groups via data.frame_cases.brute_group_by",
+        lambda: brute_group_by(GAPPY, ["label"], HOLE_AGGREGATES), 1e-9, sorted_shape))
+for _backend in ("py", "np"):
     ORACLE_CASES.append(_case(
         "fn.brain.data.pivot", "readings.station.by.month.%s" % _backend, _backend,
         {"table": READINGS, "index": "station", "columns": "month", "values": "celsius",
@@ -287,7 +299,7 @@ def _running(table, key, value):
 
 
 BENCH_CASES = []
-for _backend in ("py", "np"):
+for _backend in ("py", "np", "npsort"):
     for _size, _table in (("rows=400", WIDE_SMALL), ("rows=4000", WIDE)):
         BENCH_CASES.append({
             "calc": "fn.brain.data.group_by", "backend": _backend, "size": _size,
@@ -298,10 +310,11 @@ for _backend in ("py", "np"):
                                {"column": "value", "fn": "std"},
                                {"column": "value", "fn": "median"},
                                {"fn": "count", "as": "rows"}]})})
-        BENCH_CASES.append({
-            "calc": "fn.brain.data.pivot", "backend": _backend, "size": _size,
-            "make_args": (lambda table=_table, backend=_backend: {
-                "table": table, "index": "key", "columns": "bucket", "values": "value",
-                "agg": "mean", "backend": backend})})
+        if _backend != "npsort":
+            BENCH_CASES.append({
+                "calc": "fn.brain.data.pivot", "backend": _backend, "size": _size,
+                "make_args": (lambda table=_table, backend=_backend: {
+                    "table": table, "index": "key", "columns": "bucket", "values": "value",
+                    "agg": "mean", "backend": backend})})
 
 CALCS = frame.CALCS

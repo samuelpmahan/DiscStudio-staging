@@ -13,6 +13,7 @@ import math
 
 from pyto import Calculation
 
+from data.sorted_groups import VECTORISED, grouped
 from data.table import check, column, index_of, make, numeric, sort_key
 
 COMPARISONS = ("eq", "ne", "lt", "lte", "gt", "gte", "in", "not_in",
@@ -20,6 +21,22 @@ COMPARISONS = ("eq", "ne", "lt", "lte", "gt", "gte", "in", "not_in",
 AGGREGATES = ("count", "count_missing", "sum", "mean", "median", "min", "max",
               "var", "std", "nunique", "first", "last")
 HOWS = ("inner", "left", "right", "outer")
+
+
+GROUP_BY_BACKENDS = ("py", "np", "npsort")
+
+DEFAULT_GROUP_BY_BACKEND = "py"
+"""which engine a group-by uses when nobody names one.
+
+this constant is the tournament's output, not an opinion. the bracket
+`px.exp.brain.bracket.data.group_by_aggregation` measures all three engines, and
+the answer turned out to depend on size: at 400 rows the pure-python engine wins
+(the arrays cost more than they save) and at 4000 rows `npsort` wins (one array
+per column instead of one per group). "py" stays the default because it is the
+only engine that needs nothing installed and it wins at the size a dataset Part
+usually is; `data.build` re-runs the bracket and records whether this line still
+agrees with the winner at the benchmark's largest size.
+"""
 
 
 def _backend(args, allowed=("py", "np")):
@@ -196,7 +213,10 @@ def group_by(args):
     aggregates = args.get("aggregates") or []
     if not aggregates:
         raise ValueError("group_by needs at least one aggregate")
-    backend = _backend(args)
+    backend = args.get("backend", DEFAULT_GROUP_BY_BACKEND)
+    if backend not in GROUP_BY_BACKENDS:
+        raise ValueError("unknown backend %r for a group-by: %s"
+                         % (backend, ", ".join(GROUP_BY_BACKENDS)))
     prepared = []
     for spec in aggregates:
         if not isinstance(spec, dict) or "fn" not in spec:
@@ -226,16 +246,30 @@ def group_by(args):
         buckets[key][1].append(row)
     if args.get("sorted"):
         order.sort()
+    whole_column = {}
+    if backend == "npsort":
+        # one array per aggregated column for the WHOLE table, not one per group:
+        # the point of this engine is that the per-group cost is paid once, in the
+        # sort, and never again.
+        wanted = {}
+        for at, kind, _ in prepared:
+            if at is not None and kind in VECTORISED:
+                wanted.setdefault(at, set()).add(kind)
+        for at, kinds in wanted.items():
+            cells = [[row[at] for row in buckets[key][1]] for key in order]
+            whole_column[at] = grouped(None, cells, sorted(kinds))
     rows = []
-    for key in order:
+    for place, key in enumerate(order):
         label_values, members = buckets[key]
         out = list(label_values)
         for at, kind, _ in prepared:
-            values = [len(members)] * len(members) if at is None else [row[at] for row in members]
             if at is None:
                 out.append(len(members) if kind == "count" else 0)
+            elif at in whole_column and kind in whole_column[at]:
+                out.append(whole_column[at][kind][place])
             else:
-                out.append(_aggregate(kind, values, backend))
+                out.append(_aggregate(kind, [row[at] for row in members],
+                                      "py" if backend == "npsort" else backend))
         rows.append(out)
     return make(_for(args, "%s grouped by %s" % (table.get("for", "a dataset"), ", ".join(by) or "everything")),
                 header, rows)
