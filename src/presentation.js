@@ -23,9 +23,9 @@ export function defaultPresets() {
 }
 
 /** One material, reused by shelf, card editor and comparison. No photo recognition is claimed. */
-export function prepareDiscArt({ disc, mold, maker }) {
+export function prepareDiscArt({ disc, mold, maker, assignment = null }) {
   if (disc.photo && safeImage(disc.photo)) return { kind: 'photo', src: disc.photo, alt: disc.nickname || mold?.name || 'Physical disc', sample: false };
-  const inputs = artInputs({ disc, mold, maker });
+  const inputs = artInputs({ disc, mold, maker, assignment });
   return { kind: 'painted', svg: paintDisc(...inputs), alt: `Sample artwork · ${inputs[5]}`, sample: true, inputs };
 }
 /** hsl -> #rrggbb, so a disc's sample hue can be handed to the painter as authored colours are. */
@@ -51,8 +51,9 @@ export function sampleFamily(discId) {
   let h = 7; for (const ch of String(discId || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   return FAMILIES[h % FAMILIES.length];
 }
-export function artInputs({ disc, mold, maker }) {
-  const family = disc.artFamily || sampleFamily(disc.id);
+export function artInputs({ disc, mold, maker, assignment = null }) {
+  // authored first; then the shelf-wide assignment (fn.art.assign, px.art.assignment); the per-id hash only when neither exists
+  const family = disc.artFamily || assignment?.assignment?.[disc.id] || sampleFamily(disc.id);
   const seed = Number.isFinite(disc.sampleHue) ? disc.sampleHue : 146;
   const [sampleBase, sampleAccent] = sampleColors(seed);
   const base = paintColor(disc.artBase, sampleBase);

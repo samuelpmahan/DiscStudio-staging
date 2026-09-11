@@ -1,7 +1,6 @@
 import { schema, clone } from './domain.js';
 import { defaultPresets } from './presentation.js';
 import { defaultCards } from './cards.js';
-import { FAMILIES } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 export function createSeed() {
   const objects = Object.fromEntries(Object.keys(schema).map(type => [type, {}]));
   const add = (type, value) => (objects[type][value.id] = { ...value, type });
@@ -22,8 +21,7 @@ export function createSeed() {
     ['luna-mint', 'luna', 'Luna · putter one', 'Rubber blend', 173, 'Mint', 148], ['luna-lilac', 'luna', 'Luna · putter two', 'Rubber blend', 174, 'Lilac', 268], ['luna-blue', 'luna', 'Luna · putter three', 'Rubber blend', 173, 'Blue', 205],
     ['zone-gold', 'zone', 'Zone · putter two', 'Z', 174, 'Gold', 45], ['zone-rose', 'zone', 'Zone · putter three', 'Z', 173, 'Rose', 328]
   ];
-  // The sample collection shows the painter's families, one each in order (twelve of sixteen); a disc added later gets one by its id (presentation.js sampleFamily).
-  discs.forEach(([id, moldId, nickname, plastic, weight, color, sampleHue], index) => add('Disc', { id, moldId, nickname, plastic, weight, color, sampleHue, artFamily: FAMILIES[index % FAMILIES.length], photo: null, notes: '' }));
+  discs.forEach(([id, moldId, nickname, plastic, weight, color, sampleHue]) => add('Disc', { id, moldId, nickname, plastic, weight, color, sampleHue, photo: null, notes: '' }));
   add('Bag', { id: 'everyday', name: 'Everyday bag', discIds: discs.slice(0, 6).map(d => d[0]), notes: 'My regular lineup' });
   add('Bag', { id: 'luna-bag', name: 'Luna squad', discIds: ['luna-mint', 'luna-lilac', 'luna-blue'], notes: '' });
   add('Bag', { id: 'zone-bag', name: 'Zone squad', discIds: ['zone-peach', 'zone-gold', 'zone-rose'], notes: '' });
