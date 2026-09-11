@@ -4,7 +4,7 @@ Intent: S7 plays the holes S6 resolved: the course graph binds px.holes.straight
 Starting point: 878f7a91d29db8f1b13ee8cabf4f58bb8ec01e56 (land(task-126): the port's map, honest after the renumbering: S4-S7 under ran, the stubs that S4 recovery actually retired removed, and what S7 still owes the straight holes written down as the next step with its for)
 Verify: node --test tests/*.test.js
 Allow: src/lab tests pyto/experiments/tasks
-Candidate: 31 files, see below
+Candidate: 28 files, see below
 Evidence: suite exit 0, see below
 
 ## Candidate
@@ -14,7 +14,6 @@ Evidence: suite exit 0, see below
 - M  src/lab/s7course.js
 - M  src/lab/s7round.js
 - M  src/lab/stage-sources.js
-- M  src/lab/stages.js
 - M  src/lab/stages/S7.course.mmd
 - M  src/lab/store/lab.json
 - M  src/lab/store/records/HolesByNearestAnchor.invariants.json
@@ -36,8 +35,6 @@ Evidence: suite exit 0, see below
 - M  src/lab/store/records/S7.round.json
 - M  src/lab/store/records/S7.vs-straight.json
 - M  src/lab/store/records/route-labfixture.json
-- M  src/runtime.js
-- M  tests/lab-pipeline.test.js
 - M  tests/lab-s7course.test.js
 - M  tests/lab-s7round.test.js
 
@@ -47,7 +44,6 @@ src/lab/fixtures.js                                |   25 +-
  src/lab/s7course.js                                |   67 +-
  src/lab/s7round.js                                 |   32 +-
  src/lab/stage-sources.js                           |    2 +-
- src/lab/stages.js                                  |    2 +
  src/lab/stages/S7.course.mmd                       |    6 +-
  src/lab/store/lab.json                             | 2716 ++++++++++++++------
  .../records/HolesByNearestAnchor.invariants.json   |   24 +-
@@ -69,17 +65,15 @@ src/lab/fixtures.js                                |   25 +-
  src/lab/store/records/S7.round.json                |  606 +++--
  src/lab/store/records/S7.vs-straight.json          |   84 +-
  src/lab/store/records/route-labfixture.json        |  237 +-
- src/runtime.js                                     |    4 +-
- tests/lab-pipeline.test.js                         |   23 +-
  tests/lab-s7course.test.js                         |   70 +-
  tests/lab-s7round.test.js                          |   46 +-
- 31 files changed, 3860 insertions(+), 1656 deletions(-)
+ 28 files changed, 3841 insertions(+), 1646 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.2Z1jYdFeik) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.1HZzrrtDyC) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
