@@ -46,13 +46,19 @@ function basket(rgba, width, x, y, sprite) {
  * 48x32 (dark, inside the ring), two white digits inside the plate, and a dark
  * loop inside the second digit. Returns the geometry the tests read back.
  */
-function badge(rgba, width, x, y) {
+function badge(rgba, width, x, y, reading = '10') {
   ring(rgba, width, x, y, 60, 40, 3, WHITE);
   rect(rgba, width, x + 6, y + 4, 48, 32, BLACK);
-  rect(rgba, width, x + 12, y + 10, 6, 20, WHITE);                 // a bar digit
-  ring(rgba, width, x + 28, y + 10, 12, 20, 3, WHITE);             // a ring digit
-  rect(rgba, width, x + 31, y + 13, 6, 14, BLACK);                 // its loop
-  return { border: [x, y, 60, 40], plate: [x + 6, y + 4, 48, 32], digits: [[x + 12, y + 10, 6, 20], [x + 28, y + 10, 12, 20]], loop: [x + 31, y + 13, 6, 14] };
+  // Two glyph slots, left then right; the reading is what S1 must recover.
+  const slots = [x + 12, x + 28];
+  const digits = [...reading].map((glyph, index) => {
+    const at = slots[index];
+    if (glyph === '1') { rect(rgba, width, at, y + 10, 6, 20, WHITE); return { glyph, bbox: [at, y + 10, 6, 20], loop: null }; }
+    ring(rgba, width, at, y + 10, 12, 20, 3, WHITE);
+    rect(rgba, width, at + 3, y + 13, 6, 14, BLACK);
+    return { glyph, bbox: [at, y + 10, 12, 20], loop: [at + 3, y + 13, 6, 14] };
+  });
+  return { reading, border: [x, y, 60, 40], plate: [x + 6, y + 4, 48, 32], digits: digits.map(digit => digit.bbox), loop: digits.find(digit => digit.loop)?.loop ?? null };
 }
 
 /**
@@ -74,7 +80,9 @@ export function fixtureCapture(seed = 20260911) {
     const chrome = y < CHROME_TOP || y >= HEIGHT - CHROME_BOTTOM;
     for (let x = 0; x < WIDTH; x++) put(rgba, WIDTH, x, y, chrome ? 70 : 80 + Math.floor(random() * 120));
   }
-  const badges = [badge(rgba, WIDTH, 120, 300), badge(rgba, WIDTH, 300, 620)];
+  // Two badges reading different hole numbers, so the route's order is the
+  // reading and not the position: badge "01" is hole 1, badge "10" is hole 10.
+  const badges = [badge(rgba, WIDTH, 120, 300, '10'), badge(rgba, WIDTH, 300, 620, '01')];
   const sprite = JSON.parse(readFileSync(join(SOURCE, 'basket-sprite.json'), 'utf8'));
   const baskets = [basket(rgba, WIDTH, 150, 470, sprite), basket(rgba, WIDTH, 330, 800, sprite)];
   const tees = [tee(rgba, WIDTH, 60, 250), tee(rgba, WIDTH, 420, 560)];

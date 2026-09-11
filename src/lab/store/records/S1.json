@@ -190,7 +190,7 @@
                   "pixels": {
                     "kind": "numbers",
                     "length": 84,
-                    "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                    "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
                   },
                   "sourceTickId": null
                 },
@@ -323,7 +323,7 @@
               "pixels": {
                 "kind": "numbers",
                 "length": 200,
-                "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                "sha256": "b317a2fe4cf2448ac7175518c1b25174dcd23fe08654437f4ac8fbbd01294e02"
               },
               "components": [
                 {
@@ -337,8 +337,8 @@
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                   "pixels": {
                     "kind": "numbers",
-                    "length": 200,
-                    "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                    "length": 152,
+                    "sha256": "cebd0ecc195e3e62c2d11fb59062d9f6f0b465b75b0917eced38f997a581c915"
                   },
                   "sourceTickId": null
                 },
@@ -353,8 +353,8 @@
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                   "pixels": {
                     "kind": "numbers",
-                    "length": 120,
-                    "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                    "length": 200,
+                    "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
                   },
                   "sourceTickId": null
                 },
@@ -369,8 +369,8 @@
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                   "pixels": {
                     "kind": "numbers",
-                    "length": 156,
-                    "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                    "length": 120,
+                    "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
                   },
                   "sourceTickId": null
                 },
@@ -385,8 +385,8 @@
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                   "pixels": {
                     "kind": "numbers",
-                    "length": 200,
-                    "sha256": "353516e4a4a4b9c50ab7151427d6cdbe056787c61fdf67c20fda36829727d338"
+                    "length": 156,
+                    "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
                   },
                   "sourceTickId": null
                 },
@@ -402,7 +402,7 @@
                   "pixels": {
                     "kind": "numbers",
                     "length": 200,
-                    "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                    "sha256": "353516e4a4a4b9c50ab7151427d6cdbe056787c61fdf67c20fda36829727d338"
                   },
                   "sourceTickId": null
                 },
@@ -417,8 +417,8 @@
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                   "pixels": {
                     "kind": "numbers",
-                    "length": 120,
-                    "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                    "length": 152,
+                    "sha256": "e79ae74ed4271d2abc196018a93d24f742fbf04456146f78feb4d4ac580055cb"
                   },
                   "sourceTickId": null
                 },
@@ -433,8 +433,8 @@
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                   "pixels": {
                     "kind": "numbers",
-                    "length": 156,
-                    "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                    "length": 200,
+                    "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
                   },
                   "sourceTickId": null
                 },
@@ -449,6 +449,38 @@
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                   "pixels": {
                     "kind": "numbers",
+                    "length": 156,
+                    "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "white-component-9",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 9,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "white-component-10",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-10",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 10,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
                     "length": 200,
                     "sha256": "b748b998fb7f835251950176b1aac17c4deec4229cfe392647abdb305eb89b4b"
                   },
@@ -457,7 +489,7 @@
               ],
               "sourceTickId": null
             },
-            "note": "5 array(s) truncated to the first 200 entries; original lengths: [5172, 1746, 1746, 564, 564]"
+            "note": "5 array(s) truncated to the first 200 entries; original lengths: [5476, 1746, 1746, 564, 564]"
           }
         }
       ]
@@ -639,13 +671,13 @@
                       "pixels": {
                         "kind": "numbers",
                         "length": 84,
-                        "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                        "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
                       },
                       "sourceTickId": null
                     },
                     "area": 84,
                     "bbox": [
-                      331,
+                      315,
                       591,
                       6,
                       14
@@ -789,11 +821,11 @@
                   "matches": [
                     {
                       "part": {
-                        "id": "white-component-1",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                        "id": "white-component-2",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 1,
+                        "label": 2,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -868,11 +900,11 @@
                   "matches": [
                     {
                       "part": {
-                        "id": "white-component-5",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                        "id": "white-component-7",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 5,
+                        "label": 7,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -993,11 +1025,11 @@
                   "matches": [
                     {
                       "part": {
-                        "id": "white-component-2",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 2,
+                        "label": 3,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1018,11 +1050,11 @@
                     },
                     {
                       "part": {
-                        "id": "white-component-3",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "id": "white-component-4",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 3,
+                        "label": 4,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1097,51 +1129,51 @@
                   "matches": [
                     {
                       "part": {
-                        "id": "white-component-6",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "id": "white-component-8",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 6,
-                        "widthPx": 512,
-                        "heightPx": 920,
-                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                        "pixels": {
-                          "kind": "numbers",
-                          "length": 120,
-                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
-                        },
-                        "sourceTickId": null
-                      },
-                      "area": 120,
-                      "bbox": [
-                        312,
-                        588,
-                        6,
-                        20
-                      ]
-                    },
-                    {
-                      "part": {
-                        "id": "white-component-7",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
-                        "kind": "component",
-                        "polarity": "white",
-                        "label": 7,
+                        "label": 8,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                         "pixels": {
                           "kind": "numbers",
                           "length": 156,
-                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                          "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                         },
                         "sourceTickId": null
                       },
                       "area": 156,
                       "bbox": [
-                        328,
+                        312,
                         588,
                         12,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-9",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 9,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        328,
+                        588,
+                        6,
                         20
                       ]
                     }
@@ -1221,11 +1253,11 @@
                   },
                   "anchor": {
                     "part": {
-                      "id": "white-component-2",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                      "id": "white-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 2,
+                      "label": 3,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1274,11 +1306,11 @@
                   },
                   "anchor": {
                     "part": {
-                      "id": "white-component-3",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                      "id": "white-component-4",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 3,
+                      "label": 4,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1353,30 +1385,56 @@
                   },
                   "anchor": {
                     "part": {
-                      "id": "white-component-6",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                      "id": "white-component-8",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 6,
+                      "label": 8,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                       "pixels": {
                         "kind": "numbers",
-                        "length": 120,
-                        "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                        "length": 156,
+                        "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                       },
                       "sourceTickId": null
                     },
-                    "area": 120,
+                    "area": 156,
                     "bbox": [
                       312,
                       588,
-                      6,
+                      12,
                       20
                     ]
                   },
-                  "matches": []
+                  "matches": [
+                    {
+                      "part": {
+                        "id": "black-component-5",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 5,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 84,
+                          "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 84,
+                      "bbox": [
+                        315,
+                        591,
+                        6,
+                        14
+                      ]
+                    }
+                  ]
                 },
                 {
                   "plate": {
@@ -1406,56 +1464,30 @@
                   },
                   "anchor": {
                     "part": {
-                      "id": "white-component-7",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                      "id": "white-component-9",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 7,
+                      "label": 9,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                       "pixels": {
                         "kind": "numbers",
-                        "length": 156,
-                        "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                        "length": 120,
+                        "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
                       },
                       "sourceTickId": null
                     },
-                    "area": 156,
+                    "area": 120,
                     "bbox": [
                       328,
                       588,
-                      12,
+                      6,
                       20
                     ]
                   },
-                  "matches": [
-                    {
-                      "part": {
-                        "id": "black-component-5",
-                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
-                        "kind": "component",
-                        "polarity": "black",
-                        "label": 5,
-                        "widthPx": 512,
-                        "heightPx": 920,
-                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                        "pixels": {
-                          "kind": "numbers",
-                          "length": 84,
-                          "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
-                        },
-                        "sourceTickId": null
-                      },
-                      "area": 84,
-                      "bbox": [
-                        331,
-                        591,
-                        6,
-                        14
-                      ]
-                    }
-                  ]
+                  "matches": []
                 }
               ]
             },
@@ -1508,7 +1540,7 @@
             "data": {
               "candidates": [
                 {
-                  "id": "badge-candidate:black-component-1:white-component-1",
+                  "id": "badge-candidate:black-component-1:white-component-2",
                   "plate": {
                     "part": {
                       "id": "black-component-1",
@@ -1536,11 +1568,11 @@
                   },
                   "border": {
                     "part": {
-                      "id": "white-component-1",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                      "id": "white-component-2",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 1,
+                      "label": 2,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1562,11 +1594,11 @@
                   "digits": [
                     {
                       "part": {
-                        "id": "white-component-2",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 2,
+                        "label": 3,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1587,11 +1619,11 @@
                     },
                     {
                       "part": {
-                        "id": "white-component-3",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "id": "white-component-4",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 3,
+                        "label": 4,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1640,11 +1672,11 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-2",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                          "id": "white-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 2,
+                          "label": 3,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1693,11 +1725,11 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-3",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                          "id": "white-component-4",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 3,
+                          "label": 4,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1752,7 +1784,7 @@
                   }
                 },
                 {
-                  "id": "badge-candidate:black-component-4:white-component-5",
+                  "id": "badge-candidate:black-component-4:white-component-7",
                   "plate": {
                     "part": {
                       "id": "black-component-4",
@@ -1780,11 +1812,11 @@
                   },
                   "border": {
                     "part": {
-                      "id": "white-component-5",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                      "id": "white-component-7",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 5,
+                      "label": 7,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1806,51 +1838,51 @@
                   "digits": [
                     {
                       "part": {
-                        "id": "white-component-6",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "id": "white-component-8",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 6,
-                        "widthPx": 512,
-                        "heightPx": 920,
-                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                        "pixels": {
-                          "kind": "numbers",
-                          "length": 120,
-                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
-                        },
-                        "sourceTickId": null
-                      },
-                      "area": 120,
-                      "bbox": [
-                        312,
-                        588,
-                        6,
-                        20
-                      ]
-                    },
-                    {
-                      "part": {
-                        "id": "white-component-7",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
-                        "kind": "component",
-                        "polarity": "white",
-                        "label": 7,
+                        "label": 8,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                         "pixels": {
                           "kind": "numbers",
                           "length": 156,
-                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                          "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                         },
                         "sourceTickId": null
                       },
                       "area": 156,
                       "bbox": [
-                        328,
+                        312,
                         588,
                         12,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-9",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 9,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        328,
+                        588,
+                        6,
                         20
                       ]
                     }
@@ -1884,30 +1916,56 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-6",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                          "id": "white-component-8",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 6,
+                          "label": 8,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                           "pixels": {
                             "kind": "numbers",
-                            "length": 120,
-                            "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                            "length": 156,
+                            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                           },
                           "sourceTickId": null
                         },
-                        "area": 120,
+                        "area": 156,
                         "bbox": [
                           312,
                           588,
-                          6,
+                          12,
                           20
                         ]
                       },
-                      "matches": []
+                      "matches": [
+                        {
+                          "part": {
+                            "id": "black-component-5",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 5,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 84,
+                              "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 84,
+                          "bbox": [
+                            315,
+                            591,
+                            6,
+                            14
+                          ]
+                        }
+                      ]
                     },
                     {
                       "plate": {
@@ -1937,56 +1995,30 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-7",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                          "id": "white-component-9",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 7,
+                          "label": 9,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                           "pixels": {
                             "kind": "numbers",
-                            "length": 156,
-                            "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                            "length": 120,
+                            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
                           },
                           "sourceTickId": null
                         },
-                        "area": 156,
+                        "area": 120,
                         "bbox": [
                           328,
                           588,
-                          12,
+                          6,
                           20
                         ]
                       },
-                      "matches": [
-                        {
-                          "part": {
-                            "id": "black-component-5",
-                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
-                            "kind": "component",
-                            "polarity": "black",
-                            "label": 5,
-                            "widthPx": 512,
-                            "heightPx": 920,
-                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                            "pixels": {
-                              "kind": "numbers",
-                              "length": 84,
-                              "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
-                            },
-                            "sourceTickId": null
-                          },
-                          "area": 84,
-                          "bbox": [
-                            331,
-                            591,
-                            6,
-                            14
-                          ]
-                        }
-                      ]
+                      "matches": []
                     }
                   ],
                   "pixels": {
@@ -2055,7 +2087,7 @@
               "badges": [
                 {
                   "badge": {
-                    "id": "badge-candidate:black-component-1:white-component-1",
+                    "id": "badge-candidate:black-component-1:white-component-2",
                     "plate": {
                       "part": {
                         "id": "black-component-1",
@@ -2083,11 +2115,11 @@
                     },
                     "border": {
                       "part": {
-                        "id": "white-component-1",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                        "id": "white-component-2",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 1,
+                        "label": 2,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2109,11 +2141,11 @@
                     "digits": [
                       {
                         "part": {
-                          "id": "white-component-2",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                          "id": "white-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 2,
+                          "label": 3,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2134,11 +2166,11 @@
                       },
                       {
                         "part": {
-                          "id": "white-component-3",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                          "id": "white-component-4",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 3,
+                          "label": 4,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2187,11 +2219,11 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-2",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                            "id": "white-component-3",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 2,
+                            "label": 3,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2240,11 +2272,11 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-3",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                            "id": "white-component-4",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 3,
+                            "label": 4,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2347,7 +2379,7 @@
                 },
                 {
                   "badge": {
-                    "id": "badge-candidate:black-component-4:white-component-5",
+                    "id": "badge-candidate:black-component-4:white-component-7",
                     "plate": {
                       "part": {
                         "id": "black-component-4",
@@ -2375,11 +2407,11 @@
                     },
                     "border": {
                       "part": {
-                        "id": "white-component-5",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                        "id": "white-component-7",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 5,
+                        "label": 7,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2401,51 +2433,51 @@
                     "digits": [
                       {
                         "part": {
-                          "id": "white-component-6",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                          "id": "white-component-8",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 6,
-                          "widthPx": 512,
-                          "heightPx": 920,
-                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                          "pixels": {
-                            "kind": "numbers",
-                            "length": 120,
-                            "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
-                          },
-                          "sourceTickId": null
-                        },
-                        "area": 120,
-                        "bbox": [
-                          312,
-                          588,
-                          6,
-                          20
-                        ]
-                      },
-                      {
-                        "part": {
-                          "id": "white-component-7",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
-                          "kind": "component",
-                          "polarity": "white",
-                          "label": 7,
+                          "label": 8,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                           "pixels": {
                             "kind": "numbers",
                             "length": 156,
-                            "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                           },
                           "sourceTickId": null
                         },
                         "area": 156,
                         "bbox": [
-                          328,
+                          312,
                           588,
                           12,
+                          20
+                        ]
+                      },
+                      {
+                        "part": {
+                          "id": "white-component-9",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 9,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          328,
+                          588,
+                          6,
                           20
                         ]
                       }
@@ -2479,30 +2511,56 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-6",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                            "id": "white-component-8",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 6,
+                            "label": 8,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                             "pixels": {
                               "kind": "numbers",
-                              "length": 120,
-                              "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                              "length": 156,
+                              "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                             },
                             "sourceTickId": null
                           },
-                          "area": 120,
+                          "area": 156,
                           "bbox": [
                             312,
                             588,
-                            6,
+                            12,
                             20
                           ]
                         },
-                        "matches": []
+                        "matches": [
+                          {
+                            "part": {
+                              "id": "black-component-5",
+                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                              "kind": "component",
+                              "polarity": "black",
+                              "label": 5,
+                              "widthPx": 512,
+                              "heightPx": 920,
+                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                              "pixels": {
+                                "kind": "numbers",
+                                "length": 84,
+                                "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+                              },
+                              "sourceTickId": null
+                            },
+                            "area": 84,
+                            "bbox": [
+                              315,
+                              591,
+                              6,
+                              14
+                            ]
+                          }
+                        ]
                       },
                       {
                         "plate": {
@@ -2532,56 +2590,30 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-7",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                            "id": "white-component-9",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 7,
+                            "label": 9,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                             "pixels": {
                               "kind": "numbers",
-                              "length": 156,
-                              "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                              "length": 120,
+                              "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
                             },
                             "sourceTickId": null
                           },
-                          "area": 156,
+                          "area": 120,
                           "bbox": [
                             328,
                             588,
-                            12,
+                            6,
                             20
                           ]
                         },
-                        "matches": [
-                          {
-                            "part": {
-                              "id": "black-component-5",
-                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
-                              "kind": "component",
-                              "polarity": "black",
-                              "label": 5,
-                              "widthPx": 512,
-                              "heightPx": 920,
-                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                              "pixels": {
-                                "kind": "numbers",
-                                "length": 84,
-                                "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
-                              },
-                              "sourceTickId": null
-                            },
-                            "area": 84,
-                            "bbox": [
-                              331,
-                              591,
-                              6,
-                              14
-                            ]
-                          }
-                        ]
+                        "matches": []
                       }
                     ],
                     "pixels": {
@@ -2608,21 +2640,6 @@
                       "bbox": [
                         312,
                         588,
-                        6,
-                        20
-                      ],
-                      "method": "cc",
-                      "normalized": {
-                        "kind": "numbers",
-                        "length": 200,
-                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
-                      },
-                      "notes": []
-                    },
-                    {
-                      "bbox": [
-                        328,
-                        588,
                         12,
                         20
                       ],
@@ -2631,6 +2648,21 @@
                         "kind": "numbers",
                         "length": 200,
                         "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                      },
+                      "notes": []
+                    },
+                    {
+                      "bbox": [
+                        328,
+                        588,
+                        6,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
                       },
                       "notes": []
                     }
@@ -2681,7 +2713,7 @@
             "data": {
               "candidates": [
                 {
-                  "id": "badge-candidate:black-component-1:white-component-1",
+                  "id": "badge-candidate:black-component-1:white-component-2",
                   "plate": {
                     "part": {
                       "id": "black-component-1",
@@ -2709,11 +2741,11 @@
                   },
                   "border": {
                     "part": {
-                      "id": "white-component-1",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                      "id": "white-component-2",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 1,
+                      "label": 2,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2735,11 +2767,11 @@
                   "digits": [
                     {
                       "part": {
-                        "id": "white-component-2",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 2,
+                        "label": 3,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2760,11 +2792,11 @@
                     },
                     {
                       "part": {
-                        "id": "white-component-3",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "id": "white-component-4",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 3,
+                        "label": 4,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2813,11 +2845,11 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-2",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                          "id": "white-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 2,
+                          "label": 3,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2866,11 +2898,11 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-3",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                          "id": "white-component-4",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 3,
+                          "label": 4,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2981,7 +3013,7 @@
                   }
                 },
                 {
-                  "id": "badge-candidate:black-component-4:white-component-5",
+                  "id": "badge-candidate:black-component-4:white-component-7",
                   "plate": {
                     "part": {
                       "id": "black-component-4",
@@ -3009,11 +3041,11 @@
                   },
                   "border": {
                     "part": {
-                      "id": "white-component-5",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                      "id": "white-component-7",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 5,
+                      "label": 7,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3035,51 +3067,51 @@
                   "digits": [
                     {
                       "part": {
-                        "id": "white-component-6",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "id": "white-component-8",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 6,
-                        "widthPx": 512,
-                        "heightPx": 920,
-                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                        "pixels": {
-                          "kind": "numbers",
-                          "length": 120,
-                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
-                        },
-                        "sourceTickId": null
-                      },
-                      "area": 120,
-                      "bbox": [
-                        312,
-                        588,
-                        6,
-                        20
-                      ]
-                    },
-                    {
-                      "part": {
-                        "id": "white-component-7",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
-                        "kind": "component",
-                        "polarity": "white",
-                        "label": 7,
+                        "label": 8,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                         "pixels": {
                           "kind": "numbers",
                           "length": 156,
-                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                          "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                         },
                         "sourceTickId": null
                       },
                       "area": 156,
                       "bbox": [
-                        328,
+                        312,
                         588,
                         12,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-9",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 9,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        328,
+                        588,
+                        6,
                         20
                       ]
                     }
@@ -3113,30 +3145,56 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-6",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                          "id": "white-component-8",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 6,
+                          "label": 8,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                           "pixels": {
                             "kind": "numbers",
-                            "length": 120,
-                            "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                            "length": 156,
+                            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                           },
                           "sourceTickId": null
                         },
-                        "area": 120,
+                        "area": 156,
                         "bbox": [
                           312,
                           588,
-                          6,
+                          12,
                           20
                         ]
                       },
-                      "matches": []
+                      "matches": [
+                        {
+                          "part": {
+                            "id": "black-component-5",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 5,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 84,
+                              "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 84,
+                          "bbox": [
+                            315,
+                            591,
+                            6,
+                            14
+                          ]
+                        }
+                      ]
                     },
                     {
                       "plate": {
@@ -3166,56 +3224,30 @@
                       },
                       "anchor": {
                         "part": {
-                          "id": "white-component-7",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                          "id": "white-component-9",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 7,
+                          "label": 9,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                           "pixels": {
                             "kind": "numbers",
-                            "length": 156,
-                            "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                            "length": 120,
+                            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
                           },
                           "sourceTickId": null
                         },
-                        "area": 156,
+                        "area": 120,
                         "bbox": [
                           328,
                           588,
-                          12,
+                          6,
                           20
                         ]
                       },
-                      "matches": [
-                        {
-                          "part": {
-                            "id": "black-component-5",
-                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
-                            "kind": "component",
-                            "polarity": "black",
-                            "label": 5,
-                            "widthPx": 512,
-                            "heightPx": 920,
-                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                            "pixels": {
-                              "kind": "numbers",
-                              "length": 84,
-                              "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
-                            },
-                            "sourceTickId": null
-                          },
-                          "area": 84,
-                          "bbox": [
-                            331,
-                            591,
-                            6,
-                            14
-                          ]
-                        }
-                      ]
+                      "matches": []
                     }
                   ],
                   "pixels": {
@@ -3224,37 +3256,12 @@
                     "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
                   },
                   "reading": {
-                    "value": "10",
+                    "value": "01",
                     "status": "read",
                     "digits": [
                       {
                         "bbox": [
                           312,
-                          588,
-                          6,
-                          20
-                        ],
-                        "method": "cc",
-                        "normalized": {
-                          "kind": "numbers",
-                          "length": 200,
-                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
-                        },
-                        "notes": [],
-                        "rankings": [
-                          {
-                            "label": "1",
-                            "score": 1
-                          },
-                          {
-                            "label": "0",
-                            "score": 0.640625
-                          }
-                        ]
-                      },
-                      {
-                        "bbox": [
-                          328,
                           588,
                           12,
                           20
@@ -3273,6 +3280,31 @@
                           },
                           {
                             "label": "1",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          328,
+                          588,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
                             "score": 0.640625
                           }
                         ]
@@ -3326,7 +3358,7 @@
             "kind": "json",
             "data": [
               {
-                "id": "badge-candidate:black-component-1:white-component-1",
+                "id": "badge-candidate:black-component-1:white-component-2",
                 "plate": {
                   "part": {
                     "id": "black-component-1",
@@ -3354,11 +3386,11 @@
                 },
                 "border": {
                   "part": {
-                    "id": "white-component-1",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                    "id": "white-component-2",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 1,
+                    "label": 2,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3380,11 +3412,11 @@
                 "digits": [
                   {
                     "part": {
-                      "id": "white-component-2",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                      "id": "white-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 2,
+                      "label": 3,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3405,11 +3437,11 @@
                   },
                   {
                     "part": {
-                      "id": "white-component-3",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                      "id": "white-component-4",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 3,
+                      "label": 4,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3458,11 +3490,11 @@
                     },
                     "anchor": {
                       "part": {
-                        "id": "white-component-2",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 2,
+                        "label": 3,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3511,11 +3543,11 @@
                     },
                     "anchor": {
                       "part": {
-                        "id": "white-component-3",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "id": "white-component-4",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 3,
+                        "label": 4,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3626,7 +3658,7 @@
                 },
                 "unaccountedButOwned": {
                   "rule": "outer-border-bbox",
-                  "outerBorder": "white-component-1",
+                  "outerBorder": "white-component-2",
                   "bbox": [
                     120,
                     258,
@@ -3636,7 +3668,7 @@
                 }
               },
               {
-                "id": "badge-candidate:black-component-4:white-component-5",
+                "id": "badge-candidate:black-component-4:white-component-7",
                 "plate": {
                   "part": {
                     "id": "black-component-4",
@@ -3664,11 +3696,11 @@
                 },
                 "border": {
                   "part": {
-                    "id": "white-component-5",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                    "id": "white-component-7",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 5,
+                    "label": 7,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3690,51 +3722,51 @@
                 "digits": [
                   {
                     "part": {
-                      "id": "white-component-6",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                      "id": "white-component-8",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                       "kind": "component",
                       "polarity": "white",
-                      "label": 6,
-                      "widthPx": 512,
-                      "heightPx": 920,
-                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                      "pixels": {
-                        "kind": "numbers",
-                        "length": 120,
-                        "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
-                      },
-                      "sourceTickId": null
-                    },
-                    "area": 120,
-                    "bbox": [
-                      312,
-                      588,
-                      6,
-                      20
-                    ]
-                  },
-                  {
-                    "part": {
-                      "id": "white-component-7",
-                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
-                      "kind": "component",
-                      "polarity": "white",
-                      "label": 7,
+                      "label": 8,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                       "pixels": {
                         "kind": "numbers",
                         "length": 156,
-                        "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                        "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                       },
                       "sourceTickId": null
                     },
                     "area": 156,
                     "bbox": [
-                      328,
+                      312,
                       588,
                       12,
+                      20
+                    ]
+                  },
+                  {
+                    "part": {
+                      "id": "white-component-9",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 9,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 120,
+                        "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 120,
+                    "bbox": [
+                      328,
+                      588,
+                      6,
                       20
                     ]
                   }
@@ -3768,30 +3800,56 @@
                     },
                     "anchor": {
                       "part": {
-                        "id": "white-component-6",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "id": "white-component-8",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 6,
+                        "label": 8,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                         "pixels": {
                           "kind": "numbers",
-                          "length": 120,
-                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                          "length": 156,
+                          "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
                         },
                         "sourceTickId": null
                       },
-                      "area": 120,
+                      "area": 156,
                       "bbox": [
                         312,
                         588,
-                        6,
+                        12,
                         20
                       ]
                     },
-                    "matches": []
+                    "matches": [
+                      {
+                        "part": {
+                          "id": "black-component-5",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 5,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 84,
+                            "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 84,
+                        "bbox": [
+                          315,
+                          591,
+                          6,
+                          14
+                        ]
+                      }
+                    ]
                   },
                   {
                     "plate": {
@@ -3821,56 +3879,30 @@
                     },
                     "anchor": {
                       "part": {
-                        "id": "white-component-7",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                        "id": "white-component-9",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 7,
+                        "label": 9,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                         "pixels": {
                           "kind": "numbers",
-                          "length": 156,
-                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                          "length": 120,
+                          "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
                         },
                         "sourceTickId": null
                       },
-                      "area": 156,
+                      "area": 120,
                       "bbox": [
                         328,
                         588,
-                        12,
+                        6,
                         20
                       ]
                     },
-                    "matches": [
-                      {
-                        "part": {
-                          "id": "black-component-5",
-                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
-                          "kind": "component",
-                          "polarity": "black",
-                          "label": 5,
-                          "widthPx": 512,
-                          "heightPx": 920,
-                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
-                          "pixels": {
-                            "kind": "numbers",
-                            "length": 84,
-                            "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
-                          },
-                          "sourceTickId": null
-                        },
-                        "area": 84,
-                        "bbox": [
-                          331,
-                          591,
-                          6,
-                          14
-                        ]
-                      }
-                    ]
+                    "matches": []
                   }
                 ],
                 "pixels": {
@@ -3879,37 +3911,12 @@
                   "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
                 },
                 "reading": {
-                  "value": "10",
+                  "value": "01",
                   "status": "read",
                   "digits": [
                     {
                       "bbox": [
                         312,
-                        588,
-                        6,
-                        20
-                      ],
-                      "method": "cc",
-                      "normalized": {
-                        "kind": "numbers",
-                        "length": 200,
-                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
-                      },
-                      "notes": [],
-                      "rankings": [
-                        {
-                          "label": "1",
-                          "score": 1
-                        },
-                        {
-                          "label": "0",
-                          "score": 0.640625
-                        }
-                      ]
-                    },
-                    {
-                      "bbox": [
-                        328,
                         588,
                         12,
                         20
@@ -3931,12 +3938,37 @@
                           "score": 0.640625
                         }
                       ]
+                    },
+                    {
+                      "bbox": [
+                        328,
+                        588,
+                        6,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                      },
+                      "notes": [],
+                      "rankings": [
+                        {
+                          "label": "1",
+                          "score": 1
+                        },
+                        {
+                          "label": "0",
+                          "score": 0.640625
+                        }
+                      ]
                     }
                   ]
                 },
                 "unaccountedButOwned": {
                   "rule": "outer-border-bbox",
-                  "outerBorder": "white-component-5",
+                  "outerBorder": "white-component-7",
                   "bbox": [
                     300,
                     578,

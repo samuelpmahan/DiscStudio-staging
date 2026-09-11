@@ -71,83 +71,143 @@
                 "components": [
                   {
                     "label": 1,
+                    "area": 152,
+                    "cx": 67.5,
+                    "cy": 220.5,
+                    "bboxX": 60,
+                    "bboxY": 208,
+                    "bboxW": 16,
+                    "bboxH": 26,
+                    "major": 26,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36538461538461536
+                  },
+                  {
+                    "label": 2,
                     "area": 564,
                     "cx": 149.5,
                     "cy": 277.5,
                     "bboxX": 120,
                     "bboxY": 258,
                     "bboxW": 60,
-                    "bboxH": 40
+                    "bboxH": 40,
+                    "major": 60,
+                    "minor": 40,
+                    "angle": 0,
+                    "fill": 0.235
                   },
                   {
-                    "label": 2,
+                    "label": 3,
                     "area": 120,
                     "cx": 134.5,
                     "cy": 277.5,
                     "bboxX": 132,
                     "bboxY": 268,
                     "bboxW": 6,
-                    "bboxH": 20
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
                   },
                   {
-                    "label": 3,
+                    "label": 4,
                     "area": 156,
                     "cx": 153.5,
                     "cy": 277.5,
                     "bboxX": 148,
                     "bboxY": 268,
                     "bboxW": 12,
-                    "bboxH": 20
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 12,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.65
                   },
                   {
-                    "label": 4,
+                    "label": 5,
                     "area": 1746,
                     "cx": 170.5,
                     "cy": 455.31500572737684,
                     "bboxX": 150,
                     "bboxY": 428,
                     "bboxW": 42,
-                    "bboxH": 66
+                    "bboxH": 66,
+                    "major": 66,
+                    "minor": 42,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.6298701298701299
                   },
                   {
-                    "label": 5,
+                    "label": 6,
+                    "area": 152,
+                    "cx": 427.5,
+                    "cy": 530.5,
+                    "bboxX": 420,
+                    "bboxY": 518,
+                    "bboxW": 16,
+                    "bboxH": 26,
+                    "major": 26,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36538461538461536
+                  },
+                  {
+                    "label": 7,
                     "area": 564,
                     "cx": 329.5,
                     "cy": 597.5,
                     "bboxX": 300,
                     "bboxY": 578,
                     "bboxW": 60,
-                    "bboxH": 40
-                  },
-                  {
-                    "label": 6,
-                    "area": 120,
-                    "cx": 314.5,
-                    "cy": 597.5,
-                    "bboxX": 312,
-                    "bboxY": 588,
-                    "bboxW": 6,
-                    "bboxH": 20
-                  },
-                  {
-                    "label": 7,
-                    "area": 156,
-                    "cx": 333.5,
-                    "cy": 597.5,
-                    "bboxX": 328,
-                    "bboxY": 588,
-                    "bboxW": 12,
-                    "bboxH": 20
+                    "bboxH": 40,
+                    "major": 60,
+                    "minor": 40,
+                    "angle": 0,
+                    "fill": 0.235
                   },
                   {
                     "label": 8,
+                    "area": 156,
+                    "cx": 317.5,
+                    "cy": 597.5,
+                    "bboxX": 312,
+                    "bboxY": 588,
+                    "bboxW": 12,
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 12,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.65
+                  },
+                  {
+                    "label": 9,
+                    "area": 120,
+                    "cx": 330.5,
+                    "cy": 597.5,
+                    "bboxX": 328,
+                    "bboxY": 588,
+                    "bboxW": 6,
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
+                  },
+                  {
+                    "label": 10,
                     "area": 1746,
                     "cx": 350.5,
                     "cy": 785.3150057273768,
                     "bboxX": 330,
                     "bboxY": 758,
                     "bboxW": 42,
-                    "bboxH": 66
+                    "bboxH": 66,
+                    "major": 66,
+                    "minor": 42,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.6298701298701299
                   }
                 ]
               },
@@ -175,7 +235,11 @@
                     "bboxX": 126,
                     "bboxY": 262,
                     "bboxW": 48,
-                    "bboxH": 32
+                    "bboxH": 32,
+                    "major": 48,
+                    "minor": 32,
+                    "angle": 0,
+                    "fill": 0.765625
                   },
                   {
                     "label": 2,
@@ -185,7 +249,11 @@
                     "bboxX": 151,
                     "bboxY": 271,
                     "bboxW": 6,
-                    "bboxH": 14
+                    "bboxH": 14,
+                    "major": 14,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
                   },
                   {
                     "label": 3,
@@ -195,27 +263,39 @@
                     "bboxX": 146,
                     "bboxY": 424,
                     "bboxW": 50,
-                    "bboxH": 74
+                    "bboxH": 74,
+                    "major": 74,
+                    "minor": 50,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.5281081081081082
                   },
                   {
                     "label": 4,
                     "area": 1176,
-                    "cx": 330.2142857142857,
+                    "cx": 331.8469387755102,
                     "cy": 597.5,
                     "bboxX": 306,
                     "bboxY": 582,
                     "bboxW": 48,
-                    "bboxH": 32
+                    "bboxH": 32,
+                    "major": 48.00000000000001,
+                    "minor": 32.00000000000001,
+                    "angle": -1.9374145755300002e-16,
+                    "fill": 0.7656249999999997
                   },
                   {
                     "label": 5,
                     "area": 84,
-                    "cx": 333.5,
+                    "cx": 317.5,
                     "cy": 597.5,
-                    "bboxX": 331,
+                    "bboxX": 315,
                     "bboxY": 591,
                     "bboxW": 6,
-                    "bboxH": 14
+                    "bboxH": 14,
+                    "major": 14,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
                   },
                   {
                     "label": 6,
@@ -225,7 +305,11 @@
                     "bboxX": 326,
                     "bboxY": 754,
                     "bboxW": 50,
-                    "bboxH": 74
+                    "bboxH": 74,
+                    "major": 74,
+                    "minor": 50,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.5281081081081082
                   }
                 ]
               }
@@ -279,28 +363,36 @@
               "members": [
                 {
                   "body": {
-                    "label": 4,
+                    "label": 5,
                     "area": 1746,
                     "cx": 170.5,
                     "cy": 455.31500572737684,
                     "bboxX": 150,
                     "bboxY": 428,
                     "bboxW": 42,
-                    "bboxH": 66
+                    "bboxH": 66,
+                    "major": 66,
+                    "minor": 42,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.6298701298701299
                   },
                   "areaRatio": 1,
                   "whiteCoverage": 1
                 },
                 {
                   "body": {
-                    "label": 8,
+                    "label": 10,
                     "area": 1746,
                     "cx": 350.5,
                     "cy": 785.3150057273768,
                     "bboxX": 330,
                     "bboxY": 758,
                     "bboxW": 42,
-                    "bboxH": 66
+                    "bboxH": 66,
+                    "major": 66,
+                    "minor": 42,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.6298701298701299
                   },
                   "areaRatio": 1,
                   "whiteCoverage": 1
@@ -367,14 +459,18 @@
                 {
                   "candidate": {
                     "body": {
-                      "label": 4,
+                      "label": 5,
                       "area": 1746,
                       "cx": 170.5,
                       "cy": 455.31500572737684,
                       "bboxX": 150,
                       "bboxY": 428,
                       "bboxW": 42,
-                      "bboxH": 66
+                      "bboxH": 66,
+                      "major": 66,
+                      "minor": 42,
+                      "angle": 1.5707963267948966,
+                      "fill": 0.6298701298701299
                     },
                     "areaRatio": 1,
                     "whiteCoverage": 1
@@ -394,14 +490,18 @@
                 {
                   "candidate": {
                     "body": {
-                      "label": 8,
+                      "label": 10,
                       "area": 1746,
                       "cx": 350.5,
                       "cy": 785.3150057273768,
                       "bboxX": 330,
                       "bboxY": 758,
                       "bboxW": 42,
-                      "bboxH": 66
+                      "bboxH": 66,
+                      "major": 66,
+                      "minor": 42,
+                      "angle": 1.5707963267948966,
+                      "fill": 0.6298701298701299
                     },
                     "areaRatio": 1,
                     "whiteCoverage": 1
@@ -484,7 +584,7 @@
                     "fn": "fn.lab.basket.detectfamily",
                     "body": {
                       "polarity": "bright",
-                      "label": 4,
+                      "label": 5,
                       "bbox": [
                         150,
                         428,
@@ -507,7 +607,7 @@
                     "fn": "fn.lab.basket.findpx",
                     "body": {
                       "polarity": "bright",
-                      "label": 4
+                      "label": 5
                     }
                   }
                 }
@@ -531,7 +631,7 @@
                     "fn": "fn.lab.basket.detectfamily",
                     "body": {
                       "polarity": "bright",
-                      "label": 8,
+                      "label": 10,
                       "bbox": [
                         330,
                         758,
@@ -554,7 +654,7 @@
                     "fn": "fn.lab.basket.findpx",
                     "body": {
                       "polarity": "bright",
-                      "label": 8
+                      "label": 10
                     }
                   }
                 }

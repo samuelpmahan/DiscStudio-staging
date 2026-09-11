@@ -1,0 +1,646 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S3",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Tee.detectRings",
+      "invocations": [
+        {
+          "id": "px.exp.lab.tees.rings",
+          "calculation": {
+            "address": "fn.lab.tee.detectrings",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "fields": "px:px.exp.lab.components",
+            "badges": "px:px.exp.lab.badges.objects"
+          },
+          "args": {},
+          "into": "px.exp.lab.tees.rings",
+          "declared_consumes": [
+            "px:px.exp.lab.components",
+            "px:px.exp.lab.badges.objects"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.components",
+            "px.exp.lab.badges.objects"
+          ],
+          "actual_produces": [
+            "px.exp.lab.tees.rings"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.tees.rings",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "enclosed": [
+                {
+                  "cx": 67.5,
+                  "cy": 220.5,
+                  "holeArea": 264,
+                  "bboxX": 62,
+                  "bboxY": 210,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 153.5,
+                  "cy": 277.5,
+                  "holeArea": 84,
+                  "bboxX": 151,
+                  "bboxY": 271,
+                  "bboxW": 6,
+                  "bboxH": 14,
+                  "angle": 1.5707963267948966,
+                  "elongation": 2.3603873774083297,
+                  "ringFrac": 1,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 427.5,
+                  "cy": 530.5,
+                  "holeArea": 264,
+                  "bboxX": 422,
+                  "bboxY": 520,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 317.5,
+                  "cy": 597.5,
+                  "holeArea": 84,
+                  "bboxX": 315,
+                  "bboxY": 591,
+                  "bboxW": 6,
+                  "bboxH": 14,
+                  "angle": 1.5707963267948966,
+                  "elongation": 2.3603873774083297,
+                  "ringFrac": 1,
+                  "kind": "tee-rect"
+                }
+              ],
+              "elongated": [
+                {
+                  "cx": 67.5,
+                  "cy": 220.5,
+                  "holeArea": 264,
+                  "bboxX": 62,
+                  "bboxY": 210,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 153.5,
+                  "cy": 277.5,
+                  "holeArea": 84,
+                  "bboxX": 151,
+                  "bboxY": 271,
+                  "bboxW": 6,
+                  "bboxH": 14,
+                  "angle": 1.5707963267948966,
+                  "elongation": 2.3603873774083297,
+                  "ringFrac": 1,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 427.5,
+                  "cy": 530.5,
+                  "holeArea": 264,
+                  "bboxX": 422,
+                  "bboxY": 520,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 317.5,
+                  "cy": 597.5,
+                  "holeArea": 84,
+                  "bboxX": 315,
+                  "bboxY": 591,
+                  "bboxW": 6,
+                  "bboxH": 14,
+                  "angle": 1.5707963267948966,
+                  "elongation": 2.3603873774083297,
+                  "ringFrac": 1,
+                  "kind": "tee-rect"
+                }
+              ],
+              "excludedByBadge": [
+                {
+                  "cx": 153.5,
+                  "cy": 277.5,
+                  "holeArea": 84,
+                  "bboxX": 151,
+                  "bboxY": 271,
+                  "bboxW": 6,
+                  "bboxH": 14,
+                  "angle": 1.5707963267948966,
+                  "elongation": 2.3603873774083297,
+                  "ringFrac": 1,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 317.5,
+                  "cy": 597.5,
+                  "holeArea": 84,
+                  "bboxX": 315,
+                  "bboxY": 591,
+                  "bboxW": 6,
+                  "bboxH": 14,
+                  "angle": 1.5707963267948966,
+                  "elongation": 2.3603873774083297,
+                  "ringFrac": 1,
+                  "kind": "tee-rect"
+                }
+              ],
+              "candidates": [
+                {
+                  "cx": 67.5,
+                  "cy": 220.5,
+                  "holeArea": 264,
+                  "bboxX": 62,
+                  "bboxY": 210,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                {
+                  "cx": 427.5,
+                  "cy": 530.5,
+                  "holeArea": 264,
+                  "bboxX": 422,
+                  "bboxY": 520,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Tee.findFamily",
+      "invocations": [
+        {
+          "id": "px.exp.lab.tees.family",
+          "calculation": {
+            "address": "fn.lab.tee.findfamily",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "rings": "px:px.exp.lab.tees.rings",
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {},
+          "into": "px.exp.lab.tees.family",
+          "declared_consumes": [
+            "px:px.exp.lab.tees.rings",
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.tees.rings",
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.tees.family"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.tees.family",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "measured": [
+                {
+                  "ring": {
+                    "cx": 67.5,
+                    "cy": 220.5,
+                    "holeArea": 264,
+                    "bboxX": 62,
+                    "bboxY": 210,
+                    "bboxW": 12,
+                    "bboxH": 22,
+                    "angle": 1.5707963267948966,
+                    "elongation": 1.837830889288342,
+                    "ringFrac": 0.6333333333333333,
+                    "kind": "tee-rect"
+                  },
+                  "frame": {
+                    "label": 1,
+                    "area": 152,
+                    "cx": 67.5,
+                    "cy": 220.5,
+                    "bboxX": 60,
+                    "bboxY": 208,
+                    "bboxW": 16,
+                    "bboxH": 26,
+                    "major": 26,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36538461538461536
+                  }
+                },
+                {
+                  "ring": {
+                    "cx": 427.5,
+                    "cy": 530.5,
+                    "holeArea": 264,
+                    "bboxX": 422,
+                    "bboxY": 520,
+                    "bboxW": 12,
+                    "bboxH": 22,
+                    "angle": 1.5707963267948966,
+                    "elongation": 1.837830889288342,
+                    "ringFrac": 0.6333333333333333,
+                    "kind": "tee-rect"
+                  },
+                  "frame": {
+                    "label": 6,
+                    "area": 152,
+                    "cx": 427.5,
+                    "cy": 530.5,
+                    "bboxX": 420,
+                    "bboxY": 518,
+                    "bboxW": 16,
+                    "bboxH": 26,
+                    "major": 26,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36538461538461536
+                  }
+                }
+              ],
+              "unframed": [],
+              "members": [
+                {
+                  "ring": {
+                    "cx": 67.5,
+                    "cy": 220.5,
+                    "holeArea": 264,
+                    "bboxX": 62,
+                    "bboxY": 210,
+                    "bboxW": 12,
+                    "bboxH": 22,
+                    "angle": 1.5707963267948966,
+                    "elongation": 1.837830889288342,
+                    "ringFrac": 0.6333333333333333,
+                    "kind": "tee-rect"
+                  },
+                  "frame": {
+                    "label": 1,
+                    "area": 152,
+                    "cx": 67.5,
+                    "cy": 220.5,
+                    "bboxX": 60,
+                    "bboxY": 208,
+                    "bboxW": 16,
+                    "bboxH": 26,
+                    "major": 26,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36538461538461536
+                  }
+                },
+                {
+                  "ring": {
+                    "cx": 427.5,
+                    "cy": 530.5,
+                    "holeArea": 264,
+                    "bboxX": 422,
+                    "bboxY": 520,
+                    "bboxW": 12,
+                    "bboxH": 22,
+                    "angle": 1.5707963267948966,
+                    "elongation": 1.837830889288342,
+                    "ringFrac": 0.6333333333333333,
+                    "kind": "tee-rect"
+                  },
+                  "frame": {
+                    "label": 6,
+                    "area": 152,
+                    "cx": 427.5,
+                    "cy": 530.5,
+                    "bboxX": 420,
+                    "bboxY": 518,
+                    "bboxW": 16,
+                    "bboxH": 26,
+                    "major": 26,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.36538461538461536
+                  }
+                }
+              ],
+              "anchor": {
+                "ring": {
+                  "cx": 67.5,
+                  "cy": 220.5,
+                  "holeArea": 264,
+                  "bboxX": 62,
+                  "bboxY": 210,
+                  "bboxW": 12,
+                  "bboxH": 22,
+                  "angle": 1.5707963267948966,
+                  "elongation": 1.837830889288342,
+                  "ringFrac": 0.6333333333333333,
+                  "kind": "tee-rect"
+                },
+                "frame": {
+                  "label": 1,
+                  "area": 152,
+                  "cx": 67.5,
+                  "cy": 220.5,
+                  "bboxX": 60,
+                  "bboxY": 208,
+                  "bboxW": 16,
+                  "bboxH": 26,
+                  "major": 26,
+                  "minor": 16,
+                  "angle": 1.5707963267948966,
+                  "fill": 0.36538461538461536
+                }
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Tee.findPx",
+      "invocations": [
+        {
+          "id": "px.exp.lab.tees",
+          "calculation": {
+            "address": "fn.lab.tee.findpx",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "family": "px:px.exp.lab.tees.family",
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {},
+          "into": "px.exp.lab.tees",
+          "declared_consumes": [
+            "px:px.exp.lab.tees.family",
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.tees.family",
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.tees"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.tees",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "center": [
+                  67.5,
+                  220.5
+                ],
+                "innerBbox": [
+                  62,
+                  210,
+                  12,
+                  22
+                ],
+                "bbox": [
+                  60,
+                  208,
+                  16,
+                  26
+                ],
+                "angleRad": 1.5707963267948966,
+                "px": {
+                  "kind": "numbers",
+                  "length": 152,
+                  "sha256": "cebd0ecc195e3e62c2d11fb59062d9f6f0b465b75b0917eced38f997a581c915"
+                },
+                "has": {
+                  "detectRings": {
+                    "fn": "fn.lab.tee.detectrings",
+                    "hole": {
+                      "cx": 67.5,
+                      "cy": 220.5,
+                      "holeArea": 264,
+                      "bboxX": 62,
+                      "bboxY": 210,
+                      "bboxW": 12,
+                      "bboxH": 22,
+                      "angle": 1.5707963267948966,
+                      "elongation": 1.837830889288342,
+                      "ringFrac": 0.6333333333333333,
+                      "kind": "tee-rect"
+                    }
+                  },
+                  "findFamily": {
+                    "fn": "fn.lab.tee.findfamily",
+                    "frame": {
+                      "polarity": "bright",
+                      "label": 1,
+                      "bbox": [
+                        60,
+                        208,
+                        16,
+                        26
+                      ]
+                    }
+                  },
+                  "findPx": {
+                    "fn": "fn.lab.tee.findpx",
+                    "parts": [
+                      {
+                        "polarity": "bright",
+                        "label": 1,
+                        "bbox": [
+                          60,
+                          208,
+                          16,
+                          26
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "center": [
+                  427.5,
+                  530.5
+                ],
+                "innerBbox": [
+                  422,
+                  520,
+                  12,
+                  22
+                ],
+                "bbox": [
+                  420,
+                  518,
+                  16,
+                  26
+                ],
+                "angleRad": 1.5707963267948966,
+                "px": {
+                  "kind": "numbers",
+                  "length": 152,
+                  "sha256": "e79ae74ed4271d2abc196018a93d24f742fbf04456146f78feb4d4ac580055cb"
+                },
+                "has": {
+                  "detectRings": {
+                    "fn": "fn.lab.tee.detectrings",
+                    "hole": {
+                      "cx": 427.5,
+                      "cy": 530.5,
+                      "holeArea": 264,
+                      "bboxX": 422,
+                      "bboxY": 520,
+                      "bboxW": 12,
+                      "bboxH": 22,
+                      "angle": 1.5707963267948966,
+                      "elongation": 1.837830889288342,
+                      "ringFrac": 0.6333333333333333,
+                      "kind": "tee-rect"
+                    }
+                  },
+                  "findFamily": {
+                    "fn": "fn.lab.tee.findfamily",
+                    "frame": {
+                      "polarity": "bright",
+                      "label": 6,
+                      "bbox": [
+                        420,
+                        518,
+                        16,
+                        26
+                      ]
+                    }
+                  },
+                  "findPx": {
+                    "fn": "fn.lab.tee.findpx",
+                    "parts": [
+                      {
+                        "polarity": "bright",
+                        "label": 6,
+                        "bbox": [
+                          420,
+                          518,
+                          16,
+                          26
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.components": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.tees.rings",
+        "px.exp.lab.tees.family",
+        "px.exp.lab.tees"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.badges.objects": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.tees.rings"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.tees.rings": {
+      "written_by": "px.exp.lab.tees.rings",
+      "read_by": [
+        "px.exp.lab.tees.family"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.tees.family": {
+      "written_by": "px.exp.lab.tees.family",
+      "read_by": [
+        "px.exp.lab.tees"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.tees": {
+      "written_by": "px.exp.lab.tees",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 3,
+    "hits": 3,
+    "computed": 0,
+    "wall_ms": null
+  }
+}
