@@ -42,7 +42,7 @@ def softmax_fit(args):
     pin there is a flat direction and two runs land in different places.
     """
     data, target = args["data"], args["target"]
-    backend = core.backend_of(args)
+    backend = core.backend_of(args, calc="softmax_fit")
     l2 = float(args.get("l2", 1.0))
     lr, epochs = float(args.get("lr", 0.5)), int(args.get("epochs", 400))
     matrix, targets, features = core.xy(data, target)

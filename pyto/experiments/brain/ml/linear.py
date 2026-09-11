@@ -119,7 +119,7 @@ def fit(args):
     """fn.brain.ml.linreg_fit / fn.brain.ml.ridge_fit -- a fitted model, as a part."""
     data = args["data"]
     target = args["target"]
-    backend = core.backend_of(args)
+    backend = core.backend_of(args, calc="linreg_fit")
     method = args.get("method", "closed")
     if method not in METHODS:
         raise ValueError(f"unknown method {method!r}: {METHODS}")

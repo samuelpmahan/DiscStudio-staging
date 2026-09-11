@@ -1,0 +1,126 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T042935Z-task-110",
+  "package": "task-110",
+  "base_sha": "f4e199695d4c001ac73744ad2050bb2fbae327c5",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'",
+    "exit": 0,
+    "output_sha256": "39722de286dd727e1dfceaec07a04c450c701358e673b767eeeb2e6eb65ffd29"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "c2bbb9d7f7c46988a2382de5c8f4861b2e328d918d4934913cef49fbc4ef886b",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/brain/backend/choose.py",
+      "bytes": 5789,
+      "sha256": "facaecd0e9e154e3f2c5c3f638f0b5cf90d10e34070e566c66cbe2a579d8d976"
+    },
+    {
+      "path": "pyto/experiments/brain/backend/kerchoo.py",
+      "bytes": 8928,
+      "sha256": "d0a0c54057e9e187280df270b847ae7700aa1721d117f1470cf868822e513a52"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/classify.py",
+      "bytes": 14171,
+      "sha256": "da6835b028b5ca02a4fae97cdead20e1f5abc4a739e78c385ee4f4d3dca357da"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/core.py",
+      "bytes": 9576,
+      "sha256": "68c48c162f7fd9d060568bf9157d6a49ebb8ac56309aaa3af3ea3aa105df9abc"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/distance.py",
+      "bytes": 6078,
+      "sha256": "1ea2cb8ea692eb3814b9c4cdda78e5b45ef65b15afc0496facb1f1b31b4e8ce8"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/linear.py",
+      "bytes": 6619,
+      "sha256": "76c35fe3060b7fe7aefbc8933f7e223c02f47723bc260bdbcfaae5e2f463fd65"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/metrics.py",
+      "bytes": 8022,
+      "sha256": "4e6938d22535e838b576da9f8f81b4485f438670d7923eefb8e9157c3852a33f"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/multiclass.py",
+      "bytes": 12191,
+      "sha256": "a330765d02b7423c2629443f350a2700daa398efd1357a62880e4413ea0b597b"
+    },
+    {
+      "path": "pyto/experiments/brain/ml/nnet.py",
+      "bytes": 10753,
+      "sha256": "cef2571466e63fe486997f07769fa09e36c2971037a9073070c5843ded7f6143"
+    },
+    {
+      "path": "pyto/experiments/brain/store/backend.json",
+      "bytes": 650996,
+      "sha256": "0ac2efe43e73c24055a73b80758caf6329436f4c3ef93c38487d5e513f25b7c3"
+    },
+    {
+      "path": "pyto/experiments/tasks/110/HANDOFF.md",
+      "bytes": 9371,
+      "sha256": "06c2e4e25d283065acdb2c4f183be314a0224d050ed31442c9896772768121c9"
+    },
+    {
+      "path": "pyto/experiments/tasks/110/evidence/check_all.txt",
+      "bytes": 293451,
+      "sha256": "6948d7eb6d57044519a1a6672359ef3bc433ba0cae7829022d01603e1716531c"
+    },
+    {
+      "path": "pyto/experiments/tasks/110/evidence/verify-python312-numpy253.txt",
+      "bytes": 971,
+      "sha256": "71bd519d43c41dd187feff139c84d6235b0ada74da1e513632d488a59187a12c"
+    },
+    {
+      "path": "pyto/experiments/tasks/110/evidence/verify.txt",
+      "bytes": 857,
+      "sha256": "e0646d4f78aab090022a3fa3e653dce82d3f58142c0a7f436ad529fb8b69b664"
+    },
+    {
+      "path": "pyto/experiments/tasks/110/packet.md",
+      "bytes": 4731,
+      "sha256": "d4a9a54d99a4205215dc2e416994a883a884aff83d7fcdb7278b7ac1ea65f18c"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T04:32:14.131100Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

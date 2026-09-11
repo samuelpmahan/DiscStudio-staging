@@ -128,7 +128,7 @@ LOGREG_METHODS = ("gd", "newton")
 def logreg_fit(args):
     """fn.brain.ml.logreg_fit -- one-vs-rest logistic regression, gd or newton/irls."""
     data, target = args["data"], args["target"]
-    backend = core.backend_of(args)
+    backend = core.backend_of(args, calc="logreg_fit")
     method = args.get("method", "newton")
     if method not in LOGREG_METHODS:
         raise ValueError(f"unknown method {method!r}: {LOGREG_METHODS}")
@@ -242,7 +242,7 @@ def _distances(model, rows, backend):
 def knn_predict(args):
     """fn.brain.ml.knn_predict -- vote (or average) over the k closest training rows."""
     model, data = args["model"], args["data"]
-    backend = distance.backend_of(args)
+    backend = distance.backend_of(args, calc="knn_predict")
     rows = _rows_for(model, data)
     matrix = _distances(model, rows, backend)
     k = model["k"]

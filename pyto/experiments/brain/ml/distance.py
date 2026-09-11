@@ -40,8 +40,12 @@ def ops():
     return module
 
 
-def backend_of(args, default="py"):
-    backend = (args or {}).get("backend", default)
+def backend_of(args, default="py", calc=None):
+    """as core.backend_of, over this module's larger engine list."""
+    from . import core
+
+    named = (args or {}).get("backend")
+    backend = named if named is not None else core.chosen(calc, BACKENDS, default)
     if backend not in BACKENDS:
         raise ValueError(f"unknown backend {backend!r}: distances have {BACKENDS}")
     if backend.startswith("backend_") and ops() is None:

@@ -55,6 +55,32 @@ def build(store, vertical: str = VERTICAL) -> str:
                           round(max(row.values()) / row[fastest], 3)])
         if steps:
             by_op[op] = steps
+    # Every other vertical's benchmark Parts, keyed "<vertical>.<calc>". Their size tokens
+    # are each vertical's own words (n600_d8_k7, t.n=4000) and cannot be turned into an
+    # element count the way the backend's can, so what is recorded per calc is the engine
+    # that was fastest at the LARGEST recorded case, and the spread it won by. A facade
+    # with no size to reason about still gets the right default.
+    by_calc: dict[str, dict] = {}
+    for match in PQL.prefix(harness.BENCH).matches(store.pxc):
+        segments = match.address.split(".")
+        if len(segments) != 8 or segments[4] == vertical:
+            continue
+        key = f"{segments[4]}.{segments[5]}"
+        by_calc.setdefault(key, {}).setdefault(segments[7], {})[segments[6]] = float(match.value["wall_ms_min"])
+    decided = {}
+    for key, sizes in sorted(by_calc.items()):
+        best_case, best_engine, spread = None, None, 1.0
+        for case, row in sorted(sizes.items()):
+            if len(row) < 2:
+                continue
+            fastest = min(sorted(row), key=lambda engine: row[engine])
+            slowest = max(row.values())
+            if row[fastest] > 0 and slowest / row[fastest] >= spread:
+                best_case, best_engine, spread = case, fastest, slowest / row[fastest]
+        if best_engine:
+            decided[key] = {"engine": best_engine, "at": best_case, "spread": round(spread, 2),
+                            "engines": sorted(sizes[best_case])}
+
     address = store.put(
         PLAN,
         {
@@ -62,9 +88,24 @@ def build(store, vertical: str = VERTICAL) -> str:
             "rule": RULE,
             "by_op": by_op,
             "ops": sorted(by_op),
+            "by_calc": decided,
+            "calcs": sorted(decided),
         },
     )
     return address
+
+
+def engine_for_calc(plan, vertical: str, calc: str, engines):
+    """the engine the plan names for `<vertical>.<calc>`, or None if it says nothing.
+
+    `engines` is what the caller's facade can actually run; a plan that names an
+    engine the facade does not have (a tournament branch, say) is ignored rather
+    than obeyed, so a stale plan can never make a facade refuse.
+    """
+    row = (plan or {}).get("by_calc", {}).get(f"{vertical}.{calc}")
+    if not row or row["engine"] not in tuple(engines):
+        return None
+    return row["engine"]
 
 
 def engine_for(plan, op: str, elements: int) -> str:
