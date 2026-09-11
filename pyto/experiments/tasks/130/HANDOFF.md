@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/130
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/130:pyto/experiments/tasks/130/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 5074634 origin/exp/130 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff b0e4c59 origin/exp/130 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ every disc looked the same: the painter port (2026-09-09) replaced the per-disc 
 
 ## Starting point
 
-50746348e4094e3ee1e374399019fff15130b966 (land(task-129): the wedge: the Course route off the demo path, and the tease-then-razzle storyboard as a test that screenshots every beat). MAIN may have moved since: `git log --oneline 5074634..origin/claude/os-sprint-st8hnu` shows how far.
+50746348e4094e3ee1e374399019fff15130b966 (land(task-129): the wedge: the Course route off the demo path, and the tease-then-razzle storyboard as a test that screenshots every beat). MAIN may have moved since: `git log --oneline b0e4c59..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -77,7 +77,7 @@ pyto/viewer/fixtures/discstudio-display-card.json | 142 ++++++++++++------
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.Es3kIBKUVd) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.GJ1oeigYmq) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK

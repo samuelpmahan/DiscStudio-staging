@@ -27,7 +27,7 @@ pyto/viewer/fixtures/discstudio-display-card.json | 142 ++++++++++++------
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.Es3kIBKUVd) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.GJ1oeigYmq) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
