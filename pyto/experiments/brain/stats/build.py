@@ -310,9 +310,6 @@ def the_map(store, decided):
                 "corrections are here and the studentised range is what is missing"},
         {"address": "fn.brain.stats.power",
          "why": "sample-size and power curves need a non-central t, which is its own series"},
-        {"address": "fn.brain.stats.ols_weighted",
-         "why": "weighted least squares is the same three solvers with a weight vector; "
-                "the tournament had to be settled on the unweighted case first"},
         {"address": "fn.brain.stats.kstwo_exact",
          "why": "the EXACT two-sided kolmogorov distribution (what scipy's ks_2samp reaches for "
                 "at small n) is the marsaglia-tsang-wang matrix power; the limiting tail is "
@@ -324,10 +321,10 @@ def the_map(store, decided):
          "why": "same table, same reason: scipy's method='approx' is the one both backends meet"},
     ]
     next_ = [
-        {"what": "weighted least squares on the winning solver (%s), and a huber m-estimator "
-                 "for the multi-predictor case" % decided["winner"],
-         "for": "theil-sen and siegel cover one predictor; every real regression in a consumer "
-                "has weights, several predictors, or both"},
+        {"what": "a huber m-estimator over the weighted fit that is now here",
+         "for": "theil-sen and siegel cover one predictor and weights cover a known "
+                "heteroscedasticity; an outlier in a multi-predictor design is covered by "
+                "neither, and IRLS over ols_weighted is a short step from both"},
         {"what": "the exact small-sample nulls: kstwo, wilcoxon and mann-whitney under n=20",
          "for": "small-sample work is exactly where an asymptotic p-value is most wrong, and "
                 "every one of them is now a tail away from a calculation that already exists"},

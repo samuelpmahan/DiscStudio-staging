@@ -6,7 +6,7 @@ import numpy as np
 
 import stats.regression as regression
 from stats.regression_cases import (BENCH_CASES, CLASSES, DESIGN, ORACLE_CASES, SIMPLE,
-                                    SIMPLE_Y, X1, X2, Y, brute_ols)
+                                    SIMPLE_Y, WEIGHTS, X1, X2, Y, brute_ols, brute_wls)
 from stats.tolerance import close
 
 TWO = [[a, b] for a, b in zip(X1, X2)]
@@ -106,6 +106,47 @@ class TestOlsShape(unittest.TestCase):
         with self.assertRaises(ValueError) as caught:
             regression.ols({"x": DESIGN, "y": Y, "solver": "cholesky"})
         self.assertIn("qr", str(caught.exception))
+
+
+class TestWeightedLeastSquares(unittest.TestCase):
+    """the weights go into the design, so the tournament's three solvers still apply."""
+
+    def test_all_three_solvers_give_the_weighted_answer(self):
+        reference = brute_wls(DESIGN, Y, WEIGHTS)
+        for solver in ("normal", "qr", "lstsq"):
+            with self.subTest(solver=solver):
+                got = regression.wls({"x": DESIGN, "y": Y, "weights": WEIGHTS,
+                                      "solver": solver})
+                self.assertTrue(close(got["coefficients"], reference["coefficients"], 1e-8))
+                self.assertEqual(got["solver"], solver)
+
+    def test_equal_weights_are_ordinary_least_squares(self):
+        plain = regression.ols({"x": DESIGN, "y": Y})
+        for weights in (None, [1.0] * len(Y), [3.5] * len(Y)):
+            with self.subTest(weights="none" if weights is None else weights[0]):
+                got = regression.wls({"x": DESIGN, "y": Y, "weights": weights})
+                self.assertTrue(close(got["coefficients"], plain["coefficients"], 1e-8))
+
+    def test_a_zero_weight_drops_a_row(self):
+        weights = [1.0] * len(Y)
+        weights[0] = 0.0
+        got = regression.wls({"x": DESIGN, "y": Y, "weights": weights})
+        without = regression.ols({"x": DESIGN[1:], "y": Y[1:]})
+        self.assertTrue(close(got["coefficients"], without["coefficients"], 1e-7))
+
+    def test_the_residuals_come_back_on_the_original_scale(self):
+        got = regression.wls({"x": DESIGN, "y": Y, "weights": WEIGHTS})
+        for row, fitted, residual, actual in zip(DESIGN, got["fitted"], got["residuals"], Y):
+            self.assertAlmostEqual(fitted + residual, actual, delta=1e-9)
+
+    def test_a_bad_weight_is_refused(self):
+        for weights in ([1.0] * (len(Y) - 1), [-1.0] + [1.0] * (len(Y) - 1), [0.0] * len(Y)):
+            with self.assertRaises(ValueError):
+                regression.wls({"x": DESIGN, "y": Y, "weights": weights})
+
+    def test_an_unknown_solver_is_refused(self):
+        with self.assertRaises(ValueError):
+            regression.wls({"x": DESIGN, "y": Y, "weights": WEIGHTS, "solver": "cholesky"})
 
 
 class TestRidge(unittest.TestCase):

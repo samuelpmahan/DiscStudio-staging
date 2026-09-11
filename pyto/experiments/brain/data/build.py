@@ -346,8 +346,6 @@ def the_map(store, decided):
         {"address": "fn.brain.data.group_by (median on the npsort engine)",
          "why": "median has no whole-column reduction, so the third engine falls back to the "
                 "per-group path for it; a sorted-block median is the obvious next piece"},
-        {"address": "fn.brain.data.rolling_join",
-         "why": "an as-of join needs an ordered key and a tolerance; the equi-join is here"},
         {"address": "fn.brain.data.resample",
          "why": "needs a time index with real calendar semantics, which no dataset Part carries yet"},
         {"address": "fn.brain.data.stl",
@@ -365,9 +363,9 @@ def the_map(store, decided):
                 "cannot currently say so"},
         {"what": "column kinds on the dataset Part (see proposal.brain.data.a_dataset_part_has_no_column_types)",
          "for": "every relational calculation re-derives them on every call"},
-        {"what": "resample and a calendar-aware time index, and an as-of (rolling) join on it",
-         "for": "real time series arrive with dates, not with positions, and every join "
-                "against them is as-of"},
+        {"what": "resample and a calendar-aware time index under the as-of join that is now here",
+         "for": "the join takes any ordered numeric key, so the only thing between it and a "
+                "real time series is a date that a dataset Part can hold"},
         {"what": "ARIMA on top of the AR fit, and STL on top of the classical decomposition",
          "for": "forecasting is the first thing anyone asks a data layer for"},
     ]

@@ -1054,5 +1054,206 @@ def _interp_sp(args):
     line = interpolate.interp1d(xp, fp, kind="linear", bounds_error=False, fill_value=(fp[0], fp[-1]))
     return [float(one) for one in line(np.asarray(vector(args["x"]), dtype="float64"))]
 
+# --- matrix_rank and pinv -------------------------------------------------------
 
-CALCS = {name: calculation(name) for name in ("matmul", "solve", "lstsq", "cumsum", "histogram", "sort", "argsort", "select_k", "pairwise", "eig", "svd", "fft", "norm", "cholesky", "inv", "trace", "pack", "unpack", "qr", "convolve", "interp")}
+
+def _rank_tolerance(singular: list[float], rows: int, columns: int) -> float:
+    """numpy's rule, written down: max(m, n) * eps * the largest singular value."""
+    return max(rows, columns) * 2.220446049250313e-16 * (max(singular) if singular else 0.0)
+
+
+@engine("matrix_rank", "py")
+def _matrix_rank_py(args):
+    """the singular values above the tolerance, counted - where this engine can tell.
+
+    the py svd takes the square roots of the eigenvalues of a^T a, which squares
+    the condition number: a singular value that is truly zero comes back at about
+    sqrt(eps) * the largest one, not at zero. So numpy's rank tolerance
+    (max(m, n) * eps * sigma_max) sits far below anything this engine can resolve,
+    and a singular value that lands between the two is genuinely ambiguous here.
+    It is refused by name rather than counted or discarded; np and sp answer.
+    """
+    a = matrix(args["a"])
+    singular = _svd_py({"a": a})
+    tolerance = _rank_tolerance(singular, len(a), len(a[0]))
+    floor = max(len(a), len(a[0])) * 1.4901161193847656e-08 * (max(singular) if singular else 0.0)
+    ambiguous = [one for one in singular if tolerance < one <= floor]
+    if ambiguous:
+        raise ValueError(
+            "brain: the py engine of matrix_rank cannot resolve a singular value of "
+            f"{min(ambiguous):.3g} against a tolerance of {tolerance:.3g}: its svd goes through "
+            "a^T a, whose error floor here is %.3g. Use backend 'np' or 'sp'" % floor
+        )
+    return sum(1 for one in singular if one > floor)
+
+
+@engine("matrix_rank", "np")
+def _matrix_rank_np(args):
+    import numpy as np
+
+    return int(np.linalg.matrix_rank(_np(args["a"])))
+
+
+@engine("matrix_rank", "sp")
+def _matrix_rank_sp(args):
+    import numpy as np
+    from scipy import linalg
+
+    a = _np(args["a"])
+    singular = linalg.svdvals(a)
+    return int((singular > _rank_tolerance(singular.tolist(), *a.shape)).sum())
+
+
+@engine("pinv", "py")
+def _pinv_py(args):
+    """r^-1 q^T from the reduced qr: the pseudo-inverse of a full-column-rank matrix.
+
+    the general pinv wants the svd's u and v, which the py engine does not have
+    (they carry a sign freedom nobody has spent yet), so this one refuses a
+    rank-deficient matrix by name instead of returning something that is not a
+    pseudo-inverse.
+    """
+    a = matrix(args["a"])
+    if len(a[0]) > len(a):
+        raise ValueError("brain: the py engine of pinv needs at least as many rows as columns")
+    try:
+        rank = _matrix_rank_py({"a": a})
+    except ValueError:  # a singular value this engine cannot resolve is not a full-rank matrix
+        rank = -1
+    if rank < len(a[0]):
+        raise ValueError("brain: the py engine of pinv needs full column rank; use backend 'np' or 'sp'")
+    factored = _qr_py({"a": a})
+    q, r = factored["q"]["values"], factored["r"]["values"]
+    inverse = _inv_py({"a": r})["values"]
+    columns = len(a[0])
+    return shaped([[math.fsum(inverse[i][k] * q[j][k] for k in range(columns)) for j in range(len(a))] for i in range(columns)])
+
+
+@engine("pinv", "np")
+def _pinv_np(args):
+    import numpy as np
+
+    return shaped(np.linalg.pinv(_np(args["a"])).tolist())
+
+
+@engine("pinv", "sp")
+def _pinv_sp(args):
+    from scipy import linalg
+
+    return shaped(linalg.pinv(_np(args["a"])).tolist())
+
+
+# --- correlate ------------------------------------------------------------------
+
+
+@engine("correlate", "py")
+def _correlate_py(args):
+    """cross-correlation, which is the convolution of a with v reversed.
+
+    numpy's `correlate` does not conjugate or reverse for you; it sums
+    a[n + k] * v[k]. Real inputs only here, so that is the whole definition.
+    """
+    v = vector(args["v"])
+    return _convolve_py({"a": args["a"], "v": list(reversed(v)), "mode": args.get("mode", "valid")})
+
+
+@engine("correlate", "np")
+def _correlate_np(args):
+    import numpy as np
+
+    return np.correlate(np.asarray(vector(args["a"]), dtype="float64"),
+                        np.asarray(vector(args["v"]), dtype="float64"),
+                        mode=args.get("mode", "valid")).tolist()
+
+
+@engine("correlate", "sp")
+def _correlate_sp(args):
+    import numpy as np
+    from scipy import signal
+
+    a = np.asarray(vector(args["a"]), dtype="float64")
+    v = np.asarray(vector(args["v"]), dtype="float64")
+    return signal.correlate(a, v, mode=args.get("mode", "valid"), method="direct").tolist()
+
+
+# --- diff and gradient ----------------------------------------------------------
+
+
+@engine("diff", "py")
+def _diff_py(args):
+    """the n-th order difference, applied n times."""
+    values = vector(args["values"])
+    for _ in range(int(args.get("order", 1))):
+        values = [b - a for a, b in zip(values, values[1:])]
+    return values
+
+
+@engine("diff", "np")
+def _diff_np(args):
+    import numpy as np
+
+    return np.diff(np.asarray(vector(args["values"]), dtype="float64"), n=int(args.get("order", 1))).tolist()
+
+
+@engine("diff", "sp")
+def _diff_sp(args):
+    """scipy has no plain difference; this is numpy's, named honestly."""
+    return _diff_np(args)
+
+
+@engine("gradient", "py")
+def _gradient_py(args):
+    """central differences inside, one-sided at the two ends, unit spacing.
+
+    the edges are the whole reason this is not `diff`: numpy returns an array the
+    same length as its input, and a backend that returned a shorter one would have
+    changed the answer.
+    """
+    values = vector(args["values"])
+    if len(values) < 2:
+        raise ValueError("brain: gradient needs at least two points")
+    out = [values[1] - values[0]]
+    out += [(values[i + 1] - values[i - 1]) / 2.0 for i in range(1, len(values) - 1)]
+    out.append(values[-1] - values[-2])
+    return out
+
+
+@engine("gradient", "np")
+def _gradient_np(args):
+    import numpy as np
+
+    return np.gradient(np.asarray(vector(args["values"]), dtype="float64")).tolist()
+
+
+@engine("gradient", "sp")
+def _gradient_sp(args):
+    return _gradient_np(args)
+
+
+# --- outer ----------------------------------------------------------------------
+
+
+@engine("outer", "py")
+def _outer_py(args):
+    a, b = vector(args["a"]), vector(args["b"])
+    return shaped([[x * y for y in b] for x in a])
+
+
+@engine("outer", "np")
+def _outer_np(args):
+    import numpy as np
+
+    return shaped(np.outer(np.asarray(vector(args["a"]), dtype="float64"),
+                           np.asarray(vector(args["b"]), dtype="float64")).tolist())
+
+
+@engine("outer", "sp")
+def _outer_sp(args):
+    import numpy as np
+    from scipy import linalg
+
+    return shaped(linalg.blas.dger(1.0, np.asarray(vector(args["a"]), dtype="float64"),
+                                   np.asarray(vector(args["b"]), dtype="float64")).tolist())
+
+
+CALCS = {name: calculation(name) for name in ("matmul", "solve", "lstsq", "cumsum", "histogram", "sort", "argsort", "select_k", "pairwise", "eig", "svd", "fft", "norm", "cholesky", "inv", "trace", "pack", "unpack", "qr", "convolve", "interp", "matrix_rank", "pinv", "correlate", "diff", "gradient", "outer")}

@@ -33,6 +33,9 @@ P12 = draw((12, 3)).tolist()
 Q7 = draw((7, 3), seed=SEED + 1).tolist()
 V64 = draw((64,)).tolist()
 TIED = [3.0, 1.0, 3.0, 2.0, 1.0, 3.0, 2.0, 0.0]
+# the fourth column is the sum of the first two, so the rank is three and not four:
+# the case that tells `matrix_rank` from `min(rows, columns)`.
+DEFICIENT = [[row[0], row[1], row[2], row[0] + row[1]] for row in B64]
 
 
 def _np():
@@ -45,8 +48,15 @@ def cases() -> list[dict]:
     np = _np()
     out: list[dict] = []
 
-    def case(op, name, args, reference, expected, tolerance=1e-9):
-        out.append({"op": op, "case": name, "args": args, "reference": reference, "expected": expected, "tolerance": tolerance})
+    def case(op, name, args, reference, expected, tolerance=1e-9, engines=None):
+        """`engines` names the engines that answer this case; None means all of them.
+
+        it is not a way to excuse a disagreement - every engine named here must match
+        the reference - it is how a case that one engine refuses by design stays in the
+        table instead of being deleted from it. The map records why.
+        """
+        out.append({"op": op, "case": name, "args": args, "reference": reference,
+                    "expected": expected, "tolerance": tolerance, "engines": engines})
 
     case("matmul", "square_by_tall", {"a": A6, "b": B64}, "numpy.matmul",
          lambda: {"shape": [6, 4], "values": (np.asarray(A6) @ np.asarray(B64)).tolist()})
@@ -105,6 +115,25 @@ def cases() -> list[dict]:
          lambda: np.convolve(np.asarray(V64), np.asarray(V64[:8]), mode="same").tolist(), 1e-9)
     case("interp", "clamped", {"x": [-1.0, 0.25, 1.5, 2.0, 9.0], "xp": [0.0, 1.0, 2.0], "fp": [0.0, 10.0, 5.0]},
          "numpy.interp", lambda: np.interp([-1.0, 0.25, 1.5, 2.0, 9.0], [0.0, 1.0, 2.0], [0.0, 10.0, 5.0]).tolist())
+    case("matrix_rank", "full_6x4", {"a": B64}, "numpy.linalg.matrix_rank",
+         lambda: int(np.linalg.matrix_rank(np.asarray(B64))))
+    case("matrix_rank", "deficient_6x4", {"a": DEFICIENT}, "numpy.linalg.matrix_rank",
+         lambda: int(np.linalg.matrix_rank(np.asarray(DEFICIENT))), engines=("np", "sp"))
+    case("pinv", "deficient_6x4", {"a": DEFICIENT}, "numpy.linalg.pinv",
+         lambda: {"shape": [4, 6], "values": np.linalg.pinv(np.asarray(DEFICIENT)).tolist()}, 1e-7,
+         engines=("np", "sp"))
+    case("pinv", "6x4", {"a": B64}, "numpy.linalg.pinv",
+         lambda: {"shape": [4, 6], "values": np.linalg.pinv(np.asarray(B64)).tolist()}, 1e-7)
+    case("correlate", "valid_64_by_8", {"a": V64, "v": V64[:8]}, "numpy.correlate",
+         lambda: np.correlate(np.asarray(V64), np.asarray(V64[:8]), "valid").tolist(), 1e-9)
+    case("correlate", "full_64_by_8", {"a": V64, "v": V64[:8], "mode": "full"}, "numpy.correlate",
+         lambda: np.correlate(np.asarray(V64), np.asarray(V64[:8]), "full").tolist(), 1e-9)
+    case("diff", "order2", {"values": V64, "order": 2}, "numpy.diff",
+         lambda: np.diff(np.asarray(V64), n=2).tolist(), 1e-9)
+    case("gradient", "v64", {"values": V64}, "numpy.gradient",
+         lambda: np.gradient(np.asarray(V64)).tolist(), 1e-9)
+    case("outer", "4_by_3", {"a": V64[:4], "b": V64[:3]}, "numpy.outer",
+         lambda: {"shape": [4, 3], "values": np.outer(np.asarray(V64[:4]), np.asarray(V64[:3])).tolist()})
     case("fft", "v64", {"values": V64}, "numpy.fft.fft",
          lambda: (lambda out: {"real": out.real.tolist(), "imag": out.imag.tolist()})(np.fft.fft(np.asarray(V64))), 1e-8)
     return out
@@ -165,6 +194,12 @@ SIZES_BY_OP = {
     "unpack": (16, 64, 256),
     "convolve": (64, 256, 1024),
     "interp": (1024, 16384, 131072),
+    "matrix_rank": (8, 32, 96),
+    "pinv": (8, 32, 96),
+    "correlate": (64, 256, 1024),
+    "diff": (1024, 16384, 131072),
+    "gradient": (1024, 16384, 131072),
+    "outer": (16, 64, 256),
 }
 
 
@@ -196,6 +231,14 @@ def bench_inputs(op: str, size: int):
     if op == "solve":
         base = rng.standard_normal((size, size))
         return {"a": (base @ base.T + size * np.eye(size)).tolist(), "b": rng.standard_normal(size).tolist()}
+    if op in ("matrix_rank", "pinv"):
+        return {"a": rng.standard_normal((size, max(2, size // 2))).tolist()}
+    if op == "correlate":
+        return {"a": rng.standard_normal(size).tolist(), "v": rng.standard_normal(16).tolist()}
+    if op in ("diff", "gradient"):
+        return {"values": rng.standard_normal(size).tolist()}
+    if op == "outer":
+        return {"a": rng.standard_normal(size).tolist(), "b": rng.standard_normal(size).tolist()}
     if op in ("pack", "qr"):
         return {"a": rng.standard_normal((size, size)).tolist()}
     if op == "unpack":
@@ -229,3 +272,8 @@ def bench_inputs(op: str, size: int):
     if op == "fft":
         return {"values": rng.standard_normal(size).tolist()}
     return {"values": rng.standard_normal(size).tolist()}
+
+
+def engines_of_case(case, all_engines) -> tuple:
+    """the engines that answer this case: what it named, or every one there is."""
+    return tuple(case.get("engines") or all_engines)

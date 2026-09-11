@@ -101,7 +101,99 @@ def describe_table(args):
                 header, rows)
 
 
+DIRECTIONS = ("backward", "forward", "nearest")
+
+
+def rolling_join(args):
+    """an as-of join: every left row takes the right row nearest its key.
+
+    the one join a time series actually wants. ``on`` is an ordered numeric key
+    in both tables; ``direction`` is "backward" (the last right row at or before
+    the left key, the default), "forward" (the first at or after) or "nearest".
+    ``tolerance`` refuses a match further away than that. ``by`` restricts the
+    search to right rows whose ``by`` columns match, so several series can share
+    one table.
+    """
+    left = check(args["table"], "table")
+    right = check(args["other"], "other")
+    on = args.get("on")
+    if not on:
+        raise ValueError("an as-of join needs 'on': the ordered key both tables carry")
+    direction = args.get("direction", "backward")
+    if direction not in DIRECTIONS:
+        raise ValueError("direction must be one of %s, got %r" % (", ".join(DIRECTIONS), direction))
+    tolerance = args.get("tolerance")
+    tolerance = None if tolerance is None else float(tolerance)
+    if tolerance is not None and tolerance < 0.0:
+        raise ValueError("a tolerance cannot be negative")
+    by = args.get("by") or []
+    if isinstance(by, str):
+        by = [by]
+    left_key = index_of(left, on, "left key")
+    right_key = index_of(right, on, "right key")
+    left_by = [index_of(left, name, "left by") for name in by]
+    right_by = [index_of(right, name, "right by") for name in by]
+    suffixes = args.get("suffixes") or ["_left", "_right"]
+    right_rest = [i for i in range(len(right["columns"]))
+                  if i != right_key and i not in right_by]
+    clashes = set(left["columns"]) & {right["columns"][i] for i in right_rest}
+    header = list(left["columns"]) + [
+        right["columns"][i] + (suffixes[1] if right["columns"][i] in clashes else "")
+        for i in right_rest]
+    if len(set(header)) != len(header):
+        raise ValueError("this as-of join would produce a repeated column name: %r" % (header,))
+    groups = {}
+    for row in right["rows"]:
+        if row[right_key] is None:
+            continue
+        groups.setdefault(tuple(str(row[i]) for i in right_by), []).append(row)
+    for members in groups.values():
+        members.sort(key=lambda row: float(row[right_key]))
+    rows = []
+    for row in left["rows"]:
+        partner = None
+        if row[left_key] is not None:
+            members = groups.get(tuple(str(row[i]) for i in left_by), [])
+            partner = _nearest(members, right_key, float(row[left_key]), direction, tolerance)
+        rows.append(list(row) + ([partner[i] for i in right_rest] if partner is not None
+                                 else [None] * len(right_rest)))
+    return make(args.get("for") or "%s with the nearest %s taken as of %s"
+                % (left.get("for", "a dataset"), right.get("for", "another dataset"), on),
+                header, rows)
+
+
+def _nearest(members, key_at, key, direction, tolerance):
+    """the member nearest ``key`` in the direction asked for, within the tolerance."""
+    low, high = 0, len(members)
+    while low < high:
+        middle = (low + high) // 2
+        if float(members[middle][key_at]) <= key:
+            low = middle + 1
+        else:
+            high = middle
+    before = members[low - 1] if low > 0 else None
+    after = members[low] if low < len(members) else None
+    if direction == "backward":
+        chosen = before
+    elif direction == "forward":
+        chosen = after
+    else:
+        if before is None:
+            chosen = after
+        elif after is None:
+            chosen = before
+        else:
+            chosen = (before if key - float(before[key_at]) <= float(after[key_at]) - key
+                      else after)
+    if chosen is None:
+        return None
+    if tolerance is not None and abs(float(chosen[key_at]) - key) > tolerance:
+        return None
+    return chosen
+
+
 MELT = Calculation("fn.brain.data.melt", melt)
+ROLLING_JOIN = Calculation("fn.brain.data.rolling_join", rolling_join)
 DESCRIBE_TABLE = Calculation("fn.brain.data.describe_table", describe_table)
 
-CALCS = {c.address: c for c in (MELT, DESCRIBE_TABLE)}
+CALCS = {c.address: c for c in (MELT, ROLLING_JOIN, DESCRIBE_TABLE)}

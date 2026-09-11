@@ -1,0 +1,452 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 5,
+    "invocations": 5,
+    "wall_ms": 0.964458999078488
+  },
+  "parts": {
+    "px.exp.brain.data.backend_pinv_6x4_a": {
+      "preexisting": true,
+      "read_by": [
+        "6x4_np",
+        "6x4_py",
+        "6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_pinv_deficient_6x4_a": {
+      "preexisting": true,
+      "read_by": [
+        "deficient_6x4_np",
+        "deficient_6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.pinv.6x4_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "6x4_np"
+    },
+    "px.exp.brain.result.backend.pinv.6x4_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "6x4_py"
+    },
+    "px.exp.brain.result.backend.pinv.6x4_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "6x4_sp"
+    },
+    "px.exp.brain.result.backend.pinv.deficient_6x4_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "deficient_6x4_np"
+    },
+    "px.exp.brain.result.backend.pinv.deficient_6x4_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "deficient_6x4_sp"
+    }
+  },
+  "pcr": "brain_backend_pinv",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_pinv_deficient_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.pinv.deficient_6x4_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.pinv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_pinv_deficient_6x4_a"
+          ],
+          "duration_ms": 0.19756299843720626,
+          "hit": true,
+          "id": "deficient_6x4_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_pinv_deficient_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.pinv.deficient_6x4_np",
+          "result_sha256": "762b44c358ff74f5cc4c4c205d4f304d9c8169d1333e7a82414ec6caaa1427c6",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                6
+              ],
+              "values": [
+                [
+                  -0.15103010771891778,
+                  -0.8042765481667066,
+                  0.32201567952820476,
+                  0.1600756524319866,
+                  -0.044300281286886754,
+                  -0.2162468045170843
+                ],
+                [
+                  0.08307685100040428,
+                  0.41222970644251294,
+                  -0.21054190291322825,
+                  -0.1767070156821967,
+                  0.32082483009880974,
+                  -0.08186773182495206
+                ],
+                [
+                  -0.034267693662211475,
+                  0.5633780322332816,
+                  -0.15529123629329292,
+                  -0.500527413621812,
+                  0.29223784494680893,
+                  0.08681273330695508
+                ],
+                [
+                  -0.06795325671851353,
+                  -0.3920468417241938,
+                  0.11147377661497658,
+                  -0.016631363250210043,
+                  0.27652454881192284,
+                  -0.29811453634203633
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.pinv.deficient_6x4_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_pinv_deficient_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.pinv.deficient_6x4_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.pinv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_pinv_deficient_6x4_a"
+          ],
+          "duration_ms": 0.26410700047563296,
+          "hit": true,
+          "id": "deficient_6x4_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_pinv_deficient_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.pinv.deficient_6x4_sp",
+          "result_sha256": "08c26ea9d7abbb7244352283d46583f54780e13d848e598c5c4b93af853db2a1",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                6
+              ],
+              "values": [
+                [
+                  -0.15103010771891778,
+                  -0.8042765481667066,
+                  0.32201567952820476,
+                  0.1600756524319866,
+                  -0.04430028128688678,
+                  -0.2162468045170843
+                ],
+                [
+                  0.0830768510004043,
+                  0.41222970644251294,
+                  -0.21054190291322825,
+                  -0.1767070156821967,
+                  0.3208248300988097,
+                  -0.08186773182495209
+                ],
+                [
+                  -0.03426769366221149,
+                  0.5633780322332816,
+                  -0.15529123629329292,
+                  -0.500527413621812,
+                  0.2922378449468089,
+                  0.08681273330695509
+                ],
+                [
+                  -0.06795325671851353,
+                  -0.3920468417241938,
+                  0.11147377661497658,
+                  -0.016631363250210043,
+                  0.2765245488119228,
+                  -0.29811453634203633
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.pinv.deficient_6x4_sp",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_pinv_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.pinv.6x4_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.pinv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_pinv_6x4_a"
+          ],
+          "duration_ms": 0.11822399937955197,
+          "hit": true,
+          "id": "6x4_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_pinv_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.pinv.6x4_np",
+          "result_sha256": "6c5b8fd56f14b8abdc070dad666abcdfab54c2fab6b3f201f054547c5ee79992",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                6
+              ],
+              "values": [
+                [
+                  -0.16496536793512734,
+                  -1.0680549996403816,
+                  0.707219984575102,
+                  0.1914648717459544,
+                  0.240783834514451,
+                  -0.5877420552521384
+                ],
+                [
+                  0.059517792888073316,
+                  0.12559907339673637,
+                  0.12589481625115923,
+                  -0.1538731003664423,
+                  0.6043839811084426,
+                  -0.44028954017934946
+                ],
+                [
+                  0.007780631394170463,
+                  0.6632238487563481,
+                  0.05778423822693997,
+                  -0.4631475551339231,
+                  0.2989007254388212,
+                  0.029692211787139874
+                ],
+                [
+                  -0.10150472135320943,
+                  -0.24102795464190033,
+                  -0.5143645231855993,
+                  -0.09023503587712237,
+                  -0.016084203754717415,
+                  0.13788902679582019
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.pinv.6x4_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_pinv_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.pinv.6x4_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.pinv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_pinv_6x4_a"
+          ],
+          "duration_ms": 0.2465070010657655,
+          "hit": true,
+          "id": "6x4_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_pinv_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.pinv.6x4_py",
+          "result_sha256": "b453dbed89520341fdcb0f307e6f859935a32cef6f065cb3b7f11386f92a4284",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                6
+              ],
+              "values": [
+                [
+                  -0.16496536793512784,
+                  -1.0680549996403823,
+                  0.7072199845751027,
+                  0.1914648717459541,
+                  0.24078383451445115,
+                  -0.5877420552521387
+                ],
+                [
+                  0.05951779288807346,
+                  0.12559907339673632,
+                  0.1258948162511594,
+                  -0.15387310036644242,
+                  0.6043839811084426,
+                  -0.44028954017934946
+                ],
+                [
+                  0.007780631394170838,
+                  0.6632238487563484,
+                  0.05778423822693987,
+                  -0.463147555133923,
+                  0.29890072543882107,
+                  0.02969221178713996
+                ],
+                [
+                  -0.10150472135320938,
+                  -0.24102795464190024,
+                  -0.5143645231855993,
+                  -0.0902350358771224,
+                  -0.016084203754717332,
+                  0.1378890267958201
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.pinv.6x4_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_pinv_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.pinv.6x4_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.pinv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_pinv_6x4_a"
+          ],
+          "duration_ms": 0.13805799972033128,
+          "hit": true,
+          "id": "6x4_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_pinv_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.pinv.6x4_sp",
+          "result_sha256": "3b85db28faa2af846cd702670f88e907b0699eb2a5c98ddf6b10b1b5a9e92f8b",
+          "value": {
+            "data": {
+              "shape": [
+                4,
+                6
+              ],
+              "values": [
+                [
+                  -0.16496536793512734,
+                  -1.0680549996403816,
+                  0.7072199845751022,
+                  0.19146487174595442,
+                  0.24078383451445104,
+                  -0.5877420552521384
+                ],
+                [
+                  0.05951779288807333,
+                  0.12559907339673643,
+                  0.12589481625115928,
+                  -0.15387310036644233,
+                  0.6043839811084427,
+                  -0.44028954017934946
+                ],
+                [
+                  0.00778063139417047,
+                  0.6632238487563482,
+                  0.05778423822693997,
+                  -0.4631475551339232,
+                  0.29890072543882124,
+                  0.029692211787139818
+                ],
+                [
+                  -0.10150472135320943,
+                  -0.24102795464190033,
+                  -0.5143645231855994,
+                  -0.09023503587712235,
+                  -0.01608420375471748,
+                  0.1378890267958202
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.pinv.6x4_sp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "pinv"
+    }
+  ]
+}
