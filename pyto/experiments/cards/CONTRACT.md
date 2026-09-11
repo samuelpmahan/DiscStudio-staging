@@ -1,174 +1,163 @@
-# Card cascade: the contract (task 78)
+# Card cascade, the preset is the projection layer (task 79)
 
-The owner's mission, in his words: "card cascade editor as a PxC smoke test (~3h
-timebox)". Four card projections get cascading defaults global -> projection ->
-instance, retrofitted onto the existing card surface. Parts are the model,
-Calculations do the composing, PQL finds things, receipts tell the story.
-Everything stays lowercase: nothing here is promoted, no PxC fix is made.
+Task 78 built a second page (`#/cards`) beside the PxC composer that already
+existed (the Component Editor at `#/components`), with its own token set painted
+over the preset. Its `fn.cards.apply` overwrote every preset's background,
+foreground, accent, radius and font unconditionally, so the Component Editor's
+"The whole card" controls stopped rendering and every preset lost its own look.
 
-## The four projections and where they already are
+The owner's way, which this task implements: **the preset IS the projection
+layer.** Nothing is added beside the composer; the cascade is folded into it.
 
-The studio already composes every card through one chain (src/runtime.js
-`cardSteps`: Fields -> Art -> Card -> CardSvg). The projections are the four
-places that chain is called from:
+## The model
 
-| projection    | existing call site                                   | preset today       |
-|---------------|------------------------------------------------------|--------------------|
-| `shelf`       | shelf route, bag grid `article.bag-card` (safeThumb) | `discImage`        |
-| `bag`         | sidebar `.disc-row` thumbs, lineup entries, inspector art (safeThumb) | `discImage` |
-| `single`      | Component Editor `runtime.card(discId, presetId)`   | the chosen preset  |
-| `competition` | OnTheCourse overlay `runtime.scene` (`course.<entry>`)| `layout.presetId`  |
+`world.cards = { global: { background, foreground, accent, font, radius, sponsor }, instances: { <projection>: { <discId>: { <token>: value, ... } } } }`
 
-## The token set (small, on purpose)
-
-`background`, `foreground`, `accent` (colors, `#rrggbb`), `font` (`sans` |
-`serif` | `mono`), `radius` (integer 0..100), `sponsor` (the sponsor lockup:
-a string of at most 40 characters; empty means no lockup).
-
-## The model: `world.cards`
-
-```json
-{
-  "global": { "background": "#203d36", "foreground": "#fcfbf5", "accent": "#b9d789", "font": "sans", "radius": 16, "sponsor": "" },
-  "projections": { "shelf": {}, "bag": {}, "single": {}, "competition": {} },
-  "instances": { "shelf": { "buzzz-mint": { "accent": "#d47d54" } } }
-}
-```
-
-- `global` always carries all six tokens: the root of the cascade never inherits.
-- `projections.<p>` and `instances.<p>.<discId>` carry only the tokens they override.
-- A saved draft without `cards` gets these defaults when it is validated
-  (domain.js `validateWorld`), so old drafts open unchanged.
-- `createSeed()` ships one projection override and one instance override so the
-  editor opens with something inherited AND something overridden to look at
-  (e.g. `projections.competition.sponsor = "CHAINSPOT"`,
-  `instances.shelf["buzzz-mint"].accent = "#d47d54"`).
+- `world.cards.projections` is gone. The projection layer of a projection is
+  the preset that projection composes with: `shelf` and `bag` compose with
+  `discImage`; `single` and `competition` compose with `world.layout.presetId`.
+- A preset's own `background`, `foreground`, `accent`, `font`, `radius` and
+  `sponsor` ARE its overrides. A preset field set to `null` (or, for `sponsor`,
+  absent or `null`) **inherits** from global. `validatePreset` accepts `null`
+  for these six fields; `'transparent'` stays a legal background.
+- `global` always carries all six tokens; the root never inherits.
+- Instances are unchanged: `instances.<projection>.<discId>` carries only the
+  tokens it overrides.
+- A draft without `cards`, or with the task-78 shape (a `projections` key),
+  is normalised at `validateWorld`: `projections` is dropped (its values were
+  never the presets'), defaults are filled, nothing is mutated in place.
+- **Seed presets keep their looks, and something inherits.** In `createSeed`
+  the presets that today carry the global values inherit them instead:
+  `broadcast` and `showcase` get `background: null, foreground: null,
+  accent: null, font: null, radius: null`; `minimal` keeps its own paper
+  background, foreground and accent (overrides) but inherits `font` and
+  `radius` (`null`); `discImage` keeps its own background and foreground,
+  inherits `accent`, `font`, `radius`. `sponsor` is inherited everywhere
+  (`null`) except `broadcast.sponsor = 'CHAINSPOT'` (so the OnTheCourse
+  overlay shows the lockup as before). The seed instance override stays:
+  `instances.shelf['buzzz-mint'].accent = '#d47d54'`.
+  Consequence to embrace, not hide: a global `radius` or `font` edit
+  recomposes all four projections; a global `background` edit recomposes the
+  two that inherit it (single, competition) and not the two on `discImage`.
 
 ## The command
 
-`{ type: 'cards.set', layer: 'global' | 'projection' | 'instance', projection?, discId?, token, value }`
+`{ type: 'cards.set', layer: 'global' | 'preset' | 'instance', presetId?, projection?, discId?, token, value }`
 
-- `value: null` on `projection` / `instance` clears the override (the token
-  inherits again). On `global` it is refused: "the root of the cascade never
-  inherits".
-- Values are validated per token (colors, font names, radius range, sponsor
-  length). Unknown token or projection: refused with the names.
-- Dispatched through the ordinary `runtime.dispatch`, so `px.undo.studio`
-  already records the world before it: undo is the sentence it always was.
+- `global`: `null` refused ("the root of the cascade never inherits").
+- `preset`: needs `presetId`; sets `w.presets[presetId][token] = value`,
+  `null` meaning inherit. This is the same mutation `preset.set` with a patch
+  performs, so the Component Editor's existing `preset-color` / `preset-number`
+  controls keep dispatching `preset.set` and are, from now on, the projection
+  layer editor. Validation as before (colors `#rrggbb` or `'transparent'` for
+  background, font names, radius 0..100, sponsor ≤ 40 chars).
+- `instance`: unchanged from task 78.
 
-## The Parts (the studio's board uses dots; the brief's `px.discstudio.cards/...`)
+## The Parts
 
-Published by `publishWorld` (src/runtime.js), sourced like presets:
+Published by `publishWorld`: `px.discstudio.cards.tokens`,
+`px.discstudio.cards.global`, `px.discstudio.cards.instance.<p>.<discId>`
+(tombstoned when cleared). **No** `px.discstudio.cards.projection.*` Parts: the
+projection layer is `px.presentation.<presetId>`, which is already published.
 
-- `px.discstudio.cards.tokens` -- the token set: `{ name: { kind, label, ... } }`.
-- `px.discstudio.cards.global`
-- `px.discstudio.cards.projection.<p>` for each of the four projections (always present, possibly `{}`).
-- `px.discstudio.cards.instance.<p>.<discId>` -- only for instances that exist.
-  When an instance override is cleared to `{}` the Part is removed
-  (tombstoned to `null` the way `publishWorld` already tombstones objects).
+Produced: `px.discstudio.cards.effective.<p>.<discId>` (`fn.cards.effective`),
+`px.discstudio.cards.preset.<p>.<discId>` (`fn.cards.apply`),
+`px.discstudio.cards.query.<name>` (`fn.cards.query`).
 
-Produced by Calculations:
+`proposal.cards.*` is no longer published; `src/cards-findings.js` and the
+findings test are deleted (the owner: notes are useless; the record of this
+task against task 78 is a computed delta, task 80).
 
-- `px.discstudio.cards.effective.<p>.<discId>` <- `fn.cards.effective`
-  `{ projection, discId, tokens: {six}, provenance: { token: 'global'|'projection'|'instance' }, layers: { global, projection, instance } }`
-- `px.discstudio.cards.preset.<p>.<discId>` <- `fn.cards.apply`
-  the preset with the tokens applied: `background`, `foreground`, `accent`,
-  `font`, `radius` set from the effective tokens; when `sponsor` is non-empty
-  one text node `{ id: 'sponsor', kind: 'text', binding: '', text: sponsor, ... }`
-  is appended bottom-right (inside the card; `validatePreset` must accept it).
-- `px.discstudio.cards.query.<name>` <- `fn.cards.query` (see PQL).
-- `proposal.cards.<k>` -- the findings, published from `src/cards-findings.js`
-  at runtime creation so PQL (`proposal.cards.*`) and the editor read them.
-
-## The Calculations (src/cards.js, pure; registered in src/runtime.js)
+## The Calculations (src/cards.js, pure)
 
 ```
-fn.cards.effective({ global, projection, instances, projectionName, discId })
-fn.cards.apply({ preset, effective })
-fn.cards.query({ global, projections, instances, effective, name, token? })
+fn.cards.effective({ global, preset, instances, projectionName, discId })
+   -> { projection, discId, presetId: preset.id, tokens, provenance: { token: 'global'|'preset'|'instance' }, layers: { global, preset: {only the six fields the preset overrides}, instance } }
+fn.cards.apply({ preset, effective })      unchanged in shape: the preset with the effective tokens set, the sponsor node appended when non-empty
+fn.cards.query({ global, presentations, layout, instances, effective, name, token, projection, discId })
+   'overrides'  -> [{ layer: 'preset', presetId, token, value }, ..., { layer: 'instance', projection, discId, token, value }, ...]
+   'inherits'   -> { projections: { <p>: boolean }, presets: { <presetId>: boolean }, instances: [{ projection, discId }] }
+                   a projection inherits <token> when the preset it composes with (discImage, or layout.presetId) has the field null
+   'provenance' -> the provenance map of the composed pair, or null
 ```
 
-`cardSteps(discId, presetId, context, entry, suffix, projection = 'single')`
-gains one Tick BEFORE `Card:<discId>`, a chain of two Calculations (task 57:
-inside a Tick the Calculations are a sequence in declared order, and the Tick
-boundary is where the sequence becomes inspectable):
+The Cascade Tick (in `cardSteps`, before `Card:`), still a chain of two:
 
 ```
-Tick `Cascade:<discId>`
-  fn.cards.effective  with { global: px.discstudio.cards.global,
-                             projection: px.discstudio.cards.projection.<p>,
-                             instances: px.discstudio.cards.instance.<p>.* }   (prefix query: {} when none)
-                      args { projectionName: <p>, discId }
-                      into px.discstudio.cards.effective.<p>.<discId>
-  fn.cards.apply      with { preset: px.presentation.<presetId>,
-                             effective: px.discstudio.cards.effective.<p>.<discId> }
-                      into px.discstudio.cards.preset.<p>.<discId>
-Tick `Card:<discId>`  fn.card.compose with preset: px.discstudio.cards.preset.<p>.<discId>   (was px.presentation.<presetId>)
+fn.cards.effective  with { global: px.discstudio.cards.global, preset: px.presentation.<presetId>, instances: px.discstudio.cards.instance.<p>.* }  args { projectionName, discId }  into px.discstudio.cards.effective.<p>.<discId>
+fn.cards.apply      with { preset: px.presentation.<presetId>, effective: px.discstudio.cards.effective.<p>.<discId> }  into px.discstudio.cards.preset.<p>.<discId>
 ```
 
-`runtime.card(discId, presetId, context, entry, projection = 'single')`;
-`runtime.scene(...)` uses `competition`; `safeThumb(discId, preset, projection)`
-in app.js passes `shelf` from the bag grid and `bag` everywhere else.
+`fn.cards.query` binds `presentations: px.presentation.*` and
+`layout: px.comparison.layout` instead of the projection Parts.
 
-## The runtime API the editor uses (`runtime.cards`)
+`runtime.cards` keeps `projections`, `tokens`, `presetFor`, `effective`,
+`recompose`, `query` with the same signatures. `recompose(discId, context)`
+returns the same `{ receipt, cards: { <p>: { svg, width, height, part, changed } } }`.
 
-```
-runtime.cards.projections            -> ['shelf', 'bag', 'single', 'competition']
-runtime.cards.tokens                 -> the token set (same value as the Part)
-runtime.cards.presetFor(projection)  -> the preset id that projection composes with today
-runtime.cards.effective(projection, discId, context)
-    -> runs composition 'cards-effective' (the Cascade Tick alone) and returns
-       the effective Part; the run is on the record like any other
-runtime.cards.recompose(discId, context)
-    -> one composition 'cards-recompose' with the four projections' chains as
-       Ticks named Cascade:<p>, Card:<p>, ... ; returns
-       { receipt, cards: { <p>: { svg, width, height, changed: boolean, part } } }
-       where changed === the Card:<p> step of this run was computed, not reused.
-       This is the acceptance test: after a global edit all four are changed;
-       after a projection edit exactly one; after an instance edit exactly one.
-runtime.cards.query(name, args)      -> runs 'cards-query' and returns the Part:
-    'overrides'          -> every projection and instance override: [{ layer, projection, discId?, token, value }]
-    'inherits', { token } -> for each projection, whether it inherits <token> from global,
-                            and which composed instances (effective Parts on the board)
-                            inherit it: { projections: { <p>: boolean }, instances: [...] }
-    'provenance', { projection, discId } -> the provenance map of that effective Part, or null if not composed yet
-```
+## The editor: fold into `#/components`
 
-Every query is a Calculation bound to prefix queries (`px.discstudio.cards.projection.*`,
-`px.discstudio.cards.instance.*`, `px.discstudio.cards.effective.*`), so the read
-is on the record. A read that cannot be written that way is a finding, not a
-workaround hidden in the UI.
+- Delete the `#/cards` route, its nav link, `go-cards`, `cardsSidebar`,
+  `cardsCenter`, `cardsInspector`, `cardsFindingsStrip`, `cardsProjectionEditor`,
+  and the CSS that only that page used. Keep and reuse `tokenControl`,
+  `cascadeResetButton`, `cardPreviewTile`, `cardsCascadeReceipt` (renamed as you
+  like), the token-row / provenance-chip / preview-grid styles.
+- `componentTabs` gains a fifth tab `['AllCards', 'All cards']` (ui.component
+  === 'AllCards'). On it the center shows the four live previews grid from
+  `runtime.cards.recompose(ui.discId, context())` (each tile: projection,
+  the preset it composes with, `data-projection-preview`, `data-changed`,
+  provenance chips) with the Specimen disc select above, and the inspector
+  shows the six global tokens (`data-control="cascade-token" data-layer="global"`)
+  each with "inherited by N of 4 projections" from `query('inherits')`, the
+  last-recomposition line, and the undo row. The sidebar stays
+  `componentSidebar`.
+- In `nodeInspector`'s "The whole card" section, the existing background,
+  text, accent and radius controls stay as they are (they dispatch `preset.set`)
+  and each gets: the shown value = the effective value (the global one when the
+  preset field is null), a mark "inherited from global" / "overridden here",
+  and for an override a "Reset to inherited" button
+  (`data-action="cascade-reset" data-layer="preset" data-preset="<id>" data-token`)
+  that dispatches `preset.set` with `{ [token]: null }`. Add the two missing
+  fields the same way: typeface (select sans/serif/mono) and sponsor lockup
+  (text, maxlength 40). The "Transparent card background" check keeps working.
+- Below it, a subsection "This disc, this projection": a projection select
+  limited to the projections that compose with this preset (`DisplayCard`
+  presets: single, competition; `discImage`: shelf, bag), and the six tokens
+  at the instance layer for `ui.discId` (`data-layer="instance"
+  data-projection data-disc`), each marked `global` / `preset` / `here`, with
+  Reset for an override. The recomposition line under it.
+- Every cascade edit (global, instance, and the preset controls) sets
+  `ui.lastCascade = { edit, result: null }` and render() takes the one
+  `recompose` for the All cards tab and the inspector's line exactly as task
+  78's `cascadeSet` comment explains (recompose once per render, never in the
+  handler, or `changed` is erased).
+- `window.discStudio.cards()` keeps returning `ui.lastCascade`.
 
-## The editor (route `#/cards`, nav "Cards")
+## Tests
 
-Three panes, Figma / devtools mental model:
+`tests/cards.test.js` rewritten for the new layers:
+- seed: broadcast inherits background (null) and overrides sponsor; discImage overrides background; the instance override exists.
+- `validateWorld` fills defaults for a draft without `cards` and drops a task-78 `projections` key, without mutating a frozen world.
+- effective/provenance over global -> preset -> instance; a preset field set to null inherits again; null on global refused; a preset edit through `preset.set` changes provenance to `preset`.
+- recompose: a global `radius` edit changes all four; a global `background` edit changes exactly single and competition; a `preset.set` on `discImage.accent` changes exactly shelf and bag; an instance edit changes exactly one.
+- the Cascade Tick is a chain; the recompose receipt names the four Ticks; runRecord validates.
+- the existing surfaces carry the cascade: the OnTheCourse overlay carries the broadcast sponsor lockup; the single card does not carry a sponsor when broadcast's sponsor is set to null; the `minimal` preset still renders its paper background (`#f9f7ef`) after the retrofit.
+- the Component Editor's preset controls are live: after `preset.set` broadcast background, `runtime.card('buzzz-mint','broadcast', ctx)` carries the value.
+- query('overrides') lists preset-layer and instance overrides; query('inherits') matches the world.
+- sponsor node: as before.
 
-1. Left, "All cards": the six global tokens, editable. Under each, from
-   `query('inherits')`: "inherited by N of 4 projections".
-2. Center: four live previews in a grid, one per projection, each the actual
-   composed SVG of the selected disc for that projection (from
-   `cards.recompose`), labelled with the projection name and the preset it uses.
-   The selected projection is marked; clicking one selects it. Above the grid,
-   projection tabs. Below the grid, the projection layer for the selected tab:
-   the six tokens, each marked `inherited from global` or `overridden here`,
-   editable, with "Reset to inherited" for an override.
-3. Right, the selected card inspector: disc picker; for the selected
-   projection x disc, the six tokens with their provenance mark
-   (`global` / `projection` / `here`), editable at the instance layer,
-   "Reset to inherited" per override. Below: the last recomposition receipt:
-   "<layer>.<token> -> <value> recomposed: shelf, bag, single, competition"
-   (the `changed` projections of the last `recompose`). Below that, the
-   findings strip: every `proposal.cards.*` Part, strengths and frictions,
-   each friction with its `for`.
+`tests/core.test.js` stays as task 78 left it unless a count moves; the two
+viewer fixtures (`pyto/viewer/fixtures/discstudio-display-card.json`,
+`tests/fixtures/serial-run-record.json`) are regenerated from the real runtime
+if and only if their bytes change (they will: the Cascade Tick now binds
+`px.presentation.<id>` instead of a projection Part); note it.
 
-Every edit dispatches `cards.set`, then calls `cards.recompose` for the
-selected disc and re-renders. Undo is the existing `undo` action.
-
-## Tests (tests/cards.test.js, node:test)
-
-- effective tokens and provenance over three layers; clearing an override inherits again; `null` on global refused.
-- one global edit: `recompose` says all four changed; a projection edit: exactly that one; an instance edit: exactly that one.
-- the existing surfaces carry the cascade: `runtime.card(..., 'single').svg` contains the global background; with a `competition.sponsor` override, the scene SVG contains the lockup text and the single card does not.
-- PQL: `query('overrides')` lists the seed's overrides; `query('inherits', { token })` matches the world.
-- old drafts: `validateWorld` on a world without `cards` fills the defaults.
-- every existing test stays green unchanged (fixtures untouched).
+`scripts/browser_test.py`: replace the task-78 cards section with the same
+checks on the Component Editor: All cards tab, edit global radius -> four
+previews `data-changed="true"`; edit global accent -> shelf stays (the instance
+override), three change; on the DisplayCard tab edit the preset accent control
+(`preset-color` data-key accent) -> the All cards tab shows single and
+competition recomposed and shelf/bag not; Reset to inherited on that field ->
+`discStudio.world.presets.broadcast.accent === null` and the control shows the
+global value; instance edit on single -> exactly single; no horizontal overflow
+at 1536 and 390 wide. Screenshot the All cards tab to `out/cards.png`.
