@@ -27,7 +27,7 @@ pyto/experiments/brain/ml/build.py                 |   238 +-
  pyto/experiments/brain/ml/calcs.py                 |    12 +-
  pyto/experiments/brain/ml/classify.py              |   395 +
  pyto/experiments/brain/ml/metrics.py               |    23 +-
- pyto/experiments/brain/ml/parts.py                 |   291 +-
+ pyto/experiments/brain/ml/parts.py                 |   305 +-
  pyto/experiments/brain/ml/test_classify.py         |   231 +
  pyto/experiments/brain/ml/test_store.py            |    49 +-
  pyto/experiments/brain/ml/test_tournament.py       |    75 +
@@ -35,16 +35,16 @@ pyto/experiments/brain/ml/build.py                 |   238 +-
  .../brain/records/ml.classification.json           |  7201 +++++++
  pyto/experiments/brain/records/ml.regression.json  |    24 +-
  pyto/experiments/brain/store/ml.json               | 20040 ++++++++++++++++---
- 12 files changed, 25465 insertions(+), 3299 deletions(-)
+ 12 files changed, 25482 insertions(+), 3296 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.lrvCEb6OJx) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.afX5xPUtTW) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
-    experiments/brain               193  OK
+    experiments/brain               253  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    250  OK

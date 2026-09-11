@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/88
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/88:pyto/experiments/tasks/88/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff a9f3476 origin/exp/88 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 0d1840f origin/exp/88 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ brain ml classification: logistic regression (gradient descent and newton/irls, 
 
 ## Starting point
 
-67a55fe152b388f79dedc76ba30193cb71c4fa8f (board: **started** `task-87`: brain/backend the facade: fn.brain.backend.<op> w). MAIN may have moved since: `git log --oneline a9f3476..origin/claude/os-sprint-st8hnu` shows how far.
+67a55fe152b388f79dedc76ba30193cb71c4fa8f (board: **started** `task-87`: brain/backend the facade: fn.brain.backend.<op> w). MAIN may have moved since: `git log --oneline 0d1840f..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -77,7 +77,7 @@ pyto/experiments/brain/ml/build.py                 |   238 +-
  pyto/experiments/brain/ml/calcs.py                 |    12 +-
  pyto/experiments/brain/ml/classify.py              |   395 +
  pyto/experiments/brain/ml/metrics.py               |    23 +-
- pyto/experiments/brain/ml/parts.py                 |   291 +-
+ pyto/experiments/brain/ml/parts.py                 |   305 +-
  pyto/experiments/brain/ml/test_classify.py         |   231 +
  pyto/experiments/brain/ml/test_store.py            |    49 +-
  pyto/experiments/brain/ml/test_tournament.py       |    75 +
@@ -85,16 +85,16 @@ pyto/experiments/brain/ml/build.py                 |   238 +-
  .../brain/records/ml.classification.json           |  7201 +++++++
  pyto/experiments/brain/records/ml.regression.json  |    24 +-
  pyto/experiments/brain/store/ml.json               | 20040 ++++++++++++++++---
- 12 files changed, 25465 insertions(+), 3299 deletions(-)
+ 12 files changed, 25482 insertions(+), 3296 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.lrvCEb6OJx) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.afX5xPUtTW) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
-    experiments/brain               193  OK
+    experiments/brain               253  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    250  OK
