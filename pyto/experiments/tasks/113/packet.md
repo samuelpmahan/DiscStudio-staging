@@ -5,7 +5,7 @@ Starting point: 938a8169c05b71d331e16d2febb98a0f5cb8438a (land(task-112): port C
 Verify: node --test tests/*.test.js
 Allow: src/lab tests pyto/experiments/tasks pyto/research
 Candidate: 8 files, see below
-Evidence: suite exit 0, see below
+Evidence: suite exit 1, see below
 
 ## Candidate
 
@@ -33,10 +33,10 @@ src/lab/map.js                                   |   59 +
 ## Evidence
 
 - verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.9MfV2yQZYo) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.KnRRzao6Ax) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
-    experiments/brain               756  OK
+    experiments/brain               756  FAIL
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    250  OK
