@@ -148,6 +148,13 @@ def rolling(args):
                 "(min, max and median need the slice, so ask for py or np)"
                 % (kind, ", ".join(CUMSUM_KINDS)))
         return _cumulative(values, width, kind, least, centred)
+    if backend == "np" and kind in CUMSUM_KINDS:
+        # The np engine built one numpy array per window and reduced it, which is
+        # O(n w) with numpy's per-call cost paid n times: at n=4000 an expanding
+        # mean took 320 ms, SLOWER than the pure-python engine's 246 ms. The
+        # prefix-sum form is the same answer in one pass, and it is the same code
+        # the cumsum engine runs, so the oracle Parts cover both.
+        return _cumulative(values, width, kind, least, centred)
     out = []
     for i, (start, stop) in enumerate(_windows(len(values), width, centred)):
         window = [v for v in values[start:min(stop, len(values))] if v is not None]
