@@ -1,0 +1,394 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.47873099993012147
+  },
+  "parts": {
+    "px.exp.brain.data.backend_qr_6x4_a": {
+      "preexisting": true,
+      "read_by": [
+        "6x4_np",
+        "6x4_py",
+        "6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.qr.6x4_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "6x4_np"
+    },
+    "px.exp.brain.result.backend.qr.6x4_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "6x4_py"
+    },
+    "px.exp.brain.result.backend.qr.6x4_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "6x4_sp"
+    }
+  },
+  "pcr": "brain_backend_qr",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_qr_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.qr.6x4_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.qr",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_qr_6x4_a"
+          ],
+          "duration_ms": 0.20358799974928843,
+          "hit": true,
+          "id": "6x4_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_qr_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.qr.6x4_np",
+          "result_sha256": "9213b79d18c597de48ed4c253f1bfb02c132e18f581963f7a41de0c2461317c8",
+          "value": {
+            "data": {
+              "q": {
+                "shape": [
+                  6,
+                  4
+                ],
+                "values": [
+                  [
+                    -0.42742623518459255,
+                    0.042384111974582916,
+                    -0.041368983648591186,
+                    -0.16908461749305304
+                  ],
+                  [
+                    -0.4636155188378661,
+                    -0.294743303892739,
+                    0.6801267932757051,
+                    -0.4014997427946737
+                  ],
+                  [
+                    0.44412261007555476,
+                    -0.05860959335733515,
+                    -0.18747222028750188,
+                    -0.8568185547960596
+                  ],
+                  [
+                    -0.624558248850316,
+                    -0.0004916167542901163,
+                    -0.604251648619882,
+                    -0.15031179163246633
+                  ],
+                  [
+                    -0.025697912899968228,
+                    0.7248954047790453,
+                    0.3527982579824387,
+                    -0.02679275804406437
+                  ],
+                  [
+                    0.1199549184231767,
+                    -0.6184022136701944,
+                    0.10480292546286178,
+                    0.22969289547754995
+                  ]
+                ]
+              },
+              "r": {
+                "shape": [
+                  4,
+                  4
+                ],
+                "values": [
+                  [
+                    1.463060729549714,
+                    -1.7599632963464553,
+                    2.3469132238460757,
+                    0.981069826523206
+                  ],
+                  [
+                    0.0,
+                    1.4956819904485668,
+                    -0.5767538536771388,
+                    0.4152326045215471
+                  ],
+                  [
+                    0.0,
+                    0.0,
+                    1.2072298782748432,
+                    0.50009490851996
+                  ],
+                  [
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    1.6657808153049698
+                  ]
+                ]
+              }
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.qr.6x4_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_qr_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.qr.6x4_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.qr",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_qr_6x4_a"
+          ],
+          "duration_ms": 0.08105100005195709,
+          "hit": true,
+          "id": "6x4_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_qr_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.qr.6x4_py",
+          "result_sha256": "1a151e35dbbcb1afdd976df7c71bf2ac1cbda64193e404a0cd755f19af3eac90",
+          "value": {
+            "data": {
+              "q": {
+                "shape": [
+                  6,
+                  4
+                ],
+                "values": [
+                  [
+                    -0.4274262351845925,
+                    0.04238411197458286,
+                    -0.041368983648591005,
+                    -0.1690846174930529
+                  ],
+                  [
+                    -0.46361551883786617,
+                    -0.29474330389273923,
+                    0.6801267932757054,
+                    -0.4014997427946738
+                  ],
+                  [
+                    0.4441226100755548,
+                    -0.05860959335733502,
+                    -0.18747222028750204,
+                    -0.8568185547960597
+                  ],
+                  [
+                    -0.624558248850316,
+                    -0.000491616754290254,
+                    -0.604251648619882,
+                    -0.15031179163246614
+                  ],
+                  [
+                    -0.025697912899968235,
+                    0.7248954047790455,
+                    0.3527982579824386,
+                    -0.026792758044064294
+                  ],
+                  [
+                    0.11995491842317671,
+                    -0.6184022136701945,
+                    0.10480292546286184,
+                    0.22969289547755004
+                  ]
+                ]
+              },
+              "r": {
+                "shape": [
+                  4,
+                  4
+                ],
+                "values": [
+                  [
+                    1.4630607295497138,
+                    -1.7599632963464555,
+                    2.3469132238460753,
+                    0.981069826523206
+                  ],
+                  [
+                    0.0,
+                    1.4956819904485668,
+                    -0.5767538536771388,
+                    0.41523260452154725
+                  ],
+                  [
+                    0.0,
+                    0.0,
+                    1.2072298782748434,
+                    0.5000949085199601
+                  ],
+                  [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.6657808153049696
+                  ]
+                ]
+              }
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.qr.6x4_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_qr_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.qr.6x4_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.qr",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_qr_6x4_a"
+          ],
+          "duration_ms": 0.19409200012887595,
+          "hit": true,
+          "id": "6x4_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_qr_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.qr.6x4_sp",
+          "result_sha256": "9213b79d18c597de48ed4c253f1bfb02c132e18f581963f7a41de0c2461317c8",
+          "value": {
+            "data": {
+              "q": {
+                "shape": [
+                  6,
+                  4
+                ],
+                "values": [
+                  [
+                    -0.42742623518459255,
+                    0.042384111974582916,
+                    -0.041368983648591186,
+                    -0.16908461749305304
+                  ],
+                  [
+                    -0.4636155188378661,
+                    -0.294743303892739,
+                    0.6801267932757051,
+                    -0.4014997427946737
+                  ],
+                  [
+                    0.44412261007555476,
+                    -0.05860959335733515,
+                    -0.18747222028750188,
+                    -0.8568185547960596
+                  ],
+                  [
+                    -0.624558248850316,
+                    -0.0004916167542901163,
+                    -0.604251648619882,
+                    -0.15031179163246633
+                  ],
+                  [
+                    -0.025697912899968228,
+                    0.7248954047790453,
+                    0.3527982579824387,
+                    -0.02679275804406437
+                  ],
+                  [
+                    0.1199549184231767,
+                    -0.6184022136701944,
+                    0.10480292546286178,
+                    0.22969289547754995
+                  ]
+                ]
+              },
+              "r": {
+                "shape": [
+                  4,
+                  4
+                ],
+                "values": [
+                  [
+                    1.463060729549714,
+                    -1.7599632963464553,
+                    2.3469132238460757,
+                    0.981069826523206
+                  ],
+                  [
+                    0.0,
+                    1.4956819904485668,
+                    -0.5767538536771388,
+                    0.4152326045215471
+                  ],
+                  [
+                    0.0,
+                    0.0,
+                    1.2072298782748432,
+                    0.50009490851996
+                  ],
+                  [
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    1.6657808153049698
+                  ]
+                ]
+              }
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.qr.6x4_sp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "qr"
+    }
+  ]
+}

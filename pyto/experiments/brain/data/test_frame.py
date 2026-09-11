@@ -31,7 +31,7 @@ class TestOracles(unittest.TestCase):
     def test_every_case_names_its_authority(self):
         for case in ORACLE_CASES:
             self.assertTrue(case["reference"])
-            self.assertIn(case["backend"], ("py", "np"))
+            self.assertIn(case["backend"], ("py", "np", "npsort"))
 
     def test_every_calculation_has_a_case(self):
         covered = {case["calc"] for case in ORACLE_CASES}
@@ -39,15 +39,30 @@ class TestOracles(unittest.TestCase):
 
 
 class TestBackendsAgree(unittest.TestCase):
-    def test_group_by_py_and_np_agree_cell_for_cell(self):
+    def test_all_three_group_by_engines_agree_cell_for_cell(self):
         args = {"table": ORDERS, "by": ["region"],
                 "aggregates": [{"column": "price", "fn": kind} for kind in
                                ("mean", "sum", "median", "min", "max", "std", "var",
                                 "count", "count_missing")]}
         py = frame.group_by(dict(args, backend="py"))
-        np_ = frame.group_by(dict(args, backend="np"))
-        self.assertEqual(py["columns"], np_["columns"])
-        self.assertTrue(agrees(np_["rows"], py["rows"]))
+        for backend in ("np", "npsort"):
+            with self.subTest(backend=backend):
+                other = frame.group_by(dict(args, backend=backend))
+                self.assertEqual(py["columns"], other["columns"])
+                self.assertTrue(agrees(other["rows"], py["rows"]))
+
+    def test_all_three_engines_agree_on_a_column_full_of_holes(self):
+        table = {"for": "one group with nothing in it and one with one thing",
+                 "columns": ["k", "v"],
+                 "rows": [["a", None], ["a", None], ["b", 2.0], ["c", 3.0], ["c", 5.0]]}
+        args = {"table": table, "by": ["k"],
+                "aggregates": [{"column": "v", "fn": kind} for kind in
+                               ("mean", "sum", "min", "max", "std", "var", "count")]}
+        py = frame.group_by(dict(args, backend="py"))
+        for backend in ("np", "npsort"):
+            with self.subTest(backend=backend):
+                self.assertEqual(frame.group_by(dict(args, backend=backend))["rows"],
+                                 py["rows"])
 
     def test_pivot_and_missing_py_and_np_agree(self):
         for args in ({"table": READINGS, "index": "station", "columns": "month",
@@ -295,9 +310,13 @@ class TestSortAndShape(unittest.TestCase):
         self.assertIn("header has 2", str(caught.exception))
 
     def test_an_unknown_backend_is_refused(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as caught:
             frame.group_by({"table": ORDERS, "by": ["region"], "backend": "sp",
                             "aggregates": [{"fn": "count"}]})
+        self.assertIn("npsort", str(caught.exception))
+        with self.assertRaises(ValueError):
+            frame.pivot({"table": ORDERS, "index": "region", "columns": "customer",
+                         "values": "price", "backend": "npsort"})
 
 
 class TestBenchCases(unittest.TestCase):
@@ -306,7 +325,8 @@ class TestBenchCases(unittest.TestCase):
         for case in BENCH_CASES:
             pairs.setdefault((case["calc"], case["size"]), set()).add(case["backend"])
         for key, backends in pairs.items():
-            self.assertEqual(backends, {"py", "np"}, "%r is not a comparable pair" % (key,))
+            self.assertTrue({"py", "np"} <= backends, "%r is not a comparable pair" % (key,))
+        self.assertIn("npsort", pairs[("fn.brain.data.group_by", "rows=4000")])
         for case in BENCH_CASES[:2]:
             frame.CALCS[case["calc"]](case["make_args"]())
 

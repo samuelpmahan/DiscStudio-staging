@@ -107,9 +107,9 @@ class TestTheGroupByTournament(BuildOnce):
         for one in self.bracket["criteria"]:
             self.assertTrue(one["how"])
 
-    def test_both_backends_are_candidates_and_both_were_judged(self):
+    def test_all_three_engines_are_candidates_and_every_one_was_judged(self):
         branches = sorted(one["branch"] for one in self.bracket["candidates"])
-        self.assertEqual(branches, ["np", "py"])
+        self.assertEqual(branches, ["np", "npsort", "py"])
         self.assertEqual({one["candidate"] for one in self.bracket["judged"]}, set(branches))
 
     def test_the_judge_did_not_build(self):
@@ -123,7 +123,7 @@ class TestTheGroupByTournament(BuildOnce):
             self.assertEqual(one["scores"]["correctness"], 1.0)
 
     def test_there_is_a_winner_and_it_was_refined(self):
-        self.assertIn(self.bracket["winner"], ("py", "np"))
+        self.assertIn(self.bracket["winner"], ("py", "np", "npsort"))
         self.assertTrue(self.bracket["refined"])
         self.assertEqual(self.bracket["refinement"]["address"], "fn.brain.data.group_by")
 
@@ -133,14 +133,33 @@ class TestTheGroupByTournament(BuildOnce):
         self.assertEqual(again.decide("data", "group_by_aggregation")["winner"],
                          self.bracket["winner"])
 
+    def test_the_default_engine_is_a_candidate_and_the_refinement_says_so(self):
+        """the bracket's output is a line of source; the refinement records whether it agrees."""
+        import data.frame as frame
+
+        branches = [one["branch"] for one in self.bracket["candidates"]]
+        self.assertIn(frame.DEFAULT_GROUP_BY_BACKEND, branches)
+        note = self.bracket["refinement"]["note"]
+        self.assertIn(repr(frame.DEFAULT_GROUP_BY_BACKEND), note)
+        self.assertIn(repr(self.bracket["winner"]), note)
+        from data.datasets import ORDERS
+
+        args = {"table": ORDERS, "by": ["region"],
+                "aggregates": [{"column": "price", "fn": "mean"}]}
+        self.assertEqual(frame.group_by(args)["rows"],
+                         frame.group_by(dict(args,
+                                             backend=frame.DEFAULT_GROUP_BY_BACKEND))["rows"])
+
     def test_the_losing_backend_is_still_reachable(self):
         import data.frame as frame
         from data.datasets import ORDERS
 
-        loser = "np" if self.bracket["winner"] == "py" else "py"
-        got = frame.group_by({"table": ORDERS, "by": ["region"], "backend": loser,
-                              "aggregates": [{"column": "price", "fn": "mean"}]})
-        self.assertTrue(got["rows"])
+        for loser in [one["branch"] for one in self.bracket["candidates"]
+                      if one["branch"] != self.bracket["winner"]]:
+            with self.subTest(loser=loser):
+                got = frame.group_by({"table": ORDERS, "by": ["region"], "backend": loser,
+                                      "aggregates": [{"column": "price", "fn": "mean"}]})
+                self.assertTrue(got["rows"])
 
 
 class TestFindingsAndTheMap(BuildOnce):

@@ -1,0 +1,328 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 200.97334799993405
+  },
+  "parts": {
+    "px.exp.brain.data.backend_cholesky_spd_6_a": {
+      "preexisting": true,
+      "read_by": [
+        "spd_6_np",
+        "spd_6_py",
+        "spd_6_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.cholesky.spd_6_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_np"
+    },
+    "px.exp.brain.result.backend.cholesky.spd_6_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_py"
+    },
+    "px.exp.brain.result.backend.cholesky.spd_6_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_sp"
+    }
+  },
+  "pcr": "brain_backend_cholesky",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_cholesky_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.cholesky.spd_6_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.cholesky",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_cholesky_spd_6_a"
+          ],
+          "duration_ms": 0.17814200054999674,
+          "hit": true,
+          "id": "spd_6_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_cholesky_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.cholesky.spd_6_np",
+          "result_sha256": "026515553bb5120af917d2acca646c2b4b5b344081d09b4a3557bfee92d09fab",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                6
+              ],
+              "values": [
+                [
+                  3.0518706755553513,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  -0.5763617317430508,
+                  3.1031044650270547,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1.6718539905774494,
+                  -0.5288820956786737,
+                  3.524221897247232,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.18622798574397276,
+                  0.37583683517649946,
+                  0.46179150123153623,
+                  2.7880938226649996,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.2973198885569888,
+                  -1.0746666817272952,
+                  0.018324812721722625,
+                  0.4590976263792774,
+                  3.768830665188229,
+                  0.0
+                ],
+                [
+                  0.44354987281720964,
+                  -0.41753920155155677,
+                  0.44464343518437194,
+                  0.19709414245976414,
+                  0.10875220207582859,
+                  2.811443648569748
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.cholesky.spd_6_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_cholesky_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.cholesky.spd_6_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.cholesky",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_cholesky_spd_6_a"
+          ],
+          "duration_ms": 0.05635499928757781,
+          "hit": true,
+          "id": "spd_6_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_cholesky_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.cholesky.spd_6_py",
+          "result_sha256": "97957eb827a22b3ca9689d6e340bf2f88a4919fbcea49f232fb85c136ed485da",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                6
+              ],
+              "values": [
+                [
+                  3.0518706755553513,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  -0.5763617317430508,
+                  3.1031044650270547,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1.6718539905774494,
+                  -0.5288820956786737,
+                  3.524221897247232,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.18622798574397276,
+                  0.37583683517649946,
+                  0.4617915012315363,
+                  2.7880938226649996,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.2973198885569888,
+                  -1.0746666817272952,
+                  0.01832481272172263,
+                  0.4590976263792774,
+                  3.768830665188229,
+                  0.0
+                ],
+                [
+                  0.44354987281720964,
+                  -0.41753920155155677,
+                  0.444643435184372,
+                  0.19709414245976412,
+                  0.10875220207582861,
+                  2.811443648569748
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.cholesky.spd_6_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_cholesky_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.cholesky.spd_6_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.cholesky",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_cholesky_spd_6_a"
+          ],
+          "duration_ms": 200.73885100009647,
+          "hit": true,
+          "id": "spd_6_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_cholesky_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.cholesky.spd_6_sp",
+          "result_sha256": "026515553bb5120af917d2acca646c2b4b5b344081d09b4a3557bfee92d09fab",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                6
+              ],
+              "values": [
+                [
+                  3.0518706755553513,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  -0.5763617317430508,
+                  3.1031044650270547,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1.6718539905774494,
+                  -0.5288820956786737,
+                  3.524221897247232,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.18622798574397276,
+                  0.37583683517649946,
+                  0.46179150123153623,
+                  2.7880938226649996,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.2973198885569888,
+                  -1.0746666817272952,
+                  0.018324812721722625,
+                  0.4590976263792774,
+                  3.768830665188229,
+                  0.0
+                ],
+                [
+                  0.44354987281720964,
+                  -0.41753920155155677,
+                  0.44464343518437194,
+                  0.19709414245976414,
+                  0.10875220207582859,
+                  2.811443648569748
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.cholesky.spd_6_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "cholesky"
+    }
+  ]
+}

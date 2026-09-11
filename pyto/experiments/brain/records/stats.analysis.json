@@ -3,7 +3,7 @@
     "computed": 5,
     "hits": 0,
     "invocations": 5,
-    "wall_ms": 1.7516069992780103
+    "wall_ms": 1.7466089993831702
   },
   "parts": {
     "px.exp.brain.result.stats.ci_diff_means.sample_other": {
@@ -139,7 +139,7 @@
             "implementation_sha256": "ed437667d8453a6447ef78fcc79f8d667bd974c2f2bcf74a6dc4ea369ebd8ea9"
           },
           "declared_consumes": [],
-          "duration_ms": 0.19949299985455582,
+          "duration_ms": 0.17409999964002054,
           "hit": false,
           "id": "describe",
           "inputs": {},
@@ -348,7 +348,7 @@
             "implementation_sha256": "7440b67f028740ed52f636b65fa9003a835f9c8d9c115404c5412d48265e8f43"
           },
           "declared_consumes": [],
-          "duration_ms": 0.18377499964117305,
+          "duration_ms": 0.1814360002754256,
           "hit": false,
           "id": "pearson",
           "inputs": {},
@@ -474,7 +474,7 @@
             "implementation_sha256": "f2c878555fd095a9c5ee7bae080b37025fae6fb73397fbeb4468d260f895bdb4"
           },
           "declared_consumes": [],
-          "duration_ms": 0.08852999962982722,
+          "duration_ms": 0.0894109998625936,
           "hit": false,
           "id": "welch",
           "inputs": {},
@@ -596,7 +596,7 @@
             "implementation_sha256": "50f4f31c8fa696794c9e09a6c3ce2499f895059b963f3b9cd5d71bf5df277865"
           },
           "declared_consumes": [],
-          "duration_ms": 0.7801840001775417,
+          "duration_ms": 0.786161999712931,
           "hit": false,
           "id": "interval",
           "inputs": {},
@@ -1125,7 +1125,7 @@
             "implementation_sha256": "01eb1bb47836901fa38be7ac2629b7cf9f2d4f97634ce2f74c7d499b0c39807f"
           },
           "declared_consumes": [],
-          "duration_ms": 0.4996249999749125,
+          "duration_ms": 0.5154999998921994,
           "hit": false,
           "id": "ols",
           "inputs": {},

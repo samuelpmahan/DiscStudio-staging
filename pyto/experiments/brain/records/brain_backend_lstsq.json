@@ -1,0 +1,205 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.5841599995619617
+  },
+  "parts": {
+    "px.exp.brain.data.backend_lstsq_overdetermined_6x4_a": {
+      "preexisting": true,
+      "read_by": [
+        "overdetermined_6x4_np",
+        "overdetermined_6x4_py",
+        "overdetermined_6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_lstsq_overdetermined_6x4_b": {
+      "preexisting": true,
+      "read_by": [
+        "overdetermined_6x4_np",
+        "overdetermined_6x4_py",
+        "overdetermined_6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.lstsq.overdetermined_6x4_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "overdetermined_6x4_np"
+    },
+    "px.exp.brain.result.backend.lstsq.overdetermined_6x4_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "overdetermined_6x4_py"
+    },
+    "px.exp.brain.result.backend.lstsq.overdetermined_6x4_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "overdetermined_6x4_sp"
+    }
+  },
+  "pcr": "brain_backend_lstsq",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.lstsq.overdetermined_6x4_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.lstsq",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          ],
+          "duration_ms": 0.20839599983446533,
+          "hit": true,
+          "id": "overdetermined_6x4_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "b": "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          },
+          "into": "px.exp.brain.result.backend.lstsq.overdetermined_6x4_np",
+          "result_sha256": "cea3ebfd217b4302d45b243fa946d4bec7fe1589a5dc4c839013971e173eb2c0",
+          "value": {
+            "data": {
+              "residual": 0.5995131642000864,
+              "solution": [
+                -2.0486330922026164,
+                -0.5371963374156629,
+                0.6083155941477475,
+                0.547285358557989
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.lstsq.overdetermined_6x4_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.lstsq.overdetermined_6x4_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.lstsq",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          ],
+          "duration_ms": 0.10541099982219748,
+          "hit": true,
+          "id": "overdetermined_6x4_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "b": "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          },
+          "into": "px.exp.brain.result.backend.lstsq.overdetermined_6x4_py",
+          "result_sha256": "5e4ee3d1fcfa6de513254a2c028c3be64a3c068e15ea6dd3c00e5099fc0dc1b4",
+          "value": {
+            "data": {
+              "residual": 0.5995131642000865,
+              "solution": [
+                -2.0486330922026172,
+                -0.537196337415663,
+                0.608315594147748,
+                0.547285358557989
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.lstsq.overdetermined_6x4_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.lstsq.overdetermined_6x4_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.lstsq",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          ],
+          "duration_ms": 0.27035299990529893,
+          "hit": true,
+          "id": "overdetermined_6x4_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_a",
+            "b": "px:px.exp.brain.data.backend_lstsq_overdetermined_6x4_b"
+          },
+          "into": "px.exp.brain.result.backend.lstsq.overdetermined_6x4_sp",
+          "result_sha256": "cea3ebfd217b4302d45b243fa946d4bec7fe1589a5dc4c839013971e173eb2c0",
+          "value": {
+            "data": {
+              "residual": 0.5995131642000864,
+              "solution": [
+                -2.0486330922026164,
+                -0.5371963374156629,
+                0.6083155941477475,
+                0.547285358557989
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.lstsq.overdetermined_6x4_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "lstsq"
+    }
+  ]
+}

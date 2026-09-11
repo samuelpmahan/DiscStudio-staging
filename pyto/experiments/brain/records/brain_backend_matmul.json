@@ -1,0 +1,310 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.1937140004883986
+  },
+  "parts": {
+    "px.exp.brain.data.backend_matmul_square_by_tall_a": {
+      "preexisting": true,
+      "read_by": [
+        "square_by_tall_np",
+        "square_by_tall_py",
+        "square_by_tall_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_matmul_square_by_tall_b": {
+      "preexisting": true,
+      "read_by": [
+        "square_by_tall_np",
+        "square_by_tall_py",
+        "square_by_tall_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.matmul.square_by_tall_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "square_by_tall_np"
+    },
+    "px.exp.brain.result.backend.matmul.square_by_tall_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "square_by_tall_py"
+    },
+    "px.exp.brain.result.backend.matmul.square_by_tall_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "square_by_tall_sp"
+    }
+  },
+  "pcr": "brain_backend_matmul",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "px.exp.brain.data.backend_matmul_square_by_tall_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matmul.square_by_tall_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matmul",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "px:px.exp.brain.data.backend_matmul_square_by_tall_b"
+          ],
+          "duration_ms": 0.07989200003066799,
+          "hit": true,
+          "id": "square_by_tall_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "b": "px:px.exp.brain.data.backend_matmul_square_by_tall_b"
+          },
+          "into": "px.exp.brain.result.backend.matmul.square_by_tall_np",
+          "result_sha256": "36bc5c35a94e03de4465fa9870c189ea8611bbb3879e164d8094a118349b3e31",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                4
+              ],
+              "values": [
+                [
+                  -0.1276370167547322,
+                  -1.2330669650332284,
+                  1.5469224775892194,
+                  1.5522138552725862
+                ],
+                [
+                  1.664990947364854,
+                  0.28173257661319395,
+                  1.759502876860348,
+                  1.199110045760206
+                ],
+                [
+                  -0.33527082553518195,
+                  -1.0310173564965777,
+                  2.4366927800279163,
+                  3.7612269968997922
+                ],
+                [
+                  0.9316621911753951,
+                  -0.7628951656536498,
+                  2.8459210737610565,
+                  1.1963126210283606
+                ],
+                [
+                  0.36327806942491875,
+                  -4.175576841699364,
+                  2.7145854334466044,
+                  -2.03241496265094
+                ],
+                [
+                  -1.1831371944035234,
+                  1.0554730033234985,
+                  -0.43776367522866916,
+                  -0.7606931138671936
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matmul.square_by_tall_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "px.exp.brain.data.backend_matmul_square_by_tall_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matmul.square_by_tall_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matmul",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "px:px.exp.brain.data.backend_matmul_square_by_tall_b"
+          ],
+          "duration_ms": 0.05451800006994745,
+          "hit": true,
+          "id": "square_by_tall_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "b": "px:px.exp.brain.data.backend_matmul_square_by_tall_b"
+          },
+          "into": "px.exp.brain.result.backend.matmul.square_by_tall_py",
+          "result_sha256": "b82ab58f3c5a1a67a80cd772b2ec04c34cec199a2950ba406dc07cd25f06f53f",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                4
+              ],
+              "values": [
+                [
+                  -0.1276370167547322,
+                  -1.2330669650332284,
+                  1.5469224775892194,
+                  1.5522138552725862
+                ],
+                [
+                  1.6649909473648543,
+                  0.28173257661319423,
+                  1.7595028768603476,
+                  1.199110045760206
+                ],
+                [
+                  -0.3352708255351819,
+                  -1.0310173564965777,
+                  2.436692780027917,
+                  3.7612269968997922
+                ],
+                [
+                  0.9316621911753952,
+                  -0.7628951656536496,
+                  2.8459210737610565,
+                  1.1963126210283606
+                ],
+                [
+                  0.3632780694249188,
+                  -4.175576841699364,
+                  2.7145854334466044,
+                  -2.03241496265094
+                ],
+                [
+                  -1.1831371944035234,
+                  1.0554730033234985,
+                  -0.43776367522866905,
+                  -0.7606931138671937
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matmul.square_by_tall_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "px.exp.brain.data.backend_matmul_square_by_tall_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matmul.square_by_tall_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matmul",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "px:px.exp.brain.data.backend_matmul_square_by_tall_b"
+          ],
+          "duration_ms": 0.05930400038778316,
+          "hit": true,
+          "id": "square_by_tall_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matmul_square_by_tall_a",
+            "b": "px:px.exp.brain.data.backend_matmul_square_by_tall_b"
+          },
+          "into": "px.exp.brain.result.backend.matmul.square_by_tall_sp",
+          "result_sha256": "36bc5c35a94e03de4465fa9870c189ea8611bbb3879e164d8094a118349b3e31",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                4
+              ],
+              "values": [
+                [
+                  -0.1276370167547322,
+                  -1.2330669650332284,
+                  1.5469224775892194,
+                  1.5522138552725862
+                ],
+                [
+                  1.664990947364854,
+                  0.28173257661319395,
+                  1.759502876860348,
+                  1.199110045760206
+                ],
+                [
+                  -0.33527082553518195,
+                  -1.0310173564965777,
+                  2.4366927800279163,
+                  3.7612269968997922
+                ],
+                [
+                  0.9316621911753951,
+                  -0.7628951656536498,
+                  2.8459210737610565,
+                  1.1963126210283606
+                ],
+                [
+                  0.36327806942491875,
+                  -4.175576841699364,
+                  2.7145854334466044,
+                  -2.03241496265094
+                ],
+                [
+                  -1.1831371944035234,
+                  1.0554730033234985,
+                  -0.43776367522866916,
+                  -0.7606931138671936
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matmul.square_by_tall_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "matmul"
+    }
+  ]
+}

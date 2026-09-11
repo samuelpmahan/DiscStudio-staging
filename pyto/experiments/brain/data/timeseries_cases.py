@@ -64,6 +64,63 @@ def brute_rolling(values, width, kind, centred=False):
     return out
 
 
+HOLEY = [v if i % 7 else None for i, v in enumerate(SERIES)]
+
+
+def brute_rolling_holes(values, width, kind, least):
+    """the same windows with the holes skipped, reduced by numpy."""
+    out = []
+    for i in range(len(values)):
+        window = [v for v in values[max(0, i - width + 1):i + 1] if v is not None]
+        if len(window) < least:
+            out.append(None)
+            continue
+        block = np.asarray(window, dtype=float)
+        if kind == "count":
+            out.append(float(block.size))
+        elif kind == "sum":
+            out.append(float(block.sum()))
+        elif kind == "mean":
+            out.append(float(block.mean()))
+        elif block.size < 2:
+            out.append(None)
+        elif kind == "var":
+            out.append(float(block.var(ddof=1)))
+        else:
+            out.append(float(block.std(ddof=1)))
+    return out
+
+
+def brute_ewma(values, alpha, adjust=True):
+    """the published recurrence, written out: what the smoother answers to."""
+    out = []
+    if adjust:
+        weight = 0.0
+        weighted = 0.0
+        for value in values:
+            weight = weight * (1.0 - alpha) + 1.0
+            weighted = weighted * (1.0 - alpha) + value
+            out.append(weighted / weight)
+    else:
+        level = None
+        for value in values:
+            level = value if level is None else level + alpha * (value - level)
+            out.append(level)
+    return out
+
+
+def brute_ccf(x, y, nlags):
+    """numpy.correlate over the two centred series."""
+    a = np.asarray(x, dtype=float)
+    b = np.asarray(y, dtype=float)
+    a = a - a.mean()
+    b = b - b.mean()
+    denominator = float(np.sqrt((a * a).sum() * (b * b).sum()))
+    full = np.correlate(a, b, mode="full")
+    middle = len(full) // 2
+    return [float(full[middle + k]) / denominator for k in range(nlags + 1)]
+
+
 def brute_acf(values, nlags, adjusted=False):
     """numpy.correlate over the centred series: the textbook estimate."""
     a = np.asarray(values, dtype=float)
@@ -161,6 +218,38 @@ for _kind in ("mean", "sum", "min", "max", "median", "var", "std", "count"):
         {"values": SHORT, "window": 7, "fn": _kind},
         "numpy.%s over the same slices" % ("median" if _kind == "median" else _kind),
         (lambda kind=_kind: brute_rolling(SHORT, 7, kind)))
+# the third engine answers to exactly the same reference, on the kinds it covers.
+for _kind in ("count", "sum", "mean", "var", "std"):
+    ORACLE_CASES.append(_case(
+        "fn.brain.data.rolling", "window7.%s.cumsum" % _kind, "cumsum",
+        {"values": SHORT, "window": 7, "fn": _kind},
+        "numpy.%s over the same slices" % _kind,
+        (lambda kind=_kind: brute_rolling(SHORT, 7, kind))))
+    ORACLE_CASES.append(_case(
+        "fn.brain.data.rolling", "holes.%s.cumsum" % _kind, "cumsum",
+        {"values": HOLEY, "window": 9, "fn": _kind, "min_periods": 2},
+        "data.timeseries_cases.brute_rolling_with_holes (the same windows, holes skipped)",
+        (lambda kind=_kind: brute_rolling_holes(HOLEY, 9, kind, 2))))
+    for _backend in ("py", "np"):
+        ORACLE_CASES.append(_case(
+            "fn.brain.data.rolling", "holes.%s.%s" % (_kind, _backend), _backend,
+            {"values": HOLEY, "window": 9, "fn": _kind, "min_periods": 2},
+            "data.timeseries_cases.brute_rolling_with_holes (the same windows, holes skipped)",
+            (lambda kind=_kind: brute_rolling_holes(HOLEY, 9, kind, 2))))
+for _adjust in (True, False):
+    ORACLE_CASES += _both(
+        "fn.brain.data.ewma", "alpha0.4.%s" % ("adjust" if _adjust else "recurrence"),
+        {"values": SHORT, "alpha": 0.4, "adjust": _adjust},
+        "data.timeseries_cases.brute_ewma (the recurrence written out; numpy has no smoother)",
+        (lambda adjust=_adjust: brute_ewma(SHORT, 0.4, adjust)))
+ORACLE_CASES += _both(
+    "fn.brain.data.cross_correlation", "self", {"x": SERIES, "y": SERIES, "nlags": 8},
+    "numpy.correlate over the two centred series", lambda: brute_ccf(SERIES, SERIES, 8))
+ORACLE_CASES += _both(
+    "fn.brain.data.cross_correlation", "lagged",
+    {"x": SERIES, "y": SERIES[::-1], "nlags": 8},
+    "numpy.correlate over the two centred series",
+    lambda: brute_ccf(SERIES, SERIES[::-1], 8))
 ORACLE_CASES += _both(
     "fn.brain.data.rolling", "centred5.mean",
     {"values": SHORT, "window": 5, "fn": "mean", "center": True},
@@ -217,6 +306,10 @@ for _backend in ("py", "np"):
             "make_args": (lambda values=_values, backend=_backend:
                           {"values": values, "window": 30, "fn": "mean", "backend": backend})})
         BENCH_CASES.append({
+            "calc": "fn.brain.data.ewma", "backend": _backend, "size": _size,
+            "make_args": (lambda values=_values, backend=_backend:
+                          {"values": values, "alpha": 0.2, "backend": backend})})
+        BENCH_CASES.append({
             "calc": "fn.brain.data.acf", "backend": _backend, "size": _size,
             "make_args": (lambda values=_values, backend=_backend:
                           {"values": values, "nlags": 40, "backend": backend})})
@@ -224,5 +317,11 @@ for _backend in ("py", "np"):
             "calc": "fn.brain.data.ar_fit", "backend": _backend, "size": _size,
             "make_args": (lambda values=_values, backend=_backend:
                           {"values": values, "order": 6, "backend": backend})})
+
+for _size, _values in (("n=600", MID), ("n=4000", BIG)):
+    BENCH_CASES.append({
+        "calc": "fn.brain.data.rolling", "backend": "cumsum", "size": _size,
+        "make_args": (lambda values=_values:
+                      {"values": values, "window": 30, "fn": "mean", "backend": "cumsum"})})
 
 CALCS = timeseries.CALCS

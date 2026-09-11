@@ -22,3 +22,32 @@ def close(got, expected, tolerance=1e-9):
         return False
     scale = max(abs(float(expected)), 1.0)
     return abs(float(got) - float(expected)) <= tolerance * scale
+
+
+def canonical(value, digits=12):
+    """every float in a value rounded to ``digits`` significant digits.
+
+    a committed store document is a claim about a calculation, not about the
+    machine that ran it: a fresh build on another BLAS, another numpy or another
+    python differs in the last bit or two of a float, and a byte comparison of
+    the two documents then fails for no reason anybody cares about. twelve
+    significant digits is far inside every tolerance this vertical records
+    (1e-9 relative, 1e-7 for the one case that says why) and far outside that
+    noise, so rounding there makes the document reproducible without making it
+    less true. walks dicts and lists; leaves ints, bools, strings and None alone.
+    """
+    if isinstance(value, bool) or value is None or isinstance(value, (str, int)):
+        return value
+    if isinstance(value, float):
+        if value != value or value in (float("inf"), float("-inf")) or value == 0.0:
+            return value
+        import math
+
+        exponent = math.floor(math.log10(abs(value)))
+        return round(value, max(0, digits - 1 - exponent)) if exponent < digits else \
+            float(round(value, 0))
+    if isinstance(value, dict):
+        return {key: canonical(inner, digits) for key, inner in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [canonical(inner, digits) for inner in value]
+    return value

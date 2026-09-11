@@ -1,0 +1,328 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 5.537029999686638
+  },
+  "parts": {
+    "px.exp.brain.data.backend_inv_spd_6_a": {
+      "preexisting": true,
+      "read_by": [
+        "spd_6_np",
+        "spd_6_py",
+        "spd_6_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.inv.spd_6_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_np"
+    },
+    "px.exp.brain.result.backend.inv.spd_6_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_py"
+    },
+    "px.exp.brain.result.backend.inv.spd_6_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_sp"
+    }
+  },
+  "pcr": "brain_backend_inv",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_inv_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.inv.spd_6_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.inv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_inv_spd_6_a"
+          ],
+          "duration_ms": 0.16026999946916476,
+          "hit": true,
+          "id": "spd_6_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_inv_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.inv.spd_6_np",
+          "result_sha256": "e1d3c2183df7643b8ea96f295c2f30546e72bcfc016a56bbe0a06c4fa55e5b20",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                6
+              ],
+              "values": [
+                [
+                  0.13291545460637286,
+                  0.011392042874916934,
+                  -0.04048442878330194,
+                  -0.0013501370866812743,
+                  -0.001682773634138509,
+                  -0.0066985694212105
+                ],
+                [
+                  0.011392042874916927,
+                  0.12002747527945497,
+                  0.014894887152701649,
+                  -0.023670920749290374,
+                  0.025571423672118496,
+                  0.014238354785302708
+                ],
+                [
+                  -0.040484428783301954,
+                  0.014894887152701645,
+                  0.08448509587812143,
+                  -0.016067165282516532,
+                  0.0015814699836828262,
+                  -0.014849981411627572
+                ],
+                [
+                  -0.001350137086681271,
+                  -0.023670920749290374,
+                  -0.016067165282516532,
+                  0.13110171508355922,
+                  -0.01135197031182958,
+                  -0.008342368476902739
+                ],
+                [
+                  -0.00168277363413851,
+                  0.025571423672118496,
+                  0.001581469983682828,
+                  -0.011351970311829582,
+                  0.07050762684488011,
+                  -0.003650670769064838
+                ],
+                [
+                  -0.006698569421210499,
+                  0.01423835478530271,
+                  -0.01484998141162757,
+                  -0.008342368476902739,
+                  -0.0036506707690648365,
+                  0.12651477101460817
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.inv.spd_6_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_inv_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.inv.spd_6_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.inv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_inv_spd_6_a"
+          ],
+          "duration_ms": 0.09194700032821856,
+          "hit": true,
+          "id": "spd_6_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_inv_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.inv.spd_6_py",
+          "result_sha256": "11eeb9db508757e92900d57ba582e0ed603a8a6588c8b609914c879abe9bef77",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                6
+              ],
+              "values": [
+                [
+                  0.13291545460637286,
+                  0.011392042874916929,
+                  -0.04048442878330195,
+                  -0.0013501370866812734,
+                  -0.001682773634138509,
+                  -0.006698569421210501
+                ],
+                [
+                  0.011392042874916932,
+                  0.12002747527945497,
+                  0.014894887152701644,
+                  -0.023670920749290374,
+                  0.0255714236721185,
+                  0.014238354785302712
+                ],
+                [
+                  -0.040484428783301954,
+                  0.014894887152701649,
+                  0.08448509587812145,
+                  -0.016067165282516532,
+                  0.0015814699836828273,
+                  -0.014849981411627567
+                ],
+                [
+                  -0.0013501370866812737,
+                  -0.023670920749290378,
+                  -0.016067165282516532,
+                  0.13110171508355922,
+                  -0.011351970311829582,
+                  -0.008342368476902739
+                ],
+                [
+                  -0.0016827736341385085,
+                  0.025571423672118496,
+                  0.0015814699836828267,
+                  -0.01135197031182958,
+                  0.07050762684488011,
+                  -0.0036506707690648365
+                ],
+                [
+                  -0.0066985694212104985,
+                  0.01423835478530271,
+                  -0.01484998141162757,
+                  -0.008342368476902735,
+                  -0.0036506707690648365,
+                  0.12651477101460817
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.inv.spd_6_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_inv_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.inv.spd_6_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.inv",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_inv_spd_6_a"
+          ],
+          "duration_ms": 5.284812999889255,
+          "hit": true,
+          "id": "spd_6_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_inv_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.inv.spd_6_sp",
+          "result_sha256": "9ce4cd4aeba1425565447b8171e8dd429b6f038732a6b32ca20ae06ab636257c",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                6
+              ],
+              "values": [
+                [
+                  0.13291545460637286,
+                  0.011392042874916936,
+                  -0.04048442878330195,
+                  -0.0013501370866812763,
+                  -0.001682773634138508,
+                  -0.006698569421210501
+                ],
+                [
+                  0.011392042874916936,
+                  0.12002747527945497,
+                  0.014894887152701645,
+                  -0.02367092074929037,
+                  0.025571423672118496,
+                  0.014238354785302712
+                ],
+                [
+                  -0.04048442878330195,
+                  0.014894887152701645,
+                  0.08448509587812143,
+                  -0.016067165282516525,
+                  0.0015814699836828273,
+                  -0.014849981411627567
+                ],
+                [
+                  -0.0013501370866812763,
+                  -0.02367092074929037,
+                  -0.016067165282516525,
+                  0.13110171508355917,
+                  -0.011351970311829579,
+                  -0.008342368476902737
+                ],
+                [
+                  -0.001682773634138508,
+                  0.025571423672118496,
+                  0.0015814699836828273,
+                  -0.011351970311829579,
+                  0.0705076268448801,
+                  -0.003650670769064836
+                ],
+                [
+                  -0.006698569421210501,
+                  0.014238354785302712,
+                  -0.014849981411627567,
+                  -0.008342368476902737,
+                  -0.003650670769064836,
+                  0.12651477101460815
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.inv.spd_6_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "inv"
+    }
+  ]
+}

@@ -33,6 +33,26 @@ def _size_number(size):
     return int(digits) if digits else 0
 
 
+def score_rolling(store, branch):
+    """score one rolling engine on the three criteria the bracket recorded."""
+    import data.timeseries as timeseries
+
+    calc = "rolling"
+    oracles = [one for one in _parts(store, "px.exp.brain.oracle.data.", calc)
+               if one["case"].endswith(branch)]
+    correct = sum(1 for one in oracles if one["pass"])
+    correctness = (correct / len(oracles)) if oracles else 0.0
+    benches = _parts(store, "px.exp.brain.bench.data.", calc, backend=branch)
+    biggest = max(benches, key=lambda one: _size_number(one["size"]), default=None)
+    speed = biggest["wall_ms_median"] if biggest else 0.0
+    engine = timeseries._cumulative if branch == "cumsum" else timeseries.rolling
+    clarity = _lines(engine)
+    note = ("read %d oracle Part(s) (%d passed), benchmark %s (%.4f ms median), "
+            "engine body %d lines"
+            % (len(oracles), correct, biggest["size"] if biggest else "none", speed, clarity))
+    return ({"correctness": correctness, "speed": speed, "clarity": float(clarity)}, note)
+
+
 def score_group_by(store, branch):
     """score one group-by backend on the three criteria the bracket recorded."""
     import data.frame as frame
@@ -45,7 +65,12 @@ def score_group_by(store, branch):
     benches = _parts(store, "px.exp.brain.bench.data.", calc, backend=branch)
     biggest = max(benches, key=lambda one: _size_number(one["size"]), default=None)
     speed = biggest["wall_ms_median"] if biggest else 0.0
-    aggregator = frame._aggregate_np if branch == "np" else frame._aggregate_py
+    if branch == "npsort":
+        import data.sorted_groups as sorted_groups
+
+        aggregator = sorted_groups.grouped
+    else:
+        aggregator = frame._aggregate_np if branch == "np" else frame._aggregate_py
     clarity = _lines(aggregator)
     note = ("read %d oracle Part(s) (%d passed), benchmark %s (%.4f ms median), "
             "aggregation body %d lines"

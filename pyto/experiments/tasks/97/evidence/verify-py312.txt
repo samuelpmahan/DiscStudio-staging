@@ -1,0 +1,28 @@
+# the same suite on the owner's stack: python 3.12.3, numpy 2.5.3, scipy 1.18.1
+# run as: PYTHONPATH=<copy>/pyto/src $S/venv312/bin/python -m unittest discover -s experiments/brain -p 'test_*.py'
+
+    raise ValueError("brain: eig returns real spectra only; this matrix has a complex one")
+ValueError: brain: eig returns real spectra only; this matrix has a complex one
+
+======================================================================
+FAIL: test_the_unguarded_gram_expansion_is_a_failed_backend (backend.test_tournament.TheBrackets.test_the_unguarded_gram_expansion_is_a_failed_backend)
+the candidate that is not in the bracket, and the reason the guard exists.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/97/pyto/experiments/brain/backend/test_tournament.py", line 73, in test_the_unguarded_gram_expansion_is_a_failed_backend
+    self.assertFalse(part["pass"], size)
+AssertionError: True is not false : 16
+
+======================================================================
+FAIL: test_the_saved_document_matches_a_fresh_build (ml.test_store.TheCommittedStore.test_the_saved_document_matches_a_fresh_build)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/97/pyto/experiments/brain/ml/test_store.py", line 103, in test_the_saved_document_matches_a_fresh_build
+    self.assertEqual(saved[address], value, address)
+AssertionError: {'columns': ['w0', 'w1', 'w2', 'w3', 'w4', [12251 chars]2]]}} != {'for': 'word counts drawn from known per-c[12263 chars]: 29}
+Diff is 19318 characters long. Set self.maxDiff to None to see it. : px.exp.brain.data.ml.counts
+
+----------------------------------------------------------------------
+Ran 603 tests in 25.722s
+
+FAILED (failures=2, errors=1)

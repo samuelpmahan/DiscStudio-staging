@@ -1,0 +1,190 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.21695100076613016
+  },
+  "parts": {
+    "px.exp.brain.data.backend_argsort_tied_values": {
+      "preexisting": true,
+      "read_by": [
+        "tied_np",
+        "tied_py",
+        "tied_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.argsort.tied_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "tied_np"
+    },
+    "px.exp.brain.result.backend.argsort.tied_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "tied_py"
+    },
+    "px.exp.brain.result.backend.argsort.tied_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "tied_sp"
+    }
+  },
+  "pcr": "brain_backend_argsort",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_argsort_tied_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.argsort.tied_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.argsort",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_argsort_tied_values"
+          ],
+          "duration_ms": 0.1193409998450079,
+          "hit": true,
+          "id": "tied_np",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_argsort_tied_values"
+          },
+          "into": "px.exp.brain.result.backend.argsort.tied_np",
+          "result_sha256": "8894143da3166de66b8ab7701696b096e610a7a8280cd89ce559494e68f54666",
+          "value": {
+            "data": [
+              7,
+              1,
+              4,
+              3,
+              6,
+              0,
+              2,
+              5
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.argsort.tied_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_argsort_tied_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.argsort.tied_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.argsort",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_argsort_tied_values"
+          ],
+          "duration_ms": 0.04519800040725386,
+          "hit": true,
+          "id": "tied_py",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_argsort_tied_values"
+          },
+          "into": "px.exp.brain.result.backend.argsort.tied_py",
+          "result_sha256": "8894143da3166de66b8ab7701696b096e610a7a8280cd89ce559494e68f54666",
+          "value": {
+            "data": [
+              7,
+              1,
+              4,
+              3,
+              6,
+              0,
+              2,
+              5
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.argsort.tied_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_argsort_tied_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.argsort.tied_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.argsort",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_argsort_tied_values"
+          ],
+          "duration_ms": 0.052412000513868406,
+          "hit": true,
+          "id": "tied_sp",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_argsort_tied_values"
+          },
+          "into": "px.exp.brain.result.backend.argsort.tied_sp",
+          "result_sha256": "8894143da3166de66b8ab7701696b096e610a7a8280cd89ce559494e68f54666",
+          "value": {
+            "data": [
+              7,
+              1,
+              4,
+              3,
+              6,
+              0,
+              2,
+              5
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.argsort.tied_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "argsort"
+    }
+  ]
+}

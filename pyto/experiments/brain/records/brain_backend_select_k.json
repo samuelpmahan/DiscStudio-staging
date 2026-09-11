@@ -1,0 +1,385 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 6,
+    "invocations": 6,
+    "wall_ms": 0.3373039999132743
+  },
+  "parts": {
+    "px.exp.brain.data.backend_select_k_tied_top3_values": {
+      "preexisting": true,
+      "read_by": [
+        "tied_top3_np",
+        "tied_top3_py",
+        "tied_top3_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_select_k_top5_of_64_values": {
+      "preexisting": true,
+      "read_by": [
+        "top5_of_64_np",
+        "top5_of_64_py",
+        "top5_of_64_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.select_k.tied_top3_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "tied_top3_np"
+    },
+    "px.exp.brain.result.backend.select_k.tied_top3_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "tied_top3_py"
+    },
+    "px.exp.brain.result.backend.select_k.tied_top3_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "tied_top3_sp"
+    },
+    "px.exp.brain.result.backend.select_k.top5_of_64_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "top5_of_64_np"
+    },
+    "px.exp.brain.result.backend.select_k.top5_of_64_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "top5_of_64_py"
+    },
+    "px.exp.brain.result.backend.select_k.top5_of_64_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "top5_of_64_sp"
+    }
+  },
+  "pcr": "brain_backend_select_k",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_select_k_top5_of_64_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.select_k.top5_of_64_np"
+          ],
+          "args": {
+            "backend": "np",
+            "k": 5
+          },
+          "calculation": {
+            "address": "fn.brain.backend.select_k",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_select_k_top5_of_64_values"
+          ],
+          "duration_ms": 0.12219800009916071,
+          "hit": true,
+          "id": "top5_of_64_np",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_select_k_top5_of_64_values"
+          },
+          "into": "px.exp.brain.result.backend.select_k.top5_of_64_np",
+          "result_sha256": "a9317072d47315739a64b70f848a64364098705495dc0c48e3b672b4afa24f75",
+          "value": {
+            "data": {
+              "indices": [
+                29,
+                55,
+                48,
+                52,
+                31
+              ],
+              "values": [
+                2.4525724330478806,
+                2.0987848127717132,
+                1.8264705610688983,
+                1.7451288160688536,
+                1.4413340786320472
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.select_k.top5_of_64_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_select_k_top5_of_64_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.select_k.top5_of_64_py"
+          ],
+          "args": {
+            "backend": "py",
+            "k": 5
+          },
+          "calculation": {
+            "address": "fn.brain.backend.select_k",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_select_k_top5_of_64_values"
+          ],
+          "duration_ms": 0.048456999138579704,
+          "hit": true,
+          "id": "top5_of_64_py",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_select_k_top5_of_64_values"
+          },
+          "into": "px.exp.brain.result.backend.select_k.top5_of_64_py",
+          "result_sha256": "a9317072d47315739a64b70f848a64364098705495dc0c48e3b672b4afa24f75",
+          "value": {
+            "data": {
+              "indices": [
+                29,
+                55,
+                48,
+                52,
+                31
+              ],
+              "values": [
+                2.4525724330478806,
+                2.0987848127717132,
+                1.8264705610688983,
+                1.7451288160688536,
+                1.4413340786320472
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.select_k.top5_of_64_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_select_k_top5_of_64_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.select_k.top5_of_64_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "k": 5
+          },
+          "calculation": {
+            "address": "fn.brain.backend.select_k",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_select_k_top5_of_64_values"
+          ],
+          "duration_ms": 0.07850600013625808,
+          "hit": true,
+          "id": "top5_of_64_sp",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_select_k_top5_of_64_values"
+          },
+          "into": "px.exp.brain.result.backend.select_k.top5_of_64_sp",
+          "result_sha256": "a9317072d47315739a64b70f848a64364098705495dc0c48e3b672b4afa24f75",
+          "value": {
+            "data": {
+              "indices": [
+                29,
+                55,
+                48,
+                52,
+                31
+              ],
+              "values": [
+                2.4525724330478806,
+                2.0987848127717132,
+                1.8264705610688983,
+                1.7451288160688536,
+                1.4413340786320472
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.select_k.top5_of_64_sp",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_select_k_tied_top3_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.select_k.tied_top3_np"
+          ],
+          "args": {
+            "backend": "np",
+            "k": 3
+          },
+          "calculation": {
+            "address": "fn.brain.backend.select_k",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_select_k_tied_top3_values"
+          ],
+          "duration_ms": 0.03582499994081445,
+          "hit": true,
+          "id": "tied_top3_np",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_select_k_tied_top3_values"
+          },
+          "into": "px.exp.brain.result.backend.select_k.tied_top3_np",
+          "result_sha256": "4a55d9c16e3a91e663e29135132ed2e1087726804935d6f1ab8d591922473d5c",
+          "value": {
+            "data": {
+              "indices": [
+                0,
+                2,
+                5
+              ],
+              "values": [
+                3.0,
+                3.0,
+                3.0
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.select_k.tied_top3_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_select_k_tied_top3_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.select_k.tied_top3_py"
+          ],
+          "args": {
+            "backend": "py",
+            "k": 3
+          },
+          "calculation": {
+            "address": "fn.brain.backend.select_k",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_select_k_tied_top3_values"
+          ],
+          "duration_ms": 0.019998000425403006,
+          "hit": true,
+          "id": "tied_top3_py",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_select_k_tied_top3_values"
+          },
+          "into": "px.exp.brain.result.backend.select_k.tied_top3_py",
+          "result_sha256": "4a55d9c16e3a91e663e29135132ed2e1087726804935d6f1ab8d591922473d5c",
+          "value": {
+            "data": {
+              "indices": [
+                0,
+                2,
+                5
+              ],
+              "values": [
+                3.0,
+                3.0,
+                3.0
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.select_k.tied_top3_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_select_k_tied_top3_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.select_k.tied_top3_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "k": 3
+          },
+          "calculation": {
+            "address": "fn.brain.backend.select_k",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_select_k_tied_top3_values"
+          ],
+          "duration_ms": 0.03232000017305836,
+          "hit": true,
+          "id": "tied_top3_sp",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_select_k_tied_top3_values"
+          },
+          "into": "px.exp.brain.result.backend.select_k.tied_top3_sp",
+          "result_sha256": "4a55d9c16e3a91e663e29135132ed2e1087726804935d6f1ab8d591922473d5c",
+          "value": {
+            "data": {
+              "indices": [
+                0,
+                2,
+                5
+              ],
+              "values": [
+                3.0,
+                3.0,
+                3.0
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.select_k.tied_top3_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "select_k"
+    }
+  ]
+}

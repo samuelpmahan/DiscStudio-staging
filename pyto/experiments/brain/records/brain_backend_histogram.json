@@ -1,0 +1,244 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 386.1596829992777
+  },
+  "parts": {
+    "px.exp.brain.data.backend_histogram_v64_8bins_values": {
+      "preexisting": true,
+      "read_by": [
+        "v64_8bins_np",
+        "v64_8bins_py",
+        "v64_8bins_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.histogram.v64_8bins_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "v64_8bins_np"
+    },
+    "px.exp.brain.result.backend.histogram.v64_8bins_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "v64_8bins_py"
+    },
+    "px.exp.brain.result.backend.histogram.v64_8bins_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "v64_8bins_sp"
+    }
+  },
+  "pcr": "brain_backend_histogram",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_histogram_v64_8bins_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.histogram.v64_8bins_np"
+          ],
+          "args": {
+            "backend": "np",
+            "bins": 8,
+            "range": [
+              -3.0,
+              3.0
+            ]
+          },
+          "calculation": {
+            "address": "fn.brain.backend.histogram",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_histogram_v64_8bins_values"
+          ],
+          "duration_ms": 0.3505199993014685,
+          "hit": true,
+          "id": "v64_8bins_np",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_histogram_v64_8bins_values"
+          },
+          "into": "px.exp.brain.result.backend.histogram.v64_8bins_np",
+          "result_sha256": "a4075540a2119ad95de0b42911d770632fdc5fad8e77d53ae332b4fc1d25fe27",
+          "value": {
+            "data": {
+              "counts": [
+                0,
+                2,
+                12,
+                15,
+                17,
+                14,
+                3,
+                1
+              ],
+              "edges": [
+                -3.0,
+                -2.25,
+                -1.5,
+                -0.75,
+                0.0,
+                0.75,
+                1.5,
+                2.25,
+                3.0
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.histogram.v64_8bins_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_histogram_v64_8bins_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.histogram.v64_8bins_py"
+          ],
+          "args": {
+            "backend": "py",
+            "bins": 8,
+            "range": [
+              -3.0,
+              3.0
+            ]
+          },
+          "calculation": {
+            "address": "fn.brain.backend.histogram",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_histogram_v64_8bins_values"
+          ],
+          "duration_ms": 0.058569999964674935,
+          "hit": true,
+          "id": "v64_8bins_py",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_histogram_v64_8bins_values"
+          },
+          "into": "px.exp.brain.result.backend.histogram.v64_8bins_py",
+          "result_sha256": "a4075540a2119ad95de0b42911d770632fdc5fad8e77d53ae332b4fc1d25fe27",
+          "value": {
+            "data": {
+              "counts": [
+                0,
+                2,
+                12,
+                15,
+                17,
+                14,
+                3,
+                1
+              ],
+              "edges": [
+                -3.0,
+                -2.25,
+                -1.5,
+                -0.75,
+                0.0,
+                0.75,
+                1.5,
+                2.25,
+                3.0
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.histogram.v64_8bins_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_histogram_v64_8bins_values"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.histogram.v64_8bins_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "bins": 8,
+            "range": [
+              -3.0,
+              3.0
+            ]
+          },
+          "calculation": {
+            "address": "fn.brain.backend.histogram",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_histogram_v64_8bins_values"
+          ],
+          "duration_ms": 385.7505930000116,
+          "hit": true,
+          "id": "v64_8bins_sp",
+          "inputs": {
+            "values": "px:px.exp.brain.data.backend_histogram_v64_8bins_values"
+          },
+          "into": "px.exp.brain.result.backend.histogram.v64_8bins_sp",
+          "result_sha256": "a4075540a2119ad95de0b42911d770632fdc5fad8e77d53ae332b4fc1d25fe27",
+          "value": {
+            "data": {
+              "counts": [
+                0,
+                2,
+                12,
+                15,
+                17,
+                14,
+                3,
+                1
+              ],
+              "edges": [
+                -3.0,
+                -2.25,
+                -1.5,
+                -0.75,
+                0.0,
+                0.75,
+                1.5,
+                2.25,
+                3.0
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.histogram.v64_8bins_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "histogram"
+    }
+  ]
+}

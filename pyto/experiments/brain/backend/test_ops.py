@@ -23,7 +23,9 @@ class TheFacade(unittest.TestCase):
     def test_every_op_has_the_three_engines(self):
         self.assertEqual(
             ops.ops(),
-            ("argsort", "cumsum", "eig", "fft", "histogram", "lstsq", "matmul", "pairwise", "select_k", "solve", "sort", "svd"),
+            ("argsort", "cholesky", "convolve", "cumsum", "eig", "fft", "histogram", "interp", "inv",
+             "lstsq", "matmul", "norm", "pack", "pairwise", "qr", "select_k", "solve", "sort", "svd",
+             "trace", "unpack"),
         )
         for op in ops.ops():
             self.assertEqual(ops.engines_of(op), ("np", "py", "sp"), op)
@@ -115,6 +117,94 @@ class ThePinnedSemantics(unittest.TestCase):
         json.dumps(got)
 
 
+class TheBracketsWinnerAsAnOp(unittest.TestCase):
+    """`pack`/`unpack` are what the array_store bracket decided, made usable.
+
+    the round trip is exact - not close, exact - because nothing is turned into
+    decimal text on the way: it is the float64 buffer, base64'd, and back.
+    """
+
+    def test_the_round_trip_is_exact_in_every_engine(self):
+        matrix = [[float(row) * 0.1 + column / 3.0 for column in range(7)] for row in range(5)]
+        for backend in ("py", "np", "sp"):
+            packed = ops.call("pack", {"a": matrix, "backend": backend})
+            self.assertEqual(packed["shape"], [5, 7])
+            self.assertEqual(packed["dtype"], "float64")
+            for other in ("py", "np", "sp"):
+                back = ops.call("unpack", {"packed": packed, "backend": other})
+                self.assertEqual(back["values"], matrix, f"{backend} packed, {other} unpacked")
+
+    def test_the_engines_pack_the_same_bytes(self):
+        matrix = [[1.5, -2.25], [3.125, 4.0]]
+        packed = {backend: ops.call("pack", {"a": matrix, "backend": backend})["b64"] for backend in ("py", "np", "sp")}
+        self.assertEqual(len(set(packed.values())), 1, packed)
+
+    def test_packing_wins_on_real_float64_and_loses_on_short_decimals(self):
+        """the honest boundary, not the slogan.
+
+        base64 of float64 is a flat 11 bytes per number whatever the number is.
+        json is as long as the decimal text: about 20 bytes for a drawn float64
+        and 6 for a small round one. So packing wins by roughly 1.8x on measured
+        data - which is what the array_store bracket measured - and loses on a
+        table of small integers. The op is the right default for the ml vertical's
+        matrices and the wrong one for a column of counts.
+        """
+        drawn = case_module.draw((48, 48)).tolist()
+        packed = len(json.dumps(ops.call("pack", {"a": drawn, "backend": "np"})))
+        nested = len(json.dumps({"shape": [48, 48], "values": drawn}))
+        self.assertLess(packed, nested)
+        self.assertGreater(nested / packed, 1.5)
+
+        rounded = [[float(row * 48 + column) for column in range(48)] for row in range(48)]
+        self.assertGreater(len(json.dumps(ops.call("pack", {"a": rounded, "backend": "np"}))),
+                           len(json.dumps({"shape": [48, 48], "values": rounded})))
+
+    def test_unpack_refuses_a_dtype_it_does_not_know(self):
+        with self.assertRaises(ValueError) as refused:
+            ops.call("unpack", {"packed": {"dtype": "float32", "shape": [1, 1], "b64": ""}, "backend": "py"})
+        self.assertIn("float64 only", str(refused.exception))
+
+
+class TheNewerOps(unittest.TestCase):
+    def test_qr_reconstructs_a_and_its_q_is_orthonormal(self):
+        for backend in ("py", "np", "sp"):
+            got = ops.call("qr", {"a": case_module.B64, "backend": backend})
+            q, r = got["q"]["values"], got["r"]["values"]
+            for i in range(len(r)):
+                self.assertGreaterEqual(r[i][i], 0.0, f"{backend}: r's diagonal is the sign convention")
+            for i in range(len(q[0])):
+                for j in range(len(q[0])):
+                    dot = sum(q[k][i] * q[k][j] for k in range(len(q)))
+                    self.assertAlmostEqual(dot, 1.0 if i == j else 0.0, places=9, msg=backend)
+            for i, row in enumerate(case_module.B64):
+                for j, cell in enumerate(row):
+                    self.assertAlmostEqual(sum(q[i][k] * r[k][j] for k in range(len(r))), cell, places=9, msg=backend)
+
+    def test_qr_refuses_a_matrix_wider_than_it_is_tall(self):
+        with self.assertRaises(ValueError):
+            ops.call("qr", {"a": [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], "backend": "py"})
+
+    def test_convolve_modes_agree_across_engines(self):
+        a, v = [1.0, 2.0, 3.0, 4.0, 5.0], [0.25, 0.5, 0.25]
+        for mode in ("full", "same", "valid"):
+            answers = {backend: ops.call("convolve", {"a": a, "v": v, "mode": mode, "backend": backend})
+                       for backend in ("py", "np", "sp")}
+            for backend, got in answers.items():
+                passed, worst = harness.close(got, answers["np"], 1e-9)
+                self.assertTrue(passed, f"{mode}/{backend}: {worst}")
+        with self.assertRaises(ValueError):
+            ops.call("convolve", {"a": a, "v": v, "mode": "sideways", "backend": "py"})
+
+    def test_interp_clamps_outside_the_samples_in_every_engine(self):
+        args = {"x": [-5.0, 0.0, 0.5, 2.0, 7.0], "xp": [0.0, 1.0, 2.0], "fp": [3.0, 5.0, 9.0]}
+        for backend in ("py", "np", "sp"):
+            self.assertEqual(ops.call("interp", dict(args, backend=backend)), [3.0, 3.0, 4.0, 9.0, 9.0], backend)
+
+    def test_interp_refuses_samples_that_do_not_increase(self):
+        with self.assertRaises(ValueError):
+            ops.call("interp", {"x": [0.5], "xp": [1.0, 1.0], "fp": [1.0, 2.0], "backend": "py"})
+
+
 class TheStubsSayWhy(unittest.TestCase):
     def test_the_py_engine_of_eig_refuses_a_non_symmetric_matrix(self):
         with self.assertRaises(ValueError) as refused:
@@ -133,6 +223,24 @@ class TheStubsSayWhy(unittest.TestCase):
             ops.call("fft", {"values": [1.0, 2.0, 3.0], "backend": "py"})
         self.assertIn("radix-2", str(refused.exception))
         self.assertEqual(len(ops.call("fft", {"values": [1.0, 2.0, 3.0], "backend": "np"})["real"]), 3)
+
+    def test_cholesky_refuses_a_matrix_that_is_not_positive_definite(self):
+        for backend in ("py", "np", "sp"):
+            with self.subTest(backend=backend), self.assertRaises(ValueError) as refused:
+                ops.call("cholesky", {"a": [[1.0, 2.0], [2.0, 1.0]], "backend": backend})
+            self.assertIn("positive definite", str(refused.exception))
+
+    def test_inv_refuses_a_singular_matrix_in_every_engine(self):
+        for backend in ("py", "np", "sp"):
+            with self.subTest(backend=backend), self.assertRaises(ValueError):
+                ops.call("inv", {"a": [[1.0, 2.0], [2.0, 4.0]], "backend": backend})
+
+    def test_norm_tells_a_vector_from_a_matrix_by_its_shape(self):
+        column = {"for": "x", "columns": ["a"], "rows": [[3.0], [4.0]]}
+        for backend in ("py", "np", "sp"):
+            self.assertAlmostEqual(ops.call("norm", {"a": column, "backend": backend}), 5.0, places=12)
+            self.assertAlmostEqual(
+                ops.call("norm", {"a": [[3.0, 0.0], [0.0, 4.0]], "backend": backend}), 5.0, places=12)
 
     def test_every_engine_refuses_a_singular_matrix_the_same_way(self):
         """scipy raises nothing and numpy raises LinAlgError; the facade makes both

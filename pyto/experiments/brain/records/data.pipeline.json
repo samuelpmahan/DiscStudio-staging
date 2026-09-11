@@ -3,7 +3,7 @@
     "computed": 2,
     "hits": 2,
     "invocations": 4,
-    "wall_ms": 0.7921459991848678
+    "wall_ms": 0.711807999323355
   },
   "parts": {
     "px.exp.brain.data.customers": {
@@ -79,7 +79,7 @@
           "declared_consumes": [
             "px:px.exp.brain.data.orders"
           ],
-          "duration_ms": 0.06562399994436419,
+          "duration_ms": 0.06830199890828226,
           "hit": true,
           "id": "kept",
           "inputs": {
@@ -224,10 +224,10 @@
           "calculation": {
             "address": "fn.brain.data.group_by",
             "identity_scope": "runtime-function-body",
-            "implementation_sha256": "cc33ce6d4847ee18b02383f7e762917320a3dbe8a2e0bc0c538e727e3464b007"
+            "implementation_sha256": "bebd2af393e9f0b685b5f2023249c6df661a7032b699e6fd199588b2228495a8"
           },
           "declared_consumes": [],
-          "duration_ms": 0.30617899938079063,
+          "duration_ms": 0.23700000019744039,
           "hit": false,
           "id": "grouped",
           "inputs": {
@@ -312,7 +312,7 @@
           "declared_consumes": [
             "px:px.exp.brain.data.customers"
           ],
-          "duration_ms": 0.0867769995238632,
+          "duration_ms": 0.08858399996825028,
           "hit": true,
           "id": "joined",
           "inputs": {
@@ -532,10 +532,10 @@
           "calculation": {
             "address": "fn.brain.data.rolling",
             "identity_scope": "runtime-function-body",
-            "implementation_sha256": "a410485027e045d752cc687c2a274aaf9ab2af12e837b79bafb1d354df6c1b3b"
+            "implementation_sha256": "6a54eab78006618541ecbe14b6da858de03e093153273b74753609cfa4ffab3f"
           },
           "declared_consumes": [],
-          "duration_ms": 0.3335660003358498,
+          "duration_ms": 0.3179220002493821,
           "hit": false,
           "id": "rolled",
           "inputs": {},

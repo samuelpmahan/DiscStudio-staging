@@ -1,0 +1,18 @@
+# the same suite under a second interpreter, run by hand before packing
+# python 3.12.3 numpy 2.5.3 scipy 1.18.1
+# command: PYTHONPATH=<copy>/pyto/src $S/venv312/bin/python -m unittest discover -s experiments/brain -p 'test_*.py'   (from <copy>/pyto)
+
+..............................................................................................................................................................................................................................................................................................................................F......................................................................................................................................................................................................................................................................................................
+======================================================================
+FAIL: test_the_saved_document_matches_a_fresh_build (ml.test_store.TheCommittedStore.test_the_saved_document_matches_a_fresh_build)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/98/pyto/experiments/brain/ml/test_store.py", line 103, in test_the_saved_document_matches_a_fresh_build
+    self.assertEqual(saved[address], value, address)
+AssertionError: {'columns': ['w0', 'w1', 'w2', 'w3', 'w4', [12251 chars]2]]}} != {'for': 'word counts drawn from known per-c[12263 chars]: 29}
+Diff is 19318 characters long. Set self.maxDiff to None to see it. : px.exp.brain.data.ml.counts
+
+----------------------------------------------------------------------
+Ran 613 tests in 28.393s
+
+FAILED (failures=1)
