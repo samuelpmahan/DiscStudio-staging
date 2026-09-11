@@ -23,7 +23,7 @@ pyto/experiments/brain/records/brain_shelf.json | 465 ++++++++++++++++++++++++
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py' && BRAIN_RECORDS=commit python -m experiments.brain.shelf` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.qNQZAgiAbF) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.ND9n6sAJGI) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
