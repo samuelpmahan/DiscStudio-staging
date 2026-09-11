@@ -217,10 +217,19 @@ def ols_lstsq(args):
 
 SOLVERS = {"normal": ols_normal, "qr": ols_qr, "lstsq": ols_lstsq}
 
+DEFAULT_SOLVER = "lstsq"
+"""which route the facade takes when nobody names one.
+
+this constant is the tournament's output, not an opinion: the bracket
+`px.exp.brain.bracket.stats.ols_solver` scores the three solvers on correctness,
+conditioning, speed and clarity, and `stats.build` re-runs it and records whether
+this line still agrees with the winner. change the line, not the bracket.
+"""
+
 
 def ols(args):
     """the OLS facade: ``solver`` picks normal, qr or lstsq. reference: numpy.linalg.lstsq."""
-    solver = args.get("solver", "qr")
+    solver = args.get("solver", DEFAULT_SOLVER)
     if solver not in SOLVERS:
         raise ValueError("unknown solver %r: one of %s" % (solver, ", ".join(sorted(SOLVERS))))
     backend = args.get("backend", "np" if solver == "lstsq" else "py")
