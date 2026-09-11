@@ -50,9 +50,9 @@
           "value": {
             "kind": "json",
             "data": {
-              "tees": 4,
+              "tees": 5,
               "badges": 4,
-              "paired": 1,
+              "paired": 2,
               "contested": 0,
               "checks": {
                 "everyTeeAppearsOnce": true,

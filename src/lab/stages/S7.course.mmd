@@ -1,6 +1,6 @@
 flowchart TD
-    holes["px.holes.objects"]
-    unplacedHoles["px.holes.unplaced"]
+    holes["px.holes.straight"]
+    unresolvedHoles["px.holes.unresolved"]
     canonical["px.course.canonicalPixels"]
     remaining["px.remaining.afterBadges"]
     components["px.components"]
@@ -26,6 +26,7 @@ flowchart TD
     end
 
     holes -->|holes| holeGeometry
+    unresolvedHoles -->|unresolved| holeGeometry
     canonical -->|raster| holeGeometry
     holeGeometry --> geometry["px.course.holes"]
     remaining -->|remaining| obstacleMap
@@ -42,5 +43,4 @@ flowchart TD
     graph --> courseGraph["px.course.graph"]
     courseGraph -->|graph| summary
     geometry -->|geometry| summary
-    unplacedHoles -->|unplaced| summary
     summary --> courseSummary["px.course.summary"]

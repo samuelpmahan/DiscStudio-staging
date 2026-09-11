@@ -203,6 +203,20 @@
       "workaround": null,
       "proposal": null
     },
+    "proposal.lab.s7.playsonlywhatwasresolved": {
+      "for": "what a round may be played over",
+      "kind": "strength",
+      "text": "S7's course graph binds px.holes.straight -- the holes whose tee, badge and basket S6 put on one line, each carrying its residual -- and takes px.holes.unresolved as `unplayed`. The nearest-anchor fallback still exists and still produces a hole for every badge, so the two rounds can be run side by side, and on the course fixture they are NOT the same course: the fallback plays hole 10 (its badge is a dogleg, bound to whatever tee and basket happened to be nearest) and S7 does not. `everyDoglegIsNamedNotRouted` refuses a course that quietly plays one.",
+      "workaround": null,
+      "proposal": "a stage that follows a bend would hand S7 more holes through the same binding; nothing else in S7 would change."
+    },
+    "proposal.lab.s7.twokindsofdifference": {
+      "for": "why the comparison with the straight route had to be re-read after the rebase",
+      "kind": "finding",
+      "text": "It used to measure one thing -- what going round an obstacle costs -- because both rounds played the same holes. Now it measures two, and says so: `divergence` names the holes each round plays and which the fallback played alone, and the two totals (`straightTotalPx`, `routedTotalPx`) are both over S7's OWN legs, with the fallback's whole round kept apart as `straight.wholeRoundLengthPx`. On the course fixture the ground costs +53.0px on 987.8 (+5.4%), of which one blocked play leg is +25.7 (+9.9%) and the rest is the cell grid; the fallback's round is a different 1562.0px over a different set of holes, and adding those two numbers together would have been meaningless.",
+      "workaround": null,
+      "proposal": null
+    },
     "proposal.lab.search.noobjective": {
       "for": "what pathfinding means in the LAB before anyone writes a search",
       "kind": "finding",
@@ -839,7 +853,7 @@
         }
       },
       {
-        "id": "badge-candidate:black-component-11:white-component-17",
+        "id": "badge-candidate:black-component-11:white-component-18",
         "plate": {
           "part": {
             "id": "black-component-11",
@@ -867,11 +881,11 @@
         },
         "border": {
           "part": {
-            "id": "white-component-17",
-            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+            "id": "white-component-18",
+            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
             "kind": "component",
             "polarity": "white",
-            "label": 17,
+            "label": 18,
             "widthPx": 512,
             "heightPx": 920,
             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -893,11 +907,11 @@
         "digits": [
           {
             "part": {
-              "id": "white-component-18",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+              "id": "white-component-19",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
               "kind": "component",
               "polarity": "white",
-              "label": 18,
+              "label": 19,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -918,11 +932,11 @@
           },
           {
             "part": {
-              "id": "white-component-19",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+              "id": "white-component-20",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
               "kind": "component",
               "polarity": "white",
-              "label": 19,
+              "label": 20,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -971,11 +985,11 @@
             },
             "anchor": {
               "part": {
-                "id": "white-component-18",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                "id": "white-component-19",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                 "kind": "component",
                 "polarity": "white",
-                "label": 18,
+                "label": 19,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1050,11 +1064,11 @@
             },
             "anchor": {
               "part": {
-                "id": "white-component-19",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                "id": "white-component-20",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                 "kind": "component",
                 "polarity": "white",
-                "label": 19,
+                "label": 20,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1139,7 +1153,7 @@
         },
         "unaccountedButOwned": {
           "rule": "outer-border-bbox",
-          "outerBorder": "white-component-17",
+          "outerBorder": "white-component-18",
           "bbox": [
             300,
             578,
@@ -1255,6 +1269,53 @@
             }
           }
         }
+      },
+      {
+        "bbox": [
+          305,
+          654,
+          50,
+          74
+        ],
+        "px": {
+          "kind": "numbers",
+          "length": 3700,
+          "sha256": "8b95d9b5a9624e7ba23b8cfdee14ea11c14073e55bb3d44f2adfac5711bc72e1"
+        },
+        "whitePx": 1746,
+        "blackPx": 1954,
+        "has": {
+          "detectFamily": {
+            "fn": "fn.lab.basket.detectfamily",
+            "body": {
+              "polarity": "bright",
+              "label": 21,
+              "bbox": [
+                309,
+                658,
+                42,
+                66
+              ]
+            }
+          },
+          "findShellFamily": {
+            "fn": "fn.lab.basket.findshellfamily",
+            "margins": [
+              4,
+              4,
+              4,
+              4
+            ],
+            "blackPx": 1954
+          },
+          "findPx": {
+            "fn": "fn.lab.basket.findpx",
+            "body": {
+              "polarity": "bright",
+              "label": 21
+            }
+          }
+        }
       }
     ],
     "px.exp.lab.baskets.family": {
@@ -1289,6 +1350,24 @@
             "cy": 455.31500572737684,
             "bboxX": 150,
             "bboxY": 428,
+            "bboxW": 42,
+            "bboxH": 66,
+            "major": 66,
+            "minor": 42,
+            "angle": 1.5707963267948966,
+            "fill": 0.6298701298701299
+          },
+          "areaRatio": 1,
+          "whiteCoverage": 1
+        },
+        {
+          "body": {
+            "label": 21,
+            "area": 1746,
+            "cx": 329.5,
+            "cy": 685.3150057273768,
+            "bboxX": 309,
+            "bboxY": 658,
             "bboxW": 42,
             "bboxH": 66,
             "major": 66,
@@ -1375,6 +1454,37 @@
             "length": 1954,
             "sha256": "99ae86d3f5507f1c0e94292d855257b13747959dc6b086358674b8da4ceb0a59"
           }
+        },
+        {
+          "candidate": {
+            "body": {
+              "label": 21,
+              "area": 1746,
+              "cx": 329.5,
+              "cy": 685.3150057273768,
+              "bboxX": 309,
+              "bboxY": 658,
+              "bboxW": 42,
+              "bboxH": 66,
+              "major": 66,
+              "minor": 42,
+              "angle": 1.5707963267948966,
+              "fill": 0.6298701298701299
+            },
+            "areaRatio": 1,
+            "whiteCoverage": 1
+          },
+          "bbox": [
+            305,
+            654,
+            50,
+            74
+          ],
+          "blackPx": {
+            "kind": "numbers",
+            "length": 1954,
+            "sha256": "ba8fdd2a2b0ba86b2e54e0ed05c9120f68246caa463567cd4af071dd98e467a5"
+          }
         }
       ]
     },
@@ -1386,13 +1496,13 @@
           "data": {
             "kind": "numbers",
             "length": 471040,
-            "sha256": "3ba3328706873e70ab4a381226a55b97e8cc6695825a06b642970130b83561ae"
+            "sha256": "1144744ab64f4f19309eed0506b30ee1870e7f99d2769d1e94a9c18a6165b653"
           }
         },
         "labels": {
           "kind": "numbers",
           "length": 471040,
-          "sha256": "f85b01b13ecf73d10f4f8c010291830259d2a4e2f9eb35a06f700376ebe5be83"
+          "sha256": "6982d4988725a5de216abf52de5957290348b22635856c6cddabf64b31fc5f96"
         },
         "components": [
           {
@@ -1607,6 +1717,20 @@
           },
           {
             "label": 16,
+            "area": 176,
+            "cx": 329.5,
+            "cy": 512.5454545454545,
+            "bboxX": 322,
+            "bboxY": 498,
+            "bboxW": 16,
+            "bboxH": 30,
+            "major": 30,
+            "minor": 16,
+            "angle": 1.5707963267948966,
+            "fill": 0.36666666666666664
+          },
+          {
+            "label": 17,
             "area": 152,
             "cx": 427.5,
             "cy": 530.5,
@@ -1620,7 +1744,7 @@
             "fill": 0.36538461538461536
           },
           {
-            "label": 17,
+            "label": 18,
             "area": 564,
             "cx": 329.5,
             "cy": 597.5,
@@ -1634,7 +1758,7 @@
             "fill": 0.235
           },
           {
-            "label": 18,
+            "label": 19,
             "area": 156,
             "cx": 317.5,
             "cy": 597.5,
@@ -1648,7 +1772,7 @@
             "fill": 0.65
           },
           {
-            "label": 19,
+            "label": 20,
             "area": 120,
             "cx": 330.5,
             "cy": 597.5,
@@ -1662,7 +1786,21 @@
             "fill": 1
           },
           {
-            "label": 20,
+            "label": 21,
+            "area": 1746,
+            "cx": 329.5,
+            "cy": 685.3150057273768,
+            "bboxX": 309,
+            "bboxY": 658,
+            "bboxW": 42,
+            "bboxH": 66,
+            "major": 66,
+            "minor": 42,
+            "angle": 1.5707963267948966,
+            "fill": 0.6298701298701299
+          },
+          {
+            "label": 22,
             "area": 1786,
             "cx": 349.91769316909296,
             "cy": 785.5431131019037,
@@ -1684,13 +1822,13 @@
           "data": {
             "kind": "numbers",
             "length": 471040,
-            "sha256": "e877d6901da251c87521c294d117d11ba12f015e3e977c1542a743b5244410a1"
+            "sha256": "657a5a8f07f8c88b24721d5893a29773b7f5b9a649ef41692e90f85fdffe5559"
           }
         },
         "labels": {
           "kind": "numbers",
           "length": 471040,
-          "sha256": "f8aa98a70dba75e160ea256e663d764aed686f440d4195a5340ec066afc78196"
+          "sha256": "98ff2938597da6cb59b711746b304baaf400b6217f57a9d5ed42c470b047265b"
         },
         "components": [
           {
@@ -1863,6 +2001,20 @@
           },
           {
             "label": 13,
+            "area": 1954,
+            "cx": 329.5,
+            "cy": 695.1330603889458,
+            "bboxX": 305,
+            "bboxY": 654,
+            "bboxW": 50,
+            "bboxH": 74,
+            "major": 74,
+            "minor": 50,
+            "angle": 1.5707963267948966,
+            "fill": 0.5281081081081082
+          },
+          {
+            "label": 14,
             "area": 1938,
             "cx": 350.68988648090817,
             "cy": 795.1300309597523,
@@ -1879,13 +2031,13 @@
       }
     },
     "px.exp.lab.course.canonicalpixels": {
-      "imageId": "composite:54813ee8f534f8a061",
+      "imageId": "composite:b2896681fea6472938",
       "widthPx": 512,
       "heightPx": 920,
       "rgba": {
         "kind": "numbers",
         "length": 1884160,
-        "sha256": "1a71c373d41db88ce607910d5e55ac37a1b4e70299ed9c5bb3fa940ba3fff8b3"
+        "sha256": "8ba51ae1bdd5b98d1ad089a7fcb40f10a68deeec6045f2917b8dae3da3ccf35b"
       }
     },
     "px.exp.lab.course.dashstrack": {
@@ -2060,17 +2212,44 @@
       "walkableRule": "every class but terrain: a badge, a basket and a tee are printed on the map, and a tee or a basket is where a leg ends",
       "order": [
         1,
-        10
+        11
       ],
       "holes": [
         {
           "number": 1,
           "badge": "badge-3",
+          "basis": "tee-badge-ray-continued",
           "tee": {
             "id": "tee-3",
             "at": [
-              427.5,
-              530.5
+              329.5,
+              510.5
+            ]
+          },
+          "basket": {
+            "id": "basket-3",
+            "at": [
+              330,
+              691
+            ]
+          },
+          "vector": [
+            0.5,
+            180.5
+          ],
+          "lengthPx": 180.501,
+          "bearingDeg": 89.841,
+          "residualPx": 0.5
+        },
+        {
+          "number": 11,
+          "badge": "badge-2",
+          "basis": "tee-badge-ray-continued",
+          "tee": {
+            "id": "tee-2",
+            "at": [
+              247.5,
+              150.5
             ]
           },
           "basket": {
@@ -2081,37 +2260,12 @@
             ]
           },
           "vector": [
-            -179.5,
-            -119.5
+            0.5,
+            260.5
           ],
-          "lengthPx": 215.64,
-          "bearingDeg": 213.653,
-          "confidence": 1
-        },
-        {
-          "number": 10,
-          "badge": "badge-1",
-          "tee": {
-            "id": "tee-2",
-            "at": [
-              247.5,
-              150.5
-            ]
-          },
-          "basket": {
-            "id": "basket-2",
-            "at": [
-              171,
-              461
-            ]
-          },
-          "vector": [
-            -76.5,
-            310.5
-          ],
-          "lengthPx": 319.785,
-          "bearingDeg": 103.841,
-          "confidence": 1
+          "lengthPx": 260.5,
+          "bearingDeg": 89.89,
+          "residualPx": 0.5
         }
       ],
       "nodes": [
@@ -2120,25 +2274,25 @@
           "kind": "tee",
           "hole": 1,
           "at": [
-            427.5,
-            530.5
+            329.5,
+            510.5
           ],
-          "cell": 1082
+          "cell": 1012
         },
         {
-          "id": "basket-1",
+          "id": "basket-3",
           "kind": "basket",
           "hole": 1,
           "at": [
-            248,
-            411
+            330,
+            691
           ],
-          "cell": 815
+          "cell": 1396
         },
         {
           "id": "tee-2",
           "kind": "tee",
-          "hole": 10,
+          "hole": 11,
           "at": [
             247.5,
             150.5
@@ -2146,14 +2300,14 @@
           "cell": 303
         },
         {
-          "id": "basket-2",
+          "id": "basket-1",
           "kind": "basket",
-          "hole": 10,
+          "hole": 11,
           "at": [
-            171,
-            461
+            248,
+            411
           ],
-          "cell": 906
+          "cell": 815
         }
       ],
       "edges": [
@@ -2161,24 +2315,24 @@
           "kind": "play",
           "hole": 1,
           "from": "tee-3",
-          "to": "basket-1",
-          "straightLengthPx": 215.64,
+          "to": "basket-3",
+          "straightLengthPx": 180.501,
           "straightIsBlocked": false
         },
         {
           "kind": "walk",
-          "hole": 10,
-          "from": "basket-1",
+          "hole": 11,
+          "from": "basket-3",
           "to": "tee-2",
-          "straightLengthPx": 260.5,
-          "straightIsBlocked": true
+          "straightLengthPx": 546.76,
+          "straightIsBlocked": false
         },
         {
           "kind": "play",
-          "hole": 10,
+          "hole": 11,
           "from": "tee-2",
-          "to": "basket-2",
-          "straightLengthPx": 319.785,
+          "to": "basket-1",
+          "straightLengthPx": 260.5,
           "straightIsBlocked": true
         }
       ],
@@ -2192,17 +2346,17 @@
         ],
         "cellsByClass": {
           "terrain": 69,
-          "basket": 49,
-          "tee": 13,
+          "basket": 73,
+          "tee": 17,
           "badge": 45,
-          "open": 1680
+          "open": 1652
         },
         "pixelsByClass": {
           "terrain": 7538,
-          "basket": 7400,
-          "tee": 480,
+          "basket": 11100,
+          "tee": 656,
           "badge": 7200,
-          "open": 448422
+          "open": 444546
         },
         "cells": [
           "open",
@@ -3217,6 +3371,8 @@
           "open",
           "open",
           "open",
+          "tee",
+          "tee",
           "open",
           "open",
           "open",
@@ -3247,10 +3403,8 @@
           "open",
           "open",
           "open",
-          "open",
-          "open",
-          "open",
-          "open",
+          "tee",
+          "tee",
           "open",
           "open",
           "open",
@@ -3504,6 +3658,10 @@
           "open",
           "open",
           "open",
+          "basket",
+          "basket",
+          "basket",
+          "basket",
           "open",
           "open",
           "open",
@@ -3532,6 +3690,10 @@
           "open",
           "open",
           "open",
+          "basket",
+          "basket",
+          "basket",
+          "basket",
           "open",
           "open",
           "open",
@@ -3560,6 +3722,10 @@
           "open",
           "open",
           "open",
+          "basket",
+          "basket",
+          "basket",
+          "basket",
           "open",
           "open",
           "open",
@@ -3588,6 +3754,10 @@
           "open",
           "open",
           "open",
+          "basket",
+          "basket",
+          "basket",
+          "basket",
           "open",
           "open",
           "open",
@@ -3616,6 +3786,10 @@
           "open",
           "open",
           "open",
+          "basket",
+          "basket",
+          "basket",
+          "basket",
           "open",
           "open",
           "open",
@@ -3644,30 +3818,10 @@
           "open",
           "open",
           "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
-          "open",
+          "basket",
+          "basket",
+          "basket",
+          "basket",
           "open",
           "open",
           "open",
@@ -4084,17 +4238,44 @@
       },
       "order": [
         1,
-        10
+        11
       ],
       "holes": [
         {
           "number": 1,
           "badge": "badge-3",
+          "basis": "tee-badge-ray-continued",
           "tee": {
             "id": "tee-3",
             "at": [
-              427.5,
-              530.5
+              329.5,
+              510.5
+            ]
+          },
+          "basket": {
+            "id": "basket-3",
+            "at": [
+              330,
+              691
+            ]
+          },
+          "vector": [
+            0.5,
+            180.5
+          ],
+          "lengthPx": 180.501,
+          "bearingDeg": 89.841,
+          "residualPx": 0.5
+        },
+        {
+          "number": 11,
+          "badge": "badge-2",
+          "basis": "tee-badge-ray-continued",
+          "tee": {
+            "id": "tee-2",
+            "at": [
+              247.5,
+              150.5
             ]
           },
           "basket": {
@@ -4105,47 +4286,37 @@
             ]
           },
           "vector": [
-            -179.5,
-            -119.5
+            0.5,
+            260.5
           ],
-          "lengthPx": 215.64,
-          "bearingDeg": 213.653,
-          "confidence": 1
-        },
-        {
-          "number": 10,
-          "badge": "badge-1",
-          "tee": {
-            "id": "tee-2",
-            "at": [
-              247.5,
-              150.5
-            ]
-          },
-          "basket": {
-            "id": "basket-2",
-            "at": [
-              171,
-              461
-            ]
-          },
-          "vector": [
-            -76.5,
-            310.5
-          ],
-          "lengthPx": 319.785,
-          "bearingDeg": 103.841,
-          "confidence": 1
+          "lengthPx": 260.5,
+          "bearingDeg": 89.89,
+          "residualPx": 0.5
         }
       ],
-      "incomplete": [
+      "unplayed": [
         {
-          "number": 11,
-          "missing": [
-            "basket"
-          ]
+          "badge": "badge-1",
+          "reading": "10",
+          "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+        },
+        {
+          "badge": "badge-4",
+          "reading": "11",
+          "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
         }
-      ]
+      ],
+      "spare": {
+        "tees": [
+          "tee-1",
+          "tee-4",
+          "tee-5"
+        ],
+        "baskets": [
+          "basket-2",
+          "basket-4"
+        ]
+      }
     },
     "px.exp.lab.course.obstacles": {
       "for": "what is between the anchors: one class per pixel and per cell, derived from the Parts the Stages published and from nothing else",
@@ -4173,17 +4344,17 @@
       "priority": "a cell takes the first class present in it, in the order above",
       "pixelsByClass": {
         "terrain": 7538,
-        "basket": 7400,
-        "tee": 480,
+        "basket": 11100,
+        "tee": 656,
         "badge": 7200,
-        "open": 448422
+        "open": 444546
       },
       "cellsByClass": {
         "terrain": 69,
-        "basket": 49,
-        "tee": 13,
+        "basket": 73,
+        "tee": 17,
         "badge": 45,
-        "open": 1680
+        "open": 1652
       },
       "cells": [
         "open",
@@ -5198,6 +5369,8 @@
         "open",
         "open",
         "open",
+        "tee",
+        "tee",
         "open",
         "open",
         "open",
@@ -5228,10 +5401,8 @@
         "open",
         "open",
         "open",
-        "open",
-        "open",
-        "open",
-        "open",
+        "tee",
+        "tee",
         "open",
         "open",
         "open",
@@ -5485,6 +5656,10 @@
         "open",
         "open",
         "open",
+        "basket",
+        "basket",
+        "basket",
+        "basket",
         "open",
         "open",
         "open",
@@ -5513,6 +5688,10 @@
         "open",
         "open",
         "open",
+        "basket",
+        "basket",
+        "basket",
+        "basket",
         "open",
         "open",
         "open",
@@ -5541,6 +5720,10 @@
         "open",
         "open",
         "open",
+        "basket",
+        "basket",
+        "basket",
+        "basket",
         "open",
         "open",
         "open",
@@ -5569,6 +5752,10 @@
         "open",
         "open",
         "open",
+        "basket",
+        "basket",
+        "basket",
+        "basket",
         "open",
         "open",
         "open",
@@ -5597,6 +5784,10 @@
         "open",
         "open",
         "open",
+        "basket",
+        "basket",
+        "basket",
+        "basket",
         "open",
         "open",
         "open",
@@ -5625,30 +5816,10 @@
         "open",
         "open",
         "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
-        "open",
+        "basket",
+        "basket",
+        "basket",
+        "basket",
         "open",
         "open",
         "open",
@@ -6062,30 +6233,44 @@
       "holes": 2,
       "order": [
         1,
-        10
+        11
       ],
-      "totalLengthPx": 535.425,
-      "longestHole": 10,
+      "from": "px.exp.lab.holes.straight",
+      "totalLengthPx": 441.001,
+      "longestHole": 11,
       "blockedStraightLegs": [
-        "walk:basket-1->tee-2",
-        "play:tee-2->basket-2"
+        "play:tee-2->basket-1"
       ],
       "cellPx": 16,
       "walkableCells": 1787,
       "obstacleCells": 69,
-      "unplaced": {
-        "holes": [
+      "unplayed": {
+        "doglegs": [
           {
-            "number": 11,
-            "missing": [
-              "basket"
-            ]
+            "badge": "badge-1",
+            "reading": "10",
+            "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+          },
+          {
+            "badge": "badge-4",
+            "reading": "11",
+            "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
           }
         ],
-        "badges": [],
-        "tees": [],
-        "baskets": []
-      }
+        "tees": [
+          "tee-1",
+          "tee-4",
+          "tee-5"
+        ],
+        "baskets": [
+          "basket-2",
+          "basket-4"
+        ]
+      },
+      "residualPx": [
+        0.5,
+        0.5
+      ]
     },
     "px.exp.lab.course.walkable": {
       "rule": "every class but terrain: a badge, a basket and a tee are printed on the map, and a tee or a basket is where a leg ends",
@@ -6144,6 +6329,10 @@
           "basis": "the tee carries a 6x4 bright nose on one short end, which is the only thing in the shape that tells its two ends apart, and the badge centre and the basket centre both sit on x=248, the tee's own major axis: S5 reads the pointing end off the pixels and S6 continues the ray past the badge to the basket. The other tees have no nose, so their rays are refused rather than guessed, and their badges are S6's doglegs"
         },
         {
+          "what": "the second aligned hole: another pointing tee and another basket, on the fixture's own \"01\" badge line",
+          "basis": "a pointing tee at (322,540) and a basket at (309,700), both centred on x=330, which is the centre of the badge already drawn at (300,620): a second straight hole, so a round has a leg to WALK between holes and not only a hole to play. The obstacle crosses the first hole's play line and not this one"
+        },
+        {
           "what": "the three overlaps",
           "basis": "one object per clean detector is occluded in the one way that detector cannot survive -- a cut border (S1 needs a white component enclosing the plate), a fused body (S2 needs the sprite bbox exactly), a notched frame (S3 needs an enclosed hole) -- and in each case the evidence the OTHER half of the object carries is left untouched, which is what S4 recovers from"
         },
@@ -6177,30 +6366,30 @@
           "tee": {
             "id": "tee-3",
             "at": [
-              427.5,
-              530.5
+              329.5,
+              510.5
             ],
             "bbox": [
-              420,
-              518,
+              322,
+              498,
               16,
-              26
+              30
             ],
-            "gapFromBadgePx": 118.585
+            "gapFromBadgePx": 87.501
           },
           "basket": {
-            "id": "basket-1",
+            "id": "basket-3",
             "at": [
-              248,
-              411
+              330,
+              691
             ],
             "bbox": [
-              223,
-              374,
+              305,
+              654,
               50,
               74
             ],
-            "gapFromBadgePx": 204.189
+            "gapFromBadgePx": 93
           }
         },
         {
@@ -6235,18 +6424,18 @@
             "gapFromBadgePx": 160.507
           },
           "basket": {
-            "id": "basket-2",
+            "id": "basket-1",
             "at": [
-              171,
-              461
+              248,
+              411
             ],
             "bbox": [
-              146,
-              424,
+              223,
+              374,
               50,
               74
             ],
-            "gapFromBadgePx": 184.201
+            "gapFromBadgePx": 165.206
           }
         },
         {
@@ -6280,7 +6469,20 @@
             ],
             "gapFromBadgePx": 296.355
           },
-          "basket": null
+          "basket": {
+            "id": "basket-2",
+            "at": [
+              171,
+              461
+            ],
+            "bbox": [
+              146,
+              424,
+              50,
+              74
+            ],
+            "gapFromBadgePx": 198.54
+          }
         }
       ],
       "unreadable": [],
@@ -6317,6 +6519,20 @@
           {
             "id": "tee-3",
             "bbox": [
+              322,
+              498,
+              16,
+              30
+            ],
+            "at": [
+              329.5,
+              510.5
+            ],
+            "boundTo": 1
+          },
+          {
+            "id": "tee-4",
+            "bbox": [
               420,
               518,
               16,
@@ -6326,7 +6542,7 @@
               427.5,
               530.5
             ],
-            "boundTo": 1
+            "boundTo": null
           }
         ],
         "baskets": [
@@ -6342,7 +6558,7 @@
               248,
               411
             ],
-            "boundTo": 1
+            "boundTo": 10
           },
           {
             "id": "basket-2",
@@ -6356,7 +6572,21 @@
               171,
               461
             ],
-            "boundTo": 10
+            "boundTo": 11
+          },
+          {
+            "id": "basket-3",
+            "bbox": [
+              305,
+              654,
+              50,
+              74
+            ],
+            "at": [
+              330,
+              691
+            ],
+            "boundTo": 1
           }
         ]
       }
@@ -6435,30 +6665,30 @@
         "tee": {
           "id": "tee-3",
           "at": [
-            427.5,
-            530.5
+            329.5,
+            510.5
           ],
           "bbox": [
-            420,
-            518,
+            322,
+            498,
             16,
-            26
+            30
           ],
-          "gapFromBadgePx": 118.585
+          "gapFromBadgePx": 87.501
         },
         "basket": {
-          "id": "basket-1",
+          "id": "basket-3",
           "at": [
-            248,
-            411
+            330,
+            691
           ],
           "bbox": [
-            223,
-            374,
+            305,
+            654,
             50,
             74
           ],
-          "gapFromBadgePx": 204.189
+          "gapFromBadgePx": 93
         },
         "confidence": {
           "value": 1,
@@ -6481,7 +6711,7 @@
             "fn": "fn.lab.hole.bindanchors",
             "rule": "nearest-free-in-badge-order",
             "tee": "tee-3",
-            "basket": "basket-1"
+            "basket": "basket-3"
           },
           "assemble": {
             "fn": "fn.lab.hole.assemble",
@@ -6520,18 +6750,18 @@
           "gapFromBadgePx": 160.507
         },
         "basket": {
-          "id": "basket-2",
+          "id": "basket-1",
           "at": [
-            171,
-            461
+            248,
+            411
           ],
           "bbox": [
-            146,
-            424,
+            223,
+            374,
             50,
             74
           ],
-          "gapFromBadgePx": 184.201
+          "gapFromBadgePx": 165.206
         },
         "confidence": {
           "value": 1,
@@ -6554,7 +6784,7 @@
             "fn": "fn.lab.hole.bindanchors",
             "rule": "nearest-free-in-badge-order",
             "tee": "tee-2",
-            "basket": "basket-2"
+            "basket": "basket-1"
           },
           "assemble": {
             "fn": "fn.lab.hole.assemble",
@@ -6592,20 +6822,31 @@
           ],
           "gapFromBadgePx": 296.355
         },
-        "basket": null,
+        "basket": {
+          "id": "basket-2",
+          "at": [
+            171,
+            461
+          ],
+          "bbox": [
+            146,
+            424,
+            50,
+            74
+          ],
+          "gapFromBadgePx": 198.54
+        },
         "confidence": {
-          "value": 0.75,
+          "value": 1,
           "basis": {
             "badgeRead": 0.5,
             "tee": 0.25,
-            "basket": 0
+            "basket": 0.25
           },
           "of": "badge read 0.5 + tee 0.25 + basket 0.25"
         },
-        "missing": [
-          "basket"
-        ],
-        "complete": false,
+        "missing": [],
+        "complete": true,
         "has": {
           "readNumbers": {
             "fn": "fn.lab.hole.readnumbers",
@@ -6616,13 +6857,11 @@
             "fn": "fn.lab.hole.bindanchors",
             "rule": "nearest-free-in-badge-order",
             "tee": "tee-1",
-            "basket": null
+            "basket": "basket-2"
           },
           "assemble": {
             "fn": "fn.lab.hole.assemble",
-            "missing": [
-              "basket"
-            ]
+            "missing": []
           }
         }
       }
@@ -6663,6 +6902,20 @@
         {
           "id": "basket-3",
           "bbox": [
+            305,
+            654,
+            50,
+            74
+          ],
+          "at": [
+            330,
+            691
+          ],
+          "basis": "body-family"
+        },
+        {
+          "id": "basket-4",
+          "bbox": [
             326,
             754,
             50,
@@ -6694,10 +6947,90 @@
           "residualPx": 0.5,
           "straight": true,
           "why": null
+        },
+        {
+          "tee": "tee-3",
+          "badge": "badge-3",
+          "reading": "01",
+          "basket": "basket-3",
+          "basketAt": [
+            330,
+            691
+          ],
+          "basketBasis": "body-family",
+          "entryAt": [
+            329.5,
+            654.5
+          ],
+          "distancePx": 144,
+          "residualPx": 0.5,
+          "straight": true,
+          "why": null
         }
       ]
     },
     "px.exp.lab.holes.straight": [
+      {
+        "number": 1,
+        "reading": "01",
+        "tee": {
+          "id": "tee-3",
+          "at": [
+            329.5,
+            510.5
+          ],
+          "basis": "ring-family"
+        },
+        "badge": {
+          "id": "badge-3",
+          "at": [
+            330,
+            598
+          ],
+          "basis": "bright-family"
+        },
+        "basket": {
+          "id": "basket-3",
+          "at": [
+            330,
+            691
+          ],
+          "basis": "body-family"
+        },
+        "direction": [
+          0,
+          1
+        ],
+        "teeToBadgePx": 68,
+        "teeToBasketPx": 144,
+        "residualPx": 0.5,
+        "basis": "tee-badge-ray-continued",
+        "has": {
+          "pointing": {
+            "fn": "fn.lab.tee.pointing",
+            "lean": {
+              "offset": [
+                0,
+                2.045
+              ],
+              "alongAxisPx": 2.045,
+              "brightPx": 176
+            }
+          },
+          "castRay": {
+            "fn": "fn.lab.tee.castray",
+            "axisAngleDeg": 90
+          },
+          "continueRay": {
+            "fn": "fn.lab.hole.continueray",
+            "residualPx": 0.5,
+            "entryAt": [
+              329.5,
+              654.5
+            ]
+          }
+        }
+      },
       {
         "number": 11,
         "reading": "11",
@@ -6763,17 +7096,18 @@
     "px.exp.lab.holes.unplaced": {
       "for": "what the fallback could not put in a hole, so that nothing is silently dropped between the Stages and the course",
       "badges": [],
-      "tees": [],
-      "baskets": [],
-      "incomplete": [
+      "tees": [
         {
-          "number": 11,
-          "missing": [
-            "basket"
+          "id": "tee-4",
+          "at": [
+            427.5,
+            530.5
           ],
-          "why": "the basket pool was empty when hole 11 took its turn"
+          "why": "no hole was left to take it"
         }
-      ]
+      ],
+      "baskets": [],
+      "incomplete": []
     },
     "px.exp.lab.holes.unresolved": {
       "for": "the badges the straight-line rule cannot finish -- the doglegs -- and what is left over with them, so that a stage that can follow a bend knows exactly what it inherits",
@@ -6784,17 +7118,6 @@
           "bbox": [
             120,
             258,
-            60,
-            40
-          ],
-          "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
-        },
-        {
-          "badge": "badge-3",
-          "reading": "01",
-          "bbox": [
-            300,
-            578,
             60,
             40
           ],
@@ -6822,7 +7145,7 @@
           "why": "no straight ray entered it"
         },
         {
-          "id": "basket-3",
+          "id": "basket-4",
           "at": [
             351,
             791
@@ -6836,18 +7159,18 @@
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         },
         {
-          "id": "tee-3",
+          "id": "tee-4",
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         },
         {
-          "id": "tee-4",
+          "id": "tee-5",
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         }
       ],
       "counts": {
         "badges": 4,
-        "straight": 1,
-        "doglegs": 3
+        "straight": 2,
+        "doglegs": 2
       }
     },
     "px.exp.lab.holesnearest.ledger": {
@@ -6855,28 +7178,28 @@
       "numbered": 3,
       "unreadable": 0,
       "holes": 3,
-      "teesIn": 3,
+      "teesIn": 4,
       "teesBound": 3,
-      "teesFree": 0,
-      "basketsIn": 2,
-      "basketsBound": 2,
+      "teesFree": 1,
+      "basketsIn": 3,
+      "basketsBound": 3,
       "basketsFree": 0,
-      "complete": 2,
-      "incomplete": 1
+      "complete": 3,
+      "incomplete": 0
     },
     "px.exp.lab.holesnearest.summary": {
       "badgesIn": 3,
       "numbered": 3,
       "unreadable": 0,
       "holes": 3,
-      "teesIn": 3,
+      "teesIn": 4,
       "teesBound": 3,
-      "teesFree": 0,
-      "basketsIn": 2,
-      "basketsBound": 2,
+      "teesFree": 1,
+      "basketsIn": 3,
+      "basketsBound": 3,
       "basketsFree": 0,
-      "complete": 2,
-      "incomplete": 1,
+      "complete": 3,
+      "incomplete": 0,
       "rule": "nearest-free-in-badge-order",
       "checks": {
         "everyBadgeOnce": true,
@@ -7009,8 +7332,8 @@
           "evidence": "tests/lab-holes-nearest.test.js"
         },
         {
-          "what": "S7 Pathfinding, the course half (invented; still reading the fallback's holes)",
-          "document": "Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S7.course.mmd compiles to the same document",
+          "what": "S7 Pathfinding, the course half (invented)",
+          "document": "binds px.holes.straight and reports px.holes.unresolved as unplayed doglegs; Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S7.course.mmd compiles to the same document",
           "evidence": "tests/lab-s7course.test.js"
         },
         {
@@ -7076,10 +7399,6 @@
         {
           "what": "a line-of-sight smoothing pass over a leg",
           "for": "an unobstructed leg pays about 7% for being a cell path, and the comparison Part measures exactly that"
-        },
-        {
-          "what": "S7 pathfinding over px.holes.straight instead of the fallback's px.holes.objects",
-          "for": "S7's course graph still binds px.holes.objects, which is the nearest-anchor fallback's list. The holes the picture actually supports are S6's straight ones, and its doglegs are exactly the holes a round cannot yet play: until that binding moves, the round is played over holes that were guessed by distance while a better list sits beside it. The rebase is a binding and a shape (a straight hole has no `complete`/`missing`), plus a fixture with two pointing tees so a round has more than one leg"
         },
         {
           "what": "a stage that follows a dogleg",
@@ -8548,7 +8867,7 @@
             ]
           },
           "source": {
-            "id": "badge-candidate:black-component-11:white-component-17",
+            "id": "badge-candidate:black-component-11:white-component-18",
             "plate": {
               "part": {
                 "id": "black-component-11",
@@ -8576,11 +8895,11 @@
             },
             "border": {
               "part": {
-                "id": "white-component-17",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+                "id": "white-component-18",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
                 "kind": "component",
                 "polarity": "white",
-                "label": 17,
+                "label": 18,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -8602,11 +8921,11 @@
             "digits": [
               {
                 "part": {
-                  "id": "white-component-18",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                  "id": "white-component-19",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 18,
+                  "label": 19,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -8627,11 +8946,11 @@
               },
               {
                 "part": {
-                  "id": "white-component-19",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                  "id": "white-component-20",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 19,
+                  "label": 20,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -8680,11 +8999,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-18",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                    "id": "white-component-19",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 18,
+                    "label": 19,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -8759,11 +9078,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-19",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                    "id": "white-component-20",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 19,
+                    "label": 20,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -8848,7 +9167,7 @@
             },
             "unaccountedButOwned": {
               "rule": "outer-border-bbox",
-              "outerBorder": "white-component-17",
+              "outerBorder": "white-component-18",
               "bbox": [
                 300,
                 578,
@@ -9871,7 +10190,7 @@
             ]
           },
           "source": {
-            "id": "badge-candidate:black-component-11:white-component-17",
+            "id": "badge-candidate:black-component-11:white-component-18",
             "plate": {
               "part": {
                 "id": "black-component-11",
@@ -9899,11 +10218,11 @@
             },
             "border": {
               "part": {
-                "id": "white-component-17",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+                "id": "white-component-18",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
                 "kind": "component",
                 "polarity": "white",
-                "label": 17,
+                "label": 18,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -9925,11 +10244,11 @@
             "digits": [
               {
                 "part": {
-                  "id": "white-component-18",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                  "id": "white-component-19",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 18,
+                  "label": 19,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -9950,11 +10269,11 @@
               },
               {
                 "part": {
-                  "id": "white-component-19",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                  "id": "white-component-20",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 19,
+                  "label": 20,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -10003,11 +10322,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-18",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                    "id": "white-component-19",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 18,
+                    "label": 19,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -10082,11 +10401,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-19",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                    "id": "white-component-20",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 19,
+                    "label": 20,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -10171,7 +10490,7 @@
             },
             "unaccountedButOwned": {
               "rule": "outer-border-bbox",
-              "outerBorder": "white-component-17",
+              "outerBorder": "white-component-18",
               "bbox": [
                 300,
                 578,
@@ -10492,11 +10811,27 @@
           ],
           "px": 3700,
           "evidence": null
+        },
+        {
+          "id": "basket-3",
+          "basis": "body-family",
+          "bbox": [
+            305,
+            654,
+            50,
+            74
+          ],
+          "at": [
+            330,
+            691
+          ],
+          "px": 3700,
+          "evidence": null
         }
       ],
       "recovered": [
         {
-          "id": "basket-3",
+          "id": "basket-4",
           "basis": "shell-recovery",
           "bbox": [
             326,
@@ -10563,6 +10898,22 @@
         },
         {
           "id": "basket-3",
+          "basis": "body-family",
+          "bbox": [
+            305,
+            654,
+            50,
+            74
+          ],
+          "at": [
+            330,
+            691
+          ],
+          "px": 3700,
+          "evidence": null
+        },
+        {
+          "id": "basket-4",
           "basis": "shell-recovery",
           "bbox": [
             326,
@@ -10668,15 +11019,15 @@
           "rejected": 5
         },
         "basket": {
-          "clean": 2,
-          "recovered": 1,
-          "total": 3,
-          "rejected": 5
-        },
-        "tee": {
           "clean": 3,
           "recovered": 1,
           "total": 4,
+          "rejected": 5
+        },
+        "tee": {
+          "clean": 4,
+          "recovered": 1,
+          "total": 5,
           "rejected": 5
         }
       },
@@ -10782,7 +11133,7 @@
         },
         {
           "kind": "basket",
-          "id": "basket-3",
+          "id": "basket-4",
           "basis": "shell-recovery",
           "bbox": [
             326,
@@ -10822,7 +11173,7 @@
         },
         {
           "kind": "tee",
-          "id": "tee-4",
+          "id": "tee-5",
           "basis": "component-fallback",
           "bbox": [
             60,
@@ -10917,6 +11268,23 @@
           "id": "tee-3",
           "basis": "ring-family",
           "bbox": [
+            322,
+            498,
+            16,
+            30
+          ],
+          "at": [
+            329.5,
+            510.5
+          ],
+          "px": 176,
+          "angleRad": 1.5707963267948966,
+          "evidence": null
+        },
+        {
+          "id": "tee-4",
+          "basis": "ring-family",
+          "bbox": [
             420,
             518,
             16,
@@ -10933,7 +11301,7 @@
       ],
       "recovered": [
         {
-          "id": "tee-4",
+          "id": "tee-5",
           "basis": "component-fallback",
           "bbox": [
             60,
@@ -11005,6 +11373,23 @@
           "id": "tee-3",
           "basis": "ring-family",
           "bbox": [
+            322,
+            498,
+            16,
+            30
+          ],
+          "at": [
+            329.5,
+            510.5
+          ],
+          "px": 176,
+          "angleRad": 1.5707963267948966,
+          "evidence": null
+        },
+        {
+          "id": "tee-4",
+          "basis": "ring-family",
+          "bbox": [
             420,
             518,
             16,
@@ -11019,7 +11404,7 @@
           "evidence": null
         },
         {
-          "id": "tee-4",
+          "id": "tee-5",
           "basis": "component-fallback",
           "bbox": [
             60,
@@ -11253,7 +11638,7 @@
         },
         {
           "polarity": "bright",
-          "label": 20,
+          "label": 22,
           "bbox": [
             320,
             758,
@@ -11262,7 +11647,7 @@
           ],
           "area": 1786,
           "stats": {
-            "label": 20,
+            "label": 22,
             "area": 1786,
             "cx": 349.91769316909296,
             "cy": 785.5431131019037,
@@ -11417,7 +11802,7 @@
         },
         {
           "polarity": "dark",
-          "label": 13,
+          "label": 14,
           "bbox": [
             326,
             754,
@@ -11426,7 +11811,7 @@
           ],
           "area": 1938,
           "stats": {
-            "label": 13,
+            "label": 14,
             "area": 1938,
             "cx": 350.68988648090817,
             "cy": 795.1300309597523,
@@ -11443,7 +11828,7 @@
           "claimed": 0
         }
       ],
-      "claimedPx": 14180
+      "claimedPx": 18056
     },
     "px.exp.lab.remaining.afterbadges": {
       "kind": "pixel-set",
@@ -11464,103 +11849,108 @@
         "from": {
           "id": "tee-3",
           "at": [
-            427.5,
-            530.5
+            329.5,
+            510.5
           ],
-          "cell": 1082
+          "cell": 1012
         },
         "to": {
-          "id": "basket-1",
+          "id": "basket-3",
           "at": [
-            248,
-            411
+            330,
+            691
           ],
-          "cell": 815
+          "cell": 1396
         },
-        "straightLengthPx": 215.64,
+        "straightLengthPx": 180.501,
         "straightIsBlocked": false,
         "reachable": true,
         "cells": [
-          1082,
-          1081,
-          1080,
-          1079,
-          1046,
-          1013,
-          980,
-          947,
-          914,
-          881,
-          848,
-          815
+          1012,
+          1044,
+          1076,
+          1108,
+          1140,
+          1172,
+          1204,
+          1236,
+          1268,
+          1300,
+          1332,
+          1364,
+          1396
         ],
         "points": [
           [
-            427.5,
-            530.5
-          ],
-          [
-            408,
-            536
-          ],
-          [
-            392,
-            536
-          ],
-          [
-            376,
-            536
-          ],
-          [
-            360,
-            520
-          ],
-          [
-            344,
-            504
+            329.5,
+            510.5
           ],
           [
             328,
-            488
+            520
           ],
           [
-            312,
-            472
+            328,
+            536
           ],
           [
-            296,
-            456
+            328,
+            552
           ],
           [
-            280,
-            440
+            328,
+            568
           ],
           [
-            264,
-            424
+            328,
+            584
           ],
           [
-            248,
-            411
+            328,
+            600
+          ],
+          [
+            328,
+            616
+          ],
+          [
+            328,
+            632
+          ],
+          [
+            328,
+            648
+          ],
+          [
+            328,
+            664
+          ],
+          [
+            328,
+            680
+          ],
+          [
+            330,
+            691
           ]
         ],
-        "lengthPx": 231.268,
-        "cost": 142,
-        "cellLengthPx": 227.2,
-        "expanded": 35,
+        "lengthPx": 180.798,
+        "cost": 120,
+        "cellLengthPx": 192,
+        "expanded": 12,
         "why": null,
-        "bends": 10
+        "bends": 11
       },
       {
         "kind": "walk",
-        "hole": 10,
+        "hole": 11,
         "from": {
-          "id": "basket-1",
+          "id": "basket-3",
           "at": [
-            248,
-            411
+            330,
+            691
           ],
-          "cell": 815
+          "cell": 1396
         },
         "to": {
           "id": "tee-2",
@@ -11570,83 +11960,173 @@
           ],
           "cell": 303
         },
-        "straightLengthPx": 260.5,
-        "straightIsBlocked": true,
+        "straightLengthPx": 546.76,
+        "straightIsBlocked": false,
         "reachable": true,
         "cells": [
-          815,
-          784,
-          753,
-          721,
-          689,
-          657,
-          625,
-          593,
-          561,
-          529,
-          497,
-          465,
-          433,
-          401,
+          1396,
+          1364,
+          1332,
+          1300,
+          1268,
+          1236,
+          1204,
+          1172,
+          1140,
+          1108,
+          1076,
+          1044,
+          1012,
+          980,
+          948,
+          916,
+          884,
+          852,
+          820,
+          788,
+          756,
+          724,
+          692,
+          660,
+          628,
+          596,
+          564,
+          532,
+          500,
+          468,
+          435,
+          402,
           369,
           336,
           303
         ],
         "points": [
           [
-            248,
-            411
+            330,
+            691
           ],
           [
-            264,
+            328,
+            680
+          ],
+          [
+            328,
+            664
+          ],
+          [
+            328,
+            648
+          ],
+          [
+            328,
+            632
+          ],
+          [
+            328,
+            616
+          ],
+          [
+            328,
+            600
+          ],
+          [
+            328,
+            584
+          ],
+          [
+            328,
+            568
+          ],
+          [
+            328,
+            552
+          ],
+          [
+            328,
+            536
+          ],
+          [
+            328,
+            520
+          ],
+          [
+            328,
+            504
+          ],
+          [
+            328,
+            488
+          ],
+          [
+            328,
+            472
+          ],
+          [
+            328,
+            456
+          ],
+          [
+            328,
+            440
+          ],
+          [
+            328,
+            424
+          ],
+          [
+            328,
+            408
+          ],
+          [
+            328,
             392
           ],
           [
-            280,
+            328,
             376
           ],
           [
-            280,
+            328,
             360
           ],
           [
-            280,
+            328,
             344
           ],
           [
-            280,
+            328,
             328
           ],
           [
-            280,
+            328,
             312
           ],
           [
-            280,
+            328,
             296
           ],
           [
-            280,
+            328,
             280
           ],
           [
-            280,
+            328,
             264
           ],
           [
-            280,
+            328,
             248
           ],
           [
-            280,
+            328,
             232
           ],
           [
-            280,
+            312,
             216
           ],
           [
-            280,
+            296,
             200
           ],
           [
@@ -11662,16 +12142,16 @@
             150.5
           ]
         ],
-        "lengthPx": 286.146,
-        "cost": 176,
-        "cellLengthPx": 281.6,
-        "expanded": 42,
+        "lengthPx": 573.742,
+        "cost": 360,
+        "cellLengthPx": 576,
+        "expanded": 172,
         "why": null,
-        "bends": 15
+        "bends": 33
       },
       {
         "kind": "play",
-        "hole": 10,
+        "hole": 11,
         "from": {
           "id": "tee-2",
           "at": [
@@ -11681,14 +12161,14 @@
           "cell": 303
         },
         "to": {
-          "id": "basket-2",
+          "id": "basket-1",
           "at": [
-            171,
-            461
+            248,
+            411
           ],
-          "cell": 906
+          "cell": 815
         },
-        "straightLengthPx": 319.785,
+        "straightLengthPx": 260.5,
         "straightIsBlocked": true,
         "reachable": true,
         "cells": [
@@ -11707,13 +12187,8 @@
           689,
           721,
           753,
-          752,
-          751,
-          782,
-          813,
-          844,
-          875,
-          906
+          784,
+          815
         ],
         "points": [
           [
@@ -11778,39 +12253,19 @@
           ],
           [
             264,
-            376
-          ],
-          [
-            248,
-            376
-          ],
-          [
-            232,
             392
           ],
           [
-            216,
-            408
-          ],
-          [
-            200,
-            424
-          ],
-          [
-            184,
-            440
-          ],
-          [
-            171,
-            461
+            248,
+            411
           ]
         ],
-        "lengthPx": 385.97,
-        "cost": 238,
-        "cellLengthPx": 380.8,
-        "expanded": 147,
+        "lengthPx": 286.229,
+        "cost": 176,
+        "cellLengthPx": 281.6,
+        "expanded": 60,
         "why": null,
-        "bends": 20
+        "bends": 15
       }
     ],
     "px.exp.lab.round.path": {
@@ -11823,21 +12278,21 @@
       ],
       "order": [
         1,
-        10
+        11
       ],
       "waypoints": [
         {
           "id": "tee-3",
           "at": [
-            427.5,
-            530.5
+            329.5,
+            510.5
           ]
         },
         {
-          "id": "basket-1",
+          "id": "basket-3",
           "at": [
-            248,
-            411
+            330,
+            691
           ]
         },
         {
@@ -11848,39 +12303,58 @@
           ]
         },
         {
-          "id": "basket-2",
+          "id": "basket-1",
           "at": [
-            171,
-            461
+            248,
+            411
           ]
         }
       ],
       "cells": [
-        1082,
-        1081,
-        1080,
-        1079,
-        1046,
-        1013,
+        1012,
+        1044,
+        1076,
+        1108,
+        1140,
+        1172,
+        1204,
+        1236,
+        1268,
+        1300,
+        1332,
+        1364,
+        1396,
+        1364,
+        1332,
+        1300,
+        1268,
+        1236,
+        1204,
+        1172,
+        1140,
+        1108,
+        1076,
+        1044,
+        1012,
         980,
-        947,
-        914,
-        881,
-        848,
-        815,
-        784,
-        753,
-        721,
-        689,
-        657,
-        625,
-        593,
-        561,
-        529,
-        497,
-        465,
-        433,
-        401,
+        948,
+        916,
+        884,
+        852,
+        820,
+        788,
+        756,
+        724,
+        692,
+        660,
+        628,
+        596,
+        564,
+        532,
+        500,
+        468,
+        435,
+        402,
         369,
         336,
         303,
@@ -11898,37 +12372,108 @@
         689,
         721,
         753,
-        752,
-        751,
-        782,
-        813,
-        844,
-        875,
-        906
+        784,
+        815
       ],
       "points": [
         [
-          427.5,
-          530.5
+          329.5,
+          510.5
         ],
         [
-          408,
-          536
-        ],
-        [
-          392,
-          536
-        ],
-        [
-          376,
-          536
-        ],
-        [
-          360,
+          328,
           520
         ],
         [
-          344,
+          328,
+          536
+        ],
+        [
+          328,
+          552
+        ],
+        [
+          328,
+          568
+        ],
+        [
+          328,
+          584
+        ],
+        [
+          328,
+          600
+        ],
+        [
+          328,
+          616
+        ],
+        [
+          328,
+          632
+        ],
+        [
+          328,
+          648
+        ],
+        [
+          328,
+          664
+        ],
+        [
+          328,
+          680
+        ],
+        [
+          330,
+          691
+        ],
+        [
+          328,
+          680
+        ],
+        [
+          328,
+          664
+        ],
+        [
+          328,
+          648
+        ],
+        [
+          328,
+          632
+        ],
+        [
+          328,
+          616
+        ],
+        [
+          328,
+          600
+        ],
+        [
+          328,
+          584
+        ],
+        [
+          328,
+          568
+        ],
+        [
+          328,
+          552
+        ],
+        [
+          328,
+          536
+        ],
+        [
+          328,
+          520
+        ],
+        [
+          328,
           504
         ],
         [
@@ -11936,75 +12481,75 @@
           488
         ],
         [
-          312,
+          328,
           472
         ],
         [
-          296,
+          328,
           456
         ],
         [
-          280,
+          328,
           440
         ],
         [
-          264,
+          328,
           424
         ],
         [
-          248,
-          411
+          328,
+          408
         ],
         [
-          264,
+          328,
           392
         ],
         [
-          280,
+          328,
           376
         ],
         [
-          280,
+          328,
           360
         ],
         [
-          280,
+          328,
           344
         ],
         [
-          280,
+          328,
           328
         ],
         [
-          280,
+          328,
           312
         ],
         [
-          280,
+          328,
           296
         ],
         [
-          280,
+          328,
           280
         ],
         [
-          280,
+          328,
           264
         ],
         [
-          280,
+          328,
           248
         ],
         [
-          280,
+          328,
           232
         ],
         [
-          280,
+          312,
           216
         ],
         [
-          280,
+          296,
           200
         ],
         [
@@ -12077,37 +12622,17 @@
         ],
         [
           264,
-          376
-        ],
-        [
-          248,
-          376
-        ],
-        [
-          232,
           392
         ],
         [
-          216,
-          408
-        ],
-        [
-          200,
-          424
-        ],
-        [
-          184,
-          440
-        ],
-        [
-          171,
-          461
+          248,
+          411
         ]
       ],
-      "lengthPx": 903.384,
-      "cost": 556,
-      "playLengthPx": 617.238,
-      "walkLengthPx": 286.146,
+      "lengthPx": 1040.769,
+      "cost": 656,
+      "playLengthPx": 467.027,
+      "walkLengthPx": 573.742,
       "unreachable": []
     },
     "px.exp.lab.round.summary": {
@@ -12117,27 +12642,13 @@
       "legs": 3,
       "walked": 3,
       "unreachable": [],
-      "lengthPx": 903.384,
-      "straightLengthPx": 795.925,
-      "detourPx": 107.459,
+      "lengthPx": 1040.769,
+      "straightLengthPx": 987.761,
+      "detourPx": 53.008,
       "legsThatHadToBend": [
-        "walk:basket-1->tee-2",
-        "play:tee-2->basket-2"
+        "play:tee-2->basket-1"
       ],
-      "cells": 49,
-      "unplaced": {
-        "holes": [
-          {
-            "number": 11,
-            "missing": [
-              "basket"
-            ]
-          }
-        ],
-        "badges": [],
-        "tees": [],
-        "baskets": []
-      }
+      "cells": 63
     },
     "px.exp.lab.route.anchors": {
       "frame": {
@@ -12176,7 +12687,7 @@
           ]
         },
         {
-          "id": "badge-candidate:black-component-11:white-component-17",
+          "id": "badge-candidate:black-component-11:white-component-18",
           "reading": "01",
           "status": "read",
           "bbox": [
@@ -12217,6 +12728,19 @@
             171,
             461
           ]
+        },
+        {
+          "id": "basket-3",
+          "bbox": [
+            305,
+            654,
+            50,
+            74
+          ],
+          "at": [
+            330,
+            691
+          ]
         }
       ],
       "tees": [
@@ -12249,6 +12773,19 @@
         {
           "id": "tee-3",
           "bbox": [
+            322,
+            498,
+            16,
+            30
+          ],
+          "at": [
+            329.5,
+            510.5
+          ]
+        },
+        {
+          "id": "tee-4",
+          "bbox": [
             420,
             518,
             16,
@@ -12273,14 +12810,20 @@
       "holes": [
         {
           "number": 1,
-          "badge": "badge-candidate:black-component-11:white-component-17",
+          "badge": "badge-candidate:black-component-11:white-component-18",
           "tee": "tee-3",
-          "basket": "basket-1"
+          "basket": "basket-3"
         },
         {
           "number": 10,
           "badge": "badge-candidate:black-component-5:white-component-8",
           "tee": "tee-2",
+          "basket": "basket-1"
+        },
+        {
+          "number": 11,
+          "badge": "badge-candidate:black-component-6:white-component-9",
+          "tee": "tee-1",
           "basket": "basket-2"
         }
       ],
@@ -12288,8 +12831,22 @@
         {
           "id": "tee-3",
           "at": [
-            427.5,
-            530.5
+            329.5,
+            510.5
+          ]
+        },
+        {
+          "id": "basket-3",
+          "at": [
+            330,
+            691
+          ]
+        },
+        {
+          "id": "tee-2",
+          "at": [
+            247.5,
+            150.5
           ]
         },
         {
@@ -12300,10 +12857,10 @@
           ]
         },
         {
-          "id": "tee-2",
+          "id": "tee-1",
           "at": [
-            247.5,
-            150.5
+            477.5,
+            90.5
           ]
         },
         {
@@ -12321,27 +12878,27 @@
           "from": {
             "id": "tee-3",
             "at": [
-              427.5,
-              530.5
+              329.5,
+              510.5
             ]
           },
           "to": {
-            "id": "basket-1",
+            "id": "basket-3",
             "at": [
-              248,
-              411
+              330,
+              691
             ]
           },
-          "lengthPx": 215.64
+          "lengthPx": 180.501
         },
         {
           "kind": "walk",
           "hole": 10,
           "from": {
-            "id": "basket-1",
+            "id": "basket-3",
             "at": [
-              248,
-              411
+              330,
+              691
             ]
           },
           "to": {
@@ -12351,7 +12908,7 @@
               150.5
             ]
           },
-          "lengthPx": 260.5
+          "lengthPx": 546.76
         },
         {
           "kind": "play",
@@ -12364,25 +12921,63 @@
             ]
           },
           "to": {
+            "id": "basket-1",
+            "at": [
+              248,
+              411
+            ]
+          },
+          "lengthPx": 260.5
+        },
+        {
+          "kind": "walk",
+          "hole": 11,
+          "from": {
+            "id": "basket-1",
+            "at": [
+              248,
+              411
+            ]
+          },
+          "to": {
+            "id": "tee-1",
+            "at": [
+              477.5,
+              90.5
+            ]
+          },
+          "lengthPx": 394.196
+        },
+        {
+          "kind": "play",
+          "hole": 11,
+          "from": {
+            "id": "tee-1",
+            "at": [
+              477.5,
+              90.5
+            ]
+          },
+          "to": {
             "id": "basket-2",
             "at": [
               171,
               461
             ]
           },
-          "lengthPx": 319.785
+          "lengthPx": 480.846
         }
       ],
-      "playLengthPx": 535.425,
-      "walkLengthPx": 260.5,
-      "totalLengthPx": 795.925,
+      "playLengthPx": 921.847,
+      "walkLengthPx": 940.956,
+      "totalLengthPx": 1862.803,
       "unplaced": {
         "badges": [],
-        "tees": [],
+        "tees": [
+          "tee-4"
+        ],
         "baskets": [],
-        "incompleteHoles": [
-          11
-        ]
+        "incompleteHoles": []
       }
     },
     "px.exp.lab.route.legs": [
@@ -12392,27 +12987,27 @@
         "from": {
           "id": "tee-3",
           "at": [
-            427.5,
-            530.5
+            329.5,
+            510.5
           ]
         },
         "to": {
-          "id": "basket-1",
+          "id": "basket-3",
           "at": [
-            248,
-            411
+            330,
+            691
           ]
         },
-        "lengthPx": 215.64
+        "lengthPx": 180.501
       },
       {
         "kind": "walk",
         "hole": 10,
         "from": {
-          "id": "basket-1",
+          "id": "basket-3",
           "at": [
-            248,
-            411
+            330,
+            691
           ]
         },
         "to": {
@@ -12422,7 +13017,7 @@
             150.5
           ]
         },
-        "lengthPx": 260.5
+        "lengthPx": 546.76
       },
       {
         "kind": "play",
@@ -12435,20 +13030,58 @@
           ]
         },
         "to": {
+          "id": "basket-1",
+          "at": [
+            248,
+            411
+          ]
+        },
+        "lengthPx": 260.5
+      },
+      {
+        "kind": "walk",
+        "hole": 11,
+        "from": {
+          "id": "basket-1",
+          "at": [
+            248,
+            411
+          ]
+        },
+        "to": {
+          "id": "tee-1",
+          "at": [
+            477.5,
+            90.5
+          ]
+        },
+        "lengthPx": 394.196
+      },
+      {
+        "kind": "play",
+        "hole": 11,
+        "from": {
+          "id": "tee-1",
+          "at": [
+            477.5,
+            90.5
+          ]
+        },
+        "to": {
           "id": "basket-2",
           "at": [
             171,
             461
           ]
         },
-        "lengthPx": 319.785
+        "lengthPx": 480.846
       }
     ],
     "px.exp.lab.route.order": {
       "holes": [
         {
           "number": 1,
-          "badge": "badge-candidate:black-component-11:white-component-17",
+          "badge": "badge-candidate:black-component-11:white-component-18",
           "at": [
             330,
             598
@@ -12456,18 +13089,18 @@
           "tee": {
             "id": "tee-3",
             "at": [
-              427.5,
-              530.5
+              329.5,
+              510.5
             ],
-            "gapFromBadgePx": 118.585
+            "gapFromBadgePx": 87.501
           },
           "basket": {
-            "id": "basket-1",
+            "id": "basket-3",
             "at": [
-              248,
-              411
+              330,
+              691
             ],
-            "gapFromBadgePx": 204.189
+            "gapFromBadgePx": 93
           }
         },
         {
@@ -12486,12 +13119,12 @@
             "gapFromBadgePx": 160.507
           },
           "basket": {
-            "id": "basket-2",
+            "id": "basket-1",
             "at": [
-              171,
-              461
+              248,
+              411
             ],
-            "gapFromBadgePx": 184.201
+            "gapFromBadgePx": 165.206
           }
         },
         {
@@ -12509,32 +13142,39 @@
             ],
             "gapFromBadgePx": 296.355
           },
-          "basket": null
+          "basket": {
+            "id": "basket-2",
+            "at": [
+              171,
+              461
+            ],
+            "gapFromBadgePx": 198.54
+          }
         }
       ],
       "unreadable": [],
       "unbound": {
-        "tees": [],
+        "tees": [
+          "tee-4"
+        ],
         "baskets": []
       },
-      "incomplete": [
-        11
-      ]
+      "incomplete": []
     },
     "px.exp.lab.s0.cachereceipt": {
-      "cached": "lab-fixture-20260911-h11-obs-ovl-aln",
+      "cached": "lab-fixture-20260911-h11-obs-ovl-aln-aln2",
       "at": "last",
       "widthPx": 512,
       "heightPx": 1024
     },
     "px.exp.lab.s0.local.decode": {
-      "imageId": "lab-fixture-20260911-h11-obs-ovl-aln",
+      "imageId": "lab-fixture-20260911-h11-obs-ovl-aln-aln2",
       "widthPx": 512,
       "heightPx": 1024,
       "rgba": {
         "kind": "numbers",
         "length": 2097152,
-        "sha256": "3b1c5623d17d8f378bc808cc6c936cacbbd96f2eb5f40403cc96de6a126a8aea"
+        "sha256": "44dc9eccdd9645ab7ea38a3af62442c90e6fe9b82aca014b6f1895abbdd8350a"
       },
       "sourceByteLength": 2097152,
       "badges": [
@@ -12711,6 +13351,20 @@
             50,
             74
           ]
+        },
+        {
+          "body": [
+            309,
+            700,
+            42,
+            66
+          ],
+          "shell": [
+            305,
+            696,
+            50,
+            74
+          ]
         }
       ],
       "tees": [
@@ -12785,6 +13439,30 @@
             0,
             1
           ]
+        },
+        {
+          "frame": [
+            322,
+            540,
+            16,
+            30
+          ],
+          "hole": [
+            324,
+            542,
+            12,
+            22
+          ],
+          "nose": [
+            327,
+            566,
+            6,
+            4
+          ],
+          "points": [
+            0,
+            1
+          ]
         }
       ],
       "obstacle": {
@@ -12843,6 +13521,18 @@
         ],
         "reading": "11",
         "axisX": 248
+      },
+      "aligned2": {
+        "tee": [
+          322,
+          540
+        ],
+        "basket": [
+          309,
+          700
+        ],
+        "reading": "01",
+        "axisX": 330
       }
     },
     "px.exp.lab.s1.badgeassembly.badgecandidates": {
@@ -13310,7 +14000,7 @@
           }
         },
         {
-          "id": "badge-candidate:black-component-11:white-component-17",
+          "id": "badge-candidate:black-component-11:white-component-18",
           "plate": {
             "part": {
               "id": "black-component-11",
@@ -13338,11 +14028,11 @@
           },
           "border": {
             "part": {
-              "id": "white-component-17",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+              "id": "white-component-18",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
               "kind": "component",
               "polarity": "white",
-              "label": 17,
+              "label": 18,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -13364,11 +14054,11 @@
           "digits": [
             {
               "part": {
-                "id": "white-component-18",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                "id": "white-component-19",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                 "kind": "component",
                 "polarity": "white",
-                "label": 18,
+                "label": 19,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -13389,11 +14079,11 @@
             },
             {
               "part": {
-                "id": "white-component-19",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                "id": "white-component-20",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                 "kind": "component",
                 "polarity": "white",
-                "label": 19,
+                "label": 20,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -13442,11 +14132,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-18",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                  "id": "white-component-19",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 18,
+                  "label": 19,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -13521,11 +14211,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-19",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                  "id": "white-component-20",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 19,
+                  "label": 20,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -14013,11 +14703,11 @@
           },
           "anchor": {
             "part": {
-              "id": "white-component-18",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+              "id": "white-component-19",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
               "kind": "component",
               "polarity": "white",
-              "label": 18,
+              "label": 19,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -14092,11 +14782,11 @@
           },
           "anchor": {
             "part": {
-              "id": "white-component-19",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+              "id": "white-component-20",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
               "kind": "component",
               "polarity": "white",
-              "label": 19,
+              "label": 20,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -14387,11 +15077,11 @@
           "matches": [
             {
               "part": {
-                "id": "white-component-17",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+                "id": "white-component-18",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
                 "kind": "component",
                 "polarity": "white",
-                "label": 17,
+                "label": 18,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -14783,11 +15473,11 @@
           "matches": [
             {
               "part": {
-                "id": "white-component-18",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                "id": "white-component-19",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                 "kind": "component",
                 "polarity": "white",
-                "label": 18,
+                "label": 19,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -14808,11 +15498,11 @@
             },
             {
               "part": {
-                "id": "white-component-19",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                "id": "white-component-20",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                 "kind": "component",
                 "polarity": "white",
-                "label": 19,
+                "label": 20,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -15279,6 +15969,38 @@
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
               "pixels": {
                 "kind": "numbers",
+                "length": 1954,
+                "sha256": "ba8fdd2a2b0ba86b2e54e0ed05c9120f68246caa463567cd4af071dd98e467a5"
+              },
+              "sourceTickId": null
+            },
+            "area": 1954,
+            "bbox": [
+              305,
+              654,
+              50,
+              74
+            ]
+          },
+          "reasons": [
+            "height outside range",
+            "aspect outside range",
+            "fill below minimum"
+          ]
+        },
+        {
+          "component": {
+            "part": {
+              "id": "black-component-14",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-14",
+              "kind": "component",
+              "polarity": "black",
+              "label": 14,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
                 "length": 1938,
                 "sha256": "daa7e4337b1aba3d509eb96be3782ad6ec2f6935cf7b0daa508442a65cd5ca02"
               },
@@ -15310,8 +16032,8 @@
       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
       "pixels": {
         "kind": "numbers",
-        "length": 15262,
-        "sha256": "1f4ab69992fe76d12a47f932eacc9e5f3741bc583c852a9c1dbc1d6f464b1770"
+        "length": 17216,
+        "sha256": "edf9f1dbae8602e1873f23da226e1f4647386ec4f29b99fcff030d56fea614ce"
       },
       "components": [
         {
@@ -15588,6 +16310,22 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
+            "length": 1954,
+            "sha256": "ba8fdd2a2b0ba86b2e54e0ed05c9120f68246caa463567cd4af071dd98e467a5"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "black-component-14",
+          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-14",
+          "kind": "component",
+          "polarity": "black",
+          "label": 14,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
             "length": 1938,
             "sha256": "daa7e4337b1aba3d509eb96be3782ad6ec2f6935cf7b0daa508442a65cd5ca02"
           },
@@ -15607,7 +16345,7 @@
       "pixels": {
         "kind": "numbers",
         "length": 471040,
-        "sha256": "e877d6901da251c87521c294d117d11ba12f015e3e977c1542a743b5244410a1"
+        "sha256": "657a5a8f07f8c88b24721d5893a29773b7f5b9a649ef41692e90f85fdffe5559"
       },
       "sourceTickId": null
     },
@@ -15621,7 +16359,7 @@
       "pixels": {
         "kind": "numbers",
         "length": 1884160,
-        "sha256": "1a71c373d41db88ce607910d5e55ac37a1b4e70299ed9c5bb3fa940ba3fff8b3"
+        "sha256": "8ba51ae1bdd5b98d1ad089a7fcb40f10a68deeec6045f2917b8dae3da3ccf35b"
       },
       "pixelFormat": "rgba-8",
       "sourceAddress": "px.exp.lab.course.canonicalpixels",
@@ -15637,8 +16375,8 @@
       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
       "pixels": {
         "kind": "numbers",
-        "length": 9118,
-        "sha256": "26fd66d2ae949ce0416571991c9158809d663d8b52c6e4842fb8efe759931919"
+        "length": 11040,
+        "sha256": "2a07d4de481d320b34d55a5408bcfc253fc549e60e6bab4e3060a9a62696f303"
       },
       "components": [
         {
@@ -15892,8 +16630,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 152,
-            "sha256": "e79ae74ed4271d2abc196018a93d24f742fbf04456146f78feb4d4ac580055cb"
+            "length": 176,
+            "sha256": "2b68e1440bfa473dcb6428c9953c05a55940c7aff964795f5a8b368937755c21"
           },
           "sourceTickId": null
         },
@@ -15908,8 +16646,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 564,
-            "sha256": "7545e76c3580a5a5ddf55677dc40eccbe5e8166720d50431668187628c0641e7"
+            "length": 152,
+            "sha256": "e79ae74ed4271d2abc196018a93d24f742fbf04456146f78feb4d4ac580055cb"
           },
           "sourceTickId": null
         },
@@ -15924,8 +16662,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 156,
-            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+            "length": 564,
+            "sha256": "7545e76c3580a5a5ddf55677dc40eccbe5e8166720d50431668187628c0641e7"
           },
           "sourceTickId": null
         },
@@ -15940,8 +16678,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 120,
-            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+            "length": 156,
+            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
           },
           "sourceTickId": null
         },
@@ -15951,6 +16689,38 @@
           "kind": "component",
           "polarity": "white",
           "label": 20,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 120,
+            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "white-component-21",
+          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-21",
+          "kind": "component",
+          "polarity": "white",
+          "label": 21,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 1746,
+            "sha256": "bda5559b23bd300b0d46cb1f6d2aa1a67e238d6da98852985a68720bd7aaa3c6"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "white-component-22",
+          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-22",
+          "kind": "component",
+          "polarity": "white",
+          "label": 22,
           "widthPx": 512,
           "heightPx": 920,
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -15975,7 +16745,7 @@
       "pixels": {
         "kind": "numbers",
         "length": 471040,
-        "sha256": "3ba3328706873e70ab4a381226a55b97e8cc6695825a06b642970130b83561ae"
+        "sha256": "1144744ab64f4f19309eed0506b30ee1870e7f99d2769d1e94a9c18a6165b653"
       },
       "sourceTickId": null
     },
@@ -16562,7 +17332,7 @@
         },
         {
           "badge": {
-            "id": "badge-candidate:black-component-11:white-component-17",
+            "id": "badge-candidate:black-component-11:white-component-18",
             "plate": {
               "part": {
                 "id": "black-component-11",
@@ -16590,11 +17360,11 @@
             },
             "border": {
               "part": {
-                "id": "white-component-17",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+                "id": "white-component-18",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
                 "kind": "component",
                 "polarity": "white",
-                "label": 17,
+                "label": 18,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -16616,11 +17386,11 @@
             "digits": [
               {
                 "part": {
-                  "id": "white-component-18",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                  "id": "white-component-19",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 18,
+                  "label": 19,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -16641,11 +17411,11 @@
               },
               {
                 "part": {
-                  "id": "white-component-19",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                  "id": "white-component-20",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 19,
+                  "label": 20,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -16694,11 +17464,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-18",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                    "id": "white-component-19",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 18,
+                    "label": 19,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -16773,11 +17543,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-19",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                    "id": "white-component-20",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 19,
+                    "label": 20,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -17514,7 +18284,7 @@
           }
         },
         {
-          "id": "badge-candidate:black-component-11:white-component-17",
+          "id": "badge-candidate:black-component-11:white-component-18",
           "plate": {
             "part": {
               "id": "black-component-11",
@@ -17542,11 +18312,11 @@
           },
           "border": {
             "part": {
-              "id": "white-component-17",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+              "id": "white-component-18",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
               "kind": "component",
               "polarity": "white",
-              "label": 17,
+              "label": 18,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -17568,11 +18338,11 @@
           "digits": [
             {
               "part": {
-                "id": "white-component-18",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                "id": "white-component-19",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                 "kind": "component",
                 "polarity": "white",
-                "label": 18,
+                "label": 19,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -17593,11 +18363,11 @@
             },
             {
               "part": {
-                "id": "white-component-19",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                "id": "white-component-20",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                 "kind": "component",
                 "polarity": "white",
-                "label": 19,
+                "label": 20,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -17646,11 +18416,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-18",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                  "id": "white-component-19",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 18,
+                  "label": 19,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -17725,11 +18495,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-19",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                  "id": "white-component-20",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 19,
+                  "label": 20,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -17899,28 +18669,28 @@
       ]
     },
     "px.exp.lab.s3.ringledger": {
-      "enclosed": 5,
+      "enclosed": 6,
       "diamondDropped": 0,
-      "elongated": 5,
+      "elongated": 6,
       "excludedByBadge": 2,
-      "candidates": 3,
-      "measured": 3,
+      "candidates": 4,
+      "measured": 4,
       "unframed": 0,
       "votedOutOfFamily": 0,
-      "familyMembers": 3
+      "familyMembers": 4
     },
     "px.exp.lab.s3.teesummary": {
-      "enclosed": 5,
+      "enclosed": 6,
       "diamondDropped": 0,
-      "elongated": 5,
+      "elongated": 6,
       "excludedByBadge": 2,
-      "candidates": 3,
-      "measured": 3,
+      "candidates": 4,
+      "measured": 4,
       "unframed": 0,
       "votedOutOfFamily": 0,
-      "familyMembers": 3,
-      "tees": 3,
-      "teePx": 480,
+      "familyMembers": 4,
+      "tees": 4,
+      "teePx": 656,
       "balanced": true
     },
     "px.exp.lab.s4.recoverycheck": {
@@ -17932,15 +18702,15 @@
           "rejected": 5
         },
         "basket": {
-          "clean": 2,
-          "recovered": 1,
-          "total": 3,
-          "rejected": 5
-        },
-        "tee": {
           "clean": 3,
           "recovered": 1,
           "total": 4,
+          "rejected": 5
+        },
+        "tee": {
+          "clean": 4,
+          "recovered": 1,
+          "total": 5,
           "rejected": 5
         }
       },
@@ -17956,9 +18726,9 @@
       "balanced": true
     },
     "px.exp.lab.s5.raycheck": {
-      "tees": 4,
+      "tees": 5,
       "badges": 4,
-      "paired": 1,
+      "paired": 2,
       "contested": 0,
       "checks": {
         "everyTeeAppearsOnce": true,
@@ -17971,8 +18741,8 @@
       "balanced": true
     },
     "px.exp.lab.s6.straightcheck": {
-      "straight": 1,
-      "doglegs": 3,
+      "straight": 2,
+      "doglegs": 2,
       "checks": {
         "everyBadgeLeavesOnce": true,
         "everyBasketUsedAtMostOnce": true,
@@ -17991,15 +18761,15 @@
       "cells": 1856,
       "cellsByClass": {
         "terrain": 69,
-        "basket": 49,
-        "tee": 13,
+        "basket": 73,
+        "tee": 17,
         "badge": 45,
-        "open": 1680
+        "open": 1652
       },
       "walkableCells": 1787,
       "obstacleCells": 69,
       "holes": 2,
-      "incomplete": 1,
+      "unplayed": 2,
       "anchors": 4,
       "edges": 3,
       "checks": {
@@ -18007,8 +18777,9 @@
         "everyPixelLeavesOnce": true,
         "theMapIsAPartition": true,
         "terrainIsWhatNoStageOwns": true,
-        "playOrderIsTheBadgeOrder": true,
-        "everyEdgeIsAnchored": true
+        "playOrderIsTheStraightHoleOrder": true,
+        "everyEdgeIsAnchored": true,
+        "everyDoglegIsNamedNotRouted": true
       },
       "balanced": true
     },
@@ -18018,15 +18789,15 @@
       "cells": 1856,
       "cellsByClass": {
         "terrain": 69,
-        "basket": 49,
-        "tee": 13,
+        "basket": 73,
+        "tee": 17,
         "badge": 45,
-        "open": 1680
+        "open": 1652
       },
       "walkableCells": 1787,
       "obstacleCells": 69,
       "holes": 2,
-      "incomplete": 1,
+      "unplayed": 2,
       "anchors": 4,
       "edges": 3
     },
@@ -18035,9 +18806,9 @@
       "legs": 3,
       "walked": 3,
       "unreachable": 0,
-      "cells": 49,
-      "cost": 556,
-      "lengthPx": 903.384,
+      "cells": 63,
+      "cost": 656,
+      "lengthPx": 1040.769,
       "obstacleCells": 69,
       "walkableCells": 1787,
       "checks": {
@@ -18055,74 +18826,90 @@
       "legs": 3,
       "walked": 3,
       "unreachable": 0,
-      "cells": 49,
-      "cost": 556,
-      "lengthPx": 903.384,
+      "cells": 63,
+      "cost": 656,
+      "lengthPx": 1040.769,
       "obstacleCells": 69,
       "walkableCells": 1787
     },
     "px.exp.lab.s7.vsstraight": {
-      "for": "what respecting the obstacle map costs, measured against the straight-leg route this port landed first",
+      "for": "what respecting the obstacle map costs, and where the round the rays resolved is not the round the nearest-anchor fallback would have played",
       "straight": {
         "address": "px.exp.lab.route.labfixture",
         "objective": "play the holes in badge order: each hole tee to basket, then basket to the next hole tee, over the canonical raster",
-        "totalLengthPx": 795.925
+        "wholeRoundLengthPx": 1862.803,
+        "holes": [
+          1,
+          10,
+          11
+        ]
       },
       "routed": {
         "address": "px.exp.lab.round.path",
         "objective": "the same order over the same anchors, searched over the walkable cells"
       },
-      "sameHoles": true,
-      "sameAnchors": true,
+      "sameHoles": false,
+      "sameAnchors": false,
+      "divergence": {
+        "fallbackPlayed": [
+          1,
+          10,
+          11
+        ],
+        "rayResolvedPlayed": [
+          1,
+          11
+        ],
+        "playedByTheFallbackOnly": [
+          10
+        ],
+        "why": "the fallback binds every badge it can to its nearest free tee and basket, doglegs included; S7 plays only the holes S6 resolved by continuing the tee-to-badge ray, so a badge whose hole bends is unplayed here and routed there"
+      },
       "legs": [
         {
-          "leg": "play:tee-3->basket-1",
+          "leg": "play:tee-3->basket-3",
           "hole": 1,
-          "straightLengthPx": 215.64,
-          "routedLengthPx": 231.268,
+          "straightLengthPx": 180.501,
+          "routedLengthPx": 180.798,
           "reachable": true,
-          "deltaPx": 15.628,
-          "detourRatio": 1.072,
+          "deltaPx": 0.297,
+          "detourRatio": 1.002,
           "obstacleCellsTheStraightLineCrosses": 0,
           "cells": []
         },
         {
-          "leg": "walk:basket-1->tee-2",
-          "hole": 10,
-          "straightLengthPx": 260.5,
-          "routedLengthPx": 286.146,
+          "leg": "walk:basket-3->tee-2",
+          "hole": 11,
+          "straightLengthPx": 546.76,
+          "routedLengthPx": 573.742,
           "reachable": true,
-          "deltaPx": 25.646,
-          "detourRatio": 1.098,
+          "deltaPx": 26.982,
+          "detourRatio": 1.049,
+          "obstacleCellsTheStraightLineCrosses": 0,
+          "cells": []
+        },
+        {
+          "leg": "play:tee-2->basket-1",
+          "hole": 11,
+          "straightLengthPx": 260.5,
+          "routedLengthPx": 286.229,
+          "reachable": true,
+          "deltaPx": 25.729,
+          "detourRatio": 1.099,
           "obstacleCellsTheStraightLineCrosses": 2,
           "cells": [
             687,
             719
           ]
-        },
-        {
-          "leg": "play:tee-2->basket-2",
-          "hole": 10,
-          "straightLengthPx": 319.785,
-          "routedLengthPx": 385.97,
-          "reachable": true,
-          "deltaPx": 66.185,
-          "detourRatio": 1.207,
-          "obstacleCellsTheStraightLineCrosses": 2,
-          "cells": [
-            684,
-            716
-          ]
         }
       ],
-      "straightTotalPx": 795.925,
-      "routedTotalPx": 903.384,
-      "deltaPx": 107.459,
+      "straightTotalPx": 987.761,
+      "routedTotalPx": 1040.769,
+      "deltaPx": 53.008,
       "legsTheStraightRouteWalkedThroughAnObstacle": [
-        "walk:basket-1->tee-2",
-        "play:tee-2->basket-2"
+        "play:tee-2->basket-1"
       ],
-      "obstacleCellsTheStraightRouteCrosses": 4
+      "obstacleCellsTheStraightRouteCrosses": 2
     },
     "px.exp.lab.source.cropbounds": {
       "insets": {
@@ -18135,13 +18922,13 @@
     },
     "px.exp.lab.source.selectedinput": {
       "decoded": {
-        "imageId": "lab-fixture-20260911-h11-obs-ovl-aln",
+        "imageId": "lab-fixture-20260911-h11-obs-ovl-aln-aln2",
         "widthPx": 512,
         "heightPx": 1024,
         "rgba": {
           "kind": "numbers",
           "length": 2097152,
-          "sha256": "3b1c5623d17d8f378bc808cc6c936cacbbd96f2eb5f40403cc96de6a126a8aea"
+          "sha256": "44dc9eccdd9645ab7ea38a3af62442c90e6fe9b82aca014b6f1895abbdd8350a"
         },
         "sourceByteLength": 2097152,
         "badges": [
@@ -18318,6 +19105,20 @@
               50,
               74
             ]
+          },
+          {
+            "body": [
+              309,
+              700,
+              42,
+              66
+            ],
+            "shell": [
+              305,
+              696,
+              50,
+              74
+            ]
           }
         ],
         "tees": [
@@ -18392,6 +19193,30 @@
               0,
               1
             ]
+          },
+          {
+            "frame": [
+              322,
+              540,
+              16,
+              30
+            ],
+            "hole": [
+              324,
+              542,
+              12,
+              22
+            ],
+            "nose": [
+              327,
+              566,
+              6,
+              4
+            ],
+            "points": [
+              0,
+              1
+            ]
           }
         ],
         "obstacle": {
@@ -18450,6 +19275,18 @@
           ],
           "reading": "11",
           "axisX": 248
+        },
+        "aligned2": {
+          "tee": [
+            322,
+            540
+          ],
+          "basket": [
+            309,
+            700
+          ],
+          "reading": "01",
+          "axisX": 330
         }
       },
       "label": "lab course fixture capture"
@@ -18544,13 +19381,25 @@
         },
         {
           "tee": "tee-3",
+          "badge": "badge-3",
+          "reading": "01",
+          "entryAt": [
+            329.5,
+            578.5
+          ],
+          "distancePx": 68,
+          "steps": 68,
+          "why": null
+        },
+        {
+          "tee": "tee-4",
           "badge": null,
           "distancePx": null,
           "steps": 0,
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         },
         {
-          "tee": "tee-4",
+          "tee": "tee-5",
           "badge": null,
           "distancePx": null,
           "steps": 0,
@@ -18627,6 +19476,38 @@
           "id": "tee-3",
           "basis": "ring-family",
           "bbox": [
+            322,
+            498,
+            16,
+            30
+          ],
+          "at": [
+            329.5,
+            510.5
+          ],
+          "centroid": [
+            329.5,
+            512.545
+          ],
+          "axisAngleDeg": 90,
+          "lean": {
+            "offset": [
+              0,
+              2.045
+            ],
+            "alongAxisPx": 2.045,
+            "brightPx": 176
+          },
+          "pointing": [
+            0,
+            1
+          ],
+          "why": null
+        },
+        {
+          "id": "tee-4",
+          "basis": "ring-family",
+          "bbox": [
             420,
             518,
             16,
@@ -18653,7 +19534,7 @@
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         },
         {
-          "id": "tee-4",
+          "id": "tee-5",
           "basis": "component-fallback",
           "bbox": [
             60,
@@ -18762,6 +19643,48 @@
           "tee": "tee-3",
           "teeBasis": "ring-family",
           "origin": [
+            329.5,
+            510.5
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "axisAngleDeg": 90,
+          "lean": {
+            "offset": [
+              0,
+              2.045
+            ],
+            "alongAxisPx": 2.045,
+            "brightPx": 176
+          },
+          "badge": {
+            "id": "badge-3",
+            "reading": "01",
+            "bbox": [
+              300,
+              578,
+              60,
+              40
+            ],
+            "at": [
+              330,
+              598
+            ],
+            "basis": "bright-family"
+          },
+          "distancePx": 68,
+          "entryAt": [
+            329.5,
+            578.5
+          ],
+          "why": null
+        },
+        {
+          "tee": "tee-4",
+          "teeBasis": "ring-family",
+          "origin": [
             427.5,
             530.5
           ],
@@ -18781,7 +19704,7 @@
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         },
         {
-          "tee": "tee-4",
+          "tee": "tee-5",
           "teeBasis": "component-fallback",
           "origin": [
             67.5,
@@ -18803,7 +19726,7 @@
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         }
       ],
-      "paired": 1,
+      "paired": 2,
       "contested": [],
       "unpointed": [
         {
@@ -18811,11 +19734,11 @@
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         },
         {
-          "tee": "tee-3",
+          "tee": "tee-4",
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         },
         {
-          "tee": "tee-4",
+          "tee": "tee-5",
           "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
         }
       ],
@@ -18827,16 +19750,6 @@
           "bbox": [
             120,
             258,
-            60,
-            40
-          ]
-        },
-        {
-          "id": "badge-3",
-          "reading": "01",
-          "bbox": [
-            300,
-            578,
             60,
             40
           ]
@@ -18996,6 +19909,76 @@
       },
       {
         "center": [
+          329.5,
+          510.5
+        ],
+        "innerBbox": [
+          324,
+          500,
+          12,
+          22
+        ],
+        "bbox": [
+          322,
+          498,
+          16,
+          30
+        ],
+        "angleRad": 1.5707963267948966,
+        "px": {
+          "kind": "numbers",
+          "length": 176,
+          "sha256": "2b68e1440bfa473dcb6428c9953c05a55940c7aff964795f5a8b368937755c21"
+        },
+        "has": {
+          "detectRings": {
+            "fn": "fn.lab.tee.detectrings",
+            "hole": {
+              "cx": 329.5,
+              "cy": 510.5,
+              "holeArea": 264,
+              "bboxX": 324,
+              "bboxY": 500,
+              "bboxW": 12,
+              "bboxH": 22,
+              "angle": 1.5707963267948966,
+              "elongation": 1.837830889288342,
+              "ringFrac": 0.6583333333333333,
+              "kind": "tee-rect"
+            }
+          },
+          "findFamily": {
+            "fn": "fn.lab.tee.findfamily",
+            "frame": {
+              "polarity": "bright",
+              "label": 16,
+              "bbox": [
+                322,
+                498,
+                16,
+                30
+              ]
+            }
+          },
+          "findPx": {
+            "fn": "fn.lab.tee.findpx",
+            "parts": [
+              {
+                "polarity": "bright",
+                "label": 16,
+                "bbox": [
+                  322,
+                  498,
+                  16,
+                  30
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "center": [
           427.5,
           530.5
         ],
@@ -19038,7 +20021,7 @@
             "fn": "fn.lab.tee.findfamily",
             "frame": {
               "polarity": "bright",
-              "label": 16,
+              "label": 17,
               "bbox": [
                 420,
                 518,
@@ -19052,7 +20035,7 @@
             "parts": [
               {
                 "polarity": "bright",
-                "label": 16,
+                "label": 17,
                 "bbox": [
                   420,
                   518,
@@ -19127,6 +20110,35 @@
         },
         {
           "ring": {
+            "cx": 329.5,
+            "cy": 510.5,
+            "holeArea": 264,
+            "bboxX": 324,
+            "bboxY": 500,
+            "bboxW": 12,
+            "bboxH": 22,
+            "angle": 1.5707963267948966,
+            "elongation": 1.837830889288342,
+            "ringFrac": 0.6583333333333333,
+            "kind": "tee-rect"
+          },
+          "frame": {
+            "label": 16,
+            "area": 176,
+            "cx": 329.5,
+            "cy": 512.5454545454545,
+            "bboxX": 322,
+            "bboxY": 498,
+            "bboxW": 16,
+            "bboxH": 30,
+            "major": 30,
+            "minor": 16,
+            "angle": 1.5707963267948966,
+            "fill": 0.36666666666666664
+          }
+        },
+        {
+          "ring": {
             "cx": 427.5,
             "cy": 530.5,
             "holeArea": 264,
@@ -19140,7 +20152,7 @@
             "kind": "tee-rect"
           },
           "frame": {
-            "label": 16,
+            "label": 17,
             "area": 152,
             "cx": 427.5,
             "cy": 530.5,
@@ -19217,6 +20229,35 @@
         },
         {
           "ring": {
+            "cx": 329.5,
+            "cy": 510.5,
+            "holeArea": 264,
+            "bboxX": 324,
+            "bboxY": 500,
+            "bboxW": 12,
+            "bboxH": 22,
+            "angle": 1.5707963267948966,
+            "elongation": 1.837830889288342,
+            "ringFrac": 0.6583333333333333,
+            "kind": "tee-rect"
+          },
+          "frame": {
+            "label": 16,
+            "area": 176,
+            "cx": 329.5,
+            "cy": 512.5454545454545,
+            "bboxX": 322,
+            "bboxY": 498,
+            "bboxW": 16,
+            "bboxH": 30,
+            "major": 30,
+            "minor": 16,
+            "angle": 1.5707963267948966,
+            "fill": 0.36666666666666664
+          }
+        },
+        {
+          "ring": {
             "cx": 427.5,
             "cy": 530.5,
             "holeArea": 264,
@@ -19230,7 +20271,7 @@
             "kind": "tee-rect"
           },
           "frame": {
-            "label": 16,
+            "label": 17,
             "area": 152,
             "cx": 427.5,
             "cy": 530.5,
@@ -19317,6 +20358,19 @@
           "kind": "tee-rect"
         },
         {
+          "cx": 329.5,
+          "cy": 510.5,
+          "holeArea": 264,
+          "bboxX": 324,
+          "bboxY": 500,
+          "bboxW": 12,
+          "bboxH": 22,
+          "angle": 1.5707963267948966,
+          "elongation": 1.837830889288342,
+          "ringFrac": 0.6583333333333333,
+          "kind": "tee-rect"
+        },
+        {
           "cx": 427.5,
           "cy": 530.5,
           "holeArea": 264,
@@ -19381,6 +20435,19 @@
           "angle": 1.5707963267948966,
           "elongation": 2.3603873774083297,
           "ringFrac": 1,
+          "kind": "tee-rect"
+        },
+        {
+          "cx": 329.5,
+          "cy": 510.5,
+          "holeArea": 264,
+          "bboxX": 324,
+          "bboxY": 500,
+          "bboxW": 12,
+          "bboxH": 22,
+          "angle": 1.5707963267948966,
+          "elongation": 1.837830889288342,
+          "ringFrac": 0.6583333333333333,
           "kind": "tee-rect"
         },
         {
@@ -19458,6 +20525,19 @@
           "holeArea": 264,
           "bboxX": 242,
           "bboxY": 140,
+          "bboxW": 12,
+          "bboxH": 22,
+          "angle": 1.5707963267948966,
+          "elongation": 1.837830889288342,
+          "ringFrac": 0.6583333333333333,
+          "kind": "tee-rect"
+        },
+        {
+          "cx": 329.5,
+          "cy": 510.5,
+          "holeArea": 264,
+          "bboxX": 324,
+          "bboxY": 500,
           "bboxW": 12,
           "bboxH": 22,
           "angle": 1.5707963267948966,

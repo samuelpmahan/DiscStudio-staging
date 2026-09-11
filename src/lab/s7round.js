@@ -180,11 +180,18 @@ export function checkRound({ ledger, legs, path, graph }) {
 /* ---------------------------------- S6 against the straight route of task 114 */
 
 /**
- * The straight round (route.js) and this one, leg by leg. The straight route was
- * not wrong about the anchors -- it binds the same holes to the same tees and
- * baskets -- it was wrong about the ground between them, and this Part is how
- * much: per leg, how far the straight line went, how far a leg that respects the
- * map has to go, and how many obstacle cells the straight line passed through.
+ * The straight round (route.js) and this one, leg by leg, and now they differ in
+ * TWO ways rather than one.
+ *
+ *   the ground   a straight leg crosses whatever is between its anchors; a
+ *                searched leg goes round it. That is the per-leg delta.
+ *   the holes    the straight round is played over the nearest-anchor fallback,
+ *                which binds EVERY badge, including the ones S6 reported as
+ *                doglegs. S7 plays only the holes whose tee, badge and basket
+ *                are on one line. So the two rounds are no longer the same
+ *                course, and this Part says so out loud (`sameHoles`,
+ *                `divergence`) instead of letting a total quietly compare two
+ *                different things.
  */
 export function compareWithStraight({ legs, straight, graph }) {
   const frame = graph.frame, walkable = graph.walkable.cells;
@@ -210,13 +217,22 @@ export function compareWithStraight({ legs, straight, graph }) {
     };
   });
   const walked = rows.filter(row => row.reachable);
+  const fallbackHoles = straight.holes.map(hole => hole.number);
   return {
-    for: 'what respecting the obstacle map costs, measured against the straight-leg route this port landed first',
-    straight: { address: labAddress('px.route.labfixture'), objective: straight.objective, totalLengthPx: straight.totalLengthPx },
+    for: 'what respecting the obstacle map costs, and where the round the rays resolved is not the round the nearest-anchor fallback would have played',
+    straight: { address: labAddress('px.route.labfixture'), objective: straight.objective, wholeRoundLengthPx: straight.totalLengthPx, holes: fallbackHoles },
     routed: { address: ROUND_ADDRESSES.path, objective: 'the same order over the same anchors, searched over the walkable cells' },
-    sameHoles: JSON.stringify(straight.holes.map(hole => hole.number)) === JSON.stringify(graph.order),
+    sameHoles: JSON.stringify(fallbackHoles) === JSON.stringify(graph.order),
     sameAnchors: straight.legs.every(entry => graph.edges.some(edge => edge.kind === entry.kind && edge.from === entry.from.id && edge.to === entry.to.id)),
+    divergence: {
+      fallbackPlayed: fallbackHoles, rayResolvedPlayed: graph.order,
+      playedByTheFallbackOnly: fallbackHoles.filter(number => !graph.order.includes(number)),
+      why: 'the fallback binds every badge it can to its nearest free tee and basket, doglegs included; S7 plays only the holes S6 resolved by continuing the tee-to-badge ray, so a badge whose hole bends is unplayed here and routed there'
+    },
     legs: rows,
+    // Both totals are over S7's OWN legs: the straight line between each pair of
+    // anchors, and the leg that respects the map. `straight.wholeRoundLengthPx`
+    // above is the fallback's whole different round and is not comparable to these.
     straightTotalPx: round3(walked.reduce((sum, row) => sum + row.straightLengthPx, 0)),
     routedTotalPx: round3(walked.reduce((sum, row) => sum + row.routedLengthPx, 0)),
     deltaPx: round3(walked.reduce((sum, row) => sum + row.deltaPx, 0)),

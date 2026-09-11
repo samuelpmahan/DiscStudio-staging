@@ -11,19 +11,24 @@ import { registerS0, runS0 } from '../src/lab/s0.js';
 import { registerS1, runS1, s1YamlDocument } from '../src/lab/s1.js';
 import { registerS2, runS2 } from '../src/lab/s2.js';
 import { registerS3, runS3 } from '../src/lab/s3.js';
-import { registerHolesNearest, runHolesNearest } from '../src/lab/holes-nearest.js';
+import { registerS4, runS4 } from '../src/lab/s4.js';
+import { registerS5, runS5 } from '../src/lab/s5.js';
+import { registerS6, runS6 } from '../src/lab/s6.js';
 import { registerCourse, runCourse, grid, cellOf } from '../src/lab/s7course.js';
 import { registerRound, runRound, roundDocument, compiledRound, search, roundLegs, roundPath, checkRound, accountRound, ROUND_ADDRESSES, ROUND_CONTRACT, MOVES } from '../src/lab/s7round.js';
 import { registerRoute, runRoute } from '../src/lab/route.js';
 import { fixtureCapture } from '../src/lab/fixtures.js';
 
-function round(options = { hole11: true, obstacle: true }) {
+const COURSE = { obstacle: true, aligned: true, aligned2: true };
+
+function round(options = COURSE) {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerCourse(lab); registerRound(lab); registerRoute(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerS5(lab); registerS6(lab); registerCourse(lab); registerRound(lab); registerRoute(lab);
   const s0 = runS0(lab, { decoded: fixtureCapture(20260911, options), label: 'fixture' });
   runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
-  runS2(lab); runS3(lab); runHolesNearest(lab);
+  runS2(lab); runS3(lab); runS4(lab); runS5(lab); runS6(lab);
   const s5 = runCourse(lab);
+  // The nearest-anchor fallback's round, so the comparison has something to compare to.
   const straight = runRoute(lab, { course: 'labfixture' });
   return { lab, s5, straight, s6: runRound(lab, { compareWith: 'labfixture' }) };
 }
@@ -67,7 +72,7 @@ test('S7.round.mmd compiles to the same document the round runs', () => {
 test('every leg is walked over cells, and no leg crosses an obstacle cell', () => {
   const { s5, s6 } = round();
   const obstacles = new Set(s5.graph.obstacles.terrainCells);
-  assert.deepEqual(s6.legs.map(leg => `${leg.kind}:${leg.from.id}->${leg.to.id}`), ['play:tee-3->basket-2', 'walk:basket-2->tee-2', 'play:tee-2->basket-1']);
+  assert.deepEqual(s6.legs.map(leg => `${leg.kind}:${leg.from.id}->${leg.to.id}`), ['play:tee-3->basket-3', 'walk:basket-3->tee-1', 'play:tee-1->basket-1']);
   for (const leg of s6.legs) {
     assert.equal(leg.reachable, true);
     assert.ok(leg.cells.length > 1);
@@ -81,9 +86,9 @@ test('every leg is walked over cells, and no leg crosses an obstacle cell', () =
   assert.deepEqual(Object.keys(s6.check.checks), ROUND_CONTRACT.invariants);
 });
 
-test('the two legs the course said were blocked are the two that bend, and they get longer', () => {
+test('the leg the course said was blocked is the one that bends, and it gets longer', () => {
   const { s6 } = round();
-  assert.deepEqual(s6.summary.legsThatHadToBend, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
+  assert.deepEqual(s6.summary.legsThatHadToBend, ['play:tee-1->basket-1']);
   for (const leg of s6.legs) if (leg.straightIsBlocked) assert.ok(leg.lengthPx > leg.straightLengthPx, `${leg.from.id}->${leg.to.id}`);
   assert.ok(s6.summary.detourPx > 0);
   assert.equal(s6.summary.walked, 3);
@@ -93,7 +98,7 @@ test('the two legs the course said were blocked are the two that bend, and they 
 test('the round is one path: the legs chain, and the whole path is the legs end to end', () => {
   const { s6 } = round();
   const { path, legs } = s6;
-  assert.deepEqual(path.waypoints.map(point => point.id), ['tee-3', 'basket-2', 'tee-2', 'basket-1']);
+  assert.deepEqual(path.waypoints.map(point => point.id), ['tee-3', 'basket-3', 'tee-1', 'basket-1']);
   assert.equal(path.cells.length, legs.reduce((sum, leg) => sum + leg.cells.length, 0) - (legs.length - 1));
   assert.equal(path.lengthPx, Math.round(legs.reduce((sum, leg) => sum + leg.lengthPx, 0) * 1000) / 1000);
   assert.equal(path.cost, legs.reduce((sum, leg) => sum + leg.cost, 0));
@@ -150,25 +155,32 @@ test('a diagonal may not cut the corner between two obstacle cells', () => {
   assert.equal(search(frame, walkable, cellOf(frame, 24, 8), cellOf(frame, 8, 8)).why, 'an endpoint is an obstacle cell');
 });
 
-test('against the straight route: the same holes and anchors, and what the map costs', () => {
-  const { s6, straight } = round();
+test('against the straight route: two rounds that are no longer the same course, and what the map costs', () => {
+  const { s6, straight, s5 } = round();
   const comparison = s6.vsStraight;
-  assert.equal(comparison.sameHoles, true);
-  assert.equal(comparison.sameAnchors, true);
-  assert.equal(comparison.straightTotalPx, straight.path.totalLengthPx);
+  // The fallback binds every badge it can, the dogleg included; S7 plays only
+  // the holes S6 resolved. That divergence is reported, not averaged away.
+  assert.equal(comparison.sameHoles, false);
+  assert.deepEqual(comparison.divergence.rayResolvedPlayed, s5.graph.order);
+  assert.deepEqual(comparison.divergence.fallbackPlayed, straight.path.holes.map(hole => hole.number));
+  assert.deepEqual(comparison.divergence.playedByTheFallbackOnly, [10]);
+  assert.match(comparison.divergence.why, /a badge whose hole bends is unplayed here and routed there/);
+  assert.equal(comparison.straight.wholeRoundLengthPx, straight.path.totalLengthPx);
+  // Both totals below are over S7's own legs: straight line, then searched.
   assert.ok(comparison.routedTotalPx > comparison.straightTotalPx);
   assert.equal(comparison.deltaPx, Math.round((comparison.routedTotalPx - comparison.straightTotalPx) * 1000) / 1000);
-  // The straight route walked through the obstacle on exactly the legs S5 called blocked.
-  assert.deepEqual(comparison.legsTheStraightRouteWalkedThroughAnObstacle, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
-  assert.ok(comparison.obstacleCellsTheStraightRouteCrosses > 0);
+  assert.deepEqual(comparison.legsTheStraightRouteWalkedThroughAnObstacle, ['play:tee-1->basket-1']);
+  assert.equal(comparison.obstacleCellsTheStraightRouteCrosses, 2);
   for (const leg of comparison.legs) assert.ok(leg.detourRatio >= 1);
   // Even an unblocked leg pays for the grid: the cell path is not the straight line.
   const clear = comparison.legs.find(leg => leg.obstacleCellsTheStraightLineCrosses === 0);
   assert.ok(clear.detourRatio > 1 && clear.detourRatio < 1.2, `grid overhead ${clear.detourRatio}`);
+  const bent = comparison.legs.find(leg => leg.obstacleCellsTheStraightLineCrosses > 0);
+  assert.ok(bent.detourRatio > clear.detourRatio, 'the leg that had to go round pays more than the grid alone');
 });
 
 test('with no obstacle drawn, no leg bends and the round costs what the straight route costs, within the grid', () => {
-  const { s6 } = round({ hole11: true });
+  const { s6 } = round({ aligned: true, aligned2: true });
   assert.deepEqual(s6.summary.legsThatHadToBend, []);
   assert.equal(s6.check.balanced, true);
   assert.equal(s6.vsStraight.obstacleCellsTheStraightRouteCrosses, 0);

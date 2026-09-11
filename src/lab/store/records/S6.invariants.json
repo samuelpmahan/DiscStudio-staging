@@ -56,8 +56,8 @@
           "value": {
             "kind": "json",
             "data": {
-              "straight": 1,
-              "doglegs": 3,
+              "straight": 2,
+              "doglegs": 2,
               "checks": {
                 "everyBadgeLeavesOnce": true,
                 "everyBasketUsedAtMostOnce": true,

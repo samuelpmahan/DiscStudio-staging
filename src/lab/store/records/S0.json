@@ -44,7 +44,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "imageId": "lab-fixture-20260911-h11-obs-ovl-aln",
+              "imageId": "lab-fixture-20260911-h11-obs-ovl-aln-aln2",
               "widthPx": 512,
               "heightPx": 1024,
               "rgba": {
@@ -227,6 +227,20 @@
                     50,
                     74
                   ]
+                },
+                {
+                  "body": [
+                    309,
+                    700,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    305,
+                    696,
+                    50,
+                    74
+                  ]
                 }
               ],
               "tees": [
@@ -301,6 +315,30 @@
                     0,
                     1
                   ]
+                },
+                {
+                  "frame": [
+                    322,
+                    540,
+                    16,
+                    30
+                  ],
+                  "hole": [
+                    324,
+                    542,
+                    12,
+                    22
+                  ],
+                  "nose": [
+                    327,
+                    566,
+                    6,
+                    4
+                  ],
+                  "points": [
+                    0,
+                    1
+                  ]
                 }
               ],
               "obstacle": {
@@ -359,6 +397,18 @@
                 ],
                 "reading": "11",
                 "axisX": 248
+              },
+              "aligned2": {
+                "tee": [
+                  322,
+                  540
+                ],
+                "basket": [
+                  309,
+                  700
+                ],
+                "reading": "01",
+                "axisX": 330
               }
             },
             "note": "1 array(s) truncated to the first 200 entries; original lengths: [2097152]"
@@ -450,7 +500,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "imageId": "composite:54813ee8f534f8a061",
+              "imageId": "composite:b2896681fea6472938",
               "widthPx": 512,
               "heightPx": 920,
               "rgba": {
@@ -501,7 +551,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "cached": "lab-fixture-20260911-h11-obs-ovl-aln",
+              "cached": "lab-fixture-20260911-h11-obs-ovl-aln-aln2",
               "at": "last",
               "widthPx": 512,
               "heightPx": 1024

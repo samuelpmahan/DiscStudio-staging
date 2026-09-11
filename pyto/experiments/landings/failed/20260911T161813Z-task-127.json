@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T161813Z-task-127",
+  "package": "task-127",
+  "base_sha": "c48e19f745d32bc546c0ffc61602bacad2bc7f36",
+  "result": "failed",
+  "reason": "dirty file outside allowed paths: src/runtime.js  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- src/runtime.js  then land, then git stash pop)",
+  "at": "2026-09-11T16:18:14.133181Z"
+}

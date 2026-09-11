@@ -113,6 +113,17 @@ function tee(rgba, width, x, y, nose = null) {
 export const ALIGNED = { tee: [240, 180], badge: [218, 300], basket: [227, 420], reading: '11', axisX: 248 };
 
 /**
+ * The second aligned hole, so a round has more than one leg to walk. It brings a
+ * pointing tee and a basket only: the badge it points at is the fixture's own
+ * "01", already drawn at (300,620), and both new elements sit on that badge's
+ * centre line (x = 330). The obstacle bar crosses the FIRST hole's play line and
+ * not this one, so a round over the two holes has one leg that must bend and two
+ * that need not -- which is what makes the comparison with the straight-leg
+ * route say something.
+ */
+export const ALIGNED2 = { tee: [322, 540], basket: [309, 700], reading: '01', axisX: 330 };
+
+/**
  * The obstacle: a dark bar, drawn in the same value the badge plates and basket
  * shells are drawn in, so it lands in S1's black mask like they do -- and owned
  * by nothing, so it survives `px.remaining.afterBadges` minus the Basket and Tee
@@ -152,7 +163,7 @@ export const OVERLAPS = {
 export const HOLE11 = { badge: [380, 180], tee: [470, 120], reading: '11' };
 
 /** The fixture capture: `{ imageId, widthPx, heightPx, rgba, sourceByteLength, badges, baskets, tees, obstacle }`. */
-export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = false, overlaps = false, aligned = false } = {}) {
+export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = false, overlaps = false, aligned = false, aligned2 = false } = {}) {
   const random = lcg(seed), rgba = new Array(WIDTH * HEIGHT * 4).fill(0);
   for (let y = 0; y < HEIGHT; y++) {
     const chrome = y < CHROME_TOP || y >= HEIGHT - CHROME_BOTTOM;
@@ -169,6 +180,10 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
     tees.push(tee(rgba, WIDTH, ...ALIGNED.tee, 'down'));
     badges.push(badge(rgba, WIDTH, ...ALIGNED.badge, ALIGNED.reading));
     baskets.push(basket(rgba, WIDTH, ...ALIGNED.basket, sprite));
+  }
+  if (aligned2) {
+    tees.push(tee(rgba, WIDTH, ...ALIGNED2.tee, 'down'));
+    baskets.push(basket(rgba, WIDTH, ...ALIGNED2.basket, sprite));
   }
   if (obstacle) rect(rgba, WIDTH, OBSTACLE.x, OBSTACLE.y, OBSTACLE.width, OBSTACLE.height, BLACK);
   const occluded = [];
@@ -188,9 +203,10 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
     occluded.push({ kind: 'tee', of: 'tee at ' + frame.slice(0, 2).join(','), bbox: frame, how: 'a notch through the top wall wider than the detector can dilate closed, so the hole leaks to the background; the frame component keeps its bbox' });
   }
   return {
-    imageId: `lab-fixture-${seed}${hole11 ? '-h11' : ''}${obstacle ? '-obs' : ''}${overlaps ? '-ovl' : ''}${aligned ? '-aln' : ''}`,
+    imageId: `lab-fixture-${seed}${hole11 ? '-h11' : ''}${obstacle ? '-obs' : ''}${overlaps ? '-ovl' : ''}${aligned ? '-aln' : ''}${aligned2 ? '-aln2' : ''}`,
     widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length,
-    badges, baskets, tees, obstacle: obstacle ? { ...OBSTACLE } : null, occluded, aligned: aligned ? { ...ALIGNED } : null
+    badges, baskets, tees, obstacle: obstacle ? { ...OBSTACLE } : null, occluded,
+    aligned: aligned ? { ...ALIGNED } : null, aligned2: aligned2 ? { ...ALIGNED2 } : null
   };
 }
 
@@ -201,7 +217,7 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
  * be tuned until a Stage passes, which is the failure this Part exists to make
  * visible (proposal.lab.oracle.nocorpus).
  */
-export function fixtureBasis({ hole11 = false, obstacle = false, overlaps = false, aligned = false } = {}) {
+export function fixtureBasis({ hole11 = false, obstacle = false, overlaps = false, aligned = false, aligned2 = false } = {}) {
   return {
     for: 'why every element of the synthetic capture is drawn the way it is, and which Stage knob it answers to',
     frame: { widthPx: WIDTH, heightPx: HEIGHT, chromeTop: CHROME_TOP, chromeBottom: CHROME_BOTTOM, background: 'seeded LCG, values 80..199: never <= 45 (S1 black) and never >= 210 (S1 white), so every mask pixel below is drawn on purpose' },
@@ -212,6 +228,7 @@ export function fixtureBasis({ hole11 = false, obstacle = false, overlaps = fals
       { what: 'tee', basis: 'a bright 16x26 outline 2px thick whose enclosed hole is small and elongated: S3 floods the background in and keeps what is enclosed' },
       ...(hole11 ? [{ what: 'the third badge "11" and third tee, with no third basket', basis: 'S4 has to report a hole whose basket is missing instead of binding a basket that belongs to another hole; both digits are bars, so this badge adds no enclosed loop for S3 to mute' }] : []),
       ...(aligned ? [{ what: 'the aligned hole: a pointing tee, its badge and its basket on one line', basis: `the tee carries a ${TEE_NOSE.width}x${TEE_NOSE.height} bright nose on one short end, which is the only thing in the shape that tells its two ends apart, and the badge centre and the basket centre both sit on x=${ALIGNED.axisX}, the tee's own major axis: S5 reads the pointing end off the pixels and S6 continues the ray past the badge to the basket. The other tees have no nose, so their rays are refused rather than guessed, and their badges are S6's doglegs` }] : []),
+      ...(aligned2 ? [{ what: 'the second aligned hole: another pointing tee and another basket, on the fixture\'s own "01" badge line', basis: `a pointing tee at (${ALIGNED2.tee.join(',')}) and a basket at (${ALIGNED2.basket.join(',')}), both centred on x=${ALIGNED2.axisX}, which is the centre of the badge already drawn at (300,620): a second straight hole, so a round has a leg to WALK between holes and not only a hole to play. The obstacle crosses the first hole's play line and not this one` }] : []),
       ...(overlaps ? [{ what: 'the three overlaps', basis: 'one object per clean detector is occluded in the one way that detector cannot survive -- a cut border (S1 needs a white component enclosing the plate), a fused body (S2 needs the sprite bbox exactly), a notched frame (S3 needs an enclosed hole) -- and in each case the evidence the OTHER half of the object carries is left untouched, which is what S4 recovers from' }] : []),
       ...(obstacle ? [{ what: 'the obstacle bar', basis: `${OBSTACLE.width}x${OBSTACLE.height} at (${OBSTACLE.x},${OBSTACLE.y}) in source coordinates: dark like a plate but outside every S1/S2/S3 predicate, so it is the one thing in the raster no Stage object owns and S5 can only call terrain` }] : [])
     ],

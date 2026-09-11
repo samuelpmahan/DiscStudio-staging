@@ -169,30 +169,30 @@
                   "tee": {
                     "id": "tee-3",
                     "at": [
-                      427.5,
-                      530.5
+                      329.5,
+                      510.5
                     ],
                     "bbox": [
-                      420,
-                      518,
+                      322,
+                      498,
                       16,
-                      26
+                      30
                     ],
-                    "gapFromBadgePx": 118.585
+                    "gapFromBadgePx": 87.501
                   },
                   "basket": {
-                    "id": "basket-1",
+                    "id": "basket-3",
                     "at": [
-                      248,
-                      411
+                      330,
+                      691
                     ],
                     "bbox": [
-                      223,
-                      374,
+                      305,
+                      654,
                       50,
                       74
                     ],
-                    "gapFromBadgePx": 204.189
+                    "gapFromBadgePx": 93
                   }
                 },
                 {
@@ -227,18 +227,18 @@
                     "gapFromBadgePx": 160.507
                   },
                   "basket": {
-                    "id": "basket-2",
+                    "id": "basket-1",
                     "at": [
-                      171,
-                      461
+                      248,
+                      411
                     ],
                     "bbox": [
-                      146,
-                      424,
+                      223,
+                      374,
                       50,
                       74
                     ],
-                    "gapFromBadgePx": 184.201
+                    "gapFromBadgePx": 165.206
                   }
                 },
                 {
@@ -272,7 +272,20 @@
                     ],
                     "gapFromBadgePx": 296.355
                   },
-                  "basket": null
+                  "basket": {
+                    "id": "basket-2",
+                    "at": [
+                      171,
+                      461
+                    ],
+                    "bbox": [
+                      146,
+                      424,
+                      50,
+                      74
+                    ],
+                    "gapFromBadgePx": 198.54
+                  }
                 }
               ],
               "unreadable": [],
@@ -309,6 +322,20 @@
                   {
                     "id": "tee-3",
                     "bbox": [
+                      322,
+                      498,
+                      16,
+                      30
+                    ],
+                    "at": [
+                      329.5,
+                      510.5
+                    ],
+                    "boundTo": 1
+                  },
+                  {
+                    "id": "tee-4",
+                    "bbox": [
                       420,
                       518,
                       16,
@@ -318,7 +345,7 @@
                       427.5,
                       530.5
                     ],
-                    "boundTo": 1
+                    "boundTo": null
                   }
                 ],
                 "baskets": [
@@ -334,7 +361,7 @@
                       248,
                       411
                     ],
-                    "boundTo": 1
+                    "boundTo": 10
                   },
                   {
                     "id": "basket-2",
@@ -348,7 +375,21 @@
                       171,
                       461
                     ],
-                    "boundTo": 10
+                    "boundTo": 11
+                  },
+                  {
+                    "id": "basket-3",
+                    "bbox": [
+                      305,
+                      654,
+                      50,
+                      74
+                    ],
+                    "at": [
+                      330,
+                      691
+                    ],
+                    "boundTo": 1
                   }
                 ]
               }
@@ -414,30 +455,30 @@
                 "tee": {
                   "id": "tee-3",
                   "at": [
-                    427.5,
-                    530.5
+                    329.5,
+                    510.5
                   ],
                   "bbox": [
-                    420,
-                    518,
+                    322,
+                    498,
                     16,
-                    26
+                    30
                   ],
-                  "gapFromBadgePx": 118.585
+                  "gapFromBadgePx": 87.501
                 },
                 "basket": {
-                  "id": "basket-1",
+                  "id": "basket-3",
                   "at": [
-                    248,
-                    411
+                    330,
+                    691
                   ],
                   "bbox": [
-                    223,
-                    374,
+                    305,
+                    654,
                     50,
                     74
                   ],
-                  "gapFromBadgePx": 204.189
+                  "gapFromBadgePx": 93
                 },
                 "confidence": {
                   "value": 1,
@@ -460,7 +501,7 @@
                     "fn": "fn.lab.hole.bindanchors",
                     "rule": "nearest-free-in-badge-order",
                     "tee": "tee-3",
-                    "basket": "basket-1"
+                    "basket": "basket-3"
                   },
                   "assemble": {
                     "fn": "fn.lab.hole.assemble",
@@ -499,18 +540,18 @@
                   "gapFromBadgePx": 160.507
                 },
                 "basket": {
-                  "id": "basket-2",
+                  "id": "basket-1",
                   "at": [
-                    171,
-                    461
+                    248,
+                    411
                   ],
                   "bbox": [
-                    146,
-                    424,
+                    223,
+                    374,
                     50,
                     74
                   ],
-                  "gapFromBadgePx": 184.201
+                  "gapFromBadgePx": 165.206
                 },
                 "confidence": {
                   "value": 1,
@@ -533,7 +574,7 @@
                     "fn": "fn.lab.hole.bindanchors",
                     "rule": "nearest-free-in-badge-order",
                     "tee": "tee-2",
-                    "basket": "basket-2"
+                    "basket": "basket-1"
                   },
                   "assemble": {
                     "fn": "fn.lab.hole.assemble",
@@ -571,20 +612,31 @@
                   ],
                   "gapFromBadgePx": 296.355
                 },
-                "basket": null,
+                "basket": {
+                  "id": "basket-2",
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "gapFromBadgePx": 198.54
+                },
                 "confidence": {
-                  "value": 0.75,
+                  "value": 1,
                   "basis": {
                     "badgeRead": 0.5,
                     "tee": 0.25,
-                    "basket": 0
+                    "basket": 0.25
                   },
                   "of": "badge read 0.5 + tee 0.25 + basket 0.25"
                 },
-                "missing": [
-                  "basket"
-                ],
-                "complete": false,
+                "missing": [],
+                "complete": true,
                 "has": {
                   "readNumbers": {
                     "fn": "fn.lab.hole.readnumbers",
@@ -595,13 +647,11 @@
                     "fn": "fn.lab.hole.bindanchors",
                     "rule": "nearest-free-in-badge-order",
                     "tee": "tee-1",
-                    "basket": null
+                    "basket": "basket-2"
                   },
                   "assemble": {
                     "fn": "fn.lab.hole.assemble",
-                    "missing": [
-                      "basket"
-                    ]
+                    "missing": []
                   }
                 }
               }
@@ -653,17 +703,18 @@
             "data": {
               "for": "what the fallback could not put in a hole, so that nothing is silently dropped between the Stages and the course",
               "badges": [],
-              "tees": [],
-              "baskets": [],
-              "incomplete": [
+              "tees": [
                 {
-                  "number": 11,
-                  "missing": [
-                    "basket"
+                  "id": "tee-4",
+                  "at": [
+                    427.5,
+                    530.5
                   ],
-                  "why": "the basket pool was empty when hole 11 took its turn"
+                  "why": "no hole was left to take it"
                 }
-              ]
+              ],
+              "baskets": [],
+              "incomplete": []
             },
             "note": null
           }

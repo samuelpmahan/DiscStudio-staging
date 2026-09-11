@@ -12,23 +12,31 @@ import { registerS0, runS0 } from '../src/lab/s0.js';
 import { registerS1, runS1, s1YamlDocument } from '../src/lab/s1.js';
 import { registerS2, runS2 } from '../src/lab/s2.js';
 import { registerS3, runS3 } from '../src/lab/s3.js';
-import { registerHolesNearest, runHolesNearest } from '../src/lab/holes-nearest.js';
+import { registerS4, runS4 } from '../src/lab/s4.js';
+import { registerS5, runS5 } from '../src/lab/s5.js';
+import { registerS6, runS6 } from '../src/lab/s6.js';
 import { registerCourse, runCourse, courseDocument, compiledCourse, holeGeometry, checkCourse, grid, cellOf, straightIsBlocked, COURSE_ADDRESSES, COURSE_CONTRACT, CLASSES, CELL_PX } from '../src/lab/s7course.js';
 import { fixtureCapture, OBSTACLE } from '../src/lab/fixtures.js';
 
-function course(options = { hole11: true, obstacle: true }) {
+/** The course fixture: two pointing tees, two collinear baskets, and one badge no tee points at. */
+export const COURSE = { obstacle: true, aligned: true, aligned2: true };
+
+function course(options = COURSE) {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerCourse(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerS5(lab); registerS6(lab); registerCourse(lab);
   const s0 = runS0(lab, { decoded: fixtureCapture(20260911, options), label: 'fixture' });
   runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
-  const s2 = runS2(lab), s3 = runS3(lab), s4 = runHolesNearest(lab);
-  return { lab, s0, s2, s3, s4, s5: runCourse(lab) };
+  const s2 = runS2(lab), s3 = runS3(lab), s4 = runS4(lab), s5r = runS5(lab), s6 = runS6(lab);
+  return { lab, s0, s2, s3, s4, s5r, s6, s5: runCourse(lab) };
 }
 
-test('the course runs the document its contract declares, over the holes and the Stage masks', () => {
+test('the course runs the document its contract declares, over S6 straight holes and the Stage masks', () => {
   const { lab, s5 } = course();
   assert.deepEqual(s5.composition.Ticks.map(tick => tick.name), COURSE_CONTRACT.ticks);
   assert.deepEqual(COURSE_CONTRACT.produces, ['px.exp.lab.course.graph', 'px.exp.lab.course.summary']);
+  // The binding that matters: the holes are S6's straight ones, not the fallback's.
+  assert.deepEqual(s5.composition.Ticks[0].Calculations[0].with, { holes: labAddress('px.holes.straight'), unresolved: labAddress('px.holes.unresolved'), raster: labAddress('px.course.canonicalPixels') });
+  assert.deepEqual(COURSE_CONTRACT.consumes.slice(0, 2), ['px.exp.lab.holes.straight', 'px.exp.lab.holes.unresolved']);
   assert.deepEqual(s5.composition.Ticks[1].Calculations[0].with, {
     remaining: labAddress('px.remaining.afterBadges'), fields: labAddress('px.components'),
     baskets: labAddress('px.baskets'), tees: labAddress('px.tees'), raster: labAddress('px.course.canonicalPixels')
@@ -55,13 +63,15 @@ test('no invented Stage module reaches for node at import time', () => {
   }
 });
 
-test('a hole is a tee-to-basket vector and a length in raster px, and the play order is the holes order', () => {
-  const { s4, s5 } = course();
-  assert.deepEqual(s5.graph.order, [1, 10]);
-  assert.deepEqual(s5.graph.order, s4.holes.filter(hole => hole.complete).map(hole => hole.number));
-  assert.deepEqual(s5.geometry.incomplete, [{ number: 11, missing: ['basket'] }]);
+test('a hole is a tee-to-basket vector and a length in raster px, and the play order is S6 order', () => {
+  const { s6, s5 } = course();
+  assert.deepEqual(s5.graph.order, [1, 11]);
+  assert.deepEqual(s5.graph.order, s6.holes.map(hole => hole.number));
+  // Every hole in the course carries the residual S6 measured for it.
+  assert.deepEqual(s5.graph.holes.map(hole => hole.residualPx), [0.5, 0.5]);
+  assert.deepEqual(s5.graph.holes.map(hole => hole.basis), ['tee-badge-ray-continued', 'tee-badge-ray-continued']);
   for (const hole of s5.graph.holes) {
-    const source = s4.holes.find(entry => entry.number === hole.number);
+    const source = s6.holes.find(entry => entry.number === hole.number);
     assert.deepEqual(hole.vector, [Math.round((source.basket.at[0] - source.tee.at[0]) * 1000) / 1000, Math.round((source.basket.at[1] - source.tee.at[1]) * 1000) / 1000]);
     assert.equal(hole.lengthPx, Math.round(Math.hypot(...hole.vector) * 1000) / 1000);
     assert.ok(hole.bearingDeg >= 0 && hole.bearingDeg < 360);
@@ -69,9 +79,21 @@ test('a hole is a tee-to-basket vector and a length in raster px, and the play o
   assert.equal(s5.summary.totalLengthPx, Math.round((s5.graph.holes[0].lengthPx + s5.graph.holes[1].lengthPx) * 1000) / 1000);
 });
 
+test("the badges S6 could not finish are unplayed, not routed and not straightened", () => {
+  const { s6, s5 } = course();
+  assert.deepEqual(s5.geometry.unplayed.map(entry => entry.reading), ['10']);
+  assert.deepEqual(s5.summary.unplayed.doglegs.map(entry => entry.badge), s6.unresolved.doglegs.map(entry => entry.badge));
+  assert.deepEqual(s5.summary.unplayed.tees, ['tee-2', 'tee-4']);
+  assert.deepEqual(s5.summary.unplayed.baskets, ['basket-2', 'basket-4']);
+  // A dogleg's badge is in no hole of the course, and the invariant says so.
+  for (const dogleg of s5.geometry.unplayed) assert.ok(!s5.graph.holes.some(hole => hole.badge === dogleg.badge));
+  assert.equal(s5.check.checks.everyDoglegIsNamedNotRouted, true);
+  assert.equal(s5.summary.from, 'px.exp.lab.holes.straight');
+});
+
 test('an anchor outside the canonical raster refuses the Stage', () => {
-  const holes = [{ number: 1, complete: true, missing: [], badge: { id: 'badge-1' }, confidence: { value: 1 }, tee: { id: 't', at: [1, 1] }, basket: { id: 'b', at: [900, 1] } }];
-  assert.throws(() => holeGeometry({ holes, raster: { widthPx: 100, heightPx: 100 } }), /leaves canonical raster/);
+  const holes = [{ number: 1, badge: { id: 'badge-1' }, basis: 'tee-badge-ray-continued', residualPx: 0, tee: { id: 't', at: [1, 1] }, basket: { id: 'b', at: [900, 1] } }];
+  assert.throws(() => holeGeometry({ holes, unresolved: { doglegs: [], tees: [], baskets: [] }, raster: { widthPx: 100, heightPx: 100 } }), /leaves canonical raster/);
 });
 
 test('the obstacle map is a partition, and terrain is exactly what no Stage object owns', () => {
@@ -104,16 +126,16 @@ test('the walkable cells are every class but terrain, and the rule says why', ()
 
 test('the course says which straight legs cannot be walked, and does not route around them', () => {
   const { s5 } = course();
-  assert.deepEqual(s5.graph.edges.map(edge => `${edge.kind}:${edge.from}->${edge.to}`), ['play:tee-3->basket-2', 'walk:basket-2->tee-2', 'play:tee-2->basket-1']);
-  assert.deepEqual(s5.graph.edges.map(edge => edge.straightIsBlocked), [false, true, true]);
-  assert.deepEqual(s5.summary.blockedStraightLegs, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
+  assert.deepEqual(s5.graph.edges.map(edge => `${edge.kind}:${edge.from}->${edge.to}`), ['play:tee-3->basket-3', 'walk:basket-3->tee-1', 'play:tee-1->basket-1']);
+  assert.deepEqual(s5.graph.edges.map(edge => edge.straightIsBlocked), [false, false, true]);
+  assert.deepEqual(s5.summary.blockedStraightLegs, ['play:tee-1->basket-1']);
   // Nothing in the graph is a route: an edge carries its straight length only.
   for (const edge of s5.graph.edges) assert.equal(typeof edge.straightLengthPx, 'number');
   assert.ok(!Object.keys(s5.graph).includes('legs'));
 });
 
 test('with no obstacle drawn, the same course has no terrain and no blocked leg', () => {
-  const { s5 } = course({ hole11: true });
+  const { s5 } = course({ aligned: true, aligned2: true });
   assert.equal(s5.obstacles.pixelsByClass.terrain, 0);
   assert.deepEqual(s5.obstacles.terrain.cells, []);
   assert.equal(s5.walkable.count, s5.obstacles.frame.cells);
@@ -122,15 +144,19 @@ test('with no obstacle drawn, the same course has no terrain and no blocked leg'
 });
 
 test('the invariants balance, and a map that is not a partition is refused', () => {
-  const { lab, s4, s5 } = course();
+  const { lab, s6, s5 } = course();
   assert.deepEqual(s5.invariants.Ticks.map(tick => tick.name), ['AccountCourse', 'CheckCourse']);
   assert.deepEqual(Object.keys(s5.check.checks), COURSE_CONTRACT.invariants);
   assert.equal(s5.check.balanced, true);
   assert.ok(lab.has(COURSE_ADDRESSES.check));
+  const args = { ledger: s5.ledger, holes: s6.holes, obstacles: s5.obstacles, summary: s5.summary };
   const broken = { ...s5.graph, walkable: { ...s5.graph.walkable, cells: s5.graph.walkable.cells.map(() => 1) } };
-  assert.equal(checkCourse({ ledger: s5.ledger, graph: broken, holes: s4.holes, obstacles: s5.obstacles }).checks.theMapIsAPartition, false);
-  const reordered = { ...s5.graph, order: [10, 1] };
-  assert.equal(checkCourse({ ledger: s5.ledger, graph: reordered, holes: s4.holes, obstacles: s5.obstacles }).checks.playOrderIsTheBadgeOrder, false);
+  assert.equal(checkCourse({ ...args, graph: broken }).checks.theMapIsAPartition, false);
+  const reordered = { ...s5.graph, order: [11, 1] };
+  assert.equal(checkCourse({ ...args, graph: reordered }).checks.playOrderIsTheStraightHoleOrder, false);
+  // A course that quietly played a dogleg would be refused too.
+  const routed = { ...s5.graph, holes: [...s5.graph.holes, { number: 10, badge: s5.summary.unplayed.doglegs[0].badge, tee: { id: 'tee-2', at: [1, 1] }, basket: { id: 'basket-2', at: [2, 2] } }] };
+  assert.equal(checkCourse({ ...args, graph: routed }).checks.everyDoglegIsNamedNotRouted, false);
 });
 
 test('a straight line is blocked when it crosses an obstacle cell, and the sampler catches a thin one', () => {

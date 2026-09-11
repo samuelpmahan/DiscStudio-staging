@@ -195,7 +195,7 @@
                 },
                 {
                   "polarity": "bright",
-                  "label": 20,
+                  "label": 22,
                   "bbox": [
                     320,
                     758,
@@ -204,7 +204,7 @@
                   ],
                   "area": 1786,
                   "stats": {
-                    "label": 20,
+                    "label": 22,
                     "area": 1786,
                     "cx": 349.91769316909296,
                     "cy": 785.5431131019037,
@@ -359,7 +359,7 @@
                 },
                 {
                   "polarity": "dark",
-                  "label": 13,
+                  "label": 14,
                   "bbox": [
                     326,
                     754,
@@ -368,7 +368,7 @@
                   ],
                   "area": 1938,
                   "stats": {
-                    "label": 13,
+                    "label": 14,
                     "area": 1938,
                     "cx": 350.68988648090817,
                     "cy": 795.1300309597523,
@@ -385,7 +385,7 @@
                   "claimed": 0
                 }
               ],
-              "claimedPx": 14180
+              "claimedPx": 18056
             },
             "note": null
           }
@@ -1272,7 +1272,7 @@
                     ]
                   },
                   "source": {
-                    "id": "badge-candidate:black-component-11:white-component-17",
+                    "id": "badge-candidate:black-component-11:white-component-18",
                     "plate": {
                       "part": {
                         "id": "black-component-11",
@@ -1300,11 +1300,11 @@
                     },
                     "border": {
                       "part": {
-                        "id": "white-component-17",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+                        "id": "white-component-18",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 17,
+                        "label": 18,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1326,11 +1326,11 @@
                     "digits": [
                       {
                         "part": {
-                          "id": "white-component-18",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                          "id": "white-component-19",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 18,
+                          "label": 19,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1351,11 +1351,11 @@
                       },
                       {
                         "part": {
-                          "id": "white-component-19",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                          "id": "white-component-20",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 19,
+                          "label": 20,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1404,11 +1404,11 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-18",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                            "id": "white-component-19",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 18,
+                            "label": 19,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1483,11 +1483,11 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-19",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                            "id": "white-component-20",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 19,
+                            "label": 20,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -1572,7 +1572,7 @@
                     },
                     "unaccountedButOwned": {
                       "rule": "outer-border-bbox",
-                      "outerBorder": "white-component-17",
+                      "outerBorder": "white-component-18",
                       "bbox": [
                         300,
                         578,
@@ -2595,7 +2595,7 @@
                     ]
                   },
                   "source": {
-                    "id": "badge-candidate:black-component-11:white-component-17",
+                    "id": "badge-candidate:black-component-11:white-component-18",
                     "plate": {
                       "part": {
                         "id": "black-component-11",
@@ -2623,11 +2623,11 @@
                     },
                     "border": {
                       "part": {
-                        "id": "white-component-17",
-                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-17",
+                        "id": "white-component-18",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
                         "kind": "component",
                         "polarity": "white",
-                        "label": 17,
+                        "label": 18,
                         "widthPx": 512,
                         "heightPx": 920,
                         "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2649,11 +2649,11 @@
                     "digits": [
                       {
                         "part": {
-                          "id": "white-component-18",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                          "id": "white-component-19",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 18,
+                          "label": 19,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2674,11 +2674,11 @@
                       },
                       {
                         "part": {
-                          "id": "white-component-19",
-                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                          "id": "white-component-20",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                           "kind": "component",
                           "polarity": "white",
-                          "label": 19,
+                          "label": 20,
                           "widthPx": 512,
                           "heightPx": 920,
                           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2727,11 +2727,11 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-18",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-18",
+                            "id": "white-component-19",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 18,
+                            "label": 19,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2806,11 +2806,11 @@
                         },
                         "anchor": {
                           "part": {
-                            "id": "white-component-19",
-                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-19",
+                            "id": "white-component-20",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-20",
                             "kind": "component",
                             "polarity": "white",
-                            "label": 19,
+                            "label": 20,
                             "widthPx": 512,
                             "heightPx": 920,
                             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2895,7 +2895,7 @@
                     },
                     "unaccountedButOwned": {
                       "rule": "outer-border-bbox",
-                      "outerBorder": "white-component-17",
+                      "outerBorder": "white-component-18",
                       "bbox": [
                         300,
                         578,
@@ -3266,11 +3266,27 @@
                   ],
                   "px": 3700,
                   "evidence": null
+                },
+                {
+                  "id": "basket-3",
+                  "basis": "body-family",
+                  "bbox": [
+                    305,
+                    654,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    330,
+                    691
+                  ],
+                  "px": 3700,
+                  "evidence": null
                 }
               ],
               "recovered": [
                 {
-                  "id": "basket-3",
+                  "id": "basket-4",
                   "basis": "shell-recovery",
                   "bbox": [
                     326,
@@ -3337,6 +3353,22 @@
                 },
                 {
                   "id": "basket-3",
+                  "basis": "body-family",
+                  "bbox": [
+                    305,
+                    654,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    330,
+                    691
+                  ],
+                  "px": 3700,
+                  "evidence": null
+                },
+                {
+                  "id": "basket-4",
                   "basis": "shell-recovery",
                   "bbox": [
                     326,
@@ -3514,6 +3546,23 @@
                   "id": "tee-3",
                   "basis": "ring-family",
                   "bbox": [
+                    322,
+                    498,
+                    16,
+                    30
+                  ],
+                  "at": [
+                    329.5,
+                    510.5
+                  ],
+                  "px": 176,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": null
+                },
+                {
+                  "id": "tee-4",
+                  "basis": "ring-family",
+                  "bbox": [
                     420,
                     518,
                     16,
@@ -3530,7 +3579,7 @@
               ],
               "recovered": [
                 {
-                  "id": "tee-4",
+                  "id": "tee-5",
                   "basis": "component-fallback",
                   "bbox": [
                     60,
@@ -3602,6 +3651,23 @@
                   "id": "tee-3",
                   "basis": "ring-family",
                   "bbox": [
+                    322,
+                    498,
+                    16,
+                    30
+                  ],
+                  "at": [
+                    329.5,
+                    510.5
+                  ],
+                  "px": 176,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": null
+                },
+                {
+                  "id": "tee-4",
+                  "basis": "ring-family",
+                  "bbox": [
                     420,
                     518,
                     16,
@@ -3616,7 +3682,7 @@
                   "evidence": null
                 },
                 {
-                  "id": "tee-4",
+                  "id": "tee-5",
                   "basis": "component-fallback",
                   "bbox": [
                     60,
@@ -3773,15 +3839,15 @@
                   "rejected": 5
                 },
                 "basket": {
-                  "clean": 2,
-                  "recovered": 1,
-                  "total": 3,
-                  "rejected": 5
-                },
-                "tee": {
                   "clean": 3,
                   "recovered": 1,
                   "total": 4,
+                  "rejected": 5
+                },
+                "tee": {
+                  "clean": 4,
+                  "recovered": 1,
+                  "total": 5,
                   "rejected": 5
                 }
               },
@@ -3887,7 +3953,7 @@
                 },
                 {
                   "kind": "basket",
-                  "id": "basket-3",
+                  "id": "basket-4",
                   "basis": "shell-recovery",
                   "bbox": [
                     326,
@@ -3927,7 +3993,7 @@
                 },
                 {
                   "kind": "tee",
-                  "id": "tee-4",
+                  "id": "tee-5",
                   "basis": "component-fallback",
                   "bbox": [
                     60,
