@@ -1,0 +1,126 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T013053Z-task-81",
+  "package": "task-81",
+  "base_sha": "5de20674260342b0cfee79eede7b5fdf3dc6ca05",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'",
+    "exit": 0,
+    "output_sha256": "d6d676abc0549a8602068f1fc8c60185dcf808d3e0f85627e79b5116ecd6be73"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "b5f6568be65925dd6cbe3f6ffe1de17814c24321737b58b7592ef05e2ddd0ab1",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 48,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/brain/CONTRACT.md",
+      "bytes": 8268,
+      "sha256": "a49f8ef75e25c5d3263eb5a70739b323d7836aa63eda9f29740662e11f96cece"
+    },
+    {
+      "path": "pyto/experiments/brain/__init__.py",
+      "bytes": 319,
+      "sha256": "aaefb565058ba5885653eb916c0a7507c178f425b8a9218c6a6256874d3352e4"
+    },
+    {
+      "path": "pyto/experiments/brain/backend/__init__.py",
+      "bytes": 334,
+      "sha256": "2b1e29a67c1903b3c104f84badae1d7e08961c4aa41f663075f070fbfcfc83b6"
+    },
+    {
+      "path": "pyto/experiments/brain/example.py",
+      "bytes": 5396,
+      "sha256": "a24b0cc25ac85e7a7a2c85a5910fdf82a436803a8bb9fea4a1dd61a0c46aad18"
+    },
+    {
+      "path": "pyto/experiments/brain/harness.py",
+      "bytes": 28208,
+      "sha256": "a9710925a6bf8478a73ce5118472e2a14973908205d3d76956d702aaacb71337"
+    },
+    {
+      "path": "pyto/experiments/brain/map.py",
+      "bytes": 480,
+      "sha256": "82fc7f8b62ec7608c67193652f177d8b3f70062e7dbe58006a26cc7735c5bf90"
+    },
+    {
+      "path": "pyto/experiments/brain/records/brain_example.json",
+      "bytes": 3316,
+      "sha256": "8726da7a6dcfa9d44b16c8c18b8d3fdb9056fdf959ecbc1b03e037d3aedd1e9b"
+    },
+    {
+      "path": "pyto/experiments/brain/store/backend.json",
+      "bytes": 7260,
+      "sha256": "8d12fe2d20923e5fd2962f0011d008764fbaf6d3b55ad64470270992bd2765a9"
+    },
+    {
+      "path": "pyto/experiments/brain/test_harness.py",
+      "bytes": 16733,
+      "sha256": "8be8a1a86a46675595e5c5fca10b5220ea69500c9a86bb658747c182dc5c1602"
+    },
+    {
+      "path": "pyto/experiments/tasks/81/HANDOFF.md",
+      "bytes": 8678,
+      "sha256": "643ccab0bcefe59405713edca622c82f749dace1372ec599f65cf54b2342c75e"
+    },
+    {
+      "path": "pyto/experiments/tasks/81/evidence/check_all.txt",
+      "bytes": 201514,
+      "sha256": "b8c25f98bcc23caf8d4ab1ac70d917c2cc2879c37cafa31bdb2a854b1d54cf85"
+    },
+    {
+      "path": "pyto/experiments/tasks/81/evidence/verify.txt",
+      "bytes": 147,
+      "sha256": "ddcdd00c5fc840cc0ea1c325fca604e3a5888d23c7aaff6eca740d6dc86b3bbb"
+    },
+    {
+      "path": "pyto/experiments/tasks/81/packet.md",
+      "bytes": 4480,
+      "sha256": "d608358248618bad40444308358ed9406cf0d6faf19d366816887ba2d3cfe771"
+    },
+    {
+      "path": "pyto/pyproject.toml",
+      "bytes": 592,
+      "sha256": "0e341b291cf60379b94a09ba6072fff5ba88a6b848cfe88ebc59f3fcbdc598e2"
+    },
+    {
+      "path": "pyto/scripts/neat.sh",
+      "bytes": 44095,
+      "sha256": "ad2a726d04aaa71c7293ee5bdaadad8db5b7f1a348ddce626872cd5330c989ef"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T01:32:10.311958Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
