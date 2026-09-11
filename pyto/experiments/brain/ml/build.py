@@ -16,7 +16,7 @@ from scipy.cluster import hierarchy
 from scipy.spatial import distance
 from scipy.spatial import distance as sp_distance
 
-from . import calcs, core, linear, metrics, nnet, parts, resample, tournament, trees, unsup
+from . import calcs, core, linear, metrics, nnet, parts, resample, tournament, trees, unsup, validate
 
 VERTICAL = "ml"
 SECTIONS = []
@@ -830,6 +830,60 @@ def sparse_and_networks(store):
     )
 
 
+@section
+def validation(store):
+    """the two loops, as Parts: k-fold scores per model, and the lasso path with its choice."""
+    regression = store.get("px.exp.brain.data.ml.regression")
+    folds = {}
+    for name, fit, predict, fit_args in (
+        ("linreg", "linreg_fit", "linreg_predict", {}),
+        ("ridge_a1", "ridge_fit", "linreg_predict", {"alpha": 1.0, "backend": "np"}),
+        ("forest", "forest_fit", "forest_predict", {"criterion": "mse", "n_trees": 10, "seed": 105, "max_depth": 5}),
+    ):
+        scored = calcs.call("cross_validate", {
+            "data": regression, "target": "y", "seed": 105, "k": 5, "fit": fit, "predict": predict,
+            "fit_args": fit_args, "metric": "mse",
+            "for": f"{name} scored on every row of the same five folds, exactly once"})
+        parts.result(store, VERTICAL, "cross_validate", name, scored)
+        folds[name] = scored
+    parts.oracle(
+        store, VERTICAL, "cross_validate", "the_same_folds_for_every_model",
+        [folds["linreg"]["sizes"], folds["forest"]["sizes"]],
+        [folds["ridge_a1"]["sizes"], folds["ridge_a1"]["sizes"]],
+        "the fold sizes of the seeded kfold every one of them was handed", 0.0,
+        "two models compared on different folds are compared on the luck of the split, not on the model",
+    )
+    parts.oracle(
+        store, VERTICAL, "cross_validate", "held_out_error_is_not_below_training_error",
+        all(one["mean"] >= core.mean(one["train"]) - 1e-9 for one in folds.values()), True,
+        "each model's own training error on the same folds", 0.0,
+        "a held-out error below the training error means the fold leaked, and every number above it is worthless",
+    )
+    parts.oracle(
+        store, VERTICAL, "cross_validate", "the_linear_truth_is_fitted_best_by_a_linear_model",
+        folds["linreg"]["mean"] < folds["forest"]["mean"], True,
+        "the same folds, a linear model and a forest, on data drawn from a linear truth", 0.0,
+        "cross-validation is only worth having if it prefers the model that is actually right",
+    )
+    path = calcs.call("lasso_path", {
+        "data": regression, "target": "y", "seed": 105, "k": 5,
+        "alphas": [0.001, 0.01, 0.05, 0.1, 0.3, 1.0, 3.0, 10.0],
+        "for": "where each column drops out as the penalty rises, and which penalty the folds prefer"})
+    parts.result(store, VERTICAL, "lasso_path", "regression", path)
+    parts.oracle(
+        store, VERTICAL, "lasso_path", "columns_only_ever_drop_out",
+        [path["monotone"], path["path"][-1]["count"]], [True, 0],
+        "the l1 penalty's own definition: a larger penalty can only zero more coefficients", 0.0,
+        "a path that is not monotone means the coordinate descent stopped somewhere that is not the minimum",
+    )
+    parts.oracle(
+        store, VERTICAL, "lasso_path", "the_chosen_penalty_is_the_one_the_folds_preferred",
+        path["chosen"], min(path["path"], key=lambda row: row["cv_mse"])["alpha"],
+        "the cross-validated error the path itself recorded at every penalty", 0.0,
+        "the choice has to be readable back out of the Part, or it is a number somebody remembered",
+    )
+
+
 # --- the map and the findings ------------------------------------------------
 
 
@@ -846,11 +900,10 @@ def map_and_findings(store):
 
 
 STUBBED = [
+    {"address": "fn.brain.ml.cross_validate nested", "why": "the penalty on the lasso path is chosen on the same folds it is scored on, so that score is optimistic and an outer loop is what fixes it"},
     {"address": "fn.brain.ml.gbm_fit logistic", "why": "boosting here is squared loss only; the logistic loss needs a second-order step and its own oracle"},
     {"address": "fn.brain.ml.forest_fit oob_score", "why": "the out-of-bag rows are recorded per tree (oob_sizes) but nothing scores on them yet"},
     {"address": "fn.brain.ml.mlp_fit deep", "why": "the backward pass is hand-derived for exactly one hidden layer; a second layer needs autograd or another hand derivation, and a half-checked one is worth less than none"},
-    {"address": "fn.brain.ml.lasso_path", "why": "one alpha is fitted and oracled; the path over a grid of alphas is a loop away and is the part worth reading"},
-    {"address": "fn.brain.ml.cross_validate", "why": "kfold and every metric exist; the loop that folds them together is still at each call site"},
     {"address": "fn.brain.ml.logreg_fit multinomial", "why": "multiclass is one-vs-rest, not a softmax; the softmax needs its own oracle and is not worth a half-checked one"},
     {"address": "fn.brain.ml.knn_fit approximate", "why": "the exact vote is the reference; a kd-tree or ball-tree is a backend of it, and belongs after the shared pairwise-distance primitive"},
 ]
@@ -858,14 +911,14 @@ STUBBED = [
 NEXT = [
     {"what": "a pairwise-distance calculation in the backend vertical, with knn, silhouette, k-means and dbscan routed through it",
      "for": "four calculations here build the same n-by-n matrix in three different spellings; one primitive and one oracle would cover all four"},
-    {"what": "elastic net, and a lasso regularisation path over a grid of alphas as one Part",
-     "for": "the lasso is here but a single alpha is a guess; the path is what makes the choice readable"},
+    {"what": "elastic net, and the same path treatment for ridge and for the tree depth",
+     "for": "the lasso path made the choice readable; every other model here still takes its hyper-parameter on faith"},
     {"what": "a softmax (multinomial) logistic regression beside the one-vs-rest one",
      "for": "one-vs-rest probabilities are renormalised, not calibrated, and the difference shows up in any ranking read off them"},
     {"what": "gradient boosting for classification (logistic loss) and out-of-bag scoring for the forest",
      "for": "the squared-loss boosting here is the easy half; the loss that needs a second-order step is where the design is tested"},
-    {"what": "a cross_validate calculation that folds fit, predict and score into one Part per fold",
-     "for": "kfold exists and every metric exists, but the loop between them is still written at each call site"},
+    {"what": "nested cross-validation, so a hyper-parameter chosen on the folds is not also scored on them",
+     "for": "lasso_path picks its penalty on the same folds it reports; that number is optimistic and the Part should say so"},
     {"what": "a deeper network, softmax output and mini-batch shuffling through the effects handle rather than a seed",
      "for": "one hidden layer and one output is where this stops; the next step needs a real autograd or an honest admission that it is hand-derived"},
 ]
