@@ -1,5 +1,5 @@
 import { safeImage, id } from './domain.js';
-import { render as paintDisc } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
+import { render as paintDisc, FAMILIES } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 export const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const color = (value, fallback = '#203d36') => /^(#[0-9a-f]{3,8}|transparent)$/i.test(value ?? '') ? value : fallback;
 export const fonts = { sans: 'Arial, Helvetica, sans-serif', serif: 'Georgia, Times New Roman, serif', mono: 'Courier New, monospace' };
@@ -28,11 +28,35 @@ export function prepareDiscArt({ disc, mold, maker }) {
   const inputs = artInputs({ disc, mold, maker });
   return { kind: 'painted', svg: paintDisc(...inputs), alt: `Sample artwork · ${inputs[5]}`, sample: true, inputs };
 }
+/** hsl -> #rrggbb, so a disc's sample hue can be handed to the painter as authored colours are. */
+export function hslHex(h, s, l) {
+  const sat = s / 100, light = l / 100, k = n => (n + h / 30) % 12, a = sat * Math.min(light, 1 - light);
+  const f = n => light - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return '#' + [f(0), f(8), f(4)].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
+}
+/**
+ * A disc with no authored art colours is painted in its own sample hue: the
+ * base and the accent the original prepareDiscArt drew (hsl(hue 35% 72%) and a
+ * darker hsl(hue 26% 40%)), so twelve discs are twelve colours, not one. The
+ * painter port (2026-09-09) had handed every such disc one fixed pair.
+ */
+export function sampleColors(hue) { return [hslHex(hue, 35, 72), hslHex(hue, 26, 40)]; }
+/**
+ * A disc with no authored art family gets one of the painter's sixteen, chosen
+ * by its id and nothing else (the owner, 2026-09-11: "I just want all the cool
+ * art that I enabled ai to make manually to be visible"); an authored family
+ * always wins, and the same disc always gets the same family.
+ */
+export function sampleFamily(discId) {
+  let h = 7; for (const ch of String(discId || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return FAMILIES[h % FAMILIES.length];
+}
 export function artInputs({ disc, mold, maker }) {
-  const family = disc.artFamily || 'wind-rose';
+  const family = disc.artFamily || sampleFamily(disc.id);
   const seed = Number.isFinite(disc.sampleHue) ? disc.sampleHue : 146;
-  const base = paintColor(disc.artBase, '#e6ebde');
-  const accent = paintColor(disc.artAccent, '#456157');
+  const [sampleBase, sampleAccent] = sampleColors(seed);
+  const base = paintColor(disc.artBase, sampleBase);
+  const accent = paintColor(disc.artAccent, sampleAccent);
   const target = 96;
   const label = `${maker?.name || 'Disc Studio'} · ${mold?.name || disc.nickname || 'Your disc'}`;
   return [family, seed, base, accent, target, label];
