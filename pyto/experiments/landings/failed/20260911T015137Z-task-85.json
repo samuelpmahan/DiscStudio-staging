@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T015137Z-task-85",
+  "package": "task-85",
+  "base_sha": "a9f3476abcdca3c49000fb6ebc0092715cf5e958",
+  "result": "failed",
+  "reason": "the tree is not clean; a branch can only land into a clean tree (dirty: pyto/experiments/brain/backend/cases.py pyto/experiments/brain/backend/ops.py pyto/experiments/brain/backend/test_ops.py pyto/experiments/tasks/87/HANDOFF.md pyto/experiments/tasks/87/evidence/check_all.txt pyto/experiments/tasks/87/evidence/verify.txt pyto/experiments/tasks/87/packet.md )",
+  "at": "2026-09-11T01:51:38.049255Z"
+}

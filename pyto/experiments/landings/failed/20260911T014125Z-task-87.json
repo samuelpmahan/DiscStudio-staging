@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T014125Z-task-87",
+  "package": "task-87",
+  "base_sha": "fd1a59dd83921f52c29760704b1b4a9fd4f47a34",
+  "result": "failed",
+  "reason": "dirty file outside allowed paths: pyto/experiments/brain/records/ml.regression.json  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- pyto/experiments/brain/records/ml.regression.json  then land, then git stash pop)",
+  "at": "2026-09-11T01:41:26.342494Z"
+}

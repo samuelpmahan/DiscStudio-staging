@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T013835Z-task-87",
+  "package": "task-87",
+  "base_sha": "fd1a59dd83921f52c29760704b1b4a9fd4f47a34",
+  "result": "failed",
+  "reason": "the tree is not clean; a branch can only land into a clean tree (dirty: pyto/experiments/brain/records/ml.regression.json )",
+  "at": "2026-09-11T01:38:36.499979Z"
+}
