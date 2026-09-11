@@ -40,8 +40,8 @@ export function createSeed() {
   cards.instances.shelf = { ...cards.instances.shelf, 'buzzz-mint': { accent: '#d47d54' } };
   return {
     version: 2, schemas: clone(schema), objects, presets: defaultPresets(), cards,
-    layout: { presetId: 'broadcast', arrangement: 'row', anchor: 'bottom-left', scale: 1.25, gap: 16 },
-    battle: { id: 'comparison', name: 'My disc comparison', entries: [ { id: 'entry-1', discId: 'buzzz-mint' }, { id: 'entry-2', discId: 'zone-peach' }, { id: 'entry-3', discId: 'destroyer-lilac' } ], currentStateId: 'state-1', states: [{ id: 'state-1', name: 'Opening', scores: { 'entry-1': null, 'entry-2': null, 'entry-3': null }, highlight: null, winners: [] }] },
+    layout: { presetId: 'broadcast', arrangement: 'row', anchor: 'bottom-left', scale: 1.25, gap: 16, orientation: 'landscape', frame: { presetId: 'none', title: '' } },
+    battle: { id: 'comparison', name: 'My disc comparison', templateId: 'open', combine: 'all', constraints: [], entries: [ { id: 'entry-1', discId: 'buzzz-mint' }, { id: 'entry-2', discId: 'zone-peach' }, { id: 'entry-3', discId: 'destroyer-lilac' } ], currentStateId: 'state-1', states: [{ id: 'state-1', name: 'Opening', scores: { 'entry-1': null, 'entry-2': null, 'entry-3': null }, highlight: null, winners: [] }] },
     events: [], exports: [], seedDisclosure: 'Sample collection and PutterWarz setup; no throws, measured results, usage or export events are pre-recorded.'
   };
 }

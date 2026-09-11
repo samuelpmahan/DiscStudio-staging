@@ -2,7 +2,9 @@ import { createSeed } from './seed.js';
 import { createStudioRuntime } from './runtime.js';
 import { get, all, currentBattle, clone, id, labelHash, sampleHueFor, validateWorld } from './domain.js';
 import { esc, fieldNode, sampleColors } from './presentation.js';
-import { constraintDefinitions } from './constraints.js';
+import { constraintDefinitions, battleConstraintDefinitions, TIE_MODES, SCORE_MODES, rulePoints } from './constraints.js';
+import { battleTemplates } from './battle.js';
+import { framePresets, canvasFor } from './frames.js';
 import { reviewItems } from './review.js';
 import { SORTS, GROUPS, FILTERS } from './shelf.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
@@ -23,7 +25,7 @@ const ui = {
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
-  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single',
+  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single', battleRules: null,
   labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null
 };
 const w = () => runtime.world();
@@ -185,14 +187,50 @@ function discInspector() {
 }
 function coursePreview(result, editor = false) {
   const background = ui.footage ? (ui.footageKind === 'video' ? `<video id="footage-video" src="${esc(ui.footage)}" muted playsinline preload="metadata"></video>` : `<img src="${esc(ui.footage)}" alt="Your local footage context">`) : `<div class="footage-placeholder"><span class="empty-disc">◌</span><h2>The flight gets the screen.</h2><p>Your discs get the credit.</p>${button('+ Try your footage behind the graphic', 'footage', {}, 'quiet')}</div>`;
-  return `<div class="preview-frame"><div class="preview-meta"><span><i class="status-dot"></i> ${editor ? 'COMPOSITION PREVIEW' : 'LIVE PREVIEW'} <small>1920 × 1080</small></span><div>${ui.footage ? button('Clear', 'footage-clear', {}, 'quiet small') : ''}${button(ui.footage ? 'Replace footage ↗' : '+ Your footage', 'footage', {}, 'quiet small')}${ui.footageKind === 'video' ? button('Play / pause', 'footage-play', {}, 'quiet small') : ''}</div></div><div class="course-stage checker"><div class="footage-layer">${background}</div><div class="overlay-layer" id="actual-preview">${result.svg}</div></div><div class="preview-meta bottom"><span>${ui.footageName ? `${esc(ui.footageName)} · context only, never exported` : 'Transparent overlay · add your still or video for context'}</span><span>${result.cardCount} card${result.cardCount === 1 ? '' : 's'}</span></div></div>`;
+  const canvas = canvasFor(w().layout.orientation), vertical = canvas.height > canvas.width;
+  return `<div class="preview-frame ${vertical ? 'vertical' : ''}"><div class="preview-meta"><span><i class="status-dot"></i> ${editor ? 'COMPOSITION PREVIEW' : 'LIVE PREVIEW'} <small>${canvas.width} × ${canvas.height}</small></span><div>${ui.footage ? button('Clear', 'footage-clear', {}, 'quiet small') : ''}${button(ui.footage ? 'Replace footage ↗' : '+ Your footage', 'footage', {}, 'quiet small')}${ui.footageKind === 'video' ? button('Play / pause', 'footage-play', {}, 'quiet small') : ''}</div></div><div class="course-stage checker ${vertical ? 'vertical' : ''}"><div class="footage-layer">${background}</div><div class="overlay-layer" id="actual-preview">${result.svg}</div></div><div class="preview-meta bottom"><span>${ui.footageName ? `${esc(ui.footageName)} · context only, never exported` : (result.frame && result.frame.presetId !== 'none' ? esc(result.frame.note) : 'Transparent overlay · add your still or video for context')}</span><span>${result.cardCount} card${result.cardCount === 1 ? '' : 's'}</span></div></div>`;
 }
 function modeTabs() { return `<div class="segmented">${button('Single Disc', 'mode', { value: 'card' }, ui.mode === 'card' ? 'active' : '')}${button('DiscBattle', 'mode', { value: 'battle' }, ui.mode === 'battle' ? 'active' : '')}</div>`; }
 function courseCenter(result) {
-  const battle = w().battle, state = currentBattle(w());
+  const battle = w().battle, state = currentBattle(w()), standings = result.standings ?? null;
   return `<section class="center course-center" data-scroll="center"><div class="section-heading compact"><div><span class="eyebrow">ON THE COURSE</span><h1>Your discs. Your screen.</h1></div>${modeTabs()}</div>${coursePreview(result)}<div class="pxc-strip"><span class="mono">${result.part}</span><span>${result.run.computed} computed · ${result.run.reused} reused</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${ui.mode === 'battle' ? `<div class="section-toolbar"><div><h2>On screen <small>${battle.entries.length} / 12</small></h2><p class="tiny muted">Edit scores. Highlight any disc. Mark your winner.</p></div>${button('Clear highlight', 'highlight', { id: '' }, 'quiet')}${button('Clear lineup', 'lineup-clear', {}, 'quiet danger')}</div><div class="lineup">${battle.entries.map((entry, index) => {
-    const { disc, mold } = discInfo(entry.discId); return `<div class="lineup-entry ${state.highlight === entry.id ? 'highlighted' : ''}"><button class="lineup-disc" data-action="disc-select" data-id="${esc(entry.discId)}"><span class="disc-thumb">${safeThumb(entry.discId)}</span><span><strong>${esc(mold?.name || 'Missing disc')}</strong><small>${esc(disc?.nickname)}</small></span></button><div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', `aria-label="Decrease score: ${esc(disc?.nickname)}"`)}<input aria-label="Score: ${esc(disc?.nickname)}" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', `aria-label="Increase score: ${esc(disc?.nickname)}"`)}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-label="Mark winner: ${esc(disc?.nickname)}" aria-pressed="${state.winners.includes(entry.id)}"`)}<div class="ordering">${button('↑', 'lineup-move', { id: entry.id, value: -1 }, 'quiet', `aria-label="Move participant up" ${index === 0 ? 'disabled' : ''}`)}${button('↓', 'lineup-move', { id: entry.id, value: 1 }, 'quiet', `aria-label="Move participant down" ${index === battle.entries.length - 1 ? 'disabled' : ''}`)}</div>${button('×', 'lineup-remove', { id: entry.id }, 'quiet', `aria-label="Remove participant: ${esc(disc?.nickname)}"`)}</div>`;
-  }).join('') || '<div class="empty-note">Add physical discs from the shelf to start a comparison.</div>'}</div><section class="states-section"><div class="section-toolbar"><div><span class="eyebrow">ONE COMPARISON. MANY STATES.</span><h2>The next moment.</h2></div>${button('+ Duplicate current state', 'state-add', {}, 'secondary')}</div><div class="state-tabs">${battle.states.map((s, i) => button(`<small>${String(i + 1).padStart(2, '0')}</small> ${esc(s.name)}`, 'state-select', { id: s.id }, s.id === state.id ? 'active' : '')).join('')}</div><div class="button-row">${button('Rename current', 'state-rename', {}, 'quiet small')}${button('Delete current', 'state-remove', {}, 'quiet small danger')}${button('Export SVG state bundle ↓', 'states-export', {}, 'quiet small')}</div><p class="tiny muted">States are editable snapshots. PNG exports are still images; the motion preview is not a video export.</p></section>` : '<div class="principle-strip"><span>A SINGLE DISC IS THE SAME PRIMITIVE.</span><p>The selected shelf disc uses exactly the same saved presentation as your comparison.</p></div>'}${tracePanel(result.run)}</section>`;
+    const { disc, mold } = discInfo(entry.discId); return `<div class="lineup-entry ${state.highlight === entry.id ? 'highlighted' : ''}"><button class="lineup-disc" data-action="disc-select" data-id="${esc(entry.discId)}"><span class="disc-thumb">${safeThumb(entry.discId)}</span><span><strong>${esc(mold?.name || 'Missing disc')}</strong><small>${esc(disc?.nickname)}</small></span></button>${orderButton(entry, index, standings)}<div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', `aria-label="Decrease score: ${esc(disc?.nickname)}"`)}<input aria-label="Score: ${esc(disc?.nickname)}" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', `aria-label="Increase score: ${esc(disc?.nickname)}"`)}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-label="Mark winner: ${esc(disc?.nickname)}" aria-pressed="${state.winners.includes(entry.id)}"`)}<div class="ordering">${button('↑', 'lineup-move', { id: entry.id, value: -1 }, 'quiet', `aria-label="Move participant up" ${index === 0 ? 'disabled' : ''}`)}${button('↓', 'lineup-move', { id: entry.id, value: 1 }, 'quiet', `aria-label="Move participant down" ${index === battle.entries.length - 1 ? 'disabled' : ''}`)}</div>${button('×', 'lineup-remove', { id: entry.id }, 'quiet', `aria-label="Remove participant: ${esc(disc?.nickname)}"`)}</div>`;
+  }).join('') || '<div class="empty-note">Add physical discs from the shelf to start a comparison.</div>'}</div>${battleRulesSection(ui.battleRules)}${standingsSection(standings)}<section class="states-section"><div class="section-toolbar"><div><span class="eyebrow">ONE COMPARISON. MANY STATES.</span><h2>The next moment.</h2></div>${button('+ Duplicate current state', 'state-add', {}, 'secondary')}</div><div class="state-tabs">${battle.states.map((s, i) => button(`<small>${String(i + 1).padStart(2, '0')}</small> ${esc(s.name)}`, 'state-select', { id: s.id }, s.id === state.id ? 'active' : '')).join('')}</div><div class="button-row">${button('Rename current', 'state-rename', {}, 'quiet small')}${button('Delete current', 'state-remove', {}, 'quiet small danger')}${button('Export SVG state bundle ↓', 'states-export', {}, 'quiet small')}</div><p class="tiny muted">States are editable snapshots. PNG exports are still images; the motion preview is not a video export.</p></section>` : '<div class="principle-strip"><span>A SINGLE DISC IS THE SAME PRIMITIVE.</span><p>The selected shelf disc uses exactly the same saved presentation as your comparison.</p></div>'}${tracePanel(result.run)}</section>`;
+}
+/**
+ * The battle's own rules. A template is one gesture; what it composed is three
+ * reusable Constraints with their parameters, each showing the status
+ * `fn.constraint.combine` gave it -- the same composition a Competition uses.
+ */
+function battleRulesSection(rules) {
+  const battle = w().battle, template = battleTemplates[battle.templateId];
+  const options = [...Object.values(battleTemplates).map(t => [t.id, t.name]), ...(template ? [] : [['custom', 'Custom · edited by hand']])];
+  return `<section class="battle-rules"><div class="section-toolbar"><div><span class="eyebrow">A BATTLE IS COMPOSED OF CONSTRAINTS</span><h2>The rules.</h2></div><label class="inline-control">Template ${select('battle-template', battle.templateId, options)}</label>${rules ? `<span class="result-status ${esc(rules.status)}">${rules.status === 'pending' ? 'In progress' : rules.status === 'unconstrained' ? 'No rules' : esc(rules.status)}</span>` : ''}</div><p class="tiny muted">${esc(template ? template.about : 'Edited by hand from the constraint library. Picking a template starts again from one.')}</p><div class="battle-rule-list">${battle.constraints.map(rule => battleRuleRow(rule, rules)).join('') || '<p class="empty-note">No constraints: the scores and the winner are exactly what you author.</p>'}</div>${battle.constraints.length ? `<p class="tiny muted"><span class="mono">px.battle.validation</span> · composed by <span class="mono">fn.constraint.combine</span>, the same Calculation a competition uses</p>` : ''}</section>`;
+}
+function battleRuleRow(rule, rules) {
+  const def = battleConstraintDefinitions[rule.kind], outcome = rules?.rules?.find(r => r.id === rule.id) ?? null;
+  const parameter = rule.kind === 'discCap'
+    ? `<input type="number" min="1" max="12" data-control="battle-rule-value" data-id="${esc(rule.id)}" aria-label="Discs in the battle" value="${rule.value}"><span>${esc(def.unit)}</span>`
+    : rule.kind === 'placesPoints'
+      ? `<input type="text" data-control="battle-rule-points" data-id="${esc(rule.id)}" aria-label="Points per place" value="${esc(rulePoints(rule).join(', '))}" size="9"><span>pt per place</span>${select('battle-rule-mode', rule.mode ?? 'low', Object.entries(SCORE_MODES), `data-id="${esc(rule.id)}"`)}`
+      : select('battle-rule-mode', rule.mode ?? 'share', Object.entries(TIE_MODES), `data-id="${esc(rule.id)}"`);
+  return `<article class="battle-rule" data-rule="${esc(rule.id)}" data-status="${esc(outcome?.status ?? 'off')}"><div class="battle-rule-heading"><label class="check"><input type="checkbox" data-control="battle-rule-enabled" data-id="${esc(rule.id)}" ${rule.enabled ? 'checked' : ''}><strong>${esc(def?.label || rule.kind)}</strong></label><span class="result-status ${esc(outcome?.status ?? 'disabled')}">${esc(outcome?.status ?? 'off')}</span></div><div class="rule-parameter">${parameter}${button('×', 'battle-rule-remove', { id: rule.id }, 'quiet small', `aria-label="Remove constraint: ${esc(def?.label || rule.kind)}"`)}</div><p class="tiny muted">${esc(outcome?.details?.[0]?.message ?? def?.description ?? '')}</p><span class="mono tiny">${esc(def?.call ?? '')}</span></article>`;
+}
+/** The standings as `fn.battle.standings` produced them: nothing here recomputes a number. */
+function standingsSection(standings) {
+  if (!standings) return '';
+  return `<section class="standings-section"><div class="section-toolbar"><div><span class="eyebrow">SCORED BY ONE CALCULATION, ON THE RECORD</span><h2>Standings.</h2></div>${button('Clear this state', 'order-clear', {}, 'quiet small')}</div><div class="table-scroll"><table class="standings-table"><thead><tr><th>#</th><th>Disc</th><th>This state</th><th>Points</th><th>Total</th></tr></thead><tbody>${standings.table.map(row => `<tr data-standing="${esc(row.entryId)}"><td>${row.standing ?? '—'}</td><td>${esc(row.name)}</td><td>${row.score ?? '—'}${row.tied ? ' · tied' : ''}</td><td data-points>${row.points ?? '—'}</td><td data-total>${row.total ?? '—'}</td></tr>`).join('')}</tbody></table></div><p class="tiny muted">${esc(standings.sentence)}</p><span class="mono tiny">px.battle.standings</span></section>`;
+}
+const ordinal = n => ['1st', '2nd', '3rd'][n - 1] ?? `${n}th`;
+/**
+ * One tap enters a result: the tapped disc takes the next free place and its
+ * score is that place. Tapping it again takes it back out. The number on the
+ * left is the key that does the same thing from the keyboard.
+ */
+function orderButton(entry, index, standings) {
+  const row = standings?.table.find(t => t.entryId === entry.id) ?? null, place = row?.place ?? null;
+  if (standings && standings.scheme.mode === 'high') return '';
+  return `<span class="key-hint" aria-hidden="true">${index < 9 ? index + 1 : '·'}</span>${button(place ? ordinal(place) : 'tap', 'battle-order', { id: entry.id }, `place-tap ${place ? 'active' : ''}`, `aria-label="Finishing order for this state: ${esc(entry.discId)}" aria-pressed="${!!place}"`)}`;
 }
 /**
  * The comparison's arrangements. `course` is offered only when a course exists to
@@ -203,7 +241,17 @@ function courseCenter(result) {
 function layoutControls() {
   const l = w().layout, anchored = courseAnchorHint();
   const arrangements = [['row', 'Across the screen'], ['stack', 'Down the screen'], ['grid', 'Two-column grid'], ...(anchored || l.arrangement === 'course' ? [['course', 'At the holes of your course']] : [])];
-  return `<section class="control-section"><h3>DiscComp arrangement <span>VIEW</span></h3><label class="control"><span>Layout</span>${select('arrangement', l.arrangement, arrangements)}</label>${l.arrangement === 'course' ? `<p class="tiny muted">Anchored on <span class="mono">${esc(anchored ?? 'no course built yet')}</span> — the holes the Stages read off your capture. ${button('Open Course ↗', 'go-course-build', {}, 'quiet small')}</p>` : ''}<label class="control"><span>Place on screen</span></label><div class="anchor-pad">${[['top-left', '↖'], ['center', '◎'], ['top-right', '↗'], ['bottom-left', '↙'], ['bottom-right', '↘']].map(([value, label]) => button(label, 'anchor', { value }, l.anchor === value ? 'active' : '', `aria-label="Place ${value}"`)).join('')}</div>${input('Overlay scale', 'scale', l.scale, 'range', 'min="0.25" max="2" step="0.05"')}<span class="tiny muted">${Math.round(l.scale * 100)}% requested · always fitted inside frame</span>${input('Gap between cards (px)', 'gap', l.gap, 'number', 'min="0" max="100"')}</section>`;
+  const vertical = l.orientation === 'portrait';
+  return `<section class="control-section"><h3>Canvas <span>VIEW</span></h3><div class="segmented orientation-pick">${button('Landscape <small>1920 × 1080</small>', 'orientation', { value: 'landscape' }, vertical ? '' : 'active')}${button('Vertical <small>1080 × 1920</small>', 'orientation', { value: 'portrait' }, vertical ? 'active' : '')}</div>${vertical ? '<p class="tiny muted">Vertical is what TikTok, Reels and Shorts want. Down the screen and the two-column grid are the arrangements that read at this size.</p>' : ''}</section><section class="control-section"><h3>DiscComp arrangement <span>VIEW</span></h3><label class="control"><span>Layout</span>${select('arrangement', l.arrangement, arrangements)}</label>${l.arrangement === 'course' ? `<p class="tiny muted">Anchored on <span class="mono">${esc(anchored ?? 'no course built yet')}</span> — the holes the Stages read off your capture. ${button('Open Course ↗', 'go-course-build', {}, 'quiet small')}</p>` : ''}<label class="control"><span>Place on screen</span></label><div class="anchor-pad">${[['top-left', '↖'], ['center', '◎'], ['top-right', '↗'], ['bottom-left', '↙'], ['bottom-right', '↘']].map(([value, label]) => button(label, 'anchor', { value }, l.anchor === value ? 'active' : '', `aria-label="Place ${value}"`)).join('')}</div>${input('Overlay scale', 'scale', l.scale, 'range', 'min="0.25" max="2" step="0.05"')}<span class="tiny muted">${Math.round(l.scale * 100)}% requested · always fitted inside frame</span>${input('Gap between cards (px)', 'gap', l.gap, 'number', 'min="0" max="100"')}</section>`;
+}
+/**
+ * The background / frame layer: one reusable frame preset (src/frames.js) with
+ * its title strip, and a sponsor lockup that is the cards cascade's own global
+ * Sponsor token -- so a frame never invents a palette or a second sponsor.
+ */
+function frameControls() {
+  const l = w().layout, f = l.frame, preset = framePresets[f.presetId], sponsor = w().cards.global.sponsor;
+  return `<section class="control-section"><h3>Background / frame <span>OVERLAY</span></h3><label class="control"><span>Frame preset</span>${select('frame-preset', f.presetId, Object.values(framePresets).map(x => [x.id, x.name]))}</label><p class="tiny muted">${esc(preset.description)}</p>${input('Title strip', 'frame-title', f.title, 'text', `maxlength="80" placeholder="${esc(w().battle.name)}"`)}<p class="tiny muted">${f.presetId === 'none' ? 'Any other frame preset draws the title strip and keeps the cards inside a safe area.' : sponsor ? `Sponsor lockup: <strong>${esc(sponsor)}</strong> — the cards cascade’s global Sponsor token.` : 'The sponsor lockup is the cards cascade’s global Sponsor token. It is empty, so nothing is drawn.'}</p>${button('Edit the cascade’s tokens ↗', 'go-editor', {}, 'wide quiet')}</section>`;
 }
 /** Which Stage Part the course arrangement would stand the cards on, or null if no course has been built. */
 function courseAnchorHint() {
@@ -211,7 +259,7 @@ function courseAnchorHint() {
 }
 function courseInspector() {
   const { disc, mold, maker } = discInfo();
-  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE & CUSTOMIZE</span><h2>Make it your own.</h2><section class="export-section">${button(ui.busy ? 'Preparing export…' : 'Save overlay PNG ↓', 'export-png', {}, 'primary wide', ui.busy ? 'disabled' : '')}${button('Save editable SVG ↓', 'export-svg', {}, 'wide quiet')}<p class="tiny muted">Transparent 1920 × 1080. The actual PxC-produced scene. No footage, editor outlines or motion baked in.</p>${ui.latestReceipt ? `<p class="tiny mono">PNG SHA-256<br>${esc(ui.latestReceipt.pngHash.slice(0, 24))}…</p>` : ''}</section><section class="control-section"><label class="control"><span>Shared DisplayCard design</span>${select('course-preset', w().layout.presetId, Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]))}</label>${button('Edit this design ↗', 'go-editor', {}, 'wide secondary')}<p class="tiny muted">Photo, manufacturer, mold, every field. No fixed identity text hiding outside your design.</p></section>${layoutControls()}<section class="control-section"><h3>Selected physical disc <span>DOMAIN</span></h3><div class="selected-summary"><span class="disc-thumb">${disc ? safeThumb(disc.id) : ''}</span><div><strong>${esc(mold?.name || 'None')}</strong><small>${esc(maker?.name)}</small></div></div><p class="tiny muted">${esc(disc?.nickname || '')}</p>${button('Edit facts & exact photo ↗', 'go-shelf', {}, 'wide')}</section><div class="subtle-box"><span class="eyebrow">PLAY BY YOUR RULES</span><p>Compose PutterWarz from reusable constraints.</p>${button('Open competition sandbox ↗', 'go-competition', {}, 'quiet small')}</div></aside>`;
+  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE & CUSTOMIZE</span><h2>Make it your own.</h2><section class="export-section">${button(ui.busy ? 'Preparing export…' : 'Save overlay PNG ↓', 'export-png', {}, 'primary wide', ui.busy ? 'disabled' : '')}${button('Save editable SVG ↓', 'export-svg', {}, 'wide quiet')}<p class="tiny muted">${esc(canvasFor(w().layout.orientation).name)}. The actual PxC-produced scene. No footage, editor outlines or motion baked in.</p>${ui.latestReceipt ? `<p class="tiny mono">PNG SHA-256<br>${esc(ui.latestReceipt.pngHash.slice(0, 24))}…</p>` : ''}</section><section class="control-section"><label class="control"><span>Shared DisplayCard design</span>${select('course-preset', w().layout.presetId, Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]))}</label>${button('Edit this design ↗', 'go-editor', {}, 'wide secondary')}<p class="tiny muted">Photo, manufacturer, mold, every field. No fixed identity text hiding outside your design.</p></section>${layoutControls()}${frameControls()}<section class="control-section"><h3>Selected physical disc <span>DOMAIN</span></h3><div class="selected-summary"><span class="disc-thumb">${disc ? safeThumb(disc.id) : ''}</span><div><strong>${esc(mold?.name || 'None')}</strong><small>${esc(maker?.name)}</small></div></div><p class="tiny muted">${esc(disc?.nickname || '')}</p>${button('Edit facts & exact photo ↗', 'go-shelf', {}, 'wide')}</section><div class="subtle-box"><span class="eyebrow">PLAY BY YOUR RULES</span><p>Compose PutterWarz from reusable constraints.</p>${button('Open competition sandbox ↗', 'go-competition', {}, 'quiet small')}</div></aside>`;
 }
 /* ------------------------------------------------------------------ */
 /* the Course route: a capture, the Stages, the course                  */
@@ -488,6 +536,7 @@ function render() {
       body = `${shelfSidebar()}${shelfCenter()}${discInspector()}`;
     } else if (ui.route === 'course') {
       ui.lastResult = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() });
+      ui.battleRules = ui.mode === 'battle' ? runtime.battle() : null;
       body = `${shelfSidebar()}${courseCenter(ui.lastResult)}${courseInspector()}`;
     } else if (ui.route === 'course-build') {
       // The last Stage's own receipt is the run this route shows; nothing is
@@ -548,7 +597,7 @@ async function exportPng() {
   if (!result.cardCount) throw new Error('Add at least one disc before exporting.');
   // Capture the exact scene and source data BEFORE async conversion; later edits cannot relabel the export.
   const mode = ui.mode;
-  const sourceSnapshot = clone({ layout: w().layout, preset: w().presets[w().layout.presetId], state: currentBattle(w()), entryDiscIds: mode === 'card' ? [ui.discId] : w().battle.entries.map(e => e.discId), objects: {} });
+  const sourceSnapshot = clone({ layout: w().layout, frame: result.frame ?? null, preset: w().presets[w().layout.presetId], state: currentBattle(w()), entryDiscIds: mode === 'card' ? [ui.discId] : w().battle.entries.map(e => e.discId), objects: {} });
   // Retain immutable facts and asset hashes, not another complete copy of every local photo per export.
   for (const discId of sourceSnapshot.entryDiscIds) {
     const disc = clone(get(w(), 'Disc', discId)), mold = clone(get(w(), 'Mold', disc.moldId)), maker = clone(get(w(), 'Manufacturer', mold.manufacturerId));
@@ -556,12 +605,12 @@ async function exportPng() {
   }
   ui.busy = true; render();
   try {
-    const blob = await pngFromSvg(result.svg), pngHash = await sha256(blob), svgHash = await sha256(result.svg);
+    const blob = await pngFromSvg(result.svg, result.width, result.height), pngHash = await sha256(blob), svgHash = await sha256(result.svg);
     for (const item of Object.values(sourceSnapshot.objects)) if (item.disc.photo) { item.disc.photoSha256 = await sha256(item.disc.photo); delete item.disc.photo; }
     sourceSnapshot.assetPolicy = 'Photo data-URL hashes retained; original photo bytes remain in the draft, not duplicated per export. Keep exported SVGs for self-contained graphics.';
-    const record = { id: id('export'), type: 'PNG', time: new Date().toISOString(), stateId: result.stateId, mode, pngHash, svgHash, width: 1920, height: 1080, sourceSnapshot, byteLength: blob.size };
+    const record = { id: id('export'), type: 'PNG', time: new Date().toISOString(), stateId: result.stateId, mode, pngHash, svgHash, width: result.width, height: result.height, orientation: result.orientation, framePresetId: result.frame?.presetId ?? 'none', sourceSnapshot, byteLength: blob.size };
     execute({ type: 'export.record', record }); ui.latestReceipt = record;
-    downloadBlob(blob, `discstudio-${result.stateId}-${svgHash.slice(0, 8)}.png`); message('PNG exported from the actual SVG Part. Footage and editor controls are excluded.');
+    downloadBlob(blob, `discstudio-${result.stateId}-${result.width}x${result.height}-${svgHash.slice(0, 8)}.png`); message(`PNG exported from the actual SVG Part at ${result.width} × ${result.height}. Footage and editor controls are excluded.`);
   } finally { ui.busy = false; }
 }
 async function action(name, el) {
@@ -619,11 +668,23 @@ async function action(name, el) {
     case 'photo': ui.photoTarget = 'disc'; ui.photoDiscId = d.id || ui.discId; document.querySelector('#photo-file').click(); return;
     case 'photo-remove': execute({ type: 'entity.set', entityType: 'Disc', id: ui.discId, path: 'photo', value: null }); break;
     case 'mode': ui.mode = d.value; break;
+    case 'orientation': {
+      // Switching to the vertical canvas takes a wide row of cards down the
+      // screen with it: one command, so undo is one step, and the sentence says
+      // what moved rather than leaving a row of three unreadable cards.
+      const l = w().layout, stacking = d.value === 'portrait' && l.arrangement === 'row' && w().battle.entries.length > 2;
+      execute({ type: 'layout.set', patch: { orientation: d.value, ...(stacking ? { arrangement: 'stack' } : {}) } });
+      message(d.value === 'portrait' ? `Vertical canvas: 1080 × 1920. Cards are fitted inside the frame’s safe area and exports come out at that size.${stacking ? ' The row went down the screen, which is what reads at this size.' : ''}` : 'Landscape canvas: 1920 × 1080.');
+      break;
+    }
     case 'lineup-add': addLineup(d.id); break;
     case 'bag-lineup': for (const key of get(w(), 'Bag', ui.bagId)?.discIds || []) addLineup(key); break;
     case 'lineup-remove': execute({ type: 'battle.remove', id: d.id }); break;
     case 'lineup-clear': if (confirm('Clear the comparison lineup and its scores/highlights in every state? Your shelf and bags remain unchanged.')) for (const e of [...w().battle.entries]) execute({ type: 'battle.remove', id: e.id }); break;
     case 'lineup-move': execute({ type: 'battle.move', id: d.id, offset: +d.value }); break;
+    case 'battle-order': execute({ type: 'battle.order', id: d.id }); ui.motionEntry = d.id; break;
+    case 'order-clear': execute({ type: 'battle.order.clear' }); message('This state is clear. Tap the finishing order again, or type the scores.'); break;
+    case 'battle-rule-remove': execute({ type: 'battle.rule.remove', ruleId: d.id }); break;
     case 'score-step': execute({ type: 'battle.score', id: d.id, score: (currentBattle(w()).scores[d.id] ?? 0) + +d.value }); ui.motionEntry = d.id; break;
     case 'highlight': execute({ type: 'battle.highlight', id: d.id }); break;
     case 'winner': execute({ type: 'battle.winner', id: d.id }); break;
@@ -636,7 +697,7 @@ async function action(name, el) {
     case 'footage-clear': if (ui.footage) URL.revokeObjectURL(ui.footage); Object.assign(ui, { footage: null, footageKind: null, footageName: '', footageTime: 0 }); break;
     case 'footage-play': { const video = document.querySelector('#footage-video'); if (video) { if (video.paused) await video.play(); else video.pause(); } return; }
     case 'export-png': await exportPng(); break;
-    case 'export-svg': { const result = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() }); downloadBlob(new Blob([result.svg], { type: 'image/svg+xml' }), `discstudio-${result.stateId}.svg`); message('SVG scene downloaded. This is not recorded as a PNG export.'); break; }
+    case 'export-svg': { const result = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() }); downloadBlob(new Blob([result.svg], { type: 'image/svg+xml' }), `discstudio-${result.stateId}-${result.width}x${result.height}.svg`); message(`SVG scene downloaded at ${result.width} × ${result.height}. This is not recorded as a PNG export.`); break; }
     case 'states-export': {
       const files = [];
       for (const [index, state] of w().battle.states.entries()) { const result = runtime.scene({ mode: 'battle', ...context(), stateId: state.id }); files.push({ filename: `${String(index + 1).padStart(2, '0')}-${state.name.replace(/[^a-z0-9_-]+/ig, '-')}.svg`, svg: result.svg, stateId: state.id }); }
@@ -723,7 +784,14 @@ function controlChange(el) {
     case 'flight': execute({ type: 'entity.set', entityType: 'Mold', id: mold.id, path: `flight.${d.key}`, value: number() }); break;
     case 'score': execute({ type: 'battle.score', id: d.id, score: number() }); ui.motionEntry = d.id; break;
     case 'course-preset': ui.presetId = value; execute({ type: 'layout.set', patch: { presetId: value } }); break;
+    case 'battle-template': { execute({ type: 'battle.template', id: value }); const template = battleTemplates[value]; message(`${template.name}. ${template.about}`); break; }
+    case 'battle-rule-enabled': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { enabled: el.checked } }); break;
+    case 'battle-rule-value': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { value: number() } }); break;
+    case 'battle-rule-mode': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { mode: value } }); break;
+    case 'battle-rule-points': { const points = value.split(/[^0-9]+/).filter(Boolean).map(Number); execute({ type: 'battle.rule.set', ruleId: d.id, patch: { points, value: points.length } }); break; }
     case 'arrangement': execute({ type: 'layout.set', patch: { arrangement: value } }); break;
+    case 'frame-preset': execute({ type: 'layout.set', patch: { frame: { ...w().layout.frame, presetId: value } } }); break;
+    case 'frame-title': execute({ type: 'layout.set', patch: { frame: { ...w().layout.frame, title: value.slice(0, 80) } } }); break;
     case 'scale': execute({ type: 'layout.set', patch: { scale: number() } }); break;
     case 'gap': execute({ type: 'layout.set', patch: { gap: number() } }); break;
     case 'edit-preset': ui.presetId = value; ui.component = w().presets[value].kind; ui.nodeId = w().presets[value].nodes[0]?.id; if (w().presets[value].kind === 'DisplayCard') execute({ type: 'layout.set', patch: { presetId: value } }); break;
@@ -786,6 +854,21 @@ window.addEventListener('pointermove', event => {
 function flushDrag() { if (!pendingMove) return; const command = pendingMove; pendingMove = null; try { execute(command); render(); } catch (error) { message(error.message, true); } }
 window.addEventListener('pointerup', () => { cancelAnimationFrame(dragFrame); flushDrag(); drag = null; });
 window.addEventListener('pointercancel', () => { cancelAnimationFrame(dragFrame); pendingMove = null; drag = null; });
+/**
+ * Entering a hole from the keyboard: 1..9 taps that disc into the finishing
+ * order (the same command the button dispatches), 0 or Backspace clears the
+ * state. Nothing here writes a score the order does not imply.
+ */
+window.addEventListener('keydown', event => {
+  if (ui.route !== 'course' || ui.mode !== 'battle' || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+  const entries = w().battle.entries;
+  const command = /^[1-9]$/.test(event.key) && entries[+event.key - 1] ? { type: 'battle.order', id: entries[+event.key - 1].id }
+    : event.key === '0' || event.key === 'Backspace' ? { type: 'battle.order.clear' } : null;
+  if (!command) return;
+  event.preventDefault();
+  try { execute(command); ui.motionEntry = command.id ?? null; } catch (error) { message(error.cause?.message || error.message, true); }
+  render();
+});
 window.addEventListener('keydown', event => {
   if (ui.route !== 'components' || !ui.nodeId || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
   const node = w().presets[ui.presetId]?.nodes.find(n => n.id === ui.nodeId); if (!node) return;
