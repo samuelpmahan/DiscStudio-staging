@@ -1,0 +1,4125 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S1",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "BlackMask",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s1.maskcomponents.part.blackmask",
+          "calculation": {
+            "address": "fn.lab.s1.maskcomponents.selecthsvmask",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "raster": "px:px.exp.lab.s1.maskcomponents.part.croppedraster"
+          },
+          "args": {
+            "polarity": "black",
+            "valueMax": 45,
+            "alpha": "ignored"
+          },
+          "into": "px.exp.lab.s1.maskcomponents.part.blackmask",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.maskcomponents.part.croppedraster"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.maskcomponents.part.croppedraster"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.maskcomponents.part.blackmask"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.maskcomponents.part.blackmask",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "id": "black-mask",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackmask",
+              "kind": "mask",
+              "polarity": "black",
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "2c035465f9e02236378722f8d48a530ded08d1e64672f1d226084bee1e92f42a"
+              },
+              "sourceTickId": null
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [471040]"
+          }
+        },
+        {
+          "id": "px.exp.lab.s1.maskcomponents.part.blackcomponents",
+          "calculation": {
+            "address": "fn.lab.s1.maskcomponents.group8connected",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "mask": "px:px.exp.lab.s1.maskcomponents.part.blackmask"
+          },
+          "args": {
+            "connectivity": 8,
+            "retainSingletons": true
+          },
+          "into": "px.exp.lab.s1.maskcomponents.part.blackcomponents",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.maskcomponents.part.blackmask"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.maskcomponents.part.blackmask"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.maskcomponents.part.blackcomponents"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponents",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "id": "black-components",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponents",
+              "kind": "component-set",
+              "polarity": "black",
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+              },
+              "components": [
+                {
+                  "id": "black-component-1",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 1,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "black-component-2",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 2,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 84,
+                    "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "black-component-3",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 3,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "black-component-4",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 4,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 84,
+                    "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                  },
+                  "sourceTickId": null
+                }
+              ],
+              "sourceTickId": null
+            },
+            "note": "3 array(s) truncated to the first 200 entries; original lengths: [2520, 1176, 1176]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "WhiteMask",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s1.maskcomponents.part.whitemask",
+          "calculation": {
+            "address": "fn.lab.s1.maskcomponents.selecthsvmask",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "raster": "px:px.exp.lab.s1.maskcomponents.part.croppedraster"
+          },
+          "args": {
+            "polarity": "white",
+            "valueMin": 210,
+            "saturationMax": 45,
+            "alpha": "ignored"
+          },
+          "into": "px.exp.lab.s1.maskcomponents.part.whitemask",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.maskcomponents.part.croppedraster"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.maskcomponents.part.croppedraster"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.maskcomponents.part.whitemask"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.maskcomponents.part.whitemask",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "id": "white-mask",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitemask",
+              "kind": "mask",
+              "polarity": "white",
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "2c035465f9e02236378722f8d48a530ded08d1e64672f1d226084bee1e92f42a"
+              },
+              "sourceTickId": null
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [471040]"
+          }
+        },
+        {
+          "id": "px.exp.lab.s1.maskcomponents.part.whitecomponents",
+          "calculation": {
+            "address": "fn.lab.s1.maskcomponents.group8connected",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "mask": "px:px.exp.lab.s1.maskcomponents.part.whitemask"
+          },
+          "args": {
+            "connectivity": 8,
+            "retainSingletons": true
+          },
+          "into": "px.exp.lab.s1.maskcomponents.part.whitecomponents",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.maskcomponents.part.whitemask"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.maskcomponents.part.whitemask"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponents",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "id": "white-components",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponents",
+              "kind": "component-set",
+              "polarity": "white",
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+              },
+              "components": [
+                {
+                  "id": "white-component-1",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 1,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "white-component-2",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 2,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "white-component-3",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 3,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 156,
+                    "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "white-component-4",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 4,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "white-component-5",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 5,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                  },
+                  "sourceTickId": null
+                },
+                {
+                  "id": "white-component-6",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 6,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 156,
+                    "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                  },
+                  "sourceTickId": null
+                }
+              ],
+              "sourceTickId": null
+            },
+            "note": "3 array(s) truncated to the first 200 entries; original lengths: [1680, 564, 564]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "BadgeAssembly",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s1.badgeassembly.plates",
+          "calculation": {
+            "address": "fn.lab.s1.badgeassembly.selectcomponents",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "components": "px:px.exp.lab.s1.maskcomponents.part.blackcomponents"
+          },
+          "args": {
+            "predicate": "plate-bbox-and-fill",
+            "minWidth": 34,
+            "maxWidth": 78,
+            "minHeight": 24,
+            "maxHeight": 54,
+            "minAspect": 1,
+            "maxAspect": 2.4,
+            "minFill": 0.55
+          },
+          "into": "px.exp.lab.s1.badgeassembly.plates",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.maskcomponents.part.blackcomponents"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.maskcomponents.part.blackcomponents"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.badgeassembly.plates"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.badgeassembly.plates",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "selected": [
+                {
+                  "part": {
+                    "id": "black-component-1",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                    "kind": "component",
+                    "polarity": "black",
+                    "label": 1,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 1176,
+                  "bbox": [
+                    126,
+                    262,
+                    48,
+                    32
+                  ]
+                },
+                {
+                  "part": {
+                    "id": "black-component-3",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                    "kind": "component",
+                    "polarity": "black",
+                    "label": 3,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 1176,
+                  "bbox": [
+                    306,
+                    582,
+                    48,
+                    32
+                  ]
+                }
+              ],
+              "rejected": [
+                {
+                  "component": {
+                    "part": {
+                      "id": "black-component-2",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 2,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 84,
+                        "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 84,
+                    "bbox": [
+                      151,
+                      271,
+                      6,
+                      14
+                    ]
+                  },
+                  "reasons": [
+                    "width outside range",
+                    "height outside range",
+                    "aspect outside range"
+                  ]
+                },
+                {
+                  "component": {
+                    "part": {
+                      "id": "black-component-4",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 4,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 84,
+                        "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 84,
+                    "bbox": [
+                      331,
+                      591,
+                      6,
+                      14
+                    ]
+                  },
+                  "reasons": [
+                    "width outside range",
+                    "height outside range",
+                    "aspect outside range"
+                  ]
+                }
+              ]
+            },
+            "note": "2 array(s) truncated to the first 200 entries; original lengths: [1176, 1176]"
+          }
+        },
+        {
+          "id": "px.exp.lab.s1.badgeassembly.plateborders",
+          "calculation": {
+            "address": "fn.lab.s1.badgeassembly.findrelated",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "anchors": "px:px.exp.lab.s1.badgeassembly.plates",
+            "candidates": "px:px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          },
+          "args": {
+            "anchorRole": "plate",
+            "predicate": "candidate-bbox-contains-anchor"
+          },
+          "into": "px.exp.lab.s1.badgeassembly.plateborders",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.badgeassembly.plates",
+            "px:px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.badgeassembly.plates",
+            "px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.badgeassembly.plateborders"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.badgeassembly.plateborders",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "predicate": "candidate-bbox-contains-anchor",
+              "rows": [
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "matches": [
+                    {
+                      "part": {
+                        "id": "white-component-1",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 1,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        120,
+                        258,
+                        60,
+                        40
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "matches": [
+                    {
+                      "part": {
+                        "id": "white-component-4",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 4,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        300,
+                        578,
+                        60,
+                        40
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "note": "6 array(s) truncated to the first 200 entries; original lengths: [1176, 1176, 1176, 1176, 564, 564]"
+          }
+        },
+        {
+          "id": "px.exp.lab.s1.badgeassembly.platedigits",
+          "calculation": {
+            "address": "fn.lab.s1.badgeassembly.findrelated",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "anchors": "px:px.exp.lab.s1.badgeassembly.plates",
+            "candidates": "px:px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          },
+          "args": {
+            "anchorRole": "plate",
+            "predicate": "anchor-bbox-contains-candidate"
+          },
+          "into": "px.exp.lab.s1.badgeassembly.platedigits",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.badgeassembly.plates",
+            "px:px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.badgeassembly.plates",
+            "px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.badgeassembly.platedigits"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.badgeassembly.platedigits",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "predicate": "anchor-bbox-contains-candidate",
+              "rows": [
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "matches": [
+                    {
+                      "part": {
+                        "id": "white-component-2",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 2,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        132,
+                        268,
+                        6,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 3,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        148,
+                        268,
+                        12,
+                        20
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "matches": [
+                    {
+                      "part": {
+                        "id": "white-component-5",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 5,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        312,
+                        588,
+                        6,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-6",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 6,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        328,
+                        588,
+                        12,
+                        20
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "note": "4 array(s) truncated to the first 200 entries; original lengths: [1176, 1176, 1176, 1176]"
+          }
+        },
+        {
+          "id": "px.exp.lab.s1.badgeassembly.digitloops",
+          "calculation": {
+            "address": "fn.lab.s1.badgeassembly.findrelated",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "anchors": "px:px.exp.lab.s1.badgeassembly.platedigits",
+            "candidates": "px:px.exp.lab.s1.maskcomponents.part.blackcomponents"
+          },
+          "args": {
+            "anchorRole": "related-component",
+            "predicate": "anchor-bbox-contains-candidate"
+          },
+          "into": "px.exp.lab.s1.badgeassembly.digitloops",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.badgeassembly.platedigits",
+            "px:px.exp.lab.s1.maskcomponents.part.blackcomponents"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.badgeassembly.platedigits",
+            "px.exp.lab.s1.maskcomponents.part.blackcomponents"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.badgeassembly.digitloops"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.badgeassembly.digitloops",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "predicate": "anchor-bbox-contains-candidate",
+              "rows": [
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "white-component-2",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 2,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 120,
+                        "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 120,
+                    "bbox": [
+                      132,
+                      268,
+                      6,
+                      20
+                    ]
+                  },
+                  "matches": []
+                },
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "white-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 156,
+                        "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 156,
+                    "bbox": [
+                      148,
+                      268,
+                      12,
+                      20
+                    ]
+                  },
+                  "matches": [
+                    {
+                      "part": {
+                        "id": "black-component-2",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 2,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 84,
+                          "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 84,
+                      "bbox": [
+                        151,
+                        271,
+                        6,
+                        14
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "white-component-5",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 5,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 120,
+                        "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 120,
+                    "bbox": [
+                      312,
+                      588,
+                      6,
+                      20
+                    ]
+                  },
+                  "matches": []
+                },
+                {
+                  "plate": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "anchor": {
+                    "part": {
+                      "id": "white-component-6",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 6,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 156,
+                        "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 156,
+                    "bbox": [
+                      328,
+                      588,
+                      12,
+                      20
+                    ]
+                  },
+                  "matches": [
+                    {
+                      "part": {
+                        "id": "black-component-4",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 4,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 84,
+                          "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 84,
+                      "bbox": [
+                        331,
+                        591,
+                        6,
+                        14
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "note": "4 array(s) truncated to the first 200 entries; original lengths: [1176, 1176, 1176, 1176]"
+          }
+        },
+        {
+          "id": "px.exp.lab.s1.badgeassembly.badgecandidates",
+          "calculation": {
+            "address": "fn.lab.s1.badgeassembly.assemble",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "plates": "px:px.exp.lab.s1.badgeassembly.plates",
+            "plateBorders": "px:px.exp.lab.s1.badgeassembly.plateborders",
+            "plateDigits": "px:px.exp.lab.s1.badgeassembly.platedigits",
+            "digitLoops": "px:px.exp.lab.s1.badgeassembly.digitloops"
+          },
+          "args": {
+            "acceptance": "border-and-digit-material"
+          },
+          "into": "px.exp.lab.s1.badgeassembly.badgecandidates",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.badgeassembly.plates",
+            "px:px.exp.lab.s1.badgeassembly.plateborders",
+            "px:px.exp.lab.s1.badgeassembly.platedigits",
+            "px:px.exp.lab.s1.badgeassembly.digitloops"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.badgeassembly.plates",
+            "px.exp.lab.s1.badgeassembly.plateborders",
+            "px.exp.lab.s1.badgeassembly.platedigits",
+            "px.exp.lab.s1.badgeassembly.digitloops"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.badgeassembly.badgecandidates"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.badgeassembly.badgecandidates",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "candidates": [
+                {
+                  "id": "badge-candidate:black-component-1:white-component-1",
+                  "plate": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "border": {
+                    "part": {
+                      "id": "white-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 564,
+                    "bbox": [
+                      120,
+                      258,
+                      60,
+                      40
+                    ]
+                  },
+                  "digits": [
+                    {
+                      "part": {
+                        "id": "white-component-2",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 2,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        132,
+                        268,
+                        6,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 3,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        148,
+                        268,
+                        12,
+                        20
+                      ]
+                    }
+                  ],
+                  "digitLoops": [
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-1",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 1,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          126,
+                          262,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-2",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 2,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ]
+                      },
+                      "matches": []
+                    },
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-1",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 1,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          126,
+                          262,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 3,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ]
+                      },
+                      "matches": [
+                        {
+                          "part": {
+                            "id": "black-component-2",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 2,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 84,
+                              "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 84,
+                          "bbox": [
+                            151,
+                            271,
+                            6,
+                            14
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+                  }
+                },
+                {
+                  "id": "badge-candidate:black-component-3:white-component-4",
+                  "plate": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "border": {
+                    "part": {
+                      "id": "white-component-4",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 4,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 564,
+                    "bbox": [
+                      300,
+                      578,
+                      60,
+                      40
+                    ]
+                  },
+                  "digits": [
+                    {
+                      "part": {
+                        "id": "white-component-5",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 5,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        312,
+                        588,
+                        6,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-6",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 6,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        328,
+                        588,
+                        12,
+                        20
+                      ]
+                    }
+                  ],
+                  "digitLoops": [
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 3,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          306,
+                          582,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-5",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 5,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          312,
+                          588,
+                          6,
+                          20
+                        ]
+                      },
+                      "matches": []
+                    },
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 3,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          306,
+                          582,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-6",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 6,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          328,
+                          588,
+                          12,
+                          20
+                        ]
+                      },
+                      "matches": [
+                        {
+                          "part": {
+                            "id": "black-component-4",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 4,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 84,
+                              "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 84,
+                          "bbox": [
+                            331,
+                            591,
+                            6,
+                            14
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
+                  }
+                }
+              ],
+              "incomplete": []
+            },
+            "note": "10 array(s) truncated to the first 200 entries; original lengths: [2100, 2100, 1176, 1176, 1176, 1176, 1176, 1176, 564, 564]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "WhiteDigitRecognition",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s1.whitedigits.prepared",
+          "calculation": {
+            "address": "fn.lab.s1.whitedigits.prepare",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "badges": "px:px.exp.lab.s1.badgeassembly.badgecandidates"
+          },
+          "args": {
+            "knobs": {
+              "minComponentArea": 6,
+              "heightRatioMin": 0.5,
+              "wideRatio": 0.95,
+              "valleySearchLo": 0.3,
+              "valleySearchHi": 0.7,
+              "digitW": 24,
+              "digitH": 32,
+              "confidenceFloorDivisor": 8,
+              "labelAmbiguityMargin": 0.045
+            }
+          },
+          "into": "px.exp.lab.s1.whitedigits.prepared",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.badgeassembly.badgecandidates"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.badgeassembly.badgecandidates"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.whitedigits.prepared"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.whitedigits.prepared",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "badges": [
+                {
+                  "badge": {
+                    "id": "badge-candidate:black-component-1:white-component-1",
+                    "plate": {
+                      "part": {
+                        "id": "black-component-1",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 1,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        126,
+                        262,
+                        48,
+                        32
+                      ]
+                    },
+                    "border": {
+                      "part": {
+                        "id": "white-component-1",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 1,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        120,
+                        258,
+                        60,
+                        40
+                      ]
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "id": "white-component-2",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 2,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ]
+                      },
+                      {
+                        "part": {
+                          "id": "white-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 3,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ]
+                      }
+                    ],
+                    "digitLoops": [
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-1",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 1,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            126,
+                            262,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-2",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 2,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 120,
+                              "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 120,
+                          "bbox": [
+                            132,
+                            268,
+                            6,
+                            20
+                          ]
+                        },
+                        "matches": []
+                      },
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-1",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 1,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            126,
+                            262,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-3",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 3,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 156,
+                              "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 156,
+                          "bbox": [
+                            148,
+                            268,
+                            12,
+                            20
+                          ]
+                        },
+                        "matches": [
+                          {
+                            "part": {
+                              "id": "black-component-2",
+                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                              "kind": "component",
+                              "polarity": "black",
+                              "label": 2,
+                              "widthPx": 512,
+                              "heightPx": 920,
+                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                              "pixels": {
+                                "kind": "numbers",
+                                "length": 84,
+                                "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                              },
+                              "sourceTickId": null
+                            },
+                            "area": 84,
+                            "bbox": [
+                              151,
+                              271,
+                              6,
+                              14
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+                    }
+                  },
+                  "glyph": {
+                    "origin": [
+                      120,
+                      258
+                    ],
+                    "width": 60,
+                    "height": 40,
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+                    }
+                  },
+                  "digits": [
+                    {
+                      "bbox": [
+                        132,
+                        268,
+                        6,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                      },
+                      "notes": []
+                    },
+                    {
+                      "bbox": [
+                        148,
+                        268,
+                        12,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                      },
+                      "notes": []
+                    }
+                  ],
+                  "notes": []
+                },
+                {
+                  "badge": {
+                    "id": "badge-candidate:black-component-3:white-component-4",
+                    "plate": {
+                      "part": {
+                        "id": "black-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 3,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        306,
+                        582,
+                        48,
+                        32
+                      ]
+                    },
+                    "border": {
+                      "part": {
+                        "id": "white-component-4",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 4,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        300,
+                        578,
+                        60,
+                        40
+                      ]
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "id": "white-component-5",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 5,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          312,
+                          588,
+                          6,
+                          20
+                        ]
+                      },
+                      {
+                        "part": {
+                          "id": "white-component-6",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 6,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          328,
+                          588,
+                          12,
+                          20
+                        ]
+                      }
+                    ],
+                    "digitLoops": [
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-3",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 3,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            306,
+                            582,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-5",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 5,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 120,
+                              "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 120,
+                          "bbox": [
+                            312,
+                            588,
+                            6,
+                            20
+                          ]
+                        },
+                        "matches": []
+                      },
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-3",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 3,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            306,
+                            582,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-6",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 6,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 156,
+                              "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 156,
+                          "bbox": [
+                            328,
+                            588,
+                            12,
+                            20
+                          ]
+                        },
+                        "matches": [
+                          {
+                            "part": {
+                              "id": "black-component-4",
+                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                              "kind": "component",
+                              "polarity": "black",
+                              "label": 4,
+                              "widthPx": 512,
+                              "heightPx": 920,
+                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                              "pixels": {
+                                "kind": "numbers",
+                                "length": 84,
+                                "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                              },
+                              "sourceTickId": null
+                            },
+                            "area": 84,
+                            "bbox": [
+                              331,
+                              591,
+                              6,
+                              14
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
+                    }
+                  },
+                  "glyph": {
+                    "origin": [
+                      300,
+                      578
+                    ],
+                    "width": 60,
+                    "height": 40,
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
+                    }
+                  },
+                  "digits": [
+                    {
+                      "bbox": [
+                        312,
+                        588,
+                        6,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                      },
+                      "notes": []
+                    },
+                    {
+                      "bbox": [
+                        328,
+                        588,
+                        12,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                      },
+                      "notes": []
+                    }
+                  ],
+                  "notes": []
+                }
+              ],
+              "incomplete": []
+            },
+            "note": "16 array(s) truncated to the first 200 entries; original lengths: [2100, 2100, 2100, 2100, 1176, 1176, 1176, 1176, 1176, 1176, 768, 768, 768, 768, 564, 564]"
+          }
+        },
+        {
+          "id": "px.exp.lab.s1.whitedigits.recognizedbadges",
+          "calculation": {
+            "address": "fn.lab.s1.whitedigits.match",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "prepared": "px:px.exp.lab.s1.whitedigits.prepared",
+            "model": "px:px.exp.lab.s1.whitedigits.model"
+          },
+          "args": {},
+          "into": "px.exp.lab.s1.whitedigits.recognizedbadges",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.whitedigits.prepared",
+            "px:px.exp.lab.s1.whitedigits.model"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.whitedigits.prepared",
+            "px.exp.lab.s1.whitedigits.model"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s1.whitedigits.recognizedbadges"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s1.whitedigits.recognizedbadges",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "candidates": [
+                {
+                  "id": "badge-candidate:black-component-1:white-component-1",
+                  "plate": {
+                    "part": {
+                      "id": "black-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      126,
+                      262,
+                      48,
+                      32
+                    ]
+                  },
+                  "border": {
+                    "part": {
+                      "id": "white-component-1",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 1,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 564,
+                    "bbox": [
+                      120,
+                      258,
+                      60,
+                      40
+                    ]
+                  },
+                  "digits": [
+                    {
+                      "part": {
+                        "id": "white-component-2",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 2,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        132,
+                        268,
+                        6,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 3,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        148,
+                        268,
+                        12,
+                        20
+                      ]
+                    }
+                  ],
+                  "digitLoops": [
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-1",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 1,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          126,
+                          262,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-2",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 2,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ]
+                      },
+                      "matches": []
+                    },
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-1",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 1,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          126,
+                          262,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 3,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ]
+                      },
+                      "matches": [
+                        {
+                          "part": {
+                            "id": "black-component-2",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 2,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 84,
+                              "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 84,
+                          "bbox": [
+                            151,
+                            271,
+                            6,
+                            14
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+                  },
+                  "reading": {
+                    "value": "10",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "0",
+                            "score": 1
+                          },
+                          {
+                            "label": "1",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "badge-candidate:black-component-3:white-component-4",
+                  "plate": {
+                    "part": {
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                      "kind": "component",
+                      "polarity": "black",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 1176,
+                    "bbox": [
+                      306,
+                      582,
+                      48,
+                      32
+                    ]
+                  },
+                  "border": {
+                    "part": {
+                      "id": "white-component-4",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 4,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 564,
+                    "bbox": [
+                      300,
+                      578,
+                      60,
+                      40
+                    ]
+                  },
+                  "digits": [
+                    {
+                      "part": {
+                        "id": "white-component-5",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 5,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        312,
+                        588,
+                        6,
+                        20
+                      ]
+                    },
+                    {
+                      "part": {
+                        "id": "white-component-6",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 6,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        328,
+                        588,
+                        12,
+                        20
+                      ]
+                    }
+                  ],
+                  "digitLoops": [
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 3,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          306,
+                          582,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-5",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 5,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          312,
+                          588,
+                          6,
+                          20
+                        ]
+                      },
+                      "matches": []
+                    },
+                    {
+                      "plate": {
+                        "part": {
+                          "id": "black-component-3",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 3,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 1176,
+                        "bbox": [
+                          306,
+                          582,
+                          48,
+                          32
+                        ]
+                      },
+                      "anchor": {
+                        "part": {
+                          "id": "white-component-6",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 6,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          328,
+                          588,
+                          12,
+                          20
+                        ]
+                      },
+                      "matches": [
+                        {
+                          "part": {
+                            "id": "black-component-4",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 4,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 84,
+                              "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 84,
+                          "bbox": [
+                            331,
+                            591,
+                            6,
+                            14
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
+                  },
+                  "reading": {
+                    "value": "10",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          312,
+                          588,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          328,
+                          588,
+                          12,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "0",
+                            "score": 1
+                          },
+                          {
+                            "label": "1",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "incomplete": []
+            },
+            "note": "14 array(s) truncated to the first 200 entries; original lengths: [2100, 2100, 1176, 1176, 1176, 1176, 1176, 1176, 768, 768, 768, 768, 564, 564]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "name": "BadgeOutputs",
+      "invocations": [
+        {
+          "id": "px.exp.lab.badges.objects",
+          "calculation": {
+            "address": "fn.lab.s1.badges.declareownership",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "recognized": "px:px.exp.lab.s1.whitedigits.recognizedbadges"
+          },
+          "args": {},
+          "into": "px.exp.lab.badges.objects",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.whitedigits.recognizedbadges"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.whitedigits.recognizedbadges"
+          ],
+          "actual_produces": [
+            "px.exp.lab.badges.objects"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.badges.objects",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "id": "badge-candidate:black-component-1:white-component-1",
+                "plate": {
+                  "part": {
+                    "id": "black-component-1",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                    "kind": "component",
+                    "polarity": "black",
+                    "label": 1,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 1176,
+                  "bbox": [
+                    126,
+                    262,
+                    48,
+                    32
+                  ]
+                },
+                "border": {
+                  "part": {
+                    "id": "white-component-1",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-1",
+                    "kind": "component",
+                    "polarity": "white",
+                    "label": 1,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 564,
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ]
+                },
+                "digits": [
+                  {
+                    "part": {
+                      "id": "white-component-2",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 2,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 120,
+                        "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 120,
+                    "bbox": [
+                      132,
+                      268,
+                      6,
+                      20
+                    ]
+                  },
+                  {
+                    "part": {
+                      "id": "white-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 3,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 156,
+                        "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 156,
+                    "bbox": [
+                      148,
+                      268,
+                      12,
+                      20
+                    ]
+                  }
+                ],
+                "digitLoops": [
+                  {
+                    "plate": {
+                      "part": {
+                        "id": "black-component-1",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 1,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        126,
+                        262,
+                        48,
+                        32
+                      ]
+                    },
+                    "anchor": {
+                      "part": {
+                        "id": "white-component-2",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 2,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        132,
+                        268,
+                        6,
+                        20
+                      ]
+                    },
+                    "matches": []
+                  },
+                  {
+                    "plate": {
+                      "part": {
+                        "id": "black-component-1",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 1,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        126,
+                        262,
+                        48,
+                        32
+                      ]
+                    },
+                    "anchor": {
+                      "part": {
+                        "id": "white-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 3,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        148,
+                        268,
+                        12,
+                        20
+                      ]
+                    },
+                    "matches": [
+                      {
+                        "part": {
+                          "id": "black-component-2",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 2,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 84,
+                            "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 84,
+                        "bbox": [
+                          151,
+                          271,
+                          6,
+                          14
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+                },
+                "reading": {
+                  "value": "10",
+                  "status": "read",
+                  "digits": [
+                    {
+                      "bbox": [
+                        132,
+                        268,
+                        6,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                      },
+                      "notes": [],
+                      "rankings": [
+                        {
+                          "label": "1",
+                          "score": 1
+                        },
+                        {
+                          "label": "0",
+                          "score": 0.640625
+                        }
+                      ]
+                    },
+                    {
+                      "bbox": [
+                        148,
+                        268,
+                        12,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                      },
+                      "notes": [],
+                      "rankings": [
+                        {
+                          "label": "0",
+                          "score": 1
+                        },
+                        {
+                          "label": "1",
+                          "score": 0.640625
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "unaccountedButOwned": {
+                  "rule": "outer-border-bbox",
+                  "outerBorder": "white-component-1",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ]
+                }
+              },
+              {
+                "id": "badge-candidate:black-component-3:white-component-4",
+                "plate": {
+                  "part": {
+                    "id": "black-component-3",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                    "kind": "component",
+                    "polarity": "black",
+                    "label": 3,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 1176,
+                  "bbox": [
+                    306,
+                    582,
+                    48,
+                    32
+                  ]
+                },
+                "border": {
+                  "part": {
+                    "id": "white-component-4",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                    "kind": "component",
+                    "polarity": "white",
+                    "label": 4,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 564,
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ]
+                },
+                "digits": [
+                  {
+                    "part": {
+                      "id": "white-component-5",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 5,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 120,
+                        "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 120,
+                    "bbox": [
+                      312,
+                      588,
+                      6,
+                      20
+                    ]
+                  },
+                  {
+                    "part": {
+                      "id": "white-component-6",
+                      "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                      "kind": "component",
+                      "polarity": "white",
+                      "label": 6,
+                      "widthPx": 512,
+                      "heightPx": 920,
+                      "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                      "pixels": {
+                        "kind": "numbers",
+                        "length": 156,
+                        "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                      },
+                      "sourceTickId": null
+                    },
+                    "area": 156,
+                    "bbox": [
+                      328,
+                      588,
+                      12,
+                      20
+                    ]
+                  }
+                ],
+                "digitLoops": [
+                  {
+                    "plate": {
+                      "part": {
+                        "id": "black-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 3,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        306,
+                        582,
+                        48,
+                        32
+                      ]
+                    },
+                    "anchor": {
+                      "part": {
+                        "id": "white-component-5",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-5",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 5,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 120,
+                          "sha256": "ad0efbc6d1ab9494304e82304fdcf7a5cf30559822a89525e6e570574925493c"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 120,
+                      "bbox": [
+                        312,
+                        588,
+                        6,
+                        20
+                      ]
+                    },
+                    "matches": []
+                  },
+                  {
+                    "plate": {
+                      "part": {
+                        "id": "black-component-3",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 3,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        306,
+                        582,
+                        48,
+                        32
+                      ]
+                    },
+                    "anchor": {
+                      "part": {
+                        "id": "white-component-6",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 6,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 156,
+                          "sha256": "3480da71624faef28d1eea17d0a7bc8482c888159c2ca8fd175872424c2caf40"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 156,
+                      "bbox": [
+                        328,
+                        588,
+                        12,
+                        20
+                      ]
+                    },
+                    "matches": [
+                      {
+                        "part": {
+                          "id": "black-component-4",
+                          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                          "kind": "component",
+                          "polarity": "black",
+                          "label": 4,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 84,
+                            "sha256": "2042c75c08bf4d24ac66f26820de0062493caffa9d6d9880c8cfcc22187d6436"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 84,
+                        "bbox": [
+                          331,
+                          591,
+                          6,
+                          14
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
+                },
+                "reading": {
+                  "value": "10",
+                  "status": "read",
+                  "digits": [
+                    {
+                      "bbox": [
+                        312,
+                        588,
+                        6,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                      },
+                      "notes": [],
+                      "rankings": [
+                        {
+                          "label": "1",
+                          "score": 1
+                        },
+                        {
+                          "label": "0",
+                          "score": 0.640625
+                        }
+                      ]
+                    },
+                    {
+                      "bbox": [
+                        328,
+                        588,
+                        12,
+                        20
+                      ],
+                      "method": "cc",
+                      "normalized": {
+                        "kind": "numbers",
+                        "length": 200,
+                        "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                      },
+                      "notes": [],
+                      "rankings": [
+                        {
+                          "label": "0",
+                          "score": 1
+                        },
+                        {
+                          "label": "1",
+                          "score": 0.640625
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "unaccountedButOwned": {
+                  "rule": "outer-border-bbox",
+                  "outerBorder": "white-component-4",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ]
+                }
+              }
+            ],
+            "note": "14 array(s) truncated to the first 200 entries; original lengths: [2100, 2100, 1176, 1176, 1176, 1176, 1176, 1176, 768, 768, 768, 768, 564, 564]"
+          }
+        },
+        {
+          "id": "px.exp.lab.badges.px",
+          "calculation": {
+            "address": "fn.lab.s1.badges.ownedpixels",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "badges": "px:px.exp.lab.badges.objects",
+            "raster": "px:px.exp.lab.course.canonicalpixels"
+          },
+          "args": {},
+          "into": "px.exp.lab.badges.px",
+          "declared_consumes": [
+            "px:px.exp.lab.badges.objects",
+            "px:px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.badges.objects",
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_produces": [
+            "px.exp.lab.badges.px"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.badges.px",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "kind": "pixel-set",
+              "id": "badge-component-pixels",
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+              }
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [4200]"
+          }
+        },
+        {
+          "id": "px.exp.lab.badges.muted",
+          "calculation": {
+            "address": "fn.lab.s1.badges.mutedpixels",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "badges": "px:px.exp.lab.badges.objects",
+            "owned": "px:px.exp.lab.badges.px",
+            "raster": "px:px.exp.lab.course.canonicalpixels"
+          },
+          "args": {},
+          "into": "px.exp.lab.badges.muted",
+          "declared_consumes": [
+            "px:px.exp.lab.badges.objects",
+            "px:px.exp.lab.badges.px",
+            "px:px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.badges.objects",
+            "px.exp.lab.badges.px",
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_produces": [
+            "px.exp.lab.badges.muted"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.badges.muted",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "kind": "pixel-set",
+              "id": "unaccounted-but-owned",
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "b176d599d5100c36ba516384ea9b542296df267b0c6e1b6b5837142000ae4f74"
+              }
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [600]"
+          }
+        },
+        {
+          "id": "px.exp.lab.remaining.afterbadges",
+          "calculation": {
+            "address": "fn.lab.s1.badges.remainingpixels",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "owned": "px:px.exp.lab.badges.px",
+            "muted": "px:px.exp.lab.badges.muted",
+            "raster": "px:px.exp.lab.course.canonicalpixels"
+          },
+          "args": {},
+          "into": "px.exp.lab.remaining.afterbadges",
+          "declared_consumes": [
+            "px:px.exp.lab.badges.px",
+            "px:px.exp.lab.badges.muted",
+            "px:px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.badges.px",
+            "px.exp.lab.badges.muted",
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_produces": [
+            "px.exp.lab.remaining.afterbadges"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.remaining.afterbadges",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "kind": "pixel-set",
+              "id": "remaining-after-badges",
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "3aff9a6fb6509b8968896ebe61adb4c30173323aa5a8564336c4474b2f015a25"
+              }
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [466240]"
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.s1.maskcomponents.part.croppedraster": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s1.maskcomponents.part.blackmask",
+        "px.exp.lab.s1.maskcomponents.part.whitemask"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s1.maskcomponents.part.blackmask": {
+      "written_by": "px.exp.lab.s1.maskcomponents.part.blackmask",
+      "read_by": [
+        "px.exp.lab.s1.maskcomponents.part.blackcomponents"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.maskcomponents.part.blackcomponents": {
+      "written_by": "px.exp.lab.s1.maskcomponents.part.blackcomponents",
+      "read_by": [
+        "px.exp.lab.s1.badgeassembly.plates",
+        "px.exp.lab.s1.badgeassembly.digitloops"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.maskcomponents.part.whitemask": {
+      "written_by": "px.exp.lab.s1.maskcomponents.part.whitemask",
+      "read_by": [
+        "px.exp.lab.s1.maskcomponents.part.whitecomponents"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.maskcomponents.part.whitecomponents": {
+      "written_by": "px.exp.lab.s1.maskcomponents.part.whitecomponents",
+      "read_by": [
+        "px.exp.lab.s1.badgeassembly.plateborders",
+        "px.exp.lab.s1.badgeassembly.platedigits"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.badgeassembly.plates": {
+      "written_by": "px.exp.lab.s1.badgeassembly.plates",
+      "read_by": [
+        "px.exp.lab.s1.badgeassembly.plateborders",
+        "px.exp.lab.s1.badgeassembly.platedigits",
+        "px.exp.lab.s1.badgeassembly.badgecandidates"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.badgeassembly.plateborders": {
+      "written_by": "px.exp.lab.s1.badgeassembly.plateborders",
+      "read_by": [
+        "px.exp.lab.s1.badgeassembly.badgecandidates"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.badgeassembly.platedigits": {
+      "written_by": "px.exp.lab.s1.badgeassembly.platedigits",
+      "read_by": [
+        "px.exp.lab.s1.badgeassembly.digitloops",
+        "px.exp.lab.s1.badgeassembly.badgecandidates"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.badgeassembly.digitloops": {
+      "written_by": "px.exp.lab.s1.badgeassembly.digitloops",
+      "read_by": [
+        "px.exp.lab.s1.badgeassembly.badgecandidates"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.badgeassembly.badgecandidates": {
+      "written_by": "px.exp.lab.s1.badgeassembly.badgecandidates",
+      "read_by": [
+        "px.exp.lab.s1.whitedigits.prepared"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.whitedigits.prepared": {
+      "written_by": "px.exp.lab.s1.whitedigits.prepared",
+      "read_by": [
+        "px.exp.lab.s1.whitedigits.recognizedbadges"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.whitedigits.model": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s1.whitedigits.recognizedbadges"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s1.whitedigits.recognizedbadges": {
+      "written_by": "px.exp.lab.s1.whitedigits.recognizedbadges",
+      "read_by": [
+        "px.exp.lab.badges.objects"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.badges.objects": {
+      "written_by": "px.exp.lab.badges.objects",
+      "read_by": [
+        "px.exp.lab.badges.px",
+        "px.exp.lab.badges.muted"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.course.canonicalpixels": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.badges.px",
+        "px.exp.lab.badges.muted",
+        "px.exp.lab.remaining.afterbadges"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.badges.px": {
+      "written_by": "px.exp.lab.badges.px",
+      "read_by": [
+        "px.exp.lab.badges.muted",
+        "px.exp.lab.remaining.afterbadges"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.badges.muted": {
+      "written_by": "px.exp.lab.badges.muted",
+      "read_by": [
+        "px.exp.lab.remaining.afterbadges"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.remaining.afterbadges": {
+      "written_by": "px.exp.lab.remaining.afterbadges",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 15,
+    "hits": 6,
+    "computed": 9,
+    "wall_ms": null
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S0",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Decode",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s0.local.decode",
+          "calculation": {
+            "address": "fn.lab.s0.decodefullimage",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "source": "px:px.exp.lab.source.selectedinput"
+          },
+          "args": {},
+          "into": "px.exp.lab.s0.local.decode",
+          "declared_consumes": [
+            "px:px.exp.lab.source.selectedinput"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.source.selectedinput"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s0.local.decode"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s0.local.decode",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "imageId": "lab-fixture-20260911",
+              "widthPx": 512,
+              "heightPx": 1024,
+              "rgba": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "fe80edb05616e2c04a0ab91f1fcbb872290bc76dac2bd1f8c995ff3b74ca7625"
+              },
+              "sourceByteLength": 2097152,
+              "badges": [
+                {
+                  "border": [
+                    120,
+                    300,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    126,
+                    304,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      132,
+                      310,
+                      6,
+                      20
+                    ],
+                    [
+                      148,
+                      310,
+                      12,
+                      20
+                    ]
+                  ],
+                  "loop": [
+                    151,
+                    313,
+                    6,
+                    14
+                  ]
+                },
+                {
+                  "border": [
+                    300,
+                    620,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    306,
+                    624,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      312,
+                      630,
+                      6,
+                      20
+                    ],
+                    [
+                      328,
+                      630,
+                      12,
+                      20
+                    ]
+                  ],
+                  "loop": [
+                    331,
+                    633,
+                    6,
+                    14
+                  ]
+                }
+              ]
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [2097152]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Crop",
+      "invocations": [
+        {
+          "id": "px.exp.lab.source.cropbounds",
+          "calculation": {
+            "address": "fn.lab.s0.findchromebounds",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "image": "px:px.exp.lab.s0.local.decode"
+          },
+          "args": {},
+          "into": "px.exp.lab.source.cropbounds",
+          "declared_consumes": [
+            "px:px.exp.lab.s0.local.decode"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s0.local.decode"
+          ],
+          "actual_produces": [
+            "px.exp.lab.source.cropbounds"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.source.cropbounds",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "insets": {
+                "top": 42,
+                "right": 0,
+                "bottom": 62,
+                "left": 0
+              },
+              "source": "single-phone-entropy"
+            },
+            "note": null
+          }
+        },
+        {
+          "id": "px.exp.lab.course.canonicalpixels",
+          "calculation": {
+            "address": "fn.lab.s0.applycrop",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "image": "px:px.exp.lab.s0.local.decode",
+            "bounds": "px:px.exp.lab.source.cropbounds"
+          },
+          "args": {},
+          "into": "px.exp.lab.course.canonicalpixels",
+          "declared_consumes": [
+            "px:px.exp.lab.s0.local.decode",
+            "px:px.exp.lab.source.cropbounds"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s0.local.decode",
+            "px.exp.lab.source.cropbounds"
+          ],
+          "actual_produces": [
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.course.canonicalpixels",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "imageId": "composite:fe5b20263d8a371792",
+              "widthPx": 512,
+              "heightPx": 920,
+              "rgba": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "6ce11b9d57068df5dc6226e96b00d631839c67288cca8fb798cf55f43373c8c9"
+              }
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [1884160]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Cache",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s0.cachereceipt",
+          "calculation": {
+            "address": "fn.lab.s0.cachefullimage",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "image": "px:px.exp.lab.s0.local.decode"
+          },
+          "args": {},
+          "into": "px.exp.lab.s0.cachereceipt",
+          "declared_consumes": [
+            "px:px.exp.lab.s0.local.decode"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s0.local.decode"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s0.cachereceipt"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s0.cachereceipt",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "cached": "lab-fixture-20260911",
+              "at": "last",
+              "widthPx": 512,
+              "heightPx": 1024
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.source.selectedinput": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s0.local.decode"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s0.local.decode": {
+      "written_by": "px.exp.lab.s0.local.decode",
+      "read_by": [
+        "px.exp.lab.source.cropbounds",
+        "px.exp.lab.course.canonicalpixels",
+        "px.exp.lab.s0.cachereceipt"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.source.cropbounds": {
+      "written_by": "px.exp.lab.source.cropbounds",
+      "read_by": [
+        "px.exp.lab.course.canonicalpixels"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.course.canonicalpixels": {
+      "written_by": "px.exp.lab.course.canonicalpixels",
+      "read_by": [],
+      "preexisting": false
+    },
+    "px.exp.lab.s0.cachereceipt": {
+      "written_by": "px.exp.lab.s0.cachereceipt",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 4,
+    "hits": 1,
+    "computed": 3,
+    "wall_ms": null
+  }
+}
