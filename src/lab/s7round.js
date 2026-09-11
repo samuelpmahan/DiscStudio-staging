@@ -1,14 +1,15 @@
 /**
- * S6, invented: Round. The route that respects the map S5 drew.
+ * S7 Pathfinding, second half: the Round. The route that respects the map the
+ * course half drew.
  *
- *   consumes  px.course.graph     (S5: the holes in play order, the edges of the
+ *   consumes  px.course.graph     (the course half: the holes in play order, the edges of the
  *                                  round, the cell grid and the walkable cells)
- *             px.course.summary   (S5: what is not in the course)
+ *             px.course.summary   (the course half: what is not in the course)
  *   produces  px.round.legs       one leg per edge: its cells, its length, its cost
  *             px.round.path       the whole round as one path
  *             px.round.summary    what was walked, what was not, and why
  *
- * The search is A* over S5's cells, and every part of it is fixed in advance:
+ * The search is A* over the course's cells, and every part of it is fixed in advance:
  *
  *   moves     the eight neighbours, orthogonal cost 10 and diagonal cost 14
  *             (integers, so two runs add up to the same number on any machine);
@@ -25,22 +26,22 @@
  * The one thing this Stage may not do is invent a leg. A tee with no walkable
  * path to its basket is reported `reachable: false` with the cells it could
  * reach, and the round carries it as unreachable. A straight line between the
- * anchors would cross the obstacle S5 found, which is precisely the claim
+ * anchors would cross the obstacle the course half found, which is precisely the claim
  * `noLegCrossesAnObstacle` refuses.
  */
 import { labAddress, labDocument } from './address.js';
 import { compiledStage } from './stage-sources.js';
 import { compileMermaidPcr, lowerToPql } from './mermaid.js';
-import { round3 } from './s4.js';
-import { cellCenter, cellOf } from './s5.js';
+import { round3 } from './holes-nearest.js';
+import { cellCenter, cellOf } from './s7course.js';
 
-export const S6_ADDRESSES = {
+export const ROUND_ADDRESSES = {
   legs: labAddress('px.round.legs'),
   path: labAddress('px.round.path'),
   summary: labAddress('px.round.summary'),
-  ledger: 'px.exp.lab.s6.roundledger',
-  check: 'px.exp.lab.s6.roundcheck',
-  vsStraight: 'px.exp.lab.s6.vsstraight'
+  ledger: 'px.exp.lab.s7.roundledger',
+  check: 'px.exp.lab.s7.roundcheck',
+  vsStraight: 'px.exp.lab.s7.vsstraight'
 };
 
 export const ORTHOGONAL = 10, DIAGONAL = 14;
@@ -212,7 +213,7 @@ export function compareWithStraight({ legs, straight, graph }) {
   return {
     for: 'what respecting the obstacle map costs, measured against the straight-leg route this port landed first',
     straight: { address: labAddress('px.route.labfixture'), objective: straight.objective, totalLengthPx: straight.totalLengthPx },
-    routed: { address: S6_ADDRESSES.path, objective: 'the same order over the same anchors, searched over the walkable cells' },
+    routed: { address: ROUND_ADDRESSES.path, objective: 'the same order over the same anchors, searched over the walkable cells' },
     sameHoles: JSON.stringify(straight.holes.map(hole => hole.number)) === JSON.stringify(graph.order),
     sameAnchors: straight.legs.every(entry => graph.edges.some(edge => edge.kind === entry.kind && edge.from === entry.from.id && edge.to === entry.to.id)),
     legs: rows,
@@ -224,72 +225,72 @@ export function compareWithStraight({ legs, straight, graph }) {
   };
 }
 
-export function registerS6(lab) {
+export function registerRound(lab) {
   lab.register(labAddress('fn.Round.legs'), roundLegs);
   lab.register(labAddress('fn.Round.path'), roundPath);
   lab.register(labAddress('fn.Round.summary'), roundSummary);
-  lab.register('fn.lab.s6.accountround', accountRound);
-  lab.register('fn.lab.s6.checkround', checkRound);
-  lab.register('fn.lab.s6.comparewithstraight', compareWithStraight);
+  lab.register('fn.lab.s7.accountround', accountRound);
+  lab.register('fn.lab.s7.checkround', checkRound);
+  lab.register('fn.lab.s7.comparewithstraight', compareWithStraight);
 }
 
-export const S6_CONTRACT = {
-  stage: 'S6', name: 'Round',
-  for: 'the round actually walked: a deterministic search from each tee to its basket and on to the next tee, over the cells S5 says are walkable',
+export const ROUND_CONTRACT = {
+  stage: 'S7', name: 'Round',
+  for: 'the round actually walked: a deterministic search from each tee to its basket and on to the next tee, over the cells the course half says are walkable',
   consumes: [labAddress('px.course.graph'), labAddress('px.course.summary')],
-  produces: [S6_ADDRESSES.legs, S6_ADDRESSES.path, S6_ADDRESSES.summary],
+  produces: [ROUND_ADDRESSES.legs, ROUND_ADDRESSES.path, ROUND_ADDRESSES.summary],
   ticks: ['Round.legs', 'Round.path', 'Round.summary'],
   invariants: ['noLegCrossesAnObstacle', 'everyEdgeIsALeg', 'unreachableIsReportedNotStraightened', 'everyLegIsContiguous', 'everyLegEndsOnItsAnchors', 'aBentLegIsLongerThanItsStraightLine'],
   search: { algorithm: 'A*', moves: 8, orthogonalCost: ORTHOGONAL, diagonalCost: DIAGONAL, heuristic: 'octile', cornerCutting: false, tieBreak: '(f, g, cell index)', clock: 'none', random: 'none' }
 };
 
-export function s6Ticks() {
+export function roundTicks() {
   return [
-    { name: 'Round.legs', Calculations: [{ call: labAddress('fn.Round.legs'), with: { graph: labAddress('px.course.graph') }, args: {}, into: S6_ADDRESSES.legs }] },
-    { name: 'Round.path', Calculations: [{ call: labAddress('fn.Round.path'), with: { legs: S6_ADDRESSES.legs, graph: labAddress('px.course.graph') }, args: {}, into: S6_ADDRESSES.path }] },
-    { name: 'Round.summary', Calculations: [{ call: labAddress('fn.Round.summary'), with: { path: S6_ADDRESSES.path, legs: S6_ADDRESSES.legs, course: labAddress('px.course.summary') }, args: {}, into: S6_ADDRESSES.summary }] }
+    { name: 'Round.legs', Calculations: [{ call: labAddress('fn.Round.legs'), with: { graph: labAddress('px.course.graph') }, args: {}, into: ROUND_ADDRESSES.legs }] },
+    { name: 'Round.path', Calculations: [{ call: labAddress('fn.Round.path'), with: { legs: ROUND_ADDRESSES.legs, graph: labAddress('px.course.graph') }, args: {}, into: ROUND_ADDRESSES.path }] },
+    { name: 'Round.summary', Calculations: [{ call: labAddress('fn.Round.summary'), with: { path: ROUND_ADDRESSES.path, legs: ROUND_ADDRESSES.legs, course: labAddress('px.course.summary') }, args: {}, into: ROUND_ADDRESSES.summary }] }
   ];
 }
 
-export function s6Document(lab) { return lab.document('S6', s6Ticks()); }
+export function roundDocument(lab) { return lab.document('S7.round', roundTicks()); }
 
-/** `stages/S6.mmd`, compiled: the same Calculations over the same addresses in the same order. */
-export function compiledS6() { return compiledStage('S6', compileMermaidPcr, lowerToPql, labDocument); }
+/** `stages/S7.round.mmd`, compiled: the same Calculations over the same addresses in the same order. */
+export function compiledRound() { return compiledStage('S7.round', compileMermaidPcr, lowerToPql, labDocument); }
 
-export function s6InvariantDocument(lab) {
-  return lab.document('S6.invariants', [
-    { name: 'AccountRound', Calculations: [{ call: 'fn.lab.s6.accountround', with: { legs: S6_ADDRESSES.legs, path: S6_ADDRESSES.path, graph: labAddress('px.course.graph') }, args: {}, into: S6_ADDRESSES.ledger }] },
-    { name: 'CheckRound', Calculations: [{ call: 'fn.lab.s6.checkround', with: { ledger: S6_ADDRESSES.ledger, legs: S6_ADDRESSES.legs, path: S6_ADDRESSES.path, graph: labAddress('px.course.graph') }, args: {}, into: S6_ADDRESSES.check }] }
+export function roundInvariantDocument(lab) {
+  return lab.document('S7.round.invariants', [
+    { name: 'AccountRound', Calculations: [{ call: 'fn.lab.s7.accountround', with: { legs: ROUND_ADDRESSES.legs, path: ROUND_ADDRESSES.path, graph: labAddress('px.course.graph') }, args: {}, into: ROUND_ADDRESSES.ledger }] },
+    { name: 'CheckRound', Calculations: [{ call: 'fn.lab.s7.checkround', with: { ledger: ROUND_ADDRESSES.ledger, legs: ROUND_ADDRESSES.legs, path: ROUND_ADDRESSES.path, graph: labAddress('px.course.graph') }, args: {}, into: ROUND_ADDRESSES.check }] }
   ]);
 }
 
 /** The comparison with the straight route, as its own one-Tick composition over both rounds' Parts. */
-export function s6CompareDocument(lab, { course = 'labfixture' } = {}) {
-  return lab.document('S6.vs-straight', [
-    { name: 'CompareWithStraight', Calculations: [{ call: 'fn.lab.s6.comparewithstraight', with: { legs: S6_ADDRESSES.legs, straight: labAddress(`px.route.${course}`), graph: labAddress('px.course.graph') }, args: {}, into: S6_ADDRESSES.vsStraight }] }
+export function roundCompareDocument(lab, { course = 'labfixture' } = {}) {
+  return lab.document('S7.vs-straight', [
+    { name: 'CompareWithStraight', Calculations: [{ call: 'fn.lab.s7.comparewithstraight', with: { legs: ROUND_ADDRESSES.legs, straight: labAddress(`px.route.${course}`), graph: labAddress('px.course.graph') }, args: {}, into: ROUND_ADDRESSES.vsStraight }] }
   ]);
 }
 
 /** The Stage as the studio runs it; the demo decides how a round is drawn. */
-export function s6Spec() {
+export function s7Spec() {
   return {
-    key: 's6', stage: 'S6', title: 'Round', composition: 'lab-s6',
-    about: 'the round walked over the cells S5 says are walkable: every leg searched, nothing straightened, an unreachable basket reported as one.',
-    needs: S6_CONTRACT.consumes, produces: S6_CONTRACT.produces,
-    register: registerS6, ticks: lab => s6Document(lab).Ticks
+    key: 's7', stage: 'S7', title: 'Round', composition: 'lab-s7',
+    about: 'the round walked over the cells the course half says are walkable: every leg searched, nothing straightened, an unreachable basket reported as one.',
+    needs: ROUND_CONTRACT.consumes, produces: ROUND_CONTRACT.produces,
+    register: registerRound, ticks: lab => roundDocument(lab).Ticks
   };
 }
 
-export function runS6(lab, { compareWith = null } = {}) {
-  const composition = s6Document(lab), { run, receipt } = lab.run('S6', composition);
-  const invariants = s6InvariantDocument(lab);
-  lab.run('S6.invariants', invariants);
-  const comparison = compareWith ? s6CompareDocument(lab, { course: compareWith }) : null;
-  if (comparison) lab.run('S6.vs-straight', comparison);
+export function runRound(lab, { compareWith = null } = {}) {
+  const composition = roundDocument(lab), { run, receipt } = lab.run('S7.round', composition);
+  const invariants = roundInvariantDocument(lab);
+  lab.run('S7.round.invariants', invariants);
+  const comparison = compareWith ? roundCompareDocument(lab, { course: compareWith }) : null;
+  if (comparison) lab.run('S7.vs-straight', comparison);
   return {
     run, receipt, composition, invariants, comparison,
-    legs: lab.get(S6_ADDRESSES.legs), path: lab.get(S6_ADDRESSES.path), summary: lab.get(S6_ADDRESSES.summary),
-    ledger: lab.get(S6_ADDRESSES.ledger), check: lab.get(S6_ADDRESSES.check),
-    vsStraight: comparison ? lab.get(S6_ADDRESSES.vsStraight) : null
+    legs: lab.get(ROUND_ADDRESSES.legs), path: lab.get(ROUND_ADDRESSES.path), summary: lab.get(ROUND_ADDRESSES.summary),
+    ledger: lab.get(ROUND_ADDRESSES.ledger), check: lab.get(ROUND_ADDRESSES.check),
+    vsStraight: comparison ? lab.get(ROUND_ADDRESSES.vsStraight) : null
   };
 }

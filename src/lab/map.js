@@ -9,17 +9,17 @@ import { registerS0, runS0 } from './s0.js';
 import { registerS1, runS1, s1YamlDocument, s1MermaidDocument } from './s1.js';
 import { registerS2, runS2 } from './s2.js';
 import { registerS3, runS3 } from './s3.js';
-import { registerS4, runS4 } from './s4.js';
-import { registerS5, runS5 } from './s5.js';
-import { registerS6, runS6 } from './s6.js';
+import { registerHolesNearest, runHolesNearest } from './holes-nearest.js';
+import { registerCourse, runCourse } from './s7course.js';
+import { registerRound, runRound } from './s7round.js';
 import { registerRoute, runRoute } from './route.js';
 import { registerPath, pathDocument, putCourses } from './path.js';
 import { fixtureCapture, fixtureBasis } from './fixtures.js';
 
 export function buildMap() {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerS5(lab); registerS6(lab); registerRoute(lab); registerPath(lab);
-  // The course fixture: the S0..S3 capture plus the two elements S4 and above
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerCourse(lab); registerRound(lab); registerRoute(lab); registerPath(lab);
+  // The course fixture: the S0..S3 capture plus the two elements the later Stages
   // need -- a hole whose basket is missing, and structure no Stage object owns.
   const fixture = { hole11: true, obstacle: true };
   lab.put('px.exp.lab.fixture.basis', fixtureBasis(fixture));
@@ -27,27 +27,27 @@ export function buildMap() {
   const s1 = runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
   const s2 = runS2(lab);
   const s3 = runS3(lab);
-  const s4 = runS4(lab);
-  const s5 = runS5(lab);
-  // The straight round first, so S6 can be compared against what it replaces.
+  const s4 = runHolesNearest(lab);
+  const s5 = runCourse(lab);
+  // The straight round first, so the searched round can be compared against what it replaces.
   const round = runRoute(lab, { course: 'labfixture' });
-  const s6 = runS6(lab, { compareWith: 'labfixture' });
+  const s6 = runRound(lab, { compareWith: 'labfixture' });
   putCourses(lab, ['DashsTrack']);
   const path = pathDocument(lab, { course: 'dashstrack', name: 'route', from: 'h1', to: 'h9' });
   lab.run(path.composition.PrincipleComponentRender, path.composition);
-  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'S4', 'S4.invariants', 'S5', 'S5.invariants', 'S6', 'S6.invariants', 'S6.vs-straight', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
+  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'HolesByNearestAnchor', 'HolesByNearestAnchor.invariants', 'S7.course', 'S7.course.invariants', 'S7.round', 'S7.round.invariants', 'S7.vs-straight', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
 
   lab.put('px.exp.lab.map', {
-    for: 'what the ChainSpot S0/S1/Mermaid/traverse port reached in one sprint, and what it did not',
+    for: 'what the ChainSpot S0..S3 port and the Stages invented on top of it reached in one sprint, and what they did not',
     built: lab.addresses().filter(address => address.startsWith('px.exp.lab.')),
     ran: [
       { what: 'S0', document: 'the compiled S0.mmd plus the cache Tick S0.pcr.yaml names last', evidence: 'tests/lab-s0.test.js' },
       { what: 'S1', document: "the LAB's own PrincipleComponentRender.yaml, read by readPql", evidence: 'tests/lab-s1.test.js' },
       { what: 'S2', document: 'the document its three OperationSpecs declare, on S1 produce', evidence: 'tests/lab-s2.test.js' },
       { what: 'S3', document: 'the document its three OperationSpecs declare, plus the Python analogue\'s two-Tick accounting PCR', evidence: 'tests/lab-s3.test.js' },
-      { what: 'S4 (invented)', document: 'Holes: Hole.readNumbers -> Hole.bindAnchors -> Hole.assemble -> Hole.unplaced over the S1/S2/S3 produce Parts, plus the S4.invariants accounting PCR that is its oracle; stages/S4.mmd compiles to the same document', evidence: 'tests/lab-s4.test.js' },
-      { what: 'S5 (invented)', document: 'Course: Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S5.mmd compiles to the same document', evidence: 'tests/lab-s5.test.js' },
-      { what: 'S6 (invented)', document: "Round: Round.legs -> Round.path -> Round.summary, an A* over S5's walkable cells (integer costs 10/14, octile heuristic, no corner cutting, ties by (f, g, cell), no clock and no random), plus S6.invariants and the S6.vs-straight comparison with the route task 114 landed; stages/S6.mmd compiles to the same document", evidence: 'tests/lab-s6.test.js' },
+      { what: 'HolesByNearestAnchor (invented, a fallback)', document: 'Hole.readNumbers -> Hole.bindAnchors -> Hole.assemble -> Hole.unplaced over the S1/S2/S3 produce Parts, plus its invariants PCR; superseded by the tee-to-badge ray the owner set as S5/S6, kept because a course where no ray resolves still has to say something', evidence: 'tests/lab-holes-nearest.test.js' },
+      { what: 'S7 Pathfinding, the course half (invented)', document: 'Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S7.course.mmd compiles to the same document', evidence: 'tests/lab-s7course.test.js' },
+      { what: 'S7 Pathfinding, the round half (invented)', document: "Round.legs -> Round.path -> Round.summary, an A* over the course's walkable cells (integer costs 10/14, octile heuristic, no corner cutting, ties by (f, g, cell), no clock and no random), plus S7.round.invariants and the S7.vs-straight comparison with the route task 114 landed; stages/S7.round.mmd compiles to the same document", evidence: 'tests/lab-s7round.test.js' },
       { what: 'mermaid', document: 'S1.mmd compiles to the same document as the YAML (structural digest)', evidence: 'tests/lab-mermaid.test.js' },
       { what: 'pathfinding (the course)', document: 'Anchors -> Order -> Route -> Settle over the Stage Parts: badges order the holes, tees and baskets anchor them', evidence: 'tests/lab-route.test.js' },
       { what: 'pathfinding (the hex walk)', document: "Anchors -> Start -> Search -> Settle over a course manifest; kept as the LAB's human-in-the-loop tool for a raster no Stage has read yet", evidence: 'tests/lab-path.test.js' }
@@ -63,9 +63,9 @@ export function buildMap() {
       { address: 'px.exp.lab.path.truth', why: 'the LAB anchors T/N/B come from the annotation truth file, which needs the corpus; the port searches the blind per-hole viewport the manifest itself carries' }
     ],
     next: [
-      { what: 'a cost per cell instead of a boolean, and a leg that prefers fairway', for: 'S5 already classifies every pixel; the only reason walkable is 0 or 1 is that the fixture has one kind of obstacle' },
+      { what: 'a cost per cell instead of a boolean, and a leg that prefers fairway', for: 'the course half already classifies every pixel; the only reason walkable is 0 or 1 is that the fixture has one kind of obstacle' },
       { what: 'a line-of-sight smoothing pass over a leg', for: 'an unobstructed leg pays about 7% for being a cell path, and the comparison Part measures exactly that' },
-      { what: 'S7: the round as a score -- throws, not pixels', for: 'S6 says how far the round walks; nobody has said what a throw is, and the LAB has no Stage for it either' },
+      { what: 'S4 recovery, S5 the tee-to-badge ray, S6 the straight holes', for: "the owner's numbering (2026-09-11): a tee points at its badge and three points make a line, so a hole is resolved by geometry the picture carries rather than by nearest-anchor distance; S7 pathfinding then runs on those holes" },
       { what: 'run the TypeScript S1 on the same fixture and compare value by value', for: 'the port is proved structurally and by invariant, never against the LAB running' },
       { what: 'an `into: []` effect Calculation, or an oc. equivalent in the JS core', for: 'S0 cache is a Tick the studio cannot express without inventing a Part' },
       { what: 'a binding that reads a sibling result with no address', for: "the Mermaid S0's FullImage locality is a property the studio's grammar cannot hold" },
@@ -99,6 +99,7 @@ export function buildMap() {
   finding(lab, 's6.unreachableisaresult', { kind: 'strength', for: 'the answer a search must be allowed to give', text: "A basket with no walkable path to it makes a leg with `reachable: false`, no cells, no length, the reason, and the count of cells the search did reach; the round carries it under `unreachable` and its length excludes it. The invariant `unreachableIsReportedNotStraightened` refuses the alternative -- a straight line drawn across the thing that blocked it -- and the test builds a sealed room to prove the refusal fires." });
   finding(lab, 's6.determinismisdesigned', { kind: 'strength', for: 'a search that has to give the same answer on two machines', text: "Integer step costs (10 orthogonal, 14 diagonal) and an octile heuristic in the same units mean no float ever decides an ordering; the frontier is chosen by (f, g, cell index), which is a total order, and the eight moves are visited in a fixed order. No clock, no random, no Map insertion order. Two independent runs of the whole Stage produce the same cells, the same cost and the same length, which is the test." });
   finding(lab, 'stage.inventedinthelabgrammar', { kind: 'finding', for: 'whether the LAB\'s stage grammar carries a Stage it never wrote', text: "S4, S5 and S6 are not ports: nothing in ChainSpot corresponds to them. They were written in the LAB's own grammar anyway -- a contract naming consumes and produces, Ticks whose names are the OperationSpecs, one published Part per Calculation, a `has` provenance block on each constructed object, an accounting PCR as the oracle where no reference run exists, and a .mmd that compiles to the same document. Every one of those fitted without being bent. The one thing the grammar did not carry is the choice S5 had to make about what an obstacle IS, which is why that choice is a field in the Part rather than a predicate in the code." });
+  finding(lab, 'holes.nearestisafallback', { kind: 'finding', for: 'why the first rule this port invented for assembling a hole is kept but not numbered', text: "The nearest-free-anchor binding was built as \"S4\" and then superseded on the same day: the owner's numbering makes S4 recovery, S5 the tee-to-badge ray (a tee POINTS at its badge), S6 the straight holes (three points make a line, so the basket is on the ray beyond the badge) and S7 pathfinding. The difference is not a refinement, it is a different kind of claim: nearest-anchor is a guess that is always available, the ray is evidence the picture actually carries and is sometimes absent. So the fallback keeps its Stage shape and its invariants under the name HolesByNearestAnchor, unnumbered, and the two rules disagreeing on a hole is a thing a reader can see rather than a thing that never happens.", proposal: 'when both run, publish the disagreement as its own Part: a hole the ray resolved one way and the distance another is the most interesting object on the course.' });
   finding(lab, 's1.recognition', { kind: 'friction', for: 'the one Calculation of S1 that is reduced rather than ported', text: 'fn.s1.whiteDigits.prepare/match segment glyphs with knobs and score them with a logistic model asset (digits/logisticInference, assets/logistic.json). The port normalizes to the same digitW x digitH grid and scores against template Parts; the reading shape (value, status, per-digit rankings) is the LAB\'s.' });
   lab.save('lab');
   return lab;

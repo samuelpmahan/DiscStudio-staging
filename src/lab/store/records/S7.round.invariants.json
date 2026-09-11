@@ -1,6 +1,6 @@
 {
   "schema": "pyto-run-record@1",
-  "pcr": "S6.invariants",
+  "pcr": "S7.round.invariants",
   "source": {
     "runtime": "discstudio",
     "version": null,
@@ -12,9 +12,9 @@
       "name": "AccountRound",
       "invocations": [
         {
-          "id": "px.exp.lab.s6.roundledger",
+          "id": "px.exp.lab.s7.roundledger",
           "calculation": {
-            "address": "fn.lab.s6.accountround",
+            "address": "fn.lab.s7.accountround",
             "implementation_sha256": null,
             "identity_scope": "registered-address-and-revision:1"
           },
@@ -24,7 +24,7 @@
             "graph": "px:px.exp.lab.course.graph"
           },
           "args": {},
-          "into": "px.exp.lab.s6.roundledger",
+          "into": "px.exp.lab.s7.roundledger",
           "declared_consumes": [
             "px:px.exp.lab.round.legs",
             "px:px.exp.lab.round.path",
@@ -36,11 +36,11 @@
             "px.exp.lab.course.graph"
           ],
           "actual_produces": [
-            "px.exp.lab.s6.roundledger"
+            "px.exp.lab.s7.roundledger"
           ],
           "writes": [
             {
-              "address": "px.exp.lab.s6.roundledger",
+              "address": "px.exp.lab.s7.roundledger",
               "kind": "new-address"
             }
           ],
@@ -70,38 +70,38 @@
       "name": "CheckRound",
       "invocations": [
         {
-          "id": "px.exp.lab.s6.roundcheck",
+          "id": "px.exp.lab.s7.roundcheck",
           "calculation": {
-            "address": "fn.lab.s6.checkround",
+            "address": "fn.lab.s7.checkround",
             "implementation_sha256": null,
             "identity_scope": "registered-address-and-revision:1"
           },
           "inputs": {
-            "ledger": "px:px.exp.lab.s6.roundledger",
+            "ledger": "px:px.exp.lab.s7.roundledger",
             "legs": "px:px.exp.lab.round.legs",
             "path": "px:px.exp.lab.round.path",
             "graph": "px:px.exp.lab.course.graph"
           },
           "args": {},
-          "into": "px.exp.lab.s6.roundcheck",
+          "into": "px.exp.lab.s7.roundcheck",
           "declared_consumes": [
-            "px:px.exp.lab.s6.roundledger",
+            "px:px.exp.lab.s7.roundledger",
             "px:px.exp.lab.round.legs",
             "px:px.exp.lab.round.path",
             "px:px.exp.lab.course.graph"
           ],
           "actual_consumes": [
-            "px.exp.lab.s6.roundledger",
+            "px.exp.lab.s7.roundledger",
             "px.exp.lab.round.legs",
             "px.exp.lab.round.path",
             "px.exp.lab.course.graph"
           ],
           "actual_produces": [
-            "px.exp.lab.s6.roundcheck"
+            "px.exp.lab.s7.roundcheck"
           ],
           "writes": [
             {
-              "address": "px.exp.lab.s6.roundcheck",
+              "address": "px.exp.lab.s7.roundcheck",
               "kind": "new-address"
             }
           ],
@@ -140,36 +140,36 @@
     "px.exp.lab.round.legs": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s6.roundledger",
-        "px.exp.lab.s6.roundcheck"
+        "px.exp.lab.s7.roundledger",
+        "px.exp.lab.s7.roundcheck"
       ],
       "preexisting": true
     },
     "px.exp.lab.round.path": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s6.roundledger",
-        "px.exp.lab.s6.roundcheck"
+        "px.exp.lab.s7.roundledger",
+        "px.exp.lab.s7.roundcheck"
       ],
       "preexisting": true
     },
     "px.exp.lab.course.graph": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s6.roundledger",
-        "px.exp.lab.s6.roundcheck"
+        "px.exp.lab.s7.roundledger",
+        "px.exp.lab.s7.roundcheck"
       ],
       "preexisting": true
     },
-    "px.exp.lab.s6.roundledger": {
-      "written_by": "px.exp.lab.s6.roundledger",
+    "px.exp.lab.s7.roundledger": {
+      "written_by": "px.exp.lab.s7.roundledger",
       "read_by": [
-        "px.exp.lab.s6.roundcheck"
+        "px.exp.lab.s7.roundcheck"
       ],
       "preexisting": false
     },
-    "px.exp.lab.s6.roundcheck": {
-      "written_by": "px.exp.lab.s6.roundcheck",
+    "px.exp.lab.s7.roundcheck": {
+      "written_by": "px.exp.lab.s7.roundcheck",
       "read_by": [],
       "preexisting": false
     }

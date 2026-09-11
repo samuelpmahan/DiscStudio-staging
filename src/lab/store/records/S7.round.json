@@ -1,6 +1,6 @@
 {
   "schema": "pyto-run-record@1",
-  "pcr": "S6",
+  "pcr": "S7.round",
   "source": {
     "runtime": "discstudio",
     "version": null,
