@@ -76,6 +76,19 @@ def cases() -> list[dict]:
     case("eig", "spd_6", {"a": S6}, "numpy.linalg.eigh",
          lambda: (lambda w, v: {"eigenvalues": w.tolist(), "eigenvectors": _sign(v).tolist()})(*np.linalg.eigh(np.asarray(S6))), 1e-7)
     case("svd", "6x4", {"a": B64}, "numpy.linalg.svd", lambda: np.linalg.svd(np.asarray(B64), compute_uv=False).tolist(), 1e-8)
+    case("norm", "spd_fro", {"a": S6, "ord": "fro"}, "numpy.linalg.norm",
+         lambda: float(np.linalg.norm(np.asarray(S6), ord="fro")), 1e-9)
+    case("norm", "spd_1", {"a": S6, "ord": 1}, "numpy.linalg.norm",
+         lambda: float(np.linalg.norm(np.asarray(S6), ord=1)), 1e-9)
+    case("norm", "spd_inf", {"a": S6, "ord": "inf"}, "numpy.linalg.norm",
+         lambda: float(np.linalg.norm(np.asarray(S6), ord=np.inf)), 1e-9)
+    case("norm", "v64_2", {"a": V64, "ord": 2}, "numpy.linalg.norm",
+         lambda: float(np.linalg.norm(np.asarray(V64), ord=2)), 1e-9)
+    case("cholesky", "spd_6", {"a": S6}, "numpy.linalg.cholesky",
+         lambda: {"shape": [6, 6], "values": np.linalg.cholesky(np.asarray(S6)).tolist()}, 1e-8)
+    case("inv", "spd_6", {"a": S6}, "numpy.linalg.inv",
+         lambda: {"shape": [6, 6], "values": np.linalg.inv(np.asarray(S6)).tolist()}, 1e-7)
+    case("trace", "spd_6", {"a": S6}, "numpy.trace", lambda: float(np.trace(np.asarray(S6))))
     case("fft", "v64", {"values": V64}, "numpy.fft.fft",
          lambda: (lambda out: {"real": out.real.tolist(), "imag": out.imag.tolist()})(np.fft.fft(np.asarray(V64))), 1e-8)
     return out
@@ -92,34 +105,79 @@ def _sign(vectors):
     return out
 
 
+# --- benchmark sizes ------------------------------------------------------------
+#
+# one triple per op, not one triple for all of them: the pure-python engine of a
+# cubic op and the pure-python engine of a linear one stop being measurable at
+# very different n, and a benchmark nobody can run on every engine compares
+# nothing. `size` is the address segment and the scale knob; `shape_of` records
+# what it actually became, so two benchmarks are only compared when their
+# `inputs_sha256` agree.
+
+SIZES_BY_OP = {
+    "matmul": (8, 24, 64),
+    "solve": (8, 32, 96),
+    "lstsq": (16, 48, 128),
+    "svd": (16, 48, 128),
+    "eig": (4, 12, 32),
+    "pairwise": (16, 64, 192),
+    "fft": (256, 1024, 4096),
+    "cumsum": (1024, 16384, 131072),
+    "sort": (1024, 16384, 131072),
+    "argsort": (1024, 16384, 131072),
+    "select_k": (1024, 16384, 131072),
+    "histogram": (1024, 16384, 131072),
+    "norm": (8, 32, 96),
+    "cholesky": (8, 32, 96),
+    "inv": (8, 32, 96),
+    "trace": (8, 32, 96),
+}
+
+
+def sizes_for(op: str) -> tuple[int, ...]:
+    return SIZES_BY_OP[op]
+
+
+def repeats_for(size: int) -> int:
+    """fewer repeats where one run is already expensive; the part records n."""
+    return 7 if size <= 1024 else (5 if size <= 16384 else 3)
+
+
+def shape_of(args) -> list:
+    def measure(value):
+        if isinstance(value, list):
+            return [len(value)] + (measure(value[0]) if value and isinstance(value[0], list) else [])
+        return []
+
+    return [[key] + measure(value) for key, value in sorted(args.items()) if isinstance(value, list)]
+
+
 def bench_inputs(op: str, size: int):
-    """the three sizes every op is benchmarked at, as the op's own arguments."""
+    """the op's own arguments at `size`, drawn from a seed so a rerun is the same run."""
     import numpy as np
 
     rng = np.random.default_rng(SEED + size)
-    if op in ("matmul",):
-        n = max(2, int(round(size ** 0.5)))
-        return {"a": rng.standard_normal((n, n)).tolist(), "b": rng.standard_normal((n, n)).tolist()}
-    if op in ("solve", "eig"):
-        n = max(2, int(round(size ** 0.5)))
-        base = rng.standard_normal((n, n))
-        a = (base @ base.T + n * np.eye(n)).tolist()
-        return {"a": a} if op == "eig" else {"a": a, "b": rng.standard_normal(n).tolist()}
-    if op in ("lstsq", "svd"):
-        n = max(4, int(round(size ** 0.5)))
-        a = rng.standard_normal((n, max(2, n // 2))).tolist()
-        return {"a": a} if op == "svd" else {"a": a, "b": rng.standard_normal(n).tolist()}
+    if op == "matmul":
+        return {"a": rng.standard_normal((size, size)).tolist(), "b": rng.standard_normal((size, size)).tolist()}
+    if op == "solve":
+        base = rng.standard_normal((size, size))
+        return {"a": (base @ base.T + size * np.eye(size)).tolist(), "b": rng.standard_normal(size).tolist()}
+    if op in ("cholesky", "inv", "trace", "norm"):
+        base = rng.standard_normal((size, size))
+        return {"a": (base @ base.T + size * np.eye(size)).tolist()}
+    if op == "eig":
+        base = rng.standard_normal((size, size))
+        return {"a": (base @ base.T + size * np.eye(size)).tolist()}
+    if op == "svd":
+        return {"a": rng.standard_normal((size, max(2, size // 2))).tolist()}
+    if op == "lstsq":
+        return {"a": rng.standard_normal((size, max(2, size // 4))).tolist(), "b": rng.standard_normal(size).tolist()}
     if op == "pairwise":
-        n = max(2, int(round((size / 3) ** 0.5)))
-        return {"a": rng.standard_normal((n, 3)).tolist()}
+        return {"a": rng.standard_normal((size, 3)).tolist()}
     if op == "histogram":
         return {"values": rng.standard_normal(size).tolist(), "bins": 16, "range": (-4.0, 4.0)}
     if op == "select_k":
         return {"values": rng.standard_normal(size).tolist(), "k": 10}
     if op == "fft":
-        n = 1 << max(3, int(round(math.log2(size))))
-        return {"values": rng.standard_normal(n).tolist()}
+        return {"values": rng.standard_normal(size).tolist()}
     return {"values": rng.standard_normal(size).tolist()}
-
-
-SIZES = (64, 1024, 16384)
