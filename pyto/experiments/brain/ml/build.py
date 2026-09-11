@@ -871,6 +871,23 @@ NEXT = [
 ]
 
 FINDINGS = {
+    "a-record-inlines-values-that-are-already-parts": {
+        "kind": "friction",
+        "text": "run_record renders every produced value into the record, so a 300-row dataset Part is written twice: once in store/ml.json and again, in full, inside records/ml.classification.json. this vertical's records are 200kb each and the duplication is all of it. the address and the digest are already in the record; the value is not new information.",
+        "for": "records are supposed to make a run replayable and auditable; at this rate the record of a real dataset is unreadable and unreviewable, and a landing diff is dominated by it",
+        "workaround": "the datasets a bracket only needs as input are stored as a recipe Part (the calculation and its args) rather than as rows, so the record carries the seed instead of the draw",
+        "proposal": "run_record should write a reference (address plus produce_sha256) instead of the value whenever the value is published to a Part in the same store, with the full rendering kept for values that are not",
+    },
+    "the-bracket-refuses-to-be-judged-before-its-criteria-exist": {
+        "kind": "strength",
+        "text": "harness.bracket refuses a bracket with no criteria, harness.judge refuses a score for a criterion the bracket did not record and refuses a judge whose name is one of the candidate branches, and harness.decide refuses to decide while any candidate is unjudged. writing the criteria first stopped being a discipline and became a thing the code will not let you skip.",
+        "for": "the one failure mode of a tournament is choosing the criteria after seeing the numbers; a rule that is enforced by the store is worth more than a rule in a contract",
+    },
+    "one-address-scheme-made-the-map-free": {
+        "kind": "strength",
+        "text": "because every part is at px.exp.brain.<kind>.<vertical>.<name>, the map Part's built list is literally the store's own address list, and the shared map module counts kinds and verticals with prefix queries and nothing else. no vertical had to register anything or tell anyone what it had made.",
+        "for": "the brief asks for the territory as Parts readable through PQL; the address scheme is why that cost nothing to produce and nothing to keep true",
+    },
     "a-run-record-cannot-be-committed-while-it-holds-a-stopwatch": {
         "kind": "friction",
         "text": "pyto.materialize.run_record puts wall-clock readings (counters.wall_ms, each invocation's duration_ms) into the record, so the file's bytes change on every run. committed, it conflicts between any two branches that both re-ran the program, and any suite that regenerates it leaves the tree dirty behind a landing. it cost this vertical three refused landings and two other verticals one each.",
