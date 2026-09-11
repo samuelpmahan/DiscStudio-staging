@@ -1,0 +1,681 @@
+
+> discstudio-pxc-staging@0.2.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: createSeed: broadcast inherits background and overrides sponsor; discImage overrides its own background; the instance override exists
+ok 1 - createSeed: broadcast inherits background and overrides sponsor; discImage overrides its own background; the instance override exists
+  ---
+  duration_ms: 3.708225
+  type: 'test'
+  ...
+# Subtest: validateWorld fills the card cascade defaults for a draft that lacks them, drops a task-78 projections key, and never mutates a frozen world
+ok 2 - validateWorld fills the card cascade defaults for a draft that lacks them, drops a task-78 projections key, and never mutates a frozen world
+  ---
+  duration_ms: 2.754994
+  type: 'test'
+  ...
+# Subtest: effective tokens cascade global -> preset -> instance; a preset field set to null inherits again; null on global is refused; preset.set changes provenance to preset
+ok 3 - effective tokens cascade global -> preset -> instance; a preset field set to null inherits again; null on global is refused; preset.set changes provenance to preset
+  ---
+  duration_ms: 67.618934
+  type: 'test'
+  ...
+# Subtest: recompose: a global radius edit changes all four projections; a global background edit changes exactly single and competition; a preset.set on discImage.accent changes exactly shelf and bag; an instance edit changes exactly one
+ok 4 - recompose: a global radius edit changes all four projections; a global background edit changes exactly single and competition; a preset.set on discImage.accent changes exactly shelf and bag; an instance edit changes exactly one
+  ---
+  duration_ms: 130.497495
+  type: 'test'
+  ...
+# Subtest: the recompose receipt names the four projections' Ticks, and runRecord validates it
+ok 5 - the recompose receipt names the four projections' Ticks, and runRecord validates it
+  ---
+  duration_ms: 33.042866
+  type: 'test'
+  ...
+# Subtest: the Cascade Tick is classified a chain by classifyTick
+ok 6 - the Cascade Tick is classified a chain by classifyTick
+  ---
+  duration_ms: 3.48999
+  type: 'test'
+  ...
+# Subtest: the existing surfaces carry the cascade: OnTheCourse carries the broadcast sponsor lockup, clearing it removes it from the single card too, and the minimal preset still renders its own paper background
+ok 7 - the existing surfaces carry the cascade: OnTheCourse carries the broadcast sponsor lockup, clearing it removes it from the single card too, and the minimal preset still renders its own paper background
+  ---
+  duration_ms: 42.852644
+  type: 'test'
+  ...
+# Subtest: the Component Editor's preset controls are live: after preset.set on a preset's background, the composed card carries the value
+ok 8 - the Component Editor's preset controls are live: after preset.set on a preset's background, the composed card carries the value
+  ---
+  duration_ms: 10.191543
+  type: 'test'
+  ...
+# Subtest: query('overrides') lists the seed's preset and instance overrides
+ok 9 - query('overrides') lists the seed's preset and instance overrides
+  ---
+  duration_ms: 2.338538
+  type: 'test'
+  ...
+# Subtest: query('inherits', { token }) matches the world
+ok 10 - query('inherits', { token }) matches the world
+  ---
+  duration_ms: 4.776613
+  type: 'test'
+  ...
+# Subtest: query('provenance') returns null before a projection/disc pair has ever been composed
+ok 11 - query('provenance') returns null before a projection/disc pair has ever been composed
+  ---
+  duration_ms: 3.232455
+  type: 'test'
+  ...
+# Subtest: a non-empty sponsor token appends a static, validatable text node
+ok 12 - a non-empty sponsor token appends a static, validatable text node
+  ---
+  duration_ms: 15.081199
+  type: 'test'
+  ...
+# Subtest: studio art and single card Parts are byte-identical to the ported painter
+ok 13 - studio art and single card Parts are byte-identical to the ported painter
+  ---
+  duration_ms: 38.629052
+  type: 'test'
+  ...
+# Subtest: ported painter inputs use sanitized authored colors
+ok 14 - ported painter inputs use sanitized authored colors
+  ---
+  duration_ms: 42.193577
+  type: 'test'
+  ...
+# Subtest: manufacturer, mold, optional values and every registered field are discoverable
+ok 15 - manufacturer, mold, optional values and every registered field are discoverable
+  ---
+  duration_ms: 17.811735
+  type: 'test'
+  ...
+# Subtest: new schema fields automatically resolve, compose, serialize and rehydrate
+ok 16 - new schema fields automatically resolve, compose, serialize and rehydrate
+  ---
+  duration_ms: 42.515393
+  type: 'test'
+  ...
+# Subtest: unregistered fields and new related domain objects are surfaced, not silently discarded
+ok 17 - unregistered fields and new related domain objects are surfaced, not silently discarded
+  ---
+  duration_ms: 1.203082
+  type: 'test'
+  ...
+# Subtest: shelf and comparison share physical references; bags do not duplicate discs
+ok 18 - shelf and comparison share physical references; bags do not duplicate discs
+  ---
+  duration_ms: 55.155591
+  type: 'test'
+  ...
+# Subtest: actual PQL consumes rendered Parts, and repeat rendering reuses actual memoized values
+ok 19 - actual PQL consumes rendered Parts, and repeat rendering reuses actual memoized values
+  ---
+  duration_ms: 45.904901
+  type: 'test'
+  ...
+# Subtest: layout and score changes reuse upstream disc art; selected-state changes remain separate from domain
+ok 20 - layout and score changes reuse upstream disc art; selected-state changes remain separate from domain
+  ---
+  duration_ms: 59.530291
+  type: 'test'
+  ...
+# Subtest: presentation edits change real scene and apply to other discs without a second renderer
+ok 21 - presentation edits change real scene and apply to other discs without a second renderer
+  ---
+  duration_ms: 23.875573
+  type: 'test'
+  ...
+# Subtest: three reusable PutterWarz constraints evaluate pass, pending and fail honestly
+ok 22 - three reusable PutterWarz constraints evaluate pass, pending and fail honestly
+  ---
+  duration_ms: 80.153357
+  type: 'test'
+  ...
+# Subtest: constraint group any composition is not the same as all; empty rules do not pretend validation
+ok 23 - constraint group any composition is not the same as all; empty rules do not pretend validation
+  ---
+  duration_ms: 21.899983
+  type: 'test'
+  ...
+# Subtest: closing a short round fails exact-count rule; missing references fail visibly
+ok 24 - closing a short round fails exact-count rule; missing references fail visibly
+  ---
+  duration_ms: 6.977479
+  type: 'test'
+  ...
+# Subtest: states retain independent scores, highlights and winner tags; lineup removal cleans references
+ok 25 - states retain independent scores, highlights and winner tags; lineup removal cleans references
+  ---
+  duration_ms: 36.935318
+  type: 'test'
+  ...
+# Subtest: all placement/layout combinations stay inside the 1920×1080 export frame
+ok 26 - all placement/layout combinations stay inside the 1920×1080 export frame
+  ---
+  duration_ms: 376.531103
+  type: 'test'
+  ...
+# Subtest: untrusted SVG/text never becomes executable and malformed data cannot replace a valid world
+ok 27 - untrusted SVG/text never becomes executable and malformed data cannot replace a valid world
+  ---
+  duration_ms: 33.47872
+  type: 'test'
+  ...
+# Subtest: no synthetic usage is represented as recorded events or exports
+ok 28 - no synthetic usage is represented as recorded events or exports
+  ---
+  duration_ms: 25.049454
+  type: 'test'
+  ...
+# Subtest: identity fields appear first by domain metadata, not a second customizer whitelist
+ok 29 - identity fields appear first by domain metadata, not a second customizer whitelist
+  ---
+  duration_ms: 10.703955
+  type: 'test'
+  ...
+# Subtest: malformed layouts and negative constraint quantities fail before changing the world
+ok 30 - malformed layouts and negative constraint quantities fail before changing the world
+  ---
+  duration_ms: 8.52199
+  type: 'test'
+  ...
+# Subtest: large authored cards and a twelve-disc row still fit the export frame
+ok 31 - large authored cards and a twelve-disc row still fit the export frame
+  ---
+  duration_ms: 152.183518
+  type: 'test'
+  ...
+# Subtest: a seeded composition exports a validated pyto-run-record@1 kept as a Part outside the facts
+ok 32 - a seeded composition exports a validated pyto-run-record@1 kept as a Part outside the facts
+  ---
+  duration_ms: 26.681453
+  type: 'test'
+  ...
+# Subtest: the execution receipt reaches the run record: material digests and reuse are carried
+ok 33 - the execution receipt reaches the run record: material digests and reuse are carried
+  ---
+  duration_ms: 43.261384
+  type: 'test'
+  ...
+# Subtest: composePage builds the same standalone page as buildPage, one section per Tick
+ok 34 - composePage builds the same standalone page as buildPage, one section per Tick
+  ---
+  duration_ms: 79.823953
+  type: 'test'
+  ...
+# Subtest: a disc without a photo shows painted art inside the generic card, never the Add image placeholder
+ok 35 - a disc without a photo shows painted art inside the generic card, never the Add image placeholder
+  ---
+  duration_ms: 10.116506
+  type: 'test'
+  ...
+# Subtest: a Calculation may declare several into: one pass, several Parts, one receipt listing all of them
+ok 36 - a Calculation may declare several into: one pass, several Parts, one receipt listing all of them
+  ---
+  duration_ms: 0.959311
+  type: 'test'
+  ...
+# Subtest: a multi-produce output that does not carry every declared address publishes nothing
+ok 37 - a multi-produce output that does not carry every declared address publishes nothing
+  ---
+  duration_ms: 0.788036
+  type: 'test'
+  ...
+# Subtest: the grammar refuses an empty into, a repeated produce address and a misplaced prefix star
+ok 38 - the grammar refuses an empty into, a repeated produce address and a misplaced prefix star
+  ---
+  duration_ms: 0.549654
+  type: 'test'
+  ...
+# Subtest: a with binding ending in .* is a prefix query over the board, sorted and read as one value
+ok 39 - a with binding ending in .* is a prefix query over the board, sorted and read as one value
+  ---
+  duration_ms: 0.337414
+  type: 'test'
+  ...
+# Subtest: the Inspect receipts list is a PQL query over px.receipt.* publishing two Parts
+ok 40 - the Inspect receipts list is a PQL query over px.receipt.* publishing two Parts
+  ---
+  duration_ms: 52.149871
+  type: 'test'
+  ...
+# Subtest: push then pop restores the exact previous value and the stack depth follows
+ok 41 - push then pop restores the exact previous value and the stack depth follows
+  ---
+  duration_ms: 19.091028
+  type: 'test'
+  ...
+# Subtest: pop on an empty stack changes nothing and is still on the record
+ok 42 - pop on an empty stack changes nothing and is still on the record
+  ---
+  duration_ms: 3.12667
+  type: 'test'
+  ...
+# Subtest: the run record lists the undo invocations, push and pop alike
+ok 43 - the run record lists the undo invocations, push and pop alike
+  ---
+  duration_ms: 21.5488
+  type: 'test'
+  ...
+# \# parallel Fan Tick: work 160ms (4 x 40ms), latency 40.643ms; the same run serially: 162ms
+# Subtest: a Tick of four timer-awaiting Calculations runs at once: latency under the work, testimony byte-identical to the serial run
+ok 44 - a Tick of four timer-awaiting Calculations runs at once: latency under the work, testimony byte-identical to the serial run
+  ---
+  duration_ms: 205.31634
+  type: 'test'
+  ...
+# Subtest: a Tick whose Calculation reads an earlier sibling is a chain: under parallel: true it runs in declared order and each later Calculation sees the earlier value
+ok 45 - a Tick whose Calculation reads an earlier sibling is a chain: under parallel: true it runs in declared order and each later Calculation sees the earlier value
+  ---
+  duration_ms: 41.236847
+  type: 'test'
+  ...
+# Subtest: a chain under parallel: true and the same document serially write byte-identical testimony
+ok 46 - a chain under parallel: true and the same document serially write byte-identical testimony
+  ---
+  duration_ms: 81.460896
+  type: 'test'
+  ...
+# Subtest: the schedule marks a Tick with sibling reads mode chain, on one worker in sequence, and a Tick without them mode parallel
+ok 47 - the schedule marks a Tick with sibling reads mode chain, on one worker in sequence, and a Tick without them mode parallel
+  ---
+  duration_ms: 82.283837
+  type: 'test'
+  ...
+# Subtest: a Calculation that reads a LATER sibling produce is a backwards read, refused by name before the Tick runs
+ok 48 - a Calculation that reads a LATER sibling produce is a backwards read, refused by name before the Tick runs
+  ---
+  duration_ms: 1.091706
+  type: 'test'
+  ...
+# Subtest: two Calculations of one Tick declaring one into are refused by name
+ok 49 - two Calculations of one Tick declaring one into are refused by name
+  ---
+  duration_ms: 10.057057
+  type: 'test'
+  ...
+# Subtest: a budget stops the run at a Tick boundary: the board holds whole Ticks and the record says which was the last
+ok 50 - a budget stops the run at a Tick boundary: the board holds whole Ticks and the record says which was the last
+  ---
+  duration_ms: 1.231992
+  type: 'test'
+  ...
+# Subtest: a serial, unbudgeted run writes the record it always wrote, byte for byte
+ok 51 - a serial, unbudgeted run writes the record it always wrote, byte for byte
+  ---
+  duration_ms: 36.183282
+  type: 'test'
+  ...
+# Subtest: fromDiscStudioReceipt takes an array into: the list is the into, and every declared address is a produce
+ok 52 - fromDiscStudioReceipt takes an array into: the list is the into, and every declared address is a produce
+  ---
+  duration_ms: 1.742559
+  type: 'test'
+  ...
+# Subtest: shelf sheet is deterministic and matches the committed byte fixture
+ok 53 - shelf sheet is deterministic and matches the committed byte fixture
+  ---
+  duration_ms: 34.731579
+  type: 'test'
+  ...
+# Subtest: shelf sheet is registered by the production runtime and leaves a PQL record
+ok 54 - shelf sheet is registered by the production runtime and leaves a PQL record
+  ---
+  duration_ms: 21.256348
+  type: 'test'
+  ...
+# Subtest: seed bag fields can be passed directly from shared domain Parts
+ok 55 - seed bag fields can be passed directly from shared domain Parts
+  ---
+  duration_ms: 15.086353
+  type: 'test'
+  ...
+# Subtest: shelf sheet preserves a safe original disc photo in the tile
+ok 56 - shelf sheet preserves a safe original disc photo in the tile
+  ---
+  duration_ms: 6.580464
+  type: 'test'
+  ...
+# Subtest: browser-safe SHA-256 agrees with Node for empty, Unicode and multiblock input
+ok 57 - browser-safe SHA-256 agrees with Node for empty, Unicode and multiblock input
+  ---
+  duration_ms: 18.389106
+  type: 'test'
+  ...
+# Subtest: the map names only Parts the run wrote, and every stub says why
+ok 58 - the map names only Parts the run wrote, and every stub says why
+  ---
+  duration_ms: 4368.548157
+  type: 'test'
+  ...
+# Subtest: every finding is lowercase, kinded and carries its for
+ok 59 - every finding is lowercase, kinded and carries its for
+  ---
+  duration_ms: 4921.373312
+  type: 'test'
+  ...
+# Subtest: the store is written where a PQL reader can find it
+ok 60 - the store is written where a PQL reader can find it
+  ---
+  duration_ms: 4126.903407
+  type: 'test'
+  ...
+# Subtest: the studio yaml reader reads the LAB Stage documents it was written for
+ok 61 - the studio yaml reader reads the LAB Stage documents it was written for
+  ---
+  duration_ms: 6.572535
+  type: 'test'
+  ...
+# Subtest: S1.mmd compiles to the same document as the LAB S1 PrincipleComponentRender.yaml
+ok 62 - S1.mmd compiles to the same document as the LAB S1 PrincipleComponentRender.yaml
+  ---
+  duration_ms: 10.721921
+  type: 'test'
+  ...
+# Subtest: every binding and argument of all 13 shared S1 Calculations agrees with the YAML
+ok 63 - every binding and argument of all 13 shared S1 Calculations agrees with the YAML
+  ---
+  duration_ms: 2.537774
+  type: 'test'
+  ...
+# Subtest: S0.mmd binds a result with no Part, and lowering is what gives it an address
+ok 64 - S0.mmd binds a result with no Part, and lowering is what gives it an address
+  ---
+  duration_ms: 0.83946
+  type: 'test'
+  ...
+# Subtest: the S0 document that runs is the compiled graph plus the cache Tick S0.pcr.yaml names last
+ok 65 - the S0 document that runs is the compiled graph plus the cache Tick S0.pcr.yaml names last
+  ---
+  duration_ms: 9.156594
+  type: 'test'
+  ...
+# Subtest: the compiler refuses what the LAB compiler refuses
+ok 66 - the compiler refuses what the LAB compiler refuses
+  ---
+  duration_ms: 9.740304
+  type: 'test'
+  ...
+# Subtest: the ported hex geometry is the LAB traverse geometry
+ok 67 - the ported hex geometry is the LAB traverse geometry
+  ---
+  duration_ms: 3.003869
+  type: 'test'
+  ...
+# Subtest: a course Part gives blind hole anchors, and a course with no viewport table refuses
+ok 68 - a course Part gives blind hole anchors, and a course with no viewport table refuses
+  ---
+  duration_ms: 1.362687
+  type: 'test'
+  ...
+# Subtest: a path over DashsTrack is a produce with a receipt, and every step is a LAB hex move
+ok 69 - a path over DashsTrack is a produce with a receipt, and every step is a LAB hex move
+  ---
+  duration_ms: 14.30582
+  type: 'test'
+  ...
+# Subtest: the objective is fewest moves: no shorter walk of the same radius reaches the target
+ok 70 - the objective is fewest moves: no shorter walk of the same radius reaches the target
+  ---
+  duration_ms: 1.93812
+  type: 'test'
+  ...
+# Subtest: the same search over two courses is the same composition with two course Parts
+ok 71 - the same search over two courses is the same composition with two course Parts
+  ---
+  duration_ms: 6.567196
+  type: 'test'
+  ...
+# Subtest: the pipeline runs S0 through the round as one composition per Stage
+ok 72 - the pipeline runs S0 through the round as one composition per Stage
+  ---
+  duration_ms: 1186.906361
+  type: 'test'
+  ...
+# Subtest: each Stage leaves the receipt and the run record every other composition leaves
+ok 73 - each Stage leaves the receipt and the run record every other composition leaves
+  ---
+  duration_ms: 1457.371551
+  type: 'test'
+  ...
+# Subtest: the produce is what the fixture draws: two badges read, two baskets, two tees, a round in badge order
+ok 74 - the produce is what the fixture draws: two badges read, two baskets, two tees, a round in badge order
+  ---
+  duration_ms: 867.550481
+  type: 'test'
+  ...
+# Subtest: provenance is read off the record: which composition, which Tick, which Calculation
+ok 75 - provenance is read off the record: which composition, which Tick, which Calculation
+  ---
+  duration_ms: 991.060107
+  type: 'test'
+  ...
+# Subtest: a Stage that cannot run refuses with its reason, and the Stages after it stay not-run
+ok 76 - a Stage that cannot run refuses with its reason, and the Stages after it stay not-run
+  ---
+  duration_ms: 32.613329
+  type: 'test'
+  ...
+# Subtest: a Stage still being built joins the pipeline as one spec and runs, draws and inspects like the rest
+ok 77 - a Stage still being built joins the pipeline as one spec and runs, draws and inspects like the rest
+  ---
+  duration_ms: 934.530311
+  type: 'test'
+  ...
+# Subtest: the lab Calculations are the studio's own, and no domain fact is written by a Stage
+ok 78 - the lab Calculations are the studio's own, and no domain fact is written by a Stage
+  ---
+  duration_ms: 1395.889514
+  type: 'test'
+  ...
+# Subtest: the route is a composition over Stage Parts, not over the course manifest
+ok 79 - the route is a composition over Stage Parts, not over the course manifest
+  ---
+  duration_ms: 651.328505
+  type: 'test'
+  ...
+# Subtest: the holes are played in badge order, which is not their order in the raster
+ok 80 - the holes are played in badge order, which is not their order in the raster
+  ---
+  duration_ms: 389.43568
+  type: 'test'
+  ...
+# Subtest: each hole takes the nearest free tee and basket, and no anchor is used twice
+ok 81 - each hole takes the nearest free tee and basket, and no anchor is used twice
+  ---
+  duration_ms: 395.445598
+  type: 'test'
+  ...
+# Subtest: the legs chain: tee to basket, basket to the next tee, and the lengths add up
+ok 82 - the legs chain: tee to basket, basket to the next tee, and the lengths add up
+  ---
+  duration_ms: 383.841015
+  type: 'test'
+  ...
+# Subtest: a badge S1 could not read takes no turn, and is reported rather than guessed
+ok 83 - a badge S1 could not read takes no turn, and is reported rather than guessed
+  ---
+  duration_ms: 0.344076
+  type: 'test'
+  ...
+# Subtest: an anchor outside the canonical raster refuses the route
+ok 84 - an anchor outside the canonical raster refuses the route
+  ---
+  duration_ms: 0.661659
+  type: 'test'
+  ...
+# Subtest: the path is a produce with a receipt and a run record
+ok 85 - the path is a produce with a receipt and a run record
+  ---
+  duration_ms: 385.749885
+  type: 'test'
+  ...
+# Subtest: S0 runs its compiled document through readPql/invokePql and exits at canonicalPixels
+ok 86 - S0 runs its compiled document through readPql/invokePql and exits at canonicalPixels
+  ---
+  duration_ms: 118.45312
+  type: 'test'
+  ...
+# Subtest: the crop receipt carries exactly the fields S0.pcr.yaml names
+ok 87 - the crop receipt carries exactly the fields S0.pcr.yaml names
+  ---
+  duration_ms: 143.963955
+  type: 'test'
+  ...
+# Subtest: the entropy detector finds the fixture chrome bands and cuts its safety margin past them
+ok 88 - the entropy detector finds the fixture chrome bands and cuts its safety margin past them
+  ---
+  duration_ms: 49.192986
+  type: 'test'
+  ...
+# Subtest: canonicalPixels is the capture byte for byte inside the crop
+ok 89 - canonicalPixels is the capture byte for byte inside the crop
+  ---
+  duration_ms: 69.476345
+  type: 'test'
+  ...
+# Subtest: FullImage is cached last, after the CroppedImage has materialized
+ok 90 - FullImage is cached last, after the CroppedImage has materialized
+  ---
+  duration_ms: 69.820561
+  type: 'test'
+  ...
+# Subtest: the S0 run is a pyto-run-record@1 the shared adapter validates
+ok 91 - the S0 run is a pyto-run-record@1 the shared adapter validates
+  ---
+  duration_ms: 210.079066
+  type: 'test'
+  ...
+# Subtest: S1 runs the LAB PrincipleComponentRender.yaml document through readPql/invokePql
+ok 92 - S1 runs the LAB PrincipleComponentRender.yaml document through readPql/invokePql
+  ---
+  duration_ms: 285.952972
+  type: 'test'
+  ...
+# Subtest: the masks and components are the fixture badges, at the geometry the knobs accept
+ok 93 - the masks and components are the fixture badges, at the geometry the knobs accept
+  ---
+  duration_ms: 179.075969
+  type: 'test'
+  ...
+# Subtest: every badge is assembled and read, and the reading keeps the LAB shape
+ok 94 - every badge is assembled and read, and the reading keeps the LAB shape
+  ---
+  duration_ms: 168.568215
+  type: 'test'
+  ...
+# Subtest: owned, muted and remaining partition the raster exactly
+ok 95 - owned, muted and remaining partition the raster exactly
+  ---
+  duration_ms: 355.928946
+  type: 'test'
+  ...
+# Subtest: the compiled Mermaid S1 produces the same Parts as the YAML S1, value for value
+ok 96 - the compiled Mermaid S1 produces the same Parts as the YAML S1, value for value
+  ---
+  duration_ms: 835.52384
+  type: 'test'
+  ...
+# Subtest: the S1 run is a pyto-run-record@1 with the LAB Tick names
+ok 97 - the S1 run is a pyto-run-record@1 with the LAB Tick names
+  ---
+  duration_ms: 697.528616
+  type: 'test'
+  ...
+# Subtest: S2 runs the document its OperationSpec composition declares, on S1 produce
+ok 98 - S2 runs the document its OperationSpec composition declares, on S1 produce
+  ---
+  duration_ms: 378.72801
+  type: 'test'
+  ...
+# Subtest: the family is the sprite family: exact bbox, area ratio and coverage
+ok 99 - the family is the sprite family: exact bbox, area ratio and coverage
+  ---
+  duration_ms: 226.743258
+  type: 'test'
+  ...
+# Subtest: the shell family is the modal margin, learned with no tolerance
+ok 100 - the shell family is the modal margin, learned with no tolerance
+  ---
+  duration_ms: 176.428006
+  type: 'test'
+  ...
+# Subtest: a tie between margins refuses the family rather than guessing
+ok 101 - a tie between margins refuses the family rather than guessing
+  ---
+  duration_ms: 11.066486
+  type: 'test'
+  ...
+# Subtest: a Basket is its bright body and its agreed dark shell, exactly
+ok 102 - a Basket is its bright body and its agreed dark shell, exactly
+  ---
+  duration_ms: 237.0623
+  type: 'test'
+  ...
+# Subtest: the S2 run is a pyto-run-record@1 with the LAB operation ids as Tick names
+ok 103 - the S2 run is a pyto-run-record@1 with the LAB operation ids as Tick names
+  ---
+  duration_ms: 246.283015
+  type: 'test'
+  ...
+# Subtest: S3 runs the document its OperationSpecs declare, consuming S2 substrate and S1 badges
+ok 104 - S3 runs the document its OperationSpecs declare, consuming S2 substrate and S1 badges
+  ---
+  duration_ms: 699.150831
+  type: 'test'
+  ...
+# Subtest: every enclosed hole of the fixture is found, and the badge digit holes are the ones muted
+ok 105 - every enclosed hole of the fixture is found, and the badge digit holes are the ones muted
+  ---
+  duration_ms: 381.445185
+  type: 'test'
+  ...
+# Subtest: a Tee is its enclosing bright frame, exactly
+ok 106 - a Tee is its enclosing bright frame, exactly
+  ---
+  duration_ms: 403.62067
+  type: 'test'
+  ...
+# Subtest: the family vote keeps the frames that agree and drops the one that does not
+ok 107 - the family vote keeps the frames that agree and drops the one that does not
+  ---
+  duration_ms: 0.401059
+  type: 'test'
+  ...
+# Subtest: the Python analogue balances: every enclosed ring leaves through one named door
+ok 108 - the Python analogue balances: every enclosed ring leaves through one named door
+  ---
+  duration_ms: 376.181724
+  type: 'test'
+  ...
+# Subtest: both S3 runs are pyto-run-record@1 records
+ok 109 - both S3 runs are pyto-run-record@1 records
+  ---
+  duration_ms: 385.757067
+  type: 'test'
+  ...
+# Subtest: every embedded document is the file byte for byte
+ok 110 - every embedded document is the file byte for byte
+  ---
+  duration_ms: 4.14546
+  type: 'test'
+  ...
+# Subtest: no Stage module the browser imports reaches for node at import time
+ok 111 - no Stage module the browser imports reaches for node at import time
+  ---
+  duration_ms: 1.493583
+  type: 'test'
+  ...
+1..111
+# tests 111
+# suites 0
+# pass 111
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13969.256955
