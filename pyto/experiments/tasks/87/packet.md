@@ -4,7 +4,7 @@ Intent: brain/backend the facade: fn.brain.backend.<op> with engines py/np/sp fo
 Starting point: 0b4d8ac18b52ad3ce144fb81492209c3cce2c6e0 (land(task-83): brain ml foundation: the ml vertical's shared core (backend dispatch py/np, matrix helpers, seeded generators, part/oracle/bench/record writers) plus linear regression closed form and gradient descent, ridge, regression metrics (mse/mae/r2) and seeded train-test split and k-fold, each a Calculation fn.brain.ml.<name> with oracle Parts, tests and benchmarks)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain/backend pyto/experiments/tasks
-Candidate: 4 files, see below
+Candidate: 3 files, see below
 Evidence: suite exit 0, see below
 
 ## Candidate
@@ -12,23 +12,21 @@ Evidence: suite exit 0, see below
 - A  pyto/experiments/brain/backend/cases.py
 - A  pyto/experiments/brain/backend/ops.py
 - A  pyto/experiments/brain/backend/test_ops.py
-- M  pyto/experiments/brain/records/ml.regression.json
 
 ```
-pyto/experiments/brain/backend/cases.py           | 125 +++++
- pyto/experiments/brain/backend/ops.py             | 591 ++++++++++++++++++++++
- pyto/experiments/brain/backend/test_ops.py        | 175 +++++++
- pyto/experiments/brain/records/ml.regression.json |  24 +-
- 4 files changed, 903 insertions(+), 12 deletions(-)
+pyto/experiments/brain/backend/cases.py    | 125 ++++++
+ pyto/experiments/brain/backend/ops.py      | 591 +++++++++++++++++++++++++++++
+ pyto/experiments/brain/backend/test_ops.py | 175 +++++++++
+ 3 files changed, 891 insertions(+)
 ```
 
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.yNuyg1TCGK) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.dHu51mDzXS) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
-    experiments/brain               133  OK
+    experiments/brain               325  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    250  OK
