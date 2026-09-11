@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 14:13 **started** `task-117`: S5 Course: the holes as a graph over the canonical raster, with hole geometry, the obstacle map derived from px.remaining.afterBadges and the S1/S2/S3 masks, and the walkable cells a round can use (copy EXP/117; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 14:13 **landed** `task-116`: run the LAB Stages on the studio runtime: browser-safe lab modules, fn.lab.* Calculations registered in src/runtime.js, and runtime.lab.stage/pipeline as one composition per Stage with receipts (38 files since c7f06cb, suites green, receipt 20260911T141040Z-task-116)
 - 2026-09-11 14:07 **landed** `task-115`: S4 Holes: assemble each hole from S1 badges, S2 baskets and S3 tees as a Stage with explicit invariants, and extend the lab fixture with a third badge and an obstacle region (20 files since b082fab, suites green, receipt 20260911T140409Z-task-115)
 - 2026-09-11 13:55 **started** `task-116`: run the LAB Stages on the studio runtime: browser-safe lab modules, fn.lab.* Calculations registered in src/runtime.js, and runtime.lab.stage/pipeline as one composition per Stage with receipts (copy EXP/116; it lands only on green, with a receipt, or is killed)
