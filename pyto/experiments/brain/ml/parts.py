@@ -8,8 +8,11 @@ until then this file is the harness for the ml vertical and nothing else uses it
 
 from __future__ import annotations
 
+import atexit
 import json
 import os
+import shutil
+import tempfile
 import time
 
 from pyto import PCR, PQL, Part, PxC
@@ -46,9 +49,23 @@ def harness():
 class Store:
     """a PxC with the vertical's file discipline: put, get, save, load, run."""
 
-    def __init__(self, vertical="ml", pxc=None):
+    def __init__(self, vertical="ml", pxc=None, commit=None):
         self.vertical = vertical
         self.pxc = pxc if pxc is not None else PxC()
+        # A run record holds wall-clock durations, so writing one into the tracked
+        # records/ rewrites it on every suite run: MAIN goes dirty and land.sh then
+        # refuses the NEXT landing, whoever's it is. So a Store writes its records
+        # into a temporary directory unless this is an explicit record run - which
+        # is what `python -m experiments.brain.ml.build` is, and no test is. Reading
+        # is unchanged: load_store() still reads the committed store/.
+        if commit is None:
+            commit = os.environ.get("BRAIN_RECORDS", "").strip().lower() == "commit"
+        self.commit = bool(commit)
+        if self.commit:
+            self.records_dir = RECORDS_DIR
+        else:
+            self.records_dir = tempfile.mkdtemp(prefix="brain-ml-records-")
+            atexit.register(shutil.rmtree, self.records_dir, True)
 
     # --- values ---
     def put(self, address, value):
@@ -111,9 +128,9 @@ class Store:
         build(pcr)
         before = set(self.pxc.addresses())
         run = pcr.run(self.pxc, observe=True)
-        os.makedirs(RECORDS_DIR, exist_ok=True)
+        os.makedirs(self.records_dir, exist_ok=True)
         record = run_record(run, self.pxc, preexisting=before, pcr_name=name)
-        path = os.path.join(RECORDS_DIR, f"{record_name or name}.json")
+        path = os.path.join(self.records_dir, f"{record_name or name}.json")
         write_record(record, path)
         return run
 
