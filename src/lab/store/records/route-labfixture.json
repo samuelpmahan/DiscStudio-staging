@@ -60,6 +60,21 @@
               "badges": [
                 {
                   "id": "badge-candidate:black-component-1:white-component-2",
+                  "reading": "11",
+                  "status": "read",
+                  "bbox": [
+                    380,
+                    138,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    410,
+                    158
+                  ]
+                },
+                {
+                  "id": "badge-candidate:black-component-2:white-component-6",
                   "reading": "10",
                   "status": "read",
                   "bbox": [
@@ -74,7 +89,7 @@
                   ]
                 },
                 {
-                  "id": "badge-candidate:black-component-4:white-component-7",
+                  "id": "badge-candidate:black-component-6:white-component-11",
                   "reading": "01",
                   "status": "read",
                   "bbox": [
@@ -121,6 +136,19 @@
                 {
                   "id": "tee-1",
                   "bbox": [
+                    470,
+                    78,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    477.5,
+                    90.5
+                  ]
+                },
+                {
+                  "id": "tee-2",
+                  "bbox": [
                     60,
                     208,
                     16,
@@ -132,7 +160,7 @@
                   ]
                 },
                 {
-                  "id": "tee-2",
+                  "id": "tee-3",
                   "bbox": [
                     420,
                     518,
@@ -191,13 +219,13 @@
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-candidate:black-component-4:white-component-7",
+                  "badge": "badge-candidate:black-component-6:white-component-11",
                   "at": [
                     330,
                     598
                   ],
                   "tee": {
-                    "id": "tee-2",
+                    "id": "tee-3",
                     "at": [
                       427.5,
                       530.5
@@ -215,13 +243,13 @@
                 },
                 {
                   "number": 10,
-                  "badge": "badge-candidate:black-component-1:white-component-2",
+                  "badge": "badge-candidate:black-component-2:white-component-6",
                   "at": [
                     150,
                     278
                   ],
                   "tee": {
-                    "id": "tee-1",
+                    "id": "tee-2",
                     "at": [
                       67.5,
                       220.5
@@ -236,6 +264,23 @@
                     ],
                     "gapFromBadgePx": 184.201
                   }
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-candidate:black-component-1:white-component-2",
+                  "at": [
+                    410,
+                    158
+                  ],
+                  "tee": {
+                    "id": "tee-1",
+                    "at": [
+                      477.5,
+                      90.5
+                    ],
+                    "gapFromBadgePx": 95.459
+                  },
+                  "basket": null
                 }
               ],
               "unreadable": [],
@@ -243,7 +288,9 @@
                 "tees": [],
                 "baskets": []
               },
-              "incomplete": []
+              "incomplete": [
+                11
+              ]
             },
             "note": null
           }
@@ -294,7 +341,7 @@
                 "kind": "play",
                 "hole": 1,
                 "from": {
-                  "id": "tee-2",
+                  "id": "tee-3",
                   "at": [
                     427.5,
                     530.5
@@ -320,7 +367,7 @@
                   ]
                 },
                 "to": {
-                  "id": "tee-1",
+                  "id": "tee-2",
                   "at": [
                     67.5,
                     220.5
@@ -332,7 +379,7 @@
                 "kind": "play",
                 "hole": 10,
                 "from": {
-                  "id": "tee-1",
+                  "id": "tee-2",
                   "at": [
                     67.5,
                     220.5
@@ -409,20 +456,20 @@
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-candidate:black-component-4:white-component-7",
-                  "tee": "tee-2",
+                  "badge": "badge-candidate:black-component-6:white-component-11",
+                  "tee": "tee-3",
                   "basket": "basket-2"
                 },
                 {
                   "number": 10,
-                  "badge": "badge-candidate:black-component-1:white-component-2",
-                  "tee": "tee-1",
+                  "badge": "badge-candidate:black-component-2:white-component-6",
+                  "tee": "tee-2",
                   "basket": "basket-1"
                 }
               ],
               "waypoints": [
                 {
-                  "id": "tee-2",
+                  "id": "tee-3",
                   "at": [
                     427.5,
                     530.5
@@ -436,7 +483,7 @@
                   ]
                 },
                 {
-                  "id": "tee-1",
+                  "id": "tee-2",
                   "at": [
                     67.5,
                     220.5
@@ -455,7 +502,7 @@
                   "kind": "play",
                   "hole": 1,
                   "from": {
-                    "id": "tee-2",
+                    "id": "tee-3",
                     "at": [
                       427.5,
                       530.5
@@ -481,7 +528,7 @@
                     ]
                   },
                   "to": {
-                    "id": "tee-1",
+                    "id": "tee-2",
                     "at": [
                       67.5,
                       220.5
@@ -493,7 +540,7 @@
                   "kind": "play",
                   "hole": 10,
                   "from": {
-                    "id": "tee-1",
+                    "id": "tee-2",
                     "at": [
                       67.5,
                       220.5
@@ -516,7 +563,9 @@
                 "badges": [],
                 "tees": [],
                 "baskets": [],
-                "incompleteHoles": []
+                "incompleteHoles": [
+                  11
+                ]
               }
             },
             "note": null

@@ -9,6 +9,21 @@
  *
  * Deterministic: one seeded LCG, no clock, no `Math.random`, so the S0 crop and
  * every S1 component below is the same on every machine.
+ *
+ * Two elements are drawn only when asked for, because the Stages above S3 are
+ * the ones that need them and the S0..S3 tests count what they already see:
+ *
+ *   `{ hole11: true }`  a third badge reading "11" and a third tee, and NO third
+ *                       basket -- a hole whose basket is missing, which is what
+ *                       S4 has to report rather than guess.
+ *   `{ obstacle: true }` a dark bar across the straight line from tee-1 to
+ *                       basket-1 (and across the walk from basket-2 back to
+ *                       tee-1): unexplained dark structure that no Stage object
+ *                       owns, which is exactly what S5 calls terrain and what
+ *                       S6's legs have to go around.
+ *
+ * `fixtureBasis()` is the record of why each element is drawn the way it is and
+ * which knob of which Stage it answers to; map.js publishes it as a Part.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -73,8 +88,22 @@ function tee(rgba, width, x, y) {
   return { frame: [x, y, TEE_W, TEE_H], hole: [x + TEE_WALL, y + TEE_WALL, TEE_W - TEE_WALL * 2, TEE_H - TEE_WALL * 2] };
 }
 
-/** The fixture capture: `{ imageId, widthPx, heightPx, rgba, sourceByteLength, badges, baskets, tees }`. */
-export function fixtureCapture(seed = 20260911) {
+/**
+ * The obstacle: a dark bar, drawn in the same value the badge plates and basket
+ * shells are drawn in, so it lands in S1's black mask like they do -- and owned
+ * by nothing, so it survives `px.remaining.afterBadges` minus the Basket and Tee
+ * pixels. Its height is below S1's `minHeight: 24` plate knob and its width
+ * above `maxWidth: 78`, so S1 rejects it as a plate; its bbox is neither the
+ * basket sprite's (S2) nor small enough to frame a ring (S3). No Stage object
+ * claims it: that is the point.
+ */
+export const OBSTACLE = { x: 0, y: 380, width: 264, height: 16 };
+
+/** The third hole's badge and tee. There is deliberately no third basket. */
+export const HOLE11 = { badge: [380, 180], tee: [470, 120], reading: '11' };
+
+/** The fixture capture: `{ imageId, widthPx, heightPx, rgba, sourceByteLength, badges, baskets, tees, obstacle }`. */
+export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = false } = {}) {
   const random = lcg(seed), rgba = new Array(WIDTH * HEIGHT * 4).fill(0);
   for (let y = 0; y < HEIGHT; y++) {
     const chrome = y < CHROME_TOP || y >= HEIGHT - CHROME_BOTTOM;
@@ -86,7 +115,36 @@ export function fixtureCapture(seed = 20260911) {
   const sprite = JSON.parse(readFileSync(join(SOURCE, 'basket-sprite.json'), 'utf8'));
   const baskets = [basket(rgba, WIDTH, 150, 470, sprite), basket(rgba, WIDTH, 330, 800, sprite)];
   const tees = [tee(rgba, WIDTH, 60, 250), tee(rgba, WIDTH, 420, 560)];
-  return { imageId: `lab-fixture-${seed}`, widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length, badges, baskets, tees };
+  if (hole11) { badges.push(badge(rgba, WIDTH, ...HOLE11.badge, HOLE11.reading)); tees.push(tee(rgba, WIDTH, ...HOLE11.tee)); }
+  if (obstacle) rect(rgba, WIDTH, OBSTACLE.x, OBSTACLE.y, OBSTACLE.width, OBSTACLE.height, BLACK);
+  return {
+    imageId: `lab-fixture-${seed}${hole11 ? '-h11' : ''}${obstacle ? '-obs' : ''}`,
+    widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length,
+    badges, baskets, tees, obstacle: obstacle ? { ...OBSTACLE } : null
+  };
+}
+
+/**
+ * The fixture's basis: every element, the Stage knob it answers to, and why it
+ * is drawn that way. The port has no corpus image, so the fixture is the only
+ * capture any Stage sees; a fixture with no stated basis is a fixture that can
+ * be tuned until a Stage passes, which is the failure this Part exists to make
+ * visible (proposal.lab.oracle.nocorpus).
+ */
+export function fixtureBasis({ hole11 = false, obstacle = false } = {}) {
+  return {
+    for: 'why every element of the synthetic capture is drawn the way it is, and which Stage knob it answers to',
+    frame: { widthPx: WIDTH, heightPx: HEIGHT, chromeTop: CHROME_TOP, chromeBottom: CHROME_BOTTOM, background: 'seeded LCG, values 80..199: never <= 45 (S1 black) and never >= 210 (S1 white), so every mask pixel below is drawn on purpose' },
+    elements: [
+      { what: 'chrome bands', basis: 'constant rows top and bottom, no entropy: what S0 crops' },
+      { what: 'badge border / plate / digits / loop', basis: "S1's plate knobs (width 34..78, height 24..54, aspect 1..2.4, fill >= 0.55) and the digit templates the port carries in place of the LAB logistic asset" },
+      { what: 'basket', basis: "the LAB's own basket sprite (42x66, 1746 white px) inside a dark shell clearing it by 4px on every side: S2 learns that modal margin" },
+      { what: 'tee', basis: 'a bright 16x26 outline 2px thick whose enclosed hole is small and elongated: S3 floods the background in and keeps what is enclosed' },
+      ...(hole11 ? [{ what: 'the third badge "11" and third tee, with no third basket', basis: 'S4 has to report a hole whose basket is missing instead of binding a basket that belongs to another hole; both digits are bars, so this badge adds no enclosed loop for S3 to mute' }] : []),
+      ...(obstacle ? [{ what: 'the obstacle bar', basis: `${OBSTACLE.width}x${OBSTACLE.height} at (${OBSTACLE.x},${OBSTACLE.y}) in source coordinates: dark like a plate but outside every S1/S2/S3 predicate, so it is the one thing in the raster no Stage object owns and S5 can only call terrain` }] : [])
+    ],
+    seededBy: 'lcg(seed), no clock and no Math.random: the same bytes on every machine'
+  };
 }
 
 /** The same capture already cropped, for an S1 run that does not need S0 first. */

@@ -14,6 +14,13 @@
       "workaround": null,
       "proposal": null
     },
+    "proposal.lab.fixture.statedbasis": {
+      "for": "a synthetic fixture with no stated basis can be tuned until the Stage passes",
+      "kind": "friction",
+      "text": "Every Stage here is checked against a capture this port drew. That is only honest if the capture says what each element answers to, so `fixtureBasis()` is a Part: the background values are chosen to fall outside both S1 masks (never <= 45, never >= 210), the badge geometry is the plate knobs, the basket is the LAB sprite inside a 4px shell, the tee is the elongated enclosed hole, and the obstacle is drawn outside every S1/S2/S3 predicate on purpose so that no Stage object can own it.",
+      "workaround": null,
+      "proposal": "one corpus capture would replace the whole argument with a value oracle (proposal.lab.oracle.nocorpus)."
+    },
     "proposal.lab.oracle.nocorpus": {
       "for": "an oracle is what turns a port into a proof",
       "kind": "friction",
@@ -84,6 +91,20 @@
       "workaround": null,
       "proposal": null
     },
+    "proposal.lab.s4.missingisnotaguess": {
+      "for": "the one thing a hole assembler must never do",
+      "kind": "strength",
+      "text": "Hole 11 of the course fixture has a badge and a tee and no basket, because the fixture draws no third basket. S4 reports `basket: null`, `missing: ['basket']`, confidence 0.75 out of a stated sum, and lists the hole under `px.holes.unplaced.incomplete` with the reason. The alternative every nearest-neighbour binder reaches for -- take the nearest basket even though another hole already has it, or interpolate one -- is refused by two invariants at once (`everyBasketOnce` and `missingIsNotGuessed`), and the test proves both refuse it.",
+      "workaround": null,
+      "proposal": "a recovery Tick could look for a basket S2 missed, but it would publish a candidate with its own confidence, not fill this field."
+    },
+    "proposal.lab.s4.ruleliftedintoastage": {
+      "for": "what changes when a rule stops being a step of a search and becomes a Stage",
+      "kind": "finding",
+      "text": "The straight route (task 114) binds each hole to the nearest free tee and basket inside its Order Tick. S4 is that same rule with nothing else around it, and the difference is that it can now be checked: the binding publishes its pools (every anchor with the hole that took it), so `everyTeeOnce`, `everyBasketOnce` and `everyBadgeOnce` are arithmetic over a published Part rather than a property of a function nobody can see into. The rule did not get better; it got inspectable, which is what a Tick boundary is for.",
+      "workaround": null,
+      "proposal": null
+    },
     "proposal.lab.search.noobjective": {
       "for": "what pathfinding means in the LAB before anyone writes a search",
       "kind": "finding",
@@ -113,8 +134,8 @@
       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
       "pixels": {
         "kind": "numbers",
-        "length": 600,
-        "sha256": "29fad5a6e3dd9766e71fe103585c1a9b4e05b31d287fc8c4124dfdbe52e7d829"
+        "length": 900,
+        "sha256": "41ba505d91b45990803ad336c447df51945a19eb325c7da46ca5c3e05e7b16ff"
       }
     },
     "px.exp.lab.badges.objects": [
@@ -127,6 +148,290 @@
             "kind": "component",
             "polarity": "black",
             "label": 1,
+            "widthPx": 512,
+            "heightPx": 920,
+            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+            "pixels": {
+              "kind": "numbers",
+              "length": 1296,
+              "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+            },
+            "sourceTickId": null
+          },
+          "area": 1296,
+          "bbox": [
+            386,
+            142,
+            48,
+            32
+          ]
+        },
+        "border": {
+          "part": {
+            "id": "white-component-2",
+            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+            "kind": "component",
+            "polarity": "white",
+            "label": 2,
+            "widthPx": 512,
+            "heightPx": 920,
+            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+            "pixels": {
+              "kind": "numbers",
+              "length": 564,
+              "sha256": "86c490a24e479d25fd3c07b7e8661ac1dadd19e9a41b257c1eeb6afc1ac9948a"
+            },
+            "sourceTickId": null
+          },
+          "area": 564,
+          "bbox": [
+            380,
+            138,
+            60,
+            40
+          ]
+        },
+        "digits": [
+          {
+            "part": {
+              "id": "white-component-3",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+              "kind": "component",
+              "polarity": "white",
+              "label": 3,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 120,
+                "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+              },
+              "sourceTickId": null
+            },
+            "area": 120,
+            "bbox": [
+              392,
+              148,
+              6,
+              20
+            ]
+          },
+          {
+            "part": {
+              "id": "white-component-4",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+              "kind": "component",
+              "polarity": "white",
+              "label": 4,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 120,
+                "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+              },
+              "sourceTickId": null
+            },
+            "area": 120,
+            "bbox": [
+              408,
+              148,
+              6,
+              20
+            ]
+          }
+        ],
+        "digitLoops": [
+          {
+            "plate": {
+              "part": {
+                "id": "black-component-1",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                "kind": "component",
+                "polarity": "black",
+                "label": 1,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 1296,
+                  "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                },
+                "sourceTickId": null
+              },
+              "area": 1296,
+              "bbox": [
+                386,
+                142,
+                48,
+                32
+              ]
+            },
+            "anchor": {
+              "part": {
+                "id": "white-component-3",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "kind": "component",
+                "polarity": "white",
+                "label": 3,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                392,
+                148,
+                6,
+                20
+              ]
+            },
+            "matches": []
+          },
+          {
+            "plate": {
+              "part": {
+                "id": "black-component-1",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                "kind": "component",
+                "polarity": "black",
+                "label": 1,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 1296,
+                  "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                },
+                "sourceTickId": null
+              },
+              "area": 1296,
+              "bbox": [
+                386,
+                142,
+                48,
+                32
+              ]
+            },
+            "anchor": {
+              "part": {
+                "id": "white-component-4",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "kind": "component",
+                "polarity": "white",
+                "label": 4,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                408,
+                148,
+                6,
+                20
+              ]
+            },
+            "matches": []
+          }
+        ],
+        "pixels": {
+          "kind": "numbers",
+          "length": 2100,
+          "sha256": "1208d7ab21d1ddac63708b0a47882612b7686e3a36a0859c0611c564165d3189"
+        },
+        "reading": {
+          "value": "11",
+          "status": "read",
+          "digits": [
+            {
+              "bbox": [
+                392,
+                148,
+                6,
+                20
+              ],
+              "method": "cc",
+              "normalized": {
+                "kind": "numbers",
+                "length": 768,
+                "sha256": "9800f1803d7e91edef8c05c8e1242acf9815168b1fcbca2aa2b4a1b7c0264566"
+              },
+              "notes": [],
+              "rankings": [
+                {
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "label": "0",
+                  "score": 0.640625
+                }
+              ]
+            },
+            {
+              "bbox": [
+                408,
+                148,
+                6,
+                20
+              ],
+              "method": "cc",
+              "normalized": {
+                "kind": "numbers",
+                "length": 768,
+                "sha256": "9800f1803d7e91edef8c05c8e1242acf9815168b1fcbca2aa2b4a1b7c0264566"
+              },
+              "notes": [],
+              "rankings": [
+                {
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "label": "0",
+                  "score": 0.640625
+                }
+              ]
+            }
+          ]
+        },
+        "unaccountedButOwned": {
+          "rule": "outer-border-bbox",
+          "outerBorder": "white-component-2",
+          "bbox": [
+            380,
+            138,
+            60,
+            40
+          ]
+        }
+      },
+      {
+        "id": "badge-candidate:black-component-2:white-component-6",
+        "plate": {
+          "part": {
+            "id": "black-component-2",
+            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+            "kind": "component",
+            "polarity": "black",
+            "label": 2,
             "widthPx": 512,
             "heightPx": 920,
             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -147,11 +452,11 @@
         },
         "border": {
           "part": {
-            "id": "white-component-2",
-            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+            "id": "white-component-6",
+            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
             "kind": "component",
             "polarity": "white",
-            "label": 2,
+            "label": 6,
             "widthPx": 512,
             "heightPx": 920,
             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -173,11 +478,11 @@
         "digits": [
           {
             "part": {
-              "id": "white-component-3",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+              "id": "white-component-7",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
               "kind": "component",
               "polarity": "white",
-              "label": 3,
+              "label": 7,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -198,11 +503,11 @@
           },
           {
             "part": {
-              "id": "white-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+              "id": "white-component-8",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
               "kind": "component",
               "polarity": "white",
-              "label": 4,
+              "label": 8,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -226,11 +531,11 @@
           {
             "plate": {
               "part": {
-                "id": "black-component-1",
-                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                "id": "black-component-2",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                 "kind": "component",
                 "polarity": "black",
-                "label": 1,
+                "label": 2,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -251,11 +556,11 @@
             },
             "anchor": {
               "part": {
-                "id": "white-component-3",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "id": "white-component-7",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                 "kind": "component",
                 "polarity": "white",
-                "label": 3,
+                "label": 7,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -279,11 +584,11 @@
           {
             "plate": {
               "part": {
-                "id": "black-component-1",
-                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                "id": "black-component-2",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                 "kind": "component",
                 "polarity": "black",
-                "label": 1,
+                "label": 2,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -304,11 +609,11 @@
             },
             "anchor": {
               "part": {
-                "id": "white-component-4",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "id": "white-component-8",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                 "kind": "component",
                 "polarity": "white",
-                "label": 4,
+                "label": 8,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -330,11 +635,11 @@
             "matches": [
               {
                 "part": {
-                  "id": "black-component-2",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                  "id": "black-component-3",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 2,
+                  "label": 3,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -419,7 +724,7 @@
         },
         "unaccountedButOwned": {
           "rule": "outer-border-bbox",
-          "outerBorder": "white-component-2",
+          "outerBorder": "white-component-6",
           "bbox": [
             120,
             258,
@@ -429,14 +734,14 @@
         }
       },
       {
-        "id": "badge-candidate:black-component-4:white-component-7",
+        "id": "badge-candidate:black-component-6:white-component-11",
         "plate": {
           "part": {
-            "id": "black-component-4",
-            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+            "id": "black-component-6",
+            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
             "kind": "component",
             "polarity": "black",
-            "label": 4,
+            "label": 6,
             "widthPx": 512,
             "heightPx": 920,
             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -457,11 +762,11 @@
         },
         "border": {
           "part": {
-            "id": "white-component-7",
-            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+            "id": "white-component-11",
+            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-11",
             "kind": "component",
             "polarity": "white",
-            "label": 7,
+            "label": 11,
             "widthPx": 512,
             "heightPx": 920,
             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -483,11 +788,11 @@
         "digits": [
           {
             "part": {
-              "id": "white-component-8",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+              "id": "white-component-12",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
               "kind": "component",
               "polarity": "white",
-              "label": 8,
+              "label": 12,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -508,11 +813,11 @@
           },
           {
             "part": {
-              "id": "white-component-9",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+              "id": "white-component-13",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
               "kind": "component",
               "polarity": "white",
-              "label": 9,
+              "label": 13,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -536,11 +841,11 @@
           {
             "plate": {
               "part": {
-                "id": "black-component-4",
-                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                "id": "black-component-6",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                 "kind": "component",
                 "polarity": "black",
-                "label": 4,
+                "label": 6,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -561,11 +866,11 @@
             },
             "anchor": {
               "part": {
-                "id": "white-component-8",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                "id": "white-component-12",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                 "kind": "component",
                 "polarity": "white",
-                "label": 8,
+                "label": 12,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -587,11 +892,11 @@
             "matches": [
               {
                 "part": {
-                  "id": "black-component-5",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                  "id": "black-component-7",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-7",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 5,
+                  "label": 7,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -615,11 +920,11 @@
           {
             "plate": {
               "part": {
-                "id": "black-component-4",
-                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                "id": "black-component-6",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                 "kind": "component",
                 "polarity": "black",
-                "label": 4,
+                "label": 6,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -640,11 +945,11 @@
             },
             "anchor": {
               "part": {
-                "id": "white-component-9",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                "id": "white-component-13",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                 "kind": "component",
                 "polarity": "white",
-                "label": 9,
+                "label": 13,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -729,7 +1034,7 @@
         },
         "unaccountedButOwned": {
           "rule": "outer-border-bbox",
-          "outerBorder": "white-component-7",
+          "outerBorder": "white-component-11",
           "bbox": [
             300,
             578,
@@ -747,8 +1052,8 @@
       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
       "pixels": {
         "kind": "numbers",
-        "length": 4200,
-        "sha256": "db329b312425a42761b08287858be096a206f663f58650891969845163c5bb58"
+        "length": 6300,
+        "sha256": "02dd217838e6d50012740a51d2bccb8a7b0da120b8c5705f84fb07744c35f2d1"
       }
     },
     "px.exp.lab.baskets": [
@@ -771,7 +1076,7 @@
             "fn": "fn.lab.basket.detectfamily",
             "body": {
               "polarity": "bright",
-              "label": 5,
+              "label": 9,
               "bbox": [
                 150,
                 428,
@@ -794,7 +1099,7 @@
             "fn": "fn.lab.basket.findpx",
             "body": {
               "polarity": "bright",
-              "label": 5
+              "label": 9
             }
           }
         }
@@ -818,7 +1123,7 @@
             "fn": "fn.lab.basket.detectfamily",
             "body": {
               "polarity": "bright",
-              "label": 10,
+              "label": 14,
               "bbox": [
                 330,
                 758,
@@ -841,7 +1146,7 @@
             "fn": "fn.lab.basket.findpx",
             "body": {
               "polarity": "bright",
-              "label": 10
+              "label": 14
             }
           }
         }
@@ -855,7 +1160,7 @@
       "members": [
         {
           "body": {
-            "label": 5,
+            "label": 9,
             "area": 1746,
             "cx": 170.5,
             "cy": 455.31500572737684,
@@ -873,7 +1178,7 @@
         },
         {
           "body": {
-            "label": 10,
+            "label": 14,
             "area": 1746,
             "cx": 350.5,
             "cy": 785.3150057273768,
@@ -907,7 +1212,7 @@
         {
           "candidate": {
             "body": {
-              "label": 5,
+              "label": 9,
               "area": 1746,
               "cx": 170.5,
               "cy": 455.31500572737684,
@@ -938,7 +1243,7 @@
         {
           "candidate": {
             "body": {
-              "label": 10,
+              "label": 14,
               "area": 1746,
               "cx": 350.5,
               "cy": 785.3150057273768,
@@ -976,17 +1281,73 @@
           "data": {
             "kind": "numbers",
             "length": 471040,
-            "sha256": "51574525bdb36b2d7c28b60a65979e05afc38572cc1126899ca74272bdf3289d"
+            "sha256": "512c32e36e9d36236bd9dd8622b53d4b8c77ffd4e2d07af8f44ee4e58d97b815"
           }
         },
         "labels": {
           "kind": "numbers",
           "length": 471040,
-          "sha256": "caef18999ecf40c949c22678e637ecdd5dc8ea64e9f4c1c51e11b42ce2bf7d84"
+          "sha256": "2fc61ec898b551ce4d15984c5935f6c99d535b7d7e9368065656847558cbeb63"
         },
         "components": [
           {
             "label": 1,
+            "area": 152,
+            "cx": 477.5,
+            "cy": 90.5,
+            "bboxX": 470,
+            "bboxY": 78,
+            "bboxW": 16,
+            "bboxH": 26,
+            "major": 26,
+            "minor": 16,
+            "angle": 1.5707963267948966,
+            "fill": 0.36538461538461536
+          },
+          {
+            "label": 2,
+            "area": 564,
+            "cx": 409.5,
+            "cy": 157.5,
+            "bboxX": 380,
+            "bboxY": 138,
+            "bboxW": 60,
+            "bboxH": 40,
+            "major": 60,
+            "minor": 40,
+            "angle": 0,
+            "fill": 0.235
+          },
+          {
+            "label": 3,
+            "area": 120,
+            "cx": 394.5,
+            "cy": 157.5,
+            "bboxX": 392,
+            "bboxY": 148,
+            "bboxW": 6,
+            "bboxH": 20,
+            "major": 20,
+            "minor": 6,
+            "angle": 1.5707963267948966,
+            "fill": 1
+          },
+          {
+            "label": 4,
+            "area": 120,
+            "cx": 410.5,
+            "cy": 157.5,
+            "bboxX": 408,
+            "bboxY": 148,
+            "bboxW": 6,
+            "bboxH": 20,
+            "major": 20,
+            "minor": 6,
+            "angle": 1.5707963267948966,
+            "fill": 1
+          },
+          {
+            "label": 5,
             "area": 152,
             "cx": 67.5,
             "cy": 220.5,
@@ -1000,7 +1361,7 @@
             "fill": 0.36538461538461536
           },
           {
-            "label": 2,
+            "label": 6,
             "area": 564,
             "cx": 149.5,
             "cy": 277.5,
@@ -1014,7 +1375,7 @@
             "fill": 0.235
           },
           {
-            "label": 3,
+            "label": 7,
             "area": 120,
             "cx": 134.5,
             "cy": 277.5,
@@ -1028,7 +1389,7 @@
             "fill": 1
           },
           {
-            "label": 4,
+            "label": 8,
             "area": 156,
             "cx": 153.5,
             "cy": 277.5,
@@ -1042,7 +1403,7 @@
             "fill": 0.65
           },
           {
-            "label": 5,
+            "label": 9,
             "area": 1746,
             "cx": 170.5,
             "cy": 455.31500572737684,
@@ -1056,7 +1417,7 @@
             "fill": 0.6298701298701299
           },
           {
-            "label": 6,
+            "label": 10,
             "area": 152,
             "cx": 427.5,
             "cy": 530.5,
@@ -1070,7 +1431,7 @@
             "fill": 0.36538461538461536
           },
           {
-            "label": 7,
+            "label": 11,
             "area": 564,
             "cx": 329.5,
             "cy": 597.5,
@@ -1084,7 +1445,7 @@
             "fill": 0.235
           },
           {
-            "label": 8,
+            "label": 12,
             "area": 156,
             "cx": 317.5,
             "cy": 597.5,
@@ -1098,7 +1459,7 @@
             "fill": 0.65
           },
           {
-            "label": 9,
+            "label": 13,
             "area": 120,
             "cx": 330.5,
             "cy": 597.5,
@@ -1112,7 +1473,7 @@
             "fill": 1
           },
           {
-            "label": 10,
+            "label": 14,
             "area": 1746,
             "cx": 350.5,
             "cy": 785.3150057273768,
@@ -1134,17 +1495,31 @@
           "data": {
             "kind": "numbers",
             "length": 471040,
-            "sha256": "719dab1671b3272083bdf1c4f9a80b1710b901a7a7e103a7214dad551bfe07ba"
+            "sha256": "64173dc8fd6f58c352548dded82879e164a8a3f4c9e2ad852be5a9c3a8604563"
           }
         },
         "labels": {
           "kind": "numbers",
           "length": 471040,
-          "sha256": "b850929f483291bf9c6ab746fc8d6ea8010923c92fa6937ec72da5ac7a16e3e7"
+          "sha256": "87ba89480876c3a700fa5d77d9d133de69580cec94acc999a266ce1b87e6a13e"
         },
         "components": [
           {
             "label": 1,
+            "area": 1296,
+            "cx": 410.7962962962963,
+            "cy": 157.5,
+            "bboxX": 386,
+            "bboxY": 142,
+            "bboxW": 48,
+            "bboxH": 32,
+            "major": 48,
+            "minor": 32,
+            "angle": 0,
+            "fill": 0.84375
+          },
+          {
+            "label": 2,
             "area": 1176,
             "cx": 150.21428571428572,
             "cy": 277.5,
@@ -1158,7 +1533,7 @@
             "fill": 0.765625
           },
           {
-            "label": 2,
+            "label": 3,
             "area": 84,
             "cx": 153.5,
             "cy": 277.5,
@@ -1172,7 +1547,21 @@
             "fill": 1
           },
           {
-            "label": 3,
+            "label": 4,
+            "area": 4224,
+            "cx": 131.5,
+            "cy": 345.5,
+            "bboxX": 0,
+            "bboxY": 338,
+            "bboxW": 264,
+            "bboxH": 16,
+            "major": 264,
+            "minor": 16,
+            "angle": 0,
+            "fill": 1
+          },
+          {
+            "label": 5,
             "area": 1954,
             "cx": 170.5,
             "cy": 465.13306038894575,
@@ -1186,7 +1575,7 @@
             "fill": 0.5281081081081082
           },
           {
-            "label": 4,
+            "label": 6,
             "area": 1176,
             "cx": 331.8469387755102,
             "cy": 597.5,
@@ -1200,7 +1589,7 @@
             "fill": 0.7656249999999997
           },
           {
-            "label": 5,
+            "label": 7,
             "area": 84,
             "cx": 317.5,
             "cy": 597.5,
@@ -1214,7 +1603,7 @@
             "fill": 1
           },
           {
-            "label": 6,
+            "label": 8,
             "area": 1954,
             "cx": 350.5,
             "cy": 795.1330603889458,
@@ -1231,13 +1620,13 @@
       }
     },
     "px.exp.lab.course.canonicalpixels": {
-      "imageId": "composite:fe5b20263d8a371792",
+      "imageId": "composite:5ff5aac6a0ea0aaf99",
       "widthPx": 512,
       "heightPx": 920,
       "rgba": {
         "kind": "numbers",
         "length": 1884160,
-        "sha256": "c2ec136b3baa61e31b8c63d661352181455a246c554c4a725fe08c42b655695c"
+        "sha256": "1954300a6c8e6ac19ca9a339d95eaee742042322319a0b87a98f5cfc970b73cb"
       }
     },
     "px.exp.lab.course.dashstrack": {
@@ -1398,6 +1787,531 @@
         }
       }
     },
+    "px.exp.lab.fixture.basis": {
+      "for": "why every element of the synthetic capture is drawn the way it is, and which Stage knob it answers to",
+      "frame": {
+        "widthPx": 512,
+        "heightPx": 1024,
+        "chromeTop": 40,
+        "chromeBottom": 60,
+        "background": "seeded LCG, values 80..199: never <= 45 (S1 black) and never >= 210 (S1 white), so every mask pixel below is drawn on purpose"
+      },
+      "elements": [
+        {
+          "what": "chrome bands",
+          "basis": "constant rows top and bottom, no entropy: what S0 crops"
+        },
+        {
+          "what": "badge border / plate / digits / loop",
+          "basis": "S1's plate knobs (width 34..78, height 24..54, aspect 1..2.4, fill >= 0.55) and the digit templates the port carries in place of the LAB logistic asset"
+        },
+        {
+          "what": "basket",
+          "basis": "the LAB's own basket sprite (42x66, 1746 white px) inside a dark shell clearing it by 4px on every side: S2 learns that modal margin"
+        },
+        {
+          "what": "tee",
+          "basis": "a bright 16x26 outline 2px thick whose enclosed hole is small and elongated: S3 floods the background in and keeps what is enclosed"
+        },
+        {
+          "what": "the third badge \"11\" and third tee, with no third basket",
+          "basis": "S4 has to report a hole whose basket is missing instead of binding a basket that belongs to another hole; both digits are bars, so this badge adds no enclosed loop for S3 to mute"
+        },
+        {
+          "what": "the obstacle bar",
+          "basis": "264x16 at (0,380) in source coordinates: dark like a plate but outside every S1/S2/S3 predicate, so it is the one thing in the raster no Stage object owns and S5 can only call terrain"
+        }
+      ],
+      "seededBy": "lcg(seed), no clock and no Math.random: the same bytes on every machine"
+    },
+    "px.exp.lab.holes.binding": {
+      "rule": "nearest-free-in-badge-order",
+      "bound": [
+        {
+          "badge": {
+            "id": "badge-3",
+            "bbox": [
+              300,
+              578,
+              60,
+              40
+            ],
+            "at": [
+              330,
+              598
+            ],
+            "reading": "01",
+            "status": "read",
+            "number": 1
+          },
+          "tee": {
+            "id": "tee-3",
+            "at": [
+              427.5,
+              530.5
+            ],
+            "bbox": [
+              420,
+              518,
+              16,
+              26
+            ],
+            "gapFromBadgePx": 118.585
+          },
+          "basket": {
+            "id": "basket-2",
+            "at": [
+              351,
+              791
+            ],
+            "bbox": [
+              326,
+              754,
+              50,
+              74
+            ],
+            "gapFromBadgePx": 194.139
+          }
+        },
+        {
+          "badge": {
+            "id": "badge-2",
+            "bbox": [
+              120,
+              258,
+              60,
+              40
+            ],
+            "at": [
+              150,
+              278
+            ],
+            "reading": "10",
+            "status": "read",
+            "number": 10
+          },
+          "tee": {
+            "id": "tee-2",
+            "at": [
+              67.5,
+              220.5
+            ],
+            "bbox": [
+              60,
+              208,
+              16,
+              26
+            ],
+            "gapFromBadgePx": 100.561
+          },
+          "basket": {
+            "id": "basket-1",
+            "at": [
+              171,
+              461
+            ],
+            "bbox": [
+              146,
+              424,
+              50,
+              74
+            ],
+            "gapFromBadgePx": 184.201
+          }
+        },
+        {
+          "badge": {
+            "id": "badge-1",
+            "bbox": [
+              380,
+              138,
+              60,
+              40
+            ],
+            "at": [
+              410,
+              158
+            ],
+            "reading": "11",
+            "status": "read",
+            "number": 11
+          },
+          "tee": {
+            "id": "tee-1",
+            "at": [
+              477.5,
+              90.5
+            ],
+            "bbox": [
+              470,
+              78,
+              16,
+              26
+            ],
+            "gapFromBadgePx": 95.459
+          },
+          "basket": null
+        }
+      ],
+      "unreadable": [],
+      "pools": {
+        "tees": [
+          {
+            "id": "tee-1",
+            "bbox": [
+              470,
+              78,
+              16,
+              26
+            ],
+            "at": [
+              477.5,
+              90.5
+            ],
+            "boundTo": 11
+          },
+          {
+            "id": "tee-2",
+            "bbox": [
+              60,
+              208,
+              16,
+              26
+            ],
+            "at": [
+              67.5,
+              220.5
+            ],
+            "boundTo": 10
+          },
+          {
+            "id": "tee-3",
+            "bbox": [
+              420,
+              518,
+              16,
+              26
+            ],
+            "at": [
+              427.5,
+              530.5
+            ],
+            "boundTo": 1
+          }
+        ],
+        "baskets": [
+          {
+            "id": "basket-1",
+            "bbox": [
+              146,
+              424,
+              50,
+              74
+            ],
+            "at": [
+              171,
+              461
+            ],
+            "boundTo": 10
+          },
+          {
+            "id": "basket-2",
+            "bbox": [
+              326,
+              754,
+              50,
+              74
+            ],
+            "at": [
+              351,
+              791
+            ],
+            "boundTo": 1
+          }
+        ]
+      }
+    },
+    "px.exp.lab.holes.numbers": {
+      "rule": "badge order is the reading, not the position in the raster",
+      "numbered": [
+        {
+          "id": "badge-3",
+          "bbox": [
+            300,
+            578,
+            60,
+            40
+          ],
+          "at": [
+            330,
+            598
+          ],
+          "reading": "01",
+          "status": "read",
+          "number": 1
+        },
+        {
+          "id": "badge-2",
+          "bbox": [
+            120,
+            258,
+            60,
+            40
+          ],
+          "at": [
+            150,
+            278
+          ],
+          "reading": "10",
+          "status": "read",
+          "number": 10
+        },
+        {
+          "id": "badge-1",
+          "bbox": [
+            380,
+            138,
+            60,
+            40
+          ],
+          "at": [
+            410,
+            158
+          ],
+          "reading": "11",
+          "status": "read",
+          "number": 11
+        }
+      ],
+      "unreadable": []
+    },
+    "px.exp.lab.holes.objects": [
+      {
+        "number": 1,
+        "badge": {
+          "id": "badge-3",
+          "reading": "01",
+          "bbox": [
+            300,
+            578,
+            60,
+            40
+          ],
+          "at": [
+            330,
+            598
+          ]
+        },
+        "tee": {
+          "id": "tee-3",
+          "at": [
+            427.5,
+            530.5
+          ],
+          "bbox": [
+            420,
+            518,
+            16,
+            26
+          ],
+          "gapFromBadgePx": 118.585
+        },
+        "basket": {
+          "id": "basket-2",
+          "at": [
+            351,
+            791
+          ],
+          "bbox": [
+            326,
+            754,
+            50,
+            74
+          ],
+          "gapFromBadgePx": 194.139
+        },
+        "confidence": {
+          "value": 1,
+          "basis": {
+            "badgeRead": 0.5,
+            "tee": 0.25,
+            "basket": 0.25
+          },
+          "of": "badge read 0.5 + tee 0.25 + basket 0.25"
+        },
+        "missing": [],
+        "complete": true,
+        "has": {
+          "readNumbers": {
+            "fn": "fn.lab.hole.readnumbers",
+            "reading": "01",
+            "status": "read"
+          },
+          "bindAnchors": {
+            "fn": "fn.lab.hole.bindanchors",
+            "rule": "nearest-free-in-badge-order",
+            "tee": "tee-3",
+            "basket": "basket-2"
+          },
+          "assemble": {
+            "fn": "fn.lab.hole.assemble",
+            "missing": []
+          }
+        }
+      },
+      {
+        "number": 10,
+        "badge": {
+          "id": "badge-2",
+          "reading": "10",
+          "bbox": [
+            120,
+            258,
+            60,
+            40
+          ],
+          "at": [
+            150,
+            278
+          ]
+        },
+        "tee": {
+          "id": "tee-2",
+          "at": [
+            67.5,
+            220.5
+          ],
+          "bbox": [
+            60,
+            208,
+            16,
+            26
+          ],
+          "gapFromBadgePx": 100.561
+        },
+        "basket": {
+          "id": "basket-1",
+          "at": [
+            171,
+            461
+          ],
+          "bbox": [
+            146,
+            424,
+            50,
+            74
+          ],
+          "gapFromBadgePx": 184.201
+        },
+        "confidence": {
+          "value": 1,
+          "basis": {
+            "badgeRead": 0.5,
+            "tee": 0.25,
+            "basket": 0.25
+          },
+          "of": "badge read 0.5 + tee 0.25 + basket 0.25"
+        },
+        "missing": [],
+        "complete": true,
+        "has": {
+          "readNumbers": {
+            "fn": "fn.lab.hole.readnumbers",
+            "reading": "10",
+            "status": "read"
+          },
+          "bindAnchors": {
+            "fn": "fn.lab.hole.bindanchors",
+            "rule": "nearest-free-in-badge-order",
+            "tee": "tee-2",
+            "basket": "basket-1"
+          },
+          "assemble": {
+            "fn": "fn.lab.hole.assemble",
+            "missing": []
+          }
+        }
+      },
+      {
+        "number": 11,
+        "badge": {
+          "id": "badge-1",
+          "reading": "11",
+          "bbox": [
+            380,
+            138,
+            60,
+            40
+          ],
+          "at": [
+            410,
+            158
+          ]
+        },
+        "tee": {
+          "id": "tee-1",
+          "at": [
+            477.5,
+            90.5
+          ],
+          "bbox": [
+            470,
+            78,
+            16,
+            26
+          ],
+          "gapFromBadgePx": 95.459
+        },
+        "basket": null,
+        "confidence": {
+          "value": 0.75,
+          "basis": {
+            "badgeRead": 0.5,
+            "tee": 0.25,
+            "basket": 0
+          },
+          "of": "badge read 0.5 + tee 0.25 + basket 0.25"
+        },
+        "missing": [
+          "basket"
+        ],
+        "complete": false,
+        "has": {
+          "readNumbers": {
+            "fn": "fn.lab.hole.readnumbers",
+            "reading": "11",
+            "status": "read"
+          },
+          "bindAnchors": {
+            "fn": "fn.lab.hole.bindanchors",
+            "rule": "nearest-free-in-badge-order",
+            "tee": "tee-1",
+            "basket": null
+          },
+          "assemble": {
+            "fn": "fn.lab.hole.assemble",
+            "missing": [
+              "basket"
+            ]
+          }
+        }
+      }
+    ],
+    "px.exp.lab.holes.unplaced": {
+      "for": "what S4 could not put in a hole, so that nothing is silently dropped between the Stages and the course",
+      "badges": [],
+      "tees": [],
+      "baskets": [],
+      "incomplete": [
+        {
+          "number": 11,
+          "missing": [
+            "basket"
+          ],
+          "why": "the basket pool was empty when hole 11 took its turn"
+        }
+      ]
+    },
     "px.exp.lab.map": {
       "for": "what the ChainSpot S0/S1/Mermaid/traverse port reached in one sprint, and what it did not",
       "built": [
@@ -1410,6 +2324,11 @@
         "px.exp.lab.components",
         "px.exp.lab.course.canonicalpixels",
         "px.exp.lab.course.dashstrack",
+        "px.exp.lab.fixture.basis",
+        "px.exp.lab.holes.binding",
+        "px.exp.lab.holes.numbers",
+        "px.exp.lab.holes.objects",
+        "px.exp.lab.holes.unplaced",
         "px.exp.lab.path.dashstrack.h1-h9",
         "px.exp.lab.path.dashstrack.h1-h9.anchors",
         "px.exp.lab.path.dashstrack.h1-h9.found",
@@ -1437,6 +2356,8 @@
         "px.exp.lab.s1.whitedigits.recognizedbadges",
         "px.exp.lab.s3.ringledger",
         "px.exp.lab.s3.teesummary",
+        "px.exp.lab.s4.holeledger",
+        "px.exp.lab.s4.holesummary",
         "px.exp.lab.source.cropbounds",
         "px.exp.lab.source.selectedinput",
         "px.exp.lab.tees",
@@ -1463,6 +2384,11 @@
           "what": "S3",
           "document": "the document its three OperationSpecs declare, plus the Python analogue's two-Tick accounting PCR",
           "evidence": "tests/lab-s3.test.js"
+        },
+        {
+          "what": "S4 (invented)",
+          "document": "Holes: Hole.readNumbers -> Hole.bindAnchors -> Hole.assemble -> Hole.unplaced over the S1/S2/S3 produce Parts, plus the S4.invariants accounting PCR that is its oracle; stages/S4.mmd compiles to the same document",
+          "evidence": "tests/lab-s4.test.js"
         },
         {
           "what": "mermaid",
@@ -1504,7 +2430,11 @@
       ],
       "next": [
         {
-          "what": "a leg that avoids what the Stages already own",
+          "what": "S5 Course: the holes as a graph over the canonical raster, with an obstacle map",
+          "for": "S4 says which hole is where; nothing yet says what is between a tee and its basket, and the fixture now draws structure no Stage owns"
+        },
+        {
+          "what": "S6 Round: a search from tee to basket that respects that map",
           "for": "a play leg is a straight line today; px.remaining.afterBadges and the Basket and Tee pixels are exactly the obstacle map it does not use"
         },
         {
@@ -2169,8 +3099,8 @@
       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
       "pixels": {
         "kind": "numbers",
-        "length": 466240,
-        "sha256": "b64391177f3e15e8c229854298f468f31a34c5e570f6177bcdd9f66b26ff7259"
+        "length": 463840,
+        "sha256": "3490626bc1475bb70ed078e4eae73ce97b5408012853d5488b035917f7286e47"
       }
     },
     "px.exp.lab.route.anchors": {
@@ -2181,6 +3111,21 @@
       "badges": [
         {
           "id": "badge-candidate:black-component-1:white-component-2",
+          "reading": "11",
+          "status": "read",
+          "bbox": [
+            380,
+            138,
+            60,
+            40
+          ],
+          "at": [
+            410,
+            158
+          ]
+        },
+        {
+          "id": "badge-candidate:black-component-2:white-component-6",
           "reading": "10",
           "status": "read",
           "bbox": [
@@ -2195,7 +3140,7 @@
           ]
         },
         {
-          "id": "badge-candidate:black-component-4:white-component-7",
+          "id": "badge-candidate:black-component-6:white-component-11",
           "reading": "01",
           "status": "read",
           "bbox": [
@@ -2242,6 +3187,19 @@
         {
           "id": "tee-1",
           "bbox": [
+            470,
+            78,
+            16,
+            26
+          ],
+          "at": [
+            477.5,
+            90.5
+          ]
+        },
+        {
+          "id": "tee-2",
+          "bbox": [
             60,
             208,
             16,
@@ -2253,7 +3211,7 @@
           ]
         },
         {
-          "id": "tee-2",
+          "id": "tee-3",
           "bbox": [
             420,
             518,
@@ -2279,20 +3237,20 @@
       "holes": [
         {
           "number": 1,
-          "badge": "badge-candidate:black-component-4:white-component-7",
-          "tee": "tee-2",
+          "badge": "badge-candidate:black-component-6:white-component-11",
+          "tee": "tee-3",
           "basket": "basket-2"
         },
         {
           "number": 10,
-          "badge": "badge-candidate:black-component-1:white-component-2",
-          "tee": "tee-1",
+          "badge": "badge-candidate:black-component-2:white-component-6",
+          "tee": "tee-2",
           "basket": "basket-1"
         }
       ],
       "waypoints": [
         {
-          "id": "tee-2",
+          "id": "tee-3",
           "at": [
             427.5,
             530.5
@@ -2306,7 +3264,7 @@
           ]
         },
         {
-          "id": "tee-1",
+          "id": "tee-2",
           "at": [
             67.5,
             220.5
@@ -2325,7 +3283,7 @@
           "kind": "play",
           "hole": 1,
           "from": {
-            "id": "tee-2",
+            "id": "tee-3",
             "at": [
               427.5,
               530.5
@@ -2351,7 +3309,7 @@
             ]
           },
           "to": {
-            "id": "tee-1",
+            "id": "tee-2",
             "at": [
               67.5,
               220.5
@@ -2363,7 +3321,7 @@
           "kind": "play",
           "hole": 10,
           "from": {
-            "id": "tee-1",
+            "id": "tee-2",
             "at": [
               67.5,
               220.5
@@ -2386,7 +3344,9 @@
         "badges": [],
         "tees": [],
         "baskets": [],
-        "incompleteHoles": []
+        "incompleteHoles": [
+          11
+        ]
       }
     },
     "px.exp.lab.route.legs": [
@@ -2394,7 +3354,7 @@
         "kind": "play",
         "hole": 1,
         "from": {
-          "id": "tee-2",
+          "id": "tee-3",
           "at": [
             427.5,
             530.5
@@ -2420,7 +3380,7 @@
           ]
         },
         "to": {
-          "id": "tee-1",
+          "id": "tee-2",
           "at": [
             67.5,
             220.5
@@ -2432,7 +3392,7 @@
         "kind": "play",
         "hole": 10,
         "from": {
-          "id": "tee-1",
+          "id": "tee-2",
           "at": [
             67.5,
             220.5
@@ -2452,13 +3412,13 @@
       "holes": [
         {
           "number": 1,
-          "badge": "badge-candidate:black-component-4:white-component-7",
+          "badge": "badge-candidate:black-component-6:white-component-11",
           "at": [
             330,
             598
           ],
           "tee": {
-            "id": "tee-2",
+            "id": "tee-3",
             "at": [
               427.5,
               530.5
@@ -2476,13 +3436,13 @@
         },
         {
           "number": 10,
-          "badge": "badge-candidate:black-component-1:white-component-2",
+          "badge": "badge-candidate:black-component-2:white-component-6",
           "at": [
             150,
             278
           ],
           "tee": {
-            "id": "tee-1",
+            "id": "tee-2",
             "at": [
               67.5,
               220.5
@@ -2497,6 +3457,23 @@
             ],
             "gapFromBadgePx": 184.201
           }
+        },
+        {
+          "number": 11,
+          "badge": "badge-candidate:black-component-1:white-component-2",
+          "at": [
+            410,
+            158
+          ],
+          "tee": {
+            "id": "tee-1",
+            "at": [
+              477.5,
+              90.5
+            ],
+            "gapFromBadgePx": 95.459
+          },
+          "basket": null
         }
       ],
       "unreadable": [],
@@ -2504,22 +3481,24 @@
         "tees": [],
         "baskets": []
       },
-      "incomplete": []
+      "incomplete": [
+        11
+      ]
     },
     "px.exp.lab.s0.cachereceipt": {
-      "cached": "lab-fixture-20260911",
+      "cached": "lab-fixture-20260911-h11-obs",
       "at": "last",
       "widthPx": 512,
       "heightPx": 1024
     },
     "px.exp.lab.s0.local.decode": {
-      "imageId": "lab-fixture-20260911",
+      "imageId": "lab-fixture-20260911-h11-obs",
       "widthPx": 512,
       "heightPx": 1024,
       "rgba": {
         "kind": "numbers",
         "length": 2097152,
-        "sha256": "17baa7bfbc22279d9cbfce8f5b1903f64d952300dfc7443df387901c5a1eaab0"
+        "sha256": "62b152581d64227a2d4c19ae63d3ec1fa8b20dd02280866e3a8125d18b81d95e"
       },
       "sourceByteLength": 2097152,
       "badges": [
@@ -2592,6 +3571,36 @@
             6,
             14
           ]
+        },
+        {
+          "reading": "11",
+          "border": [
+            380,
+            180,
+            60,
+            40
+          ],
+          "plate": [
+            386,
+            184,
+            48,
+            32
+          ],
+          "digits": [
+            [
+              392,
+              190,
+              6,
+              20
+            ],
+            [
+              408,
+              190,
+              6,
+              20
+            ]
+          ],
+          "loop": null
         }
       ],
       "baskets": [
@@ -2652,8 +3661,28 @@
             12,
             22
           ]
+        },
+        {
+          "frame": [
+            470,
+            120,
+            16,
+            26
+          ],
+          "hole": [
+            472,
+            122,
+            12,
+            22
+          ]
         }
-      ]
+      ],
+      "obstacle": {
+        "x": 0,
+        "y": 380,
+        "width": 264,
+        "height": 16
+      }
     },
     "px.exp.lab.s1.badgeassembly.badgecandidates": {
       "candidates": [
@@ -2666,6 +3695,224 @@
               "kind": "component",
               "polarity": "black",
               "label": 1,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "border": {
+            "part": {
+              "id": "white-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+              "kind": "component",
+              "polarity": "white",
+              "label": 2,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 564,
+                "sha256": "86c490a24e479d25fd3c07b7e8661ac1dadd19e9a41b257c1eeb6afc1ac9948a"
+              },
+              "sourceTickId": null
+            },
+            "area": 564,
+            "bbox": [
+              380,
+              138,
+              60,
+              40
+            ]
+          },
+          "digits": [
+            {
+              "part": {
+                "id": "white-component-3",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "kind": "component",
+                "polarity": "white",
+                "label": 3,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                392,
+                148,
+                6,
+                20
+              ]
+            },
+            {
+              "part": {
+                "id": "white-component-4",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "kind": "component",
+                "polarity": "white",
+                "label": 4,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                408,
+                148,
+                6,
+                20
+              ]
+            }
+          ],
+          "digitLoops": [
+            {
+              "plate": {
+                "part": {
+                  "id": "black-component-1",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 1,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 1296,
+                    "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 1296,
+                "bbox": [
+                  386,
+                  142,
+                  48,
+                  32
+                ]
+              },
+              "anchor": {
+                "part": {
+                  "id": "white-component-3",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 3,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 120,
+                "bbox": [
+                  392,
+                  148,
+                  6,
+                  20
+                ]
+              },
+              "matches": []
+            },
+            {
+              "plate": {
+                "part": {
+                  "id": "black-component-1",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 1,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 1296,
+                    "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 1296,
+                "bbox": [
+                  386,
+                  142,
+                  48,
+                  32
+                ]
+              },
+              "anchor": {
+                "part": {
+                  "id": "white-component-4",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 4,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 120,
+                "bbox": [
+                  408,
+                  148,
+                  6,
+                  20
+                ]
+              },
+              "matches": []
+            }
+          ],
+          "pixels": {
+            "kind": "numbers",
+            "length": 2100,
+            "sha256": "1208d7ab21d1ddac63708b0a47882612b7686e3a36a0859c0611c564165d3189"
+          }
+        },
+        {
+          "id": "badge-candidate:black-component-2:white-component-6",
+          "plate": {
+            "part": {
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+              "kind": "component",
+              "polarity": "black",
+              "label": 2,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2686,11 +3933,11 @@
           },
           "border": {
             "part": {
-              "id": "white-component-2",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+              "id": "white-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
               "kind": "component",
               "polarity": "white",
-              "label": 2,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2712,11 +3959,11 @@
           "digits": [
             {
               "part": {
-                "id": "white-component-3",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "id": "white-component-7",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                 "kind": "component",
                 "polarity": "white",
-                "label": 3,
+                "label": 7,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2737,11 +3984,11 @@
             },
             {
               "part": {
-                "id": "white-component-4",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "id": "white-component-8",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                 "kind": "component",
                 "polarity": "white",
-                "label": 4,
+                "label": 8,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2765,11 +4012,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-1",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "id": "black-component-2",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 1,
+                  "label": 2,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2790,11 +4037,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-3",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                  "id": "white-component-7",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 3,
+                  "label": 7,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2818,11 +4065,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-1",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "id": "black-component-2",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 1,
+                  "label": 2,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2843,11 +4090,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-4",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                  "id": "white-component-8",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 4,
+                  "label": 8,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2869,11 +4116,11 @@
               "matches": [
                 {
                   "part": {
-                    "id": "black-component-2",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                    "id": "black-component-3",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 2,
+                    "label": 3,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2902,14 +4149,14 @@
           }
         },
         {
-          "id": "badge-candidate:black-component-4:white-component-7",
+          "id": "badge-candidate:black-component-6:white-component-11",
           "plate": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2930,11 +4177,11 @@
           },
           "border": {
             "part": {
-              "id": "white-component-7",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+              "id": "white-component-11",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-11",
               "kind": "component",
               "polarity": "white",
-              "label": 7,
+              "label": 11,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2956,11 +4203,11 @@
           "digits": [
             {
               "part": {
-                "id": "white-component-8",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                "id": "white-component-12",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                 "kind": "component",
                 "polarity": "white",
-                "label": 8,
+                "label": 12,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -2981,11 +4228,11 @@
             },
             {
               "part": {
-                "id": "white-component-9",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                "id": "white-component-13",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                 "kind": "component",
                 "polarity": "white",
-                "label": 9,
+                "label": 13,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3009,11 +4256,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-4",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                  "id": "black-component-6",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 4,
+                  "label": 6,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3034,11 +4281,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-8",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                  "id": "white-component-12",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 8,
+                  "label": 12,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3060,11 +4307,11 @@
               "matches": [
                 {
                   "part": {
-                    "id": "black-component-5",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                    "id": "black-component-7",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-7",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 5,
+                    "label": 7,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3088,11 +4335,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-4",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                  "id": "black-component-6",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 4,
+                  "label": 6,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3113,11 +4360,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-9",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                  "id": "white-component-13",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 9,
+                  "label": 13,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3164,6 +4411,112 @@
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
               "pixels": {
                 "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "anchor": {
+            "part": {
+              "id": "white-component-3",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+              "kind": "component",
+              "polarity": "white",
+              "label": 3,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 120,
+                "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+              },
+              "sourceTickId": null
+            },
+            "area": 120,
+            "bbox": [
+              392,
+              148,
+              6,
+              20
+            ]
+          },
+          "matches": []
+        },
+        {
+          "plate": {
+            "part": {
+              "id": "black-component-1",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+              "kind": "component",
+              "polarity": "black",
+              "label": 1,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "anchor": {
+            "part": {
+              "id": "white-component-4",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+              "kind": "component",
+              "polarity": "white",
+              "label": 4,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 120,
+                "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+              },
+              "sourceTickId": null
+            },
+            "area": 120,
+            "bbox": [
+              408,
+              148,
+              6,
+              20
+            ]
+          },
+          "matches": []
+        },
+        {
+          "plate": {
+            "part": {
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+              "kind": "component",
+              "polarity": "black",
+              "label": 2,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
                 "length": 1176,
                 "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
               },
@@ -3179,11 +4532,11 @@
           },
           "anchor": {
             "part": {
-              "id": "white-component-3",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+              "id": "white-component-7",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
               "kind": "component",
               "polarity": "white",
-              "label": 3,
+              "label": 7,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3207,11 +4560,11 @@
         {
           "plate": {
             "part": {
-              "id": "black-component-1",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
               "kind": "component",
               "polarity": "black",
-              "label": 1,
+              "label": 2,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3232,11 +4585,11 @@
           },
           "anchor": {
             "part": {
-              "id": "white-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+              "id": "white-component-8",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
               "kind": "component",
               "polarity": "white",
-              "label": 4,
+              "label": 8,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3258,11 +4611,11 @@
           "matches": [
             {
               "part": {
-                "id": "black-component-2",
-                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                "id": "black-component-3",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
                 "kind": "component",
                 "polarity": "black",
-                "label": 2,
+                "label": 3,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3286,11 +4639,11 @@
         {
           "plate": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3311,11 +4664,11 @@
           },
           "anchor": {
             "part": {
-              "id": "white-component-8",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+              "id": "white-component-12",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
               "kind": "component",
               "polarity": "white",
-              "label": 8,
+              "label": 12,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3337,11 +4690,11 @@
           "matches": [
             {
               "part": {
-                "id": "black-component-5",
-                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                "id": "black-component-7",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-7",
                 "kind": "component",
                 "polarity": "black",
-                "label": 5,
+                "label": 7,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3365,11 +4718,11 @@
         {
           "plate": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3390,11 +4743,11 @@
           },
           "anchor": {
             "part": {
-              "id": "white-component-9",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+              "id": "white-component-13",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
               "kind": "component",
               "polarity": "white",
-              "label": 9,
+              "label": 13,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3433,6 +4786,85 @@
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
               "pixels": {
                 "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "anchor": {
+            "part": {
+              "id": "black-component-1",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+              "kind": "component",
+              "polarity": "black",
+              "label": 1,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "matches": [
+            {
+              "part": {
+                "id": "white-component-2",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                "kind": "component",
+                "polarity": "white",
+                "label": 2,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 564,
+                  "sha256": "86c490a24e479d25fd3c07b7e8661ac1dadd19e9a41b257c1eeb6afc1ac9948a"
+                },
+                "sourceTickId": null
+              },
+              "area": 564,
+              "bbox": [
+                380,
+                138,
+                60,
+                40
+              ]
+            }
+          ]
+        },
+        {
+          "plate": {
+            "part": {
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+              "kind": "component",
+              "polarity": "black",
+              "label": 2,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
                 "length": 1176,
                 "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
               },
@@ -3448,11 +4880,11 @@
           },
           "anchor": {
             "part": {
-              "id": "black-component-1",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
               "kind": "component",
               "polarity": "black",
-              "label": 1,
+              "label": 2,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3474,11 +4906,11 @@
           "matches": [
             {
               "part": {
-                "id": "white-component-2",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                "id": "white-component-6",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
                 "kind": "component",
                 "polarity": "white",
-                "label": 2,
+                "label": 6,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3502,11 +4934,11 @@
         {
           "plate": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3527,11 +4959,11 @@
           },
           "anchor": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3553,11 +4985,11 @@
           "matches": [
             {
               "part": {
-                "id": "white-component-7",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                "id": "white-component-11",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-11",
                 "kind": "component",
                 "polarity": "white",
-                "label": 7,
+                "label": 11,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3596,6 +5028,110 @@
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
               "pixels": {
                 "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "anchor": {
+            "part": {
+              "id": "black-component-1",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+              "kind": "component",
+              "polarity": "black",
+              "label": 1,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "matches": [
+            {
+              "part": {
+                "id": "white-component-3",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "kind": "component",
+                "polarity": "white",
+                "label": 3,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                392,
+                148,
+                6,
+                20
+              ]
+            },
+            {
+              "part": {
+                "id": "white-component-4",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "kind": "component",
+                "polarity": "white",
+                "label": 4,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                408,
+                148,
+                6,
+                20
+              ]
+            }
+          ]
+        },
+        {
+          "plate": {
+            "part": {
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+              "kind": "component",
+              "polarity": "black",
+              "label": 2,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
                 "length": 1176,
                 "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
               },
@@ -3611,11 +5147,11 @@
           },
           "anchor": {
             "part": {
-              "id": "black-component-1",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
               "kind": "component",
               "polarity": "black",
-              "label": 1,
+              "label": 2,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3637,11 +5173,11 @@
           "matches": [
             {
               "part": {
-                "id": "white-component-3",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "id": "white-component-7",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                 "kind": "component",
                 "polarity": "white",
-                "label": 3,
+                "label": 7,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3662,11 +5198,11 @@
             },
             {
               "part": {
-                "id": "white-component-4",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "id": "white-component-8",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                 "kind": "component",
                 "polarity": "white",
-                "label": 4,
+                "label": 8,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3690,11 +5226,11 @@
         {
           "plate": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3715,11 +5251,11 @@
           },
           "anchor": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3741,11 +5277,11 @@
           "matches": [
             {
               "part": {
-                "id": "white-component-8",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                "id": "white-component-12",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                 "kind": "component",
                 "polarity": "white",
-                "label": 8,
+                "label": 12,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3766,11 +5302,11 @@
             },
             {
               "part": {
-                "id": "white-component-9",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                "id": "white-component-13",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                 "kind": "component",
                 "polarity": "white",
-                "label": 9,
+                "label": 13,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3807,6 +5343,31 @@
             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
             "pixels": {
               "kind": "numbers",
+              "length": 1296,
+              "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+            },
+            "sourceTickId": null
+          },
+          "area": 1296,
+          "bbox": [
+            386,
+            142,
+            48,
+            32
+          ]
+        },
+        {
+          "part": {
+            "id": "black-component-2",
+            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+            "kind": "component",
+            "polarity": "black",
+            "label": 2,
+            "widthPx": 512,
+            "heightPx": 920,
+            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+            "pixels": {
+              "kind": "numbers",
               "length": 1176,
               "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
             },
@@ -3822,11 +5383,11 @@
         },
         {
           "part": {
-            "id": "black-component-4",
-            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+            "id": "black-component-6",
+            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
             "kind": "component",
             "polarity": "black",
-            "label": 4,
+            "label": 6,
             "widthPx": 512,
             "heightPx": 920,
             "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3850,11 +5411,11 @@
         {
           "component": {
             "part": {
-              "id": "black-component-2",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+              "id": "black-component-3",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
               "kind": "component",
               "polarity": "black",
-              "label": 2,
+              "label": 3,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3882,11 +5443,43 @@
         {
           "component": {
             "part": {
-              "id": "black-component-3",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
+              "id": "black-component-4",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
               "kind": "component",
               "polarity": "black",
-              "label": 3,
+              "label": 4,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 4224,
+                "sha256": "cc1fe42f7a42d24531dbba635682dd9ad4ac43f42cfd8768215f72afa322139d"
+              },
+              "sourceTickId": null
+            },
+            "area": 4224,
+            "bbox": [
+              0,
+              338,
+              264,
+              16
+            ]
+          },
+          "reasons": [
+            "width outside range",
+            "height outside range",
+            "aspect outside range"
+          ]
+        },
+        {
+          "component": {
+            "part": {
+              "id": "black-component-5",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+              "kind": "component",
+              "polarity": "black",
+              "label": 5,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3914,11 +5507,11 @@
         {
           "component": {
             "part": {
-              "id": "black-component-5",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+              "id": "black-component-7",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-7",
               "kind": "component",
               "polarity": "black",
-              "label": 5,
+              "label": 7,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3946,11 +5539,11 @@
         {
           "component": {
             "part": {
-              "id": "black-component-6",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
+              "id": "black-component-8",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-8",
               "kind": "component",
               "polarity": "black",
-              "label": 6,
+              "label": 8,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -3987,8 +5580,8 @@
       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
       "pixels": {
         "kind": "numbers",
-        "length": 6428,
-        "sha256": "3fce6de327b07ae9595d74d03f923e57672133dc6e5851f5d5dbea1b77806457"
+        "length": 11948,
+        "sha256": "c30c138c4517041f900bfdd70dbadbfdd93aa12560a3186d51b3b95a2eefaa10"
       },
       "components": [
         {
@@ -4002,8 +5595,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 1176,
-            "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
+            "length": 1296,
+            "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
           },
           "sourceTickId": null
         },
@@ -4018,8 +5611,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 84,
-            "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+            "length": 1176,
+            "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
           },
           "sourceTickId": null
         },
@@ -4034,8 +5627,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 1954,
-            "sha256": "99ae86d3f5507f1c0e94292d855257b13747959dc6b086358674b8da4ceb0a59"
+            "length": 84,
+            "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
           },
           "sourceTickId": null
         },
@@ -4050,8 +5643,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 1176,
-            "sha256": "c5ce8d5d715b5c711b1270a0941eaadd6b1e2210017d12b1c9f7975b39b3a628"
+            "length": 4224,
+            "sha256": "cc1fe42f7a42d24531dbba635682dd9ad4ac43f42cfd8768215f72afa322139d"
           },
           "sourceTickId": null
         },
@@ -4066,8 +5659,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 84,
-            "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+            "length": 1954,
+            "sha256": "99ae86d3f5507f1c0e94292d855257b13747959dc6b086358674b8da4ceb0a59"
           },
           "sourceTickId": null
         },
@@ -4077,6 +5670,38 @@
           "kind": "component",
           "polarity": "black",
           "label": 6,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 1176,
+            "sha256": "c5ce8d5d715b5c711b1270a0941eaadd6b1e2210017d12b1c9f7975b39b3a628"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "black-component-7",
+          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-7",
+          "kind": "component",
+          "polarity": "black",
+          "label": 7,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 84,
+            "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "black-component-8",
+          "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-8",
+          "kind": "component",
+          "polarity": "black",
+          "label": 8,
           "widthPx": 512,
           "heightPx": 920,
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4101,7 +5726,7 @@
       "pixels": {
         "kind": "numbers",
         "length": 471040,
-        "sha256": "719dab1671b3272083bdf1c4f9a80b1710b901a7a7e103a7214dad551bfe07ba"
+        "sha256": "64173dc8fd6f58c352548dded82879e164a8a3f4c9e2ad852be5a9c3a8604563"
       },
       "sourceTickId": null
     },
@@ -4115,7 +5740,7 @@
       "pixels": {
         "kind": "numbers",
         "length": 1884160,
-        "sha256": "c2ec136b3baa61e31b8c63d661352181455a246c554c4a725fe08c42b655695c"
+        "sha256": "1954300a6c8e6ac19ca9a339d95eaee742042322319a0b87a98f5cfc970b73cb"
       },
       "pixelFormat": "rgba-8",
       "sourceAddress": "px.exp.lab.course.canonicalpixels",
@@ -4131,8 +5756,8 @@
       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
       "pixels": {
         "kind": "numbers",
-        "length": 5476,
-        "sha256": "a5c23263ed876feb912559c1c2cc0f444adebf88722faa197e05169cb5f7c713"
+        "length": 6432,
+        "sha256": "4240ca1ee8a34afb60e40f08894c04b0d52cc3ad57aad3f71bd4a7055172466a"
       },
       "components": [
         {
@@ -4147,7 +5772,7 @@
           "pixels": {
             "kind": "numbers",
             "length": 152,
-            "sha256": "cebd0ecc195e3e62c2d11fb59062d9f6f0b465b75b0917eced38f997a581c915"
+            "sha256": "4277cd7847c79b204553cb419566658fba880343bf2002ce822e3b1f790df957"
           },
           "sourceTickId": null
         },
@@ -4163,7 +5788,7 @@
           "pixels": {
             "kind": "numbers",
             "length": 564,
-            "sha256": "0fdf7cfde3057a348f0b28d3a878405f9a0e46680dbe845e6947d32c742dbb23"
+            "sha256": "86c490a24e479d25fd3c07b7e8661ac1dadd19e9a41b257c1eeb6afc1ac9948a"
           },
           "sourceTickId": null
         },
@@ -4179,7 +5804,7 @@
           "pixels": {
             "kind": "numbers",
             "length": 120,
-            "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+            "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
           },
           "sourceTickId": null
         },
@@ -4194,8 +5819,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 156,
-            "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+            "length": 120,
+            "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
           },
           "sourceTickId": null
         },
@@ -4210,8 +5835,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 1746,
-            "sha256": "a1d8436691fee322335b3eb3a6056a6f0d13c9ec47b014934cd438614a2f86a4"
+            "length": 152,
+            "sha256": "cebd0ecc195e3e62c2d11fb59062d9f6f0b465b75b0917eced38f997a581c915"
           },
           "sourceTickId": null
         },
@@ -4226,8 +5851,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 152,
-            "sha256": "e79ae74ed4271d2abc196018a93d24f742fbf04456146f78feb4d4ac580055cb"
+            "length": 564,
+            "sha256": "0fdf7cfde3057a348f0b28d3a878405f9a0e46680dbe845e6947d32c742dbb23"
           },
           "sourceTickId": null
         },
@@ -4242,8 +5867,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 564,
-            "sha256": "7545e76c3580a5a5ddf55677dc40eccbe5e8166720d50431668187628c0641e7"
+            "length": 120,
+            "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
           },
           "sourceTickId": null
         },
@@ -4259,7 +5884,7 @@
           "pixels": {
             "kind": "numbers",
             "length": 156,
-            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+            "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
           },
           "sourceTickId": null
         },
@@ -4274,8 +5899,8 @@
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
           "pixels": {
             "kind": "numbers",
-            "length": 120,
-            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+            "length": 1746,
+            "sha256": "a1d8436691fee322335b3eb3a6056a6f0d13c9ec47b014934cd438614a2f86a4"
           },
           "sourceTickId": null
         },
@@ -4285,6 +5910,70 @@
           "kind": "component",
           "polarity": "white",
           "label": 10,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 152,
+            "sha256": "e79ae74ed4271d2abc196018a93d24f742fbf04456146f78feb4d4ac580055cb"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "white-component-11",
+          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-11",
+          "kind": "component",
+          "polarity": "white",
+          "label": 11,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 564,
+            "sha256": "7545e76c3580a5a5ddf55677dc40eccbe5e8166720d50431668187628c0641e7"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "white-component-12",
+          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
+          "kind": "component",
+          "polarity": "white",
+          "label": 12,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 156,
+            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "white-component-13",
+          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
+          "kind": "component",
+          "polarity": "white",
+          "label": 13,
+          "widthPx": 512,
+          "heightPx": 920,
+          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+          "pixels": {
+            "kind": "numbers",
+            "length": 120,
+            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+          },
+          "sourceTickId": null
+        },
+        {
+          "id": "white-component-14",
+          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-14",
+          "kind": "component",
+          "polarity": "white",
+          "label": 14,
           "widthPx": 512,
           "heightPx": 920,
           "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4309,7 +5998,7 @@
       "pixels": {
         "kind": "numbers",
         "length": 471040,
-        "sha256": "51574525bdb36b2d7c28b60a65979e05afc38572cc1126899ca74272bdf3289d"
+        "sha256": "512c32e36e9d36236bd9dd8622b53d4b8c77ffd4e2d07af8f44ee4e58d97b815"
       },
       "sourceTickId": null
     },
@@ -4351,6 +6040,272 @@
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
                 "pixels": {
                   "kind": "numbers",
+                  "length": 1296,
+                  "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                },
+                "sourceTickId": null
+              },
+              "area": 1296,
+              "bbox": [
+                386,
+                142,
+                48,
+                32
+              ]
+            },
+            "border": {
+              "part": {
+                "id": "white-component-2",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                "kind": "component",
+                "polarity": "white",
+                "label": 2,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 564,
+                  "sha256": "86c490a24e479d25fd3c07b7e8661ac1dadd19e9a41b257c1eeb6afc1ac9948a"
+                },
+                "sourceTickId": null
+              },
+              "area": 564,
+              "bbox": [
+                380,
+                138,
+                60,
+                40
+              ]
+            },
+            "digits": [
+              {
+                "part": {
+                  "id": "white-component-3",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 3,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 120,
+                "bbox": [
+                  392,
+                  148,
+                  6,
+                  20
+                ]
+              },
+              {
+                "part": {
+                  "id": "white-component-4",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 4,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 120,
+                "bbox": [
+                  408,
+                  148,
+                  6,
+                  20
+                ]
+              }
+            ],
+            "digitLoops": [
+              {
+                "plate": {
+                  "part": {
+                    "id": "black-component-1",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                    "kind": "component",
+                    "polarity": "black",
+                    "label": 1,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 1296,
+                      "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 1296,
+                  "bbox": [
+                    386,
+                    142,
+                    48,
+                    32
+                  ]
+                },
+                "anchor": {
+                  "part": {
+                    "id": "white-component-3",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                    "kind": "component",
+                    "polarity": "white",
+                    "label": 3,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 120,
+                      "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 120,
+                  "bbox": [
+                    392,
+                    148,
+                    6,
+                    20
+                  ]
+                },
+                "matches": []
+              },
+              {
+                "plate": {
+                  "part": {
+                    "id": "black-component-1",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                    "kind": "component",
+                    "polarity": "black",
+                    "label": 1,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 1296,
+                      "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 1296,
+                  "bbox": [
+                    386,
+                    142,
+                    48,
+                    32
+                  ]
+                },
+                "anchor": {
+                  "part": {
+                    "id": "white-component-4",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                    "kind": "component",
+                    "polarity": "white",
+                    "label": 4,
+                    "widthPx": 512,
+                    "heightPx": 920,
+                    "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 120,
+                      "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                    },
+                    "sourceTickId": null
+                  },
+                  "area": 120,
+                  "bbox": [
+                    408,
+                    148,
+                    6,
+                    20
+                  ]
+                },
+                "matches": []
+              }
+            ],
+            "pixels": {
+              "kind": "numbers",
+              "length": 2100,
+              "sha256": "1208d7ab21d1ddac63708b0a47882612b7686e3a36a0859c0611c564165d3189"
+            }
+          },
+          "glyph": {
+            "origin": [
+              380,
+              138
+            ],
+            "width": 60,
+            "height": 40,
+            "pixels": {
+              "kind": "numbers",
+              "length": 2100,
+              "sha256": "1208d7ab21d1ddac63708b0a47882612b7686e3a36a0859c0611c564165d3189"
+            }
+          },
+          "digits": [
+            {
+              "bbox": [
+                392,
+                148,
+                6,
+                20
+              ],
+              "method": "cc",
+              "normalized": {
+                "kind": "numbers",
+                "length": 768,
+                "sha256": "9800f1803d7e91edef8c05c8e1242acf9815168b1fcbca2aa2b4a1b7c0264566"
+              },
+              "notes": []
+            },
+            {
+              "bbox": [
+                408,
+                148,
+                6,
+                20
+              ],
+              "method": "cc",
+              "normalized": {
+                "kind": "numbers",
+                "length": 768,
+                "sha256": "9800f1803d7e91edef8c05c8e1242acf9815168b1fcbca2aa2b4a1b7c0264566"
+              },
+              "notes": []
+            }
+          ],
+          "notes": []
+        },
+        {
+          "badge": {
+            "id": "badge-candidate:black-component-2:white-component-6",
+            "plate": {
+              "part": {
+                "id": "black-component-2",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                "kind": "component",
+                "polarity": "black",
+                "label": 2,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
                   "length": 1176,
                   "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
                 },
@@ -4366,11 +6321,11 @@
             },
             "border": {
               "part": {
-                "id": "white-component-2",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+                "id": "white-component-6",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
                 "kind": "component",
                 "polarity": "white",
-                "label": 2,
+                "label": 6,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4392,11 +6347,11 @@
             "digits": [
               {
                 "part": {
-                  "id": "white-component-3",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                  "id": "white-component-7",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 3,
+                  "label": 7,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4417,11 +6372,11 @@
               },
               {
                 "part": {
-                  "id": "white-component-4",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                  "id": "white-component-8",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 4,
+                  "label": 8,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4445,11 +6400,11 @@
               {
                 "plate": {
                   "part": {
-                    "id": "black-component-1",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                    "id": "black-component-2",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 1,
+                    "label": 2,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4470,11 +6425,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-3",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                    "id": "white-component-7",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 3,
+                    "label": 7,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4498,11 +6453,11 @@
               {
                 "plate": {
                   "part": {
-                    "id": "black-component-1",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                    "id": "black-component-2",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 1,
+                    "label": 2,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4523,11 +6478,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-4",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                    "id": "white-component-8",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 4,
+                    "label": 8,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4549,11 +6504,11 @@
                 "matches": [
                   {
                     "part": {
-                      "id": "black-component-2",
-                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                      "id": "black-component-3",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
                       "kind": "component",
                       "polarity": "black",
-                      "label": 2,
+                      "label": 3,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4630,14 +6585,14 @@
         },
         {
           "badge": {
-            "id": "badge-candidate:black-component-4:white-component-7",
+            "id": "badge-candidate:black-component-6:white-component-11",
             "plate": {
               "part": {
-                "id": "black-component-4",
-                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                "id": "black-component-6",
+                "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                 "kind": "component",
                 "polarity": "black",
-                "label": 4,
+                "label": 6,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4658,11 +6613,11 @@
             },
             "border": {
               "part": {
-                "id": "white-component-7",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                "id": "white-component-11",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-11",
                 "kind": "component",
                 "polarity": "white",
-                "label": 7,
+                "label": 11,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4684,11 +6639,11 @@
             "digits": [
               {
                 "part": {
-                  "id": "white-component-8",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                  "id": "white-component-12",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 8,
+                  "label": 12,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4709,11 +6664,11 @@
               },
               {
                 "part": {
-                  "id": "white-component-9",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                  "id": "white-component-13",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 9,
+                  "label": 13,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4737,11 +6692,11 @@
               {
                 "plate": {
                   "part": {
-                    "id": "black-component-4",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                    "id": "black-component-6",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 4,
+                    "label": 6,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4762,11 +6717,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-8",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                    "id": "white-component-12",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 8,
+                    "label": 12,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4788,11 +6743,11 @@
                 "matches": [
                   {
                     "part": {
-                      "id": "black-component-5",
-                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                      "id": "black-component-7",
+                      "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-7",
                       "kind": "component",
                       "polarity": "black",
-                      "label": 5,
+                      "label": 7,
                       "widthPx": 512,
                       "heightPx": 920,
                       "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4816,11 +6771,11 @@
               {
                 "plate": {
                   "part": {
-                    "id": "black-component-4",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                    "id": "black-component-6",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 4,
+                    "label": 6,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4841,11 +6796,11 @@
                 },
                 "anchor": {
                   "part": {
-                    "id": "white-component-9",
-                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                    "id": "white-component-13",
+                    "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                     "kind": "component",
                     "polarity": "white",
-                    "label": 9,
+                    "label": 13,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4939,6 +6894,280 @@
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
               "pixels": {
                 "kind": "numbers",
+                "length": 1296,
+                "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+              },
+              "sourceTickId": null
+            },
+            "area": 1296,
+            "bbox": [
+              386,
+              142,
+              48,
+              32
+            ]
+          },
+          "border": {
+            "part": {
+              "id": "white-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+              "kind": "component",
+              "polarity": "white",
+              "label": 2,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
+                "length": 564,
+                "sha256": "86c490a24e479d25fd3c07b7e8661ac1dadd19e9a41b257c1eeb6afc1ac9948a"
+              },
+              "sourceTickId": null
+            },
+            "area": 564,
+            "bbox": [
+              380,
+              138,
+              60,
+              40
+            ]
+          },
+          "digits": [
+            {
+              "part": {
+                "id": "white-component-3",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "kind": "component",
+                "polarity": "white",
+                "label": 3,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                392,
+                148,
+                6,
+                20
+              ]
+            },
+            {
+              "part": {
+                "id": "white-component-4",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "kind": "component",
+                "polarity": "white",
+                "label": 4,
+                "widthPx": 512,
+                "heightPx": 920,
+                "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 120,
+                  "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                },
+                "sourceTickId": null
+              },
+              "area": 120,
+              "bbox": [
+                408,
+                148,
+                6,
+                20
+              ]
+            }
+          ],
+          "digitLoops": [
+            {
+              "plate": {
+                "part": {
+                  "id": "black-component-1",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 1,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 1296,
+                    "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 1296,
+                "bbox": [
+                  386,
+                  142,
+                  48,
+                  32
+                ]
+              },
+              "anchor": {
+                "part": {
+                  "id": "white-component-3",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 3,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 120,
+                "bbox": [
+                  392,
+                  148,
+                  6,
+                  20
+                ]
+              },
+              "matches": []
+            },
+            {
+              "plate": {
+                "part": {
+                  "id": "black-component-1",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "kind": "component",
+                  "polarity": "black",
+                  "label": 1,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 1296,
+                    "sha256": "f577cffaf19be32240ce5d9b188b6529173e88cba5246e5cf26f769e7cbd139a"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 1296,
+                "bbox": [
+                  386,
+                  142,
+                  48,
+                  32
+                ]
+              },
+              "anchor": {
+                "part": {
+                  "id": "white-component-4",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                  "kind": "component",
+                  "polarity": "white",
+                  "label": 4,
+                  "widthPx": 512,
+                  "heightPx": 920,
+                  "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                  "pixels": {
+                    "kind": "numbers",
+                    "length": 120,
+                    "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                  },
+                  "sourceTickId": null
+                },
+                "area": 120,
+                "bbox": [
+                  408,
+                  148,
+                  6,
+                  20
+                ]
+              },
+              "matches": []
+            }
+          ],
+          "pixels": {
+            "kind": "numbers",
+            "length": 2100,
+            "sha256": "1208d7ab21d1ddac63708b0a47882612b7686e3a36a0859c0611c564165d3189"
+          },
+          "reading": {
+            "value": "11",
+            "status": "read",
+            "digits": [
+              {
+                "bbox": [
+                  392,
+                  148,
+                  6,
+                  20
+                ],
+                "method": "cc",
+                "normalized": {
+                  "kind": "numbers",
+                  "length": 768,
+                  "sha256": "9800f1803d7e91edef8c05c8e1242acf9815168b1fcbca2aa2b4a1b7c0264566"
+                },
+                "notes": [],
+                "rankings": [
+                  {
+                    "label": "1",
+                    "score": 1
+                  },
+                  {
+                    "label": "0",
+                    "score": 0.640625
+                  }
+                ]
+              },
+              {
+                "bbox": [
+                  408,
+                  148,
+                  6,
+                  20
+                ],
+                "method": "cc",
+                "normalized": {
+                  "kind": "numbers",
+                  "length": 768,
+                  "sha256": "9800f1803d7e91edef8c05c8e1242acf9815168b1fcbca2aa2b4a1b7c0264566"
+                },
+                "notes": [],
+                "rankings": [
+                  {
+                    "label": "1",
+                    "score": 1
+                  },
+                  {
+                    "label": "0",
+                    "score": 0.640625
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "badge-candidate:black-component-2:white-component-6",
+          "plate": {
+            "part": {
+              "id": "black-component-2",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+              "kind": "component",
+              "polarity": "black",
+              "label": 2,
+              "widthPx": 512,
+              "heightPx": 920,
+              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+              "pixels": {
+                "kind": "numbers",
                 "length": 1176,
                 "sha256": "b229e9043eed99838e20dd92b19885140dcad486941663a10dbfc123e0a0fec2"
               },
@@ -4954,11 +7183,11 @@
           },
           "border": {
             "part": {
-              "id": "white-component-2",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-2",
+              "id": "white-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-6",
               "kind": "component",
               "polarity": "white",
-              "label": 2,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -4980,11 +7209,11 @@
           "digits": [
             {
               "part": {
-                "id": "white-component-3",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                "id": "white-component-7",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                 "kind": "component",
                 "polarity": "white",
-                "label": 3,
+                "label": 7,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5005,11 +7234,11 @@
             },
             {
               "part": {
-                "id": "white-component-4",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                "id": "white-component-8",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                 "kind": "component",
                 "polarity": "white",
-                "label": 4,
+                "label": 8,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5033,11 +7262,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-1",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "id": "black-component-2",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 1,
+                  "label": 2,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5058,11 +7287,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-3",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-3",
+                  "id": "white-component-7",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 3,
+                  "label": 7,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5086,11 +7315,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-1",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-1",
+                  "id": "black-component-2",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 1,
+                  "label": 2,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5111,11 +7340,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-4",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-4",
+                  "id": "white-component-8",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 4,
+                  "label": 8,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5137,11 +7366,11 @@
               "matches": [
                 {
                   "part": {
-                    "id": "black-component-2",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-2",
+                    "id": "black-component-3",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-3",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 2,
+                    "label": 3,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5226,14 +7455,14 @@
           }
         },
         {
-          "id": "badge-candidate:black-component-4:white-component-7",
+          "id": "badge-candidate:black-component-6:white-component-11",
           "plate": {
             "part": {
-              "id": "black-component-4",
-              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+              "id": "black-component-6",
+              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
               "kind": "component",
               "polarity": "black",
-              "label": 4,
+              "label": 6,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5254,11 +7483,11 @@
           },
           "border": {
             "part": {
-              "id": "white-component-7",
-              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+              "id": "white-component-11",
+              "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-11",
               "kind": "component",
               "polarity": "white",
-              "label": 7,
+              "label": 11,
               "widthPx": 512,
               "heightPx": 920,
               "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5280,11 +7509,11 @@
           "digits": [
             {
               "part": {
-                "id": "white-component-8",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                "id": "white-component-12",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                 "kind": "component",
                 "polarity": "white",
-                "label": 8,
+                "label": 12,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5305,11 +7534,11 @@
             },
             {
               "part": {
-                "id": "white-component-9",
-                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                "id": "white-component-13",
+                "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                 "kind": "component",
                 "polarity": "white",
-                "label": 9,
+                "label": 13,
                 "widthPx": 512,
                 "heightPx": 920,
                 "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5333,11 +7562,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-4",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                  "id": "black-component-6",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 4,
+                  "label": 6,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5358,11 +7587,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-8",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                  "id": "white-component-12",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 8,
+                  "label": 12,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5384,11 +7613,11 @@
               "matches": [
                 {
                   "part": {
-                    "id": "black-component-5",
-                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                    "id": "black-component-7",
+                    "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-7",
                     "kind": "component",
                     "polarity": "black",
-                    "label": 5,
+                    "label": 7,
                     "widthPx": 512,
                     "heightPx": 920,
                     "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5412,11 +7641,11 @@
             {
               "plate": {
                 "part": {
-                  "id": "black-component-4",
-                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-4",
+                  "id": "black-component-6",
+                  "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
                   "kind": "component",
                   "polarity": "black",
-                  "label": 4,
+                  "label": 6,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5437,11 +7666,11 @@
               },
               "anchor": {
                 "part": {
-                  "id": "white-component-9",
-                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                  "id": "white-component-13",
+                  "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
                   "kind": "component",
                   "polarity": "white",
-                  "label": 9,
+                  "label": 13,
                   "widthPx": 512,
                   "heightPx": 920,
                   "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
@@ -5529,28 +7758,66 @@
       "incomplete": []
     },
     "px.exp.lab.s3.ringledger": {
-      "enclosed": 4,
+      "enclosed": 5,
       "diamondDropped": 0,
-      "elongated": 4,
+      "elongated": 5,
       "excludedByBadge": 2,
-      "candidates": 2,
-      "measured": 2,
+      "candidates": 3,
+      "measured": 3,
       "unframed": 0,
       "votedOutOfFamily": 0,
-      "familyMembers": 2
+      "familyMembers": 3
     },
     "px.exp.lab.s3.teesummary": {
-      "enclosed": 4,
+      "enclosed": 5,
       "diamondDropped": 0,
-      "elongated": 4,
+      "elongated": 5,
       "excludedByBadge": 2,
-      "candidates": 2,
-      "measured": 2,
+      "candidates": 3,
+      "measured": 3,
       "unframed": 0,
       "votedOutOfFamily": 0,
-      "familyMembers": 2,
-      "tees": 2,
-      "teePx": 304,
+      "familyMembers": 3,
+      "tees": 3,
+      "teePx": 456,
+      "balanced": true
+    },
+    "px.exp.lab.s4.holeledger": {
+      "badgesIn": 3,
+      "numbered": 3,
+      "unreadable": 0,
+      "holes": 3,
+      "teesIn": 3,
+      "teesBound": 3,
+      "teesFree": 0,
+      "basketsIn": 2,
+      "basketsBound": 2,
+      "basketsFree": 0,
+      "complete": 2,
+      "incomplete": 1
+    },
+    "px.exp.lab.s4.holesummary": {
+      "badgesIn": 3,
+      "numbered": 3,
+      "unreadable": 0,
+      "holes": 3,
+      "teesIn": 3,
+      "teesBound": 3,
+      "teesFree": 0,
+      "basketsIn": 2,
+      "basketsBound": 2,
+      "basketsFree": 0,
+      "complete": 2,
+      "incomplete": 1,
+      "rule": "nearest-free-in-badge-order",
+      "checks": {
+        "everyBadgeOnce": true,
+        "everyTeeOnce": true,
+        "everyBasketOnce": true,
+        "missingIsNotGuessed": true,
+        "confidenceIsStated": true,
+        "orderIsTheReading": true
+      },
       "balanced": true
     },
     "px.exp.lab.source.cropbounds": {
@@ -5564,13 +7831,13 @@
     },
     "px.exp.lab.source.selectedinput": {
       "decoded": {
-        "imageId": "lab-fixture-20260911",
+        "imageId": "lab-fixture-20260911-h11-obs",
         "widthPx": 512,
         "heightPx": 1024,
         "rgba": {
           "kind": "numbers",
           "length": 2097152,
-          "sha256": "17baa7bfbc22279d9cbfce8f5b1903f64d952300dfc7443df387901c5a1eaab0"
+          "sha256": "62b152581d64227a2d4c19ae63d3ec1fa8b20dd02280866e3a8125d18b81d95e"
         },
         "sourceByteLength": 2097152,
         "badges": [
@@ -5643,6 +7910,36 @@
               6,
               14
             ]
+          },
+          {
+            "reading": "11",
+            "border": [
+              380,
+              180,
+              60,
+              40
+            ],
+            "plate": [
+              386,
+              184,
+              48,
+              32
+            ],
+            "digits": [
+              [
+                392,
+                190,
+                6,
+                20
+              ],
+              [
+                408,
+                190,
+                6,
+                20
+              ]
+            ],
+            "loop": null
           }
         ],
         "baskets": [
@@ -5703,12 +8000,102 @@
               12,
               22
             ]
+          },
+          {
+            "frame": [
+              470,
+              120,
+              16,
+              26
+            ],
+            "hole": [
+              472,
+              122,
+              12,
+              22
+            ]
           }
-        ]
+        ],
+        "obstacle": {
+          "x": 0,
+          "y": 380,
+          "width": 264,
+          "height": 16
+        }
       },
-      "label": "lab fixture capture"
+      "label": "lab course fixture capture"
     },
     "px.exp.lab.tees": [
+      {
+        "center": [
+          477.5,
+          90.5
+        ],
+        "innerBbox": [
+          472,
+          80,
+          12,
+          22
+        ],
+        "bbox": [
+          470,
+          78,
+          16,
+          26
+        ],
+        "angleRad": 1.5707963267948966,
+        "px": {
+          "kind": "numbers",
+          "length": 152,
+          "sha256": "4277cd7847c79b204553cb419566658fba880343bf2002ce822e3b1f790df957"
+        },
+        "has": {
+          "detectRings": {
+            "fn": "fn.lab.tee.detectrings",
+            "hole": {
+              "cx": 477.5,
+              "cy": 90.5,
+              "holeArea": 264,
+              "bboxX": 472,
+              "bboxY": 80,
+              "bboxW": 12,
+              "bboxH": 22,
+              "angle": 1.5707963267948966,
+              "elongation": 1.837830889288342,
+              "ringFrac": 0.6333333333333333,
+              "kind": "tee-rect"
+            }
+          },
+          "findFamily": {
+            "fn": "fn.lab.tee.findfamily",
+            "frame": {
+              "polarity": "bright",
+              "label": 1,
+              "bbox": [
+                470,
+                78,
+                16,
+                26
+              ]
+            }
+          },
+          "findPx": {
+            "fn": "fn.lab.tee.findpx",
+            "parts": [
+              {
+                "polarity": "bright",
+                "label": 1,
+                "bbox": [
+                  470,
+                  78,
+                  16,
+                  26
+                ]
+              }
+            ]
+          }
+        }
+      },
       {
         "center": [
           67.5,
@@ -5753,7 +8140,7 @@
             "fn": "fn.lab.tee.findfamily",
             "frame": {
               "polarity": "bright",
-              "label": 1,
+              "label": 5,
               "bbox": [
                 60,
                 208,
@@ -5767,7 +8154,7 @@
             "parts": [
               {
                 "polarity": "bright",
-                "label": 1,
+                "label": 5,
                 "bbox": [
                   60,
                   208,
@@ -5823,7 +8210,7 @@
             "fn": "fn.lab.tee.findfamily",
             "frame": {
               "polarity": "bright",
-              "label": 6,
+              "label": 10,
               "bbox": [
                 420,
                 518,
@@ -5837,7 +8224,7 @@
             "parts": [
               {
                 "polarity": "bright",
-                "label": 6,
+                "label": 10,
                 "bbox": [
                   420,
                   518,
@@ -5854,6 +8241,35 @@
       "measured": [
         {
           "ring": {
+            "cx": 477.5,
+            "cy": 90.5,
+            "holeArea": 264,
+            "bboxX": 472,
+            "bboxY": 80,
+            "bboxW": 12,
+            "bboxH": 22,
+            "angle": 1.5707963267948966,
+            "elongation": 1.837830889288342,
+            "ringFrac": 0.6333333333333333,
+            "kind": "tee-rect"
+          },
+          "frame": {
+            "label": 1,
+            "area": 152,
+            "cx": 477.5,
+            "cy": 90.5,
+            "bboxX": 470,
+            "bboxY": 78,
+            "bboxW": 16,
+            "bboxH": 26,
+            "major": 26,
+            "minor": 16,
+            "angle": 1.5707963267948966,
+            "fill": 0.36538461538461536
+          }
+        },
+        {
+          "ring": {
             "cx": 67.5,
             "cy": 220.5,
             "holeArea": 264,
@@ -5867,7 +8283,7 @@
             "kind": "tee-rect"
           },
           "frame": {
-            "label": 1,
+            "label": 5,
             "area": 152,
             "cx": 67.5,
             "cy": 220.5,
@@ -5896,7 +8312,7 @@
             "kind": "tee-rect"
           },
           "frame": {
-            "label": 6,
+            "label": 10,
             "area": 152,
             "cx": 427.5,
             "cy": 530.5,
@@ -5915,6 +8331,35 @@
       "members": [
         {
           "ring": {
+            "cx": 477.5,
+            "cy": 90.5,
+            "holeArea": 264,
+            "bboxX": 472,
+            "bboxY": 80,
+            "bboxW": 12,
+            "bboxH": 22,
+            "angle": 1.5707963267948966,
+            "elongation": 1.837830889288342,
+            "ringFrac": 0.6333333333333333,
+            "kind": "tee-rect"
+          },
+          "frame": {
+            "label": 1,
+            "area": 152,
+            "cx": 477.5,
+            "cy": 90.5,
+            "bboxX": 470,
+            "bboxY": 78,
+            "bboxW": 16,
+            "bboxH": 26,
+            "major": 26,
+            "minor": 16,
+            "angle": 1.5707963267948966,
+            "fill": 0.36538461538461536
+          }
+        },
+        {
+          "ring": {
             "cx": 67.5,
             "cy": 220.5,
             "holeArea": 264,
@@ -5928,7 +8373,7 @@
             "kind": "tee-rect"
           },
           "frame": {
-            "label": 1,
+            "label": 5,
             "area": 152,
             "cx": 67.5,
             "cy": 220.5,
@@ -5957,7 +8402,7 @@
             "kind": "tee-rect"
           },
           "frame": {
-            "label": 6,
+            "label": 10,
             "area": 152,
             "cx": 427.5,
             "cy": 530.5,
@@ -5974,11 +8419,11 @@
       ],
       "anchor": {
         "ring": {
-          "cx": 67.5,
-          "cy": 220.5,
+          "cx": 477.5,
+          "cy": 90.5,
           "holeArea": 264,
-          "bboxX": 62,
-          "bboxY": 210,
+          "bboxX": 472,
+          "bboxY": 80,
           "bboxW": 12,
           "bboxH": 22,
           "angle": 1.5707963267948966,
@@ -5989,10 +8434,10 @@
         "frame": {
           "label": 1,
           "area": 152,
-          "cx": 67.5,
-          "cy": 220.5,
-          "bboxX": 60,
-          "bboxY": 208,
+          "cx": 477.5,
+          "cy": 90.5,
+          "bboxX": 470,
+          "bboxY": 78,
           "bboxW": 16,
           "bboxH": 26,
           "major": 26,
@@ -6004,6 +8449,19 @@
     },
     "px.exp.lab.tees.rings": {
       "enclosed": [
+        {
+          "cx": 477.5,
+          "cy": 90.5,
+          "holeArea": 264,
+          "bboxX": 472,
+          "bboxY": 80,
+          "bboxW": 12,
+          "bboxH": 22,
+          "angle": 1.5707963267948966,
+          "elongation": 1.837830889288342,
+          "ringFrac": 0.6333333333333333,
+          "kind": "tee-rect"
+        },
         {
           "cx": 67.5,
           "cy": 220.5,
@@ -6058,6 +8516,19 @@
         }
       ],
       "elongated": [
+        {
+          "cx": 477.5,
+          "cy": 90.5,
+          "holeArea": 264,
+          "bboxX": 472,
+          "bboxY": 80,
+          "bboxW": 12,
+          "bboxH": 22,
+          "angle": 1.5707963267948966,
+          "elongation": 1.837830889288342,
+          "ringFrac": 0.6333333333333333,
+          "kind": "tee-rect"
+        },
         {
           "cx": 67.5,
           "cy": 220.5,
@@ -6140,6 +8611,19 @@
         }
       ],
       "candidates": [
+        {
+          "cx": 477.5,
+          "cy": 90.5,
+          "holeArea": 264,
+          "bboxX": 472,
+          "bboxY": 80,
+          "bboxW": 12,
+          "bboxH": 22,
+          "angle": 1.5707963267948966,
+          "elongation": 1.837830889288342,
+          "ringFrac": 0.6333333333333333,
+          "kind": "tee-rect"
+        },
         {
           "cx": 67.5,
           "cy": 220.5,

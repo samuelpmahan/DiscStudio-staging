@@ -9,22 +9,28 @@ import { registerS0, runS0 } from './s0.js';
 import { registerS1, runS1, s1YamlDocument, s1MermaidDocument } from './s1.js';
 import { registerS2, runS2 } from './s2.js';
 import { registerS3, runS3 } from './s3.js';
+import { registerS4, runS4 } from './s4.js';
 import { registerRoute, runRoute } from './route.js';
 import { registerPath, pathDocument, putCourses } from './path.js';
-import { fixtureCapture } from './fixtures.js';
+import { fixtureCapture, fixtureBasis } from './fixtures.js';
 
 export function buildMap() {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerRoute(lab); registerPath(lab);
-  const s0 = runS0(lab, { decoded: fixtureCapture(), label: 'lab fixture capture' });
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerRoute(lab); registerPath(lab);
+  // The course fixture: the S0..S3 capture plus the two elements S4 and above
+  // need -- a hole whose basket is missing, and structure no Stage object owns.
+  const fixture = { hole11: true, obstacle: true };
+  lab.put('px.exp.lab.fixture.basis', fixtureBasis(fixture));
+  const s0 = runS0(lab, { decoded: fixtureCapture(20260911, fixture), label: 'lab course fixture capture' });
   const s1 = runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
   const s2 = runS2(lab);
   const s3 = runS3(lab);
+  const s4 = runS4(lab);
   const round = runRoute(lab, { course: 'labfixture' });
   putCourses(lab, ['DashsTrack']);
   const path = pathDocument(lab, { course: 'dashstrack', name: 'route', from: 'h1', to: 'h9' });
   lab.run(path.composition.PrincipleComponentRender, path.composition);
-  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
+  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'S4', 'S4.invariants', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
 
   lab.put('px.exp.lab.map', {
     for: 'what the ChainSpot S0/S1/Mermaid/traverse port reached in one sprint, and what it did not',
@@ -34,6 +40,7 @@ export function buildMap() {
       { what: 'S1', document: "the LAB's own PrincipleComponentRender.yaml, read by readPql", evidence: 'tests/lab-s1.test.js' },
       { what: 'S2', document: 'the document its three OperationSpecs declare, on S1 produce', evidence: 'tests/lab-s2.test.js' },
       { what: 'S3', document: 'the document its three OperationSpecs declare, plus the Python analogue\'s two-Tick accounting PCR', evidence: 'tests/lab-s3.test.js' },
+      { what: 'S4 (invented)', document: 'Holes: Hole.readNumbers -> Hole.bindAnchors -> Hole.assemble -> Hole.unplaced over the S1/S2/S3 produce Parts, plus the S4.invariants accounting PCR that is its oracle; stages/S4.mmd compiles to the same document', evidence: 'tests/lab-s4.test.js' },
       { what: 'mermaid', document: 'S1.mmd compiles to the same document as the YAML (structural digest)', evidence: 'tests/lab-mermaid.test.js' },
       { what: 'pathfinding (the course)', document: 'Anchors -> Order -> Route -> Settle over the Stage Parts: badges order the holes, tees and baskets anchor them', evidence: 'tests/lab-route.test.js' },
       { what: 'pathfinding (the hex walk)', document: "Anchors -> Start -> Search -> Settle over a course manifest; kept as the LAB's human-in-the-loop tool for a raster no Stage has read yet", evidence: 'tests/lab-path.test.js' }
@@ -46,7 +53,8 @@ export function buildMap() {
       { address: 'px.exp.lab.path.truth', why: 'the LAB anchors T/N/B come from the annotation truth file, which needs the corpus; the port searches the blind per-hole viewport the manifest itself carries' }
     ],
     next: [
-      { what: 'a leg that avoids what the Stages already own', for: 'a play leg is a straight line today; px.remaining.afterBadges and the Basket and Tee pixels are exactly the obstacle map it does not use' },
+      { what: 'S5 Course: the holes as a graph over the canonical raster, with an obstacle map', for: 'S4 says which hole is where; nothing yet says what is between a tee and its basket, and the fixture now draws structure no Stage owns' },
+      { what: 'S6 Round: a search from tee to basket that respects that map', for: 'a play leg is a straight line today; px.remaining.afterBadges and the Basket and Tee pixels are exactly the obstacle map it does not use' },
       { what: 'run the TypeScript S1 on the same fixture and compare value by value', for: 'the port is proved structurally and by invariant, never against the LAB running' },
       { what: 'an `into: []` effect Calculation, or an oc. equivalent in the JS core', for: 'S0 cache is a Tick the studio cannot express without inventing a Part' },
       { what: 'a binding that reads a sibling result with no address', for: "the Mermaid S0's FullImage locality is a property the studio's grammar cannot hold" },
@@ -69,6 +77,9 @@ export function buildMap() {
   finding(lab, 'route.straightlegs', { kind: 'friction', for: 'a round is measured today, not routed', text: 'The legs are straight lines between anchors. The Stages already publish the obstacle information a real leg would respect (px.remaining.afterBadges, and the exact Basket and Tee pixels), and nothing consumes it yet.', workaround: 'the leg carries its length and refuses an anchor outside the canonical raster.', proposal: 'a Route Tick that reads px.remaining.afterBadges as cost and searches it, with the hex walk as its move set.' });
   finding(lab, 's3.badgemute', { kind: 'strength', for: 'why the Stages have to run in order', text: "S3's fixture finds four enclosed holes: two tee glyphs and two badge digit holes. The two digit holes are removed by S1's Badge mute footprint, which is the only reason S3's family vote sees a clean pair. Run S3 without S1 and the same detector produces a different family: the order S0 -> S1 -> S2 -> S3 is load-bearing, not administrative." });
   finding(lab, 's3.pythonoracle', { kind: 'strength', for: 'an oracle for a Stage with no recorded values', text: "The Python analogue (experiments/quick-anno-python/s3.py at 6309ff1) is an accounting PCR over S3's own output: enclosed = elongated + diamondDropped, elongated = candidates + excludedByBadge, candidates = measured + unframed, measured = familyMembers + votedOutOfFamily, familyMembers = tees. The port runs it as its own two-Tick composition (the second Tick consuming the first's published Part, the shape S3_CHECKPOINT.md describes) and the balance holds on the fixture." });
+  finding(lab, 's4.ruleliftedintoastage', { kind: 'finding', for: 'what changes when a rule stops being a step of a search and becomes a Stage', text: "The straight route (task 114) binds each hole to the nearest free tee and basket inside its Order Tick. S4 is that same rule with nothing else around it, and the difference is that it can now be checked: the binding publishes its pools (every anchor with the hole that took it), so `everyTeeOnce`, `everyBasketOnce` and `everyBadgeOnce` are arithmetic over a published Part rather than a property of a function nobody can see into. The rule did not get better; it got inspectable, which is what a Tick boundary is for." });
+  finding(lab, 's4.missingisnotaguess', { kind: 'strength', for: 'the one thing a hole assembler must never do', text: "Hole 11 of the course fixture has a badge and a tee and no basket, because the fixture draws no third basket. S4 reports `basket: null`, `missing: ['basket']`, confidence 0.75 out of a stated sum, and lists the hole under `px.holes.unplaced.incomplete` with the reason. The alternative every nearest-neighbour binder reaches for -- take the nearest basket even though another hole already has it, or interpolate one -- is refused by two invariants at once (`everyBasketOnce` and `missingIsNotGuessed`), and the test proves both refuse it.", proposal: 'a recovery Tick could look for a basket S2 missed, but it would publish a candidate with its own confidence, not fill this field.' });
+  finding(lab, 'fixture.statedbasis', { kind: 'friction', for: 'a synthetic fixture with no stated basis can be tuned until the Stage passes', text: 'Every Stage here is checked against a capture this port drew. That is only honest if the capture says what each element answers to, so `fixtureBasis()` is a Part: the background values are chosen to fall outside both S1 masks (never <= 45, never >= 210), the badge geometry is the plate knobs, the basket is the LAB sprite inside a 4px shell, the tee is the elongated enclosed hole, and the obstacle is drawn outside every S1/S2/S3 predicate on purpose so that no Stage object can own it.', proposal: 'one corpus capture would replace the whole argument with a value oracle (proposal.lab.oracle.nocorpus).' });
   finding(lab, 's1.recognition', { kind: 'friction', for: 'the one Calculation of S1 that is reduced rather than ported', text: 'fn.s1.whiteDigits.prepare/match segment glyphs with knobs and score them with a logistic model asset (digits/logisticInference, assets/logistic.json). The port normalizes to the same digitW x digitH grid and scores against template Parts; the reading shape (value, status, per-digit rankings) is the LAB\'s.' });
   lab.save('lab');
   return lab;
