@@ -142,6 +142,48 @@ def findings(store) -> list[str]:
              "is a matter of taste once the numbers are in a Part",
     ))
 
+    written.append(harness.finding(
+        store, VERTICAL, "the_judge_could_not_be_another_session", "friction",
+        "the contract asks for two or three branches built by separate workers and a judge that did not build. "
+        "No route to a scoped worker session existed in this environment, so every branch in all three brackets was "
+        "written in one session and the judge is `evidence`: a pure function of the candidate's own oracle Part, its "
+        "benchmark Part at the largest size, and its source. That is weaker as independence and stronger as evidence - "
+        "it cannot be talked into anything and every score points at the Part it came from - but it is not what was "
+        "asked for, and the bracket records which judge scored it so nobody has to guess later.",
+        for_="a tournament is only worth the independence of its judge, and a reader a month from now must be able to "
+             "see which kind they are looking at",
+        workaround="criteria written into the bracket Part before any score exists, a judge that is a function of the "
+                   "recorded Parts, and a test that rebuilds all three brackets from the candidates so the verdict is "
+                   "reproducible rather than trusted",
+        proposal="either the sprint harness hands a vertical a way to run a scoped worker session, or the contract says "
+                 "plainly that a recorded, re-runnable scoring function over the evidence Parts is the judge of record",
+    ))
+
+    written.append(harness.finding(
+        store, VERTICAL, "a_copy_that_did_not_really_merge_claims_mains_commits", "friction",
+        "`neat update` stops when MAIN and the copy both changed a file, which for a regenerated run record is every "
+        "time. Bringing the copy forward by restoring that one file - rather than completing the merge - leaves MAIN's "
+        "tip not an ancestor of exp/<id>, and `land.sh` then computes the candidate from the task's STARTING point: "
+        "task 87's receipt claimed 7 files and listed 10 unclaimed ones belonging to two other verticals, including "
+        "another task's packet, and refused. It was verified green twice before anyone noticed the diff was wrong.",
+        for_="three verticals landing through one lock means a candidate that quietly widens is everyone's problem, and "
+             "the receipt is the only place it shows",
+        workaround="finish a real merge in the copy - `git merge <MAIN sha>`, resolve the record by taking MAIN's copy, "
+                   "commit - so `git merge-base` is MAIN's tip again, then pack and land",
+        proposal="`neat update` should not report success unless MAIN's tip is an ancestor of the copy afterwards, and "
+                 "`neat pack` should refuse to pack a copy where it is not, naming the sha it expected",
+    ))
+
+    written.append(harness.finding(
+        store, VERTICAL, "a_case_that_names_its_engines_keeps_the_refusal_in_the_record", "strength",
+        "two cases here are answered by np and sp and refused by py, because the py svd goes through a^T a and cannot "
+        "resolve a singular value near sqrt(eps). The case table says `engines=(\"np\", \"sp\")` rather than dropping "
+        "the case, so the oracle table stays a table: every engine that answers is checked against the reference, and "
+        "the one that does not is a stub in the map with the reason, not a gap nobody can see.",
+        for_="a backend surface grows by engines that cannot all do everything, and the alternative to saying so is "
+             "a test file with a hole in it",
+    ))
+
     fastest = {}
     for match in PQL.prefix("px.exp.brain.bench.backend.").matches(store.pxc):
         parts = match.address.split(".")
