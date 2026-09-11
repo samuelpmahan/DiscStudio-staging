@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 14:33 **started** `task-120`: your discs on the course the studio just built: S4 and S5 in the pipeline and on the raster, and an arrangement that stands the bag's DisplayCards at the holes (copy EXP/120; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 14:32 **started** `task-119`: S6 Round: a deterministic search over S5's walkable cells from each tee to its basket and on to the next tee, legs that never cross an obstacle cell, unreachable reported rather than straightened, and the difference from the straight-leg route as a Part (copy EXP/119; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 14:32 **landed** `task-118`: the Course route: a capture becomes a course stage by stage on the record, with the canonical raster drawn once and each Stage's produce overlaid on it (9 files since c3d4e52, suites green, receipt 20260911T142946Z-task-118)
 - 2026-09-11 14:26 **landed** `task-117`: S5 Course: the holes as a graph over the canonical raster, with hole geometry, the obstacle map derived from px.remaining.afterBadges and the S1/S2/S3 masks, and the walkable cells a round can use (14 files since a3cfcf5, suites green, receipt 20260911T142318Z-task-117)
