@@ -4,8 +4,58 @@ Intent: SingleCard and the export queue: Single Disc mode composes one disc with
 Starting point: a87812e363bd904660bbf093804dc4198d16deb8 (land(task-135): constraints defining DiscComp: a battle is composed from reusable Constraints with parameters (discCap, placesPoints, tieRule) the way a competition is, scoring is one Calculation over the battle's states with a receipt (ranks, points, a running total), and the UX for a 5-disc cap battle where the top 3 score 3,2,1 is pick the template, add discs against the cap, tap the order Also carries the review item Boone (the AI PM) raised for the vertical frame, worded for the orientation control task 133 landed ('frame': Landscape and vertical export frames, on the OnTheCourse inspector).)
 Verify: npm test
 Allow: src index.html tests scripts/browser_test.py scripts/demo_beats.py pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 13 files, see below
+Evidence: suite exit 1, see below
+
+## Candidate
+
+- M  scripts/browser_test.py
+- M  scripts/demo_beats.py
+- M  src/app.js
+- M  src/cards.js
+- M  src/domain.js
+- A  src/exports.js
+- M  src/presentation.js
+- M  src/runtime.js
+- M  src/seed.js
+- M  src/style.css
+- M  tests/cards.test.js
+- A  tests/exports.test.js
+- M  tests/fixtures/serial-run-record.json
+
+```
+scripts/browser_test.py               |  87 +++++++++++++++++++++++---
+ scripts/demo_beats.py                 |  12 ++++
+ src/app.js                            | 113 ++++++++++++++++++++++++++++------
+ src/cards.js                          |   2 +-
+ src/domain.js                         |   3 +-
+ src/exports.js                        |  53 ++++++++++++++++
+ src/presentation.js                   |  10 ++-
+ src/runtime.js                        |  18 ++++--
+ src/seed.js                           |   2 +-
+ src/style.css                         |   2 +-
+ tests/cards.test.js                   |   4 +-
+ tests/exports.test.js                 |  43 +++++++++++++
+ tests/fixtures/serial-run-record.json |   2 +-
+ 13 files changed, 310 insertions(+), 41 deletions(-)
+```
+
+## Evidence
+
+- verify: `npm test` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 1, last line: SOME SUITES FAILED (logs in /tmp/tmp.cLj2Xij0ky) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               756  FAIL
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
