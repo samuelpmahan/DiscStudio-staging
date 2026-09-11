@@ -1,0 +1,3306 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S4",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Recover.unclaimed",
+      "invocations": [
+        {
+          "id": "px.exp.lab.recovered.unclaimed",
+          "calculation": {
+            "address": "fn.lab.recover.unclaimed",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "fields": "px:px.exp.lab.components",
+            "badges": "px:px.exp.lab.badges.objects",
+            "baskets": "px:px.exp.lab.baskets",
+            "tees": "px:px.exp.lab.tees"
+          },
+          "args": {},
+          "into": "px.exp.lab.recovered.unclaimed",
+          "declared_consumes": [
+            "px:px.exp.lab.components",
+            "px:px.exp.lab.badges.objects",
+            "px:px.exp.lab.baskets",
+            "px:px.exp.lab.tees"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.components",
+            "px.exp.lab.badges.objects",
+            "px.exp.lab.baskets",
+            "px.exp.lab.tees"
+          ],
+          "actual_produces": [
+            "px.exp.lab.recovered.unclaimed"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.recovered.unclaimed",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "frame": {
+                "width": 512,
+                "height": 920
+              },
+              "bright": [
+                {
+                  "polarity": "bright",
+                  "label": 2,
+                  "bbox": [
+                    380,
+                    138,
+                    25,
+                    40
+                  ],
+                  "area": 252,
+                  "stats": {
+                    "label": 2,
+                    "area": 252,
+                    "cx": 387.54761904761904,
+                    "cy": 157.5,
+                    "bboxX": 380,
+                    "bboxY": 138,
+                    "bboxW": 25,
+                    "bboxH": 40,
+                    "major": 40,
+                    "minor": 25,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.252
+                  },
+                  "pixels": 252,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "bright",
+                  "label": 3,
+                  "bbox": [
+                    415,
+                    138,
+                    25,
+                    40
+                  ],
+                  "area": 252,
+                  "stats": {
+                    "label": 3,
+                    "area": 252,
+                    "cx": 431.45238095238096,
+                    "cy": 157.5,
+                    "bboxX": 415,
+                    "bboxY": 138,
+                    "bboxW": 25,
+                    "bboxH": 40,
+                    "major": 40,
+                    "minor": 25,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.252
+                  },
+                  "pixels": 252,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "bright",
+                  "label": 4,
+                  "bbox": [
+                    392,
+                    148,
+                    6,
+                    20
+                  ],
+                  "area": 120,
+                  "stats": {
+                    "label": 4,
+                    "area": 120,
+                    "cx": 394.5,
+                    "cy": 157.5,
+                    "bboxX": 392,
+                    "bboxY": 148,
+                    "bboxW": 6,
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
+                  },
+                  "pixels": 120,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "bright",
+                  "label": 5,
+                  "bbox": [
+                    408,
+                    148,
+                    6,
+                    20
+                  ],
+                  "area": 120,
+                  "stats": {
+                    "label": 5,
+                    "area": 120,
+                    "cx": 410.5,
+                    "cy": 157.5,
+                    "bboxX": 408,
+                    "bboxY": 148,
+                    "bboxW": 6,
+                    "bboxH": 20,
+                    "major": 20,
+                    "minor": 6,
+                    "angle": 1.5707963267948966,
+                    "fill": 1
+                  },
+                  "pixels": 120,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "bright",
+                  "label": 6,
+                  "bbox": [
+                    60,
+                    208,
+                    16,
+                    26
+                  ],
+                  "area": 132,
+                  "stats": {
+                    "label": 6,
+                    "area": 132,
+                    "cx": 67.5,
+                    "cy": 222.3181818181818,
+                    "bboxX": 60,
+                    "bboxY": 208,
+                    "bboxW": 16,
+                    "bboxH": 26,
+                    "major": 26,
+                    "minor": 16,
+                    "angle": 1.5707963267948966,
+                    "fill": 0.3173076923076923
+                  },
+                  "pixels": 132,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "bright",
+                  "label": 15,
+                  "bbox": [
+                    320,
+                    758,
+                    52,
+                    66
+                  ],
+                  "area": 1786,
+                  "stats": {
+                    "label": 15,
+                    "area": 1786,
+                    "cx": 349.91769316909296,
+                    "cy": 785.5431131019037,
+                    "bboxX": 320,
+                    "bboxY": 758,
+                    "bboxW": 52,
+                    "bboxH": 66,
+                    "major": 66.61817571808636,
+                    "minor": 52.07324079883769,
+                    "angle": -1.536207634875966,
+                    "fill": 0.5148421696097957
+                  },
+                  "pixels": 1786,
+                  "claimed": 0
+                }
+              ],
+              "dark": [
+                {
+                  "polarity": "dark",
+                  "label": 1,
+                  "bbox": [
+                    405,
+                    138,
+                    10,
+                    3
+                  ],
+                  "area": 30,
+                  "stats": {
+                    "label": 1,
+                    "area": 30,
+                    "cx": 409.5,
+                    "cy": 139,
+                    "bboxX": 405,
+                    "bboxY": 138,
+                    "bboxW": 10,
+                    "bboxH": 3,
+                    "major": 10,
+                    "minor": 3,
+                    "angle": 0,
+                    "fill": 1
+                  },
+                  "pixels": 30,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "dark",
+                  "label": 2,
+                  "bbox": [
+                    386,
+                    142,
+                    48,
+                    32
+                  ],
+                  "area": 1296,
+                  "stats": {
+                    "label": 2,
+                    "area": 1296,
+                    "cx": 410.7962962962963,
+                    "cy": 157.5,
+                    "bboxX": 386,
+                    "bboxY": 142,
+                    "bboxW": 48,
+                    "bboxH": 32,
+                    "major": 48,
+                    "minor": 32,
+                    "angle": 0,
+                    "fill": 0.84375
+                  },
+                  "pixels": 1296,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "dark",
+                  "label": 3,
+                  "bbox": [
+                    405,
+                    175,
+                    10,
+                    3
+                  ],
+                  "area": 30,
+                  "stats": {
+                    "label": 3,
+                    "area": 30,
+                    "cx": 409.5,
+                    "cy": 176,
+                    "bboxX": 405,
+                    "bboxY": 175,
+                    "bboxW": 10,
+                    "bboxH": 3,
+                    "major": 10,
+                    "minor": 3,
+                    "angle": 0,
+                    "fill": 1
+                  },
+                  "pixels": 30,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "dark",
+                  "label": 4,
+                  "bbox": [
+                    63,
+                    208,
+                    10,
+                    2
+                  ],
+                  "area": 20,
+                  "stats": {
+                    "label": 4,
+                    "area": 20,
+                    "cx": 67.5,
+                    "cy": 208.5,
+                    "bboxX": 63,
+                    "bboxY": 208,
+                    "bboxW": 10,
+                    "bboxH": 2,
+                    "major": 10,
+                    "minor": 2,
+                    "angle": 0,
+                    "fill": 1
+                  },
+                  "pixels": 20,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "dark",
+                  "label": 7,
+                  "bbox": [
+                    0,
+                    338,
+                    264,
+                    16
+                  ],
+                  "area": 4224,
+                  "stats": {
+                    "label": 7,
+                    "area": 4224,
+                    "cx": 131.5,
+                    "cy": 345.5,
+                    "bboxX": 0,
+                    "bboxY": 338,
+                    "bboxW": 264,
+                    "bboxH": 16,
+                    "major": 264,
+                    "minor": 16,
+                    "angle": 0,
+                    "fill": 1
+                  },
+                  "pixels": 4224,
+                  "claimed": 0
+                },
+                {
+                  "polarity": "dark",
+                  "label": 11,
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "area": 1938,
+                  "stats": {
+                    "label": 11,
+                    "area": 1938,
+                    "cx": 350.68988648090817,
+                    "cy": 795.1300309597523,
+                    "bboxX": 326,
+                    "bboxY": 754,
+                    "bboxW": 50,
+                    "bboxH": 74,
+                    "major": 74.01293410191352,
+                    "minor": 50.01927125479236,
+                    "angle": 1.570532313606693,
+                    "fill": 0.5234904837796445
+                  },
+                  "pixels": 1938,
+                  "claimed": 0
+                }
+              ],
+              "claimedPx": 8204
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Recover.badges",
+      "invocations": [
+        {
+          "id": "px.exp.lab.recovered.badges",
+          "calculation": {
+            "address": "fn.lab.recover.badges",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "badges": "px:px.exp.lab.badges.objects",
+            "unclaimed": "px:px.exp.lab.recovered.unclaimed",
+            "fields": "px:px.exp.lab.components",
+            "model": "px:px.exp.lab.s1.whitedigits.model"
+          },
+          "args": {
+            "knobs": {
+              "plateMinWidth": 34,
+              "plateMaxWidth": 78,
+              "plateMinHeight": 24,
+              "plateMaxHeight": 54,
+              "plateAspectMin": 1,
+              "plateAspectMax": 2.4,
+              "plateFillMin": 0.55,
+              "plateInteriorMargin": 4,
+              "plateGlyphFractionMin": 0.04,
+              "plateGlyphFractionMax": 0.4,
+              "plateProximityThreshold": 22,
+              "plateBboxMargin": 4
+            },
+            "digitKnobs": {
+              "minComponentArea": 6,
+              "heightRatioMin": 0.5,
+              "wideRatio": 0.95,
+              "valleySearchLo": 0.3,
+              "valleySearchHi": 0.7,
+              "digitW": 24,
+              "digitH": 32,
+              "confidenceFloorDivisor": 8,
+              "labelAmbiguityMargin": 0.045
+            }
+          },
+          "into": "px.exp.lab.recovered.badges",
+          "declared_consumes": [
+            "px:px.exp.lab.badges.objects",
+            "px:px.exp.lab.recovered.unclaimed",
+            "px:px.exp.lab.components",
+            "px:px.exp.lab.s1.whitedigits.model"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.badges.objects",
+            "px.exp.lab.recovered.unclaimed",
+            "px.exp.lab.components",
+            "px.exp.lab.s1.whitedigits.model"
+          ],
+          "actual_produces": [
+            "px.exp.lab.recovered.badges"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.recovered.badges",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "kind": "badge",
+              "clean": [
+                {
+                  "id": "badge-1",
+                  "basis": "bright-family",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    150,
+                    278
+                  ],
+                  "reading": {
+                    "value": "10",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "0",
+                            "score": 1
+                          },
+                          {
+                            "label": "1",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "source": {
+                    "id": "badge-candidate:black-component-5:white-component-7",
+                    "plate": {
+                      "part": {
+                        "id": "black-component-5",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 5,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        126,
+                        262,
+                        48,
+                        32
+                      ]
+                    },
+                    "border": {
+                      "part": {
+                        "id": "white-component-7",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 7,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        120,
+                        258,
+                        60,
+                        40
+                      ]
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "id": "white-component-8",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 8,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ]
+                      },
+                      {
+                        "part": {
+                          "id": "white-component-9",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 9,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ]
+                      }
+                    ],
+                    "digitLoops": [
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-5",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 5,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            126,
+                            262,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-8",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 8,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 120,
+                              "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 120,
+                          "bbox": [
+                            132,
+                            268,
+                            6,
+                            20
+                          ]
+                        },
+                        "matches": []
+                      },
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-5",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 5,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            126,
+                            262,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-9",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 9,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 156,
+                              "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 156,
+                          "bbox": [
+                            148,
+                            268,
+                            12,
+                            20
+                          ]
+                        },
+                        "matches": [
+                          {
+                            "part": {
+                              "id": "black-component-6",
+                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
+                              "kind": "component",
+                              "polarity": "black",
+                              "label": 6,
+                              "widthPx": 512,
+                              "heightPx": 920,
+                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                              "pixels": {
+                                "kind": "numbers",
+                                "length": 84,
+                                "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                              },
+                              "sourceTickId": null
+                            },
+                            "area": 84,
+                            "bbox": [
+                              151,
+                              271,
+                              6,
+                              14
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+                    },
+                    "reading": {
+                      "value": "10",
+                      "status": "read",
+                      "digits": [
+                        {
+                          "bbox": [
+                            132,
+                            268,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        },
+                        {
+                          "bbox": [
+                            148,
+                            268,
+                            12,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "0",
+                              "score": 1
+                            },
+                            {
+                              "label": "1",
+                              "score": 0.640625
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "unaccountedButOwned": {
+                      "rule": "outer-border-bbox",
+                      "outerBorder": "white-component-7",
+                      "bbox": [
+                        120,
+                        258,
+                        60,
+                        40
+                      ]
+                    }
+                  },
+                  "evidence": null
+                },
+                {
+                  "id": "badge-2",
+                  "basis": "bright-family",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    330,
+                    598
+                  ],
+                  "reading": {
+                    "value": "01",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          312,
+                          588,
+                          12,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "0",
+                            "score": 1
+                          },
+                          {
+                            "label": "1",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          328,
+                          588,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "source": {
+                    "id": "badge-candidate:black-component-9:white-component-12",
+                    "plate": {
+                      "part": {
+                        "id": "black-component-9",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-9",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 9,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        306,
+                        582,
+                        48,
+                        32
+                      ]
+                    },
+                    "border": {
+                      "part": {
+                        "id": "white-component-12",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 12,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        300,
+                        578,
+                        60,
+                        40
+                      ]
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "id": "white-component-13",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 13,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          312,
+                          588,
+                          12,
+                          20
+                        ]
+                      },
+                      {
+                        "part": {
+                          "id": "white-component-14",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-14",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 14,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          328,
+                          588,
+                          6,
+                          20
+                        ]
+                      }
+                    ],
+                    "digitLoops": [
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-9",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-9",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 9,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            306,
+                            582,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-13",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 13,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 156,
+                              "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 156,
+                          "bbox": [
+                            312,
+                            588,
+                            12,
+                            20
+                          ]
+                        },
+                        "matches": [
+                          {
+                            "part": {
+                              "id": "black-component-10",
+                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-10",
+                              "kind": "component",
+                              "polarity": "black",
+                              "label": 10,
+                              "widthPx": 512,
+                              "heightPx": 920,
+                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                              "pixels": {
+                                "kind": "numbers",
+                                "length": 84,
+                                "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+                              },
+                              "sourceTickId": null
+                            },
+                            "area": 84,
+                            "bbox": [
+                              315,
+                              591,
+                              6,
+                              14
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-9",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-9",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 9,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            306,
+                            582,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-14",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-14",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 14,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 120,
+                              "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 120,
+                          "bbox": [
+                            328,
+                            588,
+                            6,
+                            20
+                          ]
+                        },
+                        "matches": []
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
+                    },
+                    "reading": {
+                      "value": "01",
+                      "status": "read",
+                      "digits": [
+                        {
+                          "bbox": [
+                            312,
+                            588,
+                            12,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "0",
+                              "score": 1
+                            },
+                            {
+                              "label": "1",
+                              "score": 0.640625
+                            }
+                          ]
+                        },
+                        {
+                          "bbox": [
+                            328,
+                            588,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "unaccountedButOwned": {
+                      "rule": "outer-border-bbox",
+                      "outerBorder": "white-component-12",
+                      "bbox": [
+                        300,
+                        578,
+                        60,
+                        40
+                      ]
+                    }
+                  },
+                  "evidence": null
+                }
+              ],
+              "recovered": [
+                {
+                  "id": "badge-3",
+                  "basis": "dark-plate-recovery",
+                  "bbox": [
+                    382,
+                    138,
+                    56,
+                    40
+                  ],
+                  "at": [
+                    410,
+                    158
+                  ],
+                  "reading": {
+                    "value": "11",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          392,
+                          148,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          408,
+                          148,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "source": {
+                    "id": "badge-recovered:2",
+                    "border": {
+                      "bbox": [
+                        382,
+                        138,
+                        56,
+                        40
+                      ]
+                    },
+                    "plate": {
+                      "part": {
+                        "widthPx": 512,
+                        "heightPx": 920
+                      }
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                          },
+                          "widthPx": 512,
+                          "heightPx": 920
+                        },
+                        "bbox": [
+                          392,
+                          148,
+                          6,
+                          20
+                        ],
+                        "area": 120
+                      },
+                      {
+                        "part": {
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                          },
+                          "widthPx": 512,
+                          "heightPx": 920
+                        },
+                        "bbox": [
+                          408,
+                          148,
+                          6,
+                          20
+                        ],
+                        "area": 120
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "21676278335fe8ca765ad572f0a4ab34ebd69f36a9ea0930b535ca2774ba5bfb"
+                    },
+                    "reading": {
+                      "value": "11",
+                      "status": "read",
+                      "digits": [
+                        {
+                          "bbox": [
+                            392,
+                            148,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        },
+                        {
+                          "bbox": [
+                            408,
+                            148,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "evidence": {
+                    "rule": "the LAB's recoverDarkPlateBadges",
+                    "plate": [
+                      386,
+                      142,
+                      48,
+                      32
+                    ],
+                    "glyphFraction": 0.25,
+                    "interiorPx": 960,
+                    "knobs": {
+                      "min": 0.04,
+                      "max": 0.4
+                    },
+                    "digits": 2
+                  }
+                }
+              ],
+              "objects": [
+                {
+                  "id": "badge-1",
+                  "basis": "bright-family",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    150,
+                    278
+                  ],
+                  "reading": {
+                    "value": "10",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "0",
+                            "score": 1
+                          },
+                          {
+                            "label": "1",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "source": {
+                    "id": "badge-candidate:black-component-5:white-component-7",
+                    "plate": {
+                      "part": {
+                        "id": "black-component-5",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 5,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        126,
+                        262,
+                        48,
+                        32
+                      ]
+                    },
+                    "border": {
+                      "part": {
+                        "id": "white-component-7",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-7",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 7,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "e48c659a6de171b89ae6d1a0a23aff263431cc62306c93622a29c8eea67ae32b"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        120,
+                        258,
+                        60,
+                        40
+                      ]
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "id": "white-component-8",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 8,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          132,
+                          268,
+                          6,
+                          20
+                        ]
+                      },
+                      {
+                        "part": {
+                          "id": "white-component-9",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 9,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          148,
+                          268,
+                          12,
+                          20
+                        ]
+                      }
+                    ],
+                    "digitLoops": [
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-5",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 5,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            126,
+                            262,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-8",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-8",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 8,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 120,
+                              "sha256": "10f2169a547429539800eeced943b4ea0fd16c6761d73befd8eabaa872aeeee3"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 120,
+                          "bbox": [
+                            132,
+                            268,
+                            6,
+                            20
+                          ]
+                        },
+                        "matches": []
+                      },
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-5",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-5",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 5,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "4ba69a74c07e1e09811eb91c4033ff27851865aedcfccf30d6789e5019416400"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            126,
+                            262,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-9",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-9",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 9,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 156,
+                              "sha256": "60cb6f59807775a6801d64d5a5271d65a679b0d44c9586cc2bacff122e003e32"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 156,
+                          "bbox": [
+                            148,
+                            268,
+                            12,
+                            20
+                          ]
+                        },
+                        "matches": [
+                          {
+                            "part": {
+                              "id": "black-component-6",
+                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-6",
+                              "kind": "component",
+                              "polarity": "black",
+                              "label": 6,
+                              "widthPx": 512,
+                              "heightPx": 920,
+                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                              "pixels": {
+                                "kind": "numbers",
+                                "length": 84,
+                                "sha256": "b0fc81b85465ca8a26a67393c892cb84e430a942582b2461afd018cc80931c03"
+                              },
+                              "sourceTickId": null
+                            },
+                            "area": 84,
+                            "bbox": [
+                              151,
+                              271,
+                              6,
+                              14
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "a54b6c7a8206e91a65bf74b2138d728e8b4c0ca217e3366e30b3fef913a32d0a"
+                    },
+                    "reading": {
+                      "value": "10",
+                      "status": "read",
+                      "digits": [
+                        {
+                          "bbox": [
+                            132,
+                            268,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        },
+                        {
+                          "bbox": [
+                            148,
+                            268,
+                            12,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "0",
+                              "score": 1
+                            },
+                            {
+                              "label": "1",
+                              "score": 0.640625
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "unaccountedButOwned": {
+                      "rule": "outer-border-bbox",
+                      "outerBorder": "white-component-7",
+                      "bbox": [
+                        120,
+                        258,
+                        60,
+                        40
+                      ]
+                    }
+                  },
+                  "evidence": null
+                },
+                {
+                  "id": "badge-2",
+                  "basis": "bright-family",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    330,
+                    598
+                  ],
+                  "reading": {
+                    "value": "01",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          312,
+                          588,
+                          12,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "0",
+                            "score": 1
+                          },
+                          {
+                            "label": "1",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          328,
+                          588,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "source": {
+                    "id": "badge-candidate:black-component-9:white-component-12",
+                    "plate": {
+                      "part": {
+                        "id": "black-component-9",
+                        "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-9",
+                        "kind": "component",
+                        "polarity": "black",
+                        "label": 9,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 1176,
+                      "bbox": [
+                        306,
+                        582,
+                        48,
+                        32
+                      ]
+                    },
+                    "border": {
+                      "part": {
+                        "id": "white-component-12",
+                        "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-12",
+                        "kind": "component",
+                        "polarity": "white",
+                        "label": 12,
+                        "widthPx": 512,
+                        "heightPx": 920,
+                        "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                        "pixels": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "67209a30fda0d7c393b85529cff5c88260d1558f3465f37561aa77cd79caca81"
+                        },
+                        "sourceTickId": null
+                      },
+                      "area": 564,
+                      "bbox": [
+                        300,
+                        578,
+                        60,
+                        40
+                      ]
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "id": "white-component-13",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 13,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 156,
+                            "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 156,
+                        "bbox": [
+                          312,
+                          588,
+                          12,
+                          20
+                        ]
+                      },
+                      {
+                        "part": {
+                          "id": "white-component-14",
+                          "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-14",
+                          "kind": "component",
+                          "polarity": "white",
+                          "label": 14,
+                          "widthPx": 512,
+                          "heightPx": 920,
+                          "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                          },
+                          "sourceTickId": null
+                        },
+                        "area": 120,
+                        "bbox": [
+                          328,
+                          588,
+                          6,
+                          20
+                        ]
+                      }
+                    ],
+                    "digitLoops": [
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-9",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-9",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 9,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            306,
+                            582,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-13",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-13",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 13,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 156,
+                              "sha256": "0be504c88df59fcaa5b1638a8007d4d68b8c69ca3db99ec0a3df0c26e9d8141d"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 156,
+                          "bbox": [
+                            312,
+                            588,
+                            12,
+                            20
+                          ]
+                        },
+                        "matches": [
+                          {
+                            "part": {
+                              "id": "black-component-10",
+                              "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-10",
+                              "kind": "component",
+                              "polarity": "black",
+                              "label": 10,
+                              "widthPx": 512,
+                              "heightPx": 920,
+                              "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                              "pixels": {
+                                "kind": "numbers",
+                                "length": 84,
+                                "sha256": "a6a08f35d1e93337ae896b4d6dd6e32bfdd7e40a4cccd38b1575d3d10791cea2"
+                              },
+                              "sourceTickId": null
+                            },
+                            "area": 84,
+                            "bbox": [
+                              315,
+                              591,
+                              6,
+                              14
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "plate": {
+                          "part": {
+                            "id": "black-component-9",
+                            "address": "px.exp.lab.s1.maskcomponents.part.blackcomponent-9",
+                            "kind": "component",
+                            "polarity": "black",
+                            "label": 9,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 200,
+                              "sha256": "281b08cdb38f3c4d1ed06900e2d334804e37f54d572b9a051f0c0b1097a30d71"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 1176,
+                          "bbox": [
+                            306,
+                            582,
+                            48,
+                            32
+                          ]
+                        },
+                        "anchor": {
+                          "part": {
+                            "id": "white-component-14",
+                            "address": "px.exp.lab.s1.maskcomponents.part.whitecomponent-14",
+                            "kind": "component",
+                            "polarity": "white",
+                            "label": 14,
+                            "widthPx": 512,
+                            "heightPx": 920,
+                            "coordinateFrameId": "px.exp.lab.course.canonicalpixels",
+                            "pixels": {
+                              "kind": "numbers",
+                              "length": 120,
+                              "sha256": "b0d89e8301438b4dedb54b9ef8308687016d1bc2a08a0f69a5d4aacc0691142e"
+                            },
+                            "sourceTickId": null
+                          },
+                          "area": 120,
+                          "bbox": [
+                            328,
+                            588,
+                            6,
+                            20
+                          ]
+                        },
+                        "matches": []
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "5117714a7bb3a00b8c0daafd2f3ea18be254f5ce0d487fc80dcc31358844b6cf"
+                    },
+                    "reading": {
+                      "value": "01",
+                      "status": "read",
+                      "digits": [
+                        {
+                          "bbox": [
+                            312,
+                            588,
+                            12,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "da5a8a550f1629e79bca9e4e6c6b72effca4c69b59b73cc2a4416bfad4f8d12d"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "0",
+                              "score": 1
+                            },
+                            {
+                              "label": "1",
+                              "score": 0.640625
+                            }
+                          ]
+                        },
+                        {
+                          "bbox": [
+                            328,
+                            588,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "unaccountedButOwned": {
+                      "rule": "outer-border-bbox",
+                      "outerBorder": "white-component-12",
+                      "bbox": [
+                        300,
+                        578,
+                        60,
+                        40
+                      ]
+                    }
+                  },
+                  "evidence": null
+                },
+                {
+                  "id": "badge-3",
+                  "basis": "dark-plate-recovery",
+                  "bbox": [
+                    382,
+                    138,
+                    56,
+                    40
+                  ],
+                  "at": [
+                    410,
+                    158
+                  ],
+                  "reading": {
+                    "value": "11",
+                    "status": "read",
+                    "digits": [
+                      {
+                        "bbox": [
+                          392,
+                          148,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      },
+                      {
+                        "bbox": [
+                          408,
+                          148,
+                          6,
+                          20
+                        ],
+                        "method": "cc",
+                        "normalized": {
+                          "kind": "numbers",
+                          "length": 200,
+                          "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                        },
+                        "notes": [],
+                        "rankings": [
+                          {
+                            "label": "1",
+                            "score": 1
+                          },
+                          {
+                            "label": "0",
+                            "score": 0.640625
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "source": {
+                    "id": "badge-recovered:2",
+                    "border": {
+                      "bbox": [
+                        382,
+                        138,
+                        56,
+                        40
+                      ]
+                    },
+                    "plate": {
+                      "part": {
+                        "widthPx": 512,
+                        "heightPx": 920
+                      }
+                    },
+                    "digits": [
+                      {
+                        "part": {
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "edc2a81ff09f252a240260e3328f721654ab4a9fd09a033ad3100cabfbc9ad49"
+                          },
+                          "widthPx": 512,
+                          "heightPx": 920
+                        },
+                        "bbox": [
+                          392,
+                          148,
+                          6,
+                          20
+                        ],
+                        "area": 120
+                      },
+                      {
+                        "part": {
+                          "pixels": {
+                            "kind": "numbers",
+                            "length": 120,
+                            "sha256": "909b50fe1e8255ea6609774f3808420856d9a016a3143192abea010475d3dd52"
+                          },
+                          "widthPx": 512,
+                          "heightPx": 920
+                        },
+                        "bbox": [
+                          408,
+                          148,
+                          6,
+                          20
+                        ],
+                        "area": 120
+                      }
+                    ],
+                    "pixels": {
+                      "kind": "numbers",
+                      "length": 200,
+                      "sha256": "21676278335fe8ca765ad572f0a4ab34ebd69f36a9ea0930b535ca2774ba5bfb"
+                    },
+                    "reading": {
+                      "value": "11",
+                      "status": "read",
+                      "digits": [
+                        {
+                          "bbox": [
+                            392,
+                            148,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        },
+                        {
+                          "bbox": [
+                            408,
+                            148,
+                            6,
+                            20
+                          ],
+                          "method": "cc",
+                          "normalized": {
+                            "kind": "numbers",
+                            "length": 200,
+                            "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                          },
+                          "notes": [],
+                          "rankings": [
+                            {
+                              "label": "1",
+                              "score": 1
+                            },
+                            {
+                              "label": "0",
+                              "score": 0.640625
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "evidence": {
+                    "rule": "the LAB's recoverDarkPlateBadges",
+                    "plate": [
+                      386,
+                      142,
+                      48,
+                      32
+                    ],
+                    "glyphFraction": 0.25,
+                    "interiorPx": 960,
+                    "knobs": {
+                      "min": 0.04,
+                      "max": 0.4
+                    },
+                    "digits": 2
+                  }
+                }
+              ],
+              "rejected": [
+                {
+                  "bbox": [
+                    405,
+                    138,
+                    10,
+                    3
+                  ],
+                  "why": [
+                    "plate width",
+                    "plate height",
+                    "plate aspect",
+                    "glyph fraction"
+                  ]
+                },
+                {
+                  "bbox": [
+                    405,
+                    175,
+                    10,
+                    3
+                  ],
+                  "why": [
+                    "plate width",
+                    "plate height",
+                    "plate aspect",
+                    "glyph fraction"
+                  ]
+                },
+                {
+                  "bbox": [
+                    63,
+                    208,
+                    10,
+                    2
+                  ],
+                  "why": [
+                    "plate width",
+                    "plate height",
+                    "plate aspect",
+                    "glyph fraction"
+                  ]
+                },
+                {
+                  "bbox": [
+                    0,
+                    338,
+                    264,
+                    16
+                  ],
+                  "why": [
+                    "plate width",
+                    "plate height",
+                    "plate aspect",
+                    "glyph fraction"
+                  ]
+                },
+                {
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "why": [
+                    "plate height",
+                    "plate aspect",
+                    "plate fill",
+                    "glyph fraction"
+                  ]
+                }
+              ]
+            },
+            "note": "46 array(s) truncated to the first 200 entries; original lengths: [2100, 2100, 2100, 2100, 1296, 1296, 1176, 1176, 1176, 1176, 1176, 1176, 1176, 1176, 1176, 1176, 1176, 1176, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 768, 564, 564, 564, 564]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Recover.baskets",
+      "invocations": [
+        {
+          "id": "px.exp.lab.recovered.baskets",
+          "calculation": {
+            "address": "fn.lab.recover.baskets",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "baskets": "px:px.exp.lab.baskets",
+            "unclaimed": "px:px.exp.lab.recovered.unclaimed",
+            "shellFamily": "px:px.exp.lab.baskets.shellfamily",
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {},
+          "into": "px.exp.lab.recovered.baskets",
+          "declared_consumes": [
+            "px:px.exp.lab.baskets",
+            "px:px.exp.lab.recovered.unclaimed",
+            "px:px.exp.lab.baskets.shellfamily",
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.baskets",
+            "px.exp.lab.recovered.unclaimed",
+            "px.exp.lab.baskets.shellfamily",
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.recovered.baskets"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.recovered.baskets",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "kind": "basket",
+              "clean": [
+                {
+                  "id": "basket-1",
+                  "basis": "body-family",
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "px": 3700,
+                  "evidence": null
+                }
+              ],
+              "recovered": [
+                {
+                  "id": "basket-2",
+                  "basis": "shell-recovery",
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    351,
+                    791
+                  ],
+                  "px": 1938,
+                  "evidence": {
+                    "rule": "the recovery S2's receipt marks NOT RUN",
+                    "shell": [
+                      326,
+                      754,
+                      50,
+                      74
+                    ],
+                    "margins": [
+                      4,
+                      4,
+                      4,
+                      4
+                    ],
+                    "brightInsidePx": 1746,
+                    "interiorPx": 2772
+                  }
+                }
+              ],
+              "objects": [
+                {
+                  "id": "basket-1",
+                  "basis": "body-family",
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "px": 3700,
+                  "evidence": null
+                },
+                {
+                  "id": "basket-2",
+                  "basis": "shell-recovery",
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    351,
+                    791
+                  ],
+                  "px": 1938,
+                  "evidence": {
+                    "rule": "the recovery S2's receipt marks NOT RUN",
+                    "shell": [
+                      326,
+                      754,
+                      50,
+                      74
+                    ],
+                    "margins": [
+                      4,
+                      4,
+                      4,
+                      4
+                    ],
+                    "brightInsidePx": 1746,
+                    "interiorPx": 2772
+                  }
+                }
+              ],
+              "rejected": [
+                {
+                  "bbox": [
+                    405,
+                    138,
+                    10,
+                    3
+                  ],
+                  "why": [
+                    "shell geometry 10x3 is not the family's 50x74"
+                  ]
+                },
+                {
+                  "bbox": [
+                    386,
+                    142,
+                    48,
+                    32
+                  ],
+                  "why": [
+                    "shell geometry 48x32 is not the family's 50x74"
+                  ]
+                },
+                {
+                  "bbox": [
+                    405,
+                    175,
+                    10,
+                    3
+                  ],
+                  "why": [
+                    "shell geometry 10x3 is not the family's 50x74"
+                  ]
+                },
+                {
+                  "bbox": [
+                    63,
+                    208,
+                    10,
+                    2
+                  ],
+                  "why": [
+                    "shell geometry 10x2 is not the family's 50x74"
+                  ]
+                },
+                {
+                  "bbox": [
+                    0,
+                    338,
+                    264,
+                    16
+                  ],
+                  "why": [
+                    "shell geometry 264x16 is not the family's 50x74"
+                  ]
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Recover.tees",
+      "invocations": [
+        {
+          "id": "px.exp.lab.recovered.tees",
+          "calculation": {
+            "address": "fn.lab.recover.tees",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "tees": "px:px.exp.lab.tees",
+            "unclaimed": "px:px.exp.lab.recovered.unclaimed",
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {},
+          "into": "px.exp.lab.recovered.tees",
+          "declared_consumes": [
+            "px:px.exp.lab.tees",
+            "px:px.exp.lab.recovered.unclaimed",
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.tees",
+            "px.exp.lab.recovered.unclaimed",
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.recovered.tees"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.recovered.tees",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "kind": "tee",
+              "clean": [
+                {
+                  "id": "tee-1",
+                  "basis": "ring-family",
+                  "bbox": [
+                    470,
+                    78,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    477.5,
+                    90.5
+                  ],
+                  "px": 152,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": null
+                },
+                {
+                  "id": "tee-2",
+                  "basis": "ring-family",
+                  "bbox": [
+                    420,
+                    518,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    427.5,
+                    530.5
+                  ],
+                  "px": 152,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": null
+                }
+              ],
+              "recovered": [
+                {
+                  "id": "tee-3",
+                  "basis": "component-fallback",
+                  "bbox": [
+                    60,
+                    208,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    67.5,
+                    222.3181818181818
+                  ],
+                  "px": 132,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": {
+                    "rule": "the component fallback S3's receipt marks NOT RUN",
+                    "frame": [
+                      60,
+                      208,
+                      16,
+                      26
+                    ],
+                    "familyFrame": [
+                      16,
+                      26
+                    ],
+                    "fill": 0.317,
+                    "familyFill": 0.365,
+                    "ring": null,
+                    "why": "no enclosed hole survived, so no ring was accepted"
+                  }
+                }
+              ],
+              "objects": [
+                {
+                  "id": "tee-1",
+                  "basis": "ring-family",
+                  "bbox": [
+                    470,
+                    78,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    477.5,
+                    90.5
+                  ],
+                  "px": 152,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": null
+                },
+                {
+                  "id": "tee-2",
+                  "basis": "ring-family",
+                  "bbox": [
+                    420,
+                    518,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    427.5,
+                    530.5
+                  ],
+                  "px": 152,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": null
+                },
+                {
+                  "id": "tee-3",
+                  "basis": "component-fallback",
+                  "bbox": [
+                    60,
+                    208,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    67.5,
+                    222.3181818181818
+                  ],
+                  "px": 132,
+                  "angleRad": 1.5707963267948966,
+                  "evidence": {
+                    "rule": "the component fallback S3's receipt marks NOT RUN",
+                    "frame": [
+                      60,
+                      208,
+                      16,
+                      26
+                    ],
+                    "familyFrame": [
+                      16,
+                      26
+                    ],
+                    "fill": 0.317,
+                    "familyFill": 0.365,
+                    "ring": null,
+                    "why": "no enclosed hole survived, so no ring was accepted"
+                  }
+                }
+              ],
+              "rejected": [
+                {
+                  "bbox": [
+                    380,
+                    138,
+                    25,
+                    40
+                  ],
+                  "why": [
+                    "frame 25x40 is not the family's 16x26"
+                  ]
+                },
+                {
+                  "bbox": [
+                    415,
+                    138,
+                    25,
+                    40
+                  ],
+                  "why": [
+                    "frame 25x40 is not the family's 16x26"
+                  ]
+                },
+                {
+                  "bbox": [
+                    392,
+                    148,
+                    6,
+                    20
+                  ],
+                  "why": [
+                    "frame 6x20 is not the family's 16x26"
+                  ]
+                },
+                {
+                  "bbox": [
+                    408,
+                    148,
+                    6,
+                    20
+                  ],
+                  "why": [
+                    "frame 6x20 is not the family's 16x26"
+                  ]
+                },
+                {
+                  "bbox": [
+                    320,
+                    758,
+                    52,
+                    66
+                  ],
+                  "why": [
+                    "frame 52x66 is not the family's 16x26"
+                  ]
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "name": "Recover.ledger",
+      "invocations": [
+        {
+          "id": "px.exp.lab.recovered.ledger",
+          "calculation": {
+            "address": "fn.lab.recover.ledger",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "badges": "px:px.exp.lab.recovered.badges",
+            "baskets": "px:px.exp.lab.recovered.baskets",
+            "tees": "px:px.exp.lab.recovered.tees",
+            "unclaimed": "px:px.exp.lab.recovered.unclaimed"
+          },
+          "args": {},
+          "into": "px.exp.lab.recovered.ledger",
+          "declared_consumes": [
+            "px:px.exp.lab.recovered.badges",
+            "px:px.exp.lab.recovered.baskets",
+            "px:px.exp.lab.recovered.tees",
+            "px:px.exp.lab.recovered.unclaimed"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.recovered.badges",
+            "px.exp.lab.recovered.baskets",
+            "px.exp.lab.recovered.tees",
+            "px.exp.lab.recovered.unclaimed"
+          ],
+          "actual_produces": [
+            "px.exp.lab.recovered.ledger"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.recovered.ledger",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "what the clean detectors lost to an overlap and what found it again, so that a later Stage reads one list per kind and can still tell how each object got there",
+              "from": [
+                "px.exp.lab.badges.objects",
+                "px.exp.lab.baskets",
+                "px.exp.lab.tees",
+                "px.exp.lab.components"
+              ],
+              "counts": {
+                "badge": {
+                  "clean": 2,
+                  "recovered": 1,
+                  "total": 3,
+                  "rejected": 5
+                },
+                "basket": {
+                  "clean": 1,
+                  "recovered": 1,
+                  "total": 2,
+                  "rejected": 5
+                },
+                "tee": {
+                  "clean": 2,
+                  "recovered": 1,
+                  "total": 3,
+                  "rejected": 5
+                }
+              },
+              "recovered": [
+                {
+                  "kind": "badge",
+                  "id": "badge-3",
+                  "basis": "dark-plate-recovery",
+                  "bbox": [
+                    382,
+                    138,
+                    56,
+                    40
+                  ],
+                  "evidence": {
+                    "rule": "the LAB's recoverDarkPlateBadges",
+                    "plate": [
+                      386,
+                      142,
+                      48,
+                      32
+                    ],
+                    "glyphFraction": 0.25,
+                    "interiorPx": 960,
+                    "knobs": {
+                      "min": 0.04,
+                      "max": 0.4
+                    },
+                    "digits": 2
+                  },
+                  "overlappedBy": [
+                    {
+                      "polarity": "bright",
+                      "bbox": [
+                        380,
+                        138,
+                        25,
+                        40
+                      ],
+                      "freePx": 252
+                    },
+                    {
+                      "polarity": "bright",
+                      "bbox": [
+                        415,
+                        138,
+                        25,
+                        40
+                      ],
+                      "freePx": 252
+                    },
+                    {
+                      "polarity": "bright",
+                      "bbox": [
+                        392,
+                        148,
+                        6,
+                        20
+                      ],
+                      "freePx": 120
+                    },
+                    {
+                      "polarity": "bright",
+                      "bbox": [
+                        408,
+                        148,
+                        6,
+                        20
+                      ],
+                      "freePx": 120
+                    },
+                    {
+                      "polarity": "dark",
+                      "bbox": [
+                        405,
+                        138,
+                        10,
+                        3
+                      ],
+                      "freePx": 30
+                    },
+                    {
+                      "polarity": "dark",
+                      "bbox": [
+                        386,
+                        142,
+                        48,
+                        32
+                      ],
+                      "freePx": 1296
+                    },
+                    {
+                      "polarity": "dark",
+                      "bbox": [
+                        405,
+                        175,
+                        10,
+                        3
+                      ],
+                      "freePx": 30
+                    }
+                  ]
+                },
+                {
+                  "kind": "basket",
+                  "id": "basket-2",
+                  "basis": "shell-recovery",
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "evidence": {
+                    "rule": "the recovery S2's receipt marks NOT RUN",
+                    "shell": [
+                      326,
+                      754,
+                      50,
+                      74
+                    ],
+                    "margins": [
+                      4,
+                      4,
+                      4,
+                      4
+                    ],
+                    "brightInsidePx": 1746,
+                    "interiorPx": 2772
+                  },
+                  "overlappedBy": [
+                    {
+                      "polarity": "bright",
+                      "bbox": [
+                        320,
+                        758,
+                        52,
+                        66
+                      ],
+                      "freePx": 1786
+                    }
+                  ]
+                },
+                {
+                  "kind": "tee",
+                  "id": "tee-3",
+                  "basis": "component-fallback",
+                  "bbox": [
+                    60,
+                    208,
+                    16,
+                    26
+                  ],
+                  "evidence": {
+                    "rule": "the component fallback S3's receipt marks NOT RUN",
+                    "frame": [
+                      60,
+                      208,
+                      16,
+                      26
+                    ],
+                    "familyFrame": [
+                      16,
+                      26
+                    ],
+                    "fill": 0.317,
+                    "familyFill": 0.365,
+                    "ring": null,
+                    "why": "no enclosed hole survived, so no ring was accepted"
+                  },
+                  "overlappedBy": [
+                    {
+                      "polarity": "dark",
+                      "bbox": [
+                        63,
+                        208,
+                        10,
+                        2
+                      ],
+                      "freePx": 20
+                    }
+                  ]
+                }
+              ],
+              "bases": {
+                "badge": [
+                  "bright-family",
+                  "dark-plate-recovery"
+                ],
+                "basket": [
+                  "body-family",
+                  "shell-recovery"
+                ],
+                "tee": [
+                  "ring-family",
+                  "component-fallback"
+                ]
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.components": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.recovered.unclaimed",
+        "px.exp.lab.recovered.badges",
+        "px.exp.lab.recovered.baskets",
+        "px.exp.lab.recovered.tees"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.badges.objects": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.recovered.unclaimed",
+        "px.exp.lab.recovered.badges"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.recovered.unclaimed",
+        "px.exp.lab.recovered.baskets"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.recovered.unclaimed",
+        "px.exp.lab.recovered.tees"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.unclaimed": {
+      "written_by": "px.exp.lab.recovered.unclaimed",
+      "read_by": [
+        "px.exp.lab.recovered.badges",
+        "px.exp.lab.recovered.baskets",
+        "px.exp.lab.recovered.tees",
+        "px.exp.lab.recovered.ledger"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.s1.whitedigits.model": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.recovered.badges"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.badges": {
+      "written_by": "px.exp.lab.recovered.badges",
+      "read_by": [
+        "px.exp.lab.recovered.ledger"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.baskets.shellfamily": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.recovered.baskets"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.baskets": {
+      "written_by": "px.exp.lab.recovered.baskets",
+      "read_by": [
+        "px.exp.lab.recovered.ledger"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.recovered.tees": {
+      "written_by": "px.exp.lab.recovered.tees",
+      "read_by": [
+        "px.exp.lab.recovered.ledger"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.recovered.ledger": {
+      "written_by": "px.exp.lab.recovered.ledger",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 5,
+    "hits": 4,
+    "computed": 1,
+    "wall_ms": null
+  }
+}

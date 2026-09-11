@@ -52,43 +52,17 @@
                 "heightPx": 920
               },
               "order": [
-                1,
-                10
+                1
               ],
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-3",
-                  "tee": {
-                    "id": "tee-3",
-                    "at": [
-                      427.5,
-                      530.5
-                    ]
-                  },
-                  "basket": {
-                    "id": "basket-2",
-                    "at": [
-                      351,
-                      791
-                    ]
-                  },
-                  "vector": [
-                    -76.5,
-                    260.5
-                  ],
-                  "lengthPx": 271.5,
-                  "bearingDeg": 106.366,
-                  "confidence": 1
-                },
-                {
-                  "number": 10,
                   "badge": "badge-2",
                   "tee": {
                     "id": "tee-2",
                     "at": [
-                      67.5,
-                      220.5
+                      427.5,
+                      530.5
                     ]
                   },
                   "basket": {
@@ -99,17 +73,17 @@
                     ]
                   },
                   "vector": [
-                    103.5,
-                    240.5
+                    -256.5,
+                    -69.5
                   ],
-                  "lengthPx": 261.825,
-                  "bearingDeg": 66.715,
+                  "lengthPx": 265.749,
+                  "bearingDeg": 195.161,
                   "confidence": 1
                 }
               ],
               "incomplete": [
                 {
-                  "number": 11,
+                  "number": 10,
                   "missing": [
                     "basket"
                   ]
@@ -196,18 +170,18 @@
               ],
               "priority": "a cell takes the first class present in it, in the order above",
               "pixelsByClass": {
-                "terrain": 4224,
-                "basket": 7400,
-                "tee": 456,
-                "badge": 7200,
-                "open": 451760
+                "terrain": 7538,
+                "basket": 3700,
+                "tee": 304,
+                "badge": 4800,
+                "open": 454698
               },
               "cellsByClass": {
-                "terrain": 34,
-                "basket": 44,
-                "tee": 14,
-                "badge": 50,
-                "open": 1714
+                "terrain": 69,
+                "basket": 24,
+                "tee": 10,
+                "badge": 30,
+                "open": 1723
               },
               "cells": [
                 "open",
@@ -415,47 +389,16 @@
                 "pixels": {
                   "kind": "numbers",
                   "length": 200,
-                  "sha256": "da92a58d4aa7e1382555513fadaf211fb35e68583c7fee6bff90dfcc12229021"
+                  "sha256": "4c269c83531fd555ee18ec898aadfb2f0be8115958b5c189f4bb1a9c9bbb123d"
                 },
-                "cells": [
-                  672,
-                  673,
-                  674,
-                  675,
-                  676,
-                  677,
-                  678,
-                  679,
-                  680,
-                  681,
-                  682,
-                  683,
-                  684,
-                  685,
-                  686,
-                  687,
-                  688,
-                  704,
-                  705,
-                  706,
-                  707,
-                  708,
-                  709,
-                  710,
-                  711,
-                  712,
-                  713,
-                  714,
-                  715,
-                  716,
-                  717,
-                  718,
-                  719,
-                  720
-                ]
+                "cells": {
+                  "kind": "numbers",
+                  "length": 69,
+                  "sha256": "039b95b85a94326efde43dbfb7ec72bc9e02bae644be588c71b528d5e85c985a"
+                }
               }
             },
-            "note": "2 array(s) truncated to the first 200 entries; original lengths: [4224, 1856]"
+            "note": "2 array(s) truncated to the first 200 entries; original lengths: [7538, 1856]"
           }
         }
       ]
@@ -511,43 +454,12 @@
                 "length": 200,
                 "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
               },
-              "count": 1822,
-              "obstacleCells": [
-                672,
-                673,
-                674,
-                675,
-                676,
-                677,
-                678,
-                679,
-                680,
-                681,
-                682,
-                683,
-                684,
-                685,
-                686,
-                687,
-                688,
-                704,
-                705,
-                706,
-                707,
-                708,
-                709,
-                710,
-                711,
-                712,
-                713,
-                714,
-                715,
-                716,
-                717,
-                718,
-                719,
-                720
-              ]
+              "count": 1787,
+              "obstacleCells": {
+                "kind": "numbers",
+                "length": 69,
+                "sha256": "039b95b85a94326efde43dbfb7ec72bc9e02bae644be588c71b528d5e85c985a"
+              }
             },
             "note": "1 array(s) truncated to the first 200 entries; original lengths: [1856]"
           }
@@ -611,43 +523,17 @@
               },
               "walkableRule": "every class but terrain: a badge, a basket and a tee are printed on the map, and a tee or a basket is where a leg ends",
               "order": [
-                1,
-                10
+                1
               ],
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-3",
-                  "tee": {
-                    "id": "tee-3",
-                    "at": [
-                      427.5,
-                      530.5
-                    ]
-                  },
-                  "basket": {
-                    "id": "basket-2",
-                    "at": [
-                      351,
-                      791
-                    ]
-                  },
-                  "vector": [
-                    -76.5,
-                    260.5
-                  ],
-                  "lengthPx": 271.5,
-                  "bearingDeg": 106.366,
-                  "confidence": 1
-                },
-                {
-                  "number": 10,
                   "badge": "badge-2",
                   "tee": {
                     "id": "tee-2",
                     "at": [
-                      67.5,
-                      220.5
+                      427.5,
+                      530.5
                     ]
                   },
                   "basket": {
@@ -658,17 +544,17 @@
                     ]
                   },
                   "vector": [
-                    103.5,
-                    240.5
+                    -256.5,
+                    -69.5
                   ],
-                  "lengthPx": 261.825,
-                  "bearingDeg": 66.715,
+                  "lengthPx": 265.749,
+                  "bearingDeg": 195.161,
                   "confidence": 1
                 }
               ],
               "nodes": [
                 {
-                  "id": "tee-3",
+                  "id": "tee-2",
                   "kind": "tee",
                   "hole": 1,
                   "at": [
@@ -678,29 +564,9 @@
                   "cell": 1082
                 },
                 {
-                  "id": "basket-2",
-                  "kind": "basket",
-                  "hole": 1,
-                  "at": [
-                    351,
-                    791
-                  ],
-                  "cell": 1589
-                },
-                {
-                  "id": "tee-2",
-                  "kind": "tee",
-                  "hole": 10,
-                  "at": [
-                    67.5,
-                    220.5
-                  ],
-                  "cell": 420
-                },
-                {
                   "id": "basket-1",
                   "kind": "basket",
-                  "hole": 10,
+                  "hole": 1,
                   "at": [
                     171,
                     461
@@ -712,26 +578,10 @@
                 {
                   "kind": "play",
                   "hole": 1,
-                  "from": "tee-3",
-                  "to": "basket-2",
-                  "straightLengthPx": 271.5,
-                  "straightIsBlocked": false
-                },
-                {
-                  "kind": "walk",
-                  "hole": 10,
-                  "from": "basket-2",
-                  "to": "tee-2",
-                  "straightLengthPx": 637.058,
-                  "straightIsBlocked": true
-                },
-                {
-                  "kind": "play",
-                  "hole": 10,
                   "from": "tee-2",
                   "to": "basket-1",
-                  "straightLengthPx": 261.825,
-                  "straightIsBlocked": true
+                  "straightLengthPx": 265.749,
+                  "straightIsBlocked": false
                 }
               ],
               "obstacles": {
@@ -743,18 +593,18 @@
                   "open"
                 ],
                 "cellsByClass": {
-                  "terrain": 34,
-                  "basket": 44,
-                  "tee": 14,
-                  "badge": 50,
-                  "open": 1714
+                  "terrain": 69,
+                  "basket": 24,
+                  "tee": 10,
+                  "badge": 30,
+                  "open": 1723
                 },
                 "pixelsByClass": {
-                  "terrain": 4224,
-                  "basket": 7400,
-                  "tee": 456,
-                  "badge": 7200,
-                  "open": 451760
+                  "terrain": 7538,
+                  "basket": 3700,
+                  "tee": 304,
+                  "badge": 4800,
+                  "open": 454698
                 },
                 "cells": [
                   "open",
@@ -958,42 +808,11 @@
                   "open",
                   "open"
                 ],
-                "terrainCells": [
-                  672,
-                  673,
-                  674,
-                  675,
-                  676,
-                  677,
-                  678,
-                  679,
-                  680,
-                  681,
-                  682,
-                  683,
-                  684,
-                  685,
-                  686,
-                  687,
-                  688,
-                  704,
-                  705,
-                  706,
-                  707,
-                  708,
-                  709,
-                  710,
-                  711,
-                  712,
-                  713,
-                  714,
-                  715,
-                  716,
-                  717,
-                  718,
-                  719,
-                  720
-                ]
+                "terrainCells": {
+                  "kind": "numbers",
+                  "length": 69,
+                  "sha256": "039b95b85a94326efde43dbfb7ec72bc9e02bae644be588c71b528d5e85c985a"
+                }
               },
               "walkable": {
                 "cells": {
@@ -1001,7 +820,7 @@
                   "length": 200,
                   "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
                 },
-                "count": 1822
+                "count": 1787
               }
             },
             "note": "2 array(s) truncated to the first 200 entries; original lengths: [1856, 1856]"
@@ -1054,24 +873,20 @@
             "data": {
               "for": "the course in five numbers, and what is not in it",
               "course": "labfixture",
-              "holes": 2,
+              "holes": 1,
               "order": [
-                1,
-                10
+                1
               ],
-              "totalLengthPx": 533.325,
+              "totalLengthPx": 265.749,
               "longestHole": 1,
-              "blockedStraightLegs": [
-                "walk:basket-2->tee-2",
-                "play:tee-2->basket-1"
-              ],
+              "blockedStraightLegs": [],
               "cellPx": 16,
-              "walkableCells": 1822,
-              "obstacleCells": 34,
+              "walkableCells": 1787,
+              "obstacleCells": 69,
               "unplaced": {
                 "holes": [
                   {
-                    "number": 11,
+                    "number": 10,
                     "missing": [
                       "basket"
                     ]

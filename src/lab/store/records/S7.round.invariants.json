@@ -50,15 +50,15 @@
           "value": {
             "kind": "json",
             "data": {
-              "edges": 3,
-              "legs": 3,
-              "walked": 3,
+              "edges": 1,
+              "legs": 1,
+              "walked": 1,
               "unreachable": 0,
-              "cells": 82,
-              "cost": 922,
-              "lengthPx": 1486.596,
-              "obstacleCells": 34,
-              "walkableCells": 1822
+              "cells": 17,
+              "cost": 180,
+              "lengthPx": 287.8,
+              "obstacleCells": 69,
+              "walkableCells": 1787
             },
             "note": null
           }
@@ -111,15 +111,15 @@
           "value": {
             "kind": "json",
             "data": {
-              "edges": 3,
-              "legs": 3,
-              "walked": 3,
+              "edges": 1,
+              "legs": 1,
+              "walked": 1,
               "unreachable": 0,
-              "cells": 82,
-              "cost": 922,
-              "lengthPx": 1486.596,
-              "obstacleCells": 34,
-              "walkableCells": 1822,
+              "cells": 17,
+              "cost": 180,
+              "lengthPx": 287.8,
+              "obstacleCells": 69,
+              "walkableCells": 1787,
               "checks": {
                 "noLegCrossesAnObstacle": true,
                 "everyEdgeIsALeg": true,

@@ -57,18 +57,18 @@
               "pixelsInFrame": 471040,
               "cells": 1856,
               "cellsByClass": {
-                "terrain": 34,
-                "basket": 44,
-                "tee": 14,
-                "badge": 50,
-                "open": 1714
+                "terrain": 69,
+                "basket": 24,
+                "tee": 10,
+                "badge": 30,
+                "open": 1723
               },
-              "walkableCells": 1822,
-              "obstacleCells": 34,
-              "holes": 2,
+              "walkableCells": 1787,
+              "obstacleCells": 69,
+              "holes": 1,
               "incomplete": 1,
-              "anchors": 4,
-              "edges": 3
+              "anchors": 2,
+              "edges": 1
             },
             "note": null
           }
@@ -125,18 +125,18 @@
               "pixelsInFrame": 471040,
               "cells": 1856,
               "cellsByClass": {
-                "terrain": 34,
-                "basket": 44,
-                "tee": 14,
-                "badge": 50,
-                "open": 1714
+                "terrain": 69,
+                "basket": 24,
+                "tee": 10,
+                "badge": 30,
+                "open": 1723
               },
-              "walkableCells": 1822,
-              "obstacleCells": 34,
-              "holes": 2,
+              "walkableCells": 1787,
+              "obstacleCells": 69,
+              "holes": 1,
               "incomplete": 1,
-              "anchors": 4,
-              "edges": 3,
+              "anchors": 2,
+              "edges": 1,
               "checks": {
                 "anchorsInsideTheRaster": true,
                 "everyPixelLeavesOnce": true,

@@ -10,6 +10,7 @@ import { registerS1, runS1, s1YamlDocument, s1MermaidDocument } from './s1.js';
 import { registerS2, runS2 } from './s2.js';
 import { registerS3, runS3 } from './s3.js';
 import { registerHolesNearest, runHolesNearest } from './holes-nearest.js';
+import { registerS4, runS4 } from './s4.js';
 import { registerCourse, runCourse } from './s7course.js';
 import { registerRound, runRound } from './s7round.js';
 import { registerRoute, runRoute } from './route.js';
@@ -18,16 +19,17 @@ import { fixtureCapture, fixtureBasis } from './fixtures.js';
 
 export function buildMap() {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerCourse(lab); registerRound(lab); registerRoute(lab); registerPath(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerS4(lab); registerCourse(lab); registerRound(lab); registerRoute(lab); registerPath(lab);
   // The course fixture: the S0..S3 capture plus the two elements the later Stages
   // need -- a hole whose basket is missing, and structure no Stage object owns.
-  const fixture = { hole11: true, obstacle: true };
+  const fixture = { hole11: true, obstacle: true, overlaps: true };
   lab.put('px.exp.lab.fixture.basis', fixtureBasis(fixture));
   const s0 = runS0(lab, { decoded: fixtureCapture(20260911, fixture), label: 'lab course fixture capture' });
   const s1 = runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
   const s2 = runS2(lab);
   const s3 = runS3(lab);
-  const s4 = runHolesNearest(lab);
+  const s4 = runS4(lab);
+  const holes = runHolesNearest(lab);
   const s5 = runCourse(lab);
   // The straight round first, so the searched round can be compared against what it replaces.
   const round = runRoute(lab, { course: 'labfixture' });
@@ -35,7 +37,7 @@ export function buildMap() {
   putCourses(lab, ['DashsTrack']);
   const path = pathDocument(lab, { course: 'dashstrack', name: 'route', from: 'h1', to: 'h9' });
   lab.run(path.composition.PrincipleComponentRender, path.composition);
-  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'HolesByNearestAnchor', 'HolesByNearestAnchor.invariants', 'S7.course', 'S7.course.invariants', 'S7.round', 'S7.round.invariants', 'S7.vs-straight', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
+  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'S4', 'S4.invariants', 'HolesByNearestAnchor', 'HolesByNearestAnchor.invariants', 'S7.course', 'S7.course.invariants', 'S7.round', 'S7.round.invariants', 'S7.vs-straight', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
 
   lab.put('px.exp.lab.map', {
     for: 'what the ChainSpot S0..S3 port and the Stages invented on top of it reached in one sprint, and what they did not',
@@ -45,6 +47,7 @@ export function buildMap() {
       { what: 'S1', document: "the LAB's own PrincipleComponentRender.yaml, read by readPql", evidence: 'tests/lab-s1.test.js' },
       { what: 'S2', document: 'the document its three OperationSpecs declare, on S1 produce', evidence: 'tests/lab-s2.test.js' },
       { what: 'S3', document: 'the document its three OperationSpecs declare, plus the Python analogue\'s two-Tick accounting PCR', evidence: 'tests/lab-s3.test.js' },
+      { what: 'S4 Recovery (invented)', document: "Recover.unclaimed -> Recover.badges -> Recover.baskets -> Recover.tees -> Recover.ledger: the LAB's own dark-plate recovery ported knob for knob, plus the shell recovery and component fallback its S2 and S3 receipts mark NOT RUN; px.recovered.* is what S5 onward read", evidence: 'tests/lab-s4.test.js' },
       { what: 'HolesByNearestAnchor (invented, a fallback)', document: 'Hole.readNumbers -> Hole.bindAnchors -> Hole.assemble -> Hole.unplaced over the S1/S2/S3 produce Parts, plus its invariants PCR; superseded by the tee-to-badge ray the owner set as S5/S6, kept because a course where no ray resolves still has to say something', evidence: 'tests/lab-holes-nearest.test.js' },
       { what: 'S7 Pathfinding, the course half (invented)', document: 'Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S7.course.mmd compiles to the same document', evidence: 'tests/lab-s7course.test.js' },
       { what: 'S7 Pathfinding, the round half (invented)', document: "Round.legs -> Round.path -> Round.summary, an A* over the course's walkable cells (integer costs 10/14, octile heuristic, no corner cutting, ties by (f, g, cell), no clock and no random), plus S7.round.invariants and the S7.vs-straight comparison with the route task 114 landed; stages/S7.round.mmd compiles to the same document", evidence: 'tests/lab-s7round.test.js' },
@@ -100,6 +103,9 @@ export function buildMap() {
   finding(lab, 's6.determinismisdesigned', { kind: 'strength', for: 'a search that has to give the same answer on two machines', text: "Integer step costs (10 orthogonal, 14 diagonal) and an octile heuristic in the same units mean no float ever decides an ordering; the frontier is chosen by (f, g, cell index), which is a total order, and the eight moves are visited in a fixed order. No clock, no random, no Map insertion order. Two independent runs of the whole Stage produce the same cells, the same cost and the same length, which is the test." });
   finding(lab, 'stage.inventedinthelabgrammar', { kind: 'finding', for: 'whether the LAB\'s stage grammar carries a Stage it never wrote', text: "S4, S5 and S6 are not ports: nothing in ChainSpot corresponds to them. They were written in the LAB's own grammar anyway -- a contract naming consumes and produces, Ticks whose names are the OperationSpecs, one published Part per Calculation, a `has` provenance block on each constructed object, an accounting PCR as the oracle where no reference run exists, and a .mmd that compiles to the same document. Every one of those fitted without being bent. The one thing the grammar did not carry is the choice S5 had to make about what an obstacle IS, which is why that choice is a field in the Part rather than a predicate in the code." });
   finding(lab, 'holes.nearestisafallback', { kind: 'finding', for: 'why the first rule this port invented for assembling a hole is kept but not numbered', text: "The nearest-free-anchor binding was built as \"S4\" and then superseded on the same day: the owner's numbering makes S4 recovery, S5 the tee-to-badge ray (a tee POINTS at its badge), S6 the straight holes (three points make a line, so the basket is on the ray beyond the badge) and S7 pathfinding. The difference is not a refinement, it is a different kind of claim: nearest-anchor is a guess that is always available, the ray is evidence the picture actually carries and is sometimes absent. So the fallback keeps its Stage shape and its invariants under the name HolesByNearestAnchor, unnumbered, and the two rules disagreeing on a hole is a thing a reader can see rather than a thing that never happens.", proposal: 'when both run, publish the disagreement as its own Part: a hole the ray resolved one way and the distance another is the most interesting object on the course.' });
+  finding(lab, 's4.recoveryisadd-only', { kind: 'strength', for: 'the rule that makes recovery safe rather than generous', text: "Recovery searches only px.recovered.unclaimed -- the components of either mask that no clean Badge, Basket or Tee owns a pixel of -- so it cannot take an object away from a Stage, move one, or disagree with one. It only adds, only where the clean path found nothing, and every object it adds carries the rule that found it (`basis`) and the measurement that admitted it (`evidence`). Two invariants hold the line: everyCleanObjectSurvivesUnchanged compares against the raw S1/S2/S3 Parts rather than S4's copy of them, and noRecoveredObjectSitsOnACleanOne refuses an object on top of one that was already found." });
+  finding(lab, 's4.thelabhadonerecoveryandnamedtwomore', { kind: 'finding', for: 'where the three recovery rules came from', text: "S1 has a recovery and it is implemented: recoverDarkPlateBadges finds a badge whose bright border never formed, from the dark plate alone, and the object records basis 'dark-plate-recovery' beside 'bright-family' and 'unresolved'. S2's and S3's receipts NAME two more and run neither: 'recovery: NOT RUN' (S2/contract.ts:19) and 'recovery: NOT RUN' / 'component fallback: NOT RUN' (S3/contract.ts:25-26). So the port did not invent a scheme; it ported the one that exists and wrote the two the LAB had already given names to, in the same shape: a shell that survives the body it holds, and a frame that is still a frame after its hole leaks." });
+  finding(lab, 's4.everyoverlapbreaksonepredicate', { kind: 'finding', for: 'what an overlap actually does to a detector', text: "Each clean detector has one thing it cannot survive, and it is not noise -- it is a predicate. S1 needs a white component whose bbox encloses the plate, so cutting the border ring twice loses the badge while leaving the plate untouched. S2 needs the body component to be the sprite's bbox EXACTLY, so a 10x4 white tab fused to it loses the basket while leaving the shell untouched. S3 needs an enclosed hole, and it dilates by up to 3 to close gaps, so a notch 10px wide loses the tee while leaving the frame's bbox untouched. In all three the object's other half is still there, which is why recovery is possible at all and why each rule reads the half the overlap did not touch." });
   finding(lab, 's1.recognition', { kind: 'friction', for: 'the one Calculation of S1 that is reduced rather than ported', text: 'fn.s1.whiteDigits.prepare/match segment glyphs with knobs and score them with a logistic model asset (digits/logisticInference, assets/logistic.json). The port normalizes to the same digitW x digitH grid and scores against template Parts; the reading shape (value, status, per-digit rankings) is the LAB\'s.' });
   lab.save('lab');
   return lab;

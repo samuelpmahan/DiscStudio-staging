@@ -97,11 +97,36 @@ function tee(rgba, width, x, y) {
  */
 export const OBSTACLE = { x: 0, y: 380, width: 264, height: 16 };
 
+/**
+ * The overlaps, drawn only when asked for: three objects a clean detector loses,
+ * each to a different kind of occlusion, and each recoverable from evidence the
+ * occlusion does not touch (S4).
+ *
+ *   badge "11"  its white border ring is cut top and bottom, so no single white
+ *               component's bbox encloses the plate and S1's assembly reports
+ *               "no enclosing white border". The dark plate is untouched, which
+ *               is what the LAB's own `recoverDarkPlateBadges` works from.
+ *   basket-2    a white tab is drawn against its body, so the body's component
+ *               is no longer the sprite's exact 42x66 bbox and S2's family test
+ *               fails. The dark shell is untouched, and the shell's modal
+ *               margins are what the family already learned.
+ *   tee-1       a dark notch 10px wide is cut through the top wall of its
+ *               bright frame -- wider than S3's dilation can close (radii 0..3)
+ *               -- so the enclosed hole leaks to the background and no ring is
+ *               detected. The frame component keeps its 16x26 bbox, which is
+ *               what the component fallback S3's receipt marks NOT RUN works from.
+ */
+export const OVERLAPS = {
+  badgeCut: { width: 10, height: 3 },
+  basketTab: { width: 10, height: 4, atRow: 36 },
+  teeNotch: { width: 10, height: 2 }
+};
+
 /** The third hole's badge and tee. There is deliberately no third basket. */
 export const HOLE11 = { badge: [380, 180], tee: [470, 120], reading: '11' };
 
 /** The fixture capture: `{ imageId, widthPx, heightPx, rgba, sourceByteLength, badges, baskets, tees, obstacle }`. */
-export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = false } = {}) {
+export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = false, overlaps = false } = {}) {
   const random = lcg(seed), rgba = new Array(WIDTH * HEIGHT * 4).fill(0);
   for (let y = 0; y < HEIGHT; y++) {
     const chrome = y < CHROME_TOP || y >= HEIGHT - CHROME_BOTTOM;
@@ -115,10 +140,26 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
   const tees = [tee(rgba, WIDTH, 60, 250), tee(rgba, WIDTH, 420, 560)];
   if (hole11) { badges.push(badge(rgba, WIDTH, ...HOLE11.badge, HOLE11.reading)); tees.push(tee(rgba, WIDTH, ...HOLE11.tee)); }
   if (obstacle) rect(rgba, WIDTH, OBSTACLE.x, OBSTACLE.y, OBSTACLE.width, OBSTACLE.height, BLACK);
+  const occluded = [];
+  if (overlaps) {
+    // The badge that loses its border: cut the ring top and bottom, clear of the plate.
+    const target = hole11 ? HOLE11.badge : [120, 300], cut = OVERLAPS.badgeCut;
+    rect(rgba, WIDTH, target[0] + 25, target[1], cut.width, cut.height, BLACK);
+    rect(rgba, WIDTH, target[0] + 25, target[1] + 40 - cut.height, cut.width, cut.height, BLACK);
+    occluded.push({ kind: 'badge', of: hole11 ? HOLE11.reading : '10', bbox: [target[0], target[1], 60, 40], how: 'the white border ring cut top and bottom; the dark plate untouched' });
+    // The basket that loses its exact body: a white tab against the sprite's left edge.
+    const body = baskets[1].body, tab = OVERLAPS.basketTab;
+    rect(rgba, WIDTH, body[0] - tab.width, body[1] + tab.atRow, tab.width, tab.height, WHITE);
+    occluded.push({ kind: 'basket', of: 'basket-2', bbox: body, how: "a white tab fused to the body, so its component is no longer the sprite's exact bbox; the dark shell untouched" });
+    // The tee that loses its enclosed hole: a notch through the top wall, wider than S3 can close.
+    const frame = tees[0].frame, notch = OVERLAPS.teeNotch;
+    rect(rgba, WIDTH, frame[0] + 3, frame[1], notch.width, notch.height, BLACK);
+    occluded.push({ kind: 'tee', of: 'tee at ' + frame.slice(0, 2).join(','), bbox: frame, how: 'a notch through the top wall wider than the detector can dilate closed, so the hole leaks to the background; the frame component keeps its bbox' });
+  }
   return {
-    imageId: `lab-fixture-${seed}${hole11 ? '-h11' : ''}${obstacle ? '-obs' : ''}`,
+    imageId: `lab-fixture-${seed}${hole11 ? '-h11' : ''}${obstacle ? '-obs' : ''}${overlaps ? '-ovl' : ''}`,
     widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length,
-    badges, baskets, tees, obstacle: obstacle ? { ...OBSTACLE } : null
+    badges, baskets, tees, obstacle: obstacle ? { ...OBSTACLE } : null, occluded
   };
 }
 
@@ -129,7 +170,7 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
  * be tuned until a Stage passes, which is the failure this Part exists to make
  * visible (proposal.lab.oracle.nocorpus).
  */
-export function fixtureBasis({ hole11 = false, obstacle = false } = {}) {
+export function fixtureBasis({ hole11 = false, obstacle = false, overlaps = false } = {}) {
   return {
     for: 'why every element of the synthetic capture is drawn the way it is, and which Stage knob it answers to',
     frame: { widthPx: WIDTH, heightPx: HEIGHT, chromeTop: CHROME_TOP, chromeBottom: CHROME_BOTTOM, background: 'seeded LCG, values 80..199: never <= 45 (S1 black) and never >= 210 (S1 white), so every mask pixel below is drawn on purpose' },
@@ -139,6 +180,7 @@ export function fixtureBasis({ hole11 = false, obstacle = false } = {}) {
       { what: 'basket', basis: "the LAB's own basket sprite (42x66, 1746 white px) inside a dark shell clearing it by 4px on every side: S2 learns that modal margin" },
       { what: 'tee', basis: 'a bright 16x26 outline 2px thick whose enclosed hole is small and elongated: S3 floods the background in and keeps what is enclosed' },
       ...(hole11 ? [{ what: 'the third badge "11" and third tee, with no third basket', basis: 'S4 has to report a hole whose basket is missing instead of binding a basket that belongs to another hole; both digits are bars, so this badge adds no enclosed loop for S3 to mute' }] : []),
+      ...(overlaps ? [{ what: 'the three overlaps', basis: 'one object per clean detector is occluded in the one way that detector cannot survive -- a cut border (S1 needs a white component enclosing the plate), a fused body (S2 needs the sprite bbox exactly), a notched frame (S3 needs an enclosed hole) -- and in each case the evidence the OTHER half of the object carries is left untouched, which is what S4 recovers from' }] : []),
       ...(obstacle ? [{ what: 'the obstacle bar', basis: `${OBSTACLE.width}x${OBSTACLE.height} at (${OBSTACLE.x},${OBSTACLE.y}) in source coordinates: dark like a plate but outside every S1/S2/S3 predicate, so it is the one thing in the raster no Stage object owns and S5 can only call terrain` }] : [])
     ],
     seededBy: 'lcg(seed), no clock and no Math.random: the same bytes on every machine'

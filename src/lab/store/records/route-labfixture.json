@@ -59,22 +59,7 @@
               },
               "badges": [
                 {
-                  "id": "badge-candidate:black-component-1:white-component-2",
-                  "reading": "11",
-                  "status": "read",
-                  "bbox": [
-                    380,
-                    138,
-                    60,
-                    40
-                  ],
-                  "at": [
-                    410,
-                    158
-                  ]
-                },
-                {
-                  "id": "badge-candidate:black-component-2:white-component-6",
+                  "id": "badge-candidate:black-component-5:white-component-7",
                   "reading": "10",
                   "status": "read",
                   "bbox": [
@@ -89,7 +74,7 @@
                   ]
                 },
                 {
-                  "id": "badge-candidate:black-component-6:white-component-11",
+                  "id": "badge-candidate:black-component-9:white-component-12",
                   "reading": "01",
                   "status": "read",
                   "bbox": [
@@ -117,19 +102,6 @@
                     171,
                     461
                   ]
-                },
-                {
-                  "id": "basket-2",
-                  "bbox": [
-                    326,
-                    754,
-                    50,
-                    74
-                  ],
-                  "at": [
-                    351,
-                    791
-                  ]
                 }
               ],
               "tees": [
@@ -148,19 +120,6 @@
                 },
                 {
                   "id": "tee-2",
-                  "bbox": [
-                    60,
-                    208,
-                    16,
-                    26
-                  ],
-                  "at": [
-                    67.5,
-                    220.5
-                  ]
-                },
-                {
-                  "id": "tee-3",
                   "bbox": [
                     420,
                     518,
@@ -219,13 +178,13 @@
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-candidate:black-component-6:white-component-11",
+                  "badge": "badge-candidate:black-component-9:white-component-12",
                   "at": [
                     330,
                     598
                   ],
                   "tee": {
-                    "id": "tee-3",
+                    "id": "tee-2",
                     "at": [
                       427.5,
                       530.5
@@ -233,44 +192,20 @@
                     "gapFromBadgePx": 118.585
                   },
                   "basket": {
-                    "id": "basket-2",
-                    "at": [
-                      351,
-                      791
-                    ],
-                    "gapFromBadgePx": 194.139
-                  }
-                },
-                {
-                  "number": 10,
-                  "badge": "badge-candidate:black-component-2:white-component-6",
-                  "at": [
-                    150,
-                    278
-                  ],
-                  "tee": {
-                    "id": "tee-2",
-                    "at": [
-                      67.5,
-                      220.5
-                    ],
-                    "gapFromBadgePx": 100.561
-                  },
-                  "basket": {
                     "id": "basket-1",
                     "at": [
                       171,
                       461
                     ],
-                    "gapFromBadgePx": 184.201
+                    "gapFromBadgePx": 209.881
                   }
                 },
                 {
-                  "number": 11,
-                  "badge": "badge-candidate:black-component-1:white-component-2",
+                  "number": 10,
+                  "badge": "badge-candidate:black-component-5:white-component-7",
                   "at": [
-                    410,
-                    158
+                    150,
+                    278
                   ],
                   "tee": {
                     "id": "tee-1",
@@ -278,7 +213,7 @@
                       477.5,
                       90.5
                     ],
-                    "gapFromBadgePx": 95.459
+                    "gapFromBadgePx": 377.376
                   },
                   "basket": null
                 }
@@ -289,7 +224,7 @@
                 "baskets": []
               },
               "incomplete": [
-                11
+                10
               ]
             },
             "note": null
@@ -341,48 +276,10 @@
                 "kind": "play",
                 "hole": 1,
                 "from": {
-                  "id": "tee-3",
+                  "id": "tee-2",
                   "at": [
                     427.5,
                     530.5
-                  ]
-                },
-                "to": {
-                  "id": "basket-2",
-                  "at": [
-                    351,
-                    791
-                  ]
-                },
-                "lengthPx": 271.5
-              },
-              {
-                "kind": "walk",
-                "hole": 10,
-                "from": {
-                  "id": "basket-2",
-                  "at": [
-                    351,
-                    791
-                  ]
-                },
-                "to": {
-                  "id": "tee-2",
-                  "at": [
-                    67.5,
-                    220.5
-                  ]
-                },
-                "lengthPx": 637.058
-              },
-              {
-                "kind": "play",
-                "hole": 10,
-                "from": {
-                  "id": "tee-2",
-                  "at": [
-                    67.5,
-                    220.5
                   ]
                 },
                 "to": {
@@ -392,7 +289,7 @@
                     461
                   ]
                 },
-                "lengthPx": 261.825
+                "lengthPx": 265.749
               }
             ],
             "note": null
@@ -456,37 +353,17 @@
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-candidate:black-component-6:white-component-11",
-                  "tee": "tee-3",
-                  "basket": "basket-2"
-                },
-                {
-                  "number": 10,
-                  "badge": "badge-candidate:black-component-2:white-component-6",
+                  "badge": "badge-candidate:black-component-9:white-component-12",
                   "tee": "tee-2",
                   "basket": "basket-1"
                 }
               ],
               "waypoints": [
                 {
-                  "id": "tee-3",
+                  "id": "tee-2",
                   "at": [
                     427.5,
                     530.5
-                  ]
-                },
-                {
-                  "id": "basket-2",
-                  "at": [
-                    351,
-                    791
-                  ]
-                },
-                {
-                  "id": "tee-2",
-                  "at": [
-                    67.5,
-                    220.5
                   ]
                 },
                 {
@@ -502,48 +379,10 @@
                   "kind": "play",
                   "hole": 1,
                   "from": {
-                    "id": "tee-3",
+                    "id": "tee-2",
                     "at": [
                       427.5,
                       530.5
-                    ]
-                  },
-                  "to": {
-                    "id": "basket-2",
-                    "at": [
-                      351,
-                      791
-                    ]
-                  },
-                  "lengthPx": 271.5
-                },
-                {
-                  "kind": "walk",
-                  "hole": 10,
-                  "from": {
-                    "id": "basket-2",
-                    "at": [
-                      351,
-                      791
-                    ]
-                  },
-                  "to": {
-                    "id": "tee-2",
-                    "at": [
-                      67.5,
-                      220.5
-                    ]
-                  },
-                  "lengthPx": 637.058
-                },
-                {
-                  "kind": "play",
-                  "hole": 10,
-                  "from": {
-                    "id": "tee-2",
-                    "at": [
-                      67.5,
-                      220.5
                     ]
                   },
                   "to": {
@@ -553,18 +392,18 @@
                       461
                     ]
                   },
-                  "lengthPx": 261.825
+                  "lengthPx": 265.749
                 }
               ],
-              "playLengthPx": 533.325,
-              "walkLengthPx": 637.058,
-              "totalLengthPx": 1170.383,
+              "playLengthPx": 265.749,
+              "walkLengthPx": 0,
+              "totalLengthPx": 265.749,
               "unplaced": {
                 "badges": [],
                 "tees": [],
                 "baskets": [],
                 "incompleteHoles": [
-                  11
+                  10
                 ]
               }
             },

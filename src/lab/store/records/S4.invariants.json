@@ -1,0 +1,164 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S4.invariants",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "CheckRecovery",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s4.recoverycheck",
+          "calculation": {
+            "address": "fn.lab.s4.checkrecovery",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "ledger": "px:px.exp.lab.recovered.ledger",
+            "badges": "px:px.exp.lab.recovered.badges",
+            "baskets": "px:px.exp.lab.recovered.baskets",
+            "tees": "px:px.exp.lab.recovered.tees",
+            "cleanBadges": "px:px.exp.lab.badges.objects",
+            "cleanBaskets": "px:px.exp.lab.baskets",
+            "cleanTees": "px:px.exp.lab.tees"
+          },
+          "args": {},
+          "into": "px.exp.lab.s4.recoverycheck",
+          "declared_consumes": [
+            "px:px.exp.lab.recovered.ledger",
+            "px:px.exp.lab.recovered.badges",
+            "px:px.exp.lab.recovered.baskets",
+            "px:px.exp.lab.recovered.tees",
+            "px:px.exp.lab.badges.objects",
+            "px:px.exp.lab.baskets",
+            "px:px.exp.lab.tees"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.recovered.ledger",
+            "px.exp.lab.recovered.badges",
+            "px.exp.lab.recovered.baskets",
+            "px.exp.lab.recovered.tees",
+            "px.exp.lab.badges.objects",
+            "px.exp.lab.baskets",
+            "px.exp.lab.tees"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s4.recoverycheck"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s4.recoverycheck",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "counts": {
+                "badge": {
+                  "clean": 2,
+                  "recovered": 1,
+                  "total": 3,
+                  "rejected": 5
+                },
+                "basket": {
+                  "clean": 1,
+                  "recovered": 1,
+                  "total": 2,
+                  "rejected": 5
+                },
+                "tee": {
+                  "clean": 2,
+                  "recovered": 1,
+                  "total": 3,
+                  "rejected": 5
+                }
+              },
+              "checks": {
+                "everyCleanObjectSurvivesUnchanged": true,
+                "recoveryOnlyAdds": true,
+                "everyObjectNamesItsBasis": true,
+                "everyRecoveredObjectCarriesEvidence": true,
+                "noRecoveredObjectSitsOnACleanOne": true,
+                "everyRejectionSaysWhy": true,
+                "idsAreUnique": true
+              },
+              "balanced": true
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.recovered.ledger": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.recoverycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.badges": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.recoverycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.recoverycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.recoverycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.badges.objects": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.recoverycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.recoverycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s4.recoverycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s4.recoverycheck": {
+      "written_by": "px.exp.lab.s4.recoverycheck",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 1,
+    "hits": 1,
+    "computed": 0,
+    "wall_ms": null
+  }
+}
