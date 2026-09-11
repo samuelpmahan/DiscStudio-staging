@@ -1,0 +1,186 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T152236Z-task-123",
+  "package": "task-123",
+  "base_sha": "bcfd4996dbe37eaf8001785b65bfbc737c1c49db",
+  "result": "verified",
+  "verifier": {
+    "command": "node --test tests/*.test.js",
+    "exit": 0,
+    "output_sha256": "ab71d525c51eebb1c43de42231bca951c3ba7ac44cfba84b286f02295ed19053"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "3a81632bf6617f9ed517eeedc8011f04afe406ca2c5ff698be62861b63212a10",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/123/HANDOFF.md",
+      "bytes": 8488,
+      "sha256": "45ec0ec4ace5511a7e8ca01011ac7e87fa42b0f7041856a11e252f1020e3daef"
+    },
+    {
+      "path": "pyto/experiments/tasks/123/evidence/check_all.txt",
+      "bytes": 293458,
+      "sha256": "271544d87775304f3df6442dfa44505eb4521d6dbca6a7aafd3f5127da17c697"
+    },
+    {
+      "path": "pyto/experiments/tasks/123/evidence/verify.txt",
+      "bytes": 36721,
+      "sha256": "40e57e44085f2cb2ef15c1bf718bd400219bc5605410f96d4afaf942e31c8807"
+    },
+    {
+      "path": "pyto/experiments/tasks/123/packet.md",
+      "bytes": 4136,
+      "sha256": "2bd7a67ea0d938e02ddd94876c062b4144e4803df256dd8eeea6392b05d7bf18"
+    },
+    {
+      "path": "src/lab/fixtures.js",
+      "bytes": 12910,
+      "sha256": "e3c6f22b19bd3c9ebdf2dab089b3185184746f4e6a6d3fafc38396a4fddfea3f"
+    },
+    {
+      "path": "src/lab/map.js",
+      "bytes": 28903,
+      "sha256": "ff5d82330bbedcbd537c7cddb2dc5ee15f1bdf4a7e1d4f4cb39216db3931d32c"
+    },
+    {
+      "path": "src/lab/s4.js",
+      "bytes": 20807,
+      "sha256": "21d021b020afcdb1212e6310ab5985a2491a16f7fe70615df9c171d08b430ffb"
+    },
+    {
+      "path": "src/lab/stage-sources.js",
+      "bytes": 7971,
+      "sha256": "a577255d79221702e3b573d986107b3507e62223bcff89b28700a9147b9687c8"
+    },
+    {
+      "path": "src/lab/stages/S4.args.json",
+      "bytes": 685,
+      "sha256": "d4694603f593cfe753ab7ee55b7a31018baa7432c1e71de13684876b56302d3e"
+    },
+    {
+      "path": "src/lab/stages/S4.mmd",
+      "bytes": 1723,
+      "sha256": "380b5a4adc8122664027884d0290d59a2569160d4cc00a99c55eb74257ce8cff"
+    },
+    {
+      "path": "src/lab/store/lab.json",
+      "bytes": 398906,
+      "sha256": "868f9e3d1f595ab8f741946f233e62c868918efc6a8c106fde5b188c8f746278"
+    },
+    {
+      "path": "src/lab/store/records/HolesByNearestAnchor.invariants.json",
+      "bytes": 5493,
+      "sha256": "bc08977b4df3decdc1a498466419727ecdac74d637c05fd7c4d8800725772277"
+    },
+    {
+      "path": "src/lab/store/records/HolesByNearestAnchor.json",
+      "bytes": 15479,
+      "sha256": "fe314fb056a6830818df880f5e3280865f6aedcec077610385dc3835dca7389d"
+    },
+    {
+      "path": "src/lab/store/records/S0.json",
+      "bytes": 12616,
+      "sha256": "dd1d817b0db10e0dc76930bdb0625242d4bcc9b80ea1cc172f0c83c9a507423d"
+    },
+    {
+      "path": "src/lab/store/records/S1.json",
+      "bytes": 202948,
+      "sha256": "f35f28eadeb101950772613d4fdb51d485d86ce50e805f17bb56fe3c323b0a23"
+    },
+    {
+      "path": "src/lab/store/records/S2.json",
+      "bytes": 24291,
+      "sha256": "b8da95fab0c9fe615dd52d02139aff204f22cddda676ca7843fce51061bfb640"
+    },
+    {
+      "path": "src/lab/store/records/S3.json",
+      "bytes": 19563,
+      "sha256": "0510548cddbe600726f31c7487f2998b207c22edb306b384ec7e1d3d8de0a01e"
+    },
+    {
+      "path": "src/lab/store/records/S3.quick-anno.json",
+      "bytes": 4211,
+      "sha256": "f5a50e92639abeddf4f3613dafbfa8d113a69843dc8910d6457fc812cc7aaaa1"
+    },
+    {
+      "path": "src/lab/store/records/S4.invariants.json",
+      "bytes": 4478,
+      "sha256": "f56808e37dc97a92b23380c86d47075f294312866ac6054c12e17ddee5a4f32a"
+    },
+    {
+      "path": "src/lab/store/records/S4.json",
+      "bytes": 116403,
+      "sha256": "ad8041280d2a7936b83120f8614d77828675365f3a4d813a9d57b1ad845a82a2"
+    },
+    {
+      "path": "src/lab/store/records/S7.course.invariants.json",
+      "bytes": 5894,
+      "sha256": "f67b33be7105113120d7146f6b28eeea120e206d80b30b688a798689fd0109c2"
+    },
+    {
+      "path": "src/lab/store/records/S7.course.json",
+      "bytes": 27426,
+      "sha256": "fc7667784366952e9295e38c46beb441e17b7fdad282b043c275cf32b477d1e3"
+    },
+    {
+      "path": "src/lab/store/records/S7.round.invariants.json",
+      "bytes": 4976,
+      "sha256": "c4591e94cc6d6b0cf05b0bb1e59cf2f7e20de39b8cf5c63464e5ed12726c7e13"
+    },
+    {
+      "path": "src/lab/store/records/S7.round.json",
+      "bytes": 11255,
+      "sha256": "8fcf81e750ea1c4801649dd5ed0c6a3cc723436c1cc37ed31167d3d48a7edf3d"
+    },
+    {
+      "path": "src/lab/store/records/S7.vs-straight.json",
+      "bytes": 3660,
+      "sha256": "4ca5a2a821fd380a130bee4f8b4da011534613bf7460f3d684040164955146a9"
+    },
+    {
+      "path": "src/lab/store/records/route-labfixture.json",
+      "bytes": 12950,
+      "sha256": "83f1e4e428bf06f7fd403a1883d1c4f6559e4854d65eb6b1ba8a0000c356e540"
+    },
+    {
+      "path": "tests/lab-s4.test.js",
+      "bytes": 9283,
+      "sha256": "b70e533bd75f29f005781d8956028ef2c472cba91317c20a7a94fc3449474b31"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T15:25:44.512296Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T151808Z-task-122",
+  "package": "task-122",
+  "base_sha": "10c512c5e985964718dbc7aac45281b615182827",
+  "result": "failed",
+  "reason": "merge conflict with exp/122 in: src/lab/stages.js tests/lab-pipeline.test.js ",
+  "at": "2026-09-11T15:18:09.022710Z"
+}

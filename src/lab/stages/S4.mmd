@@ -1,0 +1,50 @@
+flowchart TD
+    components["px.components"]
+    cleanBadges["px.badges.objects"]
+    cleanBaskets["px.baskets"]
+    cleanTees["px.tees"]
+    shellFamily["px.baskets.shellFamily"]
+    model["px.s1.whiteDigits.model"]
+
+    subgraph S4["PCR: S4"]
+        subgraph Unclaimed["Tick: Recover.unclaimed"]
+            unclaimed["fn.Recover.unclaimed"]
+        end
+        subgraph Badges["Tick: Recover.badges"]
+            badges["fn.Recover.badges"]
+        end
+        subgraph Baskets["Tick: Recover.baskets"]
+            baskets["fn.Recover.baskets"]
+        end
+        subgraph Tees["Tick: Recover.tees"]
+            tees["fn.Recover.tees"]
+        end
+        subgraph Ledger["Tick: Recover.ledger"]
+            ledger["fn.Recover.ledger"]
+        end
+    end
+
+    components -->|fields| unclaimed
+    cleanBadges -->|badges| unclaimed
+    cleanBaskets -->|baskets| unclaimed
+    cleanTees -->|tees| unclaimed
+    unclaimed --> unclaimedPart["px.recovered.unclaimed"]
+    cleanBadges -->|badges| badges
+    unclaimedPart -->|unclaimed| badges
+    components -->|fields| badges
+    model -->|model| badges
+    badges --> recoveredBadges["px.recovered.badges"]
+    cleanBaskets -->|baskets| baskets
+    unclaimedPart -->|unclaimed| baskets
+    shellFamily -->|shellFamily| baskets
+    components -->|fields| baskets
+    baskets --> recoveredBaskets["px.recovered.baskets"]
+    cleanTees -->|tees| tees
+    unclaimedPart -->|unclaimed| tees
+    components -->|fields| tees
+    tees --> recoveredTees["px.recovered.tees"]
+    recoveredBadges -->|badges| ledger
+    recoveredBaskets -->|baskets| ledger
+    recoveredTees -->|tees| ledger
+    unclaimedPart -->|unclaimed| ledger
+    ledger --> ledgerPart["px.recovered.ledger"]

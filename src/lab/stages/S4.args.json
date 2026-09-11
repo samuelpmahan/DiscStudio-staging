@@ -1,0 +1,29 @@
+{
+  "badges": {
+    "knobs": {
+      "plateMinWidth": 34,
+      "plateMaxWidth": 78,
+      "plateMinHeight": 24,
+      "plateMaxHeight": 54,
+      "plateAspectMin": 1,
+      "plateAspectMax": 2.4,
+      "plateFillMin": 0.55,
+      "plateInteriorMargin": 4,
+      "plateGlyphFractionMin": 0.04,
+      "plateGlyphFractionMax": 0.4,
+      "plateProximityThreshold": 22,
+      "plateBboxMargin": 4
+    },
+    "digitKnobs": {
+      "minComponentArea": 6,
+      "heightRatioMin": 0.5,
+      "wideRatio": 0.95,
+      "valleySearchLo": 0.3,
+      "valleySearchHi": 0.7,
+      "digitW": 24,
+      "digitH": 32,
+      "confidenceFloorDivisor": 8,
+      "labelAmbiguityMargin": 0.045
+    }
+  }
+}

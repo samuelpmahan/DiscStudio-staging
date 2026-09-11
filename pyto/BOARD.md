@@ -69,6 +69,8 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 15:25 **landed** `task-123`: S4 Recovery: the objects the clean detectors lose to an overlap, found again from other evidence -- the LAB's own dark-plate recovery for badges, and the shell recovery and component fallback its S2 and S3 receipts mark NOT RUN -- published as px.recovered.* for the later Stages to read (27 files since bcfd499, suites green, receipt 20260911T152236Z-task-123)
+- 2026-09-11 15:18 **refused** `task-122`: merge conflict with exp/122 in: src/lab/stages.js tests/lab-pipeline.test.js 
 - 2026-09-11 15:13 **started** `task-123`: S4 Recovery: the objects the clean detectors lose to an overlap, found again from other evidence -- the LAB's own dark-plate recovery for badges, and the shell recovery and component fallback its S2 and S3 receipts mark NOT RUN -- published as px.recovered.* for the later Stages to read (copy EXP/123; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 15:12 **landed** `task-121`: renumber the invented Stages to the owner's S4-S7: the nearest-anchor hole assembly becomes the HolesByNearestAnchor fallback, the course graph and the A* round become S7 Pathfinding, and S4/S5/S6 are freed for recovery, the tee-to-badge ray and the straight holes (28 files since a07042b, suites green, receipt 20260911T150916Z-task-121)
 - 2026-09-11 15:05 **started** `task-122`: draw a Stage by the addresses it publishes, not by its number: the Course overlay becomes an address table, the searched round joins the pipeline, and the renumbered S4-S7 draw themselves as they land (copy EXP/122; it lands only on green, with a receipt, or is killed)
