@@ -1,0 +1,121 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T024144Z-task-96",
+  "package": "task-96",
+  "base_sha": "427330763694caf9d882f51f30a04b3b39b2115e",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'",
+    "exit": 0,
+    "output_sha256": "b905f0ffa5b27077a9eecc305cfe99c6cebc06bce85f2cba7829d26b4edd6f23"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "29aaadb8b251267956d3a02dae7baf55ded0161034b7896df015007fded4f3d4",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 549,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/brain/backend/cases.py",
+      "bytes": 11628,
+      "sha256": "c81790f8ff4da48631c671b01d54d43deb90eaaf8634d0d214d25d7c780a7a21"
+    },
+    {
+      "path": "pyto/experiments/brain/backend/ops.py",
+      "bytes": 34925,
+      "sha256": "abbfa552b312f57208e366751b3ad7a196b9e4ba54f69ff4531619c1ed21a0e1"
+    },
+    {
+      "path": "pyto/experiments/brain/backend/summary.py",
+      "bytes": 14719,
+      "sha256": "5bca2411f59d88227a4a40173e1aa1ec2e7622487fc773ce8fe6d494ee4cc5fc"
+    },
+    {
+      "path": "pyto/experiments/brain/backend/test_ops.py",
+      "bytes": 15179,
+      "sha256": "2f792ea9aeb48b57cb3486dc6359cd88dfba2787d42fa666cdefe480a30c0e4b"
+    },
+    {
+      "path": "pyto/experiments/brain/records/brain_backend_convolve.json",
+      "bytes": 25603,
+      "sha256": "93a542a0748063d06b77ef073e94e880c0f7451ce97a9d60b5c3835ac9bc2c55"
+    },
+    {
+      "path": "pyto/experiments/brain/records/brain_backend_interp.json",
+      "bytes": 6744,
+      "sha256": "9ba09ce8848f731f60e777ae115a35b1549c078dc892eeff5fcaf3b2ace60cd8"
+    },
+    {
+      "path": "pyto/experiments/brain/records/brain_backend_pack.json",
+      "bytes": 6143,
+      "sha256": "3d8a3660d7c1b294de8bebb9b6339c7c5a1c11ab9450124a533f9bef45d33c34"
+    },
+    {
+      "path": "pyto/experiments/brain/records/brain_backend_qr.json",
+      "bytes": 11530,
+      "sha256": "3ed785ec140aa60adea0a8bfc15c787c834f4292abbd7a1c4ddf305e1830a853"
+    },
+    {
+      "path": "pyto/experiments/brain/records/brain_backend_unpack.json",
+      "bytes": 9273,
+      "sha256": "2c8c14af3e4297ce4b22ed03ac774b942cc4ba71b7b74af430851bc2269361f1"
+    },
+    {
+      "path": "pyto/experiments/brain/store/backend.json",
+      "bytes": 561293,
+      "sha256": "09842beb6300b041fc84f770b42bcd959e0336a9eba7a1620a209c1ff5772ffb"
+    },
+    {
+      "path": "pyto/experiments/tasks/96/HANDOFF.md",
+      "bytes": 10129,
+      "sha256": "6273eca65e48a15e148d0454548697de70aeceb5945698986f99f432e53bee45"
+    },
+    {
+      "path": "pyto/experiments/tasks/96/evidence/check_all.txt",
+      "bytes": 265337,
+      "sha256": "0e64d7b19b25c4b2af47be37d45ff63876677d777fd26b7140cace373e61fc68"
+    },
+    {
+      "path": "pyto/experiments/tasks/96/evidence/verify.txt",
+      "bytes": 650,
+      "sha256": "128d0ac70982a366d411d7dde73ca08135dd1915b80eb66b1c67baab62feccbb"
+    },
+    {
+      "path": "pyto/experiments/tasks/96/packet.md",
+      "bytes": 4998,
+      "sha256": "dbc1f13053ea084e7d2d10b23b5e916f409e00a6627f7c5e50e200eb7e95fac6"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T02:44:06.804608Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

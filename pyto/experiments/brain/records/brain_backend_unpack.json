@@ -1,0 +1,292 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 0.10038100026577013
+  },
+  "parts": {
+    "px.exp.brain.result.backend.unpack.b64_6x4_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "b64_6x4_np"
+    },
+    "px.exp.brain.result.backend.unpack.b64_6x4_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "b64_6x4_py"
+    },
+    "px.exp.brain.result.backend.unpack.b64_6x4_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "b64_6x4_sp"
+    }
+  },
+  "pcr": "brain_backend_unpack",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.brain.result.backend.unpack.b64_6x4_np"
+          ],
+          "args": {
+            "backend": "np",
+            "packed": {
+              "b64": "w/xyIt8C5L8QGrQTyRnqP+lb1e+EPfG/SeLXEteH5r/w6OlKnbTlv92F02W0Adg/1hAY9xnVuL8Ez9mNNP3sv1rvT/f7yuQ/r52N7E/R67+oaniPjDHrPySJ31odwfG/NA4+jZM97b9OAyVLT5PxP+3HKgRNjwHAfFT40+yl8r87pZ9a/j+jvxkR4BQwEvI/mOpPLMLfqr8tZ9yB9hXaP0csXt3TdsY/x2TkCUIt8r+Ue6XsgnjoPxueCDOQ8NI/",
+              "dtype": "float64",
+              "order": "little",
+              "shape": [
+                6,
+                4
+              ]
+            }
+          },
+          "calculation": {
+            "address": "fn.brain.backend.unpack",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.051918000281148124,
+          "hit": false,
+          "id": "b64_6x4_np",
+          "inputs": {},
+          "into": "px.exp.brain.result.backend.unpack.b64_6x4_np",
+          "result_sha256": "32c097ad1ddaeeae2abd586407f833a7bb810e030f30293861eee1240ec3f295",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                4
+              ],
+              "values": [
+                [
+                  -0.6253505394778575,
+                  0.8156476387819698,
+                  -1.0775193565839294,
+                  -0.7040820472748887
+                ],
+                [
+                  -0.6782976592214975,
+                  0.37510404533358416,
+                  -0.09700166971748855,
+                  -0.9059088488124591
+                ],
+                [
+                  0.6497783499066643,
+                  -0.8693008060626449,
+                  0.849798469749051,
+                  -1.1096471357091753
+                ],
+                [
+                  -0.913766647209235,
+                  1.0984642920813772,
+                  -2.1949711156421388,
+                  -1.1655090599136022
+                ],
+                [
+                  -0.037597607195332526,
+                  1.1294403853835944,
+                  -0.052488391789627886,
+                  0.40759051019414266
+                ],
+                [
+                  0.17550133046128932,
+                  -1.1360493074810607,
+                  0.7647108671188669,
+                  0.2959328173041926
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.unpack.b64_6x4_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.brain.result.backend.unpack.b64_6x4_py"
+          ],
+          "args": {
+            "backend": "py",
+            "packed": {
+              "b64": "w/xyIt8C5L8QGrQTyRnqP+lb1e+EPfG/SeLXEteH5r/w6OlKnbTlv92F02W0Adg/1hAY9xnVuL8Ez9mNNP3sv1rvT/f7yuQ/r52N7E/R67+oaniPjDHrPySJ31odwfG/NA4+jZM97b9OAyVLT5PxP+3HKgRNjwHAfFT40+yl8r87pZ9a/j+jvxkR4BQwEvI/mOpPLMLfqr8tZ9yB9hXaP0csXt3TdsY/x2TkCUIt8r+Ue6XsgnjoPxueCDOQ8NI/",
+              "dtype": "float64",
+              "order": "little",
+              "shape": [
+                6,
+                4
+              ]
+            }
+          },
+          "calculation": {
+            "address": "fn.brain.backend.unpack",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.029478999749699142,
+          "hit": false,
+          "id": "b64_6x4_py",
+          "inputs": {},
+          "into": "px.exp.brain.result.backend.unpack.b64_6x4_py",
+          "result_sha256": "32c097ad1ddaeeae2abd586407f833a7bb810e030f30293861eee1240ec3f295",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                4
+              ],
+              "values": [
+                [
+                  -0.6253505394778575,
+                  0.8156476387819698,
+                  -1.0775193565839294,
+                  -0.7040820472748887
+                ],
+                [
+                  -0.6782976592214975,
+                  0.37510404533358416,
+                  -0.09700166971748855,
+                  -0.9059088488124591
+                ],
+                [
+                  0.6497783499066643,
+                  -0.8693008060626449,
+                  0.849798469749051,
+                  -1.1096471357091753
+                ],
+                [
+                  -0.913766647209235,
+                  1.0984642920813772,
+                  -2.1949711156421388,
+                  -1.1655090599136022
+                ],
+                [
+                  -0.037597607195332526,
+                  1.1294403853835944,
+                  -0.052488391789627886,
+                  0.40759051019414266
+                ],
+                [
+                  0.17550133046128932,
+                  -1.1360493074810607,
+                  0.7647108671188669,
+                  0.2959328173041926
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.unpack.b64_6x4_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.brain.result.backend.unpack.b64_6x4_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "packed": {
+              "b64": "w/xyIt8C5L8QGrQTyRnqP+lb1e+EPfG/SeLXEteH5r/w6OlKnbTlv92F02W0Adg/1hAY9xnVuL8Ez9mNNP3sv1rvT/f7yuQ/r52N7E/R67+oaniPjDHrPySJ31odwfG/NA4+jZM97b9OAyVLT5PxP+3HKgRNjwHAfFT40+yl8r87pZ9a/j+jvxkR4BQwEvI/mOpPLMLfqr8tZ9yB9hXaP0csXt3TdsY/x2TkCUIt8r+Ue6XsgnjoPxueCDOQ8NI/",
+              "dtype": "float64",
+              "order": "little",
+              "shape": [
+                6,
+                4
+              ]
+            }
+          },
+          "calculation": {
+            "address": "fn.brain.backend.unpack",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.01898400023492286,
+          "hit": false,
+          "id": "b64_6x4_sp",
+          "inputs": {},
+          "into": "px.exp.brain.result.backend.unpack.b64_6x4_sp",
+          "result_sha256": "32c097ad1ddaeeae2abd586407f833a7bb810e030f30293861eee1240ec3f295",
+          "value": {
+            "data": {
+              "shape": [
+                6,
+                4
+              ],
+              "values": [
+                [
+                  -0.6253505394778575,
+                  0.8156476387819698,
+                  -1.0775193565839294,
+                  -0.7040820472748887
+                ],
+                [
+                  -0.6782976592214975,
+                  0.37510404533358416,
+                  -0.09700166971748855,
+                  -0.9059088488124591
+                ],
+                [
+                  0.6497783499066643,
+                  -0.8693008060626449,
+                  0.849798469749051,
+                  -1.1096471357091753
+                ],
+                [
+                  -0.913766647209235,
+                  1.0984642920813772,
+                  -2.1949711156421388,
+                  -1.1655090599136022
+                ],
+                [
+                  -0.037597607195332526,
+                  1.1294403853835944,
+                  -0.052488391789627886,
+                  0.40759051019414266
+                ],
+                [
+                  0.17550133046128932,
+                  -1.1360493074810607,
+                  0.7647108671188669,
+                  0.2959328173041926
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.unpack.b64_6x4_sp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "unpack"
+    }
+  ]
+}
