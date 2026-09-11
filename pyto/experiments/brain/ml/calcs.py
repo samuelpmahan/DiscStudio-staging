@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pyto import Calculation
 
-from . import classify, distance, linear, metrics, nnet, resample, trees, unsup, validate
+from . import classify, distance, linear, metrics, multiclass, nnet, resample, trees, unsup, validate
 
 _FUNCTIONS = {
     # supervised: linear
@@ -47,6 +47,13 @@ _FUNCTIONS = {
     "synthetic_blobs": resample.synthetic_blobs,
     "synthetic_classification": resample.synthetic_classification,
     "synthetic_counts": resample.synthetic_counts,
+    # supervised: the multiclass and second-order ones
+    "softmax_fit": multiclass.softmax_fit,
+    "softmax_proba": multiclass.softmax_proba,
+    "softmax_predict": multiclass.softmax_predict,
+    "cross_entropy": multiclass.cross_entropy,
+    "logistic_gbm_fit": multiclass.logistic_gbm_fit,
+    "logistic_gbm_predict": multiclass.logistic_gbm_predict,
     # supervised: trees
     "tree_fit": trees.tree_fit,
     "tree_predict": trees.tree_predict,

@@ -15,7 +15,9 @@ from scipy import optimize, stats
 from scipy.cluster import hierarchy
 from scipy.spatial import distance as sp_distance
 
-from . import calcs, core, distance, linear, metrics, nnet, parts, resample, tournament, trees, unsup, validate
+import math
+
+from . import calcs, core, distance, linear, metrics, multiclass, nnet, parts, resample, tournament, trees, unsup, validate
 
 VERTICAL = "ml"
 SECTIONS = []
@@ -940,6 +942,117 @@ def distances(store):
         )
 
 
+@section
+def multiclass_and_second_order(store):
+    """the softmax and the logistic booster, on problems already in the store."""
+    from . import multiclass
+
+    data = store.get("px.exp.brain.data.ml.classification")
+    matrix, targets, _ = core.xy(data, "label")
+    design = np.hstack([np.ones((len(matrix), 1)), np.asarray(matrix)])
+    classes = sorted(set(targets))
+    model = calcs.call("softmax_fit", {"data": data, "target": "label", "backend": "np",
+                                        "lr": 1.0, "epochs": 4000, "l2": 1.0,
+                                        "for": "every class fitted at once against one denominator"})
+    parts.result(store, VERTICAL, "softmax", "classification",
+                 {k: model[k] for k in ("for", "model", "backend", "target", "columns", "classes",
+                                        "l2", "pinned_class", "intercepts", "coefs", "epochs", "loss", "n")})
+    n, width = design.shape
+    free = len(classes) - 1
+    y = np.zeros((n, len(classes)))
+    for i, t in enumerate(targets):
+        y[i, classes.index(t)] = 1.0
+
+    def loss(flat):
+        w = flat.reshape(free, width)
+        scores = np.hstack([design @ w.T, np.zeros((n, 1))])
+        scores = scores - scores.max(1, keepdims=True)
+        e = np.exp(scores)
+        p = e / e.sum(1, keepdims=True)
+        return float(-np.log(np.maximum((p * y).sum(1), 1e-300)).mean()
+                     + 0.5 * 1.0 * float((w[:, 1:] ** 2).sum()) / n)
+
+    best = optimize.minimize(loss, np.zeros(free * width), method="L-BFGS-B",
+                             options={"ftol": 1e-15, "gtol": 1e-12, "maxiter": 20000})
+    parts.oracle(
+        store, VERTICAL, "softmax_fit", "reaches_the_cross_entropy_optimum",
+        model["loss"][-1], float(best.fun),
+        "scipy.optimize.minimize on the same penalised cross-entropy, same pinned class", 1e-3,
+        "a softmax that stops short of the optimum is a one-vs-rest with extra steps",
+    )
+    proba = calcs.call("softmax_proba", {"model": model, "data": data})
+    parts.oracle(
+        store, VERTICAL, "softmax_proba", "is_a_distribution_without_renormalising",
+        [round(math.fsum(row), 12) for row in proba["proba"]], [1.0] * len(proba["proba"]),
+        "the definition of a softmax: one shared denominator", 1e-12,
+        "one-vs-rest divides k sigmoids by their sum afterwards; this is the model that never needed to",
+    )
+    truth = [row[-1] for row in core.as_rows(data)]
+    scored = calcs.call("classification_metrics",
+                        {"y_true": truth,
+                         "y_pred": calcs.call("softmax_predict", {"model": model, "data": data})["labels"]})
+    parts.result(store, VERTICAL, "classification_metrics", "softmax_train", scored)
+    entropy = calcs.call("cross_entropy", {"y_true": truth, "y_pred": proba})
+    parts.result(store, VERTICAL, "cross_entropy", "softmax_train", entropy)
+    rest = store.get("px.exp.brain.result.ml.logreg.classification")
+    rest_proba = calcs.call("logreg_proba", {"model": rest, "data": data})
+    rest_entropy = calcs.call("cross_entropy", {"y_true": truth, "y_pred": rest_proba})
+    parts.result(store, VERTICAL, "cross_entropy", "one_vs_rest_train", rest_entropy)
+    parts.oracle(
+        store, VERTICAL, "softmax_fit", "beats_one_vs_rest_on_the_loss_it_optimises",
+        entropy["mean"] <= rest_entropy["mean"], True,
+        "the same rows scored by cross-entropy under both multiclass models", 0.0,
+        "the two models predict nearly the same labels; the difference is in the probabilities, "
+        "and cross-entropy is the one measure that can see it",
+    )
+
+    # the booster on the logistic loss, against the squared-loss one it replaces.
+    binary = store.get("px.exp.brain.data.ml.binary")
+    binary_truth = [row[-1] for row in core.as_rows(binary)]
+    boosted = calcs.call("logistic_gbm_fit", {"data": binary, "target": "label", "n_trees": 30,
+                                               "learning_rate": 0.25, "max_depth": 2,
+                                               "for": "thirty newton corrections on the logistic loss"})
+    parts.result(store, VERTICAL, "logistic_gbm", "binary", {
+        "for": boosted["for"], "model": "logistic_gbm", "classes": boosted["classes"],
+        "init": boosted["init"], "learning_rate": boosted["learning_rate"],
+        "n_trees": boosted["n_trees"], "max_depth": boosted["max_depth"],
+        "train_loss": boosted["train_loss"], "nodes": [tree["nodes"] for tree in boosted["trees"]]})
+    losses = boosted["train_loss"]
+    parts.oracle(
+        store, VERTICAL, "logistic_gbm_fit", "the_loss_never_goes_up",
+        all(after <= before + 1e-9 for before, after in zip(losses, losses[1:])), True,
+        "the logistic loss the fit recorded after each of its own corrections", 0.0,
+        "a newton step that overshoots raises the loss; that is exactly what the second derivative is for",
+    )
+    base = math.fsum(1.0 for t in binary_truth if t == boosted["classes"][1]) / len(binary_truth)
+    parts.oracle(
+        store, VERTICAL, "logistic_gbm_fit", "starts_at_the_base_rate",
+        1.0 / (1.0 + math.exp(-boosted["init"])), base,
+        "the proportion of the positive class, which is the best constant prediction", 1e-9,
+        "a booster that starts anywhere else spends its first trees walking back to the base rate",
+    )
+    predicted = calcs.call("logistic_gbm_predict", {"model": boosted, "data": binary})
+    scored = calcs.call("classification_metrics", {"y_true": binary_truth, "y_pred": predicted["labels"]})
+    parts.result(store, VERTICAL, "classification_metrics", "logistic_gbm_binary", scored)
+    auc = calcs.call("roc_auc", {"y_true": binary_truth, "y_pred": [p[1] for p in predicted["proba"]],
+                                  "positive": boosted["classes"][1]})
+    parts.result(store, VERTICAL, "roc_auc", "logistic_gbm_binary", auc)
+    linear_auc = store.get("px.exp.brain.result.ml.roc_auc.logreg_binary")["auc"]
+    parts.oracle(
+        store, VERTICAL, "logistic_gbm_predict", "at_least_as_separating_as_the_linear_model",
+        auc["auc"] >= linear_auc - 0.02, True,
+        "the area under the curve of the logistic regression on the same rows", 0.0,
+        "a booster that cannot match a straight line on a nearly linear problem is mis-wired, not flexible",
+    )
+    for backend in ("py", "np"):
+        parts.bench(
+            store, VERTICAL, "softmax_fit", backend, "n300_d4_k3_400epochs",
+            lambda backend=backend: calcs.call(
+                "softmax_fit", {"data": data, "target": "label", "backend": backend, "epochs": 400}), 3,
+            "every epoch is one n-by-k score matrix and one k-by-d gradient: all matmul, no solve",
+        )
+
+
 # --- the map and the findings ------------------------------------------------
 
 
@@ -956,11 +1069,11 @@ def map_and_findings(store):
 
 
 STUBBED = [
+    {"address": "fn.brain.ml.logistic_gbm_fit multiclass", "why": "the booster is two-class; the k-class version boosts k scores against the softmax loss and needs its own oracle"},
+    {"address": "fn.brain.ml.softmax_fit newton", "why": "the softmax is fitted by gradient descent only; its hessian is k*d by k*d and the logistic bracket's lesson says the solve would still pay"},
     {"address": "fn.brain.ml.cross_validate nested", "why": "the penalty on the lasso path is chosen on the same folds it is scored on, so that score is optimistic and an outer loop is what fixes it"},
-    {"address": "fn.brain.ml.gbm_fit logistic", "why": "boosting here is squared loss only; the logistic loss needs a second-order step and its own oracle"},
     {"address": "fn.brain.ml.forest_fit oob_score", "why": "the out-of-bag rows are recorded per tree (oob_sizes) but nothing scores on them yet"},
     {"address": "fn.brain.ml.mlp_fit deep", "why": "the backward pass is hand-derived for exactly one hidden layer; a second layer needs autograd or another hand derivation, and a half-checked one is worth less than none"},
-    {"address": "fn.brain.ml.logreg_fit multinomial", "why": "multiclass is one-vs-rest, not a softmax; the softmax needs its own oracle and is not worth a half-checked one"},
     {"address": "fn.brain.ml.knn_fit approximate", "why": "the exact vote is the reference; a kd-tree or ball-tree is a backend of it, and belongs after the shared pairwise-distance primitive"},
 ]
 
@@ -971,10 +1084,8 @@ NEXT = [
      "for": "four brackets now name a winner and every calculation still defaults to the py reference; the gap between what the evidence says and what the code does is the next honest thing to close"},
     {"what": "elastic net, and the same path treatment for ridge and for the tree depth",
      "for": "the lasso path made the choice readable; every other model here still takes its hyper-parameter on faith"},
-    {"what": "a softmax (multinomial) logistic regression beside the one-vs-rest one",
-     "for": "one-vs-rest probabilities are renormalised, not calibrated, and the difference shows up in any ranking read off them"},
-    {"what": "gradient boosting for classification (logistic loss) and out-of-bag scoring for the forest",
-     "for": "the squared-loss boosting here is the easy half; the loss that needs a second-order step is where the design is tested"},
+    {"what": "out-of-bag scoring for the forest, and a multiclass booster over the softmax loss",
+     "for": "the forest already records which rows each tree did not see; the booster is two-class and the softmax shows what the k-class loss would be"},
     {"what": "nested cross-validation, so a hyper-parameter chosen on the folds is not also scored on them",
      "for": "lasso_path picks its penalty on the same folds it reports; that number is optimistic and the Part should say so"},
     {"what": "a deeper network, softmax output and mini-batch shuffling through the effects handle rather than a seed",
