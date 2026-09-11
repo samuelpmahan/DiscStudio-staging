@@ -54,7 +54,7 @@
               "straight": {
                 "address": "px.exp.lab.route.labfixture",
                 "objective": "play the holes in badge order: each hole tee to basket, then basket to the next hole tee, over the canonical raster",
-                "totalLengthPx": 265.749
+                "totalLengthPx": 795.925
               },
               "routed": {
                 "address": "px.exp.lab.round.path",
@@ -64,22 +64,53 @@
               "sameAnchors": true,
               "legs": [
                 {
-                  "leg": "play:tee-2->basket-1",
+                  "leg": "play:tee-3->basket-1",
                   "hole": 1,
-                  "straightLengthPx": 265.749,
-                  "routedLengthPx": 287.8,
+                  "straightLengthPx": 215.64,
+                  "routedLengthPx": 231.268,
                   "reachable": true,
-                  "deltaPx": 22.051,
-                  "detourRatio": 1.083,
+                  "deltaPx": 15.628,
+                  "detourRatio": 1.072,
                   "obstacleCellsTheStraightLineCrosses": 0,
                   "cells": []
+                },
+                {
+                  "leg": "walk:basket-1->tee-2",
+                  "hole": 10,
+                  "straightLengthPx": 260.5,
+                  "routedLengthPx": 286.146,
+                  "reachable": true,
+                  "deltaPx": 25.646,
+                  "detourRatio": 1.098,
+                  "obstacleCellsTheStraightLineCrosses": 2,
+                  "cells": [
+                    687,
+                    719
+                  ]
+                },
+                {
+                  "leg": "play:tee-2->basket-2",
+                  "hole": 10,
+                  "straightLengthPx": 319.785,
+                  "routedLengthPx": 385.97,
+                  "reachable": true,
+                  "deltaPx": 66.185,
+                  "detourRatio": 1.207,
+                  "obstacleCellsTheStraightLineCrosses": 2,
+                  "cells": [
+                    684,
+                    716
+                  ]
                 }
               ],
-              "straightTotalPx": 265.749,
-              "routedTotalPx": 287.8,
-              "deltaPx": 22.051,
-              "legsTheStraightRouteWalkedThroughAnObstacle": [],
-              "obstacleCellsTheStraightRouteCrosses": 0
+              "straightTotalPx": 795.925,
+              "routedTotalPx": 903.384,
+              "deltaPx": 107.459,
+              "legsTheStraightRouteWalkedThroughAnObstacle": [
+                "walk:basket-1->tee-2",
+                "play:tee-2->basket-2"
+              ],
+              "obstacleCellsTheStraightRouteCrosses": 4
             },
             "note": null
           }

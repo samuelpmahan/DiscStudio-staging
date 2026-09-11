@@ -1,0 +1,107 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S5.invariants",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "CheckRays",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s5.raycheck",
+          "calculation": {
+            "address": "fn.lab.s5.checkrays",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "rays": "px:px.exp.lab.teebadge.rays",
+            "tees": "px:px.exp.lab.recovered.tees",
+            "badges": "px:px.exp.lab.recovered.badges"
+          },
+          "args": {},
+          "into": "px.exp.lab.s5.raycheck",
+          "declared_consumes": [
+            "px:px.exp.lab.teebadge.rays",
+            "px:px.exp.lab.recovered.tees",
+            "px:px.exp.lab.recovered.badges"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.teebadge.rays",
+            "px.exp.lab.recovered.tees",
+            "px.exp.lab.recovered.badges"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s5.raycheck"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s5.raycheck",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "tees": 4,
+              "badges": 4,
+              "paired": 1,
+              "contested": 0,
+              "checks": {
+                "everyTeeAppearsOnce": true,
+                "aPairingHasADirection": true,
+                "everyMissSaysWhy": true,
+                "noBadgeIsPairedTwice": true,
+                "everyBadgeIsPairedOrListed": true,
+                "aSymmetricPadIsRefusedNotGuessed": true
+              },
+              "balanced": true
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.teebadge.rays": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s5.raycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s5.raycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.badges": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s5.raycheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s5.raycheck": {
+      "written_by": "px.exp.lab.s5.raycheck",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 1,
+    "hits": 1,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

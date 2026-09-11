@@ -1,0 +1,609 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S5",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Tee.pointing",
+      "invocations": [
+        {
+          "id": "px.exp.lab.teebadge.pointing",
+          "calculation": {
+            "address": "fn.lab.tee.pointing",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "tees": "px:px.exp.lab.recovered.tees",
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {
+            "minLeanPx": 0.5
+          },
+          "into": "px.exp.lab.teebadge.pointing",
+          "declared_consumes": [
+            "px:px.exp.lab.recovered.tees",
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.recovered.tees",
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.teebadge.pointing"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.teebadge.pointing",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "rule": "the unit major axis whose dot product with (bright centroid - ring centre) is positive, when that dot product is at least minLeanPx",
+              "minLeanPx": 0.5,
+              "tees": [
+                {
+                  "id": "tee-1",
+                  "basis": "ring-family",
+                  "bbox": [
+                    470,
+                    78,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    477.5,
+                    90.5
+                  ],
+                  "centroid": [
+                    477.5,
+                    90.5
+                  ],
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "alongAxisPx": 0,
+                    "brightPx": 152
+                  },
+                  "pointing": null,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "id": "tee-2",
+                  "basis": "ring-family",
+                  "bbox": [
+                    240,
+                    138,
+                    16,
+                    30
+                  ],
+                  "at": [
+                    247.5,
+                    150.5
+                  ],
+                  "centroid": [
+                    247.5,
+                    152.545
+                  ],
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      2.045
+                    ],
+                    "alongAxisPx": 2.045,
+                    "brightPx": 176
+                  },
+                  "pointing": [
+                    0,
+                    1
+                  ],
+                  "why": null
+                },
+                {
+                  "id": "tee-3",
+                  "basis": "ring-family",
+                  "bbox": [
+                    420,
+                    518,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    427.5,
+                    530.5
+                  ],
+                  "centroid": [
+                    427.5,
+                    530.5
+                  ],
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "alongAxisPx": 0,
+                    "brightPx": 152
+                  },
+                  "pointing": null,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "id": "tee-4",
+                  "basis": "component-fallback",
+                  "bbox": [
+                    60,
+                    208,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    67.5,
+                    222.318
+                  ],
+                  "centroid": [
+                    67.5,
+                    222.318
+                  ],
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "alongAxisPx": 0,
+                    "brightPx": 132
+                  },
+                  "pointing": null,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Tee.castRay",
+      "invocations": [
+        {
+          "id": "px.exp.lab.teebadge.hits",
+          "calculation": {
+            "address": "fn.lab.tee.castray",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "pointing": "px:px.exp.lab.teebadge.pointing",
+            "badges": "px:px.exp.lab.recovered.badges",
+            "raster": "px:px.exp.lab.course.canonicalpixels"
+          },
+          "args": {
+            "stepPx": 1
+          },
+          "into": "px.exp.lab.teebadge.hits",
+          "declared_consumes": [
+            "px:px.exp.lab.teebadge.pointing",
+            "px:px.exp.lab.recovered.badges",
+            "px:px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.teebadge.pointing",
+            "px.exp.lab.recovered.badges",
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_produces": [
+            "px.exp.lab.teebadge.hits"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.teebadge.hits",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "frame": {
+                "width": 512,
+                "height": 920
+              },
+              "stepPx": 1,
+              "targets": [
+                {
+                  "id": "badge-1",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    150,
+                    278
+                  ],
+                  "reading": "10",
+                  "basis": "bright-family"
+                },
+                {
+                  "id": "badge-2",
+                  "bbox": [
+                    218,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    248,
+                    278
+                  ],
+                  "reading": "11",
+                  "basis": "bright-family"
+                },
+                {
+                  "id": "badge-3",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    330,
+                    598
+                  ],
+                  "reading": "01",
+                  "basis": "bright-family"
+                },
+                {
+                  "id": "badge-4",
+                  "bbox": [
+                    382,
+                    138,
+                    56,
+                    40
+                  ],
+                  "at": [
+                    410,
+                    158
+                  ],
+                  "reading": "11",
+                  "basis": "dark-plate-recovery"
+                }
+              ],
+              "hits": [
+                {
+                  "tee": "tee-1",
+                  "badge": null,
+                  "distancePx": null,
+                  "steps": 0,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "tee": "tee-2",
+                  "badge": "badge-2",
+                  "reading": "11",
+                  "entryAt": [
+                    247.5,
+                    258.5
+                  ],
+                  "distancePx": 108,
+                  "steps": 108,
+                  "why": null
+                },
+                {
+                  "tee": "tee-3",
+                  "badge": null,
+                  "distancePx": null,
+                  "steps": 0,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "tee": "tee-4",
+                  "badge": null,
+                  "distancePx": null,
+                  "steps": 0,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "TeeBadge.pair",
+      "invocations": [
+        {
+          "id": "px.exp.lab.teebadge.rays",
+          "calculation": {
+            "address": "fn.lab.teebadge.pair",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "pointing": "px:px.exp.lab.teebadge.pointing",
+            "hits": "px:px.exp.lab.teebadge.hits",
+            "badges": "px:px.exp.lab.recovered.badges"
+          },
+          "args": {},
+          "into": "px.exp.lab.teebadge.rays",
+          "declared_consumes": [
+            "px:px.exp.lab.teebadge.pointing",
+            "px:px.exp.lab.teebadge.hits",
+            "px:px.exp.lab.recovered.badges"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.teebadge.pointing",
+            "px.exp.lab.teebadge.hits",
+            "px.exp.lab.recovered.badges"
+          ],
+          "actual_produces": [
+            "px.exp.lab.teebadge.rays"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.teebadge.rays",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "each tee paired with the badge it points at, by the direction its own pixels carry, or the reason there is no pair",
+              "from": [
+                "px.exp.lab.recovered.tees",
+                "px.exp.lab.recovered.badges",
+                "px.exp.lab.components"
+              ],
+              "rule": "the unit major axis whose dot product with (bright centroid - ring centre) is positive, when that dot product is at least minLeanPx",
+              "minLeanPx": 0.5,
+              "stepPx": 1,
+              "rays": [
+                {
+                  "tee": "tee-1",
+                  "teeBasis": "ring-family",
+                  "origin": [
+                    477.5,
+                    90.5
+                  ],
+                  "direction": null,
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "alongAxisPx": 0,
+                    "brightPx": 152
+                  },
+                  "badge": null,
+                  "distancePx": null,
+                  "entryAt": null,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "tee": "tee-2",
+                  "teeBasis": "ring-family",
+                  "origin": [
+                    247.5,
+                    150.5
+                  ],
+                  "direction": [
+                    0,
+                    1
+                  ],
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      2.045
+                    ],
+                    "alongAxisPx": 2.045,
+                    "brightPx": 176
+                  },
+                  "badge": {
+                    "id": "badge-2",
+                    "reading": "11",
+                    "bbox": [
+                      218,
+                      258,
+                      60,
+                      40
+                    ],
+                    "at": [
+                      248,
+                      278
+                    ],
+                    "basis": "bright-family"
+                  },
+                  "distancePx": 108,
+                  "entryAt": [
+                    247.5,
+                    258.5
+                  ],
+                  "why": null
+                },
+                {
+                  "tee": "tee-3",
+                  "teeBasis": "ring-family",
+                  "origin": [
+                    427.5,
+                    530.5
+                  ],
+                  "direction": null,
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "alongAxisPx": 0,
+                    "brightPx": 152
+                  },
+                  "badge": null,
+                  "distancePx": null,
+                  "entryAt": null,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "tee": "tee-4",
+                  "teeBasis": "component-fallback",
+                  "origin": [
+                    67.5,
+                    222.318
+                  ],
+                  "direction": null,
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "alongAxisPx": 0,
+                    "brightPx": 132
+                  },
+                  "badge": null,
+                  "distancePx": null,
+                  "entryAt": null,
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                }
+              ],
+              "paired": 1,
+              "contested": [],
+              "unpointed": [
+                {
+                  "tee": "tee-1",
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "tee": "tee-3",
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                },
+                {
+                  "tee": "tee-4",
+                  "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
+                }
+              ],
+              "missed": [],
+              "badgesWithNoRay": [
+                {
+                  "id": "badge-1",
+                  "reading": "10",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ]
+                },
+                {
+                  "id": "badge-3",
+                  "reading": "01",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ]
+                },
+                {
+                  "id": "badge-4",
+                  "reading": "11",
+                  "bbox": [
+                    382,
+                    138,
+                    56,
+                    40
+                  ]
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.recovered.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.teebadge.pointing"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.components": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.teebadge.pointing"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.teebadge.pointing": {
+      "written_by": "px.exp.lab.teebadge.pointing",
+      "read_by": [
+        "px.exp.lab.teebadge.hits",
+        "px.exp.lab.teebadge.rays"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.recovered.badges": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.teebadge.hits",
+        "px.exp.lab.teebadge.rays"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.canonicalpixels": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.teebadge.hits"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.teebadge.hits": {
+      "written_by": "px.exp.lab.teebadge.hits",
+      "read_by": [
+        "px.exp.lab.teebadge.rays"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.teebadge.rays": {
+      "written_by": "px.exp.lab.teebadge.rays",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 3,
+    "hits": 3,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

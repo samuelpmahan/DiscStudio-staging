@@ -64,21 +64,21 @@
             "data": {
               "counts": {
                 "badge": {
-                  "clean": 2,
+                  "clean": 3,
                   "recovered": 1,
-                  "total": 3,
+                  "total": 4,
                   "rejected": 5
                 },
                 "basket": {
-                  "clean": 1,
-                  "recovered": 1,
-                  "total": 2,
-                  "rejected": 5
-                },
-                "tee": {
                   "clean": 2,
                   "recovered": 1,
                   "total": 3,
+                  "rejected": 5
+                },
+                "tee": {
+                  "clean": 3,
+                  "recovered": 1,
+                  "total": 4,
                   "rejected": 5
                 }
               },

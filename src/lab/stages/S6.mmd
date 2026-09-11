@@ -1,0 +1,29 @@
+flowchart TD
+    rays["px.teebadge.rays"]
+    baskets["px.recovered.baskets"]
+    badges["px.recovered.badges"]
+
+    subgraph S6["PCR: S6"]
+        subgraph ContinueRay["Tick: Hole.continueRay"]
+            continueRay["fn.Hole.continueRay"]
+        end
+        subgraph Straight["Tick: Hole.straight"]
+            straight["fn.Hole.straight"]
+        end
+        subgraph Unresolved["Tick: Hole.unresolved"]
+            unresolved["fn.Hole.unresolved"]
+        end
+    end
+
+    rays -->|rays| continueRay
+    baskets -->|baskets| continueRay
+    continueRay --> hits["px.holes.rayhits"]
+    hits -->|hits| straight
+    rays -->|rays| straight
+    straight --> straightHoles["px.holes.straight"]
+    hits -->|hits| unresolved
+    rays -->|rays| unresolved
+    badges -->|badges| unresolved
+    baskets -->|baskets| unresolved
+    straightHoles -->|holes| unresolved
+    unresolved --> unresolvedPart["px.holes.unresolved"]

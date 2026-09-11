@@ -1,0 +1,127 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S6.invariants",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "CheckStraight",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s6.straightcheck",
+          "calculation": {
+            "address": "fn.lab.s6.checkstraight",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "holes": "px:px.exp.lab.holes.straight",
+            "unresolved": "px:px.exp.lab.holes.unresolved",
+            "hits": "px:px.exp.lab.holes.rayhits",
+            "badges": "px:px.exp.lab.recovered.badges",
+            "baskets": "px:px.exp.lab.recovered.baskets"
+          },
+          "args": {},
+          "into": "px.exp.lab.s6.straightcheck",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.straight",
+            "px:px.exp.lab.holes.unresolved",
+            "px:px.exp.lab.holes.rayhits",
+            "px:px.exp.lab.recovered.badges",
+            "px:px.exp.lab.recovered.baskets"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.straight",
+            "px.exp.lab.holes.unresolved",
+            "px.exp.lab.holes.rayhits",
+            "px.exp.lab.recovered.badges",
+            "px.exp.lab.recovered.baskets"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s6.straightcheck"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s6.straightcheck",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "straight": 1,
+              "doglegs": 3,
+              "checks": {
+                "everyBadgeLeavesOnce": true,
+                "everyBasketUsedAtMostOnce": true,
+                "everyTeeUsedAtMostOnce": true,
+                "threePointsAreOnALine": true,
+                "theBasketIsBeyondTheBadge": true,
+                "everyDoglegSaysWhy": true,
+                "nothingIsGuessed": true,
+                "everyLeftoverBasketIsListed": true
+              },
+              "balanced": true
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.holes.straight": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.straightcheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.unresolved": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.straightcheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.rayhits": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.straightcheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.badges": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.straightcheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.recovered.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.straightcheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s6.straightcheck": {
+      "written_by": "px.exp.lab.s6.straightcheck",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 1,
+    "hits": 1,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

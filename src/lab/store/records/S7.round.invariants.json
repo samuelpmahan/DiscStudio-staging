@@ -50,13 +50,13 @@
           "value": {
             "kind": "json",
             "data": {
-              "edges": 1,
-              "legs": 1,
-              "walked": 1,
+              "edges": 3,
+              "legs": 3,
+              "walked": 3,
               "unreachable": 0,
-              "cells": 17,
-              "cost": 180,
-              "lengthPx": 287.8,
+              "cells": 49,
+              "cost": 556,
+              "lengthPx": 903.384,
               "obstacleCells": 69,
               "walkableCells": 1787
             },
@@ -111,13 +111,13 @@
           "value": {
             "kind": "json",
             "data": {
-              "edges": 1,
-              "legs": 1,
-              "walked": 1,
+              "edges": 3,
+              "legs": 3,
+              "walked": 3,
               "unreachable": 0,
-              "cells": 17,
-              "cost": 180,
-              "lengthPx": 287.8,
+              "cells": 49,
+              "cost": 556,
+              "lengthPx": 903.384,
               "obstacleCells": 69,
               "walkableCells": 1787,
               "checks": {

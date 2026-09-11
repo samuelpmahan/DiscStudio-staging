@@ -52,14 +52,15 @@
                 "heightPx": 920
               },
               "order": [
-                1
+                1,
+                10
               ],
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-2",
+                  "badge": "badge-3",
                   "tee": {
-                    "id": "tee-2",
+                    "id": "tee-3",
                     "at": [
                       427.5,
                       530.5
@@ -68,22 +69,47 @@
                   "basket": {
                     "id": "basket-1",
                     "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "vector": [
+                    -179.5,
+                    -119.5
+                  ],
+                  "lengthPx": 215.64,
+                  "bearingDeg": 213.653,
+                  "confidence": 1
+                },
+                {
+                  "number": 10,
+                  "badge": "badge-1",
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-2",
+                    "at": [
                       171,
                       461
                     ]
                   },
                   "vector": [
-                    -256.5,
-                    -69.5
+                    -76.5,
+                    310.5
                   ],
-                  "lengthPx": 265.749,
-                  "bearingDeg": 195.161,
+                  "lengthPx": 319.785,
+                  "bearingDeg": 103.841,
                   "confidence": 1
                 }
               ],
               "incomplete": [
                 {
-                  "number": 10,
+                  "number": 11,
                   "missing": [
                     "basket"
                   ]
@@ -171,17 +197,17 @@
               "priority": "a cell takes the first class present in it, in the order above",
               "pixelsByClass": {
                 "terrain": 7538,
-                "basket": 3700,
-                "tee": 304,
-                "badge": 4800,
-                "open": 454698
+                "basket": 7400,
+                "tee": 480,
+                "badge": 7200,
+                "open": 448422
               },
               "cellsByClass": {
                 "terrain": 69,
-                "basket": 24,
-                "tee": 10,
-                "badge": 30,
-                "open": 1723
+                "basket": 49,
+                "tee": 13,
+                "badge": 45,
+                "open": 1680
               },
               "cells": [
                 "open",
@@ -523,14 +549,15 @@
               },
               "walkableRule": "every class but terrain: a badge, a basket and a tee are printed on the map, and a tee or a basket is where a leg ends",
               "order": [
-                1
+                1,
+                10
               ],
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-2",
+                  "badge": "badge-3",
                   "tee": {
-                    "id": "tee-2",
+                    "id": "tee-3",
                     "at": [
                       427.5,
                       530.5
@@ -539,22 +566,47 @@
                   "basket": {
                     "id": "basket-1",
                     "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "vector": [
+                    -179.5,
+                    -119.5
+                  ],
+                  "lengthPx": 215.64,
+                  "bearingDeg": 213.653,
+                  "confidence": 1
+                },
+                {
+                  "number": 10,
+                  "badge": "badge-1",
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-2",
+                    "at": [
                       171,
                       461
                     ]
                   },
                   "vector": [
-                    -256.5,
-                    -69.5
+                    -76.5,
+                    310.5
                   ],
-                  "lengthPx": 265.749,
-                  "bearingDeg": 195.161,
+                  "lengthPx": 319.785,
+                  "bearingDeg": 103.841,
                   "confidence": 1
                 }
               ],
               "nodes": [
                 {
-                  "id": "tee-2",
+                  "id": "tee-3",
                   "kind": "tee",
                   "hole": 1,
                   "at": [
@@ -568,6 +620,26 @@
                   "kind": "basket",
                   "hole": 1,
                   "at": [
+                    248,
+                    411
+                  ],
+                  "cell": 815
+                },
+                {
+                  "id": "tee-2",
+                  "kind": "tee",
+                  "hole": 10,
+                  "at": [
+                    247.5,
+                    150.5
+                  ],
+                  "cell": 303
+                },
+                {
+                  "id": "basket-2",
+                  "kind": "basket",
+                  "hole": 10,
+                  "at": [
                     171,
                     461
                   ],
@@ -578,10 +650,26 @@
                 {
                   "kind": "play",
                   "hole": 1,
-                  "from": "tee-2",
+                  "from": "tee-3",
                   "to": "basket-1",
-                  "straightLengthPx": 265.749,
+                  "straightLengthPx": 215.64,
                   "straightIsBlocked": false
+                },
+                {
+                  "kind": "walk",
+                  "hole": 10,
+                  "from": "basket-1",
+                  "to": "tee-2",
+                  "straightLengthPx": 260.5,
+                  "straightIsBlocked": true
+                },
+                {
+                  "kind": "play",
+                  "hole": 10,
+                  "from": "tee-2",
+                  "to": "basket-2",
+                  "straightLengthPx": 319.785,
+                  "straightIsBlocked": true
                 }
               ],
               "obstacles": {
@@ -594,17 +682,17 @@
                 ],
                 "cellsByClass": {
                   "terrain": 69,
-                  "basket": 24,
-                  "tee": 10,
-                  "badge": 30,
-                  "open": 1723
+                  "basket": 49,
+                  "tee": 13,
+                  "badge": 45,
+                  "open": 1680
                 },
                 "pixelsByClass": {
                   "terrain": 7538,
-                  "basket": 3700,
-                  "tee": 304,
-                  "badge": 4800,
-                  "open": 454698
+                  "basket": 7400,
+                  "tee": 480,
+                  "badge": 7200,
+                  "open": 448422
                 },
                 "cells": [
                   "open",
@@ -873,20 +961,24 @@
             "data": {
               "for": "the course in five numbers, and what is not in it",
               "course": "labfixture",
-              "holes": 1,
+              "holes": 2,
               "order": [
-                1
+                1,
+                10
               ],
-              "totalLengthPx": 265.749,
-              "longestHole": 1,
-              "blockedStraightLegs": [],
+              "totalLengthPx": 535.425,
+              "longestHole": 10,
+              "blockedStraightLegs": [
+                "walk:basket-1->tee-2",
+                "play:tee-2->basket-2"
+              ],
               "cellPx": 16,
               "walkableCells": 1787,
               "obstacleCells": 69,
               "unplaced": {
                 "holes": [
                   {
-                    "number": 10,
+                    "number": 11,
                     "missing": [
                       "basket"
                     ]

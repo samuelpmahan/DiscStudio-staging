@@ -81,10 +81,36 @@ function badge(rgba, width, x, y, reading = '10') {
  * frame the family vote measures.
  */
 export const TEE_WALL = 2, TEE_W = 16, TEE_H = 26;
-function tee(rgba, width, x, y) {
+/**
+ * The nose: a bright block against ONE short end of the frame, and the only
+ * thing in a tee that tells the two ends apart. A plain rectangular pad has an
+ * axis and no direction; S5 has to read a direction off the pixels, so the pad
+ * it reads has to carry one. The nose is part of the same bright component, so
+ * it moves the frame's centroid toward the end it is on while leaving the
+ * enclosed hole's centroid where it was -- which is the measurement S5 makes.
+ */
+export const TEE_NOSE = { width: 6, height: 4 };
+function tee(rgba, width, x, y, nose = null) {
   ring(rgba, width, x, y, TEE_W, TEE_H, TEE_WALL, WHITE);
-  return { frame: [x, y, TEE_W, TEE_H], hole: [x + TEE_WALL, y + TEE_WALL, TEE_W - TEE_WALL * 2, TEE_H - TEE_WALL * 2] };
+  const built = { frame: [x, y, TEE_W, TEE_H], hole: [x + TEE_WALL, y + TEE_WALL, TEE_W - TEE_WALL * 2, TEE_H - TEE_WALL * 2], nose: null, points: null };
+  if (nose === 'down') {
+    rect(rgba, width, x + (TEE_W - TEE_NOSE.width) / 2, y + TEE_H, TEE_NOSE.width, TEE_NOSE.height, WHITE);
+    built.nose = [x + (TEE_W - TEE_NOSE.width) / 2, y + TEE_H, TEE_NOSE.width, TEE_NOSE.height];
+    built.frame = [x, y, TEE_W, TEE_H + TEE_NOSE.height];
+    built.points = [0, 1];
+  }
+  return built;
 }
+
+/**
+ * The aligned hole: a tee that POINTS, the badge it points at, and the basket on
+ * the far side of that badge on the same line. Three points make a line (the
+ * owner, 2026-09-11), so S5 casts the tee's ray at the badge and S6 continues it
+ * to the basket. Everything is on one vertical line at x = 248, which is the
+ * tee's own major axis, so nothing about the alignment is a coincidence of
+ * rounding: the badge centre and the basket centre are the tee centre's x.
+ */
+export const ALIGNED = { tee: [240, 180], badge: [218, 300], basket: [227, 420], reading: '11', axisX: 248 };
 
 /**
  * The obstacle: a dark bar, drawn in the same value the badge plates and basket
@@ -126,7 +152,7 @@ export const OVERLAPS = {
 export const HOLE11 = { badge: [380, 180], tee: [470, 120], reading: '11' };
 
 /** The fixture capture: `{ imageId, widthPx, heightPx, rgba, sourceByteLength, badges, baskets, tees, obstacle }`. */
-export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = false, overlaps = false } = {}) {
+export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = false, overlaps = false, aligned = false } = {}) {
   const random = lcg(seed), rgba = new Array(WIDTH * HEIGHT * 4).fill(0);
   for (let y = 0; y < HEIGHT; y++) {
     const chrome = y < CHROME_TOP || y >= HEIGHT - CHROME_BOTTOM;
@@ -139,6 +165,11 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
   const baskets = [basket(rgba, WIDTH, 150, 470, sprite), basket(rgba, WIDTH, 330, 800, sprite)];
   const tees = [tee(rgba, WIDTH, 60, 250), tee(rgba, WIDTH, 420, 560)];
   if (hole11) { badges.push(badge(rgba, WIDTH, ...HOLE11.badge, HOLE11.reading)); tees.push(tee(rgba, WIDTH, ...HOLE11.tee)); }
+  if (aligned) {
+    tees.push(tee(rgba, WIDTH, ...ALIGNED.tee, 'down'));
+    badges.push(badge(rgba, WIDTH, ...ALIGNED.badge, ALIGNED.reading));
+    baskets.push(basket(rgba, WIDTH, ...ALIGNED.basket, sprite));
+  }
   if (obstacle) rect(rgba, WIDTH, OBSTACLE.x, OBSTACLE.y, OBSTACLE.width, OBSTACLE.height, BLACK);
   const occluded = [];
   if (overlaps) {
@@ -157,9 +188,9 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
     occluded.push({ kind: 'tee', of: 'tee at ' + frame.slice(0, 2).join(','), bbox: frame, how: 'a notch through the top wall wider than the detector can dilate closed, so the hole leaks to the background; the frame component keeps its bbox' });
   }
   return {
-    imageId: `lab-fixture-${seed}${hole11 ? '-h11' : ''}${obstacle ? '-obs' : ''}${overlaps ? '-ovl' : ''}`,
+    imageId: `lab-fixture-${seed}${hole11 ? '-h11' : ''}${obstacle ? '-obs' : ''}${overlaps ? '-ovl' : ''}${aligned ? '-aln' : ''}`,
     widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length,
-    badges, baskets, tees, obstacle: obstacle ? { ...OBSTACLE } : null, occluded
+    badges, baskets, tees, obstacle: obstacle ? { ...OBSTACLE } : null, occluded, aligned: aligned ? { ...ALIGNED } : null
   };
 }
 
@@ -170,7 +201,7 @@ export function fixtureCapture(seed = 20260911, { hole11 = false, obstacle = fal
  * be tuned until a Stage passes, which is the failure this Part exists to make
  * visible (proposal.lab.oracle.nocorpus).
  */
-export function fixtureBasis({ hole11 = false, obstacle = false, overlaps = false } = {}) {
+export function fixtureBasis({ hole11 = false, obstacle = false, overlaps = false, aligned = false } = {}) {
   return {
     for: 'why every element of the synthetic capture is drawn the way it is, and which Stage knob it answers to',
     frame: { widthPx: WIDTH, heightPx: HEIGHT, chromeTop: CHROME_TOP, chromeBottom: CHROME_BOTTOM, background: 'seeded LCG, values 80..199: never <= 45 (S1 black) and never >= 210 (S1 white), so every mask pixel below is drawn on purpose' },
@@ -180,6 +211,7 @@ export function fixtureBasis({ hole11 = false, obstacle = false, overlaps = fals
       { what: 'basket', basis: "the LAB's own basket sprite (42x66, 1746 white px) inside a dark shell clearing it by 4px on every side: S2 learns that modal margin" },
       { what: 'tee', basis: 'a bright 16x26 outline 2px thick whose enclosed hole is small and elongated: S3 floods the background in and keeps what is enclosed' },
       ...(hole11 ? [{ what: 'the third badge "11" and third tee, with no third basket', basis: 'S4 has to report a hole whose basket is missing instead of binding a basket that belongs to another hole; both digits are bars, so this badge adds no enclosed loop for S3 to mute' }] : []),
+      ...(aligned ? [{ what: 'the aligned hole: a pointing tee, its badge and its basket on one line', basis: `the tee carries a ${TEE_NOSE.width}x${TEE_NOSE.height} bright nose on one short end, which is the only thing in the shape that tells its two ends apart, and the badge centre and the basket centre both sit on x=${ALIGNED.axisX}, the tee's own major axis: S5 reads the pointing end off the pixels and S6 continues the ray past the badge to the basket. The other tees have no nose, so their rays are refused rather than guessed, and their badges are S6's doglegs` }] : []),
       ...(overlaps ? [{ what: 'the three overlaps', basis: 'one object per clean detector is occluded in the one way that detector cannot survive -- a cut border (S1 needs a white component enclosing the plate), a fused body (S2 needs the sprite bbox exactly), a notched frame (S3 needs an enclosed hole) -- and in each case the evidence the OTHER half of the object carries is left untouched, which is what S4 recovers from' }] : []),
       ...(obstacle ? [{ what: 'the obstacle bar', basis: `${OBSTACLE.width}x${OBSTACLE.height} at (${OBSTACLE.x},${OBSTACLE.y}) in source coordinates: dark like a plate but outside every S1/S2/S3 predicate, so it is the one thing in the raster no Stage object owns and S5 can only call terrain` }] : [])
     ],
