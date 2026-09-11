@@ -16,7 +16,7 @@ from scipy.cluster import hierarchy
 from scipy.spatial import distance
 from scipy.spatial import distance as sp_distance
 
-from . import calcs, core, linear, metrics, parts, resample, tournament, trees, unsup
+from . import calcs, core, linear, metrics, nnet, parts, resample, tournament, trees, unsup
 
 VERTICAL = "ml"
 SECTIONS = []
@@ -744,6 +744,92 @@ def tree_benchmarks(store):
         )
 
 
+@section
+def sparse_and_networks(store):
+    """the sparse linear model and the two small networks, on the problems already in the store."""
+    regression = store.get("px.exp.brain.data.ml.regression_train")
+    matrix, targets, features = core.xy(regression, "y")
+    scaled, _, _ = core.standardize(matrix)
+    x, centre = np.asarray(scaled), float(np.mean(targets))
+    y = np.asarray(targets) - centre
+    for alpha in (0.05, 0.5):
+        model = calcs.call("lasso_fit", {"data": regression, "target": "y", "alpha": alpha, "backend": "np",
+                                          "for": f"least squares with an l1 penalty of {alpha}"})
+        parts.result(store, VERTICAL, "lasso", f"regression_a{str(alpha).replace('.', '_')}", model)
+
+        def loss(w, alpha=alpha):
+            return float(((y - x @ w) ** 2).sum() / (2 * len(y)) + alpha * np.abs(w).sum())
+
+        reference = optimize.minimize(loss, np.zeros(x.shape[1]), method="Powell",
+                                      options={"xtol": 1e-12, "ftol": 1e-14,
+                                               "maxiter": 200000, "maxfev": 200000}).x.tolist()
+        parts.oracle(
+            store, VERTICAL, "lasso_fit", f"alpha_{str(alpha).replace('.', '_')}",
+            model["scaled_coef"], reference,
+            "scipy.optimize.minimize on the same penalised objective, same standardised columns", 3e-3,
+            "coordinate descent is only the lasso if it lands where the objective's minimum is",
+        )
+    heavy = calcs.call("lasso_fit", {"data": regression, "target": "y", "alpha": 50.0, "backend": "np"})
+    ridge = store.get("px.exp.brain.result.ml.ridge.regression_a1")
+    parts.oracle(
+        store, VERTICAL, "lasso_fit", "selects_where_ridge_only_shrinks",
+        [heavy["nonzero"] == [], all(c != 0.0 for c in ridge["coef"])], [True, True],
+        "the same columns under an l1 and an l2 penalty", 0.0,
+        "shrinking every coefficient and zeroing some are different jobs; that is the whole reason both exist",
+    )
+    for backend in ("py", "np"):
+        parts.bench(
+            store, VERTICAL, "lasso_fit", backend, "n180_d4_a0_5",
+            lambda backend=backend: calcs.call(
+                "lasso_fit", {"data": regression, "target": "y", "alpha": 0.5, "backend": backend}), 3,
+            "coordinate descent touches one column at a time: the case where numpy has least to win",
+        )
+
+    separable = calcs.call("synthetic_classification",
+                           {"seed": 97, "n": 200, "d": 3, "k": 2, "spread": 0.4, "separation": 9.0,
+                            "for": "two classes that really are separable, so the perceptron must converge"})
+    store.put("px.exp.brain.data.ml.separable", separable)
+    walked = calcs.call("perceptron_fit", {"data": separable, "target": "label", "seed": 97, "epochs": 60,
+                                            "for": "the boundary the mistake rule walked to"})
+    parts.result(store, VERTICAL, "perceptron", "separable", walked)
+    truth = [row[-1] for row in core.as_rows(separable)]
+    got = calcs.call("perceptron_predict", {"model": walked, "data": separable})["labels"]
+    parts.oracle(
+        store, VERTICAL, "perceptron_fit", "converges_on_a_separable_problem",
+        [walked["converged"], got == truth], [True, True],
+        "the perceptron convergence theorem, on a problem drawn to satisfy it", 0.0,
+        "the one guarantee the perceptron has is that it stops on a separable problem; if it does not, the update is wrong",
+    )
+
+    network = calcs.call("mlp_fit", {"data": regression, "target": "y", "seed": 97, "hidden": 12,
+                                      "lr": 0.05, "epochs": 300,
+                                      "for": "a twelve-unit hidden layer fitted by sgd from one seed"})
+    parts.result(store, VERTICAL, "mlp", "regression", {
+        "for": network["for"], "model": "mlp", "hidden": network["hidden"], "seed": network["seed"],
+        "learning_rate": network["learning_rate"], "epochs": network["epochs"],
+        "loss_first": network["loss"][0], "loss_last": network["loss"][-1],
+        "loss": network["loss"][::20]})
+    predicted = calcs.call("mlp_predict", {"model": network, "data": regression})
+    scored = calcs.call("regression_metrics", {"y_true": targets, "y_pred": predicted})
+    parts.result(store, VERTICAL, "regression_metrics", "mlp_train", scored)
+    closed = store.get("px.exp.brain.result.ml.linreg.regression_closed_np")
+    closed_fit = calcs.call("linreg_predict", {"model": closed, "data": regression, "backend": "np"})
+    closed_scored = calcs.call("regression_metrics", {"y_true": targets, "y_pred": closed_fit})
+    parts.oracle(
+        store, VERTICAL, "mlp_fit", "the_loss_falls_and_reaches_the_linear_fit",
+        [network["loss"][-1] < network["loss"][0], scored["r2"] > 0.9 * closed_scored["r2"]], [True, True],
+        "the closed-form least squares fit of the same rows, which is the right answer here", 0.0,
+        "the data is linear, so the network has no excuse: it must at least get near the line",
+    )
+    parts.oracle(
+        store, VERTICAL, "mlp_fit", "the_seed_is_the_whole_init",
+        calcs.call("mlp_fit", {"data": regression, "target": "y", "seed": 97, "hidden": 4, "epochs": 5})["w1"],
+        calcs.call("mlp_fit", {"data": regression, "target": "y", "seed": 97, "hidden": 4, "epochs": 5})["w1"],
+        "the same calculation re-run from the same seed", 0.0,
+        "a network whose init is not a function of its seed cannot be replayed from its record",
+    )
+
+
 # --- the map and the findings ------------------------------------------------
 
 
@@ -760,10 +846,9 @@ def map_and_findings(store):
 
 
 STUBBED = [
-    {"address": "fn.brain.ml.mlp_fit", "why": "a one-hidden-layer network is the last supervised family left; the seeded-init and the metrics are ready for it, the fit is not written"},
-    {"address": "fn.brain.ml.perceptron_fit", "why": "the same slice as the mlp; logistic regression covers the linear separator today"},
+    {"address": "fn.brain.ml.mlp_fit deep", "why": "the backward pass is hand-derived for exactly one hidden layer; a second layer needs autograd or another hand derivation, and a half-checked one is worth less than none"},
+    {"address": "fn.brain.ml.lasso_path", "why": "one alpha is fitted and oracled; the path over a grid of alphas is a loop away and is the part worth reading"},
     {"address": "fn.brain.ml.cross_validate", "why": "kfold and every metric exist; the loop that folds them together is still at each call site"},
-    {"address": "fn.brain.ml.lasso_fit", "why": "coordinate descent is queued behind the classifiers; ridge covers the penalised case today"},
     {"address": "fn.brain.ml.dbscan", "why": "density clustering is behind k-means and the hierarchies in the queue"},
     {"address": "fn.brain.ml.logreg_fit multinomial", "why": "multiclass is one-vs-rest, not a softmax; the softmax needs its own oracle and is not worth a half-checked one"},
     {"address": "fn.brain.ml.knn_fit approximate", "why": "the exact vote is the reference; a kd-tree or ball-tree is a backend of it, and belongs after the shared pairwise-distance primitive"},
@@ -772,16 +857,16 @@ STUBBED = [
 NEXT = [
     {"what": "a pairwise-distance calculation in the backend vertical, with knn, silhouette, k-means and dbscan routed through it",
      "for": "four calculations here build the same n-by-n matrix in three different spellings; one primitive and one oracle would cover all four"},
-    {"what": "lasso by coordinate descent, and elastic net, with the same oracle route as ridge",
-     "for": "ridge shrinks but never selects; the sparse path is what makes a linear model readable"},
+    {"what": "elastic net, and a lasso regularisation path over a grid of alphas as one Part",
+     "for": "the lasso is here but a single alpha is a guess; the path is what makes the choice readable"},
     {"what": "a softmax (multinomial) logistic regression beside the one-vs-rest one",
      "for": "one-vs-rest probabilities are renormalised, not calibrated, and the difference shows up in any ranking read off them"},
     {"what": "gradient boosting for classification (logistic loss) and out-of-bag scoring for the forest",
      "for": "the squared-loss boosting here is the easy half; the loss that needs a second-order step is where the design is tested"},
     {"what": "a cross_validate calculation that folds fit, predict and score into one Part per fold",
      "for": "kfold exists and every metric exists, but the loop between them is still written at each call site"},
-    {"what": "a one-hidden-layer mlp and a perceptron on this same split and these same metrics",
-     "for": "the only model family in the brief with no entry here at all; the seeded-init discipline is already in place for it"},
+    {"what": "a deeper network, softmax output and mini-batch shuffling through the effects handle rather than a seed",
+     "for": "one hidden layer and one output is where this stops; the next step needs a real autograd or an honest admission that it is hand-derived"},
 ]
 
 FINDINGS = {

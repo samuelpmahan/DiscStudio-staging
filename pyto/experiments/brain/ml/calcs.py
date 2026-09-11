@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pyto import Calculation
 
-from . import classify, linear, metrics, resample, trees, unsup
+from . import classify, linear, metrics, nnet, resample, trees, unsup
 
 _FUNCTIONS = {
     # supervised: linear
@@ -50,6 +50,12 @@ _FUNCTIONS = {
     "gbm_fit": trees.gbm_fit,
     "gbm_predict": trees.gbm_predict,
     "learning_curve": trees.learning_curve,
+    # supervised: sparse linear and the small networks
+    "lasso_fit": nnet.lasso_fit,
+    "perceptron_fit": nnet.perceptron_fit,
+    "perceptron_predict": nnet.perceptron_predict,
+    "mlp_fit": nnet.mlp_fit,
+    "mlp_predict": nnet.mlp_predict,
     # unsupervised
     "kmeans": unsup.kmeans,
     "kmeans_predict": unsup.kmeans_predict,
