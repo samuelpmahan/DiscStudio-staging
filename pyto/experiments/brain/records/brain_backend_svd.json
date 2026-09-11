@@ -1,0 +1,178 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.48318599965568865
+  },
+  "parts": {
+    "px.exp.brain.data.backend_svd_6x4_a": {
+      "preexisting": true,
+      "read_by": [
+        "6x4_np",
+        "6x4_py",
+        "6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.svd.6x4_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "6x4_np"
+    },
+    "px.exp.brain.result.backend.svd.6x4_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "6x4_py"
+    },
+    "px.exp.brain.result.backend.svd.6x4_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "6x4_sp"
+    }
+  },
+  "pcr": "brain_backend_svd",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_svd_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.svd.6x4_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.svd",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_svd_6x4_a"
+          ],
+          "duration_ms": 0.1470079996579443,
+          "hit": true,
+          "id": "6x4_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_svd_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.svd.6x4_np",
+          "result_sha256": "22e36303a527d79c737a0e89f3277edd46ded2a48907080218a2deca9184de17",
+          "value": {
+            "data": [
+              3.7499029596925073,
+              1.8720039077574804,
+              0.9775161099712898,
+              0.6412963167665218
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.svd.6x4_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_svd_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.svd.6x4_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.svd",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_svd_6x4_a"
+          ],
+          "duration_ms": 0.1432939998267102,
+          "hit": true,
+          "id": "6x4_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_svd_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.svd.6x4_py",
+          "result_sha256": "b0c74089d59bcfa4a2af3ebd2d3e9db84dc6bc11dc15c81713f1166a3fe85c44",
+          "value": {
+            "data": [
+              3.749902959692507,
+              1.8720039077574804,
+              0.9775161099712891,
+              0.6412963167665215
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.svd.6x4_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_svd_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.svd.6x4_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.svd",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_svd_6x4_a"
+          ],
+          "duration_ms": 0.19288400017103413,
+          "hit": true,
+          "id": "6x4_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_svd_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.svd.6x4_sp",
+          "result_sha256": "22e36303a527d79c737a0e89f3277edd46ded2a48907080218a2deca9184de17",
+          "value": {
+            "data": [
+              3.7499029596925073,
+              1.8720039077574804,
+              0.9775161099712898,
+              0.6412963167665218
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.svd.6x4_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "svd"
+    }
+  ]
+}

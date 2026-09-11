@@ -587,5 +587,178 @@ def _fft_sp(args):
     out = scipy_fft.fft(np.asarray(vector(args["values"]), dtype="float64"))
     return {"real": np.real(out).tolist(), "imag": np.imag(out).tolist()}
 
+# --- norm ----------------------------------------------------------------------
 
-CALCS = {name: calculation(name) for name in ("matmul", "solve", "lstsq", "cumsum", "histogram", "sort", "argsort", "select_k", "pairwise", "eig", "svd", "fft")}
+
+@engine("norm", "py")
+def _norm_py(args):
+    """the vector or matrix norm named by args["ord"], off the definition.
+
+    a vector part (one column, or a bare list) takes 1, 2 and inf; a matrix takes
+    'fro', 1 (max column sum) and inf (max row sum). the two are told apart by the
+    part's own shape, never by a flag, so the same call site works for both.
+    """
+    rows = matrix(args["a"]) if _is_matrix(args["a"]) else [[one] for one in vector(args["a"])]
+    order = args.get("ord", "fro" if len(rows[0]) > 1 else 2)
+    flat = [cell for row in rows for cell in row]
+    if len(rows[0]) == 1 or order in (2, "2"):
+        if order in (1, "1"):
+            return math.fsum(abs(one) for one in flat)
+        if order in ("inf", float("inf")):
+            return max(abs(one) for one in flat)
+        return math.sqrt(math.fsum(one * one for one in flat))
+    if order == "fro":
+        return math.sqrt(math.fsum(one * one for one in flat))
+    if order in (1, "1"):
+        return max(math.fsum(abs(cell) for cell in column) for column in zip(*rows))
+    if order in ("inf", float("inf")):
+        return max(math.fsum(abs(cell) for cell in row) for row in rows)
+    raise ValueError(f"brain: unknown norm order {order!r} (2, 1, 'inf' for a vector; 'fro', 1, 'inf' for a matrix)")
+
+
+def _is_matrix(part) -> bool:
+    rows = part["values"] if isinstance(part, Mapping) and "values" in part else (
+        part["rows"] if isinstance(part, Mapping) else part)
+    return bool(rows) and isinstance(rows[0], (list, tuple)) and len(rows[0]) > 1
+
+
+@engine("norm", "np")
+def _norm_np(args):
+    import numpy as np
+
+    order = args.get("ord", "fro" if _is_matrix(args["a"]) else 2)
+    order = np.inf if order in ("inf", float("inf")) else order
+    if _is_matrix(args["a"]):
+        return float(np.linalg.norm(_np(args["a"]), ord=order))
+    return float(np.linalg.norm(np.asarray(vector(args["a"]), dtype="float64"), ord=2 if order == "fro" else order))
+
+
+@engine("norm", "sp")
+def _norm_sp(args):
+    import numpy as np
+    from scipy import linalg
+
+    order = args.get("ord", "fro" if _is_matrix(args["a"]) else 2)
+    order = np.inf if order in ("inf", float("inf")) else order
+    if _is_matrix(args["a"]):
+        return float(linalg.norm(_np(args["a"]), ord=order))
+    return float(linalg.norm(np.asarray(vector(args["a"]), dtype="float64"), ord=2 if order == "fro" else order))
+
+
+# --- cholesky ------------------------------------------------------------------
+
+
+@engine("cholesky", "py")
+def _cholesky_py(args):
+    """the cholesky-banachiewicz recurrence: lower triangular l with l l^T = a.
+
+    it refuses a matrix that is not positive definite where the recurrence would
+    take the square root of a negative number, which is the honest place to refuse.
+    """
+    a = matrix(args["a"])
+    n = len(a)
+    lower = [[0.0] * n for _ in range(n)]
+    for i in range(n):
+        for j in range(i + 1):
+            total = math.fsum(lower[i][k] * lower[j][k] for k in range(j))
+            if i == j:
+                left = a[i][i] - total
+                if left <= 0.0:
+                    raise ValueError("brain: cholesky needs a positive definite matrix")
+                lower[i][j] = math.sqrt(left)
+            else:
+                lower[i][j] = (a[i][j] - total) / lower[j][j]
+    return shaped(lower)
+
+
+@engine("cholesky", "np")
+def _cholesky_np(args):
+    import numpy as np
+
+    try:
+        return shaped(np.linalg.cholesky(_np(args["a"])).tolist())
+    except np.linalg.LinAlgError as refused:
+        raise ValueError(f"brain: cholesky needs a positive definite matrix ({refused})") from refused
+
+
+@engine("cholesky", "sp")
+def _cholesky_sp(args):
+    import numpy as np
+    from scipy import linalg
+
+    try:
+        return shaped(linalg.cholesky(_np(args["a"]), lower=True).tolist())
+    except (linalg.LinAlgError, ValueError) as refused:
+        raise ValueError(f"brain: cholesky needs a positive definite matrix ({refused})") from refused
+
+
+# --- inverse -------------------------------------------------------------------
+
+
+@engine("inv", "py")
+def _inv_py(args):
+    """gauss-jordan with partial pivoting: the py solve, run against the identity."""
+    a = [row[:] for row in matrix(args["a"])]
+    n = len(a)
+    out = [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
+    for column in range(n):
+        pivot = max(range(column, n), key=lambda row: abs(a[row][column]))
+        if abs(a[pivot][column]) < 1e-300:
+            raise ValueError("brain: inv got a singular matrix")
+        a[column], a[pivot] = a[pivot], a[column]
+        out[column], out[pivot] = out[pivot], out[column]
+        scale = a[column][column]
+        a[column] = [cell / scale for cell in a[column]]
+        out[column] = [cell / scale for cell in out[column]]
+        for row in range(n):
+            if row == column or not a[row][column]:
+                continue
+            factor = a[row][column]
+            a[row] = [cell - factor * other for cell, other in zip(a[row], a[column])]
+            out[row] = [cell - factor * other for cell, other in zip(out[row], out[column])]
+    return shaped(out)
+
+
+@engine("inv", "np")
+def _inv_np(args):
+    import numpy as np
+
+    try:
+        return shaped(np.linalg.inv(_np(args["a"])).tolist())
+    except np.linalg.LinAlgError as refused:
+        raise ValueError(f"brain: inv got a singular matrix ({refused})") from refused
+
+
+@engine("inv", "sp")
+def _inv_sp(args):
+    import numpy as np
+    from scipy import linalg
+
+    a = _np(args["a"])
+    if abs(float(np.linalg.det(a))) < 1e-12:
+        raise ValueError("brain: inv got a singular matrix")
+    return shaped(linalg.inv(a).tolist())
+
+
+# --- trace ---------------------------------------------------------------------
+
+
+@engine("trace", "py")
+def _trace_py(args):
+    a = matrix(args["a"])
+    return math.fsum(a[i][i] for i in range(min(len(a), len(a[0]))))
+
+
+@engine("trace", "np")
+def _trace_np(args):
+    import numpy as np
+
+    return float(np.trace(_np(args["a"])))
+
+
+@engine("trace", "sp")
+def _trace_sp(args):
+    return _trace_np(args)
+
+
+CALCS = {name: calculation(name) for name in ("matmul", "solve", "lstsq", "cumsum", "histogram", "sort", "argsort", "select_k", "pairwise", "eig", "svd", "fft", "norm", "cholesky", "inv", "trace")}

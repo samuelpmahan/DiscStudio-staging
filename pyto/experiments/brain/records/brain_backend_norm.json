@@ -1,0 +1,589 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 12,
+    "invocations": 12,
+    "wall_ms": 0.5609410018223571
+  },
+  "parts": {
+    "px.exp.brain.data.backend_norm_spd_1_a": {
+      "preexisting": true,
+      "read_by": [
+        "spd_1_np",
+        "spd_1_py",
+        "spd_1_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_norm_spd_fro_a": {
+      "preexisting": true,
+      "read_by": [
+        "spd_fro_np",
+        "spd_fro_py",
+        "spd_fro_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_norm_spd_inf_a": {
+      "preexisting": true,
+      "read_by": [
+        "spd_inf_np",
+        "spd_inf_py",
+        "spd_inf_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_norm_v64_2_a": {
+      "preexisting": true,
+      "read_by": [
+        "v64_2_np",
+        "v64_2_py",
+        "v64_2_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.norm.spd_1_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_1_np"
+    },
+    "px.exp.brain.result.backend.norm.spd_1_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_1_py"
+    },
+    "px.exp.brain.result.backend.norm.spd_1_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_1_sp"
+    },
+    "px.exp.brain.result.backend.norm.spd_fro_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_fro_np"
+    },
+    "px.exp.brain.result.backend.norm.spd_fro_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_fro_py"
+    },
+    "px.exp.brain.result.backend.norm.spd_fro_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_fro_sp"
+    },
+    "px.exp.brain.result.backend.norm.spd_inf_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_inf_np"
+    },
+    "px.exp.brain.result.backend.norm.spd_inf_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_inf_py"
+    },
+    "px.exp.brain.result.backend.norm.spd_inf_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_inf_sp"
+    },
+    "px.exp.brain.result.backend.norm.v64_2_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "v64_2_np"
+    },
+    "px.exp.brain.result.backend.norm.v64_2_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "v64_2_py"
+    },
+    "px.exp.brain.result.backend.norm.v64_2_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "v64_2_sp"
+    }
+  },
+  "pcr": "brain_backend_norm",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_fro_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_fro_np"
+          ],
+          "args": {
+            "backend": "np",
+            "ord": "fro"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_fro_a"
+          ],
+          "duration_ms": 0.06725700040988158,
+          "hit": true,
+          "id": "spd_fro_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_fro_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_fro_np",
+          "result_sha256": "ac0efc602ddaf3d60f8bf5b0426cbedb4cae66765c0508664c3fdc7adfa6a0b8",
+          "value": {
+            "data": 30.76423159251759,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_fro_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_fro_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_fro_py"
+          ],
+          "args": {
+            "backend": "py",
+            "ord": "fro"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_fro_a"
+          ],
+          "duration_ms": 0.028325000130280387,
+          "hit": true,
+          "id": "spd_fro_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_fro_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_fro_py",
+          "result_sha256": "ac0efc602ddaf3d60f8bf5b0426cbedb4cae66765c0508664c3fdc7adfa6a0b8",
+          "value": {
+            "data": 30.76423159251759,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_fro_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_fro_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_fro_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "ord": "fro"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_fro_a"
+          ],
+          "duration_ms": 0.059193000197410583,
+          "hit": true,
+          "id": "spd_fro_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_fro_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_fro_sp",
+          "result_sha256": "ac0efc602ddaf3d60f8bf5b0426cbedb4cae66765c0508664c3fdc7adfa6a0b8",
+          "value": {
+            "data": 30.76423159251759,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_fro_sp",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_1_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_1_np"
+          ],
+          "args": {
+            "backend": "np",
+            "ord": 1
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_1_a"
+          ],
+          "duration_ms": 0.0469980004709214,
+          "hit": true,
+          "id": "spd_1_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_1_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_1_np",
+          "result_sha256": "6f3278b94c3b0d17ca755b7220f0ad3236ba95a4a4536a2b42edcff9e4fbf0a9",
+          "value": {
+            "data": 28.60146146692346,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_1_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_1_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_1_py"
+          ],
+          "args": {
+            "backend": "py",
+            "ord": 1
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_1_a"
+          ],
+          "duration_ms": 0.03438099975028308,
+          "hit": true,
+          "id": "spd_1_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_1_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_1_py",
+          "result_sha256": "99d7ba7cd1383f679c4a945e2ef76febd8cac7f89deaa0b36bdf228d37e492ba",
+          "value": {
+            "data": 28.601461466923457,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_1_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_1_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_1_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "ord": 1
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_1_a"
+          ],
+          "duration_ms": 0.06643500000791391,
+          "hit": true,
+          "id": "spd_1_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_1_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_1_sp",
+          "result_sha256": "6f3278b94c3b0d17ca755b7220f0ad3236ba95a4a4536a2b42edcff9e4fbf0a9",
+          "value": {
+            "data": 28.60146146692346,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_1_sp",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_inf_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_inf_np"
+          ],
+          "args": {
+            "backend": "np",
+            "ord": "inf"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_inf_a"
+          ],
+          "duration_ms": 0.045247000343806576,
+          "hit": true,
+          "id": "spd_inf_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_inf_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_inf_np",
+          "result_sha256": "6f3278b94c3b0d17ca755b7220f0ad3236ba95a4a4536a2b42edcff9e4fbf0a9",
+          "value": {
+            "data": 28.60146146692346,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_inf_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_inf_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_inf_py"
+          ],
+          "args": {
+            "backend": "py",
+            "ord": "inf"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_inf_a"
+          ],
+          "duration_ms": 0.02585200036264723,
+          "hit": true,
+          "id": "spd_inf_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_inf_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_inf_py",
+          "result_sha256": "99d7ba7cd1383f679c4a945e2ef76febd8cac7f89deaa0b36bdf228d37e492ba",
+          "value": {
+            "data": 28.601461466923457,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_inf_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_spd_inf_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.spd_inf_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "ord": "inf"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_spd_inf_a"
+          ],
+          "duration_ms": 0.036390999412105884,
+          "hit": true,
+          "id": "spd_inf_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_spd_inf_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.spd_inf_sp",
+          "result_sha256": "6f3278b94c3b0d17ca755b7220f0ad3236ba95a4a4536a2b42edcff9e4fbf0a9",
+          "value": {
+            "data": 28.60146146692346,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.spd_inf_sp",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_v64_2_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.v64_2_np"
+          ],
+          "args": {
+            "backend": "np",
+            "ord": 2
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_v64_2_a"
+          ],
+          "duration_ms": 0.03550400015228661,
+          "hit": true,
+          "id": "v64_2_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_v64_2_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.v64_2_np",
+          "result_sha256": "46173c944b12ed5b3982c0cf4ed520c337ef8f5010e1e632ca72d01ae3a966f3",
+          "value": {
+            "data": 7.621719875175869,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.v64_2_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_v64_2_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.v64_2_py"
+          ],
+          "args": {
+            "backend": "py",
+            "ord": 2
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_v64_2_a"
+          ],
+          "duration_ms": 0.035230000321462285,
+          "hit": true,
+          "id": "v64_2_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_v64_2_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.v64_2_py",
+          "result_sha256": "46173c944b12ed5b3982c0cf4ed520c337ef8f5010e1e632ca72d01ae3a966f3",
+          "value": {
+            "data": 7.621719875175869,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.v64_2_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_norm_v64_2_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.norm.v64_2_sp"
+          ],
+          "args": {
+            "backend": "sp",
+            "ord": 2
+          },
+          "calculation": {
+            "address": "fn.brain.backend.norm",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_norm_v64_2_a"
+          ],
+          "duration_ms": 0.08012800026335754,
+          "hit": true,
+          "id": "v64_2_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_norm_v64_2_a"
+          },
+          "into": "px.exp.brain.result.backend.norm.v64_2_sp",
+          "result_sha256": "46173c944b12ed5b3982c0cf4ed520c337ef8f5010e1e632ca72d01ae3a966f3",
+          "value": {
+            "data": 7.621719875175869,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.norm.v64_2_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "norm"
+    }
+  ]
+}

@@ -1,0 +1,340 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 1.034068999615556
+  },
+  "parts": {
+    "px.exp.brain.data.backend_eig_spd_6_a": {
+      "preexisting": true,
+      "read_by": [
+        "spd_6_np",
+        "spd_6_py",
+        "spd_6_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.eig.spd_6_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_np"
+    },
+    "px.exp.brain.result.backend.eig.spd_6_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_py"
+    },
+    "px.exp.brain.result.backend.eig.spd_6_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_sp"
+    }
+  },
+  "pcr": "brain_backend_eig",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_eig_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.eig.spd_6_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.eig",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_eig_spd_6_a"
+          ],
+          "duration_ms": 0.372329000128957,
+          "hit": true,
+          "id": "spd_6_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_eig_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.eig.spd_6_np",
+          "result_sha256": "01288d401a46ea85857432391958a3c6a8360700d892c7fe0fed4e00120d6f14",
+          "value": {
+            "data": {
+              "eigenvalues": [
+                6.015488593047471,
+                6.409231427257479,
+                7.763415642822851,
+                9.606191594020798,
+                15.482157944872801,
+                21.83865474251054
+              ],
+              "eigenvectors": [
+                [
+                  0.17800160655590816,
+                  0.8382666443963541,
+                  0.23302818119984495,
+                  0.06941023947304754,
+                  0.23732721561043735,
+                  0.3875310814755066
+                ],
+                [
+                  -0.5875956552261786,
+                  0.2587922398980433,
+                  0.08911483955628072,
+                  -0.6386111607351075,
+                  0.20992729759854326,
+                  -0.3576629460906747
+                ],
+                [
+                  -0.2824667314939147,
+                  -0.43346747396950774,
+                  0.2013784241312393,
+                  -0.1040900679592645,
+                  0.4823289546590848,
+                  0.66954407035965
+                ],
+                [
+                  0.6528871741283477,
+                  -0.09608847731412196,
+                  -0.20025048865946202,
+                  -0.7118269887640946,
+                  0.06414203156913544,
+                  0.11658997397300656
+                ],
+                [
+                  -0.23261233530731254,
+                  0.058257111819546084,
+                  0.13417242530904755,
+                  -0.2594214429164078,
+                  -0.8123758006439016,
+                  0.44411872754406656
+                ],
+                [
+                  -0.2507771100869397,
+                  0.17266925586630208,
+                  -0.9160243689500318,
+                  0.05026046970829859,
+                  0.053818772425696555,
+                  0.2505453043742958
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.eig.spd_6_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_eig_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.eig.spd_6_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.eig",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_eig_spd_6_a"
+          ],
+          "duration_ms": 0.2663909999682801,
+          "hit": true,
+          "id": "spd_6_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_eig_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.eig.spd_6_py",
+          "result_sha256": "253865ce51e23c05824a1e9690a7ac69b5888654257ec820016331a31c40fdef",
+          "value": {
+            "data": {
+              "eigenvalues": [
+                6.015488593047472,
+                6.409231427257494,
+                7.763415642822857,
+                9.606191594020792,
+                15.482157944872828,
+                21.838654742510546
+              ],
+              "eigenvectors": [
+                [
+                  0.1780016065559054,
+                  0.8382666443963558,
+                  0.23302818119984473,
+                  0.06941023947304731,
+                  0.23732721561043726,
+                  0.3875310814755062
+                ],
+                [
+                  -0.5875956552261803,
+                  0.25879223989804157,
+                  0.08911483955627947,
+                  -0.6386111607351078,
+                  0.20992729759854287,
+                  -0.35766294609067434
+                ],
+                [
+                  -0.28246673149391377,
+                  -0.43346747396950885,
+                  0.2013784241312391,
+                  -0.10409006795926477,
+                  0.482328954659085,
+                  0.6695440703596502
+                ],
+                [
+                  0.6528871741283486,
+                  -0.0960884773141202,
+                  -0.2002504886594608,
+                  -0.7118269887640949,
+                  0.06414203156913513,
+                  0.1165899739730066
+                ],
+                [
+                  -0.2326123353073131,
+                  0.058257111819545446,
+                  0.13417242530904716,
+                  -0.25942144291640723,
+                  -0.8123758006439019,
+                  0.4441187275440665
+                ],
+                [
+                  -0.25077711008693865,
+                  0.1726692558663012,
+                  -0.916024368950033,
+                  0.05026046970829887,
+                  0.05381877242569672,
+                  0.2505453043742957
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.eig.spd_6_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_eig_spd_6_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.eig.spd_6_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.eig",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_eig_spd_6_a"
+          ],
+          "duration_ms": 0.39534899951831903,
+          "hit": true,
+          "id": "spd_6_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_eig_spd_6_a"
+          },
+          "into": "px.exp.brain.result.backend.eig.spd_6_sp",
+          "result_sha256": "877b08ccb85853eb54f2931188a42659ba9ffa160a07db5e340bebb806a5f806",
+          "value": {
+            "data": {
+              "eigenvalues": [
+                6.015488593047471,
+                6.409231427257478,
+                7.763415642822853,
+                9.606191594020796,
+                15.482157944872803,
+                21.838654742510528
+              ],
+              "eigenvectors": [
+                [
+                  0.1780016065559091,
+                  0.838266644396354,
+                  0.23302818119984406,
+                  0.06941023947304745,
+                  0.2373272156104368,
+                  0.38753108147550686
+                ],
+                [
+                  -0.5875956552261787,
+                  0.25879223989804423,
+                  0.08911483955627986,
+                  -0.6386111607351072,
+                  0.2099272975985434,
+                  -0.3576629460906743
+                ],
+                [
+                  -0.2824667314939153,
+                  -0.43346747396950724,
+                  0.20137842413123955,
+                  -0.10409006795926469,
+                  0.48232895465908404,
+                  0.66954407035965
+                ],
+                [
+                  0.6528871741283473,
+                  -0.09608847731412291,
+                  -0.20025048865946213,
+                  -0.7118269887640949,
+                  0.06414203156913557,
+                  0.11658997397300645
+                ],
+                [
+                  -0.23261233530731273,
+                  0.058257111819546396,
+                  0.13417242530904702,
+                  -0.25942144291640784,
+                  -0.8123758006439016,
+                  0.44411872754406595
+                ],
+                [
+                  -0.2507771100869392,
+                  0.17266925586630164,
+                  -0.9160243689500321,
+                  0.050260469708299484,
+                  0.05381877242569662,
+                  0.2505453043742956
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.eig.spd_6_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "eig"
+    }
+  ]
+}

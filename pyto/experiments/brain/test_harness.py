@@ -228,6 +228,38 @@ class TheEvidenceParts(unittest.TestCase):
         self.assertFalse(harness.close([1.0], [1.0, 2.0])[0], "a different shape is not close")
         self.assertTrue(harness.close({"a": float("nan")}, {"a": float("nan")})[0], "nan matches nan")
 
+
+    def test_a_big_value_is_outlined_rather_than_copied_into_the_oracle_part(self):
+        """an oracle Part is evidence; it is not a second copy of every matrix.
+
+        the verdict is still decided on the full values - that is the whole point -
+        but what the Part keeps of a 192x192 matrix is its size, its digest, its
+        shape and its first numbers. Before this cap the three pairwise tournaments
+        put 6.5 MB of decimal text into store/backend.json.
+        """
+        wide = {"shape": [120, 120], "values": [[float(row * 120 + column) for column in range(120)] for row in range(120)]}
+        kept = harness.outline(wide)
+        self.assertEqual(kept["shape"], [120, 120], "the readable parts of a mapping stay readable")
+        self.assertTrue(kept["values"]["outline"])
+        self.assertEqual(kept["values"]["shape"], [120, 120])
+        self.assertEqual(kept["values"]["head"], [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
+        self.assertEqual(kept["values"]["sha256"], harness.digest(wide["values"]))
+        self.assertLess(len(json.dumps(kept)), 1000)
+
+        self.assertTrue(harness.oracle(self.store, "backend", "wide", "same", got=wide, expected=wide,
+                                       reference="itself", for_="the comparison is on the full value"))
+        wrong = json.loads(json.dumps(wide))
+        wrong["values"][0][0] = 99.0
+        self.assertFalse(harness.oracle(self.store, "backend", "wide", "different", got=wrong, expected=wide,
+                                        reference="itself", for_="an outlined Part still knows it failed"))
+        part = self.store.get(harness.oracle_address("backend", "wide", "different"))
+        self.assertNotEqual(part["got"]["values"]["sha256"], part["expected"]["values"]["sha256"])
+        self.assertLess(len(json.dumps(part)), 2000)
+
+    def test_a_small_value_is_kept_whole(self):
+        self.assertEqual(harness.outline([1.0, 2.0]), [1.0, 2.0])
+        self.assertEqual(harness.shape_of([[1.0, 2.0], [3.0, 4.0]]), [2, 2])
+
     def test_bench_records_median_min_and_a_digest(self):
         value = harness.bench(self.store, "backend", "mean", "py", 128, lambda: sum(range(1000)), n=3, for_="x", inputs={"size": 128})
         self.assertEqual(value["n"], 3)

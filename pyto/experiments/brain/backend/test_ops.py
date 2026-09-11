@@ -23,7 +23,8 @@ class TheFacade(unittest.TestCase):
     def test_every_op_has_the_three_engines(self):
         self.assertEqual(
             ops.ops(),
-            ("argsort", "cumsum", "eig", "fft", "histogram", "lstsq", "matmul", "pairwise", "select_k", "solve", "sort", "svd"),
+            ("argsort", "cholesky", "cumsum", "eig", "fft", "histogram", "inv", "lstsq", "matmul", "norm",
+             "pairwise", "select_k", "solve", "sort", "svd", "trace"),
         )
         for op in ops.ops():
             self.assertEqual(ops.engines_of(op), ("np", "py", "sp"), op)
@@ -133,6 +134,24 @@ class TheStubsSayWhy(unittest.TestCase):
             ops.call("fft", {"values": [1.0, 2.0, 3.0], "backend": "py"})
         self.assertIn("radix-2", str(refused.exception))
         self.assertEqual(len(ops.call("fft", {"values": [1.0, 2.0, 3.0], "backend": "np"})["real"]), 3)
+
+    def test_cholesky_refuses_a_matrix_that_is_not_positive_definite(self):
+        for backend in ("py", "np", "sp"):
+            with self.subTest(backend=backend), self.assertRaises(ValueError) as refused:
+                ops.call("cholesky", {"a": [[1.0, 2.0], [2.0, 1.0]], "backend": backend})
+            self.assertIn("positive definite", str(refused.exception))
+
+    def test_inv_refuses_a_singular_matrix_in_every_engine(self):
+        for backend in ("py", "np", "sp"):
+            with self.subTest(backend=backend), self.assertRaises(ValueError):
+                ops.call("inv", {"a": [[1.0, 2.0], [2.0, 4.0]], "backend": backend})
+
+    def test_norm_tells_a_vector_from_a_matrix_by_its_shape(self):
+        column = {"for": "x", "columns": ["a"], "rows": [[3.0], [4.0]]}
+        for backend in ("py", "np", "sp"):
+            self.assertAlmostEqual(ops.call("norm", {"a": column, "backend": backend}), 5.0, places=12)
+            self.assertAlmostEqual(
+                ops.call("norm", {"a": [[3.0, 0.0], [0.0, 4.0]], "backend": backend}), 5.0, places=12)
 
     def test_every_engine_refuses_a_singular_matrix_the_same_way(self):
         """scipy raises nothing and numpy raises LinAlgError; the facade makes both

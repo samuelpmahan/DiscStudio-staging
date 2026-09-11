@@ -1,0 +1,202 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 3,
+    "invocations": 3,
+    "wall_ms": 0.41142499958368717
+  },
+  "parts": {
+    "px.exp.brain.data.backend_solve_spd_6_a": {
+      "preexisting": true,
+      "read_by": [
+        "spd_6_np",
+        "spd_6_py",
+        "spd_6_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_solve_spd_6_b": {
+      "preexisting": true,
+      "read_by": [
+        "spd_6_np",
+        "spd_6_py",
+        "spd_6_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.solve.spd_6_np": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_np"
+    },
+    "px.exp.brain.result.backend.solve.spd_6_py": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_py"
+    },
+    "px.exp.brain.result.backend.solve.spd_6_sp": {
+      "preexisting": true,
+      "read_by": [],
+      "written_by": "spd_6_sp"
+    }
+  },
+  "pcr": "brain_backend_solve",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_solve_spd_6_a",
+            "px.exp.brain.data.backend_solve_spd_6_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.solve.spd_6_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.solve",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_solve_spd_6_a",
+            "px:px.exp.brain.data.backend_solve_spd_6_b"
+          ],
+          "duration_ms": 0.12975200024811784,
+          "hit": true,
+          "id": "spd_6_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_solve_spd_6_a",
+            "b": "px:px.exp.brain.data.backend_solve_spd_6_b"
+          },
+          "into": "px.exp.brain.result.backend.solve.spd_6_np",
+          "result_sha256": "adce271ef87e82a59005972b574665587f594ac0f7d7102e7a5117351019ab08",
+          "value": {
+            "data": [
+              -0.03062473450367534,
+              0.07938867542303987,
+              -0.04889878009808212,
+              -0.08888574529464895,
+              -0.02099629090293583,
+              0.08760973259361203
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.solve.spd_6_np",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_solve_spd_6_a",
+            "px.exp.brain.data.backend_solve_spd_6_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.solve.spd_6_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.solve",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_solve_spd_6_a",
+            "px:px.exp.brain.data.backend_solve_spd_6_b"
+          ],
+          "duration_ms": 0.05450099979498191,
+          "hit": true,
+          "id": "spd_6_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_solve_spd_6_a",
+            "b": "px:px.exp.brain.data.backend_solve_spd_6_b"
+          },
+          "into": "px.exp.brain.result.backend.solve.spd_6_py",
+          "result_sha256": "4ab0869f3a30573c8845af03cb8b26619be6ba45257f303b00c85b9b7cd9a2a0",
+          "value": {
+            "data": [
+              -0.030624734503675352,
+              0.07938867542303987,
+              -0.04889878009808212,
+              -0.08888574529464893,
+              -0.02099629090293583,
+              0.08760973259361203
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.solve.spd_6_py",
+              "kind": "replacement"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_solve_spd_6_a",
+            "px.exp.brain.data.backend_solve_spd_6_b"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.solve.spd_6_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.solve",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_solve_spd_6_a",
+            "px:px.exp.brain.data.backend_solve_spd_6_b"
+          ],
+          "duration_ms": 0.22717199954058742,
+          "hit": true,
+          "id": "spd_6_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_solve_spd_6_a",
+            "b": "px:px.exp.brain.data.backend_solve_spd_6_b"
+          },
+          "into": "px.exp.brain.result.backend.solve.spd_6_sp",
+          "result_sha256": "363bae7c34970db639afffea45d9dc90fd8c00fa70b3b3e2e330aa2b8077a255",
+          "value": {
+            "data": [
+              -0.03062473450367535,
+              0.07938867542303987,
+              -0.04889878009808213,
+              -0.08888574529464892,
+              -0.02099629090293583,
+              0.08760973259361203
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.solve.spd_6_sp",
+              "kind": "replacement"
+            }
+          ]
+        }
+      ],
+      "name": "solve"
+    }
+  ]
+}
