@@ -4,8 +4,44 @@ Intent: brain/backend the benchmark Parts are what decides: the vertical's bench
 Starting point: 6d29ac32d88cd0a2814eb96cea9ebd30db1e32c1 (land(task-95): brain ml distances: the four calculations that each built their own n-by-n matrix (knn_predict, silhouette, kmeans, dbscan) route through fn.brain.backend.pairwise as one more backend, oracled against their own spelling and against scipy cdist, with the bracket that decides which spelling deserves the default; and exp/88 is killed, its candidate having landed inside task-89)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 6 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- A  pyto/experiments/brain/backend/choose.py
+- M  pyto/experiments/brain/backend/evidence.py
+- M  pyto/experiments/brain/backend/ops.py
+- M  pyto/experiments/brain/backend/summary.py
+- A  pyto/experiments/brain/backend/test_choose.py
+- M  pyto/experiments/brain/store/backend.json
+
+```
+pyto/experiments/brain/backend/choose.py      |   88 ++
+ pyto/experiments/brain/backend/evidence.py    |   16 +-
+ pyto/experiments/brain/backend/ops.py         |   43 +-
+ pyto/experiments/brain/backend/summary.py     |   22 +-
+ pyto/experiments/brain/backend/test_choose.py |  103 ++
+ pyto/experiments/brain/store/backend.json     | 1370 ++++++++++++++++---------
+ 6 files changed, 1179 insertions(+), 463 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.R7GJyDHsjB) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               673  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
