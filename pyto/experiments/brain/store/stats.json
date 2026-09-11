@@ -44,8 +44,8 @@
     "inputs_sha256": "62faeecdbc12fd475834c18b234292d51a5e79c96a8321dd615ebde8f26d18b2",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 0.126257999909285,
-    "wall_ms_min": 0.12369199976092204
+    "wall_ms_median": 0.12212799992994405,
+    "wall_ms_min": 0.11974100016232114
   },
   "px.exp.brain.bench.stats.cdf.py.chi2_n=4000": {
     "backend": "py",
@@ -54,8 +54,8 @@
     "inputs_sha256": "7cd03822ee308bf595626882753d274df8387d9a7e47b758b9b1143648295f49",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 4.071559000294656,
-    "wall_ms_min": 4.057823000039207
+    "wall_ms_median": 4.2425150004419265,
+    "wall_ms_min": 4.176727999947616
   },
   "px.exp.brain.bench.stats.cdf.py.normal_n=1000": {
     "backend": "py",
@@ -64,8 +64,8 @@
     "inputs_sha256": "26068dc4da55bc0bd3da095429393457ea9b846edd6ea88db0f1df27d4f87e57",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 0.23719400087429676,
-    "wall_ms_min": 0.22448800064012175
+    "wall_ms_median": 0.24244399992312538,
+    "wall_ms_min": 0.2218350000475766
   },
   "px.exp.brain.bench.stats.cdf.py.normal_n=4000": {
     "backend": "py",
@@ -74,8 +74,8 @@
     "inputs_sha256": "32b849a0a3f0a261691cf8f76c720535431c854717ed35e002c03a97383c300b",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 0.9355539996249718,
-    "wall_ms_min": 0.8933029994295794
+    "wall_ms_median": 0.9090659996218164,
+    "wall_ms_min": 0.8615530005045002
   },
   "px.exp.brain.bench.stats.cdf.py.t_n=1000": {
     "backend": "py",
@@ -84,8 +84,8 @@
     "inputs_sha256": "55b0b083ec65d239f0e8d139ca9c43965a879ae9c4997f85e138e5b3ecdc2d92",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 5.202589999498741,
-    "wall_ms_min": 4.655048999666178
+    "wall_ms_median": 5.64738400044007,
+    "wall_ms_min": 5.51467999957822
   },
   "px.exp.brain.bench.stats.cdf.py.t_n=4000": {
     "backend": "py",
@@ -94,8 +94,8 @@
     "inputs_sha256": "b6d32d8ed83accf379089139e8ae81aa6a77993c682a0e434fa65960e9516222",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 19.775493999986793,
-    "wall_ms_min": 19.63923000039358
+    "wall_ms_median": 20.315798000410723,
+    "wall_ms_min": 20.221965999553504
   },
   "px.exp.brain.bench.stats.cdf.sp.chi2_n=1000": {
     "backend": "sp",
@@ -104,8 +104,8 @@
     "inputs_sha256": "62faeecdbc12fd475834c18b234292d51a5e79c96a8321dd615ebde8f26d18b2",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 19.899398000234214,
-    "wall_ms_min": 18.94674000050145
+    "wall_ms_median": 21.344093000152498,
+    "wall_ms_min": 20.27106300010928
   },
   "px.exp.brain.bench.stats.cdf.sp.chi2_n=4000": {
     "backend": "sp",
@@ -114,8 +114,8 @@
     "inputs_sha256": "7cd03822ee308bf595626882753d274df8387d9a7e47b758b9b1143648295f49",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 122.67292499927862,
-    "wall_ms_min": 118.83168200074579
+    "wall_ms_median": 122.58103600015602,
+    "wall_ms_min": 121.4169459999539
   },
   "px.exp.brain.bench.stats.cdf.sp.normal_n=1000": {
     "backend": "sp",
@@ -124,8 +124,8 @@
     "inputs_sha256": "26068dc4da55bc0bd3da095429393457ea9b846edd6ea88db0f1df27d4f87e57",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 40.56992599998921,
-    "wall_ms_min": 39.58539899940661
+    "wall_ms_median": 41.631073999269574,
+    "wall_ms_min": 39.18930600048043
   },
   "px.exp.brain.bench.stats.cdf.sp.normal_n=4000": {
     "backend": "sp",
@@ -134,8 +134,8 @@
     "inputs_sha256": "32b849a0a3f0a261691cf8f76c720535431c854717ed35e002c03a97383c300b",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 157.36293500049214,
-    "wall_ms_min": 150.34131399988837
+    "wall_ms_median": 163.50365100061026,
+    "wall_ms_min": 158.58559200023592
   },
   "px.exp.brain.bench.stats.cdf.sp.t_n=1000": {
     "backend": "sp",
@@ -144,8 +144,8 @@
     "inputs_sha256": "55b0b083ec65d239f0e8d139ca9c43965a879ae9c4997f85e138e5b3ecdc2d92",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 41.87381900010223,
-    "wall_ms_min": 41.16860300018743
+    "wall_ms_median": 42.81148500012932,
+    "wall_ms_min": 42.25196700008382
   },
   "px.exp.brain.bench.stats.cdf.sp.t_n=4000": {
     "backend": "sp",
@@ -154,8 +154,8 @@
     "inputs_sha256": "b6d32d8ed83accf379089139e8ae81aa6a77993c682a0e434fa65960e9516222",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 166.9933849998415,
-    "wall_ms_min": 165.79811399969913
+    "wall_ms_median": 166.56804100057343,
+    "wall_ms_min": 164.38427100001718
   },
   "px.exp.brain.bench.stats.ci_mean.py.n=45": {
     "backend": "py",
@@ -164,8 +164,8 @@
     "inputs_sha256": "2ac4bd70042b4b77b8ed24bfb10cf25e7447922010a7ab764060475f14509372",
     "n": 5,
     "size": "n=45",
-    "wall_ms_median": 0.6410329997379449,
-    "wall_ms_min": 0.6168879999677301
+    "wall_ms_median": 0.6615350002903142,
+    "wall_ms_min": 0.6243839998205658
   },
   "px.exp.brain.bench.stats.ci_mean.py.n=450": {
     "backend": "py",
@@ -174,8 +174,8 @@
     "inputs_sha256": "69489b3acb38b474f77a96a8cb03513ac70872fcca6b4cb157ebfd333482228c",
     "n": 5,
     "size": "n=450",
-    "wall_ms_median": 1.0760579998532194,
-    "wall_ms_min": 1.025057000333618
+    "wall_ms_median": 1.0799589999805903,
+    "wall_ms_min": 1.0407769996163552
   },
   "px.exp.brain.bench.stats.covariance.np.n=1000": {
     "backend": "np",
@@ -184,8 +184,8 @@
     "inputs_sha256": "9082d2872f8dc710ab9102b1edd338dac0e3a4cfbf30604ddb893039a5d55014",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.14915300016582478,
-    "wall_ms_min": 0.13384100020630285
+    "wall_ms_median": 0.185005999810528,
+    "wall_ms_min": 0.13308799952937989
   },
   "px.exp.brain.bench.stats.covariance.np.n=50000": {
     "backend": "np",
@@ -194,8 +194,8 @@
     "inputs_sha256": "39d05eafbbae66e58319b8695a3729e1f362fb8adc4cf602db9adc79340374a9",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 5.901393000385724,
-    "wall_ms_min": 5.825946000186377
+    "wall_ms_median": 6.057558999600587,
+    "wall_ms_min": 5.96831100028794
   },
   "px.exp.brain.bench.stats.covariance.py.n=1000": {
     "backend": "py",
@@ -204,8 +204,8 @@
     "inputs_sha256": "9082d2872f8dc710ab9102b1edd338dac0e3a4cfbf30604ddb893039a5d55014",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.16025399963837117,
-    "wall_ms_min": 0.14775999989069533
+    "wall_ms_median": 0.15195099967968417,
+    "wall_ms_min": 0.1468839991503046
   },
   "px.exp.brain.bench.stats.covariance.py.n=50000": {
     "backend": "py",
@@ -214,8 +214,8 @@
     "inputs_sha256": "39d05eafbbae66e58319b8695a3729e1f362fb8adc4cf602db9adc79340374a9",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 8.092480999948748,
-    "wall_ms_min": 8.038617000238446
+    "wall_ms_median": 8.172412000021723,
+    "wall_ms_min": 8.118493999972998
   },
   "px.exp.brain.bench.stats.kendall.np.n=200": {
     "backend": "np",
@@ -224,8 +224,8 @@
     "inputs_sha256": "35156f021b6dc9417e22923996e2de1929da5e0eba2c863165d0b33ae136790b",
     "n": 5,
     "size": "n=200",
-    "wall_ms_median": 0.41288099964731373,
-    "wall_ms_min": 0.3926639992641867
+    "wall_ms_median": 0.43051100055890856,
+    "wall_ms_min": 0.3730869993887609
   },
   "px.exp.brain.bench.stats.kendall.np.n=800": {
     "backend": "np",
@@ -234,8 +234,8 @@
     "inputs_sha256": "75811c93d0469bd8d0bb6b6d0a382c4623673d152f06d792f6355791a0cb3b43",
     "n": 5,
     "size": "n=800",
-    "wall_ms_median": 8.484136999868497,
-    "wall_ms_min": 7.345426000028965
+    "wall_ms_median": 8.735913999771583,
+    "wall_ms_min": 8.157113999914145
   },
   "px.exp.brain.bench.stats.kendall.py.n=200": {
     "backend": "py",
@@ -244,8 +244,8 @@
     "inputs_sha256": "35156f021b6dc9417e22923996e2de1929da5e0eba2c863165d0b33ae136790b",
     "n": 5,
     "size": "n=200",
-    "wall_ms_median": 2.9258640006446512,
-    "wall_ms_min": 2.8497200000856537
+    "wall_ms_median": 4.728193000119063,
+    "wall_ms_min": 4.695153000284336
   },
   "px.exp.brain.bench.stats.kendall.py.n=800": {
     "backend": "py",
@@ -254,8 +254,48 @@
     "inputs_sha256": "75811c93d0469bd8d0bb6b6d0a382c4623673d152f06d792f6355791a0cb3b43",
     "n": 5,
     "size": "n=800",
-    "wall_ms_median": 45.34495900043112,
-    "wall_ms_min": 44.80012699968938
+    "wall_ms_median": 48.0155029999878,
+    "wall_ms_min": 44.340370999634615
+  },
+  "px.exp.brain.bench.stats.ks_2samp.py.n=1000": {
+    "backend": "py",
+    "calc": "ks_2samp",
+    "for": "how long fn.brain.stats.ks_2samp takes on its py backend at n=1000",
+    "inputs_sha256": "765c6d357f7887411c16df0733243b9ceb433afb9acfaac19b1548e0e33e0535",
+    "n": 5,
+    "size": "n=1000",
+    "wall_ms_median": 0.33341700054734247,
+    "wall_ms_min": 0.3176380005243118
+  },
+  "px.exp.brain.bench.stats.ks_2samp.py.n=400": {
+    "backend": "py",
+    "calc": "ks_2samp",
+    "for": "how long fn.brain.stats.ks_2samp takes on its py backend at n=400",
+    "inputs_sha256": "6b4a89d5f086c105dbdc7bc7d8f6f6aac4bdcd320563e9b0a984e079a7d52141",
+    "n": 5,
+    "size": "n=400",
+    "wall_ms_median": 0.18871399970521452,
+    "wall_ms_min": 0.16862800021044677
+  },
+  "px.exp.brain.bench.stats.ks_2samp.sp.n=1000": {
+    "backend": "sp",
+    "calc": "ks_2samp",
+    "for": "how long fn.brain.stats.ks_2samp takes on its sp backend at n=1000",
+    "inputs_sha256": "765c6d357f7887411c16df0733243b9ceb433afb9acfaac19b1548e0e33e0535",
+    "n": 5,
+    "size": "n=1000",
+    "wall_ms_median": 0.8185550004782272,
+    "wall_ms_min": 0.8002559998203651
+  },
+  "px.exp.brain.bench.stats.ks_2samp.sp.n=400": {
+    "backend": "sp",
+    "calc": "ks_2samp",
+    "for": "how long fn.brain.stats.ks_2samp takes on its sp backend at n=400",
+    "inputs_sha256": "6b4a89d5f086c105dbdc7bc7d8f6f6aac4bdcd320563e9b0a984e079a7d52141",
+    "n": 5,
+    "size": "n=400",
+    "wall_ms_median": 0.6581870002264623,
+    "wall_ms_min": 0.5976209995424142
   },
   "px.exp.brain.bench.stats.kurtosis.np.n=1000": {
     "backend": "np",
@@ -264,8 +304,8 @@
     "inputs_sha256": "b37ba169485a38d5529a77d94aa983a085d54dec45aad57b833668092bbf27a0",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.16526600029465044,
-    "wall_ms_min": 0.15283199991245056
+    "wall_ms_median": 0.12875599986728048,
+    "wall_ms_min": 0.12381900069158291
   },
   "px.exp.brain.bench.stats.kurtosis.np.n=100000": {
     "backend": "np",
@@ -274,8 +314,8 @@
     "inputs_sha256": "7b3eec67208c3606f04b05ca0720d8bfaf34869609875589d10e1f84b26af1a6",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 14.966947000175423,
-    "wall_ms_min": 14.063843000258203
+    "wall_ms_median": 12.129182000535366,
+    "wall_ms_min": 11.911309000424808
   },
   "px.exp.brain.bench.stats.kurtosis.py.n=1000": {
     "backend": "py",
@@ -284,8 +324,8 @@
     "inputs_sha256": "b37ba169485a38d5529a77d94aa983a085d54dec45aad57b833668092bbf27a0",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.20284499987610616,
-    "wall_ms_min": 0.179287999344524
+    "wall_ms_median": 0.19018100010725902,
+    "wall_ms_min": 0.17930899957718793
   },
   "px.exp.brain.bench.stats.kurtosis.py.n=100000": {
     "backend": "py",
@@ -294,8 +334,8 @@
     "inputs_sha256": "7b3eec67208c3606f04b05ca0720d8bfaf34869609875589d10e1f84b26af1a6",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 20.3072490003251,
-    "wall_ms_min": 18.39602600011858
+    "wall_ms_median": 18.70631899964792,
+    "wall_ms_min": 18.58375600022555
   },
   "px.exp.brain.bench.stats.mannwhitneyu.py.n=4000": {
     "backend": "py",
@@ -304,8 +344,8 @@
     "inputs_sha256": "69e71c2671ad0bb3eb49b177d6a39c62ab1505c834b87cd2e591fdb7bb89143c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 4.065399999490182,
-    "wall_ms_min": 3.9425529994332464
+    "wall_ms_median": 4.0955820004455745,
+    "wall_ms_min": 4.00021099994774
   },
   "px.exp.brain.bench.stats.mannwhitneyu.py.n=600": {
     "backend": "py",
@@ -314,8 +354,8 @@
     "inputs_sha256": "dac5d45b6bf2c32afdc20317700dfcf30994618880080bd25585990722ac3587",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.6187549997775932,
-    "wall_ms_min": 0.59728499945777
+    "wall_ms_median": 0.6125680001787259,
+    "wall_ms_min": 0.5816029997731675
   },
   "px.exp.brain.bench.stats.mannwhitneyu.sp.n=4000": {
     "backend": "sp",
@@ -324,8 +364,8 @@
     "inputs_sha256": "69e71c2671ad0bb3eb49b177d6a39c62ab1505c834b87cd2e591fdb7bb89143c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.7582139998921775,
-    "wall_ms_min": 1.7461649995311745
+    "wall_ms_median": 1.7847179997261264,
+    "wall_ms_min": 1.7134409999925992
   },
   "px.exp.brain.bench.stats.mannwhitneyu.sp.n=600": {
     "backend": "sp",
@@ -334,8 +374,8 @@
     "inputs_sha256": "dac5d45b6bf2c32afdc20317700dfcf30994618880080bd25585990722ac3587",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.7340000001931912,
-    "wall_ms_min": 0.7061650003379327
+    "wall_ms_median": 0.745359000575263,
+    "wall_ms_min": 0.7138040000427281
   },
   "px.exp.brain.bench.stats.mean.np.n=1000": {
     "backend": "np",
@@ -344,8 +384,8 @@
     "inputs_sha256": "390f7d7a865ea75d2a0f54e46ae11ebd838d986feec1919e4ee6dd3a20768a92",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.04995200015400769,
-    "wall_ms_min": 0.048766999498184305
+    "wall_ms_median": 0.05265399977361085,
+    "wall_ms_min": 0.04790799994225381
   },
   "px.exp.brain.bench.stats.mean.np.n=100000": {
     "backend": "np",
@@ -354,8 +394,8 @@
     "inputs_sha256": "22495d9277dcc0851641329235c5fa52a06ec8ab8a6a5099ab377c563c733423",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 4.6972399995866,
-    "wall_ms_min": 4.631986999811488
+    "wall_ms_median": 4.700469999988854,
+    "wall_ms_min": 4.6339110003827955
   },
   "px.exp.brain.bench.stats.mean.py.n=1000": {
     "backend": "py",
@@ -364,8 +404,8 @@
     "inputs_sha256": "390f7d7a865ea75d2a0f54e46ae11ebd838d986feec1919e4ee6dd3a20768a92",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.03840499994112179,
-    "wall_ms_min": 0.03705600011016941
+    "wall_ms_median": 0.036704000194731634,
+    "wall_ms_min": 0.0353599998561549
   },
   "px.exp.brain.bench.stats.mean.py.n=100000": {
     "backend": "py",
@@ -374,8 +414,8 @@
     "inputs_sha256": "22495d9277dcc0851641329235c5fa52a06ec8ab8a6a5099ab377c563c733423",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 4.290595000384201,
-    "wall_ms_min": 4.20133299940062
+    "wall_ms_median": 4.174673000306939,
+    "wall_ms_min": 4.114452000067104
   },
   "px.exp.brain.bench.stats.median.np.n=1000": {
     "backend": "np",
@@ -384,8 +424,8 @@
     "inputs_sha256": "066b5a80e63a4252fe27aac372a5858e564ddfd14035fea19b6e4d1815e9c6c2",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.09766799939825432,
-    "wall_ms_min": 0.06647100053669419
+    "wall_ms_median": 0.07150900000851834,
+    "wall_ms_min": 0.06286899952101521
   },
   "px.exp.brain.bench.stats.median.np.n=100000": {
     "backend": "np",
@@ -394,8 +434,8 @@
     "inputs_sha256": "a10e560ce4cb4bfe688cb549b30b9bf57fe1c184a9efed56f07d0d907bc4d63b",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 6.316526999398775,
-    "wall_ms_min": 6.280600000536651
+    "wall_ms_median": 5.968954999843845,
+    "wall_ms_min": 5.872005999663088
   },
   "px.exp.brain.bench.stats.median.py.n=1000": {
     "backend": "py",
@@ -404,8 +444,8 @@
     "inputs_sha256": "066b5a80e63a4252fe27aac372a5858e564ddfd14035fea19b6e4d1815e9c6c2",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.09053599933395162,
-    "wall_ms_min": 0.0732890002836939
+    "wall_ms_median": 0.09682900054031052,
+    "wall_ms_min": 0.07485500009352108
   },
   "px.exp.brain.bench.stats.median.py.n=100000": {
     "backend": "py",
@@ -414,8 +454,8 @@
     "inputs_sha256": "a10e560ce4cb4bfe688cb549b30b9bf57fe1c184a9efed56f07d0d907bc4d63b",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 20.363399000416393,
-    "wall_ms_min": 20.221191000018734
+    "wall_ms_median": 20.264454000425758,
+    "wall_ms_min": 20.19365799969819
   },
   "px.exp.brain.bench.stats.ols_lstsq.np.n=2000": {
     "backend": "np",
@@ -424,8 +464,8 @@
     "inputs_sha256": "28ca9ba18909f904ce0491574fb69cc80ca732370e2bc72395059dd01d99492f",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 2.869893999559281,
-    "wall_ms_min": 2.774075000161247
+    "wall_ms_median": 2.871222000067064,
+    "wall_ms_min": 2.749267999206495
   },
   "px.exp.brain.bench.stats.ols_lstsq.np.n=300": {
     "backend": "np",
@@ -434,8 +474,8 @@
     "inputs_sha256": "dbf76979c1dd3cf5d88a32f153e2a70eee5c4f0e16eb168d8a3ec440f6538c34",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.5083829992145183,
-    "wall_ms_min": 0.4746900003738119
+    "wall_ms_median": 0.5118409999340656,
+    "wall_ms_min": 0.4637969996110769
   },
   "px.exp.brain.bench.stats.ols_normal.py.n=2000": {
     "backend": "py",
@@ -444,8 +484,8 @@
     "inputs_sha256": "f3ccbd6a41a9951ce59dca5e8c25f4cb9aa3ee30f211c26f3591aef58eebee37",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 4.5840069997211685,
-    "wall_ms_min": 4.504981000536645
+    "wall_ms_median": 4.712884000582562,
+    "wall_ms_min": 4.602464000527107
   },
   "px.exp.brain.bench.stats.ols_normal.py.n=300": {
     "backend": "py",
@@ -454,8 +494,8 @@
     "inputs_sha256": "a0f0ff52af7b946b3a83eff2183e7190f8e98c930fdd7da49c081aeee66f19b2",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.7513569998991443,
-    "wall_ms_min": 0.7207819999166531
+    "wall_ms_median": 0.7428600001730956,
+    "wall_ms_min": 0.7266689999596565
   },
   "px.exp.brain.bench.stats.ols_qr.py.n=2000": {
     "backend": "py",
@@ -464,8 +504,8 @@
     "inputs_sha256": "5a7b56d799b3c84bb881491564bb48b20d87ed04c1c20d75d9053283b0b2bc8a",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 7.840332999876409,
-    "wall_ms_min": 7.673627000258421
+    "wall_ms_median": 7.9652479998912895,
+    "wall_ms_min": 7.678008000766567
   },
   "px.exp.brain.bench.stats.ols_qr.py.n=300": {
     "backend": "py",
@@ -474,8 +514,8 @@
     "inputs_sha256": "085743c01299926d396fcb112b7f08ff9f9ca9ca7a619763e85db17e447f483e",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 1.2152330000390066,
-    "wall_ms_min": 1.1801090004155412
+    "wall_ms_median": 1.220784999532043,
+    "wall_ms_min": 1.2045450002915459
   },
   "px.exp.brain.bench.stats.pdf.py.chi2_n=1000": {
     "backend": "py",
@@ -484,8 +524,8 @@
     "inputs_sha256": "bedbc080eb1248efd958d38c73f69e80d67a26a581b13198de963407d29ff583",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 0.11209999956918182,
-    "wall_ms_min": 0.10457999997015577
+    "wall_ms_median": 0.10531599946261849,
+    "wall_ms_min": 0.1004209998427541
   },
   "px.exp.brain.bench.stats.pdf.py.chi2_n=4000": {
     "backend": "py",
@@ -494,8 +534,8 @@
     "inputs_sha256": "48c3d98d59f2e2ab026d7b8c046b54d70a30a5167ba9ea8e99cc589f3b1181a0",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 1.081981000425003,
-    "wall_ms_min": 1.0719279998738784
+    "wall_ms_median": 0.996659999145777,
+    "wall_ms_min": 0.9868530005405773
   },
   "px.exp.brain.bench.stats.pdf.py.normal_n=1000": {
     "backend": "py",
@@ -504,8 +544,8 @@
     "inputs_sha256": "1b5aff9af7a8bc358b284353dde5d91d7b370885be098355bb01345cd013f495",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 0.20202799987600883,
-    "wall_ms_min": 0.19872800021403236
+    "wall_ms_median": 0.21374999960244168,
+    "wall_ms_min": 0.19608700040407712
   },
   "px.exp.brain.bench.stats.pdf.py.normal_n=4000": {
     "backend": "py",
@@ -514,8 +554,8 @@
     "inputs_sha256": "24310172af5c375d2325d75617be21666040f75d24ecf44a983ed100d4814740",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 0.7943800001157797,
-    "wall_ms_min": 0.7839370000510826
+    "wall_ms_median": 0.7880150005803443,
+    "wall_ms_min": 0.7651050000276882
   },
   "px.exp.brain.bench.stats.pdf.py.t_n=1000": {
     "backend": "py",
@@ -524,8 +564,8 @@
     "inputs_sha256": "f6cef0cdabe08af64d4c8813e2d82b4270abb66284231908e75e41eca9913b61",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 0.4134739992878167,
-    "wall_ms_min": 0.39144899983512005
+    "wall_ms_median": 0.41745599992282223,
+    "wall_ms_min": 0.37738599985459587
   },
   "px.exp.brain.bench.stats.pdf.py.t_n=4000": {
     "backend": "py",
@@ -534,8 +574,8 @@
     "inputs_sha256": "1ec46953a6435bde9139d3daa6f091f9e6dfa2c0ca517b4e6b7c676fafd86e71",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 1.5964539998094551,
-    "wall_ms_min": 1.5790480001669494
+    "wall_ms_median": 1.55748199995287,
+    "wall_ms_min": 1.548377000290202
   },
   "px.exp.brain.bench.stats.pdf.sp.chi2_n=1000": {
     "backend": "sp",
@@ -544,8 +584,8 @@
     "inputs_sha256": "bedbc080eb1248efd958d38c73f69e80d67a26a581b13198de963407d29ff583",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 19.457241999589314,
-    "wall_ms_min": 18.34164400042937
+    "wall_ms_median": 18.555014000412484,
+    "wall_ms_min": 18.271187999744143
   },
   "px.exp.brain.bench.stats.pdf.sp.chi2_n=4000": {
     "backend": "sp",
@@ -554,8 +594,8 @@
     "inputs_sha256": "48c3d98d59f2e2ab026d7b8c046b54d70a30a5167ba9ea8e99cc589f3b1181a0",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 140.8922579994396,
-    "wall_ms_min": 131.48791000003257
+    "wall_ms_median": 138.25100700069015,
+    "wall_ms_min": 135.76966500022536
   },
   "px.exp.brain.bench.stats.pdf.sp.normal_n=1000": {
     "backend": "sp",
@@ -564,8 +604,8 @@
     "inputs_sha256": "1b5aff9af7a8bc358b284353dde5d91d7b370885be098355bb01345cd013f495",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 41.017802999704145,
-    "wall_ms_min": 40.68521099998179
+    "wall_ms_median": 40.93246699994779,
+    "wall_ms_min": 40.69773700030055
   },
   "px.exp.brain.bench.stats.pdf.sp.normal_n=4000": {
     "backend": "sp",
@@ -574,8 +614,8 @@
     "inputs_sha256": "24310172af5c375d2325d75617be21666040f75d24ecf44a983ed100d4814740",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 162.95675599940296,
-    "wall_ms_min": 162.36634299912112
+    "wall_ms_median": 165.02633099935338,
+    "wall_ms_min": 160.84578499976487
   },
   "px.exp.brain.bench.stats.pdf.sp.t_n=1000": {
     "backend": "sp",
@@ -584,8 +624,8 @@
     "inputs_sha256": "f6cef0cdabe08af64d4c8813e2d82b4270abb66284231908e75e41eca9913b61",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 110.45251700033987,
-    "wall_ms_min": 109.10457699992548
+    "wall_ms_median": 112.21664999993664,
+    "wall_ms_min": 111.1839940003847
   },
   "px.exp.brain.bench.stats.pdf.sp.t_n=4000": {
     "backend": "sp",
@@ -594,8 +634,8 @@
     "inputs_sha256": "1ec46953a6435bde9139d3daa6f091f9e6dfa2c0ca517b4e6b7c676fafd86e71",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 439.8454660004063,
-    "wall_ms_min": 437.2332410002855
+    "wall_ms_median": 443.9469589997316,
+    "wall_ms_min": 440.3914470003656
   },
   "px.exp.brain.bench.stats.pearson.np.n=1000": {
     "backend": "np",
@@ -604,8 +644,8 @@
     "inputs_sha256": "27ee3bc04fdd480833bda2a94460b5f781c61bf3f948ba9c80ee69bf4044462d",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.1475769995522569,
-    "wall_ms_min": 0.10229700001218589
+    "wall_ms_median": 0.11635000009846408,
+    "wall_ms_min": 0.10199900043517118
   },
   "px.exp.brain.bench.stats.pearson.np.n=50000": {
     "backend": "np",
@@ -614,8 +654,8 @@
     "inputs_sha256": "3c89feb89941582d144a08ae359ba396d188d4db92a977c8f9be7154b752fe7c",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 5.209988000387966,
-    "wall_ms_min": 5.044777999501093
+    "wall_ms_median": 5.303484000251046,
+    "wall_ms_min": 5.207074999816541
   },
   "px.exp.brain.bench.stats.pearson.py.n=1000": {
     "backend": "py",
@@ -624,8 +664,8 @@
     "inputs_sha256": "27ee3bc04fdd480833bda2a94460b5f781c61bf3f948ba9c80ee69bf4044462d",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.36555099995894125,
-    "wall_ms_min": 0.3466770003797137
+    "wall_ms_median": 0.3720280001289211,
+    "wall_ms_min": 0.3570379994926043
   },
   "px.exp.brain.bench.stats.pearson.py.n=50000": {
     "backend": "py",
@@ -634,8 +674,8 @@
     "inputs_sha256": "3c89feb89941582d144a08ae359ba396d188d4db92a977c8f9be7154b752fe7c",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 19.915399999263173,
-    "wall_ms_min": 19.670055999995384
+    "wall_ms_median": 20.022482999593194,
+    "wall_ms_min": 19.69281299989234
   },
   "px.exp.brain.bench.stats.quantile.np.n=1000": {
     "backend": "np",
@@ -644,8 +684,8 @@
     "inputs_sha256": "d77ebb0cd283e34e476f79f45f3b3258362d72d91af155181301739a2335cf80",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.11378699946362758,
-    "wall_ms_min": 0.09566900007484946
+    "wall_ms_median": 0.13536299957195297,
+    "wall_ms_min": 0.09837099969445262
   },
   "px.exp.brain.bench.stats.quantile.np.n=100000": {
     "backend": "np",
@@ -654,8 +694,8 @@
     "inputs_sha256": "969cf08c7cfe60c7dbfb893d46f69f366d3ceff215390be277c44b5877b0fa16",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 6.957724000130838,
-    "wall_ms_min": 6.890861000101722
+    "wall_ms_median": 6.925327000317338,
+    "wall_ms_min": 6.8408460001592175
   },
   "px.exp.brain.bench.stats.quantile.py.n=1000": {
     "backend": "py",
@@ -664,8 +704,8 @@
     "inputs_sha256": "d77ebb0cd283e34e476f79f45f3b3258362d72d91af155181301739a2335cf80",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.08906900075089652,
-    "wall_ms_min": 0.0763910002206103
+    "wall_ms_median": 0.09855400003289105,
+    "wall_ms_min": 0.07577199994557304
   },
   "px.exp.brain.bench.stats.quantile.py.n=100000": {
     "backend": "py",
@@ -674,8 +714,8 @@
     "inputs_sha256": "969cf08c7cfe60c7dbfb893d46f69f366d3ceff215390be277c44b5877b0fa16",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 20.31452499977604,
-    "wall_ms_min": 20.21946799959551
+    "wall_ms_median": 20.362758999908692,
+    "wall_ms_min": 20.232205000866088
   },
   "px.exp.brain.bench.stats.ridge.np.n=2000": {
     "backend": "np",
@@ -684,8 +724,8 @@
     "inputs_sha256": "b45fb263fa7cb388b4a70746ac41eede5c72c492f2ea537dea3697e1c877134d",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 2.709342000343895,
-    "wall_ms_min": 2.677220999430574
+    "wall_ms_median": 2.7285779997328063,
+    "wall_ms_min": 2.6853130002564285
   },
   "px.exp.brain.bench.stats.ridge.np.n=300": {
     "backend": "np",
@@ -694,8 +734,8 @@
     "inputs_sha256": "20c58cd70444eb8fa760b8f6cf5b58c9eac664a5889a6826e6608e4125834274",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.42752399986056844,
-    "wall_ms_min": 0.42140299956372473
+    "wall_ms_median": 0.42819700047402875,
+    "wall_ms_min": 0.4075090000696946
   },
   "px.exp.brain.bench.stats.ridge.py.n=2000": {
     "backend": "py",
@@ -704,8 +744,8 @@
     "inputs_sha256": "b45fb263fa7cb388b4a70746ac41eede5c72c492f2ea537dea3697e1c877134d",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 4.652131000511872,
-    "wall_ms_min": 4.635668999981135
+    "wall_ms_median": 4.672977999689465,
+    "wall_ms_min": 4.623505999916233
   },
   "px.exp.brain.bench.stats.ridge.py.n=300": {
     "backend": "py",
@@ -714,8 +754,8 @@
     "inputs_sha256": "20c58cd70444eb8fa760b8f6cf5b58c9eac664a5889a6826e6608e4125834274",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.7143689999793423,
-    "wall_ms_min": 0.7032100002106745
+    "wall_ms_median": 0.7415360005325056,
+    "wall_ms_min": 0.6929399996806751
   },
   "px.exp.brain.bench.stats.shapiro.py.n=4000": {
     "backend": "py",
@@ -724,8 +764,8 @@
     "inputs_sha256": "5d4c89011007d87c5ea16f1a3d925ec86cfef3813c7a189e3f03654b929969d2",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 5.843047999405826,
-    "wall_ms_min": 5.565368000134185
+    "wall_ms_median": 5.892301999665506,
+    "wall_ms_min": 5.80032800007757
   },
   "px.exp.brain.bench.stats.shapiro.py.n=600": {
     "backend": "py",
@@ -734,8 +774,8 @@
     "inputs_sha256": "83ffdcbf1d0253294ec002e7e36baad40435484a45c6315649e3e436814e3678",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.8360830006495235,
-    "wall_ms_min": 0.8007200003703474
+    "wall_ms_median": 0.8494749999954365,
+    "wall_ms_min": 0.8350120006070938
   },
   "px.exp.brain.bench.stats.shapiro.sp.n=4000": {
     "backend": "sp",
@@ -744,8 +784,8 @@
     "inputs_sha256": "5d4c89011007d87c5ea16f1a3d925ec86cfef3813c7a189e3f03654b929969d2",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 0.35926600048696855,
-    "wall_ms_min": 0.341328000104113
+    "wall_ms_median": 0.3504699998302385,
+    "wall_ms_min": 0.3353020001668483
   },
   "px.exp.brain.bench.stats.shapiro.sp.n=600": {
     "backend": "sp",
@@ -754,8 +794,8 @@
     "inputs_sha256": "83ffdcbf1d0253294ec002e7e36baad40435484a45c6315649e3e436814e3678",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.15146999976423103,
-    "wall_ms_min": 0.13210300039645517
+    "wall_ms_median": 0.1442909997422248,
+    "wall_ms_min": 0.13569100065069506
   },
   "px.exp.brain.bench.stats.skewness.np.n=1000": {
     "backend": "np",
@@ -764,8 +804,8 @@
     "inputs_sha256": "5ca90ef838e496f7de751353258891ec607dc4ddef58bfa276d631805f2a41ed",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.13444699925457826,
-    "wall_ms_min": 0.12289500045881141
+    "wall_ms_median": 0.12170899935881607,
+    "wall_ms_min": 0.12086900005670032
   },
   "px.exp.brain.bench.stats.skewness.np.n=100000": {
     "backend": "np",
@@ -774,8 +814,8 @@
     "inputs_sha256": "78a5cf484fda7da6c429e4de0e1a7aab725a4c62885c164585ffb1284b15095e",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 12.048503000187338,
-    "wall_ms_min": 11.913100000128907
+    "wall_ms_median": 12.109533000511874,
+    "wall_ms_min": 12.00609399984387
   },
   "px.exp.brain.bench.stats.skewness.py.n=1000": {
     "backend": "py",
@@ -784,8 +824,8 @@
     "inputs_sha256": "5ca90ef838e496f7de751353258891ec607dc4ddef58bfa276d631805f2a41ed",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.1822499998525018,
-    "wall_ms_min": 0.17792800008464837
+    "wall_ms_median": 0.18359000023338012,
+    "wall_ms_min": 0.17475999993621372
   },
   "px.exp.brain.bench.stats.skewness.py.n=100000": {
     "backend": "py",
@@ -794,8 +834,8 @@
     "inputs_sha256": "78a5cf484fda7da6c429e4de0e1a7aab725a4c62885c164585ffb1284b15095e",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 18.687443000089843,
-    "wall_ms_min": 18.533845999627374
+    "wall_ms_median": 18.637526000020443,
+    "wall_ms_min": 18.569858999399003
   },
   "px.exp.brain.bench.stats.spearman.np.n=1000": {
     "backend": "np",
@@ -804,8 +844,8 @@
     "inputs_sha256": "174e28fd0e0f0f21236f41e1886ddd8b2cbd746412a627969430f54895c88277",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 1.0889589993894333,
-    "wall_ms_min": 0.9929970001394395
+    "wall_ms_median": 1.018527000269387,
+    "wall_ms_min": 0.9793210001589614
   },
   "px.exp.brain.bench.stats.spearman.np.n=50000": {
     "backend": "np",
@@ -814,8 +854,8 @@
     "inputs_sha256": "5793038bea47e6c9a6c88f646f717607bfa606d63cb995a10f64c7cd15cc0153",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 69.50932299969281,
-    "wall_ms_min": 69.11158299953968
+    "wall_ms_median": 69.49977299973398,
+    "wall_ms_min": 66.93794399961916
   },
   "px.exp.brain.bench.stats.spearman.py.n=1000": {
     "backend": "py",
@@ -824,8 +864,8 @@
     "inputs_sha256": "174e28fd0e0f0f21236f41e1886ddd8b2cbd746412a627969430f54895c88277",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 1.149731000623433,
-    "wall_ms_min": 1.1228630000914563
+    "wall_ms_median": 1.1526509997565881,
+    "wall_ms_min": 1.1366409999027383
   },
   "px.exp.brain.bench.stats.spearman.py.n=50000": {
     "backend": "py",
@@ -834,8 +874,8 @@
     "inputs_sha256": "5793038bea47e6c9a6c88f646f717607bfa606d63cb995a10f64c7cd15cc0153",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 80.42622099947039,
-    "wall_ms_min": 78.81697100037854
+    "wall_ms_median": 77.99834800061944,
+    "wall_ms_min": 77.63075599996228
   },
   "px.exp.brain.bench.stats.ttest_ind.py.n=4000": {
     "backend": "py",
@@ -844,8 +884,8 @@
     "inputs_sha256": "23a49362a8d90433822c7b0b8d8838686042e3c80dff9ce228d7f578bc2d32be",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.2235980002515134,
-    "wall_ms_min": 1.214371000060055
+    "wall_ms_median": 1.2470559995563235,
+    "wall_ms_min": 1.2237890005053487
   },
   "px.exp.brain.bench.stats.ttest_ind.py.n=600": {
     "backend": "py",
@@ -854,8 +894,8 @@
     "inputs_sha256": "5fd89c925f4a8b83ef604ce9807e171d6073b7bb574acbf9b1386224daa0dab8",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.20859500000369735,
-    "wall_ms_min": 0.1920910008266219
+    "wall_ms_median": 0.2058849995592027,
+    "wall_ms_min": 0.19031499959965004
   },
   "px.exp.brain.bench.stats.ttest_ind.sp.n=4000": {
     "backend": "sp",
@@ -864,8 +904,8 @@
     "inputs_sha256": "23a49362a8d90433822c7b0b8d8838686042e3c80dff9ce228d7f578bc2d32be",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.063181999597873,
-    "wall_ms_min": 1.0244499999316758
+    "wall_ms_median": 1.0859100002562627,
+    "wall_ms_min": 0.9916320004776935
   },
   "px.exp.brain.bench.stats.ttest_ind.sp.n=600": {
     "backend": "sp",
@@ -874,8 +914,8 @@
     "inputs_sha256": "5fd89c925f4a8b83ef604ce9807e171d6073b7bb574acbf9b1386224daa0dab8",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.7190520000222023,
-    "wall_ms_min": 0.6534479998663301
+    "wall_ms_median": 0.7251610004459508,
+    "wall_ms_min": 0.6770859999960521
   },
   "px.exp.brain.bench.stats.variance.np.n=1000": {
     "backend": "np",
@@ -884,8 +924,8 @@
     "inputs_sha256": "c854e952287e5c82e52d62948240019c3366e83dc954eaf4910ccb968c973f7b",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.05718600004911423,
-    "wall_ms_min": 0.05532399973162683
+    "wall_ms_median": 0.06878600015625125,
+    "wall_ms_min": 0.05387600049289176
   },
   "px.exp.brain.bench.stats.variance.np.n=100000": {
     "backend": "np",
@@ -894,8 +934,8 @@
     "inputs_sha256": "7daf5185e2e697edde3b9fa5c45cb517f08168e687900c695598e75eaadb011f",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 5.1147949998266995,
-    "wall_ms_min": 4.912442999739142
+    "wall_ms_median": 4.985481999938202,
+    "wall_ms_min": 4.875574999459786
   },
   "px.exp.brain.bench.stats.variance.py.n=1000": {
     "backend": "py",
@@ -904,8 +944,8 @@
     "inputs_sha256": "c854e952287e5c82e52d62948240019c3366e83dc954eaf4910ccb968c973f7b",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.14985000052547548,
-    "wall_ms_min": 0.1302149994444335
+    "wall_ms_median": 0.15670799984945916,
+    "wall_ms_min": 0.1354830001218943
   },
   "px.exp.brain.bench.stats.variance.py.n=100000": {
     "backend": "py",
@@ -914,8 +954,48 @@
     "inputs_sha256": "7daf5185e2e697edde3b9fa5c45cb517f08168e687900c695598e75eaadb011f",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 15.932766000332776,
-    "wall_ms_min": 15.918012999463826
+    "wall_ms_median": 15.939570000227832,
+    "wall_ms_min": 15.683317999901192
+  },
+  "px.exp.brain.bench.stats.wilcoxon.py.n=1000": {
+    "backend": "py",
+    "calc": "wilcoxon",
+    "for": "how long fn.brain.stats.wilcoxon takes on its py backend at n=1000",
+    "inputs_sha256": "cbd10219123702cedb73fb5f8bd59f848cdbb7db5f377431d12d6ecb5274c75e",
+    "n": 5,
+    "size": "n=1000",
+    "wall_ms_median": 0.6128770000941586,
+    "wall_ms_min": 0.5788349999420461
+  },
+  "px.exp.brain.bench.stats.wilcoxon.py.n=400": {
+    "backend": "py",
+    "calc": "wilcoxon",
+    "for": "how long fn.brain.stats.wilcoxon takes on its py backend at n=400",
+    "inputs_sha256": "10c17aec429ddbb2d37d255adf7adc194a53f81c024890b9d0e9fe7c2300d9fb",
+    "n": 5,
+    "size": "n=400",
+    "wall_ms_median": 0.2542180000091321,
+    "wall_ms_min": 0.2391460002399981
+  },
+  "px.exp.brain.bench.stats.wilcoxon.sp.n=1000": {
+    "backend": "sp",
+    "calc": "wilcoxon",
+    "for": "how long fn.brain.stats.wilcoxon takes on its sp backend at n=1000",
+    "inputs_sha256": "cbd10219123702cedb73fb5f8bd59f848cdbb7db5f377431d12d6ecb5274c75e",
+    "n": 5,
+    "size": "n=1000",
+    "wall_ms_median": 0.6399149997378117,
+    "wall_ms_min": 0.5925550003667013
+  },
+  "px.exp.brain.bench.stats.wilcoxon.sp.n=400": {
+    "backend": "sp",
+    "calc": "wilcoxon",
+    "for": "how long fn.brain.stats.wilcoxon takes on its sp backend at n=400",
+    "inputs_sha256": "10c17aec429ddbb2d37d255adf7adc194a53f81c024890b9d0e9fe7c2300d9fb",
+    "n": 5,
+    "size": "n=400",
+    "wall_ms_median": 0.5064750002929941,
+    "wall_ms_min": 0.4526089996943483
   },
   "px.exp.brain.bracket.stats.ols_solver": {
     "candidates": [
@@ -969,34 +1049,34 @@
       {
         "candidate": "normal",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (4.5840 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 2.752e-06), solver body 8 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (4.7129 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 2.752e-06), solver body 8 lines",
         "scores": {
           "clarity": 8.0,
           "conditioning": 2.7518603781192867e-06,
           "correctness": 1.0,
-          "speed": 4.5840069997211685
+          "speed": 4.712884000582562
         }
       },
       {
         "candidate": "qr",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (7.8403 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 7.666e-15), solver body 17 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (7.9652 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 7.666e-15), solver body 17 lines",
         "scores": {
           "clarity": 17.0,
           "conditioning": 7.666382148990534e-15,
           "correctness": 1.0,
-          "speed": 7.840332999876409
+          "speed": 7.9652479998912895
         }
       },
       {
         "candidate": "lstsq",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the np backend (2.8699 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 1.332e-16), solver body 14 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the np backend (2.8712 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 1.332e-16), solver body 14 lines",
         "scores": {
           "clarity": 14.0,
           "conditioning": 1.3321599116074254e-16,
           "correctness": 1.0,
-          "speed": 2.869893999559281
+          "speed": 2.871222000067064
         }
       }
     ],
@@ -1017,9 +1097,9 @@
         "qr": 1.0
       },
       "speed": {
-        "lstsq": 2.869893999559281,
-        "normal": 4.5840069997211685,
-        "qr": 7.840332999876409
+        "lstsq": 2.871222000067064,
+        "normal": 4.712884000582562,
+        "qr": 7.9652479998912895
       }
     },
     "problem": "ols_solver",
@@ -1030,7 +1110,7 @@
     },
     "totals": {
       "lstsq": 6.333333333333333,
-      "normal": 4.655138509887653,
+      "normal": 4.638466313171733,
       "qr": 4.999999994525037
     },
     "winner": "lstsq"
@@ -2185,6 +2265,10 @@
       "px.exp.brain.bench.stats.kendall.np.n=800",
       "px.exp.brain.bench.stats.kendall.py.n=200",
       "px.exp.brain.bench.stats.kendall.py.n=800",
+      "px.exp.brain.bench.stats.ks_2samp.py.n=1000",
+      "px.exp.brain.bench.stats.ks_2samp.py.n=400",
+      "px.exp.brain.bench.stats.ks_2samp.sp.n=1000",
+      "px.exp.brain.bench.stats.ks_2samp.sp.n=400",
       "px.exp.brain.bench.stats.kurtosis.np.n=1000",
       "px.exp.brain.bench.stats.kurtosis.np.n=100000",
       "px.exp.brain.bench.stats.kurtosis.py.n=1000",
@@ -2251,6 +2335,10 @@
       "px.exp.brain.bench.stats.variance.np.n=100000",
       "px.exp.brain.bench.stats.variance.py.n=1000",
       "px.exp.brain.bench.stats.variance.py.n=100000",
+      "px.exp.brain.bench.stats.wilcoxon.py.n=1000",
+      "px.exp.brain.bench.stats.wilcoxon.py.n=400",
+      "px.exp.brain.bench.stats.wilcoxon.sp.n=1000",
+      "px.exp.brain.bench.stats.wilcoxon.sp.n=400",
       "px.exp.brain.bracket.stats.ols_solver",
       "px.exp.brain.data.stats_design80",
       "px.exp.brain.data.stats_groups",
@@ -2302,6 +2390,22 @@
       "px.exp.brain.oracle.stats.kendall.correlation_linear_py",
       "px.exp.brain.oracle.stats.kendall.correlation_ties_np",
       "px.exp.brain.oracle.stats.kendall.correlation_ties_py",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_chi2_null_py",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_chi2_null_sp",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_greater_py",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_greater_sp",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_less_py",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_less_sp",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_two-sided_py",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_two-sided_sp",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_skewed_normal_py",
+      "px.exp.brain.oracle.stats.ks_1samp.nonparametric_skewed_normal_sp",
+      "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_greater_py",
+      "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_greater_sp",
+      "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_less_py",
+      "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_less_sp",
+      "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_two-sided_py",
+      "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_two-sided_sp",
       "px.exp.brain.oracle.stats.kurtosis.descriptive_fisher_biased_np",
       "px.exp.brain.oracle.stats.kurtosis.descriptive_fisher_biased_py",
       "px.exp.brain.oracle.stats.kurtosis.descriptive_fisher_corrected_np",
@@ -2352,6 +2456,12 @@
       "px.exp.brain.oracle.stats.pearson.correlation_curved_py",
       "px.exp.brain.oracle.stats.pearson.correlation_linear_np",
       "px.exp.brain.oracle.stats.pearson.correlation_linear_py",
+      "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_greater_py",
+      "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_greater_sp",
+      "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_less_py",
+      "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_less_sp",
+      "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_two-sided_py",
+      "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_two-sided_sp",
       "px.exp.brain.oracle.stats.ppf.distributions_binomial_ppf_py",
       "px.exp.brain.oracle.stats.ppf.distributions_binomial_ppf_sp",
       "px.exp.brain.oracle.stats.ppf.distributions_chi2_ppf_py",
@@ -2427,6 +2537,20 @@
       "px.exp.brain.oracle.stats.variance.descriptive_population_py",
       "px.exp.brain.oracle.stats.variance.descriptive_sample_np",
       "px.exp.brain.oracle.stats.variance.descriptive_sample_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_paired_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_paired_sp",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_cc_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_cc_sp",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_plain_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_plain_sp",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_cc_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_cc_sp",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_plain_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_plain_sp",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_cc_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_cc_sp",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_plain_py",
+      "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_plain_sp",
       "px.exp.brain.oracle.stats.zscores.descriptive_population_np",
       "px.exp.brain.oracle.stats.zscores.descriptive_population_py",
       "px.exp.brain.result.stats.ci_diff_means.sample_other",
@@ -2442,8 +2566,8 @@
         "what": "weighted and robust least squares on the winning solver (lstsq)"
       },
       {
-        "for": "small-sample work is where the asymptotic p-value is most wrong",
-        "what": "ks and wilcoxon, and an exact (not asymptotic) mann-whitney under n=20"
+        "for": "small-sample work is exactly where an asymptotic p-value is most wrong, and every one of them is now a tail away from a calculation that already exists",
+        "what": "the exact small-sample nulls: kstwo, wilcoxon and mann-whitney under n=20"
       },
       {
         "for": "so a reader can see which Parts rest on a library and which on a second implementation",
@@ -2456,20 +2580,24 @@
     ],
     "stubbed": [
       {
-        "address": "fn.brain.stats.ks_test",
-        "why": "the kolmogorov-smirnov distribution needs its own series; the window closed first"
-      },
-      {
-        "address": "fn.brain.stats.wilcoxon",
-        "why": "the signed-rank test's exact null is a separate combinatorial table; mann-whitney covers the unpaired case today"
-      },
-      {
         "address": "fn.brain.stats.ols_weighted",
         "why": "weighted least squares is the same three solvers with a weight vector; the tournament had to be settled on the unweighted case first"
       },
       {
-        "address": "fn.brain.stats.pearson_p",
-        "why": "the coefficient is here and the t-distribution is here; only the wiring between them is missing"
+        "address": "fn.brain.stats.kstwo_exact",
+        "why": "the EXACT two-sided kolmogorov distribution (what scipy's ks_2samp reaches for at small n) is the marsaglia-tsang-wang matrix power; the limiting tail is here and both backends agree on it, which is the rule that mattered"
+      },
+      {
+        "address": "fn.brain.stats.mannwhitneyu (exact)",
+        "why": "the exact null under n=20 is its own combinatorial table; the asymptotic tail with the tie correction is what is built"
+      },
+      {
+        "address": "fn.brain.stats.wilcoxon (exact)",
+        "why": "same table, same reason: scipy's method='approx' is the one both backends meet"
+      },
+      {
+        "address": "fn.brain.stats.kruskal",
+        "why": "the rank-based one-way anova; f_oneway and mann-whitney cover its two ends"
       }
     ]
   },
@@ -3422,6 +3550,278 @@
     "reference": "scipy.stats.kendalltau",
     "tolerance": 1e-09,
     "worst_relative_error": 1.1102230246251565e-16
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_chi2_null_py": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_chi2_null_py",
+    "expected": {
+      "pvalue": 0.0017365078657926936,
+      "statistic": 0.29683805214320697
+    },
+    "for": "the py backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.0017365078657926936,
+      "statistic": 0.29683805214320697
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_chi2_null_sp": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_chi2_null_sp",
+    "expected": {
+      "pvalue": 0.0017365078657926936,
+      "statistic": 0.29683805214320697
+    },
+    "for": "the sp backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.0017365078657926936,
+      "statistic": 0.29683805214320697
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_greater_py": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_normal_greater_py",
+    "expected": {
+      "pvalue": 0.005378607852160737,
+      "statistic": 0.2503066352236139
+    },
+    "for": "the py backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.005378607852160646,
+      "statistic": 0.25030663522361385
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 9.020562075079397e-17
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_greater_sp": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_normal_greater_sp",
+    "expected": {
+      "pvalue": 0.005378607852160737,
+      "statistic": 0.2503066352236139
+    },
+    "for": "the sp backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.005378607852160737,
+      "statistic": 0.2503066352236139
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_less_py": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_normal_less_py",
+    "expected": {
+      "pvalue": 0.07163164514214859,
+      "statistic": 0.1772561756068659
+    },
+    "for": "the py backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.07163164514214723,
+      "statistic": 0.1772561756068659
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 1.3600232051658168e-15
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_less_sp": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_normal_less_sp",
+    "expected": {
+      "pvalue": 0.07163164514214859,
+      "statistic": 0.1772561756068659
+    },
+    "for": "the sp backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.07163164514214859,
+      "statistic": 0.1772561756068659
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_two-sided_py": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_normal_two-sided_py",
+    "expected": {
+      "pvalue": 0.01331151211963592,
+      "statistic": 0.2503066352236139
+    },
+    "for": "the py backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.013311512119635946,
+      "statistic": 0.25030663522361385
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 5.551115123125783e-17
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_normal_two-sided_sp": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_normal_two-sided_sp",
+    "expected": {
+      "pvalue": 0.01331151211963592,
+      "statistic": 0.2503066352236139
+    },
+    "for": "the sp backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.01331151211963592,
+      "statistic": 0.2503066352236139
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_skewed_normal_py": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_skewed_normal_py",
+    "expected": {
+      "pvalue": 0.009678652987750959,
+      "statistic": 0.30853859473682455
+    },
+    "for": "the py backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.009678652987750933,
+      "statistic": 0.3085385947368246
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 5.551115123125783e-17
+  },
+  "px.exp.brain.oracle.stats.ks_1samp.nonparametric_skewed_normal_sp": {
+    "calc": "ks_1samp",
+    "case": "nonparametric_skewed_normal_sp",
+    "expected": {
+      "pvalue": 0.009678652987750959,
+      "statistic": 0.30853859473682455
+    },
+    "for": "the sp backend of fn.brain.stats.ks_1samp answering to scipy.stats.kstest(..., method='asymp')",
+    "got": {
+      "pvalue": 0.009678652987750959,
+      "statistic": 0.30853859473682455
+    },
+    "pass": true,
+    "reference": "scipy.stats.kstest(..., method='asymp')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_greater_py": {
+    "calc": "ks_2samp",
+    "case": "nonparametric_two_samples_greater_py",
+    "expected": {
+      "pvalue": 0.03338388318013181,
+      "statistic": 0.29117647058823526
+    },
+    "for": "the py backend of fn.brain.stats.ks_2samp answering to scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "got": {
+      "pvalue": 0.03338388318013181,
+      "statistic": 0.29117647058823526
+    },
+    "pass": true,
+    "reference": "scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_greater_sp": {
+    "calc": "ks_2samp",
+    "case": "nonparametric_two_samples_greater_sp",
+    "expected": {
+      "pvalue": 0.03338388318013181,
+      "statistic": 0.29117647058823526
+    },
+    "for": "the sp backend of fn.brain.stats.ks_2samp answering to scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "got": {
+      "pvalue": 0.03338388318013181,
+      "statistic": 0.29117647058823526
+    },
+    "pass": true,
+    "reference": "scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_less_py": {
+    "calc": "ks_2samp",
+    "case": "nonparametric_two_samples_less_py",
+    "expected": {
+      "pvalue": 0.5362196287320836,
+      "statistic": 0.11764705882352941
+    },
+    "for": "the py backend of fn.brain.stats.ks_2samp answering to scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "got": {
+      "pvalue": 0.5362196287320836,
+      "statistic": 0.11764705882352941
+    },
+    "pass": true,
+    "reference": "scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_less_sp": {
+    "calc": "ks_2samp",
+    "case": "nonparametric_two_samples_less_sp",
+    "expected": {
+      "pvalue": 0.5362196287320836,
+      "statistic": 0.11764705882352941
+    },
+    "for": "the sp backend of fn.brain.stats.ks_2samp answering to scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "got": {
+      "pvalue": 0.5362196287320836,
+      "statistic": 0.11764705882352941
+    },
+    "pass": true,
+    "reference": "scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_two-sided_py": {
+    "calc": "ks_2samp",
+    "case": "nonparametric_two_samples_two-sided_py",
+    "expected": {
+      "pvalue": 0.08862732472565277,
+      "statistic": 0.29117647058823526
+    },
+    "for": "the py backend of fn.brain.stats.ks_2samp answering to scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "got": {
+      "pvalue": 0.08862732472565275,
+      "statistic": 0.29117647058823526
+    },
+    "pass": true,
+    "reference": "scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "tolerance": 1e-09,
+    "worst_relative_error": 1.3877787807814457e-17
+  },
+  "px.exp.brain.oracle.stats.ks_2samp.nonparametric_two_samples_two-sided_sp": {
+    "calc": "ks_2samp",
+    "case": "nonparametric_two_samples_two-sided_sp",
+    "expected": {
+      "pvalue": 0.08862732472565277,
+      "statistic": 0.29117647058823526
+    },
+    "for": "the sp backend of fn.brain.stats.ks_2samp answering to scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "got": {
+      "pvalue": 0.08862732472565277,
+      "statistic": 0.29117647058823526
+    },
+    "pass": true,
+    "reference": "scipy.stats.ks_2samp for the statistic, scipy.stats.kstwobign.sf for the two-sided tail",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
   },
   "px.exp.brain.oracle.stats.kurtosis.descriptive_fisher_biased_np": {
     "calc": "kurtosis",
@@ -4915,6 +5315,108 @@
     "tolerance": 1e-09,
     "worst_relative_error": 1.1102230246251565e-16
   },
+  "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_greater_py": {
+    "calc": "pearson_p",
+    "case": "nonparametric_paired_greater_py",
+    "expected": {
+      "pvalue": 0.708776767234435,
+      "r": -0.09772147573835628
+    },
+    "for": "the py backend of fn.brain.stats.pearson_p answering to scipy.stats.pearsonr",
+    "got": {
+      "pvalue": 0.7087767672344361,
+      "r": -0.09772147573835632
+    },
+    "pass": true,
+    "reference": "scipy.stats.pearsonr",
+    "tolerance": 1e-09,
+    "worst_relative_error": 1.1102230246251565e-15
+  },
+  "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_greater_sp": {
+    "calc": "pearson_p",
+    "case": "nonparametric_paired_greater_sp",
+    "expected": {
+      "pvalue": 0.708776767234435,
+      "r": -0.09772147573835628
+    },
+    "for": "the sp backend of fn.brain.stats.pearson_p answering to scipy.stats.pearsonr",
+    "got": {
+      "pvalue": 0.708776767234435,
+      "r": -0.09772147573835628
+    },
+    "pass": true,
+    "reference": "scipy.stats.pearsonr",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_less_py": {
+    "calc": "pearson_p",
+    "case": "nonparametric_paired_less_py",
+    "expected": {
+      "pvalue": 0.2912232327655647,
+      "r": -0.09772147573835628
+    },
+    "for": "the py backend of fn.brain.stats.pearson_p answering to scipy.stats.pearsonr",
+    "got": {
+      "pvalue": 0.291223232765564,
+      "r": -0.09772147573835632
+    },
+    "pass": true,
+    "reference": "scipy.stats.pearsonr",
+    "tolerance": 1e-09,
+    "worst_relative_error": 7.216449660063518e-16
+  },
+  "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_less_sp": {
+    "calc": "pearson_p",
+    "case": "nonparametric_paired_less_sp",
+    "expected": {
+      "pvalue": 0.2912232327655647,
+      "r": -0.09772147573835628
+    },
+    "for": "the sp backend of fn.brain.stats.pearson_p answering to scipy.stats.pearsonr",
+    "got": {
+      "pvalue": 0.2912232327655647,
+      "r": -0.09772147573835628
+    },
+    "pass": true,
+    "reference": "scipy.stats.pearsonr",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_two-sided_py": {
+    "calc": "pearson_p",
+    "case": "nonparametric_paired_two-sided_py",
+    "expected": {
+      "pvalue": 0.5824464655311306,
+      "r": -0.09772147573835628
+    },
+    "for": "the py backend of fn.brain.stats.pearson_p answering to scipy.stats.pearsonr",
+    "got": {
+      "pvalue": 0.582446465531128,
+      "r": -0.09772147573835632
+    },
+    "pass": true,
+    "reference": "scipy.stats.pearsonr",
+    "tolerance": 1e-09,
+    "worst_relative_error": 2.55351295663786e-15
+  },
+  "px.exp.brain.oracle.stats.pearson_p.nonparametric_paired_two-sided_sp": {
+    "calc": "pearson_p",
+    "case": "nonparametric_paired_two-sided_sp",
+    "expected": {
+      "pvalue": 0.5824464655311306,
+      "r": -0.09772147573835628
+    },
+    "for": "the sp backend of fn.brain.stats.pearson_p answering to scipy.stats.pearsonr",
+    "got": {
+      "pvalue": 0.5824464655311306,
+      "r": -0.09772147573835628
+    },
+    "pass": true,
+    "reference": "scipy.stats.pearsonr",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
   "px.exp.brain.oracle.stats.ppf.distributions_binomial_ppf_py": {
     "calc": "ppf",
     "case": "distributions_binomial_ppf_py",
@@ -6301,6 +6803,244 @@
     "reference": "numpy.var",
     "tolerance": 1e-09,
     "worst_relative_error": 1.5186884975121349e-16
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_paired_py": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_paired_py",
+    "expected": {
+      "pvalue": 0.06608077136249058,
+      "statistic": 190.0
+    },
+    "for": "the py backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.06608077136249069,
+      "statistic": 190.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 1.1102230246251565e-16
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_paired_sp": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_paired_sp",
+    "expected": {
+      "pvalue": 0.06608077136249058,
+      "statistic": 190.0
+    },
+    "for": "the sp backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.06608077136249058,
+      "statistic": 190.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_cc_py": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_greater_cc_py",
+    "expected": {
+      "pvalue": 0.634632765958354,
+      "statistic": 445.0
+    },
+    "for": "the py backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.634632765958354,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_cc_sp": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_greater_cc_sp",
+    "expected": {
+      "pvalue": 0.634632765958354,
+      "statistic": 445.0
+    },
+    "for": "the sp backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.634632765958354,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_plain_py": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_greater_plain_py",
+    "expected": {
+      "pvalue": 0.6323602265862894,
+      "statistic": 445.0
+    },
+    "for": "the py backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.6323602265862894,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_greater_plain_sp": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_greater_plain_sp",
+    "expected": {
+      "pvalue": 0.6323602265862894,
+      "statistic": 445.0
+    },
+    "for": "the sp backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.6323602265862894,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_cc_py": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_less_cc_py",
+    "expected": {
+      "pvalue": 0.3699169566981092,
+      "statistic": 445.0
+    },
+    "for": "the py backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.3699169566981092,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_cc_sp": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_less_cc_sp",
+    "expected": {
+      "pvalue": 0.3699169566981092,
+      "statistic": 445.0
+    },
+    "for": "the sp backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.3699169566981092,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_plain_py": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_less_plain_py",
+    "expected": {
+      "pvalue": 0.36763977341371057,
+      "statistic": 445.0
+    },
+    "for": "the py backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.36763977341371057,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_less_plain_sp": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_less_plain_sp",
+    "expected": {
+      "pvalue": 0.36763977341371057,
+      "statistic": 445.0
+    },
+    "for": "the sp backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.36763977341371057,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_cc_py": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_two-sided_cc_py",
+    "expected": {
+      "pvalue": 0.7398339133962184,
+      "statistic": 445.0
+    },
+    "for": "the py backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.7398339133962184,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_cc_sp": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_two-sided_cc_sp",
+    "expected": {
+      "pvalue": 0.7398339133962184,
+      "statistic": 445.0
+    },
+    "for": "the sp backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.7398339133962184,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_plain_py": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_two-sided_plain_py",
+    "expected": {
+      "pvalue": 0.7352795468274211,
+      "statistic": 445.0
+    },
+    "for": "the py backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.7352795468274211,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_plain_sp": {
+    "calc": "wilcoxon",
+    "case": "nonparametric_signed_rank_two-sided_plain_sp",
+    "expected": {
+      "pvalue": 0.7352795468274211,
+      "statistic": 445.0
+    },
+    "for": "the sp backend of fn.brain.stats.wilcoxon answering to scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "got": {
+      "pvalue": 0.7352795468274211,
+      "statistic": 445.0
+    },
+    "pass": true,
+    "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
   },
   "px.exp.brain.oracle.stats.zscores.descriptive_population_np": {
     "calc": "zscores",

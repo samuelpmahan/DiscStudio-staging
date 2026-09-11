@@ -17,11 +17,11 @@
     "text": "every calculation in this vertical spells a hole as None and never as float('nan'), because a dataset Part has to survive json.dumps for the digest, the record and the replay to work. that one rule pushed real design: a rolling window returns None until it fills, an aggregate over an all-missing group is None rather than nan, and the oracle helper compares None exactly instead of numerically."
   },
   "proposal.brain.data.numpy_does_not_pay_on_small_groups": {
-    "for": "a backend that is slower AND more code is a backend that should not be the default",
+    "for": "a backend picked by reputation rather than by a benchmark Part is a guess, and this one would have been the wrong guess twice over",
     "kind": "friction",
-    "proposal": "a group-by that sorts once and reduces with numpy's reduceat over the whole column would be a third candidate worth a branch: one array for the column instead of one per group",
-    "text": "the group-by bracket is the measurement: the np backend builds one array per group per aggregate, and on real group sizes (tens of rows) the array construction costs more than the reduction saves. numpy only starts paying when a single reduction is over thousands of contiguous values.",
-    "workaround": "the bracket decides the default and the losing backend stays reachable by naming args['backend'], so nothing is deleted and the choice is a Part"
+    "proposal": "a benchmark Part that carries the SIZE it was measured at is already there, but harness.decide reads one number per criterion, so a bracket cannot say 'this one wins above n=2000'. let a criterion name the bench size it scores on, or let decide return a winner per size, and a crossover stops being invisible to the tournament",
+    "text": "the group-by bracket measured it three ways. the 'np' engine builds one array per group per aggregate and is SLOWER than plain python at every size tested: the array construction costs more than the reduction saves when a group is tens of rows. the third engine, 'npsort', was built to answer the obvious follow-up -- sort once, then one array per COLUMN reduced by cumsum and reduceat -- and it wins at 4000 rows and loses at 400. so the useful statement is not 'numpy is faster' but 'numpy is faster per ARRAY, and a group-by's arrays are the thing you have to choose'.",
+    "workaround": "all three engines stay; args['backend'] names one, data.frame.DEFAULT_GROUP_BY_BACKEND records which one is the default and why, and the bracket re-runs against all three"
   },
   "proposal.brain.data.the_loader_is_an_effect_and_that_is_the_point": {
     "for": "a data-science layer whose inputs are unrecorded is not reproducible",
@@ -35,8 +35,8 @@
     "inputs_sha256": "2cb34fcdb08eacc04ecaacce20436b30804f42b904c839a8f09b4c954a8c0cea",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 0.7894469999882858,
-    "wall_ms_min": 0.7758249994367361
+    "wall_ms_median": 0.7792379992679344,
+    "wall_ms_min": 0.7779480001772754
   },
   "px.exp.brain.bench.data.acf.np.n=600": {
     "backend": "np",
@@ -45,8 +45,8 @@
     "inputs_sha256": "144c2fb6baf6b50861fc8582f54aa68cf42f4c9a3ee9659e090e8d2f8709129f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.1841670000430895,
-    "wall_ms_min": 0.1772519999576616
+    "wall_ms_median": 0.18164399989473168,
+    "wall_ms_min": 0.1758759999574977
   },
   "px.exp.brain.bench.data.acf.py.n=4000": {
     "backend": "py",
@@ -55,8 +55,8 @@
     "inputs_sha256": "2cb34fcdb08eacc04ecaacce20436b30804f42b904c839a8f09b4c954a8c0cea",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 11.08469500013598,
-    "wall_ms_min": 10.466817999258637
+    "wall_ms_median": 10.950052000225696,
+    "wall_ms_min": 10.83061400004226
   },
   "px.exp.brain.bench.data.acf.py.n=600": {
     "backend": "py",
@@ -65,8 +65,8 @@
     "inputs_sha256": "144c2fb6baf6b50861fc8582f54aa68cf42f4c9a3ee9659e090e8d2f8709129f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 1.6392560000895173,
-    "wall_ms_min": 1.458462000300642
+    "wall_ms_median": 1.5745179998702952,
+    "wall_ms_min": 1.54068699976051
   },
   "px.exp.brain.bench.data.ar_fit.np.n=4000": {
     "backend": "np",
@@ -75,8 +75,8 @@
     "inputs_sha256": "5f3a0a8b10a9d25528ed5390f3bee750086962ca413df7832d86ee80bce9068d",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 8.161858000676148,
-    "wall_ms_min": 7.78241700027138
+    "wall_ms_median": 7.864910000535019,
+    "wall_ms_min": 7.50446500023827
   },
   "px.exp.brain.bench.data.ar_fit.np.n=600": {
     "backend": "np",
@@ -85,8 +85,8 @@
     "inputs_sha256": "79eaa578e198c217605bf1c6211b6d1d3db95ce43d61198cecdd98ab4994bfb3",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 1.1006220001945621,
-    "wall_ms_min": 1.085889999558276
+    "wall_ms_median": 1.10603400025866,
+    "wall_ms_min": 1.0764469998321147
   },
   "px.exp.brain.bench.data.ar_fit.py.n=4000": {
     "backend": "py",
@@ -95,8 +95,8 @@
     "inputs_sha256": "5f3a0a8b10a9d25528ed5390f3bee750086962ca413df7832d86ee80bce9068d",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 16.738334000365285,
-    "wall_ms_min": 16.26069199937774
+    "wall_ms_median": 16.421706999608432,
+    "wall_ms_min": 16.171758999917074
   },
   "px.exp.brain.bench.data.ar_fit.py.n=600": {
     "backend": "py",
@@ -105,8 +105,8 @@
     "inputs_sha256": "79eaa578e198c217605bf1c6211b6d1d3db95ce43d61198cecdd98ab4994bfb3",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 2.4418190005235374,
-    "wall_ms_min": 2.37789899983909
+    "wall_ms_median": 2.3780110004736343,
+    "wall_ms_min": 2.3513400001320406
   },
   "px.exp.brain.bench.data.group_by.np.rows=400": {
     "backend": "np",
@@ -115,8 +115,8 @@
     "inputs_sha256": "9f5e5a3b3ade02a92c5464e9c840c25e5da9c25734f8fad2f15d27ac2d00ff25",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 2.0150700001977384,
-    "wall_ms_min": 1.9573720001062611
+    "wall_ms_median": 2.190047000112827,
+    "wall_ms_min": 2.092882000397367
   },
   "px.exp.brain.bench.data.group_by.np.rows=4000": {
     "backend": "np",
@@ -125,8 +125,28 @@
     "inputs_sha256": "02636d0e30f4ed6dbd7ede9b8c6ec66c5ef839459838feec1f5e15d5a5e8e6b4",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 7.361895000030927,
-    "wall_ms_min": 7.091290000062145
+    "wall_ms_median": 7.303480999325984,
+    "wall_ms_min": 7.26935000056983
+  },
+  "px.exp.brain.bench.data.group_by.npsort.rows=400": {
+    "backend": "npsort",
+    "calc": "group_by",
+    "for": "how long fn.brain.data.group_by takes on its npsort backend at rows=400",
+    "inputs_sha256": "9f5e5a3b3ade02a92c5464e9c840c25e5da9c25734f8fad2f15d27ac2d00ff25",
+    "n": 5,
+    "size": "rows=400",
+    "wall_ms_median": 0.6094330001360504,
+    "wall_ms_min": 0.5951349994575139
+  },
+  "px.exp.brain.bench.data.group_by.npsort.rows=4000": {
+    "backend": "npsort",
+    "calc": "group_by",
+    "for": "how long fn.brain.data.group_by takes on its npsort backend at rows=4000",
+    "inputs_sha256": "02636d0e30f4ed6dbd7ede9b8c6ec66c5ef839459838feec1f5e15d5a5e8e6b4",
+    "n": 5,
+    "size": "rows=4000",
+    "wall_ms_median": 4.236003000187338,
+    "wall_ms_min": 4.103838000446558
   },
   "px.exp.brain.bench.data.group_by.py.rows=400": {
     "backend": "py",
@@ -135,8 +155,8 @@
     "inputs_sha256": "9f5e5a3b3ade02a92c5464e9c840c25e5da9c25734f8fad2f15d27ac2d00ff25",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.8370790001208661,
-    "wall_ms_min": 0.7757310004308238
+    "wall_ms_median": 0.8270620000985218,
+    "wall_ms_min": 0.7795650008119992
   },
   "px.exp.brain.bench.data.group_by.py.rows=4000": {
     "backend": "py",
@@ -145,8 +165,8 @@
     "inputs_sha256": "02636d0e30f4ed6dbd7ede9b8c6ec66c5ef839459838feec1f5e15d5a5e8e6b4",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 6.153878999612061,
-    "wall_ms_min": 5.960688000413938
+    "wall_ms_median": 5.980617000204802,
+    "wall_ms_min": 5.918683000345482
   },
   "px.exp.brain.bench.data.pivot.np.rows=400": {
     "backend": "np",
@@ -155,8 +175,8 @@
     "inputs_sha256": "5096df0d9470702f7b7209fc297ad36d5eab3d6ca1d1992088cc7b1e34ccb9ee",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 1.2935719996676198,
-    "wall_ms_min": 1.2444640005924157
+    "wall_ms_median": 1.2770769999406184,
+    "wall_ms_min": 1.2408630000209087
   },
   "px.exp.brain.bench.data.pivot.np.rows=4000": {
     "backend": "np",
@@ -165,8 +185,8 @@
     "inputs_sha256": "4405cb39991deabdefa3cf63a2e9550218af45bd2769082eb44716e64dbe29c0",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 5.922516000282485,
-    "wall_ms_min": 5.833504000293033
+    "wall_ms_median": 5.877306000002136,
+    "wall_ms_min": 5.813101000057941
   },
   "px.exp.brain.bench.data.pivot.py.rows=400": {
     "backend": "py",
@@ -175,8 +195,8 @@
     "inputs_sha256": "5096df0d9470702f7b7209fc297ad36d5eab3d6ca1d1992088cc7b1e34ccb9ee",
     "n": 5,
     "size": "rows=400",
-    "wall_ms_median": 0.6834639998487546,
-    "wall_ms_min": 0.6648030002907035
+    "wall_ms_median": 0.6783919998269994,
+    "wall_ms_min": 0.6504379998659715
   },
   "px.exp.brain.bench.data.pivot.py.rows=4000": {
     "backend": "py",
@@ -185,8 +205,8 @@
     "inputs_sha256": "4405cb39991deabdefa3cf63a2e9550218af45bd2769082eb44716e64dbe29c0",
     "n": 5,
     "size": "rows=4000",
-    "wall_ms_median": 5.248690999906103,
-    "wall_ms_min": 5.162548999578576
+    "wall_ms_median": 5.131826000251749,
+    "wall_ms_min": 5.086400999971374
   },
   "px.exp.brain.bench.data.rolling.np.n=4000": {
     "backend": "np",
@@ -195,8 +215,8 @@
     "inputs_sha256": "f676cfdff14e3dfb22c3d7a265054f47baeaab003c2d9fb9aa98a2b9010c8f3c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 20.603268000741082,
-    "wall_ms_min": 19.840113999634923
+    "wall_ms_median": 19.419928999923286,
+    "wall_ms_min": 19.33890500004054
   },
   "px.exp.brain.bench.data.rolling.np.n=600": {
     "backend": "np",
@@ -205,8 +225,8 @@
     "inputs_sha256": "1b50a5bdfa0c21d1a65de6627799a955b1481f75c7345f901f9fc25b3ca03d2f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 2.9134589995010174,
-    "wall_ms_min": 2.851842000382021
+    "wall_ms_median": 2.882644000237633,
+    "wall_ms_min": 2.8584369993041037
   },
   "px.exp.brain.bench.data.rolling.py.n=4000": {
     "backend": "py",
@@ -215,8 +235,8 @@
     "inputs_sha256": "f676cfdff14e3dfb22c3d7a265054f47baeaab003c2d9fb9aa98a2b9010c8f3c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 6.64250899990293,
-    "wall_ms_min": 6.604094000067562
+    "wall_ms_median": 6.60845899983542,
+    "wall_ms_min": 6.515438999485923
   },
   "px.exp.brain.bench.data.rolling.py.n=600": {
     "backend": "py",
@@ -225,8 +245,8 @@
     "inputs_sha256": "1b50a5bdfa0c21d1a65de6627799a955b1481f75c7345f901f9fc25b3ca03d2f",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.9585950001564925,
-    "wall_ms_min": 0.939137000386836
+    "wall_ms_median": 0.9787360004338552,
+    "wall_ms_min": 0.9656719994382001
   },
   "px.exp.brain.bracket.data.group_by_aggregation": {
     "candidates": [
@@ -241,6 +261,12 @@
         "branch": "np",
         "calc": "fn.brain.data.group_by",
         "note": "one numpy array per group per aggregate, reduced by numpy"
+      },
+      {
+        "address": "",
+        "branch": "npsort",
+        "calc": "fn.brain.data.group_by",
+        "note": "sort once, then ONE numpy array per aggregated column for the whole table, reduced by cumsum and reduceat"
       }
     ],
     "criteria": [
@@ -263,54 +289,68 @@
         "weight": 1.0
       }
     ],
-    "for": "whether numpy pays for itself once a group-by has been split into small per-group arrays",
+    "for": "whether numpy pays for itself in a group-by, and if the per-group array is the thing that stops it paying, whether one array per column pays instead",
     "judged": [
       {
         "candidate": "py",
         "judge": "referee",
-        "note": "read 2 oracle Part(s) (2 passed), benchmark rows=4000 (6.1539 ms median), aggregation body 32 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (5.9806 ms median), aggregation body 32 lines",
         "scores": {
           "clarity": 32.0,
           "correctness": 1.0,
-          "speed": 6.153878999612061
+          "speed": 5.980617000204802
         }
       },
       {
         "candidate": "np",
         "judge": "referee",
-        "note": "read 2 oracle Part(s) (2 passed), benchmark rows=4000 (7.3619 ms median), aggregation body 24 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (7.3035 ms median), aggregation body 24 lines",
         "scores": {
           "clarity": 24.0,
           "correctness": 1.0,
-          "speed": 7.361895000030927
+          "speed": 7.303480999325984
+        }
+      },
+      {
+        "candidate": "npsort",
+        "judge": "referee",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark rows=4000 (4.2360 ms median), aggregation body 65 lines",
+        "scores": {
+          "clarity": 65.0,
+          "correctness": 1.0,
+          "speed": 4.236003000187338
         }
       }
     ],
     "means": {
       "clarity": {
         "np": 24.0,
+        "npsort": 65.0,
         "py": 32.0
       },
       "correctness": {
         "np": 1.0,
+        "npsort": 1.0,
         "py": 1.0
       },
       "speed": {
-        "np": 7.361895000030927,
-        "py": 6.153878999612061
+        "np": 7.303480999325984,
+        "npsort": 4.236003000187338,
+        "py": 5.980617000204802
       }
     },
     "problem": "group_by_aggregation",
     "refined": true,
     "refinement": {
       "address": "fn.brain.data.group_by",
-      "note": "the winner is what fn.brain.data.group_by does when args['backend'] is not given: 'py'. the loser stays reachable by naming the other backend, and every oracle Part for both backends stays in the store, so the bracket re-runs against both."
+      "note": "winner 'npsort'; fn.brain.data.group_by defaults to 'py' (data.frame.DEFAULT_GROUP_BY_BACKEND), so the facade does NOT follow it: data.frame.DEFAULT_GROUP_BY_BACKEND is 'py', because the bracket's speed criterion reads the LARGEST benchmark and the engines cross over on the way there -- 'py' wins at 400 rows and 'npsort' at 4000. every engine keeps its own oracle and benchmark Parts and stays reachable by naming args['backend'], so nothing is deleted and the bracket re-runs against all three."
     },
     "totals": {
       "np": 4.0,
-      "py": 5.0
+      "npsort": 5.0,
+      "py": 4.667387249819677
     },
-    "winner": "py"
+    "winner": "npsort"
   },
   "px.exp.brain.data.customers": {
     "columns": [
@@ -2853,6 +2893,8 @@
       "px.exp.brain.bench.data.ar_fit.py.n=600",
       "px.exp.brain.bench.data.group_by.np.rows=400",
       "px.exp.brain.bench.data.group_by.np.rows=4000",
+      "px.exp.brain.bench.data.group_by.npsort.rows=400",
+      "px.exp.brain.bench.data.group_by.npsort.rows=4000",
       "px.exp.brain.bench.data.group_by.py.rows=400",
       "px.exp.brain.bench.data.group_by.py.rows=4000",
       "px.exp.brain.bench.data.pivot.np.rows=400",
@@ -2882,6 +2924,10 @@
       "px.exp.brain.oracle.data.ar_fit.timeseries_order2_py",
       "px.exp.brain.oracle.data.ar_fit.timeseries_order5_np",
       "px.exp.brain.oracle.data.ar_fit.timeseries_order5_py",
+      "px.exp.brain.oracle.data.describe_table.shaping_gappy_np",
+      "px.exp.brain.oracle.data.describe_table.shaping_gappy_py",
+      "px.exp.brain.oracle.data.describe_table.shaping_orders_np",
+      "px.exp.brain.oracle.data.describe_table.shaping_orders_py",
       "px.exp.brain.oracle.data.difference.timeseries_first_np",
       "px.exp.brain.oracle.data.difference.timeseries_first_py",
       "px.exp.brain.oracle.data.difference.timeseries_seasonal_lag4_np",
@@ -2890,9 +2936,14 @@
       "px.exp.brain.oracle.data.difference.timeseries_second_py",
       "px.exp.brain.oracle.data.filter.frame_orders_east_expedited",
       "px.exp.brain.oracle.data.filter.frame_orders_missing_price",
+      "px.exp.brain.oracle.data.group_by.frame_holes_np",
+      "px.exp.brain.oracle.data.group_by.frame_holes_npsort",
+      "px.exp.brain.oracle.data.group_by.frame_holes_py",
       "px.exp.brain.oracle.data.group_by.frame_orders_by_region_customer_np",
+      "px.exp.brain.oracle.data.group_by.frame_orders_by_region_customer_npsort",
       "px.exp.brain.oracle.data.group_by.frame_orders_by_region_customer_py",
       "px.exp.brain.oracle.data.group_by.frame_orders_by_region_np",
+      "px.exp.brain.oracle.data.group_by.frame_orders_by_region_npsort",
       "px.exp.brain.oracle.data.group_by.frame_orders_by_region_py",
       "px.exp.brain.oracle.data.integrate.timeseries_cumsum_np",
       "px.exp.brain.oracle.data.integrate.timeseries_cumsum_py",
@@ -2900,6 +2951,9 @@
       "px.exp.brain.oracle.data.join.frame_orders_customers_left",
       "px.exp.brain.oracle.data.join.frame_orders_customers_outer",
       "px.exp.brain.oracle.data.join.frame_orders_customers_right",
+      "px.exp.brain.oracle.data.melt.shaping_gappy_two_ids",
+      "px.exp.brain.oracle.data.melt.shaping_readings_drop_missing",
+      "px.exp.brain.oracle.data.melt.shaping_readings_wide_to_long",
       "px.exp.brain.oracle.data.missing.frame_gappy_mean_np",
       "px.exp.brain.oracle.data.missing.frame_gappy_mean_py",
       "px.exp.brain.oracle.data.missing_report.frame_gappy",
@@ -2942,8 +2996,12 @@
     "for": "what the data vertical of the brain holds tonight, and what the next night should pick up first",
     "next": [
       {
-        "for": "the bracket is re-runnable and a third candidate is the cheapest real win left",
-        "what": "the reduceat group-by as a third branch of the bracket"
+        "for": "it is the one aggregate the third engine still hands back to the per-group path",
+        "what": "a sorted-block median and quantile on the npsort engine"
+      },
+      {
+        "for": "the group-by engines cross over between 400 and 4000 rows and the bracket cannot currently say so",
+        "what": "a bracket criterion that names the benchmark size it scores on"
       },
       {
         "for": "every relational calculation re-derives them on every call",
@@ -2960,12 +3018,8 @@
     ],
     "stubbed": [
       {
-        "address": "fn.brain.data.group_by (reduceat branch)",
-        "why": "the third tournament candidate -- sort once, reduce the whole column with numpy.reduceat -- is designed in proposal.brain.data.numpy_does_not_pay_on_small_groups and not built"
-      },
-      {
-        "address": "fn.brain.data.melt",
-        "why": "pivot's inverse; pivot was the one the tournament and the oracles needed first"
+        "address": "fn.brain.data.group_by (median on the npsort engine)",
+        "why": "median has no whole-column reduction, so the third engine falls back to the per-group path for it; a sorted-block median is the obvious next piece"
       },
       {
         "address": "fn.brain.data.resample",
@@ -4409,6 +4463,690 @@
     "tolerance": 1e-08,
     "worst_relative_error": 4.462208380573429e-12
   },
+  "px.exp.brain.oracle.data.describe_table.shaping_gappy_np": {
+    "calc": "describe_table",
+    "case": "shaping_gappy_np",
+    "expected": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "step",
+          "number",
+          7,
+          0,
+          7,
+          3.0,
+          2.160246899469287,
+          0.0,
+          1.5,
+          3.0,
+          4.5,
+          6.0
+        ],
+        [
+          "reading",
+          "number",
+          3,
+          4,
+          3,
+          16.0,
+          4.0,
+          12.0,
+          14.0,
+          16.0,
+          18.0,
+          20.0
+        ],
+        [
+          "label",
+          "other",
+          5,
+          2,
+          3,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "for": "the np backend of fn.brain.data.describe_table answering to numpy.mean/std/median/quantile per column",
+    "got": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "step",
+          "number",
+          7,
+          0,
+          7,
+          3.0,
+          2.160246899469287,
+          0.0,
+          1.5,
+          3.0,
+          4.5,
+          6.0
+        ],
+        [
+          "reading",
+          "number",
+          3,
+          4,
+          3,
+          16.0,
+          4.0,
+          12.0,
+          14.0,
+          16.0,
+          18.0,
+          20.0
+        ],
+        [
+          "label",
+          "other",
+          5,
+          2,
+          3,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.mean/std/median/quantile per column",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.describe_table.shaping_gappy_py": {
+    "calc": "describe_table",
+    "case": "shaping_gappy_py",
+    "expected": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "step",
+          "number",
+          7,
+          0,
+          7,
+          3.0,
+          2.160246899469287,
+          0.0,
+          1.5,
+          3.0,
+          4.5,
+          6.0
+        ],
+        [
+          "reading",
+          "number",
+          3,
+          4,
+          3,
+          16.0,
+          4.0,
+          12.0,
+          14.0,
+          16.0,
+          18.0,
+          20.0
+        ],
+        [
+          "label",
+          "other",
+          5,
+          2,
+          3,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "for": "the py backend of fn.brain.data.describe_table answering to numpy.mean/std/median/quantile per column",
+    "got": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "step",
+          "number",
+          7,
+          0,
+          7,
+          3.0,
+          2.160246899469287,
+          0.0,
+          1.5,
+          3.0,
+          4.5,
+          6.0
+        ],
+        [
+          "reading",
+          "number",
+          3,
+          4,
+          3,
+          16.0,
+          4.0,
+          12.0,
+          14.0,
+          16.0,
+          18.0,
+          20.0
+        ],
+        [
+          "label",
+          "other",
+          5,
+          2,
+          3,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.mean/std/median/quantile per column",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.describe_table.shaping_orders_np": {
+    "calc": "describe_table",
+    "case": "shaping_orders_np",
+    "expected": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "order",
+          "number",
+          12,
+          0,
+          12,
+          1006.5,
+          3.605551275463989,
+          1001.0,
+          1003.75,
+          1006.5,
+          1009.25,
+          1012.0
+        ],
+        [
+          "customer",
+          "other",
+          12,
+          0,
+          5,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "region",
+          "other",
+          12,
+          0,
+          4,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "items",
+          "number",
+          12,
+          0,
+          8,
+          3.6666666666666665,
+          2.6053557891157184,
+          1.0,
+          1.75,
+          3.0,
+          5.25,
+          9.0
+        ],
+        [
+          "price",
+          "number",
+          10,
+          2,
+          10,
+          54.833000000000006,
+          44.227051563494484,
+          9.99,
+          23.305,
+          44.925,
+          73.85,
+          155.75
+        ],
+        [
+          "expedited",
+          "other",
+          11,
+          1,
+          2,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "for": "the np backend of fn.brain.data.describe_table answering to numpy.mean/std/median/quantile per column",
+    "got": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "order",
+          "number",
+          12,
+          0,
+          12,
+          1006.5,
+          3.605551275463989,
+          1001.0,
+          1003.75,
+          1006.5,
+          1009.25,
+          1012.0
+        ],
+        [
+          "customer",
+          "other",
+          12,
+          0,
+          5,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "region",
+          "other",
+          12,
+          0,
+          4,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "items",
+          "number",
+          12,
+          0,
+          8,
+          3.6666666666666665,
+          2.6053557891157184,
+          1.0,
+          1.75,
+          3.0,
+          5.25,
+          9.0
+        ],
+        [
+          "price",
+          "number",
+          10,
+          2,
+          10,
+          54.833000000000006,
+          44.227051563494484,
+          9.99,
+          23.305,
+          44.925,
+          73.85,
+          155.75
+        ],
+        [
+          "expedited",
+          "other",
+          11,
+          1,
+          2,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.mean/std/median/quantile per column",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.describe_table.shaping_orders_py": {
+    "calc": "describe_table",
+    "case": "shaping_orders_py",
+    "expected": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "order",
+          "number",
+          12,
+          0,
+          12,
+          1006.5,
+          3.605551275463989,
+          1001.0,
+          1003.75,
+          1006.5,
+          1009.25,
+          1012.0
+        ],
+        [
+          "customer",
+          "other",
+          12,
+          0,
+          5,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "region",
+          "other",
+          12,
+          0,
+          4,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "items",
+          "number",
+          12,
+          0,
+          8,
+          3.6666666666666665,
+          2.6053557891157184,
+          1.0,
+          1.75,
+          3.0,
+          5.25,
+          9.0
+        ],
+        [
+          "price",
+          "number",
+          10,
+          2,
+          10,
+          54.833000000000006,
+          44.227051563494484,
+          9.99,
+          23.305,
+          44.925,
+          73.85,
+          155.75
+        ],
+        [
+          "expedited",
+          "other",
+          11,
+          1,
+          2,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "for": "the py backend of fn.brain.data.describe_table answering to numpy.mean/std/median/quantile per column",
+    "got": {
+      "columns": [
+        "column",
+        "kind",
+        "n",
+        "missing",
+        "distinct",
+        "mean",
+        "stdev",
+        "min",
+        "q25",
+        "median",
+        "q75",
+        "max"
+      ],
+      "rows": [
+        [
+          "order",
+          "number",
+          12,
+          0,
+          12,
+          1006.5,
+          3.605551275463989,
+          1001.0,
+          1003.75,
+          1006.5,
+          1009.25,
+          1012.0
+        ],
+        [
+          "customer",
+          "other",
+          12,
+          0,
+          5,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "region",
+          "other",
+          12,
+          0,
+          4,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "items",
+          "number",
+          12,
+          0,
+          8,
+          3.6666666666666665,
+          2.6053557891157184,
+          1.0,
+          1.75,
+          3.0,
+          5.25,
+          9.0
+        ],
+        [
+          "price",
+          "number",
+          10,
+          2,
+          10,
+          54.833000000000006,
+          44.227051563494484,
+          9.99,
+          23.305,
+          44.925,
+          73.85,
+          155.75
+        ],
+        [
+          "expedited",
+          "other",
+          11,
+          1,
+          2,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.mean/std/median/quantile per column",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
   "px.exp.brain.oracle.data.difference.timeseries_first_np": {
     "calc": "difference",
     "case": "timeseries_first_np",
@@ -4857,6 +5595,387 @@
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
   },
+  "px.exp.brain.oracle.data.group_by.frame_holes_np": {
+    "calc": "group_by",
+    "case": "frame_holes_np",
+    "expected": {
+      "columns": [
+        "label",
+        "reading_mean",
+        "reading_sum",
+        "reading_min",
+        "reading_max",
+        "reading_std",
+        "reading_var",
+        "reading_count",
+        "reading_count_missing"
+      ],
+      "rows": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          2
+        ],
+        [
+          "a",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          1
+        ],
+        [
+          "b",
+          18.0,
+          36.0,
+          16.0,
+          20.0,
+          2.8284271247461903,
+          8.0,
+          2,
+          0
+        ],
+        [
+          "c",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1
+        ]
+      ]
+    },
+    "for": "the np backend of fn.brain.data.group_by answering to numpy over the same groups via data.frame_cases.brute_group_by",
+    "got": {
+      "columns": [
+        "label",
+        "reading_mean",
+        "reading_sum",
+        "reading_min",
+        "reading_max",
+        "reading_std",
+        "reading_var",
+        "reading_count",
+        "reading_count_missing"
+      ],
+      "rows": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          2
+        ],
+        [
+          "a",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          1
+        ],
+        [
+          "b",
+          18.0,
+          36.0,
+          16.0,
+          20.0,
+          2.8284271247461903,
+          8.0,
+          2,
+          0
+        ],
+        [
+          "c",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy over the same groups via data.frame_cases.brute_group_by",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.group_by.frame_holes_npsort": {
+    "calc": "group_by",
+    "case": "frame_holes_npsort",
+    "expected": {
+      "columns": [
+        "label",
+        "reading_mean",
+        "reading_sum",
+        "reading_min",
+        "reading_max",
+        "reading_std",
+        "reading_var",
+        "reading_count",
+        "reading_count_missing"
+      ],
+      "rows": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          2
+        ],
+        [
+          "a",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          1
+        ],
+        [
+          "b",
+          18.0,
+          36.0,
+          16.0,
+          20.0,
+          2.8284271247461903,
+          8.0,
+          2,
+          0
+        ],
+        [
+          "c",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1
+        ]
+      ]
+    },
+    "for": "the npsort backend of fn.brain.data.group_by answering to numpy over the same groups via data.frame_cases.brute_group_by",
+    "got": {
+      "columns": [
+        "label",
+        "reading_mean",
+        "reading_sum",
+        "reading_min",
+        "reading_max",
+        "reading_std",
+        "reading_var",
+        "reading_count",
+        "reading_count_missing"
+      ],
+      "rows": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          2
+        ],
+        [
+          "a",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          1
+        ],
+        [
+          "b",
+          18.0,
+          36.0,
+          16.0,
+          20.0,
+          2.8284271247461903,
+          8.0,
+          2,
+          0
+        ],
+        [
+          "c",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy over the same groups via data.frame_cases.brute_group_by",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.group_by.frame_holes_py": {
+    "calc": "group_by",
+    "case": "frame_holes_py",
+    "expected": {
+      "columns": [
+        "label",
+        "reading_mean",
+        "reading_sum",
+        "reading_min",
+        "reading_max",
+        "reading_std",
+        "reading_var",
+        "reading_count",
+        "reading_count_missing"
+      ],
+      "rows": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          2
+        ],
+        [
+          "a",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          1
+        ],
+        [
+          "b",
+          18.0,
+          36.0,
+          16.0,
+          20.0,
+          2.8284271247461903,
+          8.0,
+          2,
+          0
+        ],
+        [
+          "c",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1
+        ]
+      ]
+    },
+    "for": "the py backend of fn.brain.data.group_by answering to numpy over the same groups via data.frame_cases.brute_group_by",
+    "got": {
+      "columns": [
+        "label",
+        "reading_mean",
+        "reading_sum",
+        "reading_min",
+        "reading_max",
+        "reading_std",
+        "reading_var",
+        "reading_count",
+        "reading_count_missing"
+      ],
+      "rows": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          2
+        ],
+        [
+          "a",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          1
+        ],
+        [
+          "b",
+          18.0,
+          36.0,
+          16.0,
+          20.0,
+          2.8284271247461903,
+          8.0,
+          2,
+          0
+        ],
+        [
+          "c",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy over the same groups via data.frame_cases.brute_group_by",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
   "px.exp.brain.oracle.data.group_by.frame_orders_by_region_customer_np": {
     "calc": "group_by",
     "case": "frame_orders_by_region_customer_np",
@@ -5193,6 +6312,343 @@
     "reference": "numpy.mean/sum/median/min/max/std/var via data.frame_cases.brute_group_by",
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.group_by.frame_orders_by_region_customer_npsort": {
+    "calc": "group_by",
+    "case": "frame_orders_by_region_customer_npsort",
+    "expected": {
+      "columns": [
+        "region",
+        "customer",
+        "price_mean",
+        "price_sum",
+        "price_median",
+        "price_min",
+        "price_max",
+        "price_std",
+        "price_var",
+        "price_count",
+        "price_count_missing",
+        "items_sum",
+        "customer_nunique",
+        "rows"
+      ],
+      "rows": [
+        [
+          "east",
+          "cy",
+          69.7,
+          139.4,
+          69.7,
+          61.4,
+          78.0,
+          11.73797256769669,
+          137.78000000000003,
+          2,
+          0,
+          5.0,
+          1,
+          2
+        ],
+        [
+          "east",
+          "dee",
+          155.75,
+          155.75,
+          155.75,
+          155.75,
+          155.75,
+          null,
+          null,
+          1,
+          0,
+          9.0,
+          1,
+          1
+        ],
+        [
+          "north",
+          "ada",
+          42.5,
+          42.5,
+          42.5,
+          42.5,
+          42.5,
+          null,
+          null,
+          1,
+          1,
+          10.0,
+          1,
+          2
+        ],
+        [
+          "north",
+          "dee",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1,
+          2.0,
+          1,
+          1
+        ],
+        [
+          "north",
+          "eli",
+          9.99,
+          9.99,
+          9.99,
+          9.99,
+          9.99,
+          null,
+          null,
+          1,
+          0,
+          1.0,
+          1,
+          1
+        ],
+        [
+          "south",
+          "ada",
+          47.35,
+          47.35,
+          47.35,
+          47.35,
+          47.35,
+          null,
+          null,
+          1,
+          0,
+          5.0,
+          1,
+          1
+        ],
+        [
+          "south",
+          "bo",
+          26.619999999999997,
+          53.239999999999995,
+          26.619999999999997,
+          19.99,
+          33.25,
+          9.376235918533622,
+          87.91380000000002,
+          2,
+          0,
+          5.0,
+          1,
+          2
+        ],
+        [
+          "west",
+          "ada",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          0,
+          1.0,
+          1,
+          1
+        ],
+        [
+          "west",
+          "bo",
+          88.1,
+          88.1,
+          88.1,
+          88.1,
+          88.1,
+          null,
+          null,
+          1,
+          0,
+          6.0,
+          1,
+          1
+        ]
+      ]
+    },
+    "for": "the npsort backend of fn.brain.data.group_by answering to numpy.mean/sum/median/min/max/std/var via data.frame_cases.brute_group_by",
+    "got": {
+      "columns": [
+        "region",
+        "customer",
+        "price_mean",
+        "price_sum",
+        "price_median",
+        "price_min",
+        "price_max",
+        "price_std",
+        "price_var",
+        "price_count",
+        "price_count_missing",
+        "items_sum",
+        "customer_nunique",
+        "rows"
+      ],
+      "rows": [
+        [
+          "east",
+          "cy",
+          69.70000000000002,
+          139.40000000000003,
+          69.7,
+          61.4,
+          78.0,
+          11.73797256769669,
+          137.78000000000003,
+          2,
+          0,
+          5.0,
+          1,
+          2
+        ],
+        [
+          "east",
+          "dee",
+          155.74999999999997,
+          155.74999999999997,
+          155.75,
+          155.75,
+          155.75,
+          null,
+          null,
+          1,
+          0,
+          9.0,
+          1,
+          1
+        ],
+        [
+          "north",
+          "ada",
+          42.5,
+          42.5,
+          42.5,
+          42.5,
+          42.5,
+          null,
+          null,
+          1,
+          1,
+          10.0,
+          1,
+          2
+        ],
+        [
+          "north",
+          "dee",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          1,
+          2.0,
+          1,
+          1
+        ],
+        [
+          "north",
+          "eli",
+          9.990000000000009,
+          9.990000000000009,
+          9.99,
+          9.99,
+          9.99,
+          null,
+          null,
+          1,
+          0,
+          1.0,
+          1,
+          1
+        ],
+        [
+          "south",
+          "ada",
+          47.35000000000002,
+          47.35000000000002,
+          47.35,
+          47.35,
+          47.35,
+          null,
+          null,
+          1,
+          0,
+          5.0,
+          1,
+          1
+        ],
+        [
+          "south",
+          "bo",
+          26.619999999999997,
+          53.239999999999995,
+          26.619999999999997,
+          19.99,
+          33.25,
+          9.376235918533622,
+          87.91380000000002,
+          2,
+          0,
+          5.0,
+          1,
+          2
+        ],
+        [
+          "west",
+          "ada",
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          12.0,
+          null,
+          null,
+          1,
+          0,
+          1.0,
+          1,
+          1
+        ],
+        [
+          "west",
+          "bo",
+          88.10000000000002,
+          88.10000000000002,
+          88.1,
+          88.1,
+          88.1,
+          null,
+          null,
+          1,
+          0,
+          6.0,
+          1,
+          1
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.mean/sum/median/min/max/std/var via data.frame_cases.brute_group_by",
+    "tolerance": 1e-09,
+    "worst_relative_error": 8.890674871873126e-16
   },
   "px.exp.brain.oracle.data.group_by.frame_orders_by_region_customer_py": {
     "calc": "group_by",
@@ -5697,6 +7153,173 @@
     "reference": "numpy.mean/sum/median/min/max/std/var via data.frame_cases.brute_group_by",
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.group_by.frame_orders_by_region_npsort": {
+    "calc": "group_by",
+    "case": "frame_orders_by_region_npsort",
+    "expected": {
+      "columns": [
+        "region",
+        "price_mean",
+        "price_sum",
+        "price_median",
+        "price_min",
+        "price_max",
+        "price_std",
+        "price_var",
+        "price_count",
+        "price_count_missing",
+        "items_sum",
+        "customer_nunique",
+        "rows"
+      ],
+      "rows": [
+        [
+          "east",
+          98.38333333333333,
+          295.15,
+          78.0,
+          61.4,
+          155.75,
+          50.369542715150125,
+          2537.090833333333,
+          3,
+          0,
+          14.0,
+          2,
+          3
+        ],
+        [
+          "north",
+          26.245,
+          52.49,
+          26.245,
+          9.99,
+          42.5,
+          22.98804145637466,
+          528.45005,
+          2,
+          2,
+          13.0,
+          3,
+          4
+        ],
+        [
+          "south",
+          33.53,
+          100.59,
+          33.25,
+          19.99,
+          47.35,
+          13.682148954020345,
+          187.20120000000003,
+          3,
+          0,
+          10.0,
+          2,
+          3
+        ],
+        [
+          "west",
+          50.05,
+          100.1,
+          50.05,
+          12.0,
+          88.1,
+          53.81082604829626,
+          2895.6049999999996,
+          2,
+          0,
+          7.0,
+          2,
+          2
+        ]
+      ]
+    },
+    "for": "the npsort backend of fn.brain.data.group_by answering to numpy.mean/sum/median/min/max/std/var via data.frame_cases.brute_group_by",
+    "got": {
+      "columns": [
+        "region",
+        "price_mean",
+        "price_sum",
+        "price_median",
+        "price_min",
+        "price_max",
+        "price_std",
+        "price_var",
+        "price_count",
+        "price_count_missing",
+        "items_sum",
+        "customer_nunique",
+        "rows"
+      ],
+      "rows": [
+        [
+          "east",
+          98.38333333333333,
+          295.15,
+          78.0,
+          61.4,
+          155.75,
+          50.369542715150125,
+          2537.090833333333,
+          3,
+          0,
+          14.0,
+          2,
+          3
+        ],
+        [
+          "north",
+          26.245,
+          52.49,
+          26.245,
+          9.99,
+          42.5,
+          22.98804145637466,
+          528.45005,
+          2,
+          2,
+          13.0,
+          3,
+          4
+        ],
+        [
+          "south",
+          33.53,
+          100.59,
+          33.25,
+          19.99,
+          47.35,
+          13.682148954020345,
+          187.20120000000003,
+          3,
+          0,
+          10.0,
+          2,
+          3
+        ],
+        [
+          "west",
+          50.05000000000001,
+          100.10000000000002,
+          50.05,
+          12.0,
+          88.1,
+          53.810826048296256,
+          2895.6049999999987,
+          2,
+          0,
+          7.0,
+          2,
+          2
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.mean/sum/median/min/max/std/var via data.frame_cases.brute_group_by",
+    "tolerance": 1e-09,
+    "worst_relative_error": 3.1409487888469884e-16
   },
   "px.exp.brain.oracle.data.group_by.frame_orders_by_region_py": {
     "calc": "group_by",
@@ -7076,6 +8699,397 @@
     },
     "pass": true,
     "reference": "data.frame_cases.brute_join (an independent nested-loop join, no index)",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.melt.shaping_gappy_two_ids": {
+    "calc": "melt",
+    "case": "shaping_gappy_two_ids",
+    "expected": {
+      "columns": [
+        "step",
+        "variable",
+        "value"
+      ],
+      "rows": [
+        [
+          0,
+          "reading",
+          null
+        ],
+        [
+          0,
+          "label",
+          "a"
+        ],
+        [
+          1,
+          "reading",
+          12.0
+        ],
+        [
+          1,
+          "label",
+          "a"
+        ],
+        [
+          2,
+          "reading",
+          null
+        ],
+        [
+          2,
+          "label",
+          null
+        ],
+        [
+          3,
+          "reading",
+          16.0
+        ],
+        [
+          3,
+          "label",
+          "b"
+        ],
+        [
+          4,
+          "reading",
+          20.0
+        ],
+        [
+          4,
+          "label",
+          "b"
+        ],
+        [
+          5,
+          "reading",
+          null
+        ],
+        [
+          5,
+          "label",
+          "c"
+        ],
+        [
+          6,
+          "reading",
+          null
+        ],
+        [
+          6,
+          "label",
+          null
+        ]
+      ]
+    },
+    "for": "the py backend of fn.brain.data.melt answering to data.shaping_cases.brute_melt (an independent fold, column by column)",
+    "got": {
+      "columns": [
+        "step",
+        "variable",
+        "value"
+      ],
+      "rows": [
+        [
+          0,
+          "reading",
+          null
+        ],
+        [
+          0,
+          "label",
+          "a"
+        ],
+        [
+          1,
+          "reading",
+          12.0
+        ],
+        [
+          1,
+          "label",
+          "a"
+        ],
+        [
+          2,
+          "reading",
+          null
+        ],
+        [
+          2,
+          "label",
+          null
+        ],
+        [
+          3,
+          "reading",
+          16.0
+        ],
+        [
+          3,
+          "label",
+          "b"
+        ],
+        [
+          4,
+          "reading",
+          20.0
+        ],
+        [
+          4,
+          "label",
+          "b"
+        ],
+        [
+          5,
+          "reading",
+          null
+        ],
+        [
+          5,
+          "label",
+          "c"
+        ],
+        [
+          6,
+          "reading",
+          null
+        ],
+        [
+          6,
+          "label",
+          null
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "data.shaping_cases.brute_melt (an independent fold, column by column)",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.melt.shaping_readings_drop_missing": {
+    "calc": "melt",
+    "case": "shaping_readings_drop_missing",
+    "expected": {
+      "columns": [
+        "station",
+        "month",
+        "celsius"
+      ],
+      "rows": [
+        [
+          "alpha",
+          "feb",
+          -1.1
+        ],
+        [
+          "alpha",
+          "jan",
+          -3.0
+        ],
+        [
+          "alpha",
+          "mar",
+          4.8
+        ],
+        [
+          "beta",
+          "feb",
+          3.9
+        ],
+        [
+          "beta",
+          "jan",
+          2.5
+        ],
+        [
+          "beta",
+          "mar",
+          8.899999999999999
+        ],
+        [
+          "gamma",
+          "jan",
+          11.0
+        ],
+        [
+          "gamma",
+          "mar",
+          18.4
+        ]
+      ]
+    },
+    "for": "the py backend of fn.brain.data.melt answering to data.shaping_cases.brute_melt (an independent fold, column by column)",
+    "got": {
+      "columns": [
+        "station",
+        "month",
+        "celsius"
+      ],
+      "rows": [
+        [
+          "alpha",
+          "feb",
+          -1.1
+        ],
+        [
+          "alpha",
+          "jan",
+          -3.0
+        ],
+        [
+          "alpha",
+          "mar",
+          4.8
+        ],
+        [
+          "beta",
+          "feb",
+          3.9
+        ],
+        [
+          "beta",
+          "jan",
+          2.5
+        ],
+        [
+          "beta",
+          "mar",
+          8.899999999999999
+        ],
+        [
+          "gamma",
+          "jan",
+          11.0
+        ],
+        [
+          "gamma",
+          "mar",
+          18.4
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "data.shaping_cases.brute_melt (an independent fold, column by column)",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.data.melt.shaping_readings_wide_to_long": {
+    "calc": "melt",
+    "case": "shaping_readings_wide_to_long",
+    "expected": {
+      "columns": [
+        "station",
+        "month",
+        "celsius"
+      ],
+      "rows": [
+        [
+          "alpha",
+          "feb",
+          -1.1
+        ],
+        [
+          "alpha",
+          "jan",
+          -3.0
+        ],
+        [
+          "alpha",
+          "mar",
+          4.8
+        ],
+        [
+          "beta",
+          "feb",
+          3.9
+        ],
+        [
+          "beta",
+          "jan",
+          2.5
+        ],
+        [
+          "beta",
+          "mar",
+          8.899999999999999
+        ],
+        [
+          "gamma",
+          "feb",
+          null
+        ],
+        [
+          "gamma",
+          "jan",
+          11.0
+        ],
+        [
+          "gamma",
+          "mar",
+          18.4
+        ]
+      ]
+    },
+    "for": "the py backend of fn.brain.data.melt answering to data.shaping_cases.brute_melt (an independent fold, column by column)",
+    "got": {
+      "columns": [
+        "station",
+        "month",
+        "celsius"
+      ],
+      "rows": [
+        [
+          "alpha",
+          "feb",
+          -1.1
+        ],
+        [
+          "alpha",
+          "jan",
+          -3.0
+        ],
+        [
+          "alpha",
+          "mar",
+          4.8
+        ],
+        [
+          "beta",
+          "feb",
+          3.9
+        ],
+        [
+          "beta",
+          "jan",
+          2.5
+        ],
+        [
+          "beta",
+          "mar",
+          8.899999999999999
+        ],
+        [
+          "gamma",
+          "feb",
+          null
+        ],
+        [
+          "gamma",
+          "jan",
+          11.0
+        ],
+        [
+          "gamma",
+          "mar",
+          18.4
+        ]
+      ]
+    },
+    "pass": true,
+    "reference": "data.shaping_cases.brute_melt (an independent fold, column by column)",
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
   },

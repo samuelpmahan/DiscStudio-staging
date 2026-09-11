@@ -45,7 +45,12 @@ def score_group_by(store, branch):
     benches = _parts(store, "px.exp.brain.bench.data.", calc, backend=branch)
     biggest = max(benches, key=lambda one: _size_number(one["size"]), default=None)
     speed = biggest["wall_ms_median"] if biggest else 0.0
-    aggregator = frame._aggregate_np if branch == "np" else frame._aggregate_py
+    if branch == "npsort":
+        import data.sorted_groups as sorted_groups
+
+        aggregator = sorted_groups.grouped
+    else:
+        aggregator = frame._aggregate_np if branch == "np" else frame._aggregate_py
     clarity = _lines(aggregator)
     note = ("read %d oracle Part(s) (%d passed), benchmark %s (%.4f ms median), "
             "aggregation body %d lines"
