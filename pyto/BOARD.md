@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 16:54 **landed** `task-129`: the wedge: the Course route off the demo path, and the tease-then-razzle storyboard as a test that screenshots every beat (6 files since 4c60678, suites green, receipt 20260911T165149Z-task-129)
 - 2026-09-11 16:29 **started** `task-129`: the wedge: the Course route off the demo path, and the tease-then-razzle storyboard as a test that screenshots every beat (copy EXP/129; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 16:29 **killed** `task-128`: nothing landed; exp/128 is kept
 - 2026-09-11 16:27 **started** `task-128`: the demo's sample gets the second pointing tee: two straight holes, so the round the studio draws is play, walk, play (copy EXP/128; it lands only on green, with a receipt, or is killed)

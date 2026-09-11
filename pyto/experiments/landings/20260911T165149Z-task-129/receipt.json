@@ -1,0 +1,81 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T165149Z-task-129",
+  "package": "task-129",
+  "base_sha": "4c60678b1068398ff0085d174eb001129c5e58e7",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test",
+    "exit": 0,
+    "output_sha256": "a23a84208882dc0f57b97b7fc836dd82be668cee7424a6a6f0dd19ea3b0a5998"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "343791c6605135ce8fb33c6cb2e914ebccb1553a6a8e9ab7c7c7b47ed74a6088",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/129/HANDOFF.md",
+      "bytes": 5581,
+      "sha256": "cccdf99dfdb5270850f1fce9d5ea77d369c64fd9a6f5c918d6e97817b7eaba68"
+    },
+    {
+      "path": "pyto/experiments/tasks/129/evidence/check_all.txt",
+      "bytes": 293454,
+      "sha256": "27490f4317304bff099e2579dc782d40188c0a2ab32e8b50a68cc07de6865c3c"
+    },
+    {
+      "path": "pyto/experiments/tasks/129/evidence/verify.txt",
+      "bytes": 41285,
+      "sha256": "a7e79f850bd2507ced96ad8f72c2e51b686846fef1228f392de1ab522e04eea6"
+    },
+    {
+      "path": "pyto/experiments/tasks/129/packet.md",
+      "bytes": 1630,
+      "sha256": "88be34840ff3eed419fadd10b212f7ed6c1ad3ea662c14b314a894724bd00ac9"
+    },
+    {
+      "path": "scripts/demo_beats.py",
+      "bytes": 13136,
+      "sha256": "072fa213e766979855264c8afd6e5e6f937e9ed178b2dcf553ffa6742bfba3db"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 108490,
+      "sha256": "c2728ab82575672963bbc4d1bc057cdd5a6da7e54613dcf02aec5c83ac38f774"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T16:54:59.458342Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
