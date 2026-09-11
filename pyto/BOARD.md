@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 13:55 **started** `task-116`: run the LAB Stages on the studio runtime: browser-safe lab modules, fn.lab.* Calculations registered in src/runtime.js, and runtime.lab.stage/pipeline as one composition per Stage with receipts (copy EXP/116; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 13:52 **started** `task-115`: S4 Holes: assemble each hole from S1 badges, S2 baskets and S3 tees as a Stage with explicit invariants, and extend the lab fixture with a third badge and an obstacle region (copy EXP/115; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 13:40 **landed** `task-114`: port S2 (baskets) and S3 (visible tees) onto the studio core as the documents their OperationSpecs declare, with the Python analogue's ring balance as S3's oracle, and redefine pathfinding on the Stage outputs: the round in badge order, tee to basket to the next tee (21 files since 6eebd23, suites green, receipt 20260911T133722Z-task-114)
 - 2026-09-11 13:24 **started** `task-114`: port S2 basket detection onto the studio core: the PQL document its OperationSpec composition implies, fn.lab.basket.* Calculations, the LAB basket sprite, and a fixture drawn to the S2 knobs (copy EXP/114; it lands only on green, with a receipt, or is killed)
