@@ -1,0 +1,126 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T021758Z-task-92",
+  "package": "task-92",
+  "base_sha": "0fb751f4535863807840443fb10215ae3f217d63",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'",
+    "exit": 0,
+    "output_sha256": "60414325f477cd35beea1b38207a1150f4be2aeb5d2029b378c239e3cef2b9e0"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "e2524d9538e51b3c9198cc0bd9244cf14063e9e98447421013b36994c61269e1",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 374,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/brain/data/build.py",
+      "bytes": 15676,
+      "sha256": "8140bb648003b1f81fa98a76457cbe348041307c00e98b9ce9743d4a5790e06b"
+    },
+    {
+      "path": "pyto/experiments/brain/data/referee.py",
+      "bytes": 2026,
+      "sha256": "717682d8ea17ed984da3ed95e78bae1ee3733d809b70f5be8c291ddfb03b6e87"
+    },
+    {
+      "path": "pyto/experiments/brain/data/test_build.py",
+      "bytes": 7972,
+      "sha256": "9ffa025e679f6d32e86492040f817098505f41f18142ce04ed1fc3e36a12668d"
+    },
+    {
+      "path": "pyto/experiments/brain/records/data.pipeline.json",
+      "bytes": 17030,
+      "sha256": "4f791527a747d9ecf77b036ed8e1fbef91b636d2096ccd70c22fb7525b47539b"
+    },
+    {
+      "path": "pyto/experiments/brain/records/stats.analysis.json",
+      "bytes": 42724,
+      "sha256": "b125b4cfdaac3cdde5fc9b4b033c14fcd5b458421fd6d2becdbd671926b6d603"
+    },
+    {
+      "path": "pyto/experiments/brain/stats/build.py",
+      "bytes": 18858,
+      "sha256": "da4b8978001010bcaab8e37f8519375bf3b4e0b6f06ce2dca97bbd0f09d1f1f0"
+    },
+    {
+      "path": "pyto/experiments/brain/stats/referee.py",
+      "bytes": 4030,
+      "sha256": "d79ef0d1c971c69ad93c4a70236a2a848ae37c95a4be8882af5d56589e5f2068"
+    },
+    {
+      "path": "pyto/experiments/brain/stats/regression.py",
+      "bytes": 16119,
+      "sha256": "ccbef98130b08908e929a6c38f41a5db93aa15cf1fe65d3a924a15e87b3f84e7"
+    },
+    {
+      "path": "pyto/experiments/brain/stats/test_build.py",
+      "bytes": 11131,
+      "sha256": "7b3fd7f826bb5715bc41e2f0dded354a7424b3cde21fadb262e42b7f84c3a703"
+    },
+    {
+      "path": "pyto/experiments/brain/store/data.json",
+      "bytes": 201069,
+      "sha256": "ea8d70fa1f6ffd4fbbebcb3efddfe5e2b76382b7bbb6dd130c8db6702e9eb46a"
+    },
+    {
+      "path": "pyto/experiments/brain/store/stats.json",
+      "bytes": 207397,
+      "sha256": "3bcef2a4cb19dea30dfa161e1a609477308bf3bb71b2419b8f0a8a7aba9a5774"
+    },
+    {
+      "path": "pyto/experiments/tasks/92/HANDOFF.md",
+      "bytes": 8207,
+      "sha256": "1352d84917955553d8eb43f7543de9bc3cf24ed1a8478797d6be4d0ad0afa0a1"
+    },
+    {
+      "path": "pyto/experiments/tasks/92/evidence/check_all.txt",
+      "bytes": 241875,
+      "sha256": "d1015683e104a17f1470280ef8b250252d9d5cd0221b7ae53e647486f8e82eda"
+    },
+    {
+      "path": "pyto/experiments/tasks/92/evidence/verify.txt",
+      "bytes": 474,
+      "sha256": "823d0bedbc6d727677d68bfbc81c3fabb0660fdd4457e401767061fe3058fcdb"
+    },
+    {
+      "path": "pyto/experiments/tasks/92/packet.md",
+      "bytes": 3554,
+      "sha256": "25d9a187eccba10d97016f1d4b8844c9fd591d709f68a6fe4904ad34011cc091"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T02:19:30.238485Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
