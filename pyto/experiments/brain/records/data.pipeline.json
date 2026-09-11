@@ -1,0 +1,625 @@
+{
+  "counters": {
+    "computed": 2,
+    "hits": 2,
+    "invocations": 4,
+    "wall_ms": 0.7921459991848678
+  },
+  "parts": {
+    "px.exp.brain.data.customers": {
+      "preexisting": true,
+      "read_by": [
+        "joined"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.orders": {
+      "preexisting": true,
+      "read_by": [
+        "kept"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.data.filter.orders_with_price": {
+      "preexisting": false,
+      "read_by": [
+        "grouped",
+        "joined"
+      ],
+      "written_by": "kept"
+    },
+    "px.exp.brain.result.data.group_by.orders_by_region": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "grouped"
+    },
+    "px.exp.brain.result.data.join.orders_customers": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "joined"
+    },
+    "px.exp.brain.result.data.rolling.series64_window8": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "rolled"
+    }
+  },
+  "pcr": "brain_data",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.orders"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.data.filter.orders_with_price"
+          ],
+          "args": {
+            "for": "the orders whose price is actually there",
+            "where": [
+              [
+                "price",
+                "not_null"
+              ]
+            ]
+          },
+          "calculation": {
+            "address": "fn.brain.data.filter",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "376e7c9c71fe1403866f3e424e8e1ef9ce02c392bd2c3742b31a8d35ce077fe8"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.orders"
+          ],
+          "duration_ms": 0.06562399994436419,
+          "hit": true,
+          "id": "kept",
+          "inputs": {
+            "table": "px:px.exp.brain.data.orders"
+          },
+          "into": "px.exp.brain.result.data.filter.orders_with_price",
+          "result_sha256": "6bee8373af0584ef6011d849fb52a34d42642f7686adcbe7d3102c3f3d7bac43",
+          "value": {
+            "data": {
+              "columns": [
+                "order",
+                "customer",
+                "region",
+                "items",
+                "price",
+                "expedited"
+              ],
+              "for": "the orders whose price is actually there",
+              "rows": [
+                [
+                  1001,
+                  "ada",
+                  "north",
+                  3,
+                  42.5,
+                  true
+                ],
+                [
+                  1002,
+                  "bo",
+                  "south",
+                  1,
+                  19.99,
+                  false
+                ],
+                [
+                  1004,
+                  "cy",
+                  "east",
+                  2,
+                  78.0,
+                  true
+                ],
+                [
+                  1005,
+                  "bo",
+                  "south",
+                  4,
+                  33.25,
+                  false
+                ],
+                [
+                  1006,
+                  "ada",
+                  "west",
+                  1,
+                  12.0,
+                  null
+                ],
+                [
+                  1007,
+                  "dee",
+                  "east",
+                  9,
+                  155.75,
+                  true
+                ],
+                [
+                  1008,
+                  "cy",
+                  "east",
+                  3,
+                  61.4,
+                  false
+                ],
+                [
+                  1010,
+                  "bo",
+                  "west",
+                  6,
+                  88.1,
+                  false
+                ],
+                [
+                  1011,
+                  "ada",
+                  "south",
+                  5,
+                  47.35,
+                  false
+                ],
+                [
+                  1012,
+                  "eli",
+                  "north",
+                  1,
+                  9.99,
+                  true
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.data.filter.orders_with_price",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.brain.result.data.group_by.orders_by_region"
+          ],
+          "args": {
+            "aggregates": [
+              {
+                "column": "price",
+                "fn": "mean"
+              },
+              {
+                "column": "price",
+                "fn": "sum"
+              },
+              {
+                "column": "items",
+                "fn": "sum"
+              },
+              {
+                "as": "orders",
+                "fn": "count"
+              }
+            ],
+            "backend": "np",
+            "by": [
+              "region"
+            ],
+            "for": "what each region actually spent"
+          },
+          "calculation": {
+            "address": "fn.brain.data.group_by",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "cc33ce6d4847ee18b02383f7e762917320a3dbe8a2e0bc0c538e727e3464b007"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.30617899938079063,
+          "hit": false,
+          "id": "grouped",
+          "inputs": {
+            "table": "fn:kept"
+          },
+          "into": "px.exp.brain.result.data.group_by.orders_by_region",
+          "result_sha256": "ca79f62b3d2caa79bfef5461d22948eb2707e78e88c0d96dfc1298b29bd836e9",
+          "value": {
+            "data": {
+              "columns": [
+                "region",
+                "price_mean",
+                "price_sum",
+                "items_sum",
+                "orders"
+              ],
+              "for": "what each region actually spent",
+              "rows": [
+                [
+                  "north",
+                  26.245,
+                  52.49,
+                  4.0,
+                  2
+                ],
+                [
+                  "south",
+                  33.53,
+                  100.59,
+                  10.0,
+                  3
+                ],
+                [
+                  "east",
+                  98.38333333333333,
+                  295.15,
+                  14.0,
+                  3
+                ],
+                [
+                  "west",
+                  50.05,
+                  100.1,
+                  7.0,
+                  2
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.data.group_by.orders_by_region",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Shape"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.customers"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.data.join.orders_customers"
+          ],
+          "args": {
+            "for": "every priced order beside the customer who placed it",
+            "how": "left",
+            "on": "customer"
+          },
+          "calculation": {
+            "address": "fn.brain.data.join",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "17de7f11971183b3f55d1160c9007a49a28d5e7e611e8b52f6a13eab6406415a"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.customers"
+          ],
+          "duration_ms": 0.0867769995238632,
+          "hit": true,
+          "id": "joined",
+          "inputs": {
+            "other": "px:px.exp.brain.data.customers",
+            "table": "fn:kept"
+          },
+          "into": "px.exp.brain.result.data.join.orders_customers",
+          "result_sha256": "bd4f04e8a157c79908070cf40b3c37cb32ab3792230ca2ef7035459203da43b1",
+          "value": {
+            "data": {
+              "columns": [
+                "customer",
+                "order",
+                "region",
+                "items",
+                "price",
+                "expedited",
+                "tier",
+                "since"
+              ],
+              "for": "every priced order beside the customer who placed it",
+              "rows": [
+                [
+                  "ada",
+                  1001,
+                  "north",
+                  3,
+                  42.5,
+                  true,
+                  "gold",
+                  2019
+                ],
+                [
+                  "bo",
+                  1002,
+                  "south",
+                  1,
+                  19.99,
+                  false,
+                  "silver",
+                  2021
+                ],
+                [
+                  "cy",
+                  1004,
+                  "east",
+                  2,
+                  78.0,
+                  true,
+                  "gold",
+                  2020
+                ],
+                [
+                  "bo",
+                  1005,
+                  "south",
+                  4,
+                  33.25,
+                  false,
+                  "silver",
+                  2021
+                ],
+                [
+                  "ada",
+                  1006,
+                  "west",
+                  1,
+                  12.0,
+                  null,
+                  "gold",
+                  2019
+                ],
+                [
+                  "dee",
+                  1007,
+                  "east",
+                  9,
+                  155.75,
+                  true,
+                  "bronze",
+                  2023
+                ],
+                [
+                  "cy",
+                  1008,
+                  "east",
+                  3,
+                  61.4,
+                  false,
+                  "gold",
+                  2020
+                ],
+                [
+                  "bo",
+                  1010,
+                  "west",
+                  6,
+                  88.1,
+                  false,
+                  "silver",
+                  2021
+                ],
+                [
+                  "ada",
+                  1011,
+                  "south",
+                  5,
+                  47.35,
+                  false,
+                  "gold",
+                  2019
+                ],
+                [
+                  "eli",
+                  1012,
+                  "north",
+                  1,
+                  9.99,
+                  true,
+                  null,
+                  null
+                ]
+              ]
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.data.join.orders_customers",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Widen"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.brain.result.data.rolling.series64_window8"
+          ],
+          "args": {
+            "backend": "np",
+            "fn": "mean",
+            "values": [
+              102.8038232678537,
+              98.17958450004359,
+              96.02525926452755,
+              104.02462236171989,
+              104.95266215265632,
+              99.75367098135621,
+              98.25739612471922,
+              104.19583352826584,
+              105.24157819671062,
+              100.84064570570159,
+              99.66506158157829,
+              106.55841288991076,
+              108.10793365377319,
+              102.47021727668951,
+              100.65308304273236,
+              107.47056266793545,
+              109.08285455179215,
+              104.52888496335764,
+              102.73333793530634,
+              108.25862070846665,
+              110.49088900200616,
+              106.25930189012078,
+              104.31765742492445,
+              109.98401586840116,
+              112.0175024967383,
+              107.34759320034277,
+              105.0955208475826,
+              112.21650958580662,
+              112.44212018298418,
+              108.011635253043,
+              106.86946062144602,
+              112.85036887935122,
+              115.13178637488072,
+              110.90177461496319,
+              107.91376957830393,
+              113.91426167689592,
+              116.28824512902285,
+              110.7281708063481,
+              109.20964596252009,
+              117.06935252775754,
+              117.51464636154135,
+              112.48307039980831,
+              110.0241759659023,
+              117.35678523635045,
+              117.4669290367498,
+              115.10948414797807,
+              111.66076055415553,
+              118.92558962250216,
+              119.03212431627675,
+              115.39641352717734,
+              114.19636626925217,
+              120.73004317739995,
+              121.08898049805241,
+              116.62125248711355,
+              114.21448374626684,
+              122.2683142812744,
+              122.09744523862557,
+              118.27044695188012,
+              116.19306731555133,
+              123.24958957641236,
+              123.8030783426345,
+              120.7578794661791,
+              116.77135884695717,
+              123.946270825947
+            ],
+            "window": 8
+          },
+          "calculation": {
+            "address": "fn.brain.data.rolling",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "a410485027e045d752cc687c2a274aaf9ab2af12e837b79bafb1d354df6c1b3b"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.3335660003358498,
+          "hit": false,
+          "id": "rolled",
+          "inputs": {},
+          "into": "px.exp.brain.result.data.rolling.series64_window8",
+          "result_sha256": "091b29b21cea2efa94e074e3f04da828c782279062424b800a990bdf85df5520",
+          "value": {
+            "data": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              101.0241065226428,
+              101.3288258887499,
+              101.66145853945716,
+              102.11643382908849,
+              102.43315764511235,
+              102.82756658275196,
+              103.16713486966862,
+              103.46659573442028,
+              103.87593687687897,
+              104.35609642126417,
+              104.81712632847118,
+              105.20066087268717,
+              105.41318685000667,
+              105.71105626853578,
+              106.18469184521469,
+              106.6427636429887,
+              106.95694529304691,
+              107.32377628616518,
+              107.67611481578832,
+              107.97138767982285,
+              108.46612378949035,
+              108.71002768711261,
+              108.92906935747789,
+              109.24804475704308,
+              109.60633888341184,
+              109.99562436817965,
+              110.4398970450072,
+              110.79217813634736,
+              111.00439714773353,
+              111.48516276598835,
+              111.8247297101515,
+              112.11725287778575,
+              112.64462583383654,
+              112.94248333216912,
+              113.14014530527476,
+              113.40394610372456,
+              113.83426154865637,
+              113.98159703712224,
+              114.52926120482599,
+              114.83565052878042,
+              115.0676801656235,
+              115.25736490996542,
+              115.62153280088654,
+              116.14305658880528,
+              116.56471383143648,
+              117.0174702640993,
+              117.20644130649123,
+              117.52565670550514,
+              117.94349728785167,
+              118.32666240314528,
+              118.68591658123313,
+              118.93550421202052,
+              119.25044751189708,
+              119.58970974246984,
+              120.10678811485303,
+              120.42639750243933,
+              120.63614207052339
+            ],
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.data.rolling.series64_window8",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Smooth"
+    }
+  ]
+}
