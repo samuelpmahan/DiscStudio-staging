@@ -2,6 +2,7 @@ import { createExecBoard, pxFn, readPql, invokePql, invokePqlAsync } from './cor
 import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materialFor, discoverFields, applyCommand, validateWorld, clone, id } from './domain.js';
 import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
+import { composeFrame } from './frames.js';
 import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
 import { shelfSheet } from './formats/shelf-sheet.js';
 import { receiptList } from './formats/receipt-list.js';
@@ -41,7 +42,8 @@ export function createStudioRuntime(initial) {
   register('fn.card.svg', cardSvg);
   // `course` is bound only by the course arrangement (sceneComposition below);
   // every other arrangement composes from the cards and the layout alone, as it always did.
-  register('fn.comparison.layout', ({ layout, course = null, ...cards }) => composeOverlay({ cards, layout, course }));
+  register('fn.comparison.layout', ({ layout, course = null, frame = null, ...cards }) => composeOverlay({ cards, layout, course, frame }));
+  register('fn.overlay.frame', composeFrame);
   register('fn.overlay.svg', materializeOverlay);
   register('fn.constraint.bagLimit', bagLimit);
   register('fn.constraint.oneMold', oneMold);
@@ -183,6 +185,13 @@ export function createStudioRuntime(initial) {
     if (!state) throw new Error('Comparison state is missing.');
     const entries = mode === 'card' ? [{ discId, id: 'single' }] : w.battle.entries;
     const ticks = [], inputs = { layout: 'px.comparison.layout' };
+    // The frame first: the canvas (1920x1080 or the vertical 1080x1920), the
+    // safe area the cards are then fitted into, the title strip and the sponsor
+    // lockup -- composed from the layout's own frame and the cards cascade's
+    // global tokens, so the frame and the cards on it are one design.
+    const spec = source('px.overlay.frame.spec', { orientation: w.layout.orientation, presetId: w.layout.frame.presetId, title: w.layout.frame.title || w.battle.name });
+    ticks.push(step('Frame', 'fn.overlay.frame', { spec, tokens: 'px.discstudio.cards.global' }, 'px.overlay.frame'));
+    inputs.frame = 'px.overlay.frame';
     if (world().layout.arrangement === 'course') inputs.course = labCourseAddress();
     entries.forEach((entry, i) => {
       const info = mode === 'card' ? null : { ...entry, score: state.scores[entry.id] ?? null, highlighted: state.highlight === entry.id, winner: state.winners.includes(entry.id) };
@@ -190,10 +199,10 @@ export function createStudioRuntime(initial) {
       ticks.push(...built.ticks); inputs[`card${i}`] = `${built.prefix}.card`;
     });
     ticks.push(step('ArrangeComparison', 'fn.comparison.layout', inputs, 'px.course.scene'));
-    ticks.push(step('MaterializeOverlay', 'fn.overlay.svg', { scene: 'px.course.scene' }, 'px.course.svg'));
+    ticks.push(step('MaterializeOverlay', 'fn.overlay.svg', { scene: 'px.course.scene', frame: 'px.overlay.frame' }, 'px.course.svg'));
     return { ticks, state };
   }
-  const rendered = state => ({ ...pxc.get('px.course.svg'), part: 'px.course.svg', stateId: state.id, scene: pxc.get('px.course.scene') });
+  const rendered = state => ({ ...pxc.get('px.course.svg'), part: 'px.course.svg', stateId: state.id, scene: pxc.get('px.course.scene'), frame: pxc.get('px.overlay.frame') });
   function scene(options = {}) {
     const { ticks, state } = sceneComposition(options);
     const run = execute('on-the-course', ticks);

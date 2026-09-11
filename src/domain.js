@@ -1,4 +1,5 @@
 import { defaultCards, validateCards, applyCardsSet, validatePresetCascade } from './cards.js';
+import { framePresets, orientations } from './frames.js';
 /** Runtime domain definitions drive both fact editing and presentation discovery. */
 export const schema = {
   BattleEntry: { label: 'Current comparison entry', fields: { score: { type: 'number', label: 'Score', optional: true }, highlighted: { type: 'boolean', label: 'Highlighted' }, winner: { type: 'boolean', label: 'Authored winner' } } },
@@ -104,8 +105,16 @@ export function validateWorld(world) {
     if (s.highlight && !world.battle.entries.some(e => e.id === s.highlight)) throw new Error('Highlight references a missing participant.');
     if (!Array.isArray(s.winners) || s.winners.some(key => !world.battle.entries.some(e => e.id === key))) throw new Error('Winner references a missing participant.');
   }
-  const l = world.layout;
+  // A draft saved before the vertical canvas existed carries no orientation and
+  // no frame. Both are normalised to what that draft always rendered -- the
+  // 1920x1080 canvas, no frame -- rather than refused, and a new object is made
+  // only when one is actually missing (validateWorld also runs over frozen Parts).
+  let layout = world.layout;
+  if (layout && (typeof layout.orientation !== 'string' || !layout.frame)) layout = { ...layout, orientation: typeof layout.orientation === 'string' ? layout.orientation : 'landscape', frame: layout.frame ?? { presetId: 'none', title: '' } };
+  const l = layout;
   if (!l || !world.presets[l.presetId] || !['row', 'stack', 'grid', 'course'].includes(l.arrangement) || !['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'].includes(l.anchor) || !Number.isFinite(l.scale) || l.scale < .25 || l.scale > 2 || !Number.isFinite(l.gap) || l.gap < 0 || l.gap > 100) throw new Error('Invalid comparison layout.');
+  if (!orientations.includes(l.orientation)) throw new Error('A comparison is composed on the landscape or the vertical canvas.');
+  if (!l.frame || !framePresets[l.frame.presetId] || typeof l.frame.title !== 'string' || l.frame.title.length > 80) throw new Error('Invalid overlay frame: pick a frame preset and a title of at most 80 characters.');
   for (const comp of Object.values(world.objects.Competition ?? {})) {
     if (!['all', 'any'].includes(comp.combine) || !Array.isArray(comp.constraints) || !Array.isArray(comp.teamIds) || !Array.isArray(comp.roundIds)) throw new Error('Invalid competition composition.');
     for (const rule of comp.constraints) if (!['bagLimit', 'oneMold', 'teamThrows'].includes(rule.kind) || !safeKey(rule.id) || typeof rule.enabled !== 'boolean' || !Number.isInteger(rule.value) || rule.value < 1 || rule.value > 100) throw new Error('Constraint values must be whole numbers from 1 to 100.');
@@ -120,7 +129,7 @@ export function validateWorld(world) {
   let cards = world.cards;
   if (!cards) cards = defaultCards();
   else if (Object.hasOwn(cards, 'projections')) { const { projections, ...rest } = cards; cards = rest; }
-  const result = cards === world.cards ? world : { ...world, cards };
+  const result = cards === world.cards && layout === world.layout ? world : { ...world, cards, layout };
   validateCards(result.cards);
   return result;
 }

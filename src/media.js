@@ -10,13 +10,14 @@ export async function photoData(file) {
   const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('Image preparation is unavailable.'); ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height); bitmap.close();
   return canvas.toDataURL('image/webp', .86);
 }
-export async function pngFromSvg(svg) {
+/** The PNG is the SVG Part at its own size: 1920x1080, or the 1080x1920 vertical canvas. */
+export async function pngFromSvg(svg, width = 1920, height = 1080) {
   const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
   try {
     const image = new Image(); image.src = url; await image.decode();
-    const canvas = document.createElement('canvas'); canvas.width = 1920; canvas.height = 1080;
+    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
     const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('PNG export is unavailable.');
-    ctx.drawImage(image, 0, 0, 1920, 1080);
+    ctx.drawImage(image, 0, 0, width, height);
     return await new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('PNG conversion failed.')), 'image/png'));
   } finally { URL.revokeObjectURL(url); }
 }

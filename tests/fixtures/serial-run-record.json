@@ -9,6 +9,74 @@
   "ticks": [
     {
       "index": 0,
+      "name": "Frame",
+      "invocations": [
+        {
+          "id": "px.overlay.frame",
+          "calculation": {
+            "address": "fn.overlay.frame",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "spec": "px:px.overlay.frame.spec",
+            "tokens": "px:px.discstudio.cards.global"
+          },
+          "args": {},
+          "into": "px.overlay.frame",
+          "declared_consumes": [
+            "px:px.overlay.frame.spec",
+            "px:px.discstudio.cards.global"
+          ],
+          "actual_consumes": [
+            "px.overlay.frame.spec",
+            "px.discstudio.cards.global"
+          ],
+          "actual_produces": [
+            "px.overlay.frame"
+          ],
+          "writes": [
+            {
+              "address": "px.overlay.frame",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": "overlay.frame:bcf8238a",
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "orientation": "landscape",
+              "presetId": "none",
+              "name": "None · transparent overlay",
+              "description": "No frame: the transparent overlay exactly as it has always been exported.",
+              "width": 1920,
+              "height": 1080,
+              "fill": "none",
+              "box": {
+                "x": 60,
+                "y": 60,
+                "width": 1800,
+                "height": 960
+              },
+              "safe": {
+                "x": 60,
+                "y": 60,
+                "width": 1800,
+                "height": 960
+              },
+              "title": null,
+              "sponsor": null,
+              "note": "Landscape · 1920 × 1080"
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
       "name": "Fields:buzzz-mint",
       "invocations": [
         {
@@ -499,7 +567,7 @@
       ]
     },
     {
-      "index": 1,
+      "index": 2,
       "name": "Art:buzzz-mint",
       "invocations": [
         {
@@ -563,7 +631,7 @@
       ]
     },
     {
-      "index": 2,
+      "index": 3,
       "name": "Cascade:buzzz-mint",
       "invocations": [
         {
@@ -899,7 +967,7 @@
       ]
     },
     {
-      "index": 3,
+      "index": 4,
       "name": "Card:buzzz-mint",
       "invocations": [
         {
@@ -1523,7 +1591,7 @@
       ]
     },
     {
-      "index": 4,
+      "index": 5,
       "name": "CardSvg:buzzz-mint",
       "invocations": [
         {
@@ -1565,7 +1633,7 @@
       ]
     },
     {
-      "index": 5,
+      "index": 6,
       "name": "Fields:zone-peach",
       "invocations": [
         {
@@ -2056,7 +2124,7 @@
       ]
     },
     {
-      "index": 6,
+      "index": 7,
       "name": "Art:zone-peach",
       "invocations": [
         {
@@ -2120,7 +2188,7 @@
       ]
     },
     {
-      "index": 7,
+      "index": 8,
       "name": "Cascade:zone-peach",
       "invocations": [
         {
@@ -2456,7 +2524,7 @@
       ]
     },
     {
-      "index": 8,
+      "index": 9,
       "name": "Card:zone-peach",
       "invocations": [
         {
@@ -3080,7 +3148,7 @@
       ]
     },
     {
-      "index": 9,
+      "index": 10,
       "name": "CardSvg:zone-peach",
       "invocations": [
         {
@@ -3122,7 +3190,7 @@
       ]
     },
     {
-      "index": 10,
+      "index": 11,
       "name": "Fields:destroyer-lilac",
       "invocations": [
         {
@@ -3613,7 +3681,7 @@
       ]
     },
     {
-      "index": 11,
+      "index": 12,
       "name": "Art:destroyer-lilac",
       "invocations": [
         {
@@ -3677,7 +3745,7 @@
       ]
     },
     {
-      "index": 12,
+      "index": 13,
       "name": "Cascade:destroyer-lilac",
       "invocations": [
         {
@@ -4013,7 +4081,7 @@
       ]
     },
     {
-      "index": 13,
+      "index": 14,
       "name": "Card:destroyer-lilac",
       "invocations": [
         {
@@ -4637,7 +4705,7 @@
       ]
     },
     {
-      "index": 14,
+      "index": 15,
       "name": "CardSvg:destroyer-lilac",
       "invocations": [
         {
@@ -4679,7 +4747,7 @@
       ]
     },
     {
-      "index": 15,
+      "index": 16,
       "name": "ArrangeComparison",
       "invocations": [
         {
@@ -4691,6 +4759,7 @@
           },
           "inputs": {
             "layout": "px:px.comparison.layout",
+            "frame": "px:px.overlay.frame",
             "card0": "px:px.render.course.entry-1.card",
             "card1": "px:px.render.course.entry-2.card",
             "card2": "px:px.render.course.entry-3.card"
@@ -4699,12 +4768,14 @@
           "into": "px.course.scene",
           "declared_consumes": [
             "px:px.comparison.layout",
+            "px:px.overlay.frame",
             "px:px.render.course.entry-1.card",
             "px:px.render.course.entry-2.card",
             "px:px.render.course.entry-3.card"
           ],
           "actual_consumes": [
             "px.comparison.layout",
+            "px.overlay.frame",
             "px.render.course.entry-1.card",
             "px.render.course.entry-2.card",
             "px.render.course.entry-3.card"
@@ -4719,13 +4790,44 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "comparison.layout:30467480",
+          "result_sha256": "comparison.layout:e74ae697",
           "hit": true,
           "value": {
             "kind": "json",
             "data": {
               "width": 1920,
               "height": 1080,
+              "orientation": "landscape",
+              "safe": {
+                "x": 60,
+                "y": 60,
+                "width": 1800,
+                "height": 960
+              },
+              "frame": {
+                "orientation": "landscape",
+                "presetId": "none",
+                "name": "None · transparent overlay",
+                "description": "No frame: the transparent overlay exactly as it has always been exported.",
+                "width": 1920,
+                "height": 1080,
+                "fill": "none",
+                "box": {
+                  "x": 60,
+                  "y": 60,
+                  "width": 1800,
+                  "height": 960
+                },
+                "safe": {
+                  "x": 60,
+                  "y": 60,
+                  "width": 1800,
+                  "height": 960
+                },
+                "title": null,
+                "sponsor": null,
+                "note": "Landscape · 1920 × 1080"
+              },
               "scale": 1.25,
               "bounds": {
                 "x": 60,
@@ -8201,7 +8303,7 @@
       ]
     },
     {
-      "index": 16,
+      "index": 17,
       "name": "MaterializeOverlay",
       "invocations": [
         {
@@ -8212,15 +8314,18 @@
             "identity_scope": "registered-address-and-revision:1"
           },
           "inputs": {
-            "scene": "px:px.course.scene"
+            "scene": "px:px.course.scene",
+            "frame": "px:px.overlay.frame"
           },
           "args": {},
           "into": "px.course.svg",
           "declared_consumes": [
-            "px:px.course.scene"
+            "px:px.course.scene",
+            "px:px.overlay.frame"
           ],
           "actual_consumes": [
-            "px.course.scene"
+            "px.course.scene",
+            "px.overlay.frame"
           ],
           "actual_produces": [
             "px.course.svg"
@@ -8232,7 +8337,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "overlay.svg:1618f4c2",
+          "result_sha256": "overlay.svg:dda3430a",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -8244,6 +8349,31 @@
     }
   ],
   "parts": {
+    "px.overlay.frame.spec": {
+      "written_by": null,
+      "read_by": [
+        "px.overlay.frame"
+      ],
+      "preexisting": true
+    },
+    "px.discstudio.cards.global": {
+      "written_by": null,
+      "read_by": [
+        "px.overlay.frame",
+        "px.discstudio.cards.effective.competition.buzzz-mint",
+        "px.discstudio.cards.effective.competition.zone-peach",
+        "px.discstudio.cards.effective.competition.destroyer-lilac"
+      ],
+      "preexisting": true
+    },
+    "px.overlay.frame": {
+      "written_by": "px.overlay.frame",
+      "read_by": [
+        "px.course.scene",
+        "px.course.svg"
+      ],
+      "preexisting": false
+    },
     "px.render.course.entry-1.inputs": {
       "written_by": null,
       "read_by": [
@@ -8295,15 +8425,6 @@
         "px.render.course.entry-1.card"
       ],
       "preexisting": false
-    },
-    "px.discstudio.cards.global": {
-      "written_by": null,
-      "read_by": [
-        "px.discstudio.cards.effective.competition.buzzz-mint",
-        "px.discstudio.cards.effective.competition.zone-peach",
-        "px.discstudio.cards.effective.competition.destroyer-lilac"
-      ],
-      "preexisting": true
     },
     "px.presentation.broadcast": {
       "written_by": null,
@@ -8526,8 +8647,8 @@
     }
   },
   "counters": {
-    "invocations": 20,
-    "hits": 16,
+    "invocations": 21,
+    "hits": 17,
     "computed": 4,
     "wall_ms": null
   }
