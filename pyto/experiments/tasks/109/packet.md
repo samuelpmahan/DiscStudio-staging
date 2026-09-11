@@ -4,8 +4,36 @@ Intent: brain: the blok generation lane, filed as a Part - proposal.brain.blok_g
 Starting point: a6d6ae5ac0b422b867259a1b8fb26f4fba77a937 (land(task-108): brain kerchoo: the owner's speed pass across all four verticals - the loops hiding inside vectorised engines (an sp or np engine that called scipy or numpy once per element is one vectorised call now), backend=auto as the default when a caller names no engine, the plan Part extended to the stats, data and ml calcs that have bench Parts, and one Part px.exp.brain.bench.kerchoo recording before, after, speedup and the engine chosen for every calc touched)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 2 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/backend/summary.py
+- M  pyto/experiments/brain/store/backend.json
+
+```
+pyto/experiments/brain/backend/summary.py | 25 +++++++++++++++++++++++++
+ pyto/experiments/brain/store/backend.json | 11 +++++++++++
+ 2 files changed, 36 insertions(+)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.uTbZi9Lhfe) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
