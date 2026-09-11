@@ -1,0 +1,137 @@
+PrincipleComponentRender: S1
+Ticks:
+  - name: BlackMask
+    Calculations:
+      - call: fn.s1.exp.maskComponents.selectHsvMask
+        with:
+          raster: px.s1.exp.maskComponents.part.croppedRaster
+        args:
+          polarity: black
+          valueMax: 45
+          alpha: ignored
+        into: px.s1.exp.maskComponents.part.blackMask
+      - call: fn.s1.exp.maskComponents.group8Connected
+        with:
+          mask: px.s1.exp.maskComponents.part.blackMask
+        args:
+          connectivity: 8
+          retainSingletons: true
+        into: px.s1.exp.maskComponents.part.blackComponents
+  - name: WhiteMask
+    Calculations:
+      - call: fn.s1.exp.maskComponents.selectHsvMask
+        with:
+          raster: px.s1.exp.maskComponents.part.croppedRaster
+        args:
+          polarity: white
+          valueMin: 210
+          saturationMax: 45
+          alpha: ignored
+        into: px.s1.exp.maskComponents.part.whiteMask
+      - call: fn.s1.exp.maskComponents.group8Connected
+        with:
+          mask: px.s1.exp.maskComponents.part.whiteMask
+        args:
+          connectivity: 8
+          retainSingletons: true
+        into: px.s1.exp.maskComponents.part.whiteComponents
+  - name: BadgeAssembly
+    Calculations:
+      - call: fn.s1.exp.badgeAssembly.selectComponents
+        with:
+          components: px.s1.exp.maskComponents.part.blackComponents
+        args:
+          predicate: plate-bbox-and-fill
+          # From DEFAULT_BADGE_STAGE_KNOBS dark-plate recovery geometry.
+          minWidth: 34
+          maxWidth: 78
+          minHeight: 24
+          maxHeight: 54
+          minAspect: 1
+          maxAspect: 2.4
+          minFill: 0.55
+        into: px.s1.exp.badgeAssembly.plates
+      - call: fn.s1.exp.badgeAssembly.findRelated
+        with:
+          anchors: px.s1.exp.badgeAssembly.plates
+          candidates: px.s1.exp.maskComponents.part.whiteComponents
+        args:
+          anchorRole: plate
+          predicate: candidate-bbox-contains-anchor
+        into: px.s1.exp.badgeAssembly.plateBorders
+      - call: fn.s1.exp.badgeAssembly.findRelated
+        with:
+          anchors: px.s1.exp.badgeAssembly.plates
+          candidates: px.s1.exp.maskComponents.part.whiteComponents
+        args:
+          anchorRole: plate
+          predicate: anchor-bbox-contains-candidate
+        into: px.s1.exp.badgeAssembly.plateDigits
+      - call: fn.s1.exp.badgeAssembly.findRelated
+        with:
+          anchors: px.s1.exp.badgeAssembly.plateDigits
+          candidates: px.s1.exp.maskComponents.part.blackComponents
+        args:
+          anchorRole: related-component
+          predicate: anchor-bbox-contains-candidate
+        into: px.s1.exp.badgeAssembly.digitLoops
+      - call: fn.s1.exp.badgeAssembly.assemble
+        with:
+          plates: px.s1.exp.badgeAssembly.plates
+          plateBorders: px.s1.exp.badgeAssembly.plateBorders
+          plateDigits: px.s1.exp.badgeAssembly.plateDigits
+          digitLoops: px.s1.exp.badgeAssembly.digitLoops
+        args:
+          acceptance: border-and-digit-material
+        into: px.s1.exp.badgeAssembly.badgeCandidates
+  - name: WhiteDigitRecognition
+    Calculations:
+      - call: fn.s1.whiteDigits.prepare
+        with:
+          badges: px.s1.exp.badgeAssembly.badgeCandidates
+        args:
+          # Existing DEFAULT_DIGITS_KNOBS; explicit here for inspection.
+          knobs:
+            minComponentArea: 6
+            heightRatioMin: 0.5
+            wideRatio: 0.95
+            valleySearchLo: 0.3
+            valleySearchHi: 0.7
+            digitW: 24
+            digitH: 32
+            confidenceFloorDivisor: 8
+            labelAmbiguityMargin: 0.045
+        into: px.s1.whiteDigits.prepared
+      - call: fn.s1.whiteDigits.match
+        with:
+          prepared: px.s1.whiteDigits.prepared
+          model: px.s1.whiteDigits.model
+        args: {}
+        into: px.s1.whiteDigits.recognizedBadges
+  - name: BadgeOutputs
+    Calculations:
+      - call: fn.s1.badges.declareOwnership
+        with:
+          recognized: px.s1.whiteDigits.recognizedBadges
+        args: {}
+        into: px.badges.objects
+      - call: fn.s1.badges.ownedPixels
+        with:
+          badges: px.badges.objects
+          raster: px.course.canonicalPixels
+        args: {}
+        into: px.badges.px
+      - call: fn.s1.badges.mutedPixels
+        with:
+          badges: px.badges.objects
+          owned: px.badges.px
+          raster: px.course.canonicalPixels
+        args: {}
+        into: px.badges.muted
+      - call: fn.s1.badges.remainingPixels
+        with:
+          owned: px.badges.px
+          muted: px.badges.muted
+          raster: px.course.canonicalPixels
+        args: {}
+        into: px.remaining.afterBadges

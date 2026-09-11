@@ -1,0 +1,29 @@
+pcr: S0.full-to-cropped
+
+input:
+  selected_image: encoded_source
+
+sanitation:
+  decode_to: FullImage
+
+transform:
+  crop_udisc_chrome
+
+output:
+  px: px.course.canonicalPixels
+
+last:
+  cache: FullImage
+
+receipt:
+  fields:
+    - originalPx
+    - cropMethod
+    - upperRowsRemoved
+    - lowerRowsRemoved
+    - croppedPx
+    - totalPxRemoved
+    - pctPxRemoved
+
+  image:
+    progression: [FullImage, crop_boundary, CroppedImage]

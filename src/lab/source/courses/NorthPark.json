@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "course": "NorthPark",
+  "aliases": ["North Park"],
+  "devDir": "NorthPark",
+  "image": "NorthPark-full.png"
+}

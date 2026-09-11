@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "course": "HeritagePark",
+  "aliases": ["Heritage", "Heritage Park"],
+  "devDir": "Heritage",
+  "image": "HeritagePark-full.png",
+  "annotation": "HeritagePark-full.annotation.json"
+}
