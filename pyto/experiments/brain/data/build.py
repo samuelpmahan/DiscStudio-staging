@@ -221,6 +221,48 @@ def group_by_tournament(store):
     return decided
 
 
+ROLLING_CRITERIA = [
+    {"name": "correctness", "how": "the share of this engine's rolling oracle Parts that pass",
+     "direction": "higher", "weight": 3.0},
+    {"name": "speed", "how": "wall_ms_median of the largest rolling benchmark Part",
+     "direction": "lower", "weight": 2.0},
+    {"name": "clarity", "how": "lines of the engine, docstring included",
+     "direction": "lower", "weight": 1.0},
+]
+
+
+def rolling_tournament(store):
+    """the rolling bracket: a slice per point, twice, against one cumulative pass."""
+    problem = "rolling_window"
+    candidates = [
+        {"branch": "py", "calc": "fn.brain.data.rolling",
+         "note": "one slice per point, reduced in pure python: O(n w)"},
+        {"branch": "np", "calc": "fn.brain.data.rolling",
+         "note": "one slice per point, reduced by numpy: O(n w) with an array built per point"},
+        {"branch": "cumsum", "calc": "fn.brain.data.rolling",
+         "note": "prefix sums of the series and of its squares, one pass: O(n) whatever the "
+                 "window, and it covers count/sum/mean/var/std only"},
+    ]
+    store.bracket(VERTICAL, problem, ROLLING_CRITERIA, candidates,
+                  for_="whether a rolling statistic should be a window reduced per point at "
+                       "all, once the same answer is available in one pass")
+    for candidate in candidates:
+        scores, note = referee.score_rolling(store, candidate["branch"])
+        store.judge(VERTICAL, problem, referee.NAME, candidate["branch"], scores, note)
+    decided = store.decide(VERTICAL, problem)
+    default = timeseries._backend({}, timeseries.ROLLING_BACKENDS)
+    store.refine(
+        VERTICAL, problem,
+        "winner %r; fn.brain.data.rolling defaults to %r, and it stays the default because it "
+        "is the only engine that answers every fn (min, max and median have no whole-window "
+        "form, and the cumsum engine refuses them loudly rather than answering some other "
+        "question). the winner is what a caller asking for count/sum/mean/var/std at size "
+        "should name. every engine keeps its own oracle and benchmark Parts."
+        % (decided["winner"], default),
+        address="fn.brain.data.rolling")
+    return decided
+
+
 def findings(store):
     store.finding(
         VERTICAL, "declarative_predicates_keep_the_record_whole", "strength",
@@ -272,6 +314,17 @@ def findings(store):
                  "written by fn.brain.data.shape and trusted (and re-checked) by the rest; the "
                  "harness's dataset() is the natural place to fill it in")
     store.finding(
+        VERTICAL, "the_window_did_not_have_to_be_a_window", "strength",
+        "the rolling bracket is the clearest thing this vertical measured. both of the "
+        "obvious engines take a slice per point and reduce it, so both are O(n w) and both "
+        "get slower as the window grows; the third keeps prefix sums of the series and of "
+        "its squares and answers every window in one pass, so its cost does not move with "
+        "the window at all. it needed one real idea to meet the same 1e-9 oracle -- shift "
+        "the series by its own mean before accumulating the squares, so a cumulative "
+        "variance is a difference of small numbers rather than of large ones.",
+        for_="a facade with a backend argument is what let a third engine be added and "
+             "measured without touching a single caller or a single oracle case")
+    store.finding(
         VERTICAL, "the_loader_is_an_effect_and_that_is_the_point", "strength",
         "oc.brain.data.load reads csv and json through args['effects'].read_text, so the bytes "
         "it read land on the ledger. a dataset that came off disk is therefore as replayable as "
@@ -287,6 +340,9 @@ def built_addresses(store):
 
 def the_map(store, decided):
     stubbed = [
+        {"address": "fn.brain.data.rolling (min, max and median on the cumsum engine)",
+         "why": "a running minimum needs a monotonic deque, not a prefix sum; the engine "
+                "refuses those three loudly instead of answering a different question"},
         {"address": "fn.brain.data.group_by (median on the npsort engine)",
          "why": "median has no whole-column reduction, so the third engine falls back to the "
                 "per-group path for it; a sorted-block median is the obvious next piece"},
@@ -328,6 +384,7 @@ def build(store_dir=None, records_dir=None, quick=False, bench_n=5, commit=False
     passed, failed = oracles(store)
     benchmarks(store, quick=quick, n=bench_n)
     decided = group_by_tournament(store)
+    rolling_tournament(store)
     findings(store)
     the_map(store, decided)
     return store, {"oracles_passed": passed, "oracles_failed": failed,

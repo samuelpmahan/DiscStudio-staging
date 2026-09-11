@@ -1,0 +1,7 @@
+# the same suite on the owner's stack: python 3.12.3, numpy 2.5.3, scipy 1.18.1
+
+ERROR: test_the_py_engine_of_eig_refuses_a_non_symmetric_matrix (backend.test_ops.TheStubsSayWhy.test_the_py_engine_of_eig_refuses_a_non_symmetric_matrix)
+FAIL: test_the_unguarded_gram_expansion_is_a_failed_backend (backend.test_tournament.TheBrackets.test_the_unguarded_gram_expansion_is_a_failed_backend)
+FAIL: test_the_saved_document_matches_a_fresh_build (ml.test_store.TheCommittedStore.test_the_saved_document_matches_a_fresh_build)
+Ran 647 tests in 29.038s
+FAILED (failures=2, errors=1)

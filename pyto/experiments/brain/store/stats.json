@@ -44,8 +44,8 @@
     "inputs_sha256": "1a6059888e51314c1e8155c6e5d067816e978a440ff9ff97eeea068118f7bdb3",
     "n": 5,
     "size": "n=3600",
-    "wall_ms_median": 0.520135999977,
-    "wall_ms_min": 0.500385000123
+    "wall_ms_median": 0.548395000806,
+    "wall_ms_min": 0.502130000314
   },
   "px.exp.brain.bench.stats.bartlett.py.n=600": {
     "backend": "py",
@@ -54,8 +54,8 @@
     "inputs_sha256": "2f63cca89e3d0b0e9a32f010b6f6ba550638800d8b568a42967093fa93210706",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.0926000002437,
-    "wall_ms_min": 0.0846319999255
+    "wall_ms_median": 0.092685000709,
+    "wall_ms_min": 0.0835009996081
   },
   "px.exp.brain.bench.stats.bartlett.sp.n=3600": {
     "backend": "sp",
@@ -64,8 +64,8 @@
     "inputs_sha256": "1a6059888e51314c1e8155c6e5d067816e978a440ff9ff97eeea068118f7bdb3",
     "n": 5,
     "size": "n=3600",
-    "wall_ms_median": 0.781214000199,
-    "wall_ms_min": 0.76310500026
+    "wall_ms_median": 0.801262000095,
+    "wall_ms_min": 0.73323200013
   },
   "px.exp.brain.bench.stats.bartlett.sp.n=600": {
     "backend": "sp",
@@ -74,8 +74,8 @@
     "inputs_sha256": "2f63cca89e3d0b0e9a32f010b6f6ba550638800d8b568a42967093fa93210706",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.64741999995,
-    "wall_ms_min": 0.569797000026
+    "wall_ms_median": 0.595176999923,
+    "wall_ms_min": 0.54093199833
   },
   "px.exp.brain.bench.stats.cdf.py.chi2_n=1000": {
     "backend": "py",
@@ -84,8 +84,8 @@
     "inputs_sha256": "62faeecdbc12fd475834c18b234292d51a5e79c96a8321dd615ebde8f26d18b2",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 0.124739000057,
-    "wall_ms_min": 0.117935000162
+    "wall_ms_median": 0.119454000014,
+    "wall_ms_min": 0.117383999168
   },
   "px.exp.brain.bench.stats.cdf.py.chi2_n=4000": {
     "backend": "py",
@@ -94,8 +94,8 @@
     "inputs_sha256": "7cd03822ee308bf595626882753d274df8387d9a7e47b758b9b1143648295f49",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 4.13852299971,
-    "wall_ms_min": 4.06245799968
+    "wall_ms_median": 4.07059400095,
+    "wall_ms_min": 4.04861999959
   },
   "px.exp.brain.bench.stats.cdf.py.normal_n=1000": {
     "backend": "py",
@@ -104,8 +104,8 @@
     "inputs_sha256": "26068dc4da55bc0bd3da095429393457ea9b846edd6ea88db0f1df27d4f87e57",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 0.267925000117,
-    "wall_ms_min": 0.223959000323
+    "wall_ms_median": 0.229761999435,
+    "wall_ms_min": 0.22081699899
   },
   "px.exp.brain.bench.stats.cdf.py.normal_n=4000": {
     "backend": "py",
@@ -114,8 +114,8 @@
     "inputs_sha256": "32b849a0a3f0a261691cf8f76c720535431c854717ed35e002c03a97383c300b",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 0.946762999774,
-    "wall_ms_min": 0.913626000511
+    "wall_ms_median": 0.897154000995,
+    "wall_ms_min": 0.875591000295
   },
   "px.exp.brain.bench.stats.cdf.py.t_n=1000": {
     "backend": "py",
@@ -124,8 +124,8 @@
     "inputs_sha256": "55b0b083ec65d239f0e8d139ca9c43965a879ae9c4997f85e138e5b3ecdc2d92",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 5.79812599972,
-    "wall_ms_min": 5.67594699987
+    "wall_ms_median": 5.61463000122,
+    "wall_ms_min": 5.43626599938
   },
   "px.exp.brain.bench.stats.cdf.py.t_n=4000": {
     "backend": "py",
@@ -134,8 +134,8 @@
     "inputs_sha256": "b6d32d8ed83accf379089139e8ae81aa6a77993c682a0e434fa65960e9516222",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 20.6669440004,
-    "wall_ms_min": 20.4601200003
+    "wall_ms_median": 20.4922069988,
+    "wall_ms_min": 20.1550490001
   },
   "px.exp.brain.bench.stats.cdf.sp.chi2_n=1000": {
     "backend": "sp",
@@ -144,8 +144,8 @@
     "inputs_sha256": "62faeecdbc12fd475834c18b234292d51a5e79c96a8321dd615ebde8f26d18b2",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 20.354841,
-    "wall_ms_min": 20.2339970001
+    "wall_ms_median": 20.6657869985,
+    "wall_ms_min": 20.0098590012
   },
   "px.exp.brain.bench.stats.cdf.sp.chi2_n=4000": {
     "backend": "sp",
@@ -154,8 +154,8 @@
     "inputs_sha256": "7cd03822ee308bf595626882753d274df8387d9a7e47b758b9b1143648295f49",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 124.630632,
-    "wall_ms_min": 122.637712
+    "wall_ms_median": 125.534068,
+    "wall_ms_min": 123.780828999
   },
   "px.exp.brain.bench.stats.cdf.sp.normal_n=1000": {
     "backend": "sp",
@@ -164,8 +164,8 @@
     "inputs_sha256": "26068dc4da55bc0bd3da095429393457ea9b846edd6ea88db0f1df27d4f87e57",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 46.6770570001,
-    "wall_ms_min": 43.0834449999
+    "wall_ms_median": 38.9867320009,
+    "wall_ms_min": 37.818286999
   },
   "px.exp.brain.bench.stats.cdf.sp.normal_n=4000": {
     "backend": "sp",
@@ -174,8 +174,8 @@
     "inputs_sha256": "32b849a0a3f0a261691cf8f76c720535431c854717ed35e002c03a97383c300b",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 161.722269,
-    "wall_ms_min": 157.636519
+    "wall_ms_median": 156.023226,
+    "wall_ms_min": 153.411796
   },
   "px.exp.brain.bench.stats.cdf.sp.t_n=1000": {
     "backend": "sp",
@@ -184,8 +184,8 @@
     "inputs_sha256": "55b0b083ec65d239f0e8d139ca9c43965a879ae9c4997f85e138e5b3ecdc2d92",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 43.4840790003,
-    "wall_ms_min": 42.7265400003
+    "wall_ms_median": 43.0539500012,
+    "wall_ms_min": 42.4031849998
   },
   "px.exp.brain.bench.stats.cdf.sp.t_n=4000": {
     "backend": "sp",
@@ -194,8 +194,8 @@
     "inputs_sha256": "b6d32d8ed83accf379089139e8ae81aa6a77993c682a0e434fa65960e9516222",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 174.156478,
-    "wall_ms_min": 168.918205
+    "wall_ms_median": 168.807951,
+    "wall_ms_min": 167.511386
   },
   "px.exp.brain.bench.stats.ci_mean.py.n=45": {
     "backend": "py",
@@ -204,8 +204,8 @@
     "inputs_sha256": "2ac4bd70042b4b77b8ed24bfb10cf25e7447922010a7ab764060475f14509372",
     "n": 5,
     "size": "n=45",
-    "wall_ms_median": 0.691671999448,
-    "wall_ms_min": 0.62582099963
+    "wall_ms_median": 0.657631000649,
+    "wall_ms_min": 0.639406998744
   },
   "px.exp.brain.bench.stats.ci_mean.py.n=450": {
     "backend": "py",
@@ -214,8 +214,8 @@
     "inputs_sha256": "69489b3acb38b474f77a96a8cb03513ac70872fcca6b4cb157ebfd333482228c",
     "n": 5,
     "size": "n=450",
-    "wall_ms_median": 1.06503799998,
-    "wall_ms_min": 1.02240700016
+    "wall_ms_median": 1.05346100099,
+    "wall_ms_min": 1.03827899875
   },
   "px.exp.brain.bench.stats.covariance.np.n=1000": {
     "backend": "np",
@@ -224,8 +224,8 @@
     "inputs_sha256": "9082d2872f8dc710ab9102b1edd338dac0e3a4cfbf30604ddb893039a5d55014",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.150306000251,
-    "wall_ms_min": 0.137598000038
+    "wall_ms_median": 0.149692999912,
+    "wall_ms_min": 0.135083999339
   },
   "px.exp.brain.bench.stats.covariance.np.n=50000": {
     "backend": "np",
@@ -234,8 +234,8 @@
     "inputs_sha256": "39d05eafbbae66e58319b8695a3729e1f362fb8adc4cf602db9adc79340374a9",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 6.06053799947,
-    "wall_ms_min": 5.96454199967
+    "wall_ms_median": 6.07149300049,
+    "wall_ms_min": 5.80620999972
   },
   "px.exp.brain.bench.stats.covariance.py.n=1000": {
     "backend": "py",
@@ -244,8 +244,8 @@
     "inputs_sha256": "9082d2872f8dc710ab9102b1edd338dac0e3a4cfbf30604ddb893039a5d55014",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.206041999263,
-    "wall_ms_min": 0.171298000168
+    "wall_ms_median": 0.174329999936,
+    "wall_ms_min": 0.152975000674
   },
   "px.exp.brain.bench.stats.covariance.py.n=50000": {
     "backend": "py",
@@ -254,8 +254,88 @@
     "inputs_sha256": "39d05eafbbae66e58319b8695a3729e1f362fb8adc4cf602db9adc79340374a9",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 9.39379299962,
-    "wall_ms_min": 9.34859299923
+    "wall_ms_median": 8.08540499929,
+    "wall_ms_min": 8.03612600066
+  },
+  "px.exp.brain.bench.stats.gmean.py.n=2400": {
+    "backend": "py",
+    "calc": "gmean",
+    "for": "how long fn.brain.stats.gmean takes on its py backend at n=2400",
+    "inputs_sha256": "d21d59259ce86037e471273502d93ec709d360cd6fa38ea06c46e6f9441f5e1a",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.29765599902,
+    "wall_ms_min": 0.28431300052
+  },
+  "px.exp.brain.bench.stats.gmean.py.n=600": {
+    "backend": "py",
+    "calc": "gmean",
+    "for": "how long fn.brain.stats.gmean takes on its py backend at n=600",
+    "inputs_sha256": "1a3b9dff43f6277ff19a76ae95bd0a8d5342175bf74ad007d2dbe3563255838b",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.0886560010258,
+    "wall_ms_min": 0.0732890002837
+  },
+  "px.exp.brain.bench.stats.gmean.sp.n=2400": {
+    "backend": "sp",
+    "calc": "gmean",
+    "for": "how long fn.brain.stats.gmean takes on its sp backend at n=2400",
+    "inputs_sha256": "d21d59259ce86037e471273502d93ec709d360cd6fa38ea06c46e6f9441f5e1a",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.39906800157,
+    "wall_ms_min": 0.351927999873
+  },
+  "px.exp.brain.bench.stats.gmean.sp.n=600": {
+    "backend": "sp",
+    "calc": "gmean",
+    "for": "how long fn.brain.stats.gmean takes on its sp backend at n=600",
+    "inputs_sha256": "1a3b9dff43f6277ff19a76ae95bd0a8d5342175bf74ad007d2dbe3563255838b",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.248704000114,
+    "wall_ms_min": 0.218498000322
+  },
+  "px.exp.brain.bench.stats.histogram.np.n=2400": {
+    "backend": "np",
+    "calc": "histogram",
+    "for": "how long fn.brain.stats.histogram takes on its np backend at n=2400",
+    "inputs_sha256": "f28bb24f125c4b6bc388bc5f68d8bda0685626b9c2a5d5b8aa9b19f43230fc46",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.39583599937,
+    "wall_ms_min": 0.362230999599
+  },
+  "px.exp.brain.bench.stats.histogram.np.n=600": {
+    "backend": "np",
+    "calc": "histogram",
+    "for": "how long fn.brain.stats.histogram takes on its np backend at n=600",
+    "inputs_sha256": "ac30158924064754399782cd74ee26b48c85341cc7cd5bc01b62e283070c994c",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.177710000571,
+    "wall_ms_min": 0.146693000715
+  },
+  "px.exp.brain.bench.stats.histogram.py.n=2400": {
+    "backend": "py",
+    "calc": "histogram",
+    "for": "how long fn.brain.stats.histogram takes on its py backend at n=2400",
+    "inputs_sha256": "f28bb24f125c4b6bc388bc5f68d8bda0685626b9c2a5d5b8aa9b19f43230fc46",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.517390999448,
+    "wall_ms_min": 0.472204999824
+  },
+  "px.exp.brain.bench.stats.histogram.py.n=600": {
+    "backend": "py",
+    "calc": "histogram",
+    "for": "how long fn.brain.stats.histogram takes on its py backend at n=600",
+    "inputs_sha256": "ac30158924064754399782cd74ee26b48c85341cc7cd5bc01b62e283070c994c",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.172239000676,
+    "wall_ms_min": 0.163720000273
   },
   "px.exp.brain.bench.stats.kendall.np.n=200": {
     "backend": "np",
@@ -264,8 +344,8 @@
     "inputs_sha256": "35156f021b6dc9417e22923996e2de1929da5e0eba2c863165d0b33ae136790b",
     "n": 5,
     "size": "n=200",
-    "wall_ms_median": 0.412484999288,
-    "wall_ms_min": 0.409815999774
+    "wall_ms_median": 0.382037998861,
+    "wall_ms_min": 0.347943001543
   },
   "px.exp.brain.bench.stats.kendall.np.n=800": {
     "backend": "np",
@@ -274,8 +354,8 @@
     "inputs_sha256": "75811c93d0469bd8d0bb6b6d0a382c4623673d152f06d792f6355791a0cb3b43",
     "n": 5,
     "size": "n=800",
-    "wall_ms_median": 8.73908899939,
-    "wall_ms_min": 8.16879099966
+    "wall_ms_median": 8.40738599982,
+    "wall_ms_min": 7.64523299949
   },
   "px.exp.brain.bench.stats.kendall.py.n=200": {
     "backend": "py",
@@ -284,8 +364,8 @@
     "inputs_sha256": "35156f021b6dc9417e22923996e2de1929da5e0eba2c863165d0b33ae136790b",
     "n": 5,
     "size": "n=200",
-    "wall_ms_median": 2.92286200056,
-    "wall_ms_min": 2.85037399954
+    "wall_ms_median": 2.83040399881,
+    "wall_ms_min": 2.77699300023
   },
   "px.exp.brain.bench.stats.kendall.py.n=800": {
     "backend": "py",
@@ -294,8 +374,8 @@
     "inputs_sha256": "75811c93d0469bd8d0bb6b6d0a382c4623673d152f06d792f6355791a0cb3b43",
     "n": 5,
     "size": "n=800",
-    "wall_ms_median": 46.8157640007,
-    "wall_ms_min": 44.7283869999
+    "wall_ms_median": 45.8333679999,
+    "wall_ms_min": 45.3944500005
   },
   "px.exp.brain.bench.stats.kruskal.py.n=3600": {
     "backend": "py",
@@ -304,8 +384,8 @@
     "inputs_sha256": "12c9b93777c003994ec54ea931cc9cfca6e161570482fe2660c899407b36e70f",
     "n": 5,
     "size": "n=3600",
-    "wall_ms_median": 1.96927599973,
-    "wall_ms_min": 1.90001299961
+    "wall_ms_median": 1.929389,
+    "wall_ms_min": 1.88904899915
   },
   "px.exp.brain.bench.stats.kruskal.py.n=600": {
     "backend": "py",
@@ -314,8 +394,8 @@
     "inputs_sha256": "cf425a2d6f22675caef3801a74dae9e5265626a07f12462306046a0ded0a5609",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.325879000229,
-    "wall_ms_min": 0.27707999925
+    "wall_ms_median": 0.322275000144,
+    "wall_ms_min": 0.302848999127
   },
   "px.exp.brain.bench.stats.kruskal.sp.n=3600": {
     "backend": "sp",
@@ -324,8 +404,8 @@
     "inputs_sha256": "12c9b93777c003994ec54ea931cc9cfca6e161570482fe2660c899407b36e70f",
     "n": 5,
     "size": "n=3600",
-    "wall_ms_median": 0.972259999799,
-    "wall_ms_min": 0.94857699969
+    "wall_ms_median": 0.952984999458,
+    "wall_ms_min": 0.940420000916
   },
   "px.exp.brain.bench.stats.kruskal.sp.n=600": {
     "backend": "sp",
@@ -334,8 +414,8 @@
     "inputs_sha256": "cf425a2d6f22675caef3801a74dae9e5265626a07f12462306046a0ded0a5609",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.543086000107,
-    "wall_ms_min": 0.469495000289
+    "wall_ms_median": 0.524115999724,
+    "wall_ms_min": 0.454110000646
   },
   "px.exp.brain.bench.stats.ks_2samp.py.n=1000": {
     "backend": "py",
@@ -344,8 +424,8 @@
     "inputs_sha256": "765c6d357f7887411c16df0733243b9ceb433afb9acfaac19b1548e0e33e0535",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.333738000336,
-    "wall_ms_min": 0.307584999973
+    "wall_ms_median": 0.350787999196,
+    "wall_ms_min": 0.331565999659
   },
   "px.exp.brain.bench.stats.ks_2samp.py.n=400": {
     "backend": "py",
@@ -354,8 +434,8 @@
     "inputs_sha256": "6b4a89d5f086c105dbdc7bc7d8f6f6aac4bdcd320563e9b0a984e079a7d52141",
     "n": 5,
     "size": "n=400",
-    "wall_ms_median": 0.180071000614,
-    "wall_ms_min": 0.173726999492
+    "wall_ms_median": 0.183891001143,
+    "wall_ms_min": 0.172131998625
   },
   "px.exp.brain.bench.stats.ks_2samp.sp.n=1000": {
     "backend": "sp",
@@ -364,8 +444,8 @@
     "inputs_sha256": "765c6d357f7887411c16df0733243b9ceb433afb9acfaac19b1548e0e33e0535",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.839657999677,
-    "wall_ms_min": 0.814789999822
+    "wall_ms_median": 0.958255999649,
+    "wall_ms_min": 0.817468000605
   },
   "px.exp.brain.bench.stats.ks_2samp.sp.n=400": {
     "backend": "sp",
@@ -374,8 +454,8 @@
     "inputs_sha256": "6b4a89d5f086c105dbdc7bc7d8f6f6aac4bdcd320563e9b0a984e079a7d52141",
     "n": 5,
     "size": "n=400",
-    "wall_ms_median": 0.681754000652,
-    "wall_ms_min": 0.61951599946
+    "wall_ms_median": 0.68135499896,
+    "wall_ms_min": 0.589163999393
   },
   "px.exp.brain.bench.stats.kurtosis.np.n=1000": {
     "backend": "np",
@@ -384,8 +464,8 @@
     "inputs_sha256": "b37ba169485a38d5529a77d94aa983a085d54dec45aad57b833668092bbf27a0",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.123232999613,
-    "wall_ms_min": 0.121099999888
+    "wall_ms_median": 0.131850001708,
+    "wall_ms_min": 0.12198299919
   },
   "px.exp.brain.bench.stats.kurtosis.np.n=100000": {
     "backend": "np",
@@ -394,8 +474,8 @@
     "inputs_sha256": "7b3eec67208c3606f04b05ca0720d8bfaf34869609875589d10e1f84b26af1a6",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 12.136757,
-    "wall_ms_min": 11.9440150002
+    "wall_ms_median": 12.0825899994,
+    "wall_ms_min": 11.83451
   },
   "px.exp.brain.bench.stats.kurtosis.py.n=1000": {
     "backend": "py",
@@ -404,8 +484,8 @@
     "inputs_sha256": "b37ba169485a38d5529a77d94aa983a085d54dec45aad57b833668092bbf27a0",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.191719999748,
-    "wall_ms_min": 0.171661999957
+    "wall_ms_median": 0.289539999358,
+    "wall_ms_min": 0.183452999408
   },
   "px.exp.brain.bench.stats.kurtosis.py.n=100000": {
     "backend": "py",
@@ -414,8 +494,8 @@
     "inputs_sha256": "7b3eec67208c3606f04b05ca0720d8bfaf34869609875589d10e1f84b26af1a6",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 18.2973640003,
-    "wall_ms_min": 18.1197919992
+    "wall_ms_median": 18.3227329999,
+    "wall_ms_min": 18.2257820015
   },
   "px.exp.brain.bench.stats.levene.py.n=3600": {
     "backend": "py",
@@ -424,8 +504,8 @@
     "inputs_sha256": "ab414d3ccf71a3f8309d11c7c18f3f26cf729031a31ec6aad8b3c447262142c6",
     "n": 5,
     "size": "n=3600",
-    "wall_ms_median": 1.1105629992,
-    "wall_ms_min": 1.07468799979
+    "wall_ms_median": 1.1365219998,
+    "wall_ms_min": 1.10998799937
   },
   "px.exp.brain.bench.stats.levene.py.n=600": {
     "backend": "py",
@@ -434,8 +514,8 @@
     "inputs_sha256": "317859a3b47d8ed2e5fe575031ed20bf1a58ef66e78596d3a486069b42db81a4",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.171292000232,
-    "wall_ms_min": 0.155591999828
+    "wall_ms_median": 0.173095999344,
+    "wall_ms_min": 0.152565000462
   },
   "px.exp.brain.bench.stats.levene.sp.n=3600": {
     "backend": "sp",
@@ -444,8 +524,8 @@
     "inputs_sha256": "ab414d3ccf71a3f8309d11c7c18f3f26cf729031a31ec6aad8b3c447262142c6",
     "n": 5,
     "size": "n=3600",
-    "wall_ms_median": 0.703272999999,
-    "wall_ms_min": 0.681554000039
+    "wall_ms_median": 0.735524999982,
+    "wall_ms_min": 0.657292999676
   },
   "px.exp.brain.bench.stats.levene.sp.n=600": {
     "backend": "sp",
@@ -454,8 +534,8 @@
     "inputs_sha256": "317859a3b47d8ed2e5fe575031ed20bf1a58ef66e78596d3a486069b42db81a4",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.514854999892,
-    "wall_ms_min": 0.45763199978
+    "wall_ms_median": 0.505378000526,
+    "wall_ms_min": 0.475234999612
   },
   "px.exp.brain.bench.stats.mannwhitneyu.py.n=4000": {
     "backend": "py",
@@ -464,8 +544,8 @@
     "inputs_sha256": "69e71c2671ad0bb3eb49b177d6a39c62ab1505c834b87cd2e591fdb7bb89143c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 4.15676400007,
-    "wall_ms_min": 4.06315999953
+    "wall_ms_median": 4.30365800094,
+    "wall_ms_min": 4.05511200006
   },
   "px.exp.brain.bench.stats.mannwhitneyu.py.n=600": {
     "backend": "py",
@@ -474,8 +554,8 @@
     "inputs_sha256": "dac5d45b6bf2c32afdc20317700dfcf30994618880080bd25585990722ac3587",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.603372999649,
-    "wall_ms_min": 0.594071000705
+    "wall_ms_median": 0.60828200003,
+    "wall_ms_min": 0.57510699844
   },
   "px.exp.brain.bench.stats.mannwhitneyu.sp.n=4000": {
     "backend": "sp",
@@ -484,8 +564,8 @@
     "inputs_sha256": "69e71c2671ad0bb3eb49b177d6a39c62ab1505c834b87cd2e591fdb7bb89143c",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.76510600068,
-    "wall_ms_min": 1.74542799959
+    "wall_ms_median": 1.91256200014,
+    "wall_ms_min": 1.74362700091
   },
   "px.exp.brain.bench.stats.mannwhitneyu.sp.n=600": {
     "backend": "sp",
@@ -494,8 +574,8 @@
     "inputs_sha256": "dac5d45b6bf2c32afdc20317700dfcf30994618880080bd25585990722ac3587",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.729950000277,
-    "wall_ms_min": 0.673986999573
+    "wall_ms_median": 0.780681999458,
+    "wall_ms_min": 0.722886001313
   },
   "px.exp.brain.bench.stats.mean.np.n=1000": {
     "backend": "np",
@@ -504,8 +584,8 @@
     "inputs_sha256": "390f7d7a865ea75d2a0f54e46ae11ebd838d986feec1919e4ee6dd3a20768a92",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.0535720000698,
-    "wall_ms_min": 0.0472900001114
+    "wall_ms_median": 0.0528639993718,
+    "wall_ms_min": 0.0474189982924
   },
   "px.exp.brain.bench.stats.mean.np.n=100000": {
     "backend": "np",
@@ -514,8 +594,8 @@
     "inputs_sha256": "22495d9277dcc0851641329235c5fa52a06ec8ab8a6a5099ab377c563c733423",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 4.74363499961,
-    "wall_ms_min": 4.66488500024
+    "wall_ms_median": 4.7390460004,
+    "wall_ms_min": 4.54923600046
   },
   "px.exp.brain.bench.stats.mean.py.n=1000": {
     "backend": "py",
@@ -524,8 +604,8 @@
     "inputs_sha256": "390f7d7a865ea75d2a0f54e46ae11ebd838d986feec1919e4ee6dd3a20768a92",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.0379299999622,
-    "wall_ms_min": 0.0363419994756
+    "wall_ms_median": 0.0381629997719,
+    "wall_ms_min": 0.0360459998774
   },
   "px.exp.brain.bench.stats.mean.py.n=100000": {
     "backend": "py",
@@ -534,8 +614,8 @@
     "inputs_sha256": "22495d9277dcc0851641329235c5fa52a06ec8ab8a6a5099ab377c563c733423",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 4.22289800008,
-    "wall_ms_min": 4.13163999929
+    "wall_ms_median": 4.27560599928,
+    "wall_ms_min": 4.11191500098
   },
   "px.exp.brain.bench.stats.median.np.n=1000": {
     "backend": "np",
@@ -544,8 +624,8 @@
     "inputs_sha256": "066b5a80e63a4252fe27aac372a5858e564ddfd14035fea19b6e4d1815e9c6c2",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.0779659994805,
-    "wall_ms_min": 0.0670219997119
+    "wall_ms_median": 0.0735609992262,
+    "wall_ms_min": 0.0655670010019
   },
   "px.exp.brain.bench.stats.median.np.n=100000": {
     "backend": "np",
@@ -554,8 +634,8 @@
     "inputs_sha256": "a10e560ce4cb4bfe688cb549b30b9bf57fe1c184a9efed56f07d0d907bc4d63b",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 6.04675999966,
-    "wall_ms_min": 6.02699499996
+    "wall_ms_median": 6.01755699972,
+    "wall_ms_min": 5.980386999
   },
   "px.exp.brain.bench.stats.median.py.n=1000": {
     "backend": "py",
@@ -564,8 +644,8 @@
     "inputs_sha256": "066b5a80e63a4252fe27aac372a5858e564ddfd14035fea19b6e4d1815e9c6c2",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.09394800054,
-    "wall_ms_min": 0.0750929993956
+    "wall_ms_median": 0.0955509985943,
+    "wall_ms_min": 0.0761119990784
   },
   "px.exp.brain.bench.stats.median.py.n=100000": {
     "backend": "py",
@@ -574,8 +654,48 @@
     "inputs_sha256": "a10e560ce4cb4bfe688cb549b30b9bf57fe1c184a9efed56f07d0d907bc4d63b",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 20.3193369998,
-    "wall_ms_min": 20.2535580001
+    "wall_ms_median": 20.3505149984,
+    "wall_ms_min": 20.0502160005
+  },
+  "px.exp.brain.bench.stats.median_abs_deviation.py.n=2400": {
+    "backend": "py",
+    "calc": "median_abs_deviation",
+    "for": "how long fn.brain.stats.median_abs_deviation takes on its py backend at n=2400",
+    "inputs_sha256": "6a72ec96c2134df647405c6b42974d6a90404fc1628a783d5b9cba41ca4b94ea",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.359171999662,
+    "wall_ms_min": 0.331077999363
+  },
+  "px.exp.brain.bench.stats.median_abs_deviation.py.n=600": {
+    "backend": "py",
+    "calc": "median_abs_deviation",
+    "for": "how long fn.brain.stats.median_abs_deviation takes on its py backend at n=600",
+    "inputs_sha256": "8065556b62145d8df21cef513eaad7f44824997db5b95d03912ad03665b49a8a",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.0836970011733,
+    "wall_ms_min": 0.0806669995654
+  },
+  "px.exp.brain.bench.stats.median_abs_deviation.sp.n=2400": {
+    "backend": "sp",
+    "calc": "median_abs_deviation",
+    "for": "how long fn.brain.stats.median_abs_deviation takes on its sp backend at n=2400",
+    "inputs_sha256": "6a72ec96c2134df647405c6b42974d6a90404fc1628a783d5b9cba41ca4b94ea",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.460270999611,
+    "wall_ms_min": 0.428405999628
+  },
+  "px.exp.brain.bench.stats.median_abs_deviation.sp.n=600": {
+    "backend": "sp",
+    "calc": "median_abs_deviation",
+    "for": "how long fn.brain.stats.median_abs_deviation takes on its sp backend at n=600",
+    "inputs_sha256": "8065556b62145d8df21cef513eaad7f44824997db5b95d03912ad03665b49a8a",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.348774001395,
+    "wall_ms_min": 0.294055998893
   },
   "px.exp.brain.bench.stats.ols_lstsq.np.n=2000": {
     "backend": "np",
@@ -584,8 +704,8 @@
     "inputs_sha256": "28ca9ba18909f904ce0491574fb69cc80ca732370e2bc72395059dd01d99492f",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 2.95188500058,
-    "wall_ms_min": 2.83963599941
+    "wall_ms_median": 2.85174800047,
+    "wall_ms_min": 2.82238600084
   },
   "px.exp.brain.bench.stats.ols_lstsq.np.n=300": {
     "backend": "np",
@@ -594,8 +714,8 @@
     "inputs_sha256": "dbf76979c1dd3cf5d88a32f153e2a70eee5c4f0e16eb168d8a3ec440f6538c34",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.491022999995,
-    "wall_ms_min": 0.475800000459
+    "wall_ms_median": 0.522525000633,
+    "wall_ms_min": 0.479336998978
   },
   "px.exp.brain.bench.stats.ols_normal.py.n=2000": {
     "backend": "py",
@@ -604,8 +724,8 @@
     "inputs_sha256": "f3ccbd6a41a9951ce59dca5e8c25f4cb9aa3ee30f211c26f3591aef58eebee37",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 4.72061799974,
-    "wall_ms_min": 4.51623199933
+    "wall_ms_median": 4.73267100097,
+    "wall_ms_min": 4.67552000009
   },
   "px.exp.brain.bench.stats.ols_normal.py.n=300": {
     "backend": "py",
@@ -614,8 +734,8 @@
     "inputs_sha256": "a0f0ff52af7b946b3a83eff2183e7190f8e98c930fdd7da49c081aeee66f19b2",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.747027000216,
-    "wall_ms_min": 0.718493000022
+    "wall_ms_median": 0.757714999054,
+    "wall_ms_min": 0.700885000697
   },
   "px.exp.brain.bench.stats.ols_qr.py.n=2000": {
     "backend": "py",
@@ -624,8 +744,8 @@
     "inputs_sha256": "5a7b56d799b3c84bb881491564bb48b20d87ed04c1c20d75d9053283b0b2bc8a",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 8.00700200034,
-    "wall_ms_min": 7.77051299974
+    "wall_ms_median": 8.20581900007,
+    "wall_ms_min": 7.94526399841
   },
   "px.exp.brain.bench.stats.ols_qr.py.n=300": {
     "backend": "py",
@@ -634,8 +754,8 @@
     "inputs_sha256": "085743c01299926d396fcb112b7f08ff9f9ca9ca7a619763e85db17e447f483e",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 1.34743699982,
-    "wall_ms_min": 1.28351900003
+    "wall_ms_median": 1.25584899979,
+    "wall_ms_min": 1.19210599951
   },
   "px.exp.brain.bench.stats.pdf.py.chi2_n=1000": {
     "backend": "py",
@@ -644,8 +764,8 @@
     "inputs_sha256": "bedbc080eb1248efd958d38c73f69e80d67a26a581b13198de963407d29ff583",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 0.131617999614,
-    "wall_ms_min": 0.104992000161
+    "wall_ms_median": 0.107722999019,
+    "wall_ms_min": 0.102977001006
   },
   "px.exp.brain.bench.stats.pdf.py.chi2_n=4000": {
     "backend": "py",
@@ -654,8 +774,8 @@
     "inputs_sha256": "48c3d98d59f2e2ab026d7b8c046b54d70a30a5167ba9ea8e99cc589f3b1181a0",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 1.00142699921,
-    "wall_ms_min": 0.978024999313
+    "wall_ms_median": 1.02223800059,
+    "wall_ms_min": 0.994930000161
   },
   "px.exp.brain.bench.stats.pdf.py.normal_n=1000": {
     "backend": "py",
@@ -664,8 +784,8 @@
     "inputs_sha256": "1b5aff9af7a8bc358b284353dde5d91d7b370885be098355bb01345cd013f495",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 0.237950000155,
-    "wall_ms_min": 0.203578000765
+    "wall_ms_median": 0.216639999053,
+    "wall_ms_min": 0.197621999177
   },
   "px.exp.brain.bench.stats.pdf.py.normal_n=4000": {
     "backend": "py",
@@ -674,8 +794,8 @@
     "inputs_sha256": "24310172af5c375d2325d75617be21666040f75d24ecf44a983ed100d4814740",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 0.830238000162,
-    "wall_ms_min": 0.801467000201
+    "wall_ms_median": 0.800956000603,
+    "wall_ms_min": 0.778059000368
   },
   "px.exp.brain.bench.stats.pdf.py.t_n=1000": {
     "backend": "py",
@@ -684,8 +804,8 @@
     "inputs_sha256": "f6cef0cdabe08af64d4c8813e2d82b4270abb66284231908e75e41eca9913b61",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 0.401897000302,
-    "wall_ms_min": 0.388933000067
+    "wall_ms_median": 0.417577999542,
+    "wall_ms_min": 0.392424999518
   },
   "px.exp.brain.bench.stats.pdf.py.t_n=4000": {
     "backend": "py",
@@ -694,8 +814,8 @@
     "inputs_sha256": "1ec46953a6435bde9139d3daa6f091f9e6dfa2c0ca517b4e6b7c676fafd86e71",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 1.56711300042,
-    "wall_ms_min": 1.5518070004
+    "wall_ms_median": 1.63970600079,
+    "wall_ms_min": 1.5663260001
   },
   "px.exp.brain.bench.stats.pdf.sp.chi2_n=1000": {
     "backend": "sp",
@@ -704,8 +824,8 @@
     "inputs_sha256": "bedbc080eb1248efd958d38c73f69e80d67a26a581b13198de963407d29ff583",
     "n": 5,
     "size": "chi2_n=1000",
-    "wall_ms_median": 18.9451719998,
-    "wall_ms_min": 18.5473090005
+    "wall_ms_median": 19.1802150002,
+    "wall_ms_min": 19.0860570001
   },
   "px.exp.brain.bench.stats.pdf.sp.chi2_n=4000": {
     "backend": "sp",
@@ -714,8 +834,8 @@
     "inputs_sha256": "48c3d98d59f2e2ab026d7b8c046b54d70a30a5167ba9ea8e99cc589f3b1181a0",
     "n": 5,
     "size": "chi2_n=4000",
-    "wall_ms_median": 138.313115,
-    "wall_ms_min": 137.033374
+    "wall_ms_median": 144.544953999,
+    "wall_ms_min": 137.606292001
   },
   "px.exp.brain.bench.stats.pdf.sp.normal_n=1000": {
     "backend": "sp",
@@ -724,8 +844,8 @@
     "inputs_sha256": "1b5aff9af7a8bc358b284353dde5d91d7b370885be098355bb01345cd013f495",
     "n": 5,
     "size": "normal_n=1000",
-    "wall_ms_median": 41.8310949999,
-    "wall_ms_min": 41.0668160002
+    "wall_ms_median": 42.2624250004,
+    "wall_ms_min": 40.3322549992
   },
   "px.exp.brain.bench.stats.pdf.sp.normal_n=4000": {
     "backend": "sp",
@@ -734,8 +854,8 @@
     "inputs_sha256": "24310172af5c375d2325d75617be21666040f75d24ecf44a983ed100d4814740",
     "n": 5,
     "size": "normal_n=4000",
-    "wall_ms_median": 164.909466001,
-    "wall_ms_min": 162.594368
+    "wall_ms_median": 163.44448,
+    "wall_ms_min": 161.113757998
   },
   "px.exp.brain.bench.stats.pdf.sp.t_n=1000": {
     "backend": "sp",
@@ -744,8 +864,8 @@
     "inputs_sha256": "f6cef0cdabe08af64d4c8813e2d82b4270abb66284231908e75e41eca9913b61",
     "n": 5,
     "size": "t_n=1000",
-    "wall_ms_median": 112.707106,
-    "wall_ms_min": 110.932539
+    "wall_ms_median": 113.579427001,
+    "wall_ms_min": 112.905031001
   },
   "px.exp.brain.bench.stats.pdf.sp.t_n=4000": {
     "backend": "sp",
@@ -754,8 +874,8 @@
     "inputs_sha256": "1ec46953a6435bde9139d3daa6f091f9e6dfa2c0ca517b4e6b7c676fafd86e71",
     "n": 5,
     "size": "t_n=4000",
-    "wall_ms_median": 462.279486001,
-    "wall_ms_min": 451.235156
+    "wall_ms_median": 489.165289999,
+    "wall_ms_min": 472.159224
   },
   "px.exp.brain.bench.stats.pearson.np.n=1000": {
     "backend": "np",
@@ -764,8 +884,8 @@
     "inputs_sha256": "27ee3bc04fdd480833bda2a94460b5f781c61bf3f948ba9c80ee69bf4044462d",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.103928999124,
-    "wall_ms_min": 0.100657000075
+    "wall_ms_median": 0.104131999251,
+    "wall_ms_min": 0.103061000118
   },
   "px.exp.brain.bench.stats.pearson.np.n=50000": {
     "backend": "np",
@@ -774,8 +894,8 @@
     "inputs_sha256": "3c89feb89941582d144a08ae359ba396d188d4db92a977c8f9be7154b752fe7c",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 5.09647400031,
-    "wall_ms_min": 5.0717059994
+    "wall_ms_median": 5.18376100081,
+    "wall_ms_min": 4.92459900124
   },
   "px.exp.brain.bench.stats.pearson.py.n=1000": {
     "backend": "py",
@@ -784,8 +904,8 @@
     "inputs_sha256": "27ee3bc04fdd480833bda2a94460b5f781c61bf3f948ba9c80ee69bf4044462d",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.404844000514,
-    "wall_ms_min": 0.38357899939
+    "wall_ms_median": 0.397791000069,
+    "wall_ms_min": 0.347710001734
   },
   "px.exp.brain.bench.stats.pearson.py.n=50000": {
     "backend": "py",
@@ -794,8 +914,8 @@
     "inputs_sha256": "3c89feb89941582d144a08ae359ba396d188d4db92a977c8f9be7154b752fe7c",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 20.9556760001,
-    "wall_ms_min": 20.9356559999
+    "wall_ms_median": 19.7976169984,
+    "wall_ms_min": 19.6977659998
   },
   "px.exp.brain.bench.stats.quantile.np.n=1000": {
     "backend": "np",
@@ -804,8 +924,8 @@
     "inputs_sha256": "d77ebb0cd283e34e476f79f45f3b3258362d72d91af155181301739a2335cf80",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.121277999824,
-    "wall_ms_min": 0.113155999315
+    "wall_ms_median": 0.11754300067,
+    "wall_ms_min": 0.100842000393
   },
   "px.exp.brain.bench.stats.quantile.np.n=100000": {
     "backend": "np",
@@ -814,8 +934,8 @@
     "inputs_sha256": "969cf08c7cfe60c7dbfb893d46f69f366d3ceff215390be277c44b5877b0fa16",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 6.79116200081,
-    "wall_ms_min": 6.71860799957
+    "wall_ms_median": 6.93753799897,
+    "wall_ms_min": 6.75876999958
   },
   "px.exp.brain.bench.stats.quantile.py.n=1000": {
     "backend": "py",
@@ -824,8 +944,8 @@
     "inputs_sha256": "d77ebb0cd283e34e476f79f45f3b3258362d72d91af155181301739a2335cf80",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.118560999908,
-    "wall_ms_min": 0.0778300000093
+    "wall_ms_median": 0.0945619995036,
+    "wall_ms_min": 0.076137999713
   },
   "px.exp.brain.bench.stats.quantile.py.n=100000": {
     "backend": "py",
@@ -834,8 +954,8 @@
     "inputs_sha256": "969cf08c7cfe60c7dbfb893d46f69f366d3ceff215390be277c44b5877b0fa16",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 20.2410129996,
-    "wall_ms_min": 20.1374009994
+    "wall_ms_median": 20.3307250013,
+    "wall_ms_min": 20.2342869998
   },
   "px.exp.brain.bench.stats.ridge.np.n=2000": {
     "backend": "np",
@@ -844,8 +964,8 @@
     "inputs_sha256": "b45fb263fa7cb388b4a70746ac41eede5c72c492f2ea537dea3697e1c877134d",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 2.84999299947,
-    "wall_ms_min": 2.7295179998
+    "wall_ms_median": 2.8273099997,
+    "wall_ms_min": 2.66674699924
   },
   "px.exp.brain.bench.stats.ridge.np.n=300": {
     "backend": "np",
@@ -854,8 +974,8 @@
     "inputs_sha256": "20c58cd70444eb8fa760b8f6cf5b58c9eac664a5889a6826e6608e4125834274",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.437522000539,
-    "wall_ms_min": 0.404625000556
+    "wall_ms_median": 0.45141100054,
+    "wall_ms_min": 0.418022998929
   },
   "px.exp.brain.bench.stats.ridge.py.n=2000": {
     "backend": "py",
@@ -864,8 +984,8 @@
     "inputs_sha256": "b45fb263fa7cb388b4a70746ac41eede5c72c492f2ea537dea3697e1c877134d",
     "n": 5,
     "size": "n=2000",
-    "wall_ms_median": 4.83835999967,
-    "wall_ms_min": 4.7167140001
+    "wall_ms_median": 4.72951699885,
+    "wall_ms_min": 4.6933499998
   },
   "px.exp.brain.bench.stats.ridge.py.n=300": {
     "backend": "py",
@@ -874,8 +994,8 @@
     "inputs_sha256": "20c58cd70444eb8fa760b8f6cf5b58c9eac664a5889a6826e6608e4125834274",
     "n": 5,
     "size": "n=300",
-    "wall_ms_median": 0.741869000194,
-    "wall_ms_min": 0.684774000547
+    "wall_ms_median": 0.769860000219,
+    "wall_ms_min": 0.712204000592
   },
   "px.exp.brain.bench.stats.shapiro.py.n=4000": {
     "backend": "py",
@@ -884,8 +1004,8 @@
     "inputs_sha256": "5d4c89011007d87c5ea16f1a3d925ec86cfef3813c7a189e3f03654b929969d2",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 6.7705420006,
-    "wall_ms_min": 6.60299399988
+    "wall_ms_median": 5.88129300013,
+    "wall_ms_min": 5.79140000082
   },
   "px.exp.brain.bench.stats.shapiro.py.n=600": {
     "backend": "py",
@@ -894,8 +1014,8 @@
     "inputs_sha256": "83ffdcbf1d0253294ec002e7e36baad40435484a45c6315649e3e436814e3678",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 1.05349299974,
-    "wall_ms_min": 1.01086399991
+    "wall_ms_median": 0.923234998481,
+    "wall_ms_min": 0.853997000377
   },
   "px.exp.brain.bench.stats.shapiro.sp.n=4000": {
     "backend": "sp",
@@ -904,8 +1024,8 @@
     "inputs_sha256": "5d4c89011007d87c5ea16f1a3d925ec86cfef3813c7a189e3f03654b929969d2",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 0.373792999198,
-    "wall_ms_min": 0.334856999871
+    "wall_ms_median": 0.341426000887,
+    "wall_ms_min": 0.338439000188
   },
   "px.exp.brain.bench.stats.shapiro.sp.n=600": {
     "backend": "sp",
@@ -914,8 +1034,8 @@
     "inputs_sha256": "83ffdcbf1d0253294ec002e7e36baad40435484a45c6315649e3e436814e3678",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.158490000103,
-    "wall_ms_min": 0.137424000059
+    "wall_ms_median": 0.13955400027,
+    "wall_ms_min": 0.13177999972
   },
   "px.exp.brain.bench.stats.skewness.np.n=1000": {
     "backend": "np",
@@ -924,8 +1044,8 @@
     "inputs_sha256": "5ca90ef838e496f7de751353258891ec607dc4ddef58bfa276d631805f2a41ed",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.125166000544,
-    "wall_ms_min": 0.121627000226
+    "wall_ms_median": 0.130675000037,
+    "wall_ms_min": 0.122125999042
   },
   "px.exp.brain.bench.stats.skewness.np.n=100000": {
     "backend": "np",
@@ -934,8 +1054,8 @@
     "inputs_sha256": "78a5cf484fda7da6c429e4de0e1a7aab725a4c62885c164585ffb1284b15095e",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 12.2057830004,
-    "wall_ms_min": 11.745578
+    "wall_ms_median": 12.0362099988,
+    "wall_ms_min": 11.9393189998
   },
   "px.exp.brain.bench.stats.skewness.py.n=1000": {
     "backend": "py",
@@ -944,8 +1064,8 @@
     "inputs_sha256": "5ca90ef838e496f7de751353258891ec607dc4ddef58bfa276d631805f2a41ed",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.181364999662,
-    "wall_ms_min": 0.175430999661
+    "wall_ms_median": 0.183444999493,
+    "wall_ms_min": 0.175795001269
   },
   "px.exp.brain.bench.stats.skewness.py.n=100000": {
     "backend": "py",
@@ -954,8 +1074,8 @@
     "inputs_sha256": "78a5cf484fda7da6c429e4de0e1a7aab725a4c62885c164585ffb1284b15095e",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 18.3758530002,
-    "wall_ms_min": 18.2341789996
+    "wall_ms_median": 18.3026630002,
+    "wall_ms_min": 18.1900869993
   },
   "px.exp.brain.bench.stats.spearman.np.n=1000": {
     "backend": "np",
@@ -964,8 +1084,8 @@
     "inputs_sha256": "174e28fd0e0f0f21236f41e1886ddd8b2cbd746412a627969430f54895c88277",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 1.00408700018,
-    "wall_ms_min": 0.981618999504
+    "wall_ms_median": 1.12921399887,
+    "wall_ms_min": 1.00764300078
   },
   "px.exp.brain.bench.stats.spearman.np.n=50000": {
     "backend": "np",
@@ -974,8 +1094,8 @@
     "inputs_sha256": "5793038bea47e6c9a6c88f646f717607bfa606d63cb995a10f64c7cd15cc0153",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 73.9403729995,
-    "wall_ms_min": 72.1034860007
+    "wall_ms_median": 69.6938540004,
+    "wall_ms_min": 68.9494919989
   },
   "px.exp.brain.bench.stats.spearman.py.n=1000": {
     "backend": "py",
@@ -984,8 +1104,8 @@
     "inputs_sha256": "174e28fd0e0f0f21236f41e1886ddd8b2cbd746412a627969430f54895c88277",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 1.1908460001,
-    "wall_ms_min": 1.13762799992
+    "wall_ms_median": 1.35892899925,
+    "wall_ms_min": 1.20147800044
   },
   "px.exp.brain.bench.stats.spearman.py.n=50000": {
     "backend": "py",
@@ -994,8 +1114,48 @@
     "inputs_sha256": "5793038bea47e6c9a6c88f646f717607bfa606d63cb995a10f64c7cd15cc0153",
     "n": 5,
     "size": "n=50000",
-    "wall_ms_median": 83.1837630003,
-    "wall_ms_min": 81.2887120001
+    "wall_ms_median": 78.1801539997,
+    "wall_ms_min": 76.8238189994
+  },
+  "px.exp.brain.bench.stats.trimmed_mean.py.n=2400": {
+    "backend": "py",
+    "calc": "trimmed_mean",
+    "for": "how long fn.brain.stats.trimmed_mean takes on its py backend at n=2400",
+    "inputs_sha256": "04029bc0dc26a496e407f81dd4a822f0a1a315a7dbd2da95ad6a51c30d10a630",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.214480000068,
+    "wall_ms_min": 0.18161799926
+  },
+  "px.exp.brain.bench.stats.trimmed_mean.py.n=600": {
+    "backend": "py",
+    "calc": "trimmed_mean",
+    "for": "how long fn.brain.stats.trimmed_mean takes on its py backend at n=600",
+    "inputs_sha256": "c06f390c9c978c086cd750f941ba589daaa93eb5c31292eb80767a4f15f9730f",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.0494010000693,
+    "wall_ms_min": 0.045250999392
+  },
+  "px.exp.brain.bench.stats.trimmed_mean.sp.n=2400": {
+    "backend": "sp",
+    "calc": "trimmed_mean",
+    "for": "how long fn.brain.stats.trimmed_mean takes on its sp backend at n=2400",
+    "inputs_sha256": "04029bc0dc26a496e407f81dd4a822f0a1a315a7dbd2da95ad6a51c30d10a630",
+    "n": 5,
+    "size": "n=2400",
+    "wall_ms_median": 0.40414599971,
+    "wall_ms_min": 0.360099000318
+  },
+  "px.exp.brain.bench.stats.trimmed_mean.sp.n=600": {
+    "backend": "sp",
+    "calc": "trimmed_mean",
+    "for": "how long fn.brain.stats.trimmed_mean takes on its sp backend at n=600",
+    "inputs_sha256": "c06f390c9c978c086cd750f941ba589daaa93eb5c31292eb80767a4f15f9730f",
+    "n": 5,
+    "size": "n=600",
+    "wall_ms_median": 0.289995999992,
+    "wall_ms_min": 0.271548000455
   },
   "px.exp.brain.bench.stats.ttest_ind.py.n=4000": {
     "backend": "py",
@@ -1004,8 +1164,8 @@
     "inputs_sha256": "23a49362a8d90433822c7b0b8d8838686042e3c80dff9ce228d7f578bc2d32be",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.24918000074,
-    "wall_ms_min": 1.206723
+    "wall_ms_median": 1.26217700017,
+    "wall_ms_min": 1.22639300025
   },
   "px.exp.brain.bench.stats.ttest_ind.py.n=600": {
     "backend": "py",
@@ -1014,8 +1174,8 @@
     "inputs_sha256": "5fd89c925f4a8b83ef604ce9807e171d6073b7bb574acbf9b1386224daa0dab8",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.204342999496,
-    "wall_ms_min": 0.183211999683
+    "wall_ms_median": 0.20489400049,
+    "wall_ms_min": 0.189250000403
   },
   "px.exp.brain.bench.stats.ttest_ind.sp.n=4000": {
     "backend": "sp",
@@ -1024,8 +1184,8 @@
     "inputs_sha256": "23a49362a8d90433822c7b0b8d8838686042e3c80dff9ce228d7f578bc2d32be",
     "n": 5,
     "size": "n=4000",
-    "wall_ms_median": 1.09347300076,
-    "wall_ms_min": 1.01310599985
+    "wall_ms_median": 1.0903429993,
+    "wall_ms_min": 1.05780999911
   },
   "px.exp.brain.bench.stats.ttest_ind.sp.n=600": {
     "backend": "sp",
@@ -1034,8 +1194,8 @@
     "inputs_sha256": "5fd89c925f4a8b83ef604ce9807e171d6073b7bb574acbf9b1386224daa0dab8",
     "n": 5,
     "size": "n=600",
-    "wall_ms_median": 0.680994000504,
-    "wall_ms_min": 0.675086999763
+    "wall_ms_median": 0.781062000897,
+    "wall_ms_min": 0.684650000039
   },
   "px.exp.brain.bench.stats.variance.np.n=1000": {
     "backend": "np",
@@ -1044,8 +1204,8 @@
     "inputs_sha256": "c854e952287e5c82e52d62948240019c3366e83dc954eaf4910ccb968c973f7b",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.0668319999022,
-    "wall_ms_min": 0.0576439997531
+    "wall_ms_median": 0.0563840003451,
+    "wall_ms_min": 0.0518269989698
   },
   "px.exp.brain.bench.stats.variance.np.n=100000": {
     "backend": "np",
@@ -1054,8 +1214,8 @@
     "inputs_sha256": "7daf5185e2e697edde3b9fa5c45cb517f08168e687900c695598e75eaadb011f",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 5.07147700046,
-    "wall_ms_min": 4.95436800065
+    "wall_ms_median": 4.99344000127,
+    "wall_ms_min": 4.82507299967
   },
   "px.exp.brain.bench.stats.variance.py.n=1000": {
     "backend": "py",
@@ -1064,8 +1224,8 @@
     "inputs_sha256": "c854e952287e5c82e52d62948240019c3366e83dc954eaf4910ccb968c973f7b",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.156580000294,
-    "wall_ms_min": 0.13442799991
+    "wall_ms_median": 0.141316000736,
+    "wall_ms_min": 0.126378001369
   },
   "px.exp.brain.bench.stats.variance.py.n=100000": {
     "backend": "py",
@@ -1074,8 +1234,8 @@
     "inputs_sha256": "7daf5185e2e697edde3b9fa5c45cb517f08168e687900c695598e75eaadb011f",
     "n": 5,
     "size": "n=100000",
-    "wall_ms_median": 15.8913449995,
-    "wall_ms_min": 15.79141
+    "wall_ms_median": 15.7508989996,
+    "wall_ms_min": 15.6494089988
   },
   "px.exp.brain.bench.stats.wilcoxon.py.n=1000": {
     "backend": "py",
@@ -1084,8 +1244,8 @@
     "inputs_sha256": "cbd10219123702cedb73fb5f8bd59f848cdbb7db5f377431d12d6ecb5274c75e",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.6254609998,
-    "wall_ms_min": 0.586598000154
+    "wall_ms_median": 0.615873999777,
+    "wall_ms_min": 0.581116999456
   },
   "px.exp.brain.bench.stats.wilcoxon.py.n=400": {
     "backend": "py",
@@ -1094,8 +1254,8 @@
     "inputs_sha256": "10c17aec429ddbb2d37d255adf7adc194a53f81c024890b9d0e9fe7c2300d9fb",
     "n": 5,
     "size": "n=400",
-    "wall_ms_median": 0.254954999946,
-    "wall_ms_min": 0.238657000409
+    "wall_ms_median": 0.243637001404,
+    "wall_ms_min": 0.237173999267
   },
   "px.exp.brain.bench.stats.wilcoxon.sp.n=1000": {
     "backend": "sp",
@@ -1104,8 +1264,8 @@
     "inputs_sha256": "cbd10219123702cedb73fb5f8bd59f848cdbb7db5f377431d12d6ecb5274c75e",
     "n": 5,
     "size": "n=1000",
-    "wall_ms_median": 0.665809000566,
-    "wall_ms_min": 0.602007999987
+    "wall_ms_median": 0.655863001157,
+    "wall_ms_min": 0.626959001238
   },
   "px.exp.brain.bench.stats.wilcoxon.sp.n=400": {
     "backend": "sp",
@@ -1114,8 +1274,8 @@
     "inputs_sha256": "10c17aec429ddbb2d37d255adf7adc194a53f81c024890b9d0e9fe7c2300d9fb",
     "n": 5,
     "size": "n=400",
-    "wall_ms_median": 0.527500999851,
-    "wall_ms_min": 0.445009000032
+    "wall_ms_median": 0.478238998767,
+    "wall_ms_min": 0.431198999649
   },
   "px.exp.brain.bracket.stats.ols_solver": {
     "candidates": [
@@ -1169,34 +1329,34 @@
       {
         "candidate": "normal",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (4.7206 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 2.752e-06), solver body 8 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (4.7327 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 2.752e-06), solver body 8 lines",
         "scores": {
           "clarity": 8.0,
           "conditioning": 2.75186037812e-06,
           "correctness": 1.0,
-          "speed": 4.72061799974
+          "speed": 4.73267100097
         }
       },
       {
         "candidate": "qr",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (8.0070 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 7.666e-15), solver body 17 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the py backend (8.2058 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 7.666e-15), solver body 17 lines",
         "scores": {
           "clarity": 17.0,
           "conditioning": 7.66638214899e-15,
           "correctness": 1.0,
-          "speed": 8.00700200034
+          "speed": 8.20581900007
         }
       },
       {
         "candidate": "lstsq",
         "judge": "referee",
-        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the np backend (2.9519 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 1.332e-16), solver body 14 lines",
+        "note": "read 3 oracle Part(s) (3 passed), benchmark n=2000 on the np backend (2.8517 ms median), conditioning on a degree-8 polynomial design (condition number 3.286e+09, worst relative disagreement with lstsq 1.332e-16), solver body 14 lines",
         "scores": {
           "clarity": 14.0,
           "conditioning": 1.33215991161e-16,
           "correctness": 1.0,
-          "speed": 2.95188500058
+          "speed": 2.85174800047
         }
       }
     ],
@@ -1217,9 +1377,9 @@
         "qr": 1.0
       },
       "speed": {
-        "lstsq": 2.95188500058,
-        "normal": 4.72061799974,
-        "qr": 8.00700200034
+        "lstsq": 2.85174800047,
+        "normal": 4.73267100097,
+        "qr": 8.20581900007
       }
     },
     "problem": "ols_solver",
@@ -1230,7 +1390,7 @@
     },
     "totals": {
       "lstsq": 6.33333333333,
-      "normal": 4.65011037346,
+      "normal": 4.64869292906,
       "qr": 4.99999999453
     },
     "winner": "lstsq"
@@ -2385,6 +2545,14 @@
       "px.exp.brain.bench.stats.covariance.np.n=50000",
       "px.exp.brain.bench.stats.covariance.py.n=1000",
       "px.exp.brain.bench.stats.covariance.py.n=50000",
+      "px.exp.brain.bench.stats.gmean.py.n=2400",
+      "px.exp.brain.bench.stats.gmean.py.n=600",
+      "px.exp.brain.bench.stats.gmean.sp.n=2400",
+      "px.exp.brain.bench.stats.gmean.sp.n=600",
+      "px.exp.brain.bench.stats.histogram.np.n=2400",
+      "px.exp.brain.bench.stats.histogram.np.n=600",
+      "px.exp.brain.bench.stats.histogram.py.n=2400",
+      "px.exp.brain.bench.stats.histogram.py.n=600",
       "px.exp.brain.bench.stats.kendall.np.n=200",
       "px.exp.brain.bench.stats.kendall.np.n=800",
       "px.exp.brain.bench.stats.kendall.py.n=200",
@@ -2417,6 +2585,10 @@
       "px.exp.brain.bench.stats.median.np.n=100000",
       "px.exp.brain.bench.stats.median.py.n=1000",
       "px.exp.brain.bench.stats.median.py.n=100000",
+      "px.exp.brain.bench.stats.median_abs_deviation.py.n=2400",
+      "px.exp.brain.bench.stats.median_abs_deviation.py.n=600",
+      "px.exp.brain.bench.stats.median_abs_deviation.sp.n=2400",
+      "px.exp.brain.bench.stats.median_abs_deviation.sp.n=600",
       "px.exp.brain.bench.stats.ols_lstsq.np.n=2000",
       "px.exp.brain.bench.stats.ols_lstsq.np.n=300",
       "px.exp.brain.bench.stats.ols_normal.py.n=2000",
@@ -2459,6 +2631,10 @@
       "px.exp.brain.bench.stats.spearman.np.n=50000",
       "px.exp.brain.bench.stats.spearman.py.n=1000",
       "px.exp.brain.bench.stats.spearman.py.n=50000",
+      "px.exp.brain.bench.stats.trimmed_mean.py.n=2400",
+      "px.exp.brain.bench.stats.trimmed_mean.py.n=600",
+      "px.exp.brain.bench.stats.trimmed_mean.sp.n=2400",
+      "px.exp.brain.bench.stats.trimmed_mean.sp.n=600",
       "px.exp.brain.bench.stats.ttest_ind.py.n=4000",
       "px.exp.brain.bench.stats.ttest_ind.py.n=600",
       "px.exp.brain.bench.stats.ttest_ind.sp.n=4000",
@@ -2525,6 +2701,12 @@
       "px.exp.brain.oracle.stats.covariance.correlation_linear_py",
       "px.exp.brain.oracle.stats.cramers_v.intervals_two_by_three_py",
       "px.exp.brain.oracle.stats.cramers_v.intervals_two_by_three_sp",
+      "px.exp.brain.oracle.stats.entropy.summaries_base2_py",
+      "px.exp.brain.oracle.stats.entropy.summaries_base2_sp",
+      "px.exp.brain.oracle.stats.entropy.summaries_kullback_leibler_py",
+      "px.exp.brain.oracle.stats.entropy.summaries_kullback_leibler_sp",
+      "px.exp.brain.oracle.stats.entropy.summaries_shannon_py",
+      "px.exp.brain.oracle.stats.entropy.summaries_shannon_sp",
       "px.exp.brain.oracle.stats.eta_squared.intervals_three_groups",
       "px.exp.brain.oracle.stats.f_oneway.hypothesis_three_groups_py",
       "px.exp.brain.oracle.stats.f_oneway.hypothesis_three_groups_sp",
@@ -2541,7 +2723,15 @@
       "px.exp.brain.oracle.stats.fisher_exact.comparisons_small_two-sided_py",
       "px.exp.brain.oracle.stats.fisher_exact.comparisons_small_two-sided_sp",
       "px.exp.brain.oracle.stats.glass_delta.intervals_two_samples",
+      "px.exp.brain.oracle.stats.gmean.summaries_positive_py",
+      "px.exp.brain.oracle.stats.gmean.summaries_positive_sp",
       "px.exp.brain.oracle.stats.hedges_g.intervals_two_samples",
+      "px.exp.brain.oracle.stats.histogram.summaries_bins12_np",
+      "px.exp.brain.oracle.stats.histogram.summaries_bins12_py",
+      "px.exp.brain.oracle.stats.histogram.summaries_bins5_np",
+      "px.exp.brain.oracle.stats.histogram.summaries_bins5_py",
+      "px.exp.brain.oracle.stats.hmean.summaries_positive_py",
+      "px.exp.brain.oracle.stats.hmean.summaries_positive_sp",
       "px.exp.brain.oracle.stats.iqr.descriptive_sample57_np",
       "px.exp.brain.oracle.stats.iqr.descriptive_sample57_py",
       "px.exp.brain.oracle.stats.kendall.correlation_linear_np",
@@ -2594,6 +2784,10 @@
       "px.exp.brain.oracle.stats.median.descriptive_even_py",
       "px.exp.brain.oracle.stats.median.descriptive_sample57_np",
       "px.exp.brain.oracle.stats.median.descriptive_sample57_py",
+      "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_1p0_py",
+      "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_1p0_sp",
+      "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_normal_py",
+      "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_normal_sp",
       "px.exp.brain.oracle.stats.mode.descriptive_tied_py",
       "px.exp.brain.oracle.stats.multipletests.comparisons_benjamini_hochberg_py",
       "px.exp.brain.oracle.stats.multipletests.comparisons_benjamini_hochberg_sp",
@@ -2691,6 +2885,12 @@
       "px.exp.brain.oracle.stats.spearman.correlation_ties_py",
       "px.exp.brain.oracle.stats.stdev.descriptive_sample_np",
       "px.exp.brain.oracle.stats.stdev.descriptive_sample_py",
+      "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p0_py",
+      "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p0_sp",
+      "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p1_py",
+      "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p1_sp",
+      "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p25_py",
+      "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p25_sp",
       "px.exp.brain.oracle.stats.ttest_1samp.hypothesis_one_greater_py",
       "px.exp.brain.oracle.stats.ttest_1samp.hypothesis_one_greater_sp",
       "px.exp.brain.oracle.stats.ttest_1samp.hypothesis_one_less_py",
@@ -2723,6 +2923,12 @@
       "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_cc_sp",
       "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_plain_py",
       "px.exp.brain.oracle.stats.wilcoxon.nonparametric_signed_rank_two-sided_plain_sp",
+      "px.exp.brain.oracle.stats.winsorize.summaries_limit0p05_py",
+      "px.exp.brain.oracle.stats.winsorize.summaries_limit0p05_sp",
+      "px.exp.brain.oracle.stats.winsorize.summaries_limit0p1_py",
+      "px.exp.brain.oracle.stats.winsorize.summaries_limit0p1_sp",
+      "px.exp.brain.oracle.stats.winsorize.summaries_limit0p2_py",
+      "px.exp.brain.oracle.stats.winsorize.summaries_limit0p2_sp",
       "px.exp.brain.oracle.stats.zscores.descriptive_population_np",
       "px.exp.brain.oracle.stats.zscores.descriptive_population_py",
       "px.exp.brain.result.stats.ci_diff_means.sample_other",
@@ -3804,6 +4010,72 @@
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
   },
+  "px.exp.brain.oracle.stats.entropy.summaries_base2_py": {
+    "calc": "entropy",
+    "case": "summaries_base2_py",
+    "expected": 2.25703468618,
+    "for": "the py backend of fn.brain.stats.entropy answering to scipy.stats.entropy",
+    "got": 2.25703468618,
+    "pass": true,
+    "reference": "scipy.stats.entropy",
+    "tolerance": 1e-09,
+    "worst_relative_error": 1.96757813502e-16
+  },
+  "px.exp.brain.oracle.stats.entropy.summaries_base2_sp": {
+    "calc": "entropy",
+    "case": "summaries_base2_sp",
+    "expected": 2.25703468618,
+    "for": "the sp backend of fn.brain.stats.entropy answering to scipy.stats.entropy",
+    "got": 2.25703468618,
+    "pass": true,
+    "reference": "scipy.stats.entropy",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.entropy.summaries_kullback_leibler_py": {
+    "calc": "entropy",
+    "case": "summaries_kullback_leibler_py",
+    "expected": 0.0400116580756,
+    "for": "the py backend of fn.brain.stats.entropy answering to scipy.stats.entropy",
+    "got": 0.0400116580756,
+    "pass": true,
+    "reference": "scipy.stats.entropy",
+    "tolerance": 1e-09,
+    "worst_relative_error": 4.16333634234e-17
+  },
+  "px.exp.brain.oracle.stats.entropy.summaries_kullback_leibler_sp": {
+    "calc": "entropy",
+    "case": "summaries_kullback_leibler_sp",
+    "expected": 0.0400116580756,
+    "for": "the sp backend of fn.brain.stats.entropy answering to scipy.stats.entropy",
+    "got": 0.0400116580756,
+    "pass": true,
+    "reference": "scipy.stats.entropy",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.entropy.summaries_shannon_py": {
+    "calc": "entropy",
+    "case": "summaries_shannon_py",
+    "expected": 1.56445722915,
+    "for": "the py backend of fn.brain.stats.entropy answering to scipy.stats.entropy",
+    "got": 1.56445722915,
+    "pass": true,
+    "reference": "scipy.stats.entropy",
+    "tolerance": 1e-09,
+    "worst_relative_error": 1.41930760897e-16
+  },
+  "px.exp.brain.oracle.stats.entropy.summaries_shannon_sp": {
+    "calc": "entropy",
+    "case": "summaries_shannon_sp",
+    "expected": 1.56445722915,
+    "for": "the sp backend of fn.brain.stats.entropy answering to scipy.stats.entropy",
+    "got": 1.56445722915,
+    "pass": true,
+    "reference": "scipy.stats.entropy",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
   "px.exp.brain.oracle.stats.eta_squared.intervals_three_groups": {
     "calc": "eta_squared",
     "case": "intervals_three_groups",
@@ -4072,6 +4344,28 @@
     "tolerance": 1e-09,
     "worst_relative_error": 3.33066907388e-16
   },
+  "px.exp.brain.oracle.stats.gmean.summaries_positive_py": {
+    "calc": "gmean",
+    "case": "summaries_positive_py",
+    "expected": 3.39391388355,
+    "for": "the py backend of fn.brain.stats.gmean answering to scipy.stats.gmean",
+    "got": 3.39391388355,
+    "pass": true,
+    "reference": "scipy.stats.gmean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.gmean.summaries_positive_sp": {
+    "calc": "gmean",
+    "case": "summaries_positive_sp",
+    "expected": 3.39391388355,
+    "for": "the sp backend of fn.brain.stats.gmean answering to scipy.stats.gmean",
+    "got": 3.39391388355,
+    "pass": true,
+    "reference": "scipy.stats.gmean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
   "px.exp.brain.oracle.stats.hedges_g.intervals_two_samples": {
     "calc": "hedges_g",
     "case": "intervals_two_samples",
@@ -4082,6 +4376,256 @@
     "reference": "numpy: cohen's d times the small-sample correction",
     "tolerance": 1e-09,
     "worst_relative_error": 4.4408920985e-16
+  },
+  "px.exp.brain.oracle.stats.histogram.summaries_bins12_np": {
+    "calc": "histogram",
+    "case": "summaries_bins12_np",
+    "expected": {
+      "counts": [
+        3,
+        2,
+        4,
+        3,
+        8,
+        6,
+        8,
+        1,
+        2,
+        1,
+        0,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        5.69694104601,
+        6.70045814082,
+        7.70397523562,
+        8.70749233043,
+        9.71100942523,
+        10.71452652,
+        11.7180436148,
+        12.7215607097,
+        13.7250778045,
+        14.7285948993,
+        15.7321119941,
+        16.7356290889
+      ]
+    },
+    "for": "the np backend of fn.brain.stats.histogram answering to numpy.histogram",
+    "got": {
+      "counts": [
+        3,
+        2,
+        4,
+        3,
+        8,
+        6,
+        8,
+        1,
+        2,
+        1,
+        0,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        5.69694104601,
+        6.70045814082,
+        7.70397523562,
+        8.70749233043,
+        9.71100942523,
+        10.71452652,
+        11.7180436148,
+        12.7215607097,
+        13.7250778045,
+        14.7285948993,
+        15.7321119941,
+        16.7356290889
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.histogram",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.histogram.summaries_bins12_py": {
+    "calc": "histogram",
+    "case": "summaries_bins12_py",
+    "expected": {
+      "counts": [
+        3,
+        2,
+        4,
+        3,
+        8,
+        6,
+        8,
+        1,
+        2,
+        1,
+        0,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        5.69694104601,
+        6.70045814082,
+        7.70397523562,
+        8.70749233043,
+        9.71100942523,
+        10.71452652,
+        11.7180436148,
+        12.7215607097,
+        13.7250778045,
+        14.7285948993,
+        15.7321119941,
+        16.7356290889
+      ]
+    },
+    "for": "the py backend of fn.brain.stats.histogram answering to numpy.histogram",
+    "got": {
+      "counts": [
+        3,
+        2,
+        4,
+        3,
+        8,
+        6,
+        8,
+        1,
+        2,
+        1,
+        0,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        5.69694104601,
+        6.70045814082,
+        7.70397523562,
+        8.70749233043,
+        9.71100942523,
+        10.71452652,
+        11.7180436148,
+        12.7215607097,
+        13.7250778045,
+        14.7285948993,
+        15.7321119941,
+        16.7356290889
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.histogram",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.histogram.summaries_bins5_np": {
+    "calc": "histogram",
+    "case": "summaries_bins5_np",
+    "expected": {
+      "counts": [
+        5,
+        14,
+        15,
+        4,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        7.10186497874,
+        9.51030600627,
+        11.9187470338,
+        14.3271880613,
+        16.7356290889
+      ]
+    },
+    "for": "the np backend of fn.brain.stats.histogram answering to numpy.histogram",
+    "got": {
+      "counts": [
+        5,
+        14,
+        15,
+        4,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        7.10186497874,
+        9.51030600627,
+        11.9187470338,
+        14.3271880613,
+        16.7356290889
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.histogram",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.histogram.summaries_bins5_py": {
+    "calc": "histogram",
+    "case": "summaries_bins5_py",
+    "expected": {
+      "counts": [
+        5,
+        14,
+        15,
+        4,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        7.10186497874,
+        9.51030600627,
+        11.9187470338,
+        14.3271880613,
+        16.7356290889
+      ]
+    },
+    "for": "the py backend of fn.brain.stats.histogram answering to numpy.histogram",
+    "got": {
+      "counts": [
+        5,
+        14,
+        15,
+        4,
+        2
+      ],
+      "edges": [
+        4.69342395121,
+        7.10186497874,
+        9.51030600627,
+        11.9187470338,
+        14.3271880613,
+        16.7356290889
+      ]
+    },
+    "pass": true,
+    "reference": "numpy.histogram",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.hmean.summaries_positive_py": {
+    "calc": "hmean",
+    "case": "summaries_positive_py",
+    "expected": 2.55294285577,
+    "for": "the py backend of fn.brain.stats.hmean answering to scipy.stats.hmean",
+    "got": 2.55294285577,
+    "pass": true,
+    "reference": "scipy.stats.hmean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 1.73951880218e-16
+  },
+  "px.exp.brain.oracle.stats.hmean.summaries_positive_sp": {
+    "calc": "hmean",
+    "case": "summaries_positive_sp",
+    "expected": 2.55294285577,
+    "for": "the sp backend of fn.brain.stats.hmean answering to scipy.stats.hmean",
+    "got": 2.55294285577,
+    "pass": true,
+    "reference": "scipy.stats.hmean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
   },
   "px.exp.brain.oracle.stats.iqr.descriptive_sample57_np": {
     "calc": "iqr",
@@ -4852,6 +5396,50 @@
     "got": 52.7562369548,
     "pass": true,
     "reference": "numpy.median",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_1p0_py": {
+    "calc": "median_abs_deviation",
+    "case": "summaries_scale_1p0_py",
+    "expected": 0.289154807012,
+    "for": "the py backend of fn.brain.stats.median_abs_deviation answering to scipy.stats.median_abs_deviation",
+    "got": 0.289154807012,
+    "pass": true,
+    "reference": "scipy.stats.median_abs_deviation",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_1p0_sp": {
+    "calc": "median_abs_deviation",
+    "case": "summaries_scale_1p0_sp",
+    "expected": 0.289154807012,
+    "for": "the sp backend of fn.brain.stats.median_abs_deviation answering to scipy.stats.median_abs_deviation",
+    "got": 0.289154807012,
+    "pass": true,
+    "reference": "scipy.stats.median_abs_deviation",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_normal_py": {
+    "calc": "median_abs_deviation",
+    "case": "summaries_scale_normal_py",
+    "expected": 0.428701558368,
+    "for": "the py backend of fn.brain.stats.median_abs_deviation answering to scipy.stats.median_abs_deviation",
+    "got": 0.428701558368,
+    "pass": true,
+    "reference": "scipy.stats.median_abs_deviation",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.median_abs_deviation.summaries_scale_normal_sp": {
+    "calc": "median_abs_deviation",
+    "case": "summaries_scale_normal_sp",
+    "expected": 0.428701558368,
+    "for": "the sp backend of fn.brain.stats.median_abs_deviation answering to scipy.stats.median_abs_deviation",
+    "got": 0.428701558368,
+    "pass": true,
+    "reference": "scipy.stats.median_abs_deviation",
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
   },
@@ -7434,6 +8022,72 @@
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
   },
+  "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p0_py": {
+    "calc": "trimmed_mean",
+    "case": "summaries_cut0p0_py",
+    "expected": 9.79973742543,
+    "for": "the py backend of fn.brain.stats.trimmed_mean answering to scipy.stats.trim_mean",
+    "got": 9.79973742543,
+    "pass": true,
+    "reference": "scipy.stats.trim_mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p0_sp": {
+    "calc": "trimmed_mean",
+    "case": "summaries_cut0p0_sp",
+    "expected": 9.79973742543,
+    "for": "the sp backend of fn.brain.stats.trimmed_mean answering to scipy.stats.trim_mean",
+    "got": 9.79973742543,
+    "pass": true,
+    "reference": "scipy.stats.trim_mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p1_py": {
+    "calc": "trimmed_mean",
+    "case": "summaries_cut0p1_py",
+    "expected": 9.67453477256,
+    "for": "the py backend of fn.brain.stats.trimmed_mean answering to scipy.stats.trim_mean",
+    "got": 9.67453477256,
+    "pass": true,
+    "reference": "scipy.stats.trim_mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p1_sp": {
+    "calc": "trimmed_mean",
+    "case": "summaries_cut0p1_sp",
+    "expected": 9.67453477256,
+    "for": "the sp backend of fn.brain.stats.trimmed_mean answering to scipy.stats.trim_mean",
+    "got": 9.67453477256,
+    "pass": true,
+    "reference": "scipy.stats.trim_mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p25_py": {
+    "calc": "trimmed_mean",
+    "case": "summaries_cut0p25_py",
+    "expected": 9.71971091008,
+    "for": "the py backend of fn.brain.stats.trimmed_mean answering to scipy.stats.trim_mean",
+    "got": 9.71971091008,
+    "pass": true,
+    "reference": "scipy.stats.trim_mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.trimmed_mean.summaries_cut0p25_sp": {
+    "calc": "trimmed_mean",
+    "case": "summaries_cut0p25_sp",
+    "expected": 9.71971091008,
+    "for": "the sp backend of fn.brain.stats.trimmed_mean answering to scipy.stats.trim_mean",
+    "got": 9.71971091008,
+    "pass": true,
+    "reference": "scipy.stats.trim_mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
   "px.exp.brain.oracle.stats.ttest_1samp.hypothesis_one_greater_py": {
     "calc": "ttest_1samp",
     "case": "hypothesis_one_greater_py",
@@ -7979,6 +8633,564 @@
     },
     "pass": true,
     "reference": "scipy.stats.wilcoxon(..., method='approx', zero_method='wilcox')",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.winsorize.summaries_limit0p05_py": {
+    "calc": "winsorize",
+    "case": "summaries_limit0p05_py",
+    "expected": [
+      5.60409191698,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      13.9138797212,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      13.9138797212,
+      9.69410376733,
+      6.45038708732,
+      11.338135916,
+      5.60409191698,
+      10.0357222628,
+      9.40732012442,
+      13.2059742128,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      5.60409191698,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      13.9138797212
+    ],
+    "for": "the py backend of fn.brain.stats.winsorize answering to scipy.stats.mstats.winsorize",
+    "got": [
+      5.60409191698,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      13.9138797212,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      13.9138797212,
+      9.69410376733,
+      6.45038708732,
+      11.338135916,
+      5.60409191698,
+      10.0357222628,
+      9.40732012442,
+      13.2059742128,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      5.60409191698,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      13.9138797212
+    ],
+    "pass": true,
+    "reference": "scipy.stats.mstats.winsorize",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.winsorize.summaries_limit0p05_sp": {
+    "calc": "winsorize",
+    "case": "summaries_limit0p05_sp",
+    "expected": [
+      5.60409191698,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      13.9138797212,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      13.9138797212,
+      9.69410376733,
+      6.45038708732,
+      11.338135916,
+      5.60409191698,
+      10.0357222628,
+      9.40732012442,
+      13.2059742128,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      5.60409191698,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      13.9138797212
+    ],
+    "for": "the sp backend of fn.brain.stats.winsorize answering to scipy.stats.mstats.winsorize",
+    "got": [
+      5.60409191698,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      13.9138797212,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      13.9138797212,
+      9.69410376733,
+      6.45038708732,
+      11.338135916,
+      5.60409191698,
+      10.0357222628,
+      9.40732012442,
+      13.2059742128,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      5.60409191698,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      13.9138797212
+    ],
+    "pass": true,
+    "reference": "scipy.stats.mstats.winsorize",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.winsorize.summaries_limit0p1_py": {
+    "calc": "winsorize",
+    "case": "summaries_limit0p1_py",
+    "expected": [
+      6.45591475648,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      12.8006670265,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      12.8006670265,
+      9.69410376733,
+      6.45591475648,
+      11.338135916,
+      6.45591475648,
+      10.0357222628,
+      9.40732012442,
+      12.8006670265,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      6.45591475648,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      12.8006670265
+    ],
+    "for": "the py backend of fn.brain.stats.winsorize answering to scipy.stats.mstats.winsorize",
+    "got": [
+      6.45591475648,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      12.8006670265,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      12.8006670265,
+      9.69410376733,
+      6.45591475648,
+      11.338135916,
+      6.45591475648,
+      10.0357222628,
+      9.40732012442,
+      12.8006670265,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      6.45591475648,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      12.8006670265
+    ],
+    "pass": true,
+    "reference": "scipy.stats.mstats.winsorize",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.winsorize.summaries_limit0p1_sp": {
+    "calc": "winsorize",
+    "case": "summaries_limit0p1_sp",
+    "expected": [
+      6.45591475648,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      12.8006670265,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      12.8006670265,
+      9.69410376733,
+      6.45591475648,
+      11.338135916,
+      6.45591475648,
+      10.0357222628,
+      9.40732012442,
+      12.8006670265,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      6.45591475648,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      12.8006670265
+    ],
+    "for": "the sp backend of fn.brain.stats.winsorize answering to scipy.stats.mstats.winsorize",
+    "got": [
+      6.45591475648,
+      9.27515641414,
+      11.5068175973,
+      8.1650776459,
+      8.35216594931,
+      12.8006670265,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      12.8006670265,
+      9.69410376733,
+      6.45591475648,
+      11.338135916,
+      6.45591475648,
+      10.0357222628,
+      9.40732012442,
+      12.8006670265,
+      9.42139666935,
+      7.65561426392,
+      7.3897768635,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.52815422,
+      9.79222805613,
+      7.16152478301,
+      9.72751724165,
+      10.9433778889,
+      6.45591475648,
+      7.59696866798,
+      10.986626238,
+      6.45591475648,
+      12.8006670265,
+      12.5783289229,
+      8.7866878079,
+      10.3348419282,
+      12.8006670265
+    ],
+    "pass": true,
+    "reference": "scipy.stats.mstats.winsorize",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.winsorize.summaries_limit0p2_py": {
+    "calc": "winsorize",
+    "case": "summaries_limit0p2_py",
+    "expected": [
+      7.65561426392,
+      9.27515641414,
+      11.3605161264,
+      8.1650776459,
+      8.35216594931,
+      11.3605161264,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      11.3605161264,
+      9.69410376733,
+      7.65561426392,
+      11.338135916,
+      7.65561426392,
+      10.0357222628,
+      9.40732012442,
+      11.3605161264,
+      9.42139666935,
+      7.65561426392,
+      7.65561426392,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.3605161264,
+      9.79222805613,
+      7.65561426392,
+      9.72751724165,
+      10.9433778889,
+      7.65561426392,
+      7.65561426392,
+      10.986626238,
+      7.65561426392,
+      11.3605161264,
+      11.3605161264,
+      8.7866878079,
+      10.3348419282,
+      11.3605161264
+    ],
+    "for": "the py backend of fn.brain.stats.winsorize answering to scipy.stats.mstats.winsorize",
+    "got": [
+      7.65561426392,
+      9.27515641414,
+      11.3605161264,
+      8.1650776459,
+      8.35216594931,
+      11.3605161264,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      11.3605161264,
+      9.69410376733,
+      7.65561426392,
+      11.338135916,
+      7.65561426392,
+      10.0357222628,
+      9.40732012442,
+      11.3605161264,
+      9.42139666935,
+      7.65561426392,
+      7.65561426392,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.3605161264,
+      9.79222805613,
+      7.65561426392,
+      9.72751724165,
+      10.9433778889,
+      7.65561426392,
+      7.65561426392,
+      10.986626238,
+      7.65561426392,
+      11.3605161264,
+      11.3605161264,
+      8.7866878079,
+      10.3348419282,
+      11.3605161264
+    ],
+    "pass": true,
+    "reference": "scipy.stats.mstats.winsorize",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.stats.winsorize.summaries_limit0p2_sp": {
+    "calc": "winsorize",
+    "case": "summaries_limit0p2_sp",
+    "expected": [
+      7.65561426392,
+      9.27515641414,
+      11.3605161264,
+      8.1650776459,
+      8.35216594931,
+      11.3605161264,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      11.3605161264,
+      9.69410376733,
+      7.65561426392,
+      11.338135916,
+      7.65561426392,
+      10.0357222628,
+      9.40732012442,
+      11.3605161264,
+      9.42139666935,
+      7.65561426392,
+      7.65561426392,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.3605161264,
+      9.79222805613,
+      7.65561426392,
+      9.72751724165,
+      10.9433778889,
+      7.65561426392,
+      7.65561426392,
+      10.986626238,
+      7.65561426392,
+      11.3605161264,
+      11.3605161264,
+      8.7866878079,
+      10.3348419282,
+      11.3605161264
+    ],
+    "for": "the sp backend of fn.brain.stats.winsorize answering to scipy.stats.mstats.winsorize",
+    "got": [
+      7.65561426392,
+      9.27515641414,
+      11.3605161264,
+      8.1650776459,
+      8.35216594931,
+      11.3605161264,
+      11.2315987307,
+      9.71376430003,
+      11.0823625171,
+      8.80964148778,
+      11.3605161264,
+      9.43751441308,
+      11.3605161264,
+      9.69410376733,
+      7.65561426392,
+      11.338135916,
+      7.65561426392,
+      10.0357222628,
+      9.40732012442,
+      11.3605161264,
+      9.42139666935,
+      7.65561426392,
+      7.65561426392,
+      7.81847537616,
+      10.2136479108,
+      8.98346684811,
+      11.3605161264,
+      9.79222805613,
+      7.65561426392,
+      9.72751724165,
+      10.9433778889,
+      7.65561426392,
+      7.65561426392,
+      10.986626238,
+      7.65561426392,
+      11.3605161264,
+      11.3605161264,
+      8.7866878079,
+      10.3348419282,
+      11.3605161264
+    ],
+    "pass": true,
+    "reference": "scipy.stats.mstats.winsorize",
     "tolerance": 1e-09,
     "worst_relative_error": 0.0
   },

@@ -11,14 +11,69 @@ import math
 from pyto import Calculation
 
 ROLLING = ("mean", "sum", "min", "max", "median", "var", "std", "count")
+ROLLING_BACKENDS = ("py", "np", "cumsum")
+CUMSUM_KINDS = ("count", "sum", "mean", "var", "std")
 DECOMPOSITIONS = ("additive", "multiplicative")
 
 
-def _backend(args):
+def _backend(args, allowed=("py", "np")):
     backend = args.get("backend", "py")
-    if backend not in ("py", "np"):
-        raise ValueError("unknown backend %r for a time-series calculation: py or np" % (backend,))
+    if backend not in allowed:
+        raise ValueError("unknown backend %r for a time-series calculation: %s"
+                         % (backend, ", ".join(allowed)))
     return backend
+
+
+def _windows(n, width, centred):
+    """(start, stop) per point: the one definition all three engines share."""
+    out = []
+    for i in range(n):
+        start = i - (width - 1) // 2 if centred else i - width + 1
+        out.append((max(0, start), max(0, start + width)))
+    return out
+
+
+def _cumulative(values, width, kind, least, centred):
+    """the whole window in ONE pass: prefix sums of the series and of its squares.
+
+    the other two engines take a slice per point and reduce it, which is O(n w);
+    this is O(n) whatever the window. the series is shifted by its own mean
+    before the squares are accumulated, so the variance is a difference of two
+    numbers of the same size rather than of two large ones -- which is what makes
+    a cumulative variance meet the same 1e-9 oracle as a two-pass one.
+    """
+    present = [v is not None for v in values]
+    kept = [v for v in values if v is not None]
+    shift = math.fsum(kept) / len(kept) if kept else 0.0
+    counts = [0]
+    sums = [0.0]
+    squares = [0.0]
+    for value, here in zip(values, present):
+        counts.append(counts[-1] + (1 if here else 0))
+        delta = (value - shift) if here else 0.0
+        sums.append(sums[-1] + delta)
+        squares.append(squares[-1] + delta * delta)
+    out = []
+    for start, stop in _windows(len(values), width, centred):
+        stop = min(stop, len(values))
+        n = counts[stop] - counts[start]
+        if n < least:
+            out.append(None)
+            continue
+        total = sums[stop] - sums[start]
+        if kind == "count":
+            out.append(float(n))
+        elif kind == "sum":
+            out.append(total + n * shift)
+        elif kind == "mean":
+            out.append(shift + total / n)
+        elif n < 2:
+            out.append(None)
+        else:
+            variance = (squares[stop] - squares[start] - total * total / n) / (n - 1)
+            variance = max(0.0, variance)
+            out.append(variance if kind == "var" else math.sqrt(variance))
+    return out
 
 
 def _series(args, key="values", least=1, allow_missing=False):
@@ -69,6 +124,10 @@ def rolling(args):
     ``min_periods`` how few points still count (default: the whole window),
     ``center`` puts the window around the point instead of behind it.
     reference: numpy over the same slices.
+
+    three engines, and they are the candidates of a tournament: "py" and "np"
+    both take a slice per point and reduce it (O(n w)); "cumsum" runs the whole
+    series in one pass of prefix sums (O(n)) and covers count/sum/mean/var/std.
     """
     values = _series(args, allow_missing=True)
     width = int(args.get("window", 3))
@@ -81,15 +140,17 @@ def rolling(args):
     if least < 1 or least > width:
         raise ValueError("min_periods must be between 1 and the window width")
     centred = bool(args.get("center", False))
-    backend = _backend(args)
+    backend = _backend(args, ROLLING_BACKENDS)
+    if backend == "cumsum":
+        if kind not in CUMSUM_KINDS:
+            raise ValueError(
+                "the cumsum engine has no whole-window form for %r; it does %s "
+                "(min, max and median need the slice, so ask for py or np)"
+                % (kind, ", ".join(CUMSUM_KINDS)))
+        return _cumulative(values, width, kind, least, centred)
     out = []
-    for i in range(len(values)):
-        if centred:
-            start = i - (width - 1) // 2
-            stop = start + width
-        else:
-            start, stop = i - width + 1, i + 1
-        window = [v for v in values[max(0, start):max(0, stop)] if v is not None]
+    for i, (start, stop) in enumerate(_windows(len(values), width, centred)):
+        window = [v for v in values[start:min(stop, len(values))] if v is not None]
         if len(window) < least:
             out.append(None)
         elif backend == "np":
@@ -443,7 +504,108 @@ def ar_forecast(args):
     return {"order": order, "horizon": horizon, "forecast": out}
 
 
+def ewma(args):
+    """exponentially weighted moving statistics over a series with no holes.
+
+    ``alpha`` (or ``span``, ``alpha = 2/(span+1)``) is the weight of the newest
+    point. ``adjust`` (default true) divides by the sum of the weights actually
+    used, so the first points are an average of what is there rather than a
+    value pulled towards x0. ``fn``: "mean" (default), "var" or "std".
+    reference: the recurrence written out in data.timeseries_cases.brute_ewma;
+    numpy has no smoother.
+    """
+    values = _series(args, least=1)
+    if "span" in args:
+        span = float(args["span"])
+        if span < 1.0:
+            raise ValueError("an ewma span is at least 1, got %r" % (span,))
+        alpha = 2.0 / (span + 1.0)
+    else:
+        alpha = float(args.get("alpha", 0.3))
+    if not 0.0 < alpha <= 1.0:
+        raise ValueError("an ewma needs alpha in (0, 1], got %r" % (alpha,))
+    kind = args.get("fn", "mean")
+    if kind not in ("mean", "var", "std"):
+        raise ValueError("an ewma computes mean, var or std, got %r" % (kind,))
+    adjust = bool(args.get("adjust", True))
+    _backend(args)
+    means = []
+    variances = []
+    weight_sum = 0.0
+    weight_squares = 0.0
+    weighted = 0.0
+    weighted_squares = 0.0
+    level = None
+    second = 0.0
+    for value in values:
+        if adjust:
+            weight_sum = weight_sum * (1.0 - alpha) + 1.0
+            weight_squares = weight_squares * (1.0 - alpha) ** 2 + 1.0
+            weighted = weighted * (1.0 - alpha) + value
+            weighted_squares = weighted_squares * (1.0 - alpha) + value * value
+            mean = weighted / weight_sum
+            means.append(mean)
+            bias = weight_sum * weight_sum - weight_squares
+            if bias <= 0.0:
+                variances.append(None)
+            else:
+                variances.append(max(0.0, (weighted_squares / weight_sum - mean * mean)
+                                     * weight_sum * weight_sum / bias))
+        else:
+            if level is None:
+                level, second = value, 0.0
+            else:
+                delta = value - level
+                level = level + alpha * delta
+                second = (1.0 - alpha) * (second + alpha * delta * delta)
+            means.append(level)
+            variances.append(second)
+    if kind == "mean":
+        return means
+    if kind == "var":
+        return variances
+    return [None if v is None else math.sqrt(v) for v in variances]
+
+
+def cross_correlation(args):
+    """the correlation of ``x`` led by k against ``y``, for k = 0..nlags.
+
+    reference: numpy.correlate over the two centred series, normalised by the
+    product of their sums of squares.
+    """
+    x = _series(args, "x", least=2)
+    y = _series(args, "y", least=2)
+    if len(x) != len(y):
+        raise ValueError("a cross-correlation needs equal lengths, got %d and %d"
+                         % (len(x), len(y)))
+    n = len(x)
+    nlags = int(args.get("nlags", min(10, n - 1)))
+    if nlags < 0 or nlags >= n:
+        raise ValueError("nlags must be between 0 and one less than the series length")
+    backend = _backend(args)
+    mx = math.fsum(x) / n
+    my = math.fsum(y) / n
+    if backend == "np":
+        import numpy as np
+
+        a = np.asarray(x, dtype=float) - mx
+        b = np.asarray(y, dtype=float) - my
+        denominator = float(np.sqrt((a * a).sum() * (b * b).sum()))
+        if denominator == 0.0:
+            raise ValueError("a cross-correlation needs both series to vary")
+        return [float((a[k:] * b[:n - k]).sum()) / denominator for k in range(nlags + 1)]
+    a = [v - mx for v in x]
+    b = [v - my for v in y]
+    denominator = math.sqrt(math.fsum(v * v for v in a) * math.fsum(v * v for v in b))
+    if denominator == 0.0:
+        raise ValueError("a cross-correlation needs both series to vary")
+    return [math.fsum(a[i + k] * b[i] for i in range(n - k)) / denominator
+            for k in range(nlags + 1)]
+
+
 ROLLING_CALC = Calculation("fn.brain.data.rolling", rolling)
+EWMA = Calculation("fn.brain.data.ewma", ewma)
+CROSS_CORRELATION = Calculation("fn.brain.data.cross_correlation", cross_correlation)
 DIFFERENCE = Calculation("fn.brain.data.difference", difference)
 INTEGRATE = Calculation("fn.brain.data.integrate", integrate)
 SES = Calculation("fn.brain.data.ses", ses)
@@ -456,6 +618,6 @@ AR_FORECAST = Calculation("fn.brain.data.ar_forecast", ar_forecast)
 
 CALCS = {
     c.address: c
-    for c in (ROLLING_CALC, DIFFERENCE, INTEGRATE, SES, HOLT, SEASONAL_DECOMPOSE,
-              ACF, PACF, AR_FIT, AR_FORECAST)
+    for c in (ROLLING_CALC, EWMA, CROSS_CORRELATION, DIFFERENCE, INTEGRATE, SES, HOLT,
+              SEASONAL_DECOMPOSE, ACF, PACF, AR_FIT, AR_FORECAST)
 }

@@ -31,10 +31,15 @@ class TestOracles(unittest.TestCase):
         self.assertEqual(set(timeseries.CALCS) - covered,
                          {"fn.brain.data.holt", "fn.brain.data.ar_forecast"})
 
+    def test_the_three_rolling_engines_all_have_cases(self):
+        seen = {case["backend"] for case in ORACLE_CASES
+                if case["calc"] == "fn.brain.data.rolling"}
+        self.assertEqual(seen, {"py", "np", "cumsum"})
+
     def test_every_case_names_a_reference_and_a_backend(self):
         for case in ORACLE_CASES:
             self.assertTrue(case["reference"])
-            self.assertIn(case["backend"], ("py", "np"))
+            self.assertIn(case["backend"], ("py", "np", "cumsum"))
 
 
 class TestBackendsAgree(unittest.TestCase):
@@ -72,6 +77,34 @@ class TestRolling(unittest.TestCase):
         self.assertIsNone(got[0])
         self.assertAlmostEqual(got[2], 2.0)
 
+    def test_the_cumsum_engine_agrees_with_the_slice_engines_everywhere(self):
+        holes = [v if i % 5 else None for i, v in enumerate(SERIES)]
+        for values in (SERIES, holes):
+            for kind in ("count", "sum", "mean", "var", "std"):
+                for width, least, centred in ((7, 7, False), (30, 1, False), (5, 3, True)):
+                    with self.subTest(kind=kind, window=width, center=centred,
+                                      holes=values is holes):
+                        args = {"values": values, "window": width, "fn": kind,
+                                "min_periods": least, "center": centred}
+                        self.assertTrue(agrees(
+                            timeseries.rolling(dict(args, backend="cumsum")),
+                            timeseries.rolling(dict(args, backend="py")), 1e-9))
+
+    def test_the_cumsum_engine_refuses_what_it_cannot_do_in_one_pass(self):
+        for kind in ("min", "max", "median"):
+            with self.subTest(fn=kind):
+                with self.assertRaises(ValueError) as caught:
+                    timeseries.rolling({"values": SERIES, "fn": kind, "backend": "cumsum"})
+                self.assertIn("whole-window form", str(caught.exception))
+
+    def test_the_cumsum_variance_holds_up_on_a_series_with_a_big_offset(self):
+        """the shift-by-the-mean trick is what this is measuring."""
+        offset = [v + 1e7 for v in SERIES]
+        self.assertTrue(agrees(
+            timeseries.rolling({"values": offset, "window": 12, "fn": "var",
+                                "backend": "cumsum"}),
+            timeseries.rolling({"values": offset, "window": 12, "fn": "var"}), 1e-9))
+
     def test_an_unknown_fn_names_the_ones_there_are(self):
         with self.assertRaises(ValueError) as caught:
             timeseries.rolling({"values": SHORT, "fn": "skew"})
@@ -83,6 +116,52 @@ class TestRolling(unittest.TestCase):
                      {"values": SHORT, "window": 3, "min_periods": 9}):
             with self.assertRaises(ValueError):
                 timeseries.rolling(args)
+
+
+class TestEwmaAndCrossCorrelation(unittest.TestCase):
+    def test_alpha_one_is_the_series_itself(self):
+        self.assertTrue(agrees(timeseries.ewma({"values": SHORT, "alpha": 1.0}), SHORT, 1e-12))
+
+    def test_a_span_is_an_alpha(self):
+        self.assertTrue(agrees(timeseries.ewma({"values": SHORT, "span": 9}),
+                               timeseries.ewma({"values": SHORT, "alpha": 2.0 / 10.0}), 1e-12))
+
+    def test_the_adjusted_and_unadjusted_forms_meet_in_the_end(self):
+        adjusted = timeseries.ewma({"values": SERIES, "alpha": 0.5})
+        plain = timeseries.ewma({"values": SERIES, "alpha": 0.5, "adjust": False})
+        self.assertNotAlmostEqual(adjusted[1], plain[1], delta=1e-12)
+        self.assertAlmostEqual(adjusted[-1], plain[-1], delta=1e-9)
+
+    def test_an_ewma_of_a_constant_is_that_constant(self):
+        self.assertTrue(agrees(timeseries.ewma({"values": [3.0] * 12}), [3.0] * 12, 1e-12))
+        self.assertTrue(agrees(
+            [v for v in timeseries.ewma({"values": [3.0] * 12, "fn": "var"}) if v is not None],
+            [0.0] * len([v for v in timeseries.ewma({"values": [3.0] * 12, "fn": "var"})
+                         if v is not None]), 1e-12))
+
+    def test_the_ewma_parameters_are_checked(self):
+        for args in ({"values": SHORT, "alpha": 0.0}, {"values": SHORT, "alpha": 1.5},
+                     {"values": SHORT, "span": 0.5}, {"values": SHORT, "fn": "median"}):
+            with self.assertRaises(ValueError):
+                timeseries.ewma(args)
+
+    def test_a_series_cross_correlated_with_itself_starts_at_one(self):
+        got = timeseries.cross_correlation({"x": SERIES, "y": SERIES, "nlags": 4})
+        self.assertAlmostEqual(got[0], 1.0, delta=1e-12)
+        self.assertTrue(all(abs(v) <= 1.0 + 1e-12 for v in got))
+
+    def test_it_is_the_acf_when_the_two_series_are_the_same(self):
+        self.assertTrue(agrees(
+            timeseries.cross_correlation({"x": SERIES, "y": SERIES, "nlags": 6}),
+            timeseries.acf({"values": SERIES, "nlags": 6}), 1e-12))
+
+    def test_a_flat_series_has_no_cross_correlation(self):
+        with self.assertRaises(ValueError):
+            timeseries.cross_correlation({"x": [2.0] * 8, "y": SERIES[:8]})
+
+    def test_unequal_lengths_are_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.cross_correlation({"x": SERIES, "y": SERIES[:-1]})
 
 
 class TestDifferencing(unittest.TestCase):
@@ -250,7 +329,8 @@ class TestBenchCases(unittest.TestCase):
         for case in BENCH_CASES:
             pairs.setdefault((case["calc"], case["size"]), set()).add(case["backend"])
         for key, backends in pairs.items():
-            self.assertEqual(backends, {"py", "np"}, "%r is not a comparable pair" % (key,))
+            self.assertTrue({"py", "np"} <= backends, "%r is not a comparable pair" % (key,))
+        self.assertIn("cumsum", pairs[("fn.brain.data.rolling", "n=4000")])
         for case in BENCH_CASES[:3]:
             timeseries.CALCS[case["calc"]](case["make_args"]())
 
