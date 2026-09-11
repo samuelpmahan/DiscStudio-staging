@@ -1,4 +1,4 @@
-import { defaultCards, validateCards, applyCardsSet } from './cards.js';
+import { defaultCards, validateCards, applyCardsSet, validatePresetCascade } from './cards.js';
 /** Runtime domain definitions drive both fact editing and presentation discovery. */
 export const schema = {
   BattleEntry: { label: 'Current comparison entry', fields: { score: { type: 'number', label: 'Score', optional: true }, highlighted: { type: 'boolean', label: 'Highlighted' }, winner: { type: 'boolean', label: 'Authored winner' } } },
@@ -112,10 +112,15 @@ export function validateWorld(world) {
   }
   for (const preset of Object.values(world.presets)) validatePreset(preset);
   // Old drafts saved before the card cascade existed carry no `cards` at all;
-  // fill the defaults here rather than mutate (world may already be frozen --
-  // `pop` validates an already-frozen Part) by returning a new object only
-  // when one is needed.
-  const result = world.cards ? world : { ...world, cards: defaultCards() };
+  // a task-78 draft carries a `projections` layer whose values were never the
+  // presets' own overrides (the preset IS the projection layer now, task 79),
+  // so it is dropped rather than kept. Both are normalised here rather than
+  // mutated (world may already be frozen -- `pop` validates an already-frozen
+  // Part) by returning a new object only when one is needed.
+  let cards = world.cards;
+  if (!cards) cards = defaultCards();
+  else if (Object.hasOwn(cards, 'projections')) { const { projections, ...rest } = cards; cards = rest; }
+  const result = cards === world.cards ? world : { ...world, cards };
   validateCards(result.cards);
   return result;
 }
@@ -127,6 +132,10 @@ export function validatePreset(p) {
     if (!safeKey(n.id) || !['text', 'image'].includes(n.kind) || typeof n.binding !== 'string' || ![n.x, n.y, n.w, n.h, n.size].every(Number.isFinite)) throw new Error('Invalid presentation element.');
     if (n.w <= 0 || n.h <= 0 || n.size < 4 || n.size > 200 || Math.abs(n.x) > 4000 || Math.abs(n.y) > 4000) throw new Error('Element dimensions are out of range.');
   }
+  // The preset IS the projection layer (task 79): background, foreground, accent,
+  // font, radius and sponsor are its own cascade overrides, each null (or, for
+  // sponsor, absent) meaning it inherits from `world.cards.global` instead.
+  validatePresetCascade(p);
   return p;
 }
 
@@ -181,7 +190,7 @@ export function applyCommand({ world: previous, command }) {
     case 'preset.node.remove': w.presets[c.id].nodes = w.presets[c.id].nodes.filter(n => n.id !== c.nodeId); break;
     case 'preset.node.move': { const nodes = w.presets[c.id].nodes, i = nodes.findIndex(n => n.id === c.nodeId), j = i + c.offset; if (i >= 0 && j >= 0 && j < nodes.length) [nodes[i], nodes[j]] = [nodes[j], nodes[i]]; break; }
     case 'layout.set': Object.assign(w.layout, c.patch); break;
-    case 'cards.set': w.cards = applyCardsSet(w.cards, c); break;
+    case 'cards.set': { const next = applyCardsSet({ cards: w.cards, presets: w.presets }, c); w.cards = next.cards; w.presets = next.presets; break; }
     case 'competition.rule.set': { const comp = required('Competition', c.id); const rule = comp.constraints.find(r => r.id === c.ruleId); if (!rule) throw new Error('Constraint is missing.'); Object.assign(rule, c.patch); break; }
     case 'competition.rule.add': required('Competition', c.id).constraints.push(clone(c.rule)); break;
     case 'competition.rule.remove': { const comp = required('Competition', c.id); comp.constraints = comp.constraints.filter(r => r.id !== c.ruleId); break; }

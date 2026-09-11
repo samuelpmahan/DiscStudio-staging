@@ -231,19 +231,24 @@ with sync_playwright() as p:
     page.screenshot(path=str(out/'mobile.png'))
     record('Four routes render at desktop and mobile widths without horizontal page overflow')
     page.set_viewport_size({'width':1536,'height':960})
-    # Card cascade editor (#/cards): global -> projection -> instance, retrofitted onto
-    # the existing card surface. `runtime.cards.recompose` is the acceptance test itself:
-    # a global edit changes all four projections, a projection edit changes exactly one.
-    route(page,'cards');page.screenshot(path=str(out/'cards.png'))
+    # Card cascade editor (task 79: the preset IS the projection layer, folded into
+    # the Component Editor's "All cards" tab plus the DisplayCard inspector's "The
+    # whole card" / "This disc, this projection" sections -- no more #/cards route).
+    # `runtime.cards.recompose` is the acceptance test itself: a global edit changes
+    # every projection that inherits the token, a preset edit changes exactly the
+    # projections composing with that preset, and an instance edit changes one.
+    route(page,'components')
     projections=['shelf','bag','single','competition']
+    page.locator('[data-action="component"][data-value="AllCards"]').click();page.wait_for_timeout(60)
+    page.screenshot(path=str(out/'cards.png'))
     assert page.locator('[data-projection-preview]').count()==4
-    background_global='[data-control="cascade-token"][data-layer="global"][data-token="background"]'
-    change(page,background_global,'#0b1f1a')
-    assert_world(page,'discStudio.world.cards.global.background==="#0b1f1a"')
+    radius_global='[data-control="cascade-token"][data-layer="global"][data-token="radius"]'
+    change(page,radius_global,'40')
+    assert_world(page,'discStudio.world.cards.global.radius===40')
     changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
     assert all(v=='true' for v in changed.values()),changed
-    assert all('#0b1f1a' in page.locator(f'[data-projection-preview="{p}"] svg').first.evaluate('e=>e.outerHTML') for p in projections)
-    record('Editing a global card token recomposes all four projections; the preview grid marks every one "recomposed" and every composed SVG carries the new value')
+    assert all('40' in page.locator(f'[data-projection-preview="{p}"] svg').first.evaluate('e=>e.outerHTML') for p in projections)
+    record('Editing the global radius recomposes all four projections; the preview grid marks every one "recomposed" and every composed SVG carries the new value')
     # The seed gives buzzz-mint an instance override on shelf.accent, so a global accent edit
     # reaches three projections and the shelf card keeps its own: the cascade, not a broadcast.
     accent_global='[data-control="cascade-token"][data-layer="global"][data-token="accent"]'
@@ -251,28 +256,48 @@ with sync_playwright() as p:
     assert_world(page,'discStudio.world.cards.global.accent==="#112233"')
     changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
     assert changed=={'shelf':'false','bag':'true','single':'true','competition':'true'},changed
-    assert 'shelf' not in page.locator('.cascade-receipt').inner_text() and 'competition' in page.locator('.cascade-receipt').inner_text()
-    record('A global edit stops at an instance override: shelf keeps buzzz-mint\'s own accent and the recomposition line names only the three cards that recomposed')
-    accent_single='[data-control="cascade-token"][data-layer="projection"][data-projection="single"][data-token="accent"]'
-    assert page.locator(accent_single).input_value()=='#112233'
-    change(page,accent_single,'#654321')
-    assert_world(page,'discStudio.world.cards.projections.single.accent==="#654321"')
+    record('A global edit stops at an instance override: shelf keeps buzzz-mint\'s own accent and the other three recompose')
+    # DisplayCard tab: edit broadcast's own accent (the preset IS the projection layer),
+    # then back to All cards to see it land on exactly the projections that compose with it.
+    page.locator('[data-action="component"][data-value="DisplayCard"]').click();page.wait_for_timeout(60)
+    accent_preset='[data-control="preset-color"][data-key="accent"]'
+    change(page,accent_preset,'#654321')
+    assert_world(page,'discStudio.world.presets.broadcast.accent==="#654321"')
+    ctx_js="{bagId:'everyday',competitionId:'putterwarz',roundId:'hole-1'}"
+    assert page.evaluate(f"discStudio.runtime.cards.effective('single','buzzz-mint',{ctx_js}).tokens.accent")=='#654321'
+    page.locator('[data-action="component"][data-value="AllCards"]').click();page.wait_for_timeout(60)
+    changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
+    assert changed=={'shelf':'false','bag':'false','single':'true','competition':'true'},changed
+    assert all('#654321' in page.locator(f'[data-projection-preview="{p}"] svg').first.evaluate('e=>e.outerHTML') for p in ['single','competition'])
+    record('Editing the preset accent control on the DisplayCard tab reaches both single and competition (they compose with broadcast) and leaves shelf/bag alone; both SVGs carry the new accent, and the grid marks both recomposed')
+    # Reset to inherited, from the DisplayCard tab's "The whole card" section.
+    page.locator('[data-action="component"][data-value="DisplayCard"]').click();page.wait_for_timeout(60)
+    assert page.locator(accent_preset).input_value()=='#654321'
+    page.locator('[data-action="cascade-reset"][data-layer="preset"][data-preset="broadcast"][data-token="accent"]').click()
+    assert_world(page,'discStudio.world.presets.broadcast.accent===null')
+    assert page.locator(accent_preset).input_value()==page.evaluate('discStudio.world.cards.global.accent'),'cleared override shows the inherited global value'
+    record('Reset to inherited clears the preset\'s own override; the control shows the global value again')
+    # Take the reset's own recompose on the All cards tab before the next edit: one edit, one recompose.
+    page.locator('[data-action="component"][data-value="AllCards"]').click();page.wait_for_timeout(60)
+    page.locator('[data-action="component"][data-value="DisplayCard"]').click();page.wait_for_timeout(60)
+    instance_projection='[data-control="instance-projection"]'
+    page.locator(instance_projection).select_option('single')
+    radius_instance='[data-control="cascade-token"][data-layer="instance"][data-projection="single"][data-disc="buzzz-mint"][data-token="radius"]'
+    change(page,radius_instance,'77')
+    assert_world(page,'discStudio.world.cards.instances.single["buzzz-mint"].radius===77')
+    page.locator('[data-action="component"][data-value="AllCards"]').click();page.wait_for_timeout(60)
     changed={p:page.locator(f'[data-projection-preview="{p}"]').get_attribute('data-changed') for p in projections}
     assert [p for p,v in changed.items() if v=='true']==['single'],changed
     receipt=page.evaluate('discStudio.cards().edit')
-    assert receipt['layer']=='projection' and receipt['token']=='accent' and receipt['value']=='#654321' and receipt['projection']=='single',receipt
-    record('Editing the single projection layer recomposes exactly that projection, and window.discStudio.cards() carries the edit')
-    reset_single='[data-action="cascade-reset"][data-layer="projection"][data-projection="single"][data-token="accent"]'
-    page.locator(reset_single).click()
-    assert_world(page,'!("accent" in discStudio.world.cards.projections.single)')
-    assert page.locator(accent_single).input_value()=='#112233','cleared override did not fall back to the inherited global value'
-    record('Resetting a projection override clears it; the token inherits from global again')
-    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'cards route overflow'
+    assert receipt['layer']=='instance' and receipt['token']=='radius' and receipt['value']==77 and receipt['projection']=='single',receipt
+    record('An instance edit on single recomposes exactly that card, and window.discStudio.cards() carries the edit')
+    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'All cards tab overflow'
     page.set_viewport_size({'width':390,'height':844})
-    route(page,'cards')
-    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'cards route mobile overflow'
+    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'All cards tab mobile overflow'
+    page.locator('[data-action="component"][data-value="DisplayCard"]').click();page.wait_for_timeout(60)
+    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'DisplayCard tab mobile overflow'
     page.set_viewport_size({'width':1536,'height':960})
-    record('Cards route renders at desktop and mobile widths without horizontal page overflow')
+    record('The Component Editor\'s All cards and DisplayCard tabs render at desktop and mobile widths without horizontal page overflow')
     assert not errors,errors
     record('No browser JavaScript errors')
     report={'mode':'embedded DOM; memory storage double; run-record block on a real local origin and file://' if a.embedded else 'HTTP; real origin storage','checks':checks,'count':len(checks),'errors':errors}

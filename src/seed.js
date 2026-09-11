@@ -31,10 +31,12 @@ export function createSeed() {
   add('Competition', { id: 'putterwarz', name: 'PutterWarz', teamIds: ['team-luna', 'team-zone'], roundIds: ['hole-1'], combine: 'all', constraints: [
     { id: 'bag-size', kind: 'bagLimit', value: 5, enabled: true }, { id: 'single-mold', kind: 'oneMold', value: 1, enabled: true }, { id: 'round-throws', kind: 'teamThrows', value: 3, enabled: true }
   ] });
-  // One projection override and one instance override, so the cards editor
-  // opens with something inherited AND something overridden to look at.
+  // The preset IS the projection layer (task 79): broadcast's own `sponsor`
+  // override (defaultPresets, src/presentation.js) is what makes the
+  // OnTheCourse lockup show up, not a projection-layer default here. One
+  // instance override is still seeded, so the editor opens with something
+  // inherited AND something overridden to look at.
   const cards = defaultCards();
-  cards.projections.competition = { ...cards.projections.competition, sponsor: 'CHAINSPOT' };
   cards.instances.shelf = { ...cards.instances.shelf, 'buzzz-mint': { accent: '#d47d54' } };
   return {
     version: 2, schemas: clone(schema), objects, presets: defaultPresets(), cards,

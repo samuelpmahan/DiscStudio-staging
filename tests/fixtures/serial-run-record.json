@@ -572,7 +572,7 @@
           },
           "inputs": {
             "global": "px:px.discstudio.cards.global",
-            "projection": "px:px.discstudio.cards.projection.competition",
+            "preset": "px:px.presentation.broadcast",
             "instances": "px:px.discstudio.cards.instance.competition.*"
           },
           "args": {
@@ -582,12 +582,12 @@
           "into": "px.discstudio.cards.effective.competition.buzzz-mint",
           "declared_consumes": [
             "px:px.discstudio.cards.global",
-            "px:px.discstudio.cards.projection.competition",
+            "px:px.presentation.broadcast",
             "px:px.discstudio.cards.instance.competition.*"
           ],
           "actual_consumes": [
             "px.discstudio.cards.global",
-            "px.discstudio.cards.projection.competition",
+            "px.presentation.broadcast",
             "px.discstudio.cards.instance.competition.*"
           ],
           "actual_produces": [
@@ -600,13 +600,14 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "cards.effective:7907bb00",
+          "result_sha256": "cards.effective:d57b0620",
           "hit": true,
           "value": {
             "kind": "json",
             "data": {
               "projection": "competition",
               "discId": "buzzz-mint",
+              "presetId": "broadcast",
               "tokens": {
                 "background": "#203d36",
                 "foreground": "#fcfbf5",
@@ -621,7 +622,7 @@
                 "accent": "global",
                 "font": "global",
                 "radius": "global",
-                "sponsor": "projection"
+                "sponsor": "preset"
               },
               "layers": {
                 "global": {
@@ -632,7 +633,7 @@
                   "radius": 16,
                   "sponsor": ""
                 },
-                "projection": {
+                "preset": {
                   "sponsor": "CHAINSPOT"
                 },
                 "instance": {}
@@ -672,7 +673,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "cards.apply:bd7bbd55",
+          "result_sha256": "cards.apply:a4d098f8",
           "hit": true,
           "value": {
             "kind": "json",
@@ -691,6 +692,7 @@
               "name": "Studio · lower third",
               "width": 400,
               "height": 174,
+              "sponsor": "CHAINSPOT",
               "nodes": [
                 {
                   "id": "photo",
@@ -934,7 +936,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.compose:ff724c8d",
+          "result_sha256": "card.compose:e3ba3d06",
           "hit": true,
           "value": {
             "kind": "json",
@@ -958,6 +960,7 @@
                 "name": "Studio · lower third",
                 "width": 400,
                 "height": 174,
+                "sponsor": "CHAINSPOT",
                 "nodes": [
                   {
                     "id": "photo",
@@ -1548,7 +1551,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.svg:dbef497b",
+          "result_sha256": "card.svg:ae00bef8",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -2123,7 +2126,7 @@
           },
           "inputs": {
             "global": "px:px.discstudio.cards.global",
-            "projection": "px:px.discstudio.cards.projection.competition",
+            "preset": "px:px.presentation.broadcast",
             "instances": "px:px.discstudio.cards.instance.competition.*"
           },
           "args": {
@@ -2133,12 +2136,12 @@
           "into": "px.discstudio.cards.effective.competition.zone-peach",
           "declared_consumes": [
             "px:px.discstudio.cards.global",
-            "px:px.discstudio.cards.projection.competition",
+            "px:px.presentation.broadcast",
             "px:px.discstudio.cards.instance.competition.*"
           ],
           "actual_consumes": [
             "px.discstudio.cards.global",
-            "px.discstudio.cards.projection.competition",
+            "px.presentation.broadcast",
             "px.discstudio.cards.instance.competition.*"
           ],
           "actual_produces": [
@@ -2151,13 +2154,14 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "cards.effective:60f6b982",
+          "result_sha256": "cards.effective:6cbb223a",
           "hit": true,
           "value": {
             "kind": "json",
             "data": {
               "projection": "competition",
               "discId": "zone-peach",
+              "presetId": "broadcast",
               "tokens": {
                 "background": "#203d36",
                 "foreground": "#fcfbf5",
@@ -2172,7 +2176,7 @@
                 "accent": "global",
                 "font": "global",
                 "radius": "global",
-                "sponsor": "projection"
+                "sponsor": "preset"
               },
               "layers": {
                 "global": {
@@ -2183,7 +2187,7 @@
                   "radius": 16,
                   "sponsor": ""
                 },
-                "projection": {
+                "preset": {
                   "sponsor": "CHAINSPOT"
                 },
                 "instance": {}
@@ -2223,7 +2227,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "cards.apply:0f3e66b7",
+          "result_sha256": "cards.apply:deefcac2",
           "hit": true,
           "value": {
             "kind": "json",
@@ -2242,6 +2246,7 @@
               "name": "Studio · lower third",
               "width": 400,
               "height": 174,
+              "sponsor": "CHAINSPOT",
               "nodes": [
                 {
                   "id": "photo",
@@ -2485,7 +2490,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.compose:b5a3a294",
+          "result_sha256": "card.compose:997dfa8b",
           "hit": true,
           "value": {
             "kind": "json",
@@ -2509,6 +2514,7 @@
                 "name": "Studio · lower third",
                 "width": 400,
                 "height": 174,
+                "sponsor": "CHAINSPOT",
                 "nodes": [
                   {
                     "id": "photo",
@@ -3099,7 +3105,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.svg:c3e94d46",
+          "result_sha256": "card.svg:921e90a9",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -3674,7 +3680,7 @@
           },
           "inputs": {
             "global": "px:px.discstudio.cards.global",
-            "projection": "px:px.discstudio.cards.projection.competition",
+            "preset": "px:px.presentation.broadcast",
             "instances": "px:px.discstudio.cards.instance.competition.*"
           },
           "args": {
@@ -3684,12 +3690,12 @@
           "into": "px.discstudio.cards.effective.competition.destroyer-lilac",
           "declared_consumes": [
             "px:px.discstudio.cards.global",
-            "px:px.discstudio.cards.projection.competition",
+            "px:px.presentation.broadcast",
             "px:px.discstudio.cards.instance.competition.*"
           ],
           "actual_consumes": [
             "px.discstudio.cards.global",
-            "px.discstudio.cards.projection.competition",
+            "px.presentation.broadcast",
             "px.discstudio.cards.instance.competition.*"
           ],
           "actual_produces": [
@@ -3702,13 +3708,14 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "cards.effective:772b9315",
+          "result_sha256": "cards.effective:257b19ab",
           "hit": true,
           "value": {
             "kind": "json",
             "data": {
               "projection": "competition",
               "discId": "destroyer-lilac",
+              "presetId": "broadcast",
               "tokens": {
                 "background": "#203d36",
                 "foreground": "#fcfbf5",
@@ -3723,7 +3730,7 @@
                 "accent": "global",
                 "font": "global",
                 "radius": "global",
-                "sponsor": "projection"
+                "sponsor": "preset"
               },
               "layers": {
                 "global": {
@@ -3734,7 +3741,7 @@
                   "radius": 16,
                   "sponsor": ""
                 },
-                "projection": {
+                "preset": {
                   "sponsor": "CHAINSPOT"
                 },
                 "instance": {}
@@ -3774,7 +3781,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "cards.apply:11aac83c",
+          "result_sha256": "cards.apply:63070a25",
           "hit": true,
           "value": {
             "kind": "json",
@@ -3793,6 +3800,7 @@
               "name": "Studio · lower third",
               "width": 400,
               "height": 174,
+              "sponsor": "CHAINSPOT",
               "nodes": [
                 {
                   "id": "photo",
@@ -4036,7 +4044,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.compose:d57c3ec5",
+          "result_sha256": "card.compose:c0023fee",
           "hit": true,
           "value": {
             "kind": "json",
@@ -4060,6 +4068,7 @@
                 "name": "Studio · lower third",
                 "width": 400,
                 "height": 174,
+                "sponsor": "CHAINSPOT",
                 "nodes": [
                   {
                     "id": "photo",
@@ -4650,7 +4659,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.svg:19ae19b3",
+          "result_sha256": "card.svg:9950aa80",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -4701,7 +4710,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "comparison.layout:957478e7",
+          "result_sha256": "comparison.layout:662b4cee",
           "hit": true,
           "value": {
             "kind": "json",
@@ -4736,6 +4745,7 @@
                     "name": "Studio · lower third",
                     "width": 400,
                     "height": 174,
+                    "sponsor": "CHAINSPOT",
                     "nodes": [
                       {
                         "id": "photo",
@@ -5309,6 +5319,7 @@
                     "name": "Studio · lower third",
                     "width": 400,
                     "height": 174,
+                    "sponsor": "CHAINSPOT",
                     "nodes": [
                       {
                         "id": "photo",
@@ -5882,6 +5893,7 @@
                     "name": "Studio · lower third",
                     "width": 400,
                     "height": 174,
+                    "sponsor": "CHAINSPOT",
                     "nodes": [
                       {
                         "id": "photo",
@@ -6458,6 +6470,7 @@
                       "name": "Studio · lower third",
                       "width": 400,
                       "height": 174,
+                      "sponsor": "CHAINSPOT",
                       "nodes": [
                         {
                           "id": "photo",
@@ -7035,6 +7048,7 @@
                       "name": "Studio · lower third",
                       "width": 400,
                       "height": 174,
+                      "sponsor": "CHAINSPOT",
                       "nodes": [
                         {
                           "id": "photo",
@@ -7612,6 +7626,7 @@
                       "name": "Studio · lower third",
                       "width": 400,
                       "height": 174,
+                      "sponsor": "CHAINSPOT",
                       "nodes": [
                         {
                           "id": "photo",
@@ -8208,7 +8223,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "overlay.svg:bad4961c",
+          "result_sha256": "overlay.svg:b4649e1c",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -8272,12 +8287,15 @@
       ],
       "preexisting": true
     },
-    "px.discstudio.cards.projection.competition": {
+    "px.presentation.broadcast": {
       "written_by": null,
       "read_by": [
         "px.discstudio.cards.effective.competition.buzzz-mint",
+        "px.discstudio.cards.preset.competition.buzzz-mint",
         "px.discstudio.cards.effective.competition.zone-peach",
-        "px.discstudio.cards.effective.competition.destroyer-lilac"
+        "px.discstudio.cards.preset.competition.zone-peach",
+        "px.discstudio.cards.effective.competition.destroyer-lilac",
+        "px.discstudio.cards.preset.competition.destroyer-lilac"
       ],
       "preexisting": true
     },
@@ -8296,15 +8314,6 @@
         "px.discstudio.cards.preset.competition.buzzz-mint"
       ],
       "preexisting": false
-    },
-    "px.presentation.broadcast": {
-      "written_by": null,
-      "read_by": [
-        "px.discstudio.cards.preset.competition.buzzz-mint",
-        "px.discstudio.cards.preset.competition.zone-peach",
-        "px.discstudio.cards.preset.competition.destroyer-lilac"
-      ],
-      "preexisting": true
     },
     "px.discstudio.cards.preset.competition.buzzz-mint": {
       "written_by": "px.discstudio.cards.preset.competition.buzzz-mint",

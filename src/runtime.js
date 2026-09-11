@@ -7,7 +7,6 @@ import { shelfSheet } from './formats/shelf-sheet.js';
 import { receiptList } from './formats/receipt-list.js';
 import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
 import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
-import { findings as cardsFindings } from './cards-findings.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
 export function createStudioRuntime(initial) {
@@ -60,7 +59,6 @@ export function createStudioRuntime(initial) {
     source('px.comparison.layout', world.layout); source('px.comparison.states', world.battle);
     source('px.discstudio.cards.tokens', CARD_TOKENS);
     source('px.discstudio.cards.global', world.cards.global);
-    for (const p of PROJECTIONS) source(`px.discstudio.cards.projection.${p}`, world.cards.projections[p] ?? {});
     const presentInstances = new Set();
     for (const p of PROJECTIONS) for (const [discId, override] of Object.entries(world.cards.instances[p] ?? {})) {
       const a = `px.discstudio.cards.instance.${p}.${discId}`; presentInstances.add(a); source(a, override);
@@ -69,7 +67,6 @@ export function createStudioRuntime(initial) {
     previousCardInstances = presentInstances;
   }
   publishWorld(freeze(validateWorld(initial)));
-  for (const finding of cardsFindings) source(finding.address, finding);
   pxc.set('px.undo.studio', emptyStack('studio'));
   const world = () => pxc.get('px.studio.world');
   const calc = (call, bindings, into, args = {}) => ({ call, with: bindings, args, into });
@@ -147,7 +144,7 @@ export function createStudioRuntime(initial) {
         step(`Fields:${label}`, 'fn.domain.fields', { material: mat }, `${prefix}.fields`),
         step(`Art:${label}`, 'fn.disc.art', { disc: partAddress('Disc', discId), mold: partAddress('Mold', mold.id), maker: partAddress('Manufacturer', maker.id) }, `${prefix}.art`),
         tick(`Cascade:${label}`, [
-          calc('fn.cards.effective', { global: 'px.discstudio.cards.global', projection: `px.discstudio.cards.projection.${projection}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
+          calc('fn.cards.effective', { global: 'px.discstudio.cards.global', preset: `px.presentation.${presetId}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
           calc('fn.cards.apply', { preset: `px.presentation.${presetId}`, effective: effectiveAddress }, presetAddress)
         ]),
         step(`Card:${label}`, 'fn.card.compose', { fields: `${prefix}.fields`, art: `${prefix}.art`, preset: presetAddress, entry: ea }, `${prefix}.card`),
@@ -243,10 +240,10 @@ export function createStudioRuntime(initial) {
     return { rows: pxc.get('px.studio.receipts'), summary: pxc.get('px.studio.receipts.summary'), run };
   }
   /**
-   * The card cascade editor's API (task 78). `presetFor` names the preset
-   * each projection composes with today (shelf/bag always show the disc
-   * itself; single/competition follow the shared comparison design), and is
-   * the only place that mapping lives.
+   * The card cascade editor's API (task 78; folded into the Component Editor
+   * in task 79). `presetFor` names the preset each projection composes with
+   * today (shelf/bag always show the disc itself; single/competition follow
+   * the shared comparison design), and is the only place that mapping lives.
    */
   function presetFor(projection) {
     if (projection === 'shelf' || projection === 'bag') return 'discImage';
@@ -256,7 +253,7 @@ export function createStudioRuntime(initial) {
   const cardsCascadeTick = (label, projection, discId, presetId) => {
     const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`, presetAddress = `px.discstudio.cards.preset.${projection}.${discId}`;
     return tick(`Cascade:${label}`, [
-      calc('fn.cards.effective', { global: 'px.discstudio.cards.global', projection: `px.discstudio.cards.projection.${projection}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
+      calc('fn.cards.effective', { global: 'px.discstudio.cards.global', preset: `px.presentation.${presetId}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
       calc('fn.cards.apply', { preset: `px.presentation.${presetId}`, effective: effectiveAddress }, presetAddress)
     ]);
   };
@@ -277,6 +274,16 @@ export function createStudioRuntime(initial) {
    * `fn.card.compose` step for a projection is `!reused` exactly when that
    * projection's effective tokens (and so its applied preset) actually moved.
    */
+  /**
+   * `changed` is per address, not per invocation: the memo is keyed on input
+   * content, so two projections that compose byte-identical material share one
+   * hit and only the first would read as computed. Each recompose records the
+   * material each projection's card was composed from, at
+   * `px.discstudio.cards.recompose.materials`, and a projection changed when
+   * that material differs from the one recorded by the previous recompose of
+   * the same address. The first recompose of a session changes nothing.
+   */
+  const materialsAddress = 'px.discstudio.cards.recompose.materials';
   function recompose(discId, context = {}) {
     if (!get(world(), 'Disc', discId)) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
     const prefixes = {}, ticks = [];
@@ -285,18 +292,22 @@ export function createStudioRuntime(initial) {
       prefixes[projection] = prefix; ticks.push(...built);
     }
     const receipt = execute('cards-recompose', ticks);
-    const cards = {};
+    const previous = pxc.has(materialsAddress) ? pxc.get(materialsAddress) : {};
+    const materials = { ...previous }, cards = {};
     for (const projection of PROJECTIONS) {
-      const prefix = prefixes[projection], svg = pxc.get(`${prefix}.svg`);
+      const prefix = prefixes[projection], svg = pxc.get(`${prefix}.svg`), address = `${prefix}.card`;
       const row = receipt.trace.find(r => r.tick === `Card:${projection}` && r.call === 'fn.card.compose');
-      cards[projection] = { svg: svg.svg, width: svg.width, height: svg.height, part: `${prefix}.svg`, changed: !!row && row.reused === false };
+      const material = row?.material ?? null;
+      cards[projection] = { svg: svg.svg, width: svg.width, height: svg.height, part: `${prefix}.svg`, material, changed: Object.hasOwn(previous, address) && previous[address] !== material };
+      materials[address] = material;
     }
+    pxc.set(materialsAddress, materials);
     return { receipt, cards };
   }
   /** Every PQL read the editor needs over the cascade, one Calculation, one Part per name. */
   function cardsQueryRun(name, args = {}) {
     const into = `px.discstudio.cards.query.${name}`;
-    const bindings = { global: 'px.discstudio.cards.global', projections: 'px.discstudio.cards.projection.*', instances: 'px.discstudio.cards.instance.*', effective: 'px.discstudio.cards.effective.*' };
+    const bindings = { global: 'px.discstudio.cards.global', presentations: 'px.presentation.*', layout: 'px.comparison.layout', instances: 'px.discstudio.cards.instance.*', effective: 'px.discstudio.cards.effective.*' };
     execute('cards-query', [step('Query', 'fn.cards.query', bindings, into, { name, ...args })]);
     return pxc.get(into);
   }

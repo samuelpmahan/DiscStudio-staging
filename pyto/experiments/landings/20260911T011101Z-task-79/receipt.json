@@ -1,0 +1,145 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T011101Z-task-79",
+  "package": "task-79",
+  "base_sha": "9ea3ae962ca7c71808f100e1adf7f37c273b3998",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test",
+    "exit": 0,
+    "output_sha256": "95a7412b103702cdcc764848e8bfb3699510ea3287aa5451f4e4e1e7593208e8"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "156b9aca9562c69dd4e4f81cbf92ea3f6d16535d32b190aa98ec347d087f2765",
+    "counts": {
+      "library": 435,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/cards/CONTRACT.md",
+      "bytes": 10886,
+      "sha256": "d294374305827550f4e9803e0fb0772cd8fab31b6b3d8e07cc7d73b6ae6621cd"
+    },
+    {
+      "path": "pyto/experiments/cards/FINDINGS.md",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "pyto/experiments/cards/README.md",
+      "bytes": 376,
+      "sha256": "a9f274549bf6a8e4c96611774de8ee10e70878e10facac523cef40481044e43f"
+    },
+    {
+      "path": "pyto/experiments/tasks/79/HANDOFF.md",
+      "bytes": 8713,
+      "sha256": "de95562856378d93f492a9cf4af7837b61823d6dfee89a1209c82ec4ffff3610"
+    },
+    {
+      "path": "pyto/experiments/tasks/79/evidence/check_all.txt",
+      "bytes": 194024,
+      "sha256": "b20e36687c5ecb06336963402471e7e41f0d6fef0c01e633c3a7884042e731fc"
+    },
+    {
+      "path": "pyto/experiments/tasks/79/evidence/verify.txt",
+      "bytes": 14778,
+      "sha256": "171a298ba3df6bbf1235d3e2214a939aea43d757cfc0d15080896ffadff194d4"
+    },
+    {
+      "path": "pyto/experiments/tasks/79/packet.md",
+      "bytes": 3862,
+      "sha256": "2e4baa097d5839ece46e3ddf899ba4a9e1df2eed9e1a06f56b93f8b1fd3a65f6"
+    },
+    {
+      "path": "pyto/viewer/fixtures/discstudio-display-card.json",
+      "bytes": 310671,
+      "sha256": "2cbfc13b270e34b0bfe151af2376ca4678a3868c8a3dd2f2dace30390ae48cb0"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 25384,
+      "sha256": "817afa6470d3cec17eaf25babb9bcbb064a68cb45f169122dcfbee6626e88706"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 88333,
+      "sha256": "f32402cfa434e3ee063a0ad372c4603d0afa8b03d34a453ee5d15f1d0412bef1"
+    },
+    {
+      "path": "src/cards-findings.js",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "src/cards.js",
+      "bytes": 11962,
+      "sha256": "8c4dfcba848e5e207afa92f8fdec17b0b6196a4e32586b68767ea5867ede009e"
+    },
+    {
+      "path": "src/domain.js",
+      "bytes": 20021,
+      "sha256": "32910964a2de7a533b8c348f2add90c08d0d5a18d33ab214e578a1e3eaa06f75"
+    },
+    {
+      "path": "src/presentation.js",
+      "bytes": 11936,
+      "sha256": "4271541ac39029949c081f01c411b0faf0885e78a0fa079be48085dc04358f8f"
+    },
+    {
+      "path": "src/runtime.js",
+      "bytes": 22905,
+      "sha256": "08e11ad5e05ec5e41c31a1a87ae2e41a4738c3fdac70d29e83b292543e18bf3a"
+    },
+    {
+      "path": "src/seed.js",
+      "bytes": 4369,
+      "sha256": "a92b729c1351b838cbfe4021c575fa007c15ebdce41df53449993adedaa2bd5e"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 28837,
+      "sha256": "3a1274a839bc4eac18022f080ac7aed12e54ee96327f0f7f097b4e299388ea6a"
+    },
+    {
+      "path": "tests/cards.test.js",
+      "bytes": 15166,
+      "sha256": "eb4c6d0766eb0171c61db5266e3e472a46adde6932ff43c04caee92bd41aba04"
+    },
+    {
+      "path": "tests/fixtures/serial-run-record.json",
+      "bytes": 404745,
+      "sha256": "f1419ac08624ac4b93d57df3fbc396a694ce91aa9e2b69ae6c7c83456f477048"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T01:12:17.589888Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
