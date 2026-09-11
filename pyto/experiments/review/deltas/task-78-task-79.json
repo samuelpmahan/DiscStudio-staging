@@ -1,0 +1,82 @@
+{
+  "a": {
+    "capability": {
+      "actions": 9,
+      "calculations": 3,
+      "queries": 18,
+      "verified": 1062
+    },
+    "cost": {
+      "address_roots": 2,
+      "files": 15,
+      "fixtures": 2,
+      "lines": 833,
+      "moved_assertions": 12,
+      "pages": 5
+    },
+    "landing": "20260910T235029Z-task-78",
+    "package": "task-78"
+  },
+  "address": "px.exp.neat.delta.task-78.task-79",
+  "b": {
+    "capability": {
+      "actions": 11,
+      "calculations": 0,
+      "queries": -1,
+      "verified": 1062
+    },
+    "cost": {
+      "address_roots": 0,
+      "files": 15,
+      "fixtures": 2,
+      "lines": 741,
+      "moved_assertions": 65,
+      "pages": 7
+    },
+    "landing": "20260911T011101Z-task-79",
+    "package": "task-79"
+  },
+  "end_states": {
+    "after_a": {
+      "capability": {
+        "actions": 9,
+        "calculations": 3,
+        "points": 30,
+        "queries": 18,
+        "verified": 1062
+      },
+      "cost": {
+        "address_roots": 2,
+        "files": 15,
+        "fixtures": 2,
+        "lines": 833,
+        "moved_assertions": 12,
+        "pages": 5,
+        "total": 869
+      },
+      "ratio": 1.2221
+    },
+    "after_b": {
+      "capability": {
+        "actions": 20,
+        "calculations": 3,
+        "points": 40,
+        "queries": 17,
+        "verified": 1062
+      },
+      "cost": {
+        "address_roots": 3,
+        "files": 15,
+        "fixtures": 2,
+        "lines": 884,
+        "moved_assertions": 12,
+        "pages": 2,
+        "total": 918
+      },
+      "ratio": 1.1569
+    }
+  },
+  "reason": "after b: 1062 verified, 40 capability points, cost 918; after a alone: 1062 verified, 30 capability points, cost 869; b removed 620 lines a had added (the price of building a first)",
+  "rework": 620,
+  "verdict": "b"
+}

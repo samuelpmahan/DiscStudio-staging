@@ -1,0 +1,21 @@
+..                         after task-1  after task-2
+capability.verified      67            68
+capability.calculations  2             2
+capability.actions       1             1
+capability.queries       1             1
+capability.points        4             4
+cost.lines               9             7
+cost.files               4             4
+cost.address_roots       1             1
+cost.fixtures            1             1
+cost.pages               2             0
+cost.moved_assertions    2             2
+cost.total               19            15
+verified / cost          3.5263        4.5333
+rework: 2 lines
+verdict: b (after b: 68 verified, 4 capability points, cost 15; after a alone: 67 verified, 4 capability points, cost 19; b removed 2 lines a had added (the price of building a first))
+..
+----------------------------------------------------------------------
+Ran 4 tests in 1.999s
+
+OK

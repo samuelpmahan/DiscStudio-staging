@@ -962,6 +962,22 @@ even when the store does not hold it yet — it is recorded as the proposal's
 over a run record once such a proposal imports (`pyto/src/pyto/px.py`
 `part_basis`): a Part computed from a part is a part.
 
+## 10. neat delta
+
+Two ways to build one capability are compared as **end states**, not as diffs
+read side by side. `neat delta <a> <b>` (`pyto/src/pyto/neat/delta.py`) measures
+landing `a` alone and the tree after both `a` and `b` from `a`'s base, from
+each landing's receipt (its verifier pass count and `check_all` counts: what
+runs green) and its git diff (Calculations registered, user actions, prefix
+queries; lines, files, pages, new `px.<x>.<y>` address roots, assertions moved
+in pre-existing tests, fixtures regenerated), then `fn.neat.delta.evaluate`,
+pure over the two measurements, publishes `px.exp.neat.delta.<a>.<b>` under
+`pyto/experiments/review/deltas` with its run record: more verified behaviour
+wins, then more capability points, then the cheaper end state, and `rework` counts the lines `b`
+tore out of `a`. What counts is the repository's own manifest,
+`pyto/experiments/delta/patterns.json`. The first record is task 78 (a second
+page built beside the PxC composer) against task 79 (the composer refined).
+
 ## Where to go next
 
 - `experiments/students/homework.py` — section 7, as a program you can run.
