@@ -285,6 +285,22 @@ def findings(store):
                  "segment -- 'px.exp.brain.oracle.<v>.<calc>.* JOIN px.exp.brain.bench.<v>.<calc>.*' "
                  "-- would turn every one of those questions into one line")
     store.finding(
+        VERTICAL, "the_linear_algebra_this_vertical_wrote_by_hand", "friction",
+        "there is a backend vertical with a matmul, a solve and an lstsq behind one facade, and "
+        "this vertical uses none of them: fn.brain.stats.ols_normal has its own gauss-jordan, "
+        "ols_qr its own householder reflections, ridge its own penalised solve, logistic its "
+        "own hessian inverse, and ar_fit a fourth copy of the normal equations. that is four "
+        "hand-written decompositions inside one vertical, each with its own numerical "
+        "character, and the tournament exists partly because of it.",
+        for_="a facade that the verticals above it do not reach through is a facade that is "
+             "being paid for twice",
+        workaround="each one is small, pure and covered by its own oracle against "
+                   "numpy.linalg.lstsq, so they are correct -- they are just not shared",
+        proposal="fn.brain.backend.cholesky, .qr, .lu, .matrix_inverse and .norm over the same "
+                 "engine argument, and the stats solvers become three calls instead of three "
+                 "implementations; the bracket then judges the BACKEND's engines and every "
+                 "vertical above it inherits the answer")
+    store.finding(
         VERTICAL, "judging_needs_a_reader_that_did_not_build", "friction",
         "the contract asks for a judge that did not build a candidate, and harness.judge "
         "enforces it by name. this vertical could not put an independent agent in the chair, so "

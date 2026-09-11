@@ -108,6 +108,36 @@ class TestWhatTheyMean(unittest.TestCase):
         self.assertLess(sum(got["counts"]), len(A))
 
 
+class TestEmpiricalCdf(unittest.TestCase):
+    def test_it_ends_at_one_and_rises(self):
+        got = summaries.ecdf({"values": A})
+        self.assertAlmostEqual(got["cdf"][-1], 1.0, delta=1e-12)
+        self.assertEqual(got["n"], len(A))
+        for earlier, later in zip(got["cdf"], got["cdf"][1:]):
+            self.assertLess(earlier, later)
+        for value, tail in zip(got["cdf"], got["sf"]):
+            self.assertAlmostEqual(value + tail, 1.0, delta=1e-15)
+
+    def test_ties_share_one_step(self):
+        got = summaries.ecdf({"values": [1.0, 2.0, 2.0, 3.0, 3.0, 3.0, 5.0, 8.0]})
+        self.assertEqual(got["x"], [1.0, 2.0, 3.0, 5.0, 8.0])
+        self.assertAlmostEqual(got["cdf"][2], 6.0 / 8.0, delta=1e-15)
+
+    def test_the_inverse_is_the_smallest_value_that_reaches_the_quantile(self):
+        got = summaries.ecdf({"values": [1.0, 2.0, 2.0, 3.0, 3.0, 3.0, 5.0, 8.0],
+                              "q": [0.125, 0.5, 0.75, 1.0]})
+        self.assertEqual(got["quantiles"], [1.0, 3.0, 3.0, 8.0])
+
+    def test_one_quantile_comes_back_alone(self):
+        self.assertEqual(summaries.ecdf({"values": [1.0, 2.0, 3.0], "q": 0.5})["quantiles"],
+                         2.0)
+
+    def test_a_quantile_outside_the_range_is_refused(self):
+        for q in (0.0, 1.5):
+            with self.assertRaises(ValueError):
+                summaries.ecdf({"values": A, "q": q})
+
+
 class TestEdges(unittest.TestCase):
     def test_a_cut_of_a_half_or_more_is_refused(self):
         for cut in (0.5, 0.9):

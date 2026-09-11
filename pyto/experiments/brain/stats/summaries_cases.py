@@ -70,6 +70,21 @@ for _bins in (5, 12):
         1e-9, (lambda got: {"counts": got["counts"], "edges": got["edges"]}),
         ("py", "np"))
 
+TIED = [1.0, 2.0, 2.0, 3.0, 3.0, 3.0, 5.0, 8.0]
+
+ORACLE_CASES += _both(
+    "fn.brain.stats.ecdf", "sample", {"values": A},
+    "scipy.stats.ecdf",
+    lambda: {"x": [float(v) for v in sp_stats.ecdf(A).cdf.quantiles],
+             "cdf": [float(v) for v in sp_stats.ecdf(A).cdf.probabilities]},
+    1e-9, (lambda got: {"x": got["x"], "cdf": got["cdf"]}))
+ORACLE_CASES += _both(
+    "fn.brain.stats.ecdf", "tied", {"values": TIED},
+    "scipy.stats.ecdf",
+    lambda: {"x": [float(v) for v in sp_stats.ecdf(TIED).cdf.quantiles],
+             "cdf": [float(v) for v in sp_stats.ecdf(TIED).cdf.probabilities]},
+    1e-9, (lambda got: {"x": got["x"], "cdf": got["cdf"]}))
+
 _BIG = [v for v in A] * 60
 _MID = _BIG[:600]
 
