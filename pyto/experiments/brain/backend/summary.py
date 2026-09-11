@@ -116,6 +116,17 @@ def findings(store) -> list[str]:
 
     # px.exp.brain.bench.backend.<calc>.<engine>.<size>: the tournaments put a branch name where
     # the engine goes, so only the three real engines are counted here.
+    written.append(harness.finding(
+        store, VERTICAL, "packing_wins_by_how_long_the_numbers_are", "strength",
+        "the array_store bracket's winner is now fn.brain.backend.pack / unpack, and the round trip is exact rather "
+        "than close: the float64 buffer, base64'd, and back, with no decimal text in between. The boundary is worth "
+        "knowing and is a test rather than a slogan: base64 of float64 is a flat 11 bytes per number whatever the "
+        "number is, while json is as long as the decimal text - about 20 bytes for a drawn float64 and 6 for a small "
+        "round one. So packing wins by roughly 1.8x on measured data and LOSES on a table of small integers.",
+        for_="the ml vertical's matrices should be packed and the data vertical's count columns should not, and neither "
+             "is a matter of taste once the numbers are in a Part",
+    ))
+
     fastest = {}
     for match in PQL.prefix("px.exp.brain.bench.backend.").matches(store.pxc):
         parts = match.address.split(".")
@@ -157,13 +168,22 @@ def map_part(store) -> str:
                     "the real part (proposal.brain.backend.json_has_no_complex_number)"},
             {"address": "fn.brain.backend.fft (py, non-power-of-two)",
              "why": "the py engine is radix-2; bluestein's algorithm is the honest fix and np/sp already answer"},
+            {"address": "fn.brain.backend.qr (the full factorisation, and column pivoting)",
+             "why": "the reduced qr is what a least squares needs and it is built; the full q and a rank-revealing "
+                    "pivot are a different job and would want their own oracle"},
+            {"address": "fn.brain.backend.pack (anything but float64)",
+             "why": "one dtype, said out loud: unpack refuses float32 by name rather than guessing. int64 and "
+                    "complex128 are the next two and each needs its own exactness oracle"},
             {"address": "fn.brain.backend.* (sparse, out-of-core, gpu)",
              "why": "not started: the dense facade had to exist first for the other two verticals to build on tonight"},
         ],
         next_=[
-            {"what": "a bytes-valued Part kind (dtype, shape, base64 buffer) plus the facade ops that read and write it, "
-                     "so a large matrix stops being 65536 decimal numbers in every record",
+            {"what": "the kernel half of the packed Part: materialize digesting the buffer instead of re-serialising it, "
+                     "and PQL answering 'what shape is it' without decoding. fn.brain.backend.pack/unpack is the vertical "
+                     "half and it is built; a packed Part is still a string to everything above it",
              "for": "the ml vertical, whose Parts are matrices and whose records are the deliverable"},
+            {"what": "lu, matrix_rank, pinv, einsum-lite, and the sparse forms of solve and matmul",
+             "for": "the stats and ml verticals, whose next layer is bigger than the dense ops reach"},
             {"what": "cholesky, qr, lu, matrix_inverse, matrix_rank, norm, einsum-lite over the same facade",
              "for": "the stats vertical's regression and covariance work, which is doing it by hand today"},
             {"what": "convolve, correlate, interpolate, rfft/irfft and a windowing op",

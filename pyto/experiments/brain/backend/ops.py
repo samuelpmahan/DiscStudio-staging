@@ -18,8 +18,10 @@ semantics are pinned here, in one place, for all of them:
 
 from __future__ import annotations
 
+import base64
 import cmath
 import math
+import sys
 from typing import Any, Callable, Mapping
 
 from pyto import Calculation
@@ -760,5 +762,245 @@ def _trace_np(args):
 def _trace_sp(args):
     return _trace_np(args)
 
+# --- pack and unpack: the array_store bracket's winner, as facade ops ------------
+#
+# `px.exp.brain.bracket.backend.array_store` measured three ways to put a large
+# matrix in the store with identical semantics. base64 of the float64 buffer won
+# on both criteria that matter at size: it is 1.8x smaller than the nested json
+# lists the dataset Part specifies, and encode plus decode plus digest is 5x
+# cheaper - and every Part in every run record is digested. These two ops are that
+# result, made available rather than merely recorded. The round trip is exact:
+# float64 in, the same float64 out, no decimal text in between.
 
-CALCS = {name: calculation(name) for name in ("matmul", "solve", "lstsq", "cumsum", "histogram", "sort", "argsort", "select_k", "pairwise", "eig", "svd", "fft", "norm", "cholesky", "inv", "trace")}
+
+@engine("pack", "py")
+def _pack_py(args):
+    """the rows as a base64 float64 buffer, through the stdlib array module."""
+    import array
+
+    rows = matrix(args["a"])
+    flat = array.array("d", [cell for row in rows for cell in row])
+    if sys.byteorder != "little":  # the Part says little-endian, whatever the host is
+        flat.byteswap()
+    return {
+        "dtype": "float64",
+        "order": "little",
+        "shape": [len(rows), len(rows[0]) if rows else 0],
+        "b64": base64.b64encode(flat.tobytes()).decode("ascii"),
+    }
+
+
+@engine("pack", "np")
+def _pack_np(args):
+    import numpy as np
+
+    array = np.asarray(matrix(args["a"]), dtype="<f8")
+    return {
+        "dtype": "float64",
+        "order": "little",
+        "shape": list(array.shape),
+        "b64": base64.b64encode(array.tobytes()).decode("ascii"),
+    }
+
+
+@engine("pack", "sp")
+def _pack_sp(args):
+    """scipy has no packing of its own; this is numpy's, named honestly."""
+    return _pack_np(args)
+
+
+def _packed(args):
+    packed = args["packed"]
+    if packed.get("dtype", "float64") != "float64":
+        raise ValueError(f"brain: unpack knows float64 only, not {packed['dtype']!r}")
+    return packed
+
+
+@engine("unpack", "py")
+def _unpack_py(args):
+    """the buffer back to rows, exactly: the same float64, never re-parsed from text."""
+    import array
+
+    packed = _packed(args)
+    flat = array.array("d")
+    flat.frombytes(base64.b64decode(packed["b64"]))
+    if sys.byteorder != "little":
+        flat.byteswap()
+    width = packed["shape"][1]
+    values = [list(flat[i * width:(i + 1) * width]) for i in range(packed["shape"][0])]
+    return shaped(values) if values else {"shape": list(packed["shape"]), "values": []}
+
+
+@engine("unpack", "np")
+def _unpack_np(args):
+    import numpy as np
+
+    packed = _packed(args)
+    buffer = np.frombuffer(base64.b64decode(packed["b64"]), dtype="<f8")
+    return shaped(buffer.reshape(packed["shape"]).tolist())
+
+
+@engine("unpack", "sp")
+def _unpack_sp(args):
+    return _unpack_np(args)
+
+
+# --- qr -------------------------------------------------------------------------
+
+
+def _positive_diagonal(q: list[list[float]], r: list[list[float]]) -> tuple[list, list]:
+    """the sign freedom of a qr, spent: r's diagonal is made non-negative.
+
+    q r and (q s)(s r) are both factorisations for any diagonal sign matrix s, so
+    two engines that do not agree on s look like two engines that disagree. they
+    agree here instead.
+    """
+    for i in range(min(len(r), len(r[0]))):
+        if r[i][i] < 0:
+            r[i] = [-cell for cell in r[i]]
+            for row in q:
+                row[i] = -row[i]
+    return q, r
+
+
+@engine("qr", "py")
+def _qr_py(args):
+    """modified gram-schmidt: the reduced qr, q with orthonormal columns, r upper."""
+    a = matrix(args["a"])
+    rows, columns = len(a), len(a[0])
+    if columns > rows:
+        raise ValueError("brain: qr here is the reduced factorisation; give it at least as many rows as columns")
+    v = [[a[i][j] for j in range(columns)] for i in range(rows)]
+    q = [[0.0] * columns for _ in range(rows)]
+    r = [[0.0] * columns for _ in range(columns)]
+    for j in range(columns):
+        norm = math.sqrt(math.fsum(v[i][j] ** 2 for i in range(rows)))
+        if norm < 1e-300:
+            raise ValueError("brain: qr got a rank-deficient matrix")
+        r[j][j] = norm
+        for i in range(rows):
+            q[i][j] = v[i][j] / norm
+        for k in range(j + 1, columns):
+            dot = math.fsum(q[i][j] * v[i][k] for i in range(rows))
+            r[j][k] = dot
+            for i in range(rows):
+                v[i][k] -= dot * q[i][j]
+    q, r = _positive_diagonal(q, r)
+    return {"q": shaped(q), "r": shaped(r)}
+
+
+@engine("qr", "np")
+def _qr_np(args):
+    import numpy as np
+
+    q, r = np.linalg.qr(_np(args["a"]), mode="reduced")
+    q, r = _positive_diagonal(q.tolist(), r.tolist())
+    return {"q": shaped(q), "r": shaped(r)}
+
+
+@engine("qr", "sp")
+def _qr_sp(args):
+    from scipy import linalg
+
+    q, r = linalg.qr(_np(args["a"]), mode="economic")
+    q, r = _positive_diagonal(q.tolist(), r.tolist())
+    return {"q": shaped(q), "r": shaped(r)}
+
+
+# --- convolve -------------------------------------------------------------------
+
+
+@engine("convolve", "py")
+def _convolve_py(args):
+    """the discrete convolution, 'full' or 'same', straight off the definition."""
+    a, v = vector(args["a"]), vector(args["v"])
+    full = [math.fsum(a[k] * v[n - k] for k in range(max(0, n - len(v) + 1), min(n + 1, len(a)))) for n in range(len(a) + len(v) - 1)]
+    mode = args.get("mode", "full")
+    if mode == "full":
+        return full
+    if mode == "same":
+        start = (len(v) - 1) // 2
+        return full[start:start + len(a)]
+    if mode == "valid":
+        short, long = sorted((len(a), len(v)))
+        start = short - 1
+        return full[start:start + long - short + 1]
+    raise ValueError(f"brain: unknown convolve mode {mode!r} (full, same, valid)")
+
+
+@engine("convolve", "np")
+def _convolve_np(args):
+    import numpy as np
+
+    return np.convolve(np.asarray(vector(args["a"]), dtype="float64"),
+                       np.asarray(vector(args["v"]), dtype="float64"),
+                       mode=args.get("mode", "full")).tolist()
+
+
+@engine("convolve", "sp")
+def _convolve_sp(args):
+    import numpy as np
+    from scipy import signal
+
+    return signal.convolve(np.asarray(vector(args["a"]), dtype="float64"),
+                           np.asarray(vector(args["v"]), dtype="float64"),
+                           mode=args.get("mode", "full"), method="direct").tolist()
+
+
+# --- interp ---------------------------------------------------------------------
+
+
+@engine("interp", "py")
+def _interp_py(args):
+    """piecewise linear interpolation, clamped outside the sample points.
+
+    the clamping is the semantics numpy's `interp` has, and it is written here
+    rather than inherited, because a backend that extrapolates where another
+    clamps is a backend that changed the answer.
+    """
+    xp, fp = vector(args["xp"]), vector(args["fp"])
+    if len(xp) != len(fp) or len(xp) < 2:
+        raise ValueError("brain: interp needs at least two matching sample points")
+    if any(b <= a for a, b in zip(xp, xp[1:])):
+        raise ValueError("brain: interp needs strictly increasing xp")
+    out = []
+    for x in vector(args["x"]):
+        if x <= xp[0]:
+            out.append(fp[0])
+            continue
+        if x >= xp[-1]:
+            out.append(fp[-1])
+            continue
+        low, high = 0, len(xp) - 1
+        while high - low > 1:
+            middle = (low + high) // 2
+            if xp[middle] <= x:
+                low = middle
+            else:
+                high = middle
+        span = xp[high] - xp[low]
+        out.append(fp[low] + (fp[high] - fp[low]) * (x - xp[low]) / span)
+    return out
+
+
+@engine("interp", "np")
+def _interp_np(args):
+    import numpy as np
+
+    return np.interp(np.asarray(vector(args["x"]), dtype="float64"),
+                     np.asarray(vector(args["xp"]), dtype="float64"),
+                     np.asarray(vector(args["fp"]), dtype="float64")).tolist()
+
+
+@engine("interp", "sp")
+def _interp_sp(args):
+    import numpy as np
+    from scipy import interpolate
+
+    xp = np.asarray(vector(args["xp"]), dtype="float64")
+    fp = np.asarray(vector(args["fp"]), dtype="float64")
+    line = interpolate.interp1d(xp, fp, kind="linear", bounds_error=False, fill_value=(fp[0], fp[-1]))
+    return [float(one) for one in line(np.asarray(vector(args["x"]), dtype="float64"))]
+
+
+CALCS = {name: calculation(name) for name in ("matmul", "solve", "lstsq", "cumsum", "histogram", "sort", "argsort", "select_k", "pairwise", "eig", "svd", "fft", "norm", "cholesky", "inv", "trace", "pack", "unpack", "qr", "convolve", "interp")}

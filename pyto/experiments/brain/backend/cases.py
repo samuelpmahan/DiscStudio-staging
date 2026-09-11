@@ -89,9 +89,38 @@ def cases() -> list[dict]:
     case("inv", "spd_6", {"a": S6}, "numpy.linalg.inv",
          lambda: {"shape": [6, 6], "values": np.linalg.inv(np.asarray(S6)).tolist()}, 1e-7)
     case("trace", "spd_6", {"a": S6}, "numpy.trace", lambda: float(np.trace(np.asarray(S6))))
+    case("pack", "b64_6x4", {"a": B64}, "base64 of numpy's little-endian float64 buffer",
+         lambda: {"dtype": "float64", "order": "little", "shape": [6, 4],
+                  "b64": __import__("base64").b64encode(np.asarray(B64, dtype="<f8").tobytes()).decode("ascii")})
+    case("unpack", "b64_6x4",
+         {"packed": {"dtype": "float64", "order": "little", "shape": [6, 4],
+                     "b64": __import__("base64").b64encode(np.asarray(B64, dtype="<f8").tobytes()).decode("ascii")}},
+         "the same float64, never re-parsed from decimal text",
+         lambda: {"shape": [6, 4], "values": np.asarray(B64, dtype="float64").tolist()}, 0.0)
+    case("qr", "6x4", {"a": B64}, "numpy.linalg.qr with r's diagonal made non-negative",
+         lambda: _qr_reference(B64), 1e-8)
+    case("convolve", "full_64_by_8", {"a": V64, "v": V64[:8]}, "numpy.convolve",
+         lambda: np.convolve(np.asarray(V64), np.asarray(V64[:8])).tolist(), 1e-9)
+    case("convolve", "same_64_by_8", {"a": V64, "v": V64[:8], "mode": "same"}, "numpy.convolve",
+         lambda: np.convolve(np.asarray(V64), np.asarray(V64[:8]), mode="same").tolist(), 1e-9)
+    case("interp", "clamped", {"x": [-1.0, 0.25, 1.5, 2.0, 9.0], "xp": [0.0, 1.0, 2.0], "fp": [0.0, 10.0, 5.0]},
+         "numpy.interp", lambda: np.interp([-1.0, 0.25, 1.5, 2.0, 9.0], [0.0, 1.0, 2.0], [0.0, 10.0, 5.0]).tolist())
     case("fft", "v64", {"values": V64}, "numpy.fft.fft",
          lambda: (lambda out: {"real": out.real.tolist(), "imag": out.imag.tolist()})(np.fft.fft(np.asarray(V64))), 1e-8)
     return out
+
+
+def _qr_reference(a):
+    """numpy's reduced qr with the same sign convention the facade pins."""
+    np = _np()
+    q, r = np.linalg.qr(np.asarray(a, dtype="float64"), mode="reduced")
+    q, r = q.copy(), r.copy()
+    for i in range(min(r.shape)):
+        if r[i, i] < 0:
+            r[i, :] = -r[i, :]
+            q[:, i] = -q[:, i]
+    return {"q": {"shape": list(q.shape), "values": q.tolist()},
+            "r": {"shape": list(r.shape), "values": r.tolist()}}
 
 
 def _sign(vectors):
@@ -131,6 +160,11 @@ SIZES_BY_OP = {
     "cholesky": (8, 32, 96),
     "inv": (8, 32, 96),
     "trace": (8, 32, 96),
+    "qr": (8, 32, 96),
+    "pack": (16, 64, 256),
+    "unpack": (16, 64, 256),
+    "convolve": (64, 256, 1024),
+    "interp": (1024, 16384, 131072),
 }
 
 
@@ -162,6 +196,20 @@ def bench_inputs(op: str, size: int):
     if op == "solve":
         base = rng.standard_normal((size, size))
         return {"a": (base @ base.T + size * np.eye(size)).tolist(), "b": rng.standard_normal(size).tolist()}
+    if op in ("pack", "qr"):
+        return {"a": rng.standard_normal((size, size)).tolist()}
+    if op == "unpack":
+        import base64
+
+        buffer = rng.standard_normal((size, size)).astype("<f8")
+        return {"packed": {"dtype": "float64", "order": "little", "shape": [size, size],
+                           "b64": base64.b64encode(buffer.tobytes()).decode("ascii")}}
+    if op == "convolve":
+        return {"a": rng.standard_normal(size).tolist(), "v": rng.standard_normal(16).tolist()}
+    if op == "interp":
+        xp = np.arange(64, dtype="float64")
+        return {"x": rng.uniform(-1.0, 64.0, size).tolist(), "xp": xp.tolist(),
+                "fp": rng.standard_normal(64).tolist()}
     if op in ("cholesky", "inv", "trace", "norm"):
         base = rng.standard_normal((size, size))
         return {"a": (base @ base.T + size * np.eye(size)).tolist()}
