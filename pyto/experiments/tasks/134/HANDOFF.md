@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/134
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/134:pyto/experiments/tasks/134/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff f4fe05e origin/exp/134 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 36ee0ce origin/exp/134 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ finding the RIGHT disc: one fn.shelf.query Calculation over the whole shelf, ran
 
 ## Starting point
 
-f4fe05e13fdd5b8556c0d46f1b4271b1f341a2fb (land(task-132): adding a disc is one gesture: the shelf's + opens a composer with the facts that matter first (maker, mold, plastic, weight, colour, photo) and sensible defaults, and one disc.create command through dispatch makes the maker, the mold and the disc together, so one undo takes the whole disc back and nothing is ever named 'My new disc'). MAIN may have moved since: `git log --oneline f4fe05e..origin/claude/os-sprint-st8hnu` shows how far.
+f4fe05e13fdd5b8556c0d46f1b4271b1f341a2fb (land(task-132): adding a disc is one gesture: the shelf's + opens a composer with the facts that matter first (maker, mold, plastic, weight, colour, photo) and sensible defaults, and one disc.create command through dispatch makes the maker, the mold and the disc together, so one undo takes the whole disc back and nothing is ever named 'My new disc'). MAIN may have moved since: `git log --oneline 36ee0ce..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -81,7 +81,7 @@ scripts/browser_test.py |  45 ++++++++++++++++++++
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.pDwVUDrPBF) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.gnDs4KNomW) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
