@@ -12,9 +12,11 @@ from __future__ import annotations
 import numpy as np
 from pyto import Part
 from scipy import optimize, stats
+from scipy.cluster import hierarchy
 from scipy.spatial import distance
+from scipy.spatial import distance as sp_distance
 
-from . import calcs, core, linear, metrics, parts, resample, tournament
+from . import calcs, core, linear, metrics, parts, resample, tournament, trees, unsup
 
 VERTICAL = "ml"
 SECTIONS = []
@@ -453,6 +455,295 @@ def tournaments(store):
         build_bracket(store)
 
 
+@section
+def tree_pipeline(store):
+    """one program for the trees: data, split, a tree, a forest, boosting, and the scores."""
+
+    def program(pcr):
+        pcr.calc(
+            "data", calcs.calc("synthetic_classification"), id="make",
+            into=D("trees"),
+            args={"seed": 67, "n": 320, "d": 5, "k": 3, "spread": 1.9,
+                  "for": "the problem the tree, the forest and the boosting are all scored on"},
+        )
+        pcr.calc(
+            "split", calcs.calc("train_test_split"), id="split",
+            into=R("train_test_split", "trees"), data=D("trees"),
+            args={"seed": 67, "test_size": 0.3, "stratify": "label",
+                  "for": "a stratified split so every class is in both halves"},
+        )
+        for which, name in (("train_index", "trees_train"), ("test_index", "trees_test")):
+            pcr.calc(
+                "split", calcs.calc("subset"), id=name, into=D(name), data=D("trees"),
+                index=R("train_test_split", "trees"),
+                args={"which": which, "for": f"the {which.split('_')[0]} half"},
+            )
+        pcr.calc(
+            "fit", calcs.calc("tree_fit"), id="tree", into=R("tree", "trees"), data=D("trees_train"),
+            args={"target": "label", "criterion": "gini", "max_depth": 5,
+                  "for": "one depth-limited cart tree, split by gini"},
+        )
+        pcr.calc(
+            "fit", calcs.calc("tree_fit"), id="tree_entropy", into=R("tree", "trees_entropy"),
+            data=D("trees_train"),
+            args={"target": "label", "criterion": "entropy", "max_depth": 5,
+                  "for": "the same tree, split by information gain instead"},
+        )
+        pcr.calc(
+            "fit", calcs.calc("forest_fit"), id="forest", into=R("forest", "trees"), data=D("trees_train"),
+            args={"target": "label", "n_trees": 20, "seed": 67, "max_depth": 6,
+                  "for": "twenty bootstrapped trees, each on a seeded subset of the columns"},
+        )
+        pcr.calc(
+            "predict", calcs.calc("column"), id="truth", into=R("column", "trees_test_label"),
+            data=D("trees_test"), args={"name": "label", "for": "what the held-out rows really were"},
+        )
+        for id_, calc, model in (("tree_p", "tree_predict", R("tree", "trees")),
+                                 ("forest_p", "forest_predict", R("forest", "trees"))):
+            pcr.calc(
+                "predict", calcs.calc(calc), id=id_, into=R(calc, "trees_test"),
+                model=model, data=D("trees_test"),
+                args={"for": f"what {calc} says about rows it never saw"},
+            )
+        for id_, calc in (("tree_s", "tree_predict"), ("forest_s", "forest_predict")):
+            pcr.calc(
+                "score", calcs.calc("classification_metrics"), id=id_,
+                into=R("classification_metrics", f"{calc}_test"),
+                y_true=R("column", "trees_test_label"), y_pred=R(calc, "trees_test"),
+                args={"for": f"the held-out accuracy, precision, recall and f1 of {calc}"},
+            )
+
+    store.run_program("brain-ml-trees", program, record_name="ml.trees")
+
+    # the oracles: invariants a tree cannot break, and a reference tree built by hand.
+    tree = store.get("px.exp.brain.result.ml.tree.trees")
+    parts.oracle(
+        store, VERTICAL, "tree_fit", "depth_is_respected",
+        [tree["depth"] <= tree["max_depth"], trees.tree_depth(tree["root"]) == tree["depth"]], [True, True],
+        "the depth limit in args, checked against the tree that came back", 0.0,
+        "a depth limit that is not enforced turns every tree into a lookup table of its training rows",
+    )
+    rows = [[float(x), 0.0] for x in (0.0, 1.0, 2.0, 3.0, 7.0, 8.0, 9.0, 10.0)]
+    labels = [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0]
+    hand = core.dataset("a split put at five by hand", ["x0", "x1", "label"],
+                        [row + [label] for row, label in zip(rows, labels)])
+    found = calcs.call("tree_fit", {"data": hand, "target": "label", "max_depth": 1})
+    parts.result(store, VERTICAL, "tree", "hand_case", {
+        "for": "the smallest tree with a right answer", "root": found["root"], "nodes": found["nodes"]})
+    parts.oracle(
+        store, VERTICAL, "tree_fit", "hand_case",
+        [found["root"]["feature"], found["root"]["threshold"]], [0, 5.0],
+        "a threshold placed by hand at five, on the only informative column", 1e-12,
+        "the split search is the one thing in a tree that can be checked exactly",
+    )
+    forest = store.get("px.exp.brain.result.ml.forest.trees")
+    one = store.get("px.exp.brain.result.ml.classification_metrics.tree_predict_test")
+    many = store.get("px.exp.brain.result.ml.classification_metrics.forest_predict_test")
+    parts.oracle(
+        store, VERTICAL, "forest_predict", "beats_the_tree_it_is_made_of",
+        many["accuracy"] >= one["accuracy"], True,
+        "the same held-out rows, scored for one tree and for the forest of twenty", 0.0,
+        "if averaging bootstrapped trees does not help, the bootstrap or the vote is wrong",
+    )
+    parts.oracle(
+        store, VERTICAL, "forest_fit", "the_seed_is_the_whole_forest",
+        calcs.call("forest_fit", {"data": store.get("px.exp.brain.data.ml.trees_train"), "target": "label",
+                                   "n_trees": 4, "seed": 67, "max_depth": 4})["trees"][0]["root"],
+        calcs.call("forest_fit", {"data": store.get("px.exp.brain.data.ml.trees_train"), "target": "label",
+                                   "n_trees": 4, "seed": 67, "max_depth": 4})["trees"][0]["root"],
+        "the same calculation re-run from the same seed", 0.0,
+        "a bootstrap that is not a function of its seed cannot be replayed from a record",
+    )
+    # boosting, on a regression problem, with its loss curve as a part.
+    regression = store.get("px.exp.brain.data.ml.regression_train")
+    boosted = calcs.call("gbm_fit", {"data": regression, "target": "y", "n_trees": 40,
+                                      "learning_rate": 0.15, "max_depth": 2,
+                                      "for": "forty small corrections to the mean"})
+    parts.result(store, VERTICAL, "gbm", "regression", {
+        "for": boosted["for"], "model": "gbm", "init": boosted["init"],
+        "learning_rate": boosted["learning_rate"], "n_trees": boosted["n_trees"],
+        "train_mse": boosted["train_mse"], "nodes": [tree["nodes"] for tree in boosted["trees"]]})
+    losses = boosted["train_mse"]
+    parts.oracle(
+        store, VERTICAL, "gbm_fit", "the_loss_never_goes_up",
+        all(after <= before + 1e-9 for before, after in zip(losses, losses[1:])), True,
+        "the squared error the fit recorded after each of its own corrections", 0.0,
+        "boosting is a sequence of corrections; a loss that rises means the correction has the wrong sign",
+    )
+    predicted = calcs.call("gbm_predict", {"model": boosted, "data": regression})
+    truth = [row[-1] for row in core.as_rows(regression)]
+    scored = calcs.call("regression_metrics", {"y_true": truth, "y_pred": predicted})
+    parts.result(store, VERTICAL, "regression_metrics", "gbm_train", scored)
+    parts.oracle(
+        store, VERTICAL, "gbm_predict", "agrees_with_the_loss_the_fit_recorded",
+        scored["mse"], losses[-1],
+        "the last entry of the fit's own train_mse, recomputed from predict", 1e-9,
+        "fit and predict are separate calculations; they must still describe the same model",
+    )
+
+
+@section
+def unsupervised_pipeline(store):
+    """one program for the unsupervised half: blobs, k-means, pca, dbscan, silhouette."""
+
+    def program(pcr):
+        pcr.calc(
+            "data", calcs.calc("synthetic_blobs"), id="make", into=D("clusters"),
+            args={"seed": 77, "n": 240, "k": 4, "d": 3, "spread": 0.8,
+                  "for": "four clusters whose true membership is known, to score the clustering against"},
+        )
+        pcr.calc(
+            "fit", calcs.calc("kmeans"), id="kmeans", into=R("kmeans", "clusters"), data=D("clusters"),
+            args={"k": 4, "seed": 77, "backend": "np", "drop_last": True,
+                  "for": "lloyd's iteration from a seeded k-means++ init"},
+        )
+        pcr.calc(
+            "fit", calcs.calc("pca"), id="pca", into=R("pca", "clusters"), data=D("clusters"),
+            args={"n_components": 2, "drop_last": True,
+                  "for": "the two directions the cluster centres actually spread along"},
+        )
+        pcr.calc(
+            "fit", calcs.calc("dbscan"), id="dbscan", into=R("dbscan", "clusters"), data=D("clusters"),
+            args={"eps": 2.0, "min_samples": 5, "backend": "np", "drop_last": True,
+                  "for": "the same clusters found without being told how many there are"},
+        )
+
+    store.run_program("brain-ml-unsupervised", program, record_name="ml.unsupervised")
+
+    blobs = store.get("px.exp.brain.data.ml.clusters")
+    features = core.dataset("the blob features alone", core.columns_of(blobs)[:-1],
+                            [row[:-1] for row in core.as_rows(blobs)])
+    truth = [int(row[-1]) for row in core.as_rows(blobs)]
+    found = store.get("px.exp.brain.result.ml.kmeans.clusters")
+    pairs = {}
+    for label, real in zip(found["labels"], truth):
+        pairs.setdefault(label, set()).add(real)
+    parts.oracle(
+        store, VERTICAL, "kmeans", "recovers_the_blobs_it_was_given",
+        all(len(v) == 1 for v in pairs.values()), True,
+        "the cluster each row was drawn from, which the generator recorded", 0.0,
+        "a clustering that cannot recover blobs it was handed cannot be trusted on data that has none",
+    )
+    history = found["history"]
+    parts.oracle(
+        store, VERTICAL, "kmeans", "the_inertia_never_goes_up",
+        all(after <= before + 1e-9 for before, after in zip(history, history[1:])), True,
+        "the inertia the iteration recorded after each of its own assignments", 0.0,
+        "lloyd's iteration is a descent; an inertia that rises means the update and the assignment disagree",
+    )
+    scored = calcs.call("silhouette", {"data": features, "labels": found["labels"], "backend": "np"})
+    parts.result(store, VERTICAL, "silhouette", "kmeans_clusters",
+                 {k: scored[k] for k in ("for", "mean", "clusters")})
+    fitted = store.get("px.exp.brain.result.ml.pca.clusters")
+    x = np.asarray([row[:-1] for row in core.as_rows(blobs)])
+    centred = x - x.mean(0)
+    _, s_values, vt = np.linalg.svd(centred, full_matrices=False)
+    parts.oracle(
+        store, VERTICAL, "pca", "explained_variance",
+        fitted["explained_variance"], ((s_values**2) / (len(x) - 1))[:2].tolist(),
+        "numpy.linalg.svd of the centred matrix, squared and scaled", 1e-9,
+        "explained variance is what makes a component worth keeping; it is the number to check",
+    )
+    components = np.asarray(fitted["components"])
+    parts.oracle(
+        store, VERTICAL, "pca", "components_are_orthonormal",
+        (components @ components.T).tolist(), np.eye(2).tolist(), "the definition of an orthonormal basis", 1e-9,
+        "components that are not orthonormal make the explained-variance split meaningless",
+    )
+    by_python = calcs.call("pca", {"data": features, "n_components": 2, "backend": "py"})
+    parts.oracle(
+        store, VERTICAL, "pca", "jacobi_finds_the_same_variance_as_the_svd",
+        by_python["explained_variance"], fitted["explained_variance"],
+        "the pure-python covariance and jacobi rotation, against the numpy svd", 1e-6,
+        "two routes to the same subspace is how a backend is shown not to have changed the answer",
+    )
+    density = store.get("px.exp.brain.result.ml.dbscan.clusters")
+    parts.oracle(
+        store, VERTICAL, "dbscan", "finds_the_same_four_groups",
+        [density["clusters"], density["noise"]], [4, 0],
+        "the four blobs the generator drew, counted without being told how many", 0.0,
+        "dbscan is the one clustering here that is allowed to say a point belongs to nothing",
+    )
+    small = core.dataset("a few points, two tight groups and one stray", ["x0", "x1"],
+                         [[0.0, 0.0], [0.1, 0.0], [0.0, 0.1], [0.1, 0.1],
+                          [5.0, 5.0], [5.1, 5.0], [5.0, 5.1], [5.1, 5.1], [50.0, 50.0]])
+    stray = calcs.call("dbscan", {"data": small, "eps": 0.5, "min_samples": 3})
+    parts.result(store, VERTICAL, "dbscan", "hand_case", stray)
+    parts.oracle(
+        store, VERTICAL, "dbscan", "hand_case",
+        [stray["clusters"], stray["noise"], stray["labels"][-1]], [2, 1, -1],
+        "nine points placed by hand, two groups and one outlier", 0.0,
+        "the noise label is the whole point of dbscan and the only part of it worth checking by hand",
+    )
+    linked = calcs.call("hierarchical", {"data": features, "linkage": "complete", "k": 4})
+    parts.result(store, VERTICAL, "hierarchical", "clusters_complete",
+                 {"for": linked["for"], "linkage": "complete", "k": 4,
+                  "heights": linked["heights"][-8:], "labels": linked["labels"]})
+    theirs = hierarchy.linkage(sp_distance.pdist(np.asarray([row[:-1] for row in core.as_rows(blobs)])),
+                               method="complete")
+    parts.oracle(
+        store, VERTICAL, "hierarchical", "merge_heights_match_scipy",
+        linked["heights"], theirs[:, 2].tolist(),
+        "scipy.cluster.hierarchy.linkage, method complete", 1e-9,
+        "the merge heights are the dendrogram; if they match, the tree matches",
+    )
+
+
+@section
+def learning_curves(store):
+    """a learning curve is a part: does this model want more rows, or a different model."""
+    data = store.get("px.exp.brain.data.ml.regression")
+    for name, fit, predict, fit_args in (
+        ("linreg", "linreg_fit", "linreg_predict", {}),
+        ("gbm", "gbm_fit", "gbm_predict", {"n_trees": 25, "learning_rate": 0.15, "max_depth": 2}),
+    ):
+        curve = calcs.call("learning_curve", {
+            "data": data, "target": "y", "seed": 81, "fit": fit, "predict": predict,
+            "fit_args": fit_args, "metric": "mse", "fractions": [0.1, 0.25, 0.5, 0.75, 1.0],
+            "for": f"whether {name} is short of rows or short of capacity"})
+        parts.result(store, VERTICAL, "learning_curve", name, curve)
+        parts.oracle(
+            store, VERTICAL, "learning_curve", f"{name}_test_error_falls",
+            curve["test"][-1] <= curve["test"][0], True,
+            "the same held-out rows, scored from a tenth of the training set and from all of it", 0.0,
+            "a curve whose test error does not fall with rows is measuring the split, not the model",
+        )
+    classification = store.get("px.exp.brain.data.ml.trees")
+    curve = calcs.call("learning_curve", {
+        "data": classification, "target": "label", "seed": 81, "fit": "tree_fit", "predict": "tree_predict",
+        "fit_args": {"max_depth": 5}, "metric": "accuracy", "fractions": [0.1, 0.25, 0.5, 1.0],
+        "for": "where a depth-five tree stops learning from more rows"})
+    parts.result(store, VERTICAL, "learning_curve", "tree", curve)
+    parts.oracle(
+        store, VERTICAL, "learning_curve", "tree_train_accuracy_is_at_least_test",
+        all(train >= test - 1e-9 for train, test in zip(curve["train"], curve["test"])), True,
+        "the same tree scored on the rows it was fitted to and on rows it never saw", 0.0,
+        "a model that scores better on held-out rows than on its own training rows is mis-wired",
+    )
+
+
+@section
+def tree_benchmarks(store):
+    """the two split searches and the three k-means assignments, timed on shared inputs."""
+    data = calcs.call("synthetic_classification", {"seed": 83, "n": 1500, "d": 8, "k": 3, "spread": 1.6})
+    for search, size in (("sort", "n1500_d8_sort"), ("hist", "n1500_d8_hist32")):
+        parts.bench(
+            store, VERTICAL, "tree_fit", search, size,
+            lambda search=search: calcs.call(
+                "tree_fit", {"data": data, "target": "label", "max_depth": 6, "search": search, "bins": 32}), 3,
+            "the sort is O(n log n) per feature per node; the histogram is one pass and a fixed scan",
+        )
+    blobs = calcs.call("synthetic_blobs", {"seed": 83, "n": 600, "k": 5, "d": 6, "spread": 0.9})
+    features = core.dataset("features", core.columns_of(blobs)[:-1], [row[:-1] for row in core.as_rows(blobs)])
+    for backend in ("py", "np", "gram"):
+        parts.bench(
+            store, VERTICAL, "kmeans", backend, "n600_k5_d6",
+            lambda backend=backend: calcs.call(
+                "kmeans", {"data": features, "k": 5, "seed": 83, "backend": backend}), 3,
+            "every iteration is one point-to-centre distance matrix; this is the cost of spelling it three ways",
+        )
+
+
 # --- the map and the findings ------------------------------------------------
 
 
@@ -469,6 +760,9 @@ def map_and_findings(store):
 
 
 STUBBED = [
+    {"address": "fn.brain.ml.mlp_fit", "why": "a one-hidden-layer network is the last supervised family left; the seeded-init and the metrics are ready for it, the fit is not written"},
+    {"address": "fn.brain.ml.perceptron_fit", "why": "the same slice as the mlp; logistic regression covers the linear separator today"},
+    {"address": "fn.brain.ml.cross_validate", "why": "kfold and every metric exist; the loop that folds them together is still at each call site"},
     {"address": "fn.brain.ml.lasso_fit", "why": "coordinate descent is queued behind the classifiers; ridge covers the penalised case today"},
     {"address": "fn.brain.ml.dbscan", "why": "density clustering is behind k-means and the hierarchies in the queue"},
     {"address": "fn.brain.ml.logreg_fit multinomial", "why": "multiclass is one-vs-rest, not a softmax; the softmax needs its own oracle and is not worth a half-checked one"},
@@ -476,15 +770,45 @@ STUBBED = [
 ]
 
 NEXT = [
-    {"what": "cart, a small forest and small gradient boosting",
-     "for": "the non-linear half; the split-search is the one place the py backend will really hurt"},
-    {"what": "k-means with a seeded k-means++ init, and pca through svd",
-     "for": "unsupervised needs the same parts discipline, and silhouette is already here to score it"},
-    {"what": "a pairwise-distance calculation on the backend vertical, and knn/k-means/silhouette routed through it",
-     "for": "three calculations recompute the same n-by-n matrix; one backend primitive would serve all three"},
+    {"what": "a pairwise-distance calculation in the backend vertical, with knn, silhouette, k-means and dbscan routed through it",
+     "for": "four calculations here build the same n-by-n matrix in three different spellings; one primitive and one oracle would cover all four"},
+    {"what": "lasso by coordinate descent, and elastic net, with the same oracle route as ridge",
+     "for": "ridge shrinks but never selects; the sparse path is what makes a linear model readable"},
+    {"what": "a softmax (multinomial) logistic regression beside the one-vs-rest one",
+     "for": "one-vs-rest probabilities are renormalised, not calibrated, and the difference shows up in any ranking read off them"},
+    {"what": "gradient boosting for classification (logistic loss) and out-of-bag scoring for the forest",
+     "for": "the squared-loss boosting here is the easy half; the loss that needs a second-order step is where the design is tested"},
+    {"what": "a cross_validate calculation that folds fit, predict and score into one Part per fold",
+     "for": "kfold exists and every metric exists, but the loop between them is still written at each call site"},
+    {"what": "a one-hidden-layer mlp and a perceptron on this same split and these same metrics",
+     "for": "the only model family in the brief with no entry here at all; the seeded-init discipline is already in place for it"},
 ]
 
 FINDINGS = {
+    "a-run-record-cannot-be-committed-while-it-holds-a-stopwatch": {
+        "kind": "friction",
+        "text": "pyto.materialize.run_record puts wall-clock readings (counters.wall_ms, each invocation's duration_ms) into the record, so the file's bytes change on every run. committed, it conflicts between any two branches that both re-ran the program, and any suite that regenerates it leaves the tree dirty behind a landing. it cost this vertical three refused landings and two other verticals one each.",
+        "for": "the contract asks for a record of every PCR run in every landing; a record that cannot be committed cleanly is not a record anyone keeps",
+        "workaround": "parts.settle() blanks every *_ms key before write_record, so the file is a function of the run and not of the stopwatch; the timings that are a claim live in benchmark Parts, which say how many samples they are the median of",
+        "proposal": "run_record should take timings='measured'|'blank' (or write them to a sibling file), so the durable half of a record and the unrepeatable half are not the same bytes",
+    },
+    "a-clustering-fixture-can-fail-for-the-generator-not-the-algorithm": {
+        "kind": "friction",
+        "text": "synthetic_blobs drew k centres from one normal and hoped: at several seeds two centres landed closer than a standard deviation, and k-means was blamed for not separating blobs that were never separate. the same trap is waiting in every seeded fixture that draws a structure and then tests for it.",
+        "for": "a test that fails for its fixture teaches the reader to loosen the assertion, which is how a real regression gets through",
+        "workaround": "the generator now redraws centres from the same seeded stream until their minimum pairwise distance clears a multiple of the spread, and scales them apart if it cannot",
+        "proposal": "harness.synthetic should take the structure it is drawing (blobs, classes, a low-rank matrix) and guarantee the property the caller is about to test for, rather than returning a draw and leaving the property to luck",
+    },
+    "an-approximate-backend-needs-a-different-oracle-than-an-exact-one": {
+        "kind": "strength",
+        "text": "the histogram split search is not the sorting one to 1e-9 and never will be: it scans bin edges, not midpoints. its oracle is not equality but the held-out accuracy of the exact tree within a stated margin, recorded in the same oracle Part shape as every exact one.",
+        "for": "the contract's rule is that a backend which changes semantics is a failed backend; an approximation is a different calculation, and saying so in the oracle is what keeps the rule enforceable",
+    },
+    "seeded-init-is-what-makes-two-clusterings-comparable": {
+        "kind": "strength",
+        "text": "all three k-means branches read one Stream built from args['seed'] for the k-means++ init, so py, np and the gram-matrix branch start from the same centres and their oracle is exact equality of labels and inertia. without that the bracket would be comparing dice.",
+        "for": "clustering is the family where nobody can tell a faster implementation from a luckier one, unless the seed is an argument",
+    },
     "newton-beats-descent-once-the-hessian-is-one-matmul": {
         "kind": "strength",
         "text": "the logistic bracket says it plainly: on 400 rows and 6 columns, newton/irls through numpy is about 22 times faster than the same steps in python and about 200 times faster than full-batch gradient descent, and all three land on scipy's penalised optimum. the cost of newton is a solve per step, and one weighted matmul pays for it.",

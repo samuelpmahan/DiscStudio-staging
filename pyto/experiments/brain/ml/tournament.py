@@ -167,6 +167,151 @@ def logistic_ascent(store):
     )
 
 
+@bracket_builder
+def split_search(store):
+    """how a tree should look for a split: every midpoint, or a fixed number of bins.
+
+    the sorting branch is exact and pays O(n log n) per feature per node. the
+    histogram branches bin first and scan at most bins-1 thresholds, which is
+    cheaper and approximate. the oracle for every branch is the held-out accuracy
+    of the exact tree: a branch that is faster and materially worse is not a backend.
+    """
+    from . import trees
+
+    data = calcs.call("synthetic_classification", {"seed": 71, "n": 1200, "d": 6, "k": 3, "spread": 1.5})
+    store.put("px.exp.brain.data.ml.split_search_bracket", {
+        "for": "the one problem every branch of the split-search bracket grows a tree on",
+        "recipe": {"calc": "fn.brain.ml.synthetic_classification",
+                   "args": {"seed": 71, "n": 1200, "d": 6, "k": 3, "spread": 1.5}},
+        "columns": core.columns_of(data),
+        "shape": [len(core.as_rows(data)), len(core.columns_of(data))],
+    })
+    split = calcs.call("train_test_split", {"data": data, "seed": 71, "test_size": 0.3, "stratify": "label"})
+    train, test = core.take(data, split["train_index"]), core.take(data, split["test_index"])
+    truth = [row[-1] for row in core.as_rows(test)]
+
+    def accuracy(model):
+        got = calcs.call("tree_predict", {"model": model, "data": test})["labels"]
+        return calcs.call("classification_metrics", {"y_true": truth, "y_pred": got})["accuracy"]
+
+    exact = calcs.call("tree_fit", {"data": train, "target": "label", "max_depth": 6, "search": "sort"})
+    reference = accuracy(exact)
+
+    branches = [
+        {"branch": "sort", "fn": trees._best_split_sort, "args": {"search": "sort"},
+         "note": "one sort per feature per node, then every midpoint between distinct values"},
+        {"branch": "hist-32", "fn": trees._best_split_hist, "args": {"search": "hist", "bins": 32},
+         "note": "32 equal-width bins per feature: no sort, at most 31 thresholds"},
+        {"branch": "hist-256", "fn": trees._best_split_hist, "args": {"search": "hist", "bins": 256},
+         "note": "the same bin scan, eight times finer: nearer the exact threshold, still no sort"},
+    ]
+    candidates = []
+    for branch in branches:
+        args = dict(branch["args"], data=train, target="label", max_depth=6)
+        model = calcs.call("tree_fit", args)
+        case = f"bracket_{branch['branch'].replace('-', '_')}"
+        parts.result(store, VERTICAL, "tree", case, {
+            "for": f"the tree the {branch['branch']} search grew",
+            "model": "tree", "search": model["search"], "nodes": model["nodes"],
+            "depth": model["depth"], "root_feature": model["root"].get("feature"),
+            "root_threshold": model["root"].get("threshold"), "accuracy": accuracy(model),
+        })
+        parts.oracle(
+            store, VERTICAL, "tree_fit", case,
+            accuracy(model) >= reference - 0.03, True,
+            "the held-out accuracy of the exact (sorting) search on the same split", 0.0,
+            "an approximate split search earns its speed only if the tree it grows is as good",
+        )
+        parts.bench(
+            store, VERTICAL, "tree_fit", branch["branch"], "bracket_n840_d6_depth6",
+            lambda args=args: calcs.call("tree_fit", args), 3,
+            "the same training rows and the same depth for every branch",
+        )
+        candidates.append({
+            "branch": branch["branch"], "calc": "fn.brain.ml.tree_fit", "fn": branch["fn"],
+            "oracle": parts.H.oracle_address(VERTICAL, "tree_fit", case),
+            "bench": parts.H.bench_address(VERTICAL, "tree_fit", branch["branch"], "bracket_n840_d6_depth6"),
+            "note": branch["note"],
+        })
+    return hold(
+        store, "split_search",
+        "the split search is the whole cost of a tree; exact or binned is the one decision that changes it",
+        candidates,
+        lambda winner: (
+            f"{winner} wins on the recorded criteria; fn.brain.ml.tree_fit keeps search='sort' as its "
+            "default because it is the reference every other branch is oracled against, and reaches the "
+            "winner through args (search, bins) so the forest and the boosting can take it by name"
+        ),
+    )
+
+
+@bracket_builder
+def kmeans_assignment(store):
+    """the assignment step of k-means, three ways, with the init held fixed by one seed.
+
+    every branch runs lloyd's iteration from the same seeded k-means++ start, so the
+    only difference is how the point-to-centre distances are computed: python loops,
+    a broadcast subtraction, or the |a-b|^2 = |a|^2 - 2ab + |b|^2 identity as one matmul.
+    the oracle is the py branch's labelling, which is the reference by definition.
+    """
+    from . import unsup
+
+    blobs = calcs.call("synthetic_blobs", {"seed": 73, "n": 900, "k": 6, "d": 8, "spread": 0.9})
+    features = core.dataset("the blob features alone", core.columns_of(blobs)[:-1],
+                            [row[:-1] for row in core.as_rows(blobs)])
+    store.put("px.exp.brain.data.ml.kmeans_bracket", {
+        "for": "the one problem every branch of the k-means bracket clusters",
+        "recipe": {"calc": "fn.brain.ml.synthetic_blobs",
+                   "args": {"seed": 73, "n": 900, "k": 6, "d": 8, "spread": 0.9}},
+        "columns": core.columns_of(features),
+        "shape": [len(core.as_rows(features)), len(core.columns_of(features))],
+    })
+    reference = calcs.call("kmeans", {"data": features, "k": 6, "seed": 73, "backend": "py"})
+    branches = [
+        {"branch": "py", "fn": unsup._assign_py, "note": "the reference: one python loop per point per centre"},
+        {"branch": "np", "fn": unsup._assign_np, "note": "one broadcast subtraction: an n by k by d array in memory"},
+        {"branch": "gram", "fn": unsup._assign_gram, "note": "the squared-distance identity: one n by d by k matmul, no cube"},
+    ]
+    candidates = []
+    for branch in branches:
+        args = {"data": features, "k": 6, "seed": 73, "backend": branch["branch"]}
+        got = calcs.call("kmeans", args)
+        case = f"bracket_{branch['branch']}"
+        parts.result(store, VERTICAL, "kmeans", case, {
+            "for": f"what the {branch['branch']} assignment found",
+            "backend": got["backend"], "k": got["k"], "seed": got["seed"],
+            "seeded_from": got["seeded_from"], "inertia": got["inertia"], "iters": got["iters"],
+        })
+        parts.oracle(
+            store, VERTICAL, "kmeans", case,
+            {"labels": got["labels"], "inertia": got["inertia"]},
+            {"labels": reference["labels"], "inertia": reference["inertia"]},
+            "the py backend of the same calculation, from the same seed", 1e-9,
+            "the seed fixes the init, so any difference between backends is a difference in semantics",
+        )
+        parts.bench(
+            store, VERTICAL, "kmeans", branch["branch"], "bracket_n900_k6_d8",
+            lambda args=args: calcs.call("kmeans", args), 3,
+            "900 points, 6 centres, 8 columns: the assignment step is nearly all of the work",
+        )
+        candidates.append({
+            "branch": branch["branch"], "calc": "fn.brain.ml.kmeans", "fn": branch["fn"],
+            "oracle": parts.H.oracle_address(VERTICAL, "kmeans", case),
+            "bench": parts.H.bench_address(VERTICAL, "kmeans", branch["branch"], "bracket_n900_k6_d8"),
+            "note": branch["note"],
+        })
+    return hold(
+        store, "kmeans_assignment",
+        "every iteration of k-means is one distance matrix; which spelling of it deserves the default",
+        candidates,
+        lambda winner: (
+            f"{winner} wins on the recorded criteria and is what fn.brain.ml.kmeans should default to; "
+            "the py branch stays as the reference every oracle here is written against, and the same "
+            "identity belongs in a shared pairwise-distance calculation rather than in three verticals"
+        ),
+    )
+
+
 def run(store=None):
     store = store or parts.Store(VERTICAL)
     return {fn.__name__: fn(store) for fn in BRACKETS}, store
