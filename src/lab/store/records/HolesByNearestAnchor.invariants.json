@@ -1,6 +1,6 @@
 {
   "schema": "pyto-run-record@1",
-  "pcr": "S4.invariants",
+  "pcr": "HolesByNearestAnchor.invariants",
   "source": {
     "runtime": "discstudio",
     "version": null,
@@ -12,9 +12,9 @@
       "name": "AccountHoles",
       "invocations": [
         {
-          "id": "px.exp.lab.s4.holeledger",
+          "id": "px.exp.lab.holesnearest.ledger",
           "calculation": {
-            "address": "fn.lab.s4.accountholes",
+            "address": "fn.lab.holesnearest.accountholes",
             "implementation_sha256": null,
             "identity_scope": "registered-address-and-revision:1"
           },
@@ -25,7 +25,7 @@
             "unplaced": "px:px.exp.lab.holes.unplaced"
           },
           "args": {},
-          "into": "px.exp.lab.s4.holeledger",
+          "into": "px.exp.lab.holesnearest.ledger",
           "declared_consumes": [
             "px:px.exp.lab.holes.numbers",
             "px:px.exp.lab.holes.binding",
@@ -39,11 +39,11 @@
             "px.exp.lab.holes.unplaced"
           ],
           "actual_produces": [
-            "px.exp.lab.s4.holeledger"
+            "px.exp.lab.holesnearest.ledger"
           ],
           "writes": [
             {
-              "address": "px.exp.lab.s4.holeledger",
+              "address": "px.exp.lab.holesnearest.ledger",
               "kind": "new-address"
             }
           ],
@@ -76,35 +76,35 @@
       "name": "CheckHoles",
       "invocations": [
         {
-          "id": "px.exp.lab.s4.holesummary",
+          "id": "px.exp.lab.holesnearest.summary",
           "calculation": {
-            "address": "fn.lab.s4.checkholes",
+            "address": "fn.lab.holesnearest.checkholes",
             "implementation_sha256": null,
             "identity_scope": "registered-address-and-revision:1"
           },
           "inputs": {
-            "ledger": "px:px.exp.lab.s4.holeledger",
+            "ledger": "px:px.exp.lab.holesnearest.ledger",
             "holes": "px:px.exp.lab.holes.objects",
             "binding": "px:px.exp.lab.holes.binding"
           },
           "args": {},
-          "into": "px.exp.lab.s4.holesummary",
+          "into": "px.exp.lab.holesnearest.summary",
           "declared_consumes": [
-            "px:px.exp.lab.s4.holeledger",
+            "px:px.exp.lab.holesnearest.ledger",
             "px:px.exp.lab.holes.objects",
             "px:px.exp.lab.holes.binding"
           ],
           "actual_consumes": [
-            "px.exp.lab.s4.holeledger",
+            "px.exp.lab.holesnearest.ledger",
             "px.exp.lab.holes.objects",
             "px.exp.lab.holes.binding"
           ],
           "actual_produces": [
-            "px.exp.lab.s4.holesummary"
+            "px.exp.lab.holesnearest.summary"
           ],
           "writes": [
             {
-              "address": "px.exp.lab.s4.holesummary",
+              "address": "px.exp.lab.holesnearest.summary",
               "kind": "new-address"
             }
           ],
@@ -147,42 +147,42 @@
     "px.exp.lab.holes.numbers": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s4.holeledger"
+        "px.exp.lab.holesnearest.ledger"
       ],
       "preexisting": true
     },
     "px.exp.lab.holes.binding": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s4.holeledger",
-        "px.exp.lab.s4.holesummary"
+        "px.exp.lab.holesnearest.ledger",
+        "px.exp.lab.holesnearest.summary"
       ],
       "preexisting": true
     },
     "px.exp.lab.holes.objects": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s4.holeledger",
-        "px.exp.lab.s4.holesummary"
+        "px.exp.lab.holesnearest.ledger",
+        "px.exp.lab.holesnearest.summary"
       ],
       "preexisting": true
     },
     "px.exp.lab.holes.unplaced": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s4.holeledger"
+        "px.exp.lab.holesnearest.ledger"
       ],
       "preexisting": true
     },
-    "px.exp.lab.s4.holeledger": {
-      "written_by": "px.exp.lab.s4.holeledger",
+    "px.exp.lab.holesnearest.ledger": {
+      "written_by": "px.exp.lab.holesnearest.ledger",
       "read_by": [
-        "px.exp.lab.s4.holesummary"
+        "px.exp.lab.holesnearest.summary"
       ],
       "preexisting": false
     },
-    "px.exp.lab.s4.holesummary": {
-      "written_by": "px.exp.lab.s4.holesummary",
+    "px.exp.lab.holesnearest.summary": {
+      "written_by": "px.exp.lab.holesnearest.summary",
       "read_by": [],
       "preexisting": false
     }

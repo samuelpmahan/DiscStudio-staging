@@ -1,0 +1,191 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T150916Z-task-121",
+  "package": "task-121",
+  "base_sha": "a07042b5446fd98c3b36f6ae5acc4f9f736e3d04",
+  "result": "verified",
+  "verifier": {
+    "command": "node --test tests/*.test.js",
+    "exit": 0,
+    "output_sha256": "343415def68657229c13fca20859c08d11eab3c751f3c9f9f985826db1e1a379"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "6a6dc87690ef8c4d6543c85e3399669af3391fa13be6ea05408dcd5ad519a9f4",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/121/HANDOFF.md",
+      "bytes": 9123,
+      "sha256": "000af1f6f437ea5870d49170553214671fb20c6da639acdba652029b3265e327"
+    },
+    {
+      "path": "pyto/experiments/tasks/121/evidence/check_all.txt",
+      "bytes": 293459,
+      "sha256": "94af9d83427559d279c4c8613d47644b62f72116f36b950ec92ccbfad8ec5ebb"
+    },
+    {
+      "path": "pyto/experiments/tasks/121/evidence/verify.txt",
+      "bytes": 34264,
+      "sha256": "6ad49005a9176c59361645a25ec9f562ac29747e384b93a3bbfbb7781c077b03"
+    },
+    {
+      "path": "pyto/experiments/tasks/121/packet.md",
+      "bytes": 4817,
+      "sha256": "55e2f964c67d502f1490261ad6c66ed8131d176ce61f005b3ac68c8cfd244d75"
+    },
+    {
+      "path": "src/lab/holes-nearest.js",
+      "bytes": 14931,
+      "sha256": "da8faa6a5f1e5a3374c35b9797eaee6c04d1cd3cea588a762c47ffb7b3cadaf7"
+    },
+    {
+      "path": "src/lab/map.js",
+      "bytes": 26075,
+      "sha256": "58f8ba9c7e4e9c98235b471e21825b3b8ab4cac2dbbcd412a9d4d55a7d46bc84"
+    },
+    {
+      "path": "src/lab/s7course.js",
+      "bytes": 17626,
+      "sha256": "e0c207879a662aefdb03aa96e216c801ea0f2d1741aa50a432b7a29c0b3d6c40"
+    },
+    {
+      "path": "src/lab/s7round.js",
+      "bytes": 19142,
+      "sha256": "8d07108111da540471a9ebbd7ad301d4a38f0200fef1f6f718bb2e3cc3661bb8"
+    },
+    {
+      "path": "src/lab/stage-sources.js",
+      "bytes": 5354,
+      "sha256": "6aea92d6740b9ea7b556a678a593cc7b2575683c1be56aea0c518338666262b3"
+    },
+    {
+      "path": "src/lab/stages.js",
+      "bytes": 11966,
+      "sha256": "e16db7a0bae6801f8df5541b185c1a3473e651332d5187f411524bcafd7bfd8a"
+    },
+    {
+      "path": "src/lab/stages/HolesByNearestAnchor.args.json",
+      "bytes": 63,
+      "sha256": "2e5ae356d1257b7572e8d59d084d6b9d6ae0ae46dafad47fa69963bf932c247a"
+    },
+    {
+      "path": "src/lab/stages/HolesByNearestAnchor.mmd",
+      "bytes": 1013,
+      "sha256": "2feb9fe7c9794e8ce77662b375719197c6c0b050c566c70920aa6159833094af"
+    },
+    {
+      "path": "src/lab/stages/S7.course.args.json",
+      "bytes": 77,
+      "sha256": "edfc81fde85c6bbb9e00ab5e9014672d98154e3bf8ad979e8aaf46b112575101"
+    },
+    {
+      "path": "src/lab/stages/S7.course.mmd",
+      "bytes": 1599,
+      "sha256": "738651d13bfa342c76d8e9b9ecda717a8d8da338307bf1e5a09f035529398d85"
+    },
+    {
+      "path": "src/lab/stages/S7.round.args.json",
+      "bytes": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "src/lab/stages/S7.round.mmd",
+      "bytes": 715,
+      "sha256": "34d01359fea8342c155a323d131c678f45db418fe932bee44eb22c529f3ef7bb"
+    },
+    {
+      "path": "src/lab/store/lab.json",
+      "bytes": 354315,
+      "sha256": "2dff276a6a9664edd5940416f3dccd19dadd1dcc28f8ebc7526f440236c8c255"
+    },
+    {
+      "path": "src/lab/store/records/HolesByNearestAnchor.invariants.json",
+      "bytes": 5493,
+      "sha256": "6e8ced5a79ee2c5903b20173583b8cfba5ce30921d6314d24ce26d6c4bee08c3"
+    },
+    {
+      "path": "src/lab/store/records/HolesByNearestAnchor.json",
+      "bytes": 20054,
+      "sha256": "241845fed543b91e97edcf209f868d78e62f1d55ea3703213dd1ac20d4636755"
+    },
+    {
+      "path": "src/lab/store/records/S7.course.invariants.json",
+      "bytes": 5894,
+      "sha256": "b4516a901129f7e65231bcc732539925e9dc5906b13e7e9dae121b9e9126243f"
+    },
+    {
+      "path": "src/lab/store/records/S7.course.json",
+      "bytes": 31825,
+      "sha256": "c82a5e6ad8e8fe7746b822a947f93ddba989305239abfa7952748547f46ac4cb"
+    },
+    {
+      "path": "src/lab/store/records/S7.round.invariants.json",
+      "bytes": 4982,
+      "sha256": "24d5b5c48a1064b4e95292f32e882be466cb2e69e95acca7a407f1ca9d14191d"
+    },
+    {
+      "path": "src/lab/store/records/S7.round.json",
+      "bytes": 26267,
+      "sha256": "e9d3495ce361a768663d52b70f78f5d6416f50bdc7a95dab0d793cebe011aae4"
+    },
+    {
+      "path": "src/lab/store/records/S7.vs-straight.json",
+      "bytes": 4772,
+      "sha256": "ed41f5f711175a35414136330c19fe379eaa94be0d8cf31f0374b493b2676b46"
+    },
+    {
+      "path": "tests/lab-holes-nearest.test.js",
+      "bytes": 8756,
+      "sha256": "9cacfa71d2bddd5c2f0bbea19974086c96f35706073fef859e75ce4716823f2c"
+    },
+    {
+      "path": "tests/lab-pipeline.test.js",
+      "bytes": 11374,
+      "sha256": "6fce93e2faa93da369355dd18d40578d08549c35088a1d09000f5d6dd7f866db"
+    },
+    {
+      "path": "tests/lab-s7course.test.js",
+      "bytes": 9687,
+      "sha256": "c6fc024c07fce5237a51758cc47734298894bebb6e7fc71658a34cb9e608f7b6"
+    },
+    {
+      "path": "tests/lab-s7round.test.js",
+      "bytes": 11065,
+      "sha256": "a5e140acd268347ce9f83508177435b281c76c3838f02fd628147713fb9335b5"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T15:12:30.861099Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

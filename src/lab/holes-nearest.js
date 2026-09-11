@@ -1,6 +1,14 @@
 /**
- * S4, invented: Holes. The first Stage of this port that ChainSpot does not
- * have -- S0..S3 were read out of the LAB and ported; S4 is written in the
+ * HolesByNearestAnchor: the fallback that assembles a hole from the nearest free
+ * anchors. It was this port's first invented Stage (it stood as "S4" until the
+ * owner set the numbering: S4 is recovery, S5 the tee-to-badge ray, S6 the
+ * straight holes, S7 pathfinding). The ray supersedes it -- a tee POINTS at its
+ * badge, and three points make a line, so a hole does not have to be guessed by
+ * distance at all -- and it is kept here, unnumbered, because a course where no
+ * ray resolves still has to say something, and because the two rules disagreeing
+ * is a fact worth being able to see (proposal.lab.holes.nearestisafallback).
+ *
+ * It is written in the
  * LAB's own stage grammar (a contract naming consumes and produces, a PQL
  * document of Ticks, `fn.lab.*` Calculations, a `has` provenance block on every
  * object it constructs, and, where no reference run exists, invariants as the
@@ -29,7 +37,7 @@
  *   4. confidence is a stated sum over what is present, not a score: 0.5 for a
  *      badge the Stage read, 0.25 for a tee, 0.25 for a basket.
  *
- * Those five accounts are a Part of their own (`S4.invariants`, the two-Tick
+ * Those five accounts are a Part of their own (`HolesByNearestAnchor.invariants`, the two-Tick
  * shape S3's Python analogue uses: AccountHoles publishes a ledger, CheckHoles
  * reads it back and says whether it balances).
  */
@@ -37,13 +45,13 @@ import { labAddress, labDocument } from './address.js';
 import { compiledStage } from './stage-sources.js';
 import { compileMermaidPcr, lowerToPql } from './mermaid.js';
 
-export const S4_ADDRESSES = {
+export const HOLES_ADDRESSES = {
   numbers: labAddress('px.holes.numbers'),
   binding: labAddress('px.holes.binding'),
   objects: labAddress('px.holes.objects'),
   unplaced: labAddress('px.holes.unplaced'),
-  ledger: 'px.exp.lab.s4.holeledger',
-  summary: 'px.exp.lab.s4.holesummary'
+  ledger: 'px.exp.lab.holesnearest.ledger',
+  summary: 'px.exp.lab.holesnearest.summary'
 };
 
 export const BIND_RULE = 'nearest-free-in-badge-order';
@@ -128,7 +136,7 @@ export function assembleHoles({ binding }) {
 export function unplaced({ binding, holes }) {
   const free = pool => binding.pools[pool].filter(anchor => anchor.boundTo === null);
   return {
-    for: 'what S4 could not put in a hole, so that nothing is silently dropped between the Stages and the course',
+    for: 'what the fallback could not put in a hole, so that nothing is silently dropped between the Stages and the course',
     badges: binding.unreadable.map(badge => ({ id: badge.id, bbox: badge.bbox, why: badge.why })),
     tees: free('tees').map(anchor => ({ id: anchor.id, at: anchor.at, why: 'no hole was left to take it' })),
     baskets: free('baskets').map(anchor => ({ id: anchor.id, at: anchor.at, why: 'no hole was left to take it' })),
@@ -165,48 +173,48 @@ export function checkHoles({ ledger, holes, binding }) {
   return { ...ledger, rule: binding.rule, checks, balanced: Object.values(checks).every(Boolean) };
 }
 
-export function registerS4(lab) {
+export function registerHolesNearest(lab) {
   lab.register(labAddress('fn.Hole.readNumbers'), readNumbers);
   lab.register(labAddress('fn.Hole.bindAnchors'), bindAnchors);
   lab.register(labAddress('fn.Hole.assemble'), assembleHoles);
   lab.register(labAddress('fn.Hole.unplaced'), unplaced);
-  lab.register('fn.lab.s4.accountholes', accountHoles);
-  lab.register('fn.lab.s4.checkholes', checkHoles);
+  lab.register('fn.lab.holesnearest.accountholes', accountHoles);
+  lab.register('fn.lab.holesnearest.checkholes', checkHoles);
 }
 
-/** The contract, as a Part: what S4 consumes and what it produces, in one place a reader can check against the document. */
-export const S4_CONTRACT = {
-  stage: 'S4', name: 'Holes',
+/** The contract, as a Part: what the fallback consumes and what it produces, in one place a reader can check against the document. */
+export const HOLES_CONTRACT = {
+  stage: 'HolesByNearestAnchor', name: 'Holes (nearest anchor)',
   for: 'one hole object per badge the Stages read, anchored on the tees and baskets they found, with what is missing named rather than guessed',
   consumes: ['px.badges.objects', 'px.tees', 'px.baskets'].map(labAddress),
-  produces: [S4_ADDRESSES.objects, S4_ADDRESSES.unplaced],
+  produces: [HOLES_ADDRESSES.objects, HOLES_ADDRESSES.unplaced],
   ticks: ['Hole.readNumbers', 'Hole.bindAnchors', 'Hole.assemble', 'Hole.unplaced'],
   invariants: ['everyBadgeOnce', 'everyTeeOnce', 'everyBasketOnce', 'missingIsNotGuessed', 'confidenceIsStated', 'orderIsTheReading']
 };
 
-/** The document S4's contract declares. */
-export function s4Document(lab) {
-  return lab.document('S4', [
-    { name: 'Hole.readNumbers', Calculations: [{ call: labAddress('fn.Hole.readNumbers'), with: { badges: labAddress('px.badges.objects') }, args: {}, into: S4_ADDRESSES.numbers }] },
-    { name: 'Hole.bindAnchors', Calculations: [{ call: labAddress('fn.Hole.bindAnchors'), with: { numbers: S4_ADDRESSES.numbers, tees: labAddress('px.tees'), baskets: labAddress('px.baskets') }, args: { rule: BIND_RULE }, into: S4_ADDRESSES.binding }] },
-    { name: 'Hole.assemble', Calculations: [{ call: labAddress('fn.Hole.assemble'), with: { binding: S4_ADDRESSES.binding }, args: {}, into: S4_ADDRESSES.objects }] },
-    { name: 'Hole.unplaced', Calculations: [{ call: labAddress('fn.Hole.unplaced'), with: { binding: S4_ADDRESSES.binding, holes: S4_ADDRESSES.objects }, args: {}, into: S4_ADDRESSES.unplaced }] }
+/** The document the contract declares. */
+export function holesNearestDocument(lab) {
+  return lab.document('HolesByNearestAnchor', [
+    { name: 'Hole.readNumbers', Calculations: [{ call: labAddress('fn.Hole.readNumbers'), with: { badges: labAddress('px.badges.objects') }, args: {}, into: HOLES_ADDRESSES.numbers }] },
+    { name: 'Hole.bindAnchors', Calculations: [{ call: labAddress('fn.Hole.bindAnchors'), with: { numbers: HOLES_ADDRESSES.numbers, tees: labAddress('px.tees'), baskets: labAddress('px.baskets') }, args: { rule: BIND_RULE }, into: HOLES_ADDRESSES.binding }] },
+    { name: 'Hole.assemble', Calculations: [{ call: labAddress('fn.Hole.assemble'), with: { binding: HOLES_ADDRESSES.binding }, args: {}, into: HOLES_ADDRESSES.objects }] },
+    { name: 'Hole.unplaced', Calculations: [{ call: labAddress('fn.Hole.unplaced'), with: { binding: HOLES_ADDRESSES.binding, holes: HOLES_ADDRESSES.objects }, args: {}, into: HOLES_ADDRESSES.unplaced }] }
   ]);
 }
 
 /**
- * The Mermaid path, the way the LAB has one for S0 and S1: `stages/S4.mmd` is
+ * The Mermaid path, the way the LAB has one for S0 and S1: `stages/HolesByNearestAnchor.mmd` is
  * the same composition drawn as a flowchart, and the ported compiler turns it
- * into the document `s4Document` builds -- the same Calculations over the same
+ * into the document `holesNearestDocument` builds -- the same Calculations over the same
  * addresses in the same order (structural digest equal).
  */
-export function compiledS4() { return compiledStage('S4', compileMermaidPcr, lowerToPql, labDocument); }
+export function compiledHolesNearest() { return compiledStage('HolesByNearestAnchor', compileMermaidPcr, lowerToPql, labDocument); }
 
 /** The invariants, as their own two-Tick composition: the shape S3's Python analogue uses. */
-export function s4InvariantDocument(lab) {
-  return lab.document('S4.invariants', [
-    { name: 'AccountHoles', Calculations: [{ call: 'fn.lab.s4.accountholes', with: { numbers: S4_ADDRESSES.numbers, binding: S4_ADDRESSES.binding, holes: S4_ADDRESSES.objects, unplaced: S4_ADDRESSES.unplaced }, args: {}, into: S4_ADDRESSES.ledger }] },
-    { name: 'CheckHoles', Calculations: [{ call: 'fn.lab.s4.checkholes', with: { ledger: S4_ADDRESSES.ledger, holes: S4_ADDRESSES.objects, binding: S4_ADDRESSES.binding }, args: {}, into: S4_ADDRESSES.summary }] }
+export function holesNearestInvariantDocument(lab) {
+  return lab.document('HolesByNearestAnchor.invariants', [
+    { name: 'AccountHoles', Calculations: [{ call: 'fn.lab.holesnearest.accountholes', with: { numbers: HOLES_ADDRESSES.numbers, binding: HOLES_ADDRESSES.binding, holes: HOLES_ADDRESSES.objects, unplaced: HOLES_ADDRESSES.unplaced }, args: {}, into: HOLES_ADDRESSES.ledger }] },
+    { name: 'CheckHoles', Calculations: [{ call: 'fn.lab.holesnearest.checkholes', with: { ledger: HOLES_ADDRESSES.ledger, holes: HOLES_ADDRESSES.objects, binding: HOLES_ADDRESSES.binding }, args: {}, into: HOLES_ADDRESSES.summary }] }
   ]);
 }
 
@@ -215,23 +223,23 @@ export function s4InvariantDocument(lab) {
  * document, with what it must read before it can run and the Calculations it
  * brings. No `view` yet -- the demo decides how a hole is drawn.
  */
-export function s4Spec() {
+export function holesNearestSpec() {
   return {
-    key: 's4', stage: 'S4', title: 'Holes', composition: 'lab-s4',
+    key: 'holes-nearest', stage: 'HolesByNearestAnchor', title: 'Holes (nearest anchor)', composition: 'lab-holes-nearest',
     about: 'each hole assembled from the badge that numbers it and the nearest free tee and basket, with what is missing named rather than guessed.',
-    needs: S4_CONTRACT.consumes, produces: S4_CONTRACT.produces,
-    register: registerS4, ticks: lab => s4Document(lab).Ticks
+    needs: HOLES_CONTRACT.consumes, produces: HOLES_CONTRACT.produces,
+    register: registerHolesNearest, ticks: lab => holesNearestDocument(lab).Ticks
   };
 }
 
-export function runS4(lab) {
-  const composition = s4Document(lab), { run, receipt } = lab.run('S4', composition);
-  const invariants = s4InvariantDocument(lab);
-  lab.run('S4.invariants', invariants);
+export function runHolesNearest(lab) {
+  const composition = holesNearestDocument(lab), { run, receipt } = lab.run('HolesByNearestAnchor', composition);
+  const invariants = holesNearestInvariantDocument(lab);
+  lab.run('HolesByNearestAnchor.invariants', invariants);
   return {
     run, receipt, composition, invariants,
-    numbers: lab.get(S4_ADDRESSES.numbers), binding: lab.get(S4_ADDRESSES.binding),
-    holes: lab.get(S4_ADDRESSES.objects), unplaced: lab.get(S4_ADDRESSES.unplaced),
-    ledger: lab.get(S4_ADDRESSES.ledger), summary: lab.get(S4_ADDRESSES.summary)
+    numbers: lab.get(HOLES_ADDRESSES.numbers), binding: lab.get(HOLES_ADDRESSES.binding),
+    holes: lab.get(HOLES_ADDRESSES.objects), unplaced: lab.get(HOLES_ADDRESSES.unplaced),
+    ledger: lab.get(HOLES_ADDRESSES.ledger), summary: lab.get(HOLES_ADDRESSES.summary)
   };
 }

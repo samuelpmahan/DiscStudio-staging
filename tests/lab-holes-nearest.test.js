@@ -1,4 +1,4 @@
-/** S4 (invented here, in the LAB's stage grammar): Holes, and the invariants that are its oracle. */
+/** HolesByNearestAnchor (invented here, the fallback the tee-to-badge ray supersedes): holes by nearest free anchor. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createLab } from '../src/lab/lab.js';
@@ -8,37 +8,37 @@ import { registerS0, runS0 } from '../src/lab/s0.js';
 import { registerS1, runS1, s1YamlDocument } from '../src/lab/s1.js';
 import { registerS2, runS2 } from '../src/lab/s2.js';
 import { registerS3, runS3 } from '../src/lab/s3.js';
-import { registerS4, runS4, s4Document, compiledS4, readNumbers, bindAnchors, assembleHoles, unplaced, checkHoles, accountHoles, S4_ADDRESSES, S4_CONTRACT } from '../src/lab/s4.js';
+import { registerHolesNearest, runHolesNearest, holesNearestDocument, compiledHolesNearest, readNumbers, bindAnchors, assembleHoles, unplaced, checkHoles, accountHoles, HOLES_ADDRESSES, HOLES_CONTRACT } from '../src/lab/holes-nearest.js';
 import { fixtureCapture, fixtureBasis } from '../src/lab/fixtures.js';
 
 /** The course fixture: three badges, three tees, two baskets -- hole 11's basket is not there. */
 function course(options = { hole11: true, obstacle: true }) {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab);
   const capture = fixtureCapture(20260911, options);
   const s0 = runS0(lab, { decoded: capture, label: 'fixture' });
   runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
   const s2 = runS2(lab), s3 = runS3(lab);
-  return { lab, capture, s0, s2, s3, s4: runS4(lab) };
+  return { lab, capture, s0, s2, s3, s4: runHolesNearest(lab) };
 }
 
-test('S4 runs the document its contract declares, over the produce Parts of S1, S2 and S3', () => {
+test('the fallback runs the document its contract declares, over the produce Parts of S1, S2 and S3', () => {
   const { lab, s4 } = course();
-  const document = s4Document(lab);
-  assert.deepEqual(document.Ticks.map(tick => tick.name), S4_CONTRACT.ticks);
-  assert.deepEqual(S4_CONTRACT.consumes, ['px.exp.lab.badges.objects', 'px.exp.lab.tees', 'px.exp.lab.baskets']);
-  assert.deepEqual(S4_CONTRACT.produces, ['px.exp.lab.holes.objects', 'px.exp.lab.holes.unplaced']);
-  assert.deepEqual(document.Ticks[1].Calculations[0].with, { numbers: S4_ADDRESSES.numbers, tees: labAddress('px.tees'), baskets: labAddress('px.baskets') });
+  const document = holesNearestDocument(lab);
+  assert.deepEqual(document.Ticks.map(tick => tick.name), HOLES_CONTRACT.ticks);
+  assert.deepEqual(HOLES_CONTRACT.consumes, ['px.exp.lab.badges.objects', 'px.exp.lab.tees', 'px.exp.lab.baskets']);
+  assert.deepEqual(HOLES_CONTRACT.produces, ['px.exp.lab.holes.objects', 'px.exp.lab.holes.unplaced']);
+  assert.deepEqual(document.Ticks[1].Calculations[0].with, { numbers: HOLES_ADDRESSES.numbers, tees: labAddress('px.tees'), baskets: labAddress('px.baskets') });
   assert.deepEqual(s4.run.Ticks.map(tick => tick.Calculations[0].call), ['fn.lab.hole.readnumbers', 'fn.lab.hole.bindanchors', 'fn.lab.hole.assemble', 'fn.lab.hole.unplaced']);
-  for (const address of S4_CONTRACT.produces) assert.ok(lab.has(address), address);
+  for (const address of HOLES_CONTRACT.produces) assert.ok(lab.has(address), address);
 });
 
-test('S4.mmd compiles to the same document S4 runs', () => {
-  const lab = createLab(); registerS4(lab);
-  const { document, local } = compiledS4();
+test('HolesByNearestAnchor.mmd compiles to the same document the fallback runs', () => {
+  const lab = createLab(); registerHolesNearest(lab);
+  const { document, local } = compiledHolesNearest();
   assert.deepEqual(local, [], 'every S4 result is a published Part');
-  assert.equal(structuralDigest(document), structuralDigest(s4Document(lab)));
-  assert.deepEqual(document.Ticks.map(tick => tick.name), S4_CONTRACT.ticks);
+  assert.equal(structuralDigest(document), structuralDigest(holesNearestDocument(lab)));
+  assert.deepEqual(document.Ticks.map(tick => tick.name), HOLES_CONTRACT.ticks);
 });
 
 test('the holes take their turns in badge order, each on the nearest free tee and basket', () => {
@@ -91,24 +91,24 @@ test('an unreadable badge takes no turn and is reported, and an anchor no hole t
 test('the invariants balance, and each one is a check a reader can name', () => {
   const { lab, s4 } = course();
   assert.deepEqual(s4.invariants.Ticks.map(tick => tick.name), ['AccountHoles', 'CheckHoles']);
-  assert.equal(s4.invariants.Ticks[1].Calculations[0].with.ledger, S4_ADDRESSES.ledger);
+  assert.equal(s4.invariants.Ticks[1].Calculations[0].with.ledger, HOLES_ADDRESSES.ledger);
   const { ledger, summary } = s4;
   assert.deepEqual(ledger, { badgesIn: 3, numbered: 3, unreadable: 0, holes: 3, teesIn: 3, teesBound: 3, teesFree: 0, basketsIn: 2, basketsBound: 2, basketsFree: 0, complete: 2, incomplete: 1 });
-  assert.deepEqual(Object.keys(summary.checks), S4_CONTRACT.invariants);
+  assert.deepEqual(Object.keys(summary.checks), HOLES_CONTRACT.invariants);
   assert.equal(summary.balanced, true);
-  assert.ok(lab.has(S4_ADDRESSES.summary));
+  assert.ok(lab.has(HOLES_ADDRESSES.summary));
   // The oracle refuses what the rule may never do: a basket guessed onto hole 11.
   const guessed = s4.holes.map(hole => hole.number === 11 ? { ...hole, basket: s4.holes[0].basket } : hole);
   assert.equal(checkHoles({ ledger, holes: guessed, binding: s4.binding }).checks.everyBasketOnce, false);
   assert.equal(checkHoles({ ledger, holes: guessed, binding: s4.binding }).checks.missingIsNotGuessed, false);
 });
 
-test('both S4 runs are pyto-run-record@1 records', () => {
+test('both fallback runs are pyto-run-record@1 records', () => {
   const { lab } = course();
-  assert.deepEqual(lab.runRecord('S4').record.ticks.map(tick => tick.name), S4_CONTRACT.ticks);
-  const invariants = lab.runRecord('S4.invariants').record;
-  assert.equal(invariants.pcr, 'S4.invariants');
-  assert.equal(invariants.ticks[1].invocations[0].actual_produces[0], S4_ADDRESSES.summary);
+  assert.deepEqual(lab.runRecord('HolesByNearestAnchor').record.ticks.map(tick => tick.name), HOLES_CONTRACT.ticks);
+  const invariants = lab.runRecord('HolesByNearestAnchor.invariants').record;
+  assert.equal(invariants.pcr, 'HolesByNearestAnchor.invariants');
+  assert.equal(invariants.ticks[1].invocations[0].actual_produces[0], HOLES_ADDRESSES.summary);
 });
 
 test('the extended fixture is the same capture plus two stated elements, and its basis says why', () => {

@@ -1,4 +1,4 @@
-/** S6 (invented here): the Round, searched over S5's walkable cells, against the straight route. */
+/** S7 Pathfinding, the round half: the Round, searched over the course's walkable cells, against the straight route. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -11,21 +11,21 @@ import { registerS0, runS0 } from '../src/lab/s0.js';
 import { registerS1, runS1, s1YamlDocument } from '../src/lab/s1.js';
 import { registerS2, runS2 } from '../src/lab/s2.js';
 import { registerS3, runS3 } from '../src/lab/s3.js';
-import { registerS4, runS4 } from '../src/lab/s4.js';
-import { registerS5, runS5, grid, cellOf } from '../src/lab/s5.js';
-import { registerS6, runS6, s6Document, compiledS6, search, roundLegs, roundPath, checkRound, accountRound, S6_ADDRESSES, S6_CONTRACT, MOVES } from '../src/lab/s6.js';
+import { registerHolesNearest, runHolesNearest } from '../src/lab/holes-nearest.js';
+import { registerCourse, runCourse, grid, cellOf } from '../src/lab/s7course.js';
+import { registerRound, runRound, roundDocument, compiledRound, search, roundLegs, roundPath, checkRound, accountRound, ROUND_ADDRESSES, ROUND_CONTRACT, MOVES } from '../src/lab/s7round.js';
 import { registerRoute, runRoute } from '../src/lab/route.js';
 import { fixtureCapture } from '../src/lab/fixtures.js';
 
 function round(options = { hole11: true, obstacle: true }) {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerS5(lab); registerS6(lab); registerRoute(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerHolesNearest(lab); registerCourse(lab); registerRound(lab); registerRoute(lab);
   const s0 = runS0(lab, { decoded: fixtureCapture(20260911, options), label: 'fixture' });
   runS1(lab, { croppedImage: s0.croppedImage, document: s1YamlDocument(lab), seedRaster: true });
-  runS2(lab); runS3(lab); runS4(lab);
-  const s5 = runS5(lab);
+  runS2(lab); runS3(lab); runHolesNearest(lab);
+  const s5 = runCourse(lab);
   const straight = runRoute(lab, { course: 'labfixture' });
-  return { lab, s5, straight, s6: runS6(lab, { compareWith: 'labfixture' }) };
+  return { lab, s5, straight, s6: runRound(lab, { compareWith: 'labfixture' }) };
 }
 
 /** A hand-built graph: one 8x8 room, a wall with a gap, two anchors. */
@@ -44,21 +44,21 @@ function room({ wall = true, sealed = false } = {}) {
   };
 }
 
-test('S6 runs the document its contract declares, over the course graph', () => {
+test('the round runs the document its contract declares, over the course graph', () => {
   const { lab, s6 } = round();
-  assert.deepEqual(s6.composition.Ticks.map(tick => tick.name), S6_CONTRACT.ticks);
-  assert.deepEqual(S6_CONTRACT.produces, ['px.exp.lab.round.legs', 'px.exp.lab.round.path', 'px.exp.lab.round.summary']);
+  assert.deepEqual(s6.composition.Ticks.map(tick => tick.name), ROUND_CONTRACT.ticks);
+  assert.deepEqual(ROUND_CONTRACT.produces, ['px.exp.lab.round.legs', 'px.exp.lab.round.path', 'px.exp.lab.round.summary']);
   assert.deepEqual(s6.composition.Ticks[0].Calculations[0].with, { graph: labAddress('px.course.graph') });
   assert.deepEqual(s6.run.Ticks.map(tick => tick.Calculations[0].call), ['fn.lab.round.legs', 'fn.lab.round.path', 'fn.lab.round.summary']);
-  for (const address of S6_CONTRACT.produces) assert.ok(lab.has(address), address);
+  for (const address of ROUND_CONTRACT.produces) assert.ok(lab.has(address), address);
 });
 
-test('S6.mmd compiles to the same document S6 runs', () => {
-  const lab = createLab(); registerS6(lab);
-  const { document, local } = compiledS6();
+test('S7.round.mmd compiles to the same document the round runs', () => {
+  const lab = createLab(); registerRound(lab);
+  const { document, local } = compiledRound();
   assert.deepEqual(local, []);
-  assert.equal(structuralDigest(document), structuralDigest(s6Document(lab)));
-  for (const name of ['s6.js']) {
+  assert.equal(structuralDigest(document), structuralDigest(roundDocument(lab)));
+  for (const name of ['s7round.js']) {
     const source = readFileSync(join(STAGES, '..', name), 'utf8');
     assert.deepEqual([...source.matchAll(/^\s*import\s[^\n]*?from\s*'([^']+)'/gm)].map(match => match[1]).filter(specifier => specifier.startsWith('node:')), []);
   }
@@ -78,10 +78,10 @@ test('every leg is walked over cells, and no leg crosses an obstacle cell', () =
     assert.deepEqual(leg.points.at(-1), leg.to.at);
   }
   assert.equal(s6.check.balanced, true);
-  assert.deepEqual(Object.keys(s6.check.checks), S6_CONTRACT.invariants);
+  assert.deepEqual(Object.keys(s6.check.checks), ROUND_CONTRACT.invariants);
 });
 
-test('the two legs S5 said were blocked are the two that bend, and they get longer', () => {
+test('the two legs the course said were blocked are the two that bend, and they get longer', () => {
   const { s6 } = round();
   assert.deepEqual(s6.summary.legsThatHadToBend, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
   for (const leg of s6.legs) if (leg.straightIsBlocked) assert.ok(leg.lengthPx > leg.straightLengthPx, `${leg.from.id}->${leg.to.id}`);
@@ -175,9 +175,9 @@ test('with no obstacle drawn, no leg bends and the round costs what the straight
   assert.ok(s6.vsStraight.routedTotalPx < s6.vsStraight.straightTotalPx * 1.2);
 });
 
-test('all three S6 runs are pyto-run-record@1 records', () => {
+test('all three round runs are pyto-run-record@1 records', () => {
   const { lab } = round();
-  assert.deepEqual(lab.runRecord('S6').record.ticks.map(tick => tick.name), S6_CONTRACT.ticks);
-  assert.equal(lab.runRecord('S6.invariants').record.ticks[1].invocations[0].actual_produces[0], S6_ADDRESSES.check);
-  assert.equal(lab.runRecord('S6.vs-straight').record.ticks[0].invocations[0].actual_produces[0], S6_ADDRESSES.vsStraight);
+  assert.deepEqual(lab.runRecord('S7.round').record.ticks.map(tick => tick.name), ROUND_CONTRACT.ticks);
+  assert.equal(lab.runRecord('S7.round.invariants').record.ticks[1].invocations[0].actual_produces[0], ROUND_ADDRESSES.check);
+  assert.equal(lab.runRecord('S7.vs-straight').record.ticks[0].invocations[0].actual_produces[0], ROUND_ADDRESSES.vsStraight);
 });

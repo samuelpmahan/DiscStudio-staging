@@ -1,6 +1,6 @@
 {
   "schema": "pyto-run-record@1",
-  "pcr": "S6.vs-straight",
+  "pcr": "S7.vs-straight",
   "source": {
     "runtime": "discstudio",
     "version": null,
@@ -12,9 +12,9 @@
       "name": "CompareWithStraight",
       "invocations": [
         {
-          "id": "px.exp.lab.s6.vsstraight",
+          "id": "px.exp.lab.s7.vsstraight",
           "calculation": {
-            "address": "fn.lab.s6.comparewithstraight",
+            "address": "fn.lab.s7.comparewithstraight",
             "implementation_sha256": null,
             "identity_scope": "registered-address-and-revision:1"
           },
@@ -24,7 +24,7 @@
             "graph": "px:px.exp.lab.course.graph"
           },
           "args": {},
-          "into": "px.exp.lab.s6.vsstraight",
+          "into": "px.exp.lab.s7.vsstraight",
           "declared_consumes": [
             "px:px.exp.lab.round.legs",
             "px:px.exp.lab.route.labfixture",
@@ -36,11 +36,11 @@
             "px.exp.lab.course.graph"
           ],
           "actual_produces": [
-            "px.exp.lab.s6.vsstraight"
+            "px.exp.lab.s7.vsstraight"
           ],
           "writes": [
             {
-              "address": "px.exp.lab.s6.vsstraight",
+              "address": "px.exp.lab.s7.vsstraight",
               "kind": "new-address"
             }
           ],
@@ -124,26 +124,26 @@
     "px.exp.lab.round.legs": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s6.vsstraight"
+        "px.exp.lab.s7.vsstraight"
       ],
       "preexisting": true
     },
     "px.exp.lab.route.labfixture": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s6.vsstraight"
+        "px.exp.lab.s7.vsstraight"
       ],
       "preexisting": true
     },
     "px.exp.lab.course.graph": {
       "written_by": null,
       "read_by": [
-        "px.exp.lab.s6.vsstraight"
+        "px.exp.lab.s7.vsstraight"
       ],
       "preexisting": true
     },
-    "px.exp.lab.s6.vsstraight": {
-      "written_by": "px.exp.lab.s6.vsstraight",
+    "px.exp.lab.s7.vsstraight": {
+      "written_by": "px.exp.lab.s7.vsstraight",
       "read_by": [],
       "preexisting": false
     }

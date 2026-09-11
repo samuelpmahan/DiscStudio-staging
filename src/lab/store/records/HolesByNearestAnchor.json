@@ -1,6 +1,6 @@
 {
   "schema": "pyto-run-record@1",
-  "pcr": "S4",
+  "pcr": "HolesByNearestAnchor",
   "source": {
     "runtime": "discstudio",
     "version": null,
@@ -651,7 +651,7 @@
           "value": {
             "kind": "json",
             "data": {
-              "for": "what S4 could not put in a hole, so that nothing is silently dropped between the Stages and the course",
+              "for": "what the fallback could not put in a hole, so that nothing is silently dropped between the Stages and the course",
               "badges": [],
               "tees": [],
               "baskets": [],

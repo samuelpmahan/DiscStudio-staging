@@ -1,7 +1,8 @@
 /**
- * S5, invented: Course. S4 says which hole is which and where its anchors are;
- * S5 says what the course IS -- the holes as a graph over the canonical raster,
- * and what lies between the anchors.
+ * S7 Pathfinding, first half: the Course. Something upstream says which hole is
+ * which and where its anchors are (S6's straight holes, or the nearest-anchor
+ * fallback); this says what the course IS -- the holes as a graph over the
+ * canonical raster, and what lies between the anchors.
  *
  *   consumes  px.holes.objects       (S4: the assembled holes, in badge order)
  *             px.holes.unplaced      (S4: what no hole could use)
@@ -33,21 +34,21 @@
  * then basket to the next hole's tee -- carrying their straight geometry AND
  * whether that straight line crosses an obstacle cell. S5 does not route around
  * anything; it says which straight lines cannot be walked, which is the question
- * S6 answers.
+ * the round half of S7 answers.
  */
 import { labAddress, labDocument } from './address.js';
 import { compiledStage } from './stage-sources.js';
 import { compileMermaidPcr, lowerToPql } from './mermaid.js';
-import { centerOf, distance, round3 } from './s4.js';
+import { centerOf, distance, round3 } from './holes-nearest.js';
 
-export const S5_ADDRESSES = {
+export const COURSE_ADDRESSES = {
   holes: labAddress('px.course.holes'),
   obstacles: labAddress('px.course.obstacles'),
   walkable: labAddress('px.course.walkable'),
   graph: labAddress('px.course.graph'),
   summary: labAddress('px.course.summary'),
-  ledger: 'px.exp.lab.s5.courseledger',
-  check: 'px.exp.lab.s5.coursecheck'
+  ledger: 'px.exp.lab.s7.courseledger',
+  check: 'px.exp.lab.s7.coursecheck'
 };
 
 export const CELL_PX = 16;
@@ -211,65 +212,65 @@ export function checkCourse({ ledger, graph, holes, obstacles }) {
   return { ...ledger, checks, balanced: Object.values(checks).every(Boolean) };
 }
 
-export function registerS5(lab) {
+export function registerCourse(lab) {
   lab.register(labAddress('fn.Course.holeGeometry'), holeGeometry);
   lab.register(labAddress('fn.Course.obstacleMap'), obstacleMap);
   lab.register(labAddress('fn.Course.walkable'), walkableCells);
   lab.register(labAddress('fn.Course.graph'), courseGraph);
   lab.register(labAddress('fn.Course.summary'), courseSummary);
-  lab.register('fn.lab.s5.accountcourse', accountCourse);
-  lab.register('fn.lab.s5.checkcourse', checkCourse);
+  lab.register('fn.lab.s7.accountcourse', accountCourse);
+  lab.register('fn.lab.s7.checkcourse', checkCourse);
 }
 
-export const S5_CONTRACT = {
-  stage: 'S5', name: 'Course',
+export const COURSE_CONTRACT = {
+  stage: 'S7', name: 'Course',
   for: 'the course as a graph over the canonical raster, with the obstacle map derived from what the Stages left unclaimed',
   consumes: ['px.holes.objects', 'px.holes.unplaced', 'px.course.canonicalPixels', 'px.remaining.afterBadges', 'px.components', 'px.baskets', 'px.tees'].map(labAddress),
-  produces: [S5_ADDRESSES.graph, S5_ADDRESSES.summary],
+  produces: [COURSE_ADDRESSES.graph, COURSE_ADDRESSES.summary],
   ticks: ['Course.holeGeometry', 'Course.obstacleMap', 'Course.walkable', 'Course.graph', 'Course.summary'],
   invariants: ['anchorsInsideTheRaster', 'everyPixelLeavesOnce', 'theMapIsAPartition', 'terrainIsWhatNoStageOwns', 'playOrderIsTheBadgeOrder', 'everyEdgeIsAnchored']
 };
 
-export function s5Ticks({ course = 'labfixture', cellPx = CELL_PX } = {}) {
+export function courseTicks({ course = 'labfixture', cellPx = CELL_PX } = {}) {
   return [
-    { name: 'Course.holeGeometry', Calculations: [{ call: labAddress('fn.Course.holeGeometry'), with: { holes: labAddress('px.holes.objects'), raster: labAddress('px.course.canonicalPixels') }, args: {}, into: S5_ADDRESSES.holes }] },
-    { name: 'Course.obstacleMap', Calculations: [{ call: labAddress('fn.Course.obstacleMap'), with: { remaining: labAddress('px.remaining.afterBadges'), fields: labAddress('px.components'), baskets: labAddress('px.baskets'), tees: labAddress('px.tees'), raster: labAddress('px.course.canonicalPixels') }, args: { cellPx }, into: S5_ADDRESSES.obstacles }] },
-    { name: 'Course.walkable', Calculations: [{ call: labAddress('fn.Course.walkable'), with: { obstacles: S5_ADDRESSES.obstacles }, args: {}, into: S5_ADDRESSES.walkable }] },
-    { name: 'Course.graph', Calculations: [{ call: labAddress('fn.Course.graph'), with: { geometry: S5_ADDRESSES.holes, obstacles: S5_ADDRESSES.obstacles, walkable: S5_ADDRESSES.walkable }, args: { course }, into: S5_ADDRESSES.graph }] },
-    { name: 'Course.summary', Calculations: [{ call: labAddress('fn.Course.summary'), with: { graph: S5_ADDRESSES.graph, geometry: S5_ADDRESSES.holes, unplaced: labAddress('px.holes.unplaced') }, args: {}, into: S5_ADDRESSES.summary }] }
+    { name: 'Course.holeGeometry', Calculations: [{ call: labAddress('fn.Course.holeGeometry'), with: { holes: labAddress('px.holes.objects'), raster: labAddress('px.course.canonicalPixels') }, args: {}, into: COURSE_ADDRESSES.holes }] },
+    { name: 'Course.obstacleMap', Calculations: [{ call: labAddress('fn.Course.obstacleMap'), with: { remaining: labAddress('px.remaining.afterBadges'), fields: labAddress('px.components'), baskets: labAddress('px.baskets'), tees: labAddress('px.tees'), raster: labAddress('px.course.canonicalPixels') }, args: { cellPx }, into: COURSE_ADDRESSES.obstacles }] },
+    { name: 'Course.walkable', Calculations: [{ call: labAddress('fn.Course.walkable'), with: { obstacles: COURSE_ADDRESSES.obstacles }, args: {}, into: COURSE_ADDRESSES.walkable }] },
+    { name: 'Course.graph', Calculations: [{ call: labAddress('fn.Course.graph'), with: { geometry: COURSE_ADDRESSES.holes, obstacles: COURSE_ADDRESSES.obstacles, walkable: COURSE_ADDRESSES.walkable }, args: { course }, into: COURSE_ADDRESSES.graph }] },
+    { name: 'Course.summary', Calculations: [{ call: labAddress('fn.Course.summary'), with: { graph: COURSE_ADDRESSES.graph, geometry: COURSE_ADDRESSES.holes, unplaced: labAddress('px.holes.unplaced') }, args: {}, into: COURSE_ADDRESSES.summary }] }
   ];
 }
 
-export function s5Document(lab, options = {}) { return lab.document('S5', s5Ticks(options)); }
+export function courseDocument(lab, options = {}) { return lab.document('S7.course', courseTicks(options)); }
 
-/** `stages/S5.mmd`, compiled: the same Calculations over the same addresses in the same order. */
-export function compiledS5() { return compiledStage('S5', compileMermaidPcr, lowerToPql, labDocument); }
+/** `stages/S7.course.mmd`, compiled: the same Calculations over the same addresses in the same order. */
+export function compiledCourse() { return compiledStage('S7.course', compileMermaidPcr, lowerToPql, labDocument); }
 
-export function s5InvariantDocument(lab) {
-  return lab.document('S5.invariants', [
-    { name: 'AccountCourse', Calculations: [{ call: 'fn.lab.s5.accountcourse', with: { obstacles: S5_ADDRESSES.obstacles, walkable: S5_ADDRESSES.walkable, graph: S5_ADDRESSES.graph, geometry: S5_ADDRESSES.holes }, args: {}, into: S5_ADDRESSES.ledger }] },
-    { name: 'CheckCourse', Calculations: [{ call: 'fn.lab.s5.checkcourse', with: { ledger: S5_ADDRESSES.ledger, graph: S5_ADDRESSES.graph, holes: labAddress('px.holes.objects'), obstacles: S5_ADDRESSES.obstacles }, args: {}, into: S5_ADDRESSES.check }] }
+export function courseInvariantDocument(lab) {
+  return lab.document('S7.course.invariants', [
+    { name: 'AccountCourse', Calculations: [{ call: 'fn.lab.s7.accountcourse', with: { obstacles: COURSE_ADDRESSES.obstacles, walkable: COURSE_ADDRESSES.walkable, graph: COURSE_ADDRESSES.graph, geometry: COURSE_ADDRESSES.holes }, args: {}, into: COURSE_ADDRESSES.ledger }] },
+    { name: 'CheckCourse', Calculations: [{ call: 'fn.lab.s7.checkcourse', with: { ledger: COURSE_ADDRESSES.ledger, graph: COURSE_ADDRESSES.graph, holes: labAddress('px.holes.objects'), obstacles: COURSE_ADDRESSES.obstacles }, args: {}, into: COURSE_ADDRESSES.check }] }
   ]);
 }
 
 /** The Stage as the studio runs it; the demo decides how a course is drawn. */
-export function s5Spec(options = {}) {
+export function s7CourseSpec(options = {}) {
   return {
-    key: 's5', stage: 'S5', title: 'Course', composition: 'lab-s5',
+    key: 's7-course', stage: 'S7', title: 'Course', composition: 'lab-s7-course',
     about: 'the holes as a graph over the canonical raster, with the obstacle map derived from every pixel no Stage object owns.',
-    needs: S5_CONTRACT.consumes, produces: S5_CONTRACT.produces,
-    register: registerS5, ticks: lab => s5Document(lab, options).Ticks
+    needs: COURSE_CONTRACT.consumes, produces: COURSE_CONTRACT.produces,
+    register: registerCourse, ticks: lab => courseDocument(lab, options).Ticks
   };
 }
 
-export function runS5(lab, options = {}) {
-  const composition = s5Document(lab, options), { run, receipt } = lab.run('S5', composition);
-  const invariants = s5InvariantDocument(lab);
-  lab.run('S5.invariants', invariants);
+export function runCourse(lab, options = {}) {
+  const composition = courseDocument(lab, options), { run, receipt } = lab.run('S7.course', composition);
+  const invariants = courseInvariantDocument(lab);
+  lab.run('S7.course.invariants', invariants);
   return {
     run, receipt, composition, invariants,
-    geometry: lab.get(S5_ADDRESSES.holes), obstacles: lab.get(S5_ADDRESSES.obstacles), walkable: lab.get(S5_ADDRESSES.walkable),
-    graph: lab.get(S5_ADDRESSES.graph), summary: lab.get(S5_ADDRESSES.summary),
-    ledger: lab.get(S5_ADDRESSES.ledger), check: lab.get(S5_ADDRESSES.check)
+    geometry: lab.get(COURSE_ADDRESSES.holes), obstacles: lab.get(COURSE_ADDRESSES.obstacles), walkable: lab.get(COURSE_ADDRESSES.walkable),
+    graph: lab.get(COURSE_ADDRESSES.graph), summary: lab.get(COURSE_ADDRESSES.summary),
+    ledger: lab.get(COURSE_ADDRESSES.ledger), check: lab.get(COURSE_ADDRESSES.check)
   };
 }
