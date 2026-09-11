@@ -116,6 +116,27 @@ def findings(store) -> list[str]:
 
     # px.exp.brain.bench.backend.<calc>.<engine>.<size>: the tournaments put a branch name where
     # the engine goes, so only the three real engines are counted here.
+    # A lane, not a vertical's finding, so it sits at proposal.brain.<k> rather than
+    # proposal.brain.<vertical>.<k>: it is about what the brain as a whole is now good for.
+    written.append(store.put("proposal.brain.blok_generation", {
+        "for": "the brain is a corpus with ground truth attached, which is what generation usually lacks: every "
+               "Calculation here already has an oracle Part saying whether an answer is right and a benchmark Part "
+               "saying what it cost, so a generated variation can be judged instead of admired",
+        "kind": "friction",
+        "text": "a lane the owner asked for at 04:08 and which is not started: optimized Blok generation - seeded, "
+                "motif-patterned variation over the brain's Calculations through crisp vary, judged by the oracle "
+                "Parts (correct), the benchmark Parts (fast) and neat delta (cheap), with the recurring motifs of the "
+                "winners mined back into the motif set by pyto/experiments/molecules. The first thing it needs is the "
+                "query every vertical filed tonight independently: a PQL that joins address kinds on a shared segment, "
+                "because 'the variations whose oracle passes and whose benchmark beats the incumbent' is a join of "
+                "px.exp.brain.oracle.* against px.exp.brain.bench.* on (vertical, calc, case) and there is no way to "
+                "ask for it.",
+        "workaround": "none yet: not started",
+        "proposal": "a motif set Part, a generate-judge-mine loop that writes each variation as a candidate in a "
+                    "bracket Part (so losers are kept, as tonight's tournaments keep theirs), and PQL that joins "
+                    "address kinds on a shared segment - see proposal.brain.backend.pql_cannot_ask_across_a_prefix",
+    }))
+
     plan = store.get("px.exp.brain.result.backend.plan") if store.has("px.exp.brain.result.backend.plan") else None
     if plan:
         flips = [op for op, steps in plan["by_op"].items() if len({step[1] for step in steps}) > 1]
@@ -243,6 +264,10 @@ def map_part(store) -> str:
              "why": "not started: the dense facade had to exist first for the other two verticals to build on tonight"},
         ],
         next_=[
+            {"what": "the blok generation lane (proposal.brain.blok_generation): seeded, motif-patterned variation "
+                     "over these Calculations through crisp vary, judged by the oracle Parts for correct, the "
+                     "benchmark Parts for fast and neat delta for cheap, winners' motifs mined back into the motif set",
+             "for": "the brain is a corpus with ground truth attached, which is what generation usually lacks"},
             {"what": "the kernel half of the packed Part: materialize digesting the buffer instead of re-serialising it, "
                      "and PQL answering 'what shape is it' without decoding. fn.brain.backend.pack/unpack is the vertical "
                      "half and it is built; a packed Part is still a string to everything above it",
