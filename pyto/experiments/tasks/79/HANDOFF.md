@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/79
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/79:pyto/experiments/tasks/79/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 2d7934f origin/exp/79 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 9ea3ae9 origin/exp/79 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ the preset is the projection layer: the card cascade folds into the existing PxC
 
 ## Starting point
 
-2d7934fe4661f5c934ee04296f5d9c693ac993c3 (land(task-78): card cascade editor as a PxC smoke test: four card projections (shelf, bag, single, competition) get cascading defaults global -> projection -> instance; each layer is a Part under px.discstudio.cards.*, fn.cards.effective and fn.cards.apply compose the effective card per projection inside the existing card chain, PQL prefix queries find overrides and inheritance, a recompose receipt says which edit recomposed which cards, and a three-pane editor (all cards, per-projection tabs, selected-card inspector) is retrofitted onto the existing surface; every friction is a proposal Part with its for, nothing is promoted). MAIN may have moved since: `git log --oneline 2d7934f..origin/claude/os-sprint-st8hnu` shows how far.
+2d7934fe4661f5c934ee04296f5d9c693ac993c3 (land(task-78): card cascade editor as a PxC smoke test: four card projections (shelf, bag, single, competition) get cascading defaults global -> projection -> instance; each layer is a Part under px.discstudio.cards.*, fn.cards.effective and fn.cards.apply compose the effective card per projection inside the existing card chain, PQL prefix queries find overrides and inheritance, a recompose receipt says which edit recomposed which cards, and a three-pane editor (all cards, per-projection tabs, selected-card inspector) is retrofitted onto the existing surface; every friction is a proposal Part with its for, nothing is promoted). MAIN may have moved since: `git log --oneline 9ea3ae9..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -97,7 +97,7 @@ pyto/experiments/cards/CONTRACT.md                |  303 +++---
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.xzBaJQZELC) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.o0HklUz26b) (evidence/check_all.txt)
     suite                         tests  status
     library                         435  OK
     experiments/classroom            16  OK

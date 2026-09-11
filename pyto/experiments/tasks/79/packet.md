@@ -47,7 +47,7 @@ pyto/experiments/cards/CONTRACT.md                |  303 +++---
 ## Evidence
 
 - verify: `npm test` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.xzBaJQZELC) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.o0HklUz26b) (evidence/check_all.txt)
     suite                         tests  status
     library                         435  OK
     experiments/classroom            16  OK
