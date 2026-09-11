@@ -3,6 +3,8 @@ import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materi
 import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
 import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
 import { composeFrame } from './frames.js';
+import { battleConstraintDefinitions, validateBattleRule, discCap, placesPoints, tieRule } from './constraints.js';
+import { battleStandings, battleEntry } from './battle.js';
 import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
 import { shelfSheet } from './formats/shelf-sheet.js';
 import { receiptList } from './formats/receipt-list.js';
@@ -35,7 +37,10 @@ export function createStudioRuntime(initial) {
     });
   }
   register('fn.studio.applyCommand', applyCommand, { memo: false });
-  register('fn.domain.fields', ({ material }) => discoverFields(material));
+  // `entry` is the BattleEntry Part fn.battle.entry published for this card, when
+  // there is one: the standings a card shows are then the standings a Calculation
+  // produced, on the record, rather than a value assembled beside the composition.
+  register('fn.domain.fields', ({ material, entry = undefined }) => discoverFields(entry === undefined ? material : { ...material, roots: { ...material.roots, entry: { ...material.roots.entry, record: entry } } }));
   register('fn.disc.art', prepareDiscArt);
   register('fn.art.assign', ({ world, families, key }) => assignArt({ items: shelfItems(world, key), families, key }));
   register('fn.card.compose', composeCard);
@@ -45,6 +50,11 @@ export function createStudioRuntime(initial) {
   register('fn.comparison.layout', ({ layout, course = null, frame = null, ...cards }) => composeOverlay({ cards, layout, course, frame }));
   register('fn.overlay.frame', composeFrame);
   register('fn.overlay.svg', materializeOverlay);
+  register('fn.battle.standings', battleStandings);
+  register('fn.battle.entry', battleEntry);
+  register('fn.constraint.discCap', discCap);
+  register('fn.constraint.placesPoints', placesPoints);
+  register('fn.constraint.tieRule', tieRule);
   register('fn.constraint.bagLimit', bagLimit);
   register('fn.constraint.oneMold', oneMold);
   register('fn.constraint.teamThrows', teamThrows);
@@ -150,21 +160,37 @@ export function createStudioRuntime(initial) {
    * below uses the projection name instead, since it renders one disc four
    * ways in a single composition and needs four distinct Tick names).
    */
+  /**
+   * The battle as one material: its lineup (with the name a reader recognises),
+   * its states in order, and which state is being rendered. One Part,
+   * `px.battle.material`, read by the standings and by every battle Constraint.
+   */
+  const battleMaterial = (w, state) => ({
+    entries: w.battle.entries.map(entry => {
+      const disc = get(w, 'Disc', entry.discId), mold = disc && get(w, 'Mold', disc.moldId);
+      return { id: entry.id, discId: entry.discId, name: disc?.nickname || mold?.name || entry.discId };
+    }),
+    states: w.battle.states.map(state => ({ id: state.id, name: state.name, scores: state.scores })),
+    currentStateId: state.id
+  });
   function cardSteps(discId, presetId, context, entry, suffix, projection = 'single', label = discId) {
     const w = world(), disc = get(w, 'Disc', discId), preset = w.presets[presetId];
     if (!disc) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
     if (!preset) throw new Error(`Missing presentation '${presetId}'.`);
     const mold = get(w, 'Mold', disc.moldId), maker = mold && get(w, 'Manufacturer', mold.manufacturerId);
     if (!mold || !maker) throw new Error(`The product identity for '${disc.nickname || disc.id}' is unresolved.`);
-    const roots = { entry: { type: 'BattleEntry', record: entry }, disc: { type: 'Disc', id: discId }, bag: { type: 'Bag', id: context.bagId }, competition: { type: 'Competition', id: context.competitionId }, round: { type: 'Round', id: context.roundId } };
+    const bound = typeof entry === 'string' && entry.startsWith('px.');
+    const roots = { entry: { type: 'BattleEntry', record: bound ? null : entry }, disc: { type: 'Disc', id: discId }, bag: { type: 'Bag', id: context.bagId }, competition: { type: 'Competition', id: context.competitionId }, round: { type: 'Round', id: context.roundId } };
     if (context.extraType && w.schemas[context.extraType]) roots[context.extraType.toLowerCase()] = { type: context.extraType, id: context.extraId };
     const prefix = `px.render.${suffix}`, mat = source(`${prefix}.inputs`, materialFor(w, roots));
-    const ea = source(`${prefix}.entry`, entry);
+    // An entry is either a value this render composed (the editor's preview) or
+    // the address of the Part fn.battle.entry published for it a Tick earlier.
+    const ea = bound ? entry : source(`${prefix}.entry`, entry);
     const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`, presetAddress = `px.discstudio.cards.preset.${projection}.${discId}`;
     return {
       prefix,
       ticks: [
-        step(`Fields:${label}`, 'fn.domain.fields', { material: mat }, `${prefix}.fields`),
+        step(`Fields:${label}`, 'fn.domain.fields', bound ? { material: mat, entry: ea } : { material: mat }, `${prefix}.fields`),
         step(`Art:${label}`, 'fn.disc.art', { disc: partAddress('Disc', discId), mold: partAddress('Mold', mold.id), maker: partAddress('Manufacturer', maker.id), assignment: 'px.art.assignment' }, `${prefix}.art`),
         tick(`Cascade:${label}`, [
           calc('fn.cards.effective', { global: 'px.discstudio.cards.global', preset: `px.presentation.${presetId}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
@@ -193,16 +219,26 @@ export function createStudioRuntime(initial) {
     ticks.push(step('Frame', 'fn.overlay.frame', { spec, tokens: 'px.discstudio.cards.global' }, 'px.overlay.frame'));
     inputs.frame = 'px.overlay.frame';
     if (world().layout.arrangement === 'course') inputs.course = labCourseAddress();
+    // The standings before any card: ranks from the scores, points from the places
+    // Constraint, the running total through this state. Each card's BattleEntry is
+    // then read off them by fn.battle.entry, so the number on a card and the number
+    // in the standings panel are one Calculation's output, not two.
+    const material = source('px.battle.material', battleMaterial(w, state));
+    const rules = source('px.battle.rules', w.battle.constraints);
+    ticks.push(step('Standings', 'fn.battle.standings', { material, rules }, 'px.battle.standings'));
+    const lineup = mode === 'card' ? w.battle.entries.find(e => e.discId === discId) ?? null : null;
     entries.forEach((entry, i) => {
-      const info = mode === 'card' ? null : { ...entry, score: state.scores[entry.id] ?? null, highlighted: state.highlight === entry.id, winner: state.winners.includes(entry.id) };
-      const built = cardSteps(entry.discId, presetId || w.layout.presetId, { bagId, competitionId, roundId }, info, `course.${entry.id}`, 'competition');
+      const entryId = mode === 'card' ? lineup?.id ?? null : entry.id;
+      const address = `px.render.course.${entry.id}.entry`;
+      if (entryId) ticks.push(step(`Entry:${entry.id}`, 'fn.battle.entry', { standings: 'px.battle.standings', battle: 'px.comparison.states' }, address, { entryId, stateId: state.id }));
+      const built = cardSteps(entry.discId, presetId || w.layout.presetId, { bagId, competitionId, roundId }, entryId ? address : null, `course.${entry.id}`, 'competition');
       ticks.push(...built.ticks); inputs[`card${i}`] = `${built.prefix}.card`;
     });
     ticks.push(step('ArrangeComparison', 'fn.comparison.layout', inputs, 'px.course.scene'));
     ticks.push(step('MaterializeOverlay', 'fn.overlay.svg', { scene: 'px.course.scene', frame: 'px.overlay.frame' }, 'px.course.svg'));
     return { ticks, state };
   }
-  const rendered = state => ({ ...pxc.get('px.course.svg'), part: 'px.course.svg', stateId: state.id, scene: pxc.get('px.course.scene'), frame: pxc.get('px.overlay.frame') });
+  const rendered = state => ({ ...pxc.get('px.course.svg'), part: 'px.course.svg', stateId: state.id, scene: pxc.get('px.course.scene'), frame: pxc.get('px.overlay.frame'), standings: pxc.get('px.battle.standings') });
   function scene(options = {}) {
     const { ticks, state } = sceneComposition(options);
     const run = execute('on-the-course', ticks);
@@ -227,6 +263,23 @@ export function createStudioRuntime(initial) {
     const { ticks, state } = sceneComposition(options);
     const run = await executeAsync('on-the-course-parallel', byStage(ticks), { parallel: true });
     return { ...rendered(state), run };
+  }
+  /**
+   * The battle as Competition[Constraint]: one Tick per enabled Constraint over
+   * the one battle material, composed by the same fn.constraint.combine a
+   * competition uses, filed as the `discomp` receipt.
+   */
+  function battleRules() {
+    const w = world(), state = currentBattle(w);
+    const ma = source('px.battle.material', battleMaterial(w, state)), ticks = [], inputs = {};
+    for (const rule of w.battle.constraints.filter(r => r.enabled)) {
+      const definition = battleConstraintDefinitions[validateBattleRule(rule).kind];
+      const ra = source(`px.battle.constraint.${rule.id}.definition`, rule), into = `px.battle.constraint.${rule.id}.result`;
+      ticks.push(step(rule.id, definition.call, { material: ma, rule: ra }, into)); inputs[rule.id] = into;
+    }
+    ticks.push(step('ComposeConstraints', 'fn.constraint.combine', inputs, 'px.battle.validation', { combine: w.battle.combine }));
+    const run = execute('discomp', ticks);
+    return { ...pxc.get('px.battle.validation'), run, part: 'px.battle.validation' };
   }
   function constraints(competitionId) {
     const w = world(), comp = get(w, 'Competition', competitionId);
@@ -492,7 +545,7 @@ export function createStudioRuntime(initial) {
     return pxc.get(into);
   }
   return {
-    pxc, world, dispatch, card, scene, sceneParallel, constraints, counters, runRecord, execute, executeAsync,
+    pxc, world, dispatch, card, scene, sceneParallel, constraints, battle: battleRules, counters, runRecord, execute, executeAsync,
     receipts,
     cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
     lab: {

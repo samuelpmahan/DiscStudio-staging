@@ -392,6 +392,65 @@ with sync_playwright() as p:
     page.locator('[data-action="orientation"][data-value="landscape"]').click()
     assert_world(page,'discStudio.world.layout.orientation==="landscape" && discStudio.world.layout.frame.presetId==="none"')
     page.locator('[data-control="arrangement"]').select_option('row')
+    # The 5-disc cap battle, the way the owner says it: pick the template, add
+    # discs until the cap refuses one by name, tap the finishing order, and watch
+    # the standings and the cards move together off one fn.battle.standings.
+    page.locator('[data-control="battle-template"]').select_option('cap5-top3')
+    assert_world(page,'discStudio.world.templateId===undefined && discStudio.world.battle.templateId==="cap5-top3"')
+    assert_world(page,'discStudio.world.battle.constraints.map(r=>r.kind).join()==="discCap,placesPoints,tieRule"')
+    assert page.locator('.battle-rule').count()==3
+    assert page.locator('.battle-rule[data-rule="disc-cap"]').count()==1
+    entries=page.evaluate('discStudio.world.battle.entries.map(e=>e.id)')
+    assert len(entries)==3,entries
+    for _ in range(2): page.locator('.disc-row .row-add:not([disabled])').first.click()
+    assert_world(page,'discStudio.world.battle.entries.length===5')
+    assert page.locator('.battle-rule[data-rule="disc-cap"][data-status="pass"]').count()==1
+    page.locator('.disc-row .row-add:not([disabled])').first.click()
+    assert 'caps the lineup at 5 discs' in page.locator('.notice.error').inner_text()
+    assert_world(page,'discStudio.world.battle.entries.length===5'),'a refused add changed nothing'
+    page.locator('[data-action="dismiss"]').click()
+    entries=page.evaluate('discStudio.world.battle.entries.map(e=>e.id)')
+    # one hole, entered by tapping the order: three taps, three places, no typing
+    page.locator('[data-action="order-clear"]').first.click()
+    for entry in entries[:3]: page.locator('[data-action="battle-order"][data-id="%s"]'%entry).click()
+    scores=page.evaluate('discStudio.world.battle.states.find(s=>s.id===discStudio.world.battle.currentStateId).scores')
+    assert [scores[e] for e in entries[:3]]==[1,2,3],scores
+    standings=page.evaluate('discStudio.preview.standings')
+    assert [r['entryId'] for r in standings['table'][:3]]==entries[:3],standings['table']
+    assert [r['points'] for r in standings['table'][:3]]==[3,2,1],standings['table']
+    assert page.locator('.standings-table tbody tr').count()==5
+    assert page.locator('[data-standing="%s"] [data-points]'%entries[0]).inner_text().strip()=='3'
+    # every number came from the one Calculation, and the run says so
+    assert page.evaluate('discStudio.preview.run.trace.some(t=>t.call==="fn.battle.standings"&&t.output==="px.battle.standings")')
+    assert page.evaluate('discStudio.preview.run.trace.filter(t=>t.call==="fn.battle.entry").length')==5
+    assert page.evaluate('discStudio.runtime.pxc.has("px.receipt.discomp")')
+    assert page.evaluate('discStudio.runtime.pxc.get("px.render.course.%s.entry").points'%entries[0])==3
+    # the points node the preset binds is on the card, not only in the panel
+    assert page.evaluate('discStudio.preview.svg').count('>3<')>=1
+    # the keyboard does the same thing: 0 clears this state, 1 taps the first disc in
+    page.locator('.course-center').click()
+    page.keyboard.press('0')
+    assert page.evaluate('Object.values(discStudio.world.battle.states.find(s=>s.id===discStudio.world.battle.currentStateId).scores).every(v=>v===null)')
+    page.keyboard.press('1')
+    assert page.evaluate('discStudio.world.battle.states.find(s=>s.id===discStudio.world.battle.currentStateId).scores["%s"]'%entries[0])==1
+    # a second state: the running total is across the states, through the one on screen
+    for entry in entries[1:3]: page.locator('[data-action="battle-order"][data-id="%s"]'%entry).click()
+    page.locator('[data-action="state-add"]').click()
+    page.locator('[data-action="order-clear"]').first.click()
+    for entry in [entries[1],entries[2],entries[0]]: page.locator('[data-action="battle-order"][data-id="%s"]'%entry).click()
+    standings=page.evaluate('discStudio.preview.standings')
+    states=standings['states'];current_id=page.evaluate('discStudio.world.battle.currentStateId')
+    index=[i for i,state in enumerate(states) if state['id']==current_id][0]
+    current,previous=states[index],states[index-1]
+    points={r['entryId']:r['points'] for r in current['rows']}
+    assert [points[e] for e in [entries[1],entries[2],entries[0]]]==[3,2,1],points
+    # the total IS the running total: the state before this one, plus what this one paid
+    assert all(current['totals'][e]==previous['totals'][e]+points.get(e,0) for e in current['totals']),(current['totals'],previous['totals'])
+    assert {r['entryId']:r['total'] for r in standings['table']}==current['totals'],standings['table']
+    page.screenshot(path=str(out/'battle.png'))
+    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'battle rules overflow'
+    record('A DiscComp is composed from reusable Constraints: the 5-disc cap template composes discCap, placesPoints and tieRule, the cap refuses a sixth disc by name without changing anything, a hole is entered with one tap per disc (or the number keys), and fn.battle.standings scores ranks, points and a running total once for both the standings panel and the cards')
+    page.locator('[data-control="battle-template"]').select_option('open')
     # Reset screenshot state without erasing the verified export/review artifacts.
     page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:"state-1"})')
     for name in ['shelf','course','course-build','components','competition']:
