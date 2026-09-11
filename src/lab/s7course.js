@@ -1,18 +1,25 @@
 /**
- * S7 Pathfinding, first half: the Course. Something upstream says which hole is
- * which and where its anchors are (S6's straight holes, or the nearest-anchor
- * fallback); this says what the course IS -- the holes as a graph over the
- * canonical raster, and what lies between the anchors.
+ * S7 Pathfinding, first half: the Course. S6 says which holes the picture
+ * actually supports -- the ones whose tee, badge and basket are on one line --
+ * and which badges it cannot finish; this says what the course IS: those holes
+ * as a graph over the canonical raster, and what lies between their anchors.
  *
- *   consumes  px.holes.objects       (S4: the assembled holes, in badge order)
- *             px.holes.unplaced      (S4: what no hole could use)
+ * It binds `px.holes.straight`, not the nearest-anchor fallback's
+ * `px.holes.objects`. The two lists are different claims about the same
+ * picture: the fallback always produces a hole, the ray produces one only where
+ * three points really are on a line. A round that is played over guesses while a
+ * ray-resolved list sits beside it is a round nobody can check, so the doglegs
+ * S6 refused to finish arrive here as `unplayed` and are never quietly routed.
+ *
+ *   consumes  px.holes.straight      (S6: the holes three points make a line for)
+ *             px.holes.unresolved    (S6: the badges whose hole bends)
  *             px.course.canonicalPixels (S0: the frame every coordinate is in)
  *             px.remaining.afterBadges  (S1: every pixel no Badge owns or mutes)
  *             px.components          (S2: the bright and dark masks and labels)
  *             px.baskets / px.tees   (S2, S3: the pixels those objects own)
  *   produces  px.course.graph        holes in play order, hole geometry, the
  *                                    obstacle map, and the walkable cells
- *             px.course.summary      hole count, total length, unplaced
+ *             px.course.summary      hole count, total length, and what is unplayed
  *
  * The obstacle map is a derivation, not a detector. Every pixel of the raster
  * leaves through exactly one door:
@@ -69,24 +76,29 @@ export const cellCenter = (frame, cell) => [(cell % frame.cols) * frame.cellPx +
  * geometry leaves its own frame is not a course with a bad number in it, it is
  * a course built from anchors that were never checked.
  */
-export function holeGeometry({ holes, raster }) {
+export function holeGeometry({ holes, unresolved, raster }) {
   const frame = { widthPx: raster.widthPx, heightPx: raster.heightPx };
   const inside = point => point[0] >= 0 && point[1] >= 0 && point[0] < frame.widthPx && point[1] < frame.heightPx;
-  const placed = [], incomplete = [];
+  const placed = [];
   for (const hole of holes) {
-    if (!hole.complete) { incomplete.push({ number: hole.number, missing: hole.missing }); continue; }
     for (const [role, anchor] of [['tee', hole.tee], ['basket', hole.basket]])
-      if (!inside(anchor.at)) throw new Error(`lab s5: hole ${hole.number}'s ${role} at ${anchor.at.map(value => value.toFixed(1)).join(',')} leaves canonical raster ${frame.widthPx}x${frame.heightPx}.`);
+      if (!inside(anchor.at)) throw new Error(`lab s7: hole ${hole.number}'s ${role} at ${anchor.at.map(value => value.toFixed(1)).join(',')} leaves canonical raster ${frame.widthPx}x${frame.heightPx}.`);
     const vector = [round3(hole.basket.at[0] - hole.tee.at[0]), round3(hole.basket.at[1] - hole.tee.at[1])];
     placed.push({
-      number: hole.number, badge: hole.badge.id,
+      number: hole.number, badge: hole.badge.id, basis: hole.basis,
       tee: { id: hole.tee.id, at: hole.tee.at.map(round3) }, basket: { id: hole.basket.id, at: hole.basket.at.map(round3) },
       vector, lengthPx: round3(distance(hole.tee.at, hole.basket.at)),
       bearingDeg: round3((Math.atan2(vector[1], vector[0]) * 180 / Math.PI + 360) % 360),
-      confidence: hole.confidence.value
+      // What S6 measured for this hole, carried on: the perpendicular distance
+      // from the basket to the tee-to-badge ray. A course made of straight holes
+      // has a residual per hole, and it is the reason each hole is in the round.
+      residualPx: hole.residualPx ?? null
     });
   }
-  return { frame, order: placed.map(hole => hole.number), holes: placed, incomplete };
+  // Every badge S6 could not finish. They are NOT holes with something missing:
+  // they are holes whose shape the straight-line rule cannot express.
+  const unplayed = (unresolved?.doglegs ?? []).map(entry => ({ badge: entry.badge, reading: entry.reading, why: entry.why }));
+  return { frame, order: placed.map(hole => hole.number), holes: placed, unplayed, spare: { tees: (unresolved?.tees ?? []).map(entry => entry.id), baskets: (unresolved?.baskets ?? []).map(entry => entry.id) } };
 }
 
 /**
@@ -170,15 +182,18 @@ export function courseGraph({ geometry, obstacles, walkable, course }) {
 }
 
 /** Tick 5. The summary a reader reads first. */
-export function courseSummary({ graph, geometry, unplaced }) {
+export function courseSummary({ graph, geometry }) {
   return {
     for: 'the course in five numbers, and what is not in it',
     course: graph.course, holes: graph.holes.length, order: graph.order,
+    from: labAddress('px.holes.straight'),
     totalLengthPx: round3(graph.holes.reduce((sum, hole) => sum + hole.lengthPx, 0)),
     longestHole: graph.holes.reduce((longest, hole) => (!longest || hole.lengthPx > longest.lengthPx ? hole : longest), null)?.number ?? null,
     blockedStraightLegs: graph.edges.filter(edge => edge.straightIsBlocked).map(edge => `${edge.kind}:${edge.from}->${edge.to}`),
     cellPx: graph.frame.cellPx, walkableCells: graph.walkable.count, obstacleCells: graph.obstacles.terrainCells.length,
-    unplaced: { holes: geometry.incomplete, badges: unplaced.badges.map(badge => badge.id), tees: unplaced.tees.map(tee => tee.id), baskets: unplaced.baskets.map(basket => basket.id) }
+    // A dogleg is not routed by the fallback and not straightened: it is named.
+    unplayed: { doglegs: geometry.unplayed, tees: geometry.spare.tees, baskets: geometry.spare.baskets },
+    residualPx: graph.holes.map(hole => hole.residualPx)
   };
 }
 
@@ -190,13 +205,13 @@ export function accountCourse({ obstacles, walkable, graph, geometry }) {
     pixelsInFrame: obstacles.frame.widthPx * obstacles.frame.heightPx,
     cells: obstacles.frame.cells, cellsByClass: obstacles.cellsByClass,
     walkableCells: walkable.count, obstacleCells: obstacles.terrain.cells.length,
-    holes: graph.holes.length, incomplete: geometry.incomplete.length,
+    holes: graph.holes.length, unplayed: geometry.unplayed.length,
     anchors: graph.nodes.length, edges: graph.edges.length
   };
 }
 
 /** Three invariants: the anchors are in the frame, the map is a partition, and the play order is S4's. */
-export function checkCourse({ ledger, graph, holes, obstacles }) {
+export function checkCourse({ ledger, graph, holes, obstacles, summary }) {
   const frame = graph.frame;
   const inFrame = point => point[0] >= 0 && point[1] >= 0 && point[0] < frame.widthPx && point[1] < frame.heightPx;
   const checks = {
@@ -206,8 +221,10 @@ export function checkCourse({ ledger, graph, holes, obstacles }) {
       Object.values(ledger.cellsByClass).reduce((sum, value) => sum + value, 0) === ledger.cells &&
       graph.walkable.cells.every((value, cell) => (value === 1) === (obstacles.cells[cell] !== 'terrain')),
     terrainIsWhatNoStageOwns: obstacles.pixelsByClass.terrain === obstacles.terrain.pixels.length,
-    playOrderIsTheBadgeOrder: JSON.stringify(graph.order) === JSON.stringify(holes.filter(hole => hole.complete).map(hole => hole.number)),
-    everyEdgeIsAnchored: graph.edges.every(edge => graph.nodes.some(node => node.id === edge.from) && graph.nodes.some(node => node.id === edge.to))
+    playOrderIsTheStraightHoleOrder: JSON.stringify(graph.order) === JSON.stringify(holes.map(hole => hole.number)),
+    everyEdgeIsAnchored: graph.edges.every(edge => graph.nodes.some(node => node.id === edge.from) && graph.nodes.some(node => node.id === edge.to)),
+    // No dogleg sneaks into the course by another door.
+    everyDoglegIsNamedNotRouted: (summary?.unplayed?.doglegs ?? []).every(entry => !graph.holes.some(hole => hole.badge === entry.badge))
   };
   return { ...ledger, checks, balanced: Object.values(checks).every(Boolean) };
 }
@@ -225,19 +242,19 @@ export function registerCourse(lab) {
 export const COURSE_CONTRACT = {
   stage: 'S7', name: 'Course',
   for: 'the course as a graph over the canonical raster, with the obstacle map derived from what the Stages left unclaimed',
-  consumes: ['px.holes.objects', 'px.holes.unplaced', 'px.course.canonicalPixels', 'px.remaining.afterBadges', 'px.components', 'px.baskets', 'px.tees'].map(labAddress),
+  consumes: ['px.holes.straight', 'px.holes.unresolved', 'px.course.canonicalPixels', 'px.remaining.afterBadges', 'px.components', 'px.baskets', 'px.tees'].map(labAddress),
   produces: [COURSE_ADDRESSES.graph, COURSE_ADDRESSES.summary],
   ticks: ['Course.holeGeometry', 'Course.obstacleMap', 'Course.walkable', 'Course.graph', 'Course.summary'],
-  invariants: ['anchorsInsideTheRaster', 'everyPixelLeavesOnce', 'theMapIsAPartition', 'terrainIsWhatNoStageOwns', 'playOrderIsTheBadgeOrder', 'everyEdgeIsAnchored']
+  invariants: ['anchorsInsideTheRaster', 'everyPixelLeavesOnce', 'theMapIsAPartition', 'terrainIsWhatNoStageOwns', 'playOrderIsTheStraightHoleOrder', 'everyEdgeIsAnchored', 'everyDoglegIsNamedNotRouted']
 };
 
 export function courseTicks({ course = 'labfixture', cellPx = CELL_PX } = {}) {
   return [
-    { name: 'Course.holeGeometry', Calculations: [{ call: labAddress('fn.Course.holeGeometry'), with: { holes: labAddress('px.holes.objects'), raster: labAddress('px.course.canonicalPixels') }, args: {}, into: COURSE_ADDRESSES.holes }] },
+    { name: 'Course.holeGeometry', Calculations: [{ call: labAddress('fn.Course.holeGeometry'), with: { holes: labAddress('px.holes.straight'), unresolved: labAddress('px.holes.unresolved'), raster: labAddress('px.course.canonicalPixels') }, args: {}, into: COURSE_ADDRESSES.holes }] },
     { name: 'Course.obstacleMap', Calculations: [{ call: labAddress('fn.Course.obstacleMap'), with: { remaining: labAddress('px.remaining.afterBadges'), fields: labAddress('px.components'), baskets: labAddress('px.baskets'), tees: labAddress('px.tees'), raster: labAddress('px.course.canonicalPixels') }, args: { cellPx }, into: COURSE_ADDRESSES.obstacles }] },
     { name: 'Course.walkable', Calculations: [{ call: labAddress('fn.Course.walkable'), with: { obstacles: COURSE_ADDRESSES.obstacles }, args: {}, into: COURSE_ADDRESSES.walkable }] },
     { name: 'Course.graph', Calculations: [{ call: labAddress('fn.Course.graph'), with: { geometry: COURSE_ADDRESSES.holes, obstacles: COURSE_ADDRESSES.obstacles, walkable: COURSE_ADDRESSES.walkable }, args: { course }, into: COURSE_ADDRESSES.graph }] },
-    { name: 'Course.summary', Calculations: [{ call: labAddress('fn.Course.summary'), with: { graph: COURSE_ADDRESSES.graph, geometry: COURSE_ADDRESSES.holes, unplaced: labAddress('px.holes.unplaced') }, args: {}, into: COURSE_ADDRESSES.summary }] }
+    { name: 'Course.summary', Calculations: [{ call: labAddress('fn.Course.summary'), with: { graph: COURSE_ADDRESSES.graph, geometry: COURSE_ADDRESSES.holes }, args: {}, into: COURSE_ADDRESSES.summary }] }
   ];
 }
 
@@ -249,7 +266,7 @@ export function compiledCourse() { return compiledStage('S7.course', compileMerm
 export function courseInvariantDocument(lab) {
   return lab.document('S7.course.invariants', [
     { name: 'AccountCourse', Calculations: [{ call: 'fn.lab.s7.accountcourse', with: { obstacles: COURSE_ADDRESSES.obstacles, walkable: COURSE_ADDRESSES.walkable, graph: COURSE_ADDRESSES.graph, geometry: COURSE_ADDRESSES.holes }, args: {}, into: COURSE_ADDRESSES.ledger }] },
-    { name: 'CheckCourse', Calculations: [{ call: 'fn.lab.s7.checkcourse', with: { ledger: COURSE_ADDRESSES.ledger, graph: COURSE_ADDRESSES.graph, holes: labAddress('px.holes.objects'), obstacles: COURSE_ADDRESSES.obstacles }, args: {}, into: COURSE_ADDRESSES.check }] }
+    { name: 'CheckCourse', Calculations: [{ call: 'fn.lab.s7.checkcourse', with: { ledger: COURSE_ADDRESSES.ledger, graph: COURSE_ADDRESSES.graph, holes: labAddress('px.holes.straight'), obstacles: COURSE_ADDRESSES.obstacles, summary: COURSE_ADDRESSES.summary }, args: {}, into: COURSE_ADDRESSES.check }] }
   ]);
 }
 

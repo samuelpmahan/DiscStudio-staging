@@ -19,17 +19,20 @@
             "identity_scope": "registered-address-and-revision:1"
           },
           "inputs": {
-            "holes": "px:px.exp.lab.holes.objects",
+            "holes": "px:px.exp.lab.holes.straight",
+            "unresolved": "px:px.exp.lab.holes.unresolved",
             "raster": "px:px.exp.lab.course.canonicalpixels"
           },
           "args": {},
           "into": "px.exp.lab.course.holes",
           "declared_consumes": [
-            "px:px.exp.lab.holes.objects",
+            "px:px.exp.lab.holes.straight",
+            "px:px.exp.lab.holes.unresolved",
             "px:px.exp.lab.course.canonicalpixels"
           ],
           "actual_consumes": [
-            "px.exp.lab.holes.objects",
+            "px.exp.lab.holes.straight",
+            "px.exp.lab.holes.unresolved",
             "px.exp.lab.course.canonicalpixels"
           ],
           "actual_produces": [
@@ -53,17 +56,44 @@
               },
               "order": [
                 1,
-                10
+                11
               ],
               "holes": [
                 {
                   "number": 1,
                   "badge": "badge-3",
+                  "basis": "tee-badge-ray-continued",
                   "tee": {
                     "id": "tee-3",
                     "at": [
-                      427.5,
-                      530.5
+                      329.5,
+                      510.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-3",
+                    "at": [
+                      330,
+                      691
+                    ]
+                  },
+                  "vector": [
+                    0.5,
+                    180.5
+                  ],
+                  "lengthPx": 180.501,
+                  "bearingDeg": 89.841,
+                  "residualPx": 0.5
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-2",
+                  "basis": "tee-badge-ray-continued",
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
                     ]
                   },
                   "basket": {
@@ -74,47 +104,37 @@
                     ]
                   },
                   "vector": [
-                    -179.5,
-                    -119.5
+                    0.5,
+                    260.5
                   ],
-                  "lengthPx": 215.64,
-                  "bearingDeg": 213.653,
-                  "confidence": 1
-                },
-                {
-                  "number": 10,
-                  "badge": "badge-1",
-                  "tee": {
-                    "id": "tee-2",
-                    "at": [
-                      247.5,
-                      150.5
-                    ]
-                  },
-                  "basket": {
-                    "id": "basket-2",
-                    "at": [
-                      171,
-                      461
-                    ]
-                  },
-                  "vector": [
-                    -76.5,
-                    310.5
-                  ],
-                  "lengthPx": 319.785,
-                  "bearingDeg": 103.841,
-                  "confidence": 1
+                  "lengthPx": 260.5,
+                  "bearingDeg": 89.89,
+                  "residualPx": 0.5
                 }
               ],
-              "incomplete": [
+              "unplayed": [
                 {
-                  "number": 11,
-                  "missing": [
-                    "basket"
-                  ]
+                  "badge": "badge-1",
+                  "reading": "10",
+                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                },
+                {
+                  "badge": "badge-4",
+                  "reading": "11",
+                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
                 }
-              ]
+              ],
+              "spare": {
+                "tees": [
+                  "tee-1",
+                  "tee-4",
+                  "tee-5"
+                ],
+                "baskets": [
+                  "basket-2",
+                  "basket-4"
+                ]
+              }
             },
             "note": null
           }
@@ -197,17 +217,17 @@
               "priority": "a cell takes the first class present in it, in the order above",
               "pixelsByClass": {
                 "terrain": 7538,
-                "basket": 7400,
-                "tee": 480,
+                "basket": 11100,
+                "tee": 656,
                 "badge": 7200,
-                "open": 448422
+                "open": 444546
               },
               "cellsByClass": {
                 "terrain": 69,
-                "basket": 49,
-                "tee": 13,
+                "basket": 73,
+                "tee": 17,
                 "badge": 45,
-                "open": 1680
+                "open": 1652
               },
               "cells": [
                 "open",
@@ -550,17 +570,44 @@
               "walkableRule": "every class but terrain: a badge, a basket and a tee are printed on the map, and a tee or a basket is where a leg ends",
               "order": [
                 1,
-                10
+                11
               ],
               "holes": [
                 {
                   "number": 1,
                   "badge": "badge-3",
+                  "basis": "tee-badge-ray-continued",
                   "tee": {
                     "id": "tee-3",
                     "at": [
-                      427.5,
-                      530.5
+                      329.5,
+                      510.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-3",
+                    "at": [
+                      330,
+                      691
+                    ]
+                  },
+                  "vector": [
+                    0.5,
+                    180.5
+                  ],
+                  "lengthPx": 180.501,
+                  "bearingDeg": 89.841,
+                  "residualPx": 0.5
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-2",
+                  "basis": "tee-badge-ray-continued",
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
                     ]
                   },
                   "basket": {
@@ -571,37 +618,12 @@
                     ]
                   },
                   "vector": [
-                    -179.5,
-                    -119.5
+                    0.5,
+                    260.5
                   ],
-                  "lengthPx": 215.64,
-                  "bearingDeg": 213.653,
-                  "confidence": 1
-                },
-                {
-                  "number": 10,
-                  "badge": "badge-1",
-                  "tee": {
-                    "id": "tee-2",
-                    "at": [
-                      247.5,
-                      150.5
-                    ]
-                  },
-                  "basket": {
-                    "id": "basket-2",
-                    "at": [
-                      171,
-                      461
-                    ]
-                  },
-                  "vector": [
-                    -76.5,
-                    310.5
-                  ],
-                  "lengthPx": 319.785,
-                  "bearingDeg": 103.841,
-                  "confidence": 1
+                  "lengthPx": 260.5,
+                  "bearingDeg": 89.89,
+                  "residualPx": 0.5
                 }
               ],
               "nodes": [
@@ -610,25 +632,25 @@
                   "kind": "tee",
                   "hole": 1,
                   "at": [
-                    427.5,
-                    530.5
+                    329.5,
+                    510.5
                   ],
-                  "cell": 1082
+                  "cell": 1012
                 },
                 {
-                  "id": "basket-1",
+                  "id": "basket-3",
                   "kind": "basket",
                   "hole": 1,
                   "at": [
-                    248,
-                    411
+                    330,
+                    691
                   ],
-                  "cell": 815
+                  "cell": 1396
                 },
                 {
                   "id": "tee-2",
                   "kind": "tee",
-                  "hole": 10,
+                  "hole": 11,
                   "at": [
                     247.5,
                     150.5
@@ -636,14 +658,14 @@
                   "cell": 303
                 },
                 {
-                  "id": "basket-2",
+                  "id": "basket-1",
                   "kind": "basket",
-                  "hole": 10,
+                  "hole": 11,
                   "at": [
-                    171,
-                    461
+                    248,
+                    411
                   ],
-                  "cell": 906
+                  "cell": 815
                 }
               ],
               "edges": [
@@ -651,24 +673,24 @@
                   "kind": "play",
                   "hole": 1,
                   "from": "tee-3",
-                  "to": "basket-1",
-                  "straightLengthPx": 215.64,
+                  "to": "basket-3",
+                  "straightLengthPx": 180.501,
                   "straightIsBlocked": false
                 },
                 {
                   "kind": "walk",
-                  "hole": 10,
-                  "from": "basket-1",
+                  "hole": 11,
+                  "from": "basket-3",
                   "to": "tee-2",
-                  "straightLengthPx": 260.5,
-                  "straightIsBlocked": true
+                  "straightLengthPx": 546.76,
+                  "straightIsBlocked": false
                 },
                 {
                   "kind": "play",
-                  "hole": 10,
+                  "hole": 11,
                   "from": "tee-2",
-                  "to": "basket-2",
-                  "straightLengthPx": 319.785,
+                  "to": "basket-1",
+                  "straightLengthPx": 260.5,
                   "straightIsBlocked": true
                 }
               ],
@@ -682,17 +704,17 @@
                 ],
                 "cellsByClass": {
                   "terrain": 69,
-                  "basket": 49,
-                  "tee": 13,
+                  "basket": 73,
+                  "tee": 17,
                   "badge": 45,
-                  "open": 1680
+                  "open": 1652
                 },
                 "pixelsByClass": {
                   "terrain": 7538,
-                  "basket": 7400,
-                  "tee": 480,
+                  "basket": 11100,
+                  "tee": 656,
                   "badge": 7200,
-                  "open": 448422
+                  "open": 444546
                 },
                 "cells": [
                   "open",
@@ -929,20 +951,17 @@
           },
           "inputs": {
             "graph": "px:px.exp.lab.course.graph",
-            "geometry": "px:px.exp.lab.course.holes",
-            "unplaced": "px:px.exp.lab.holes.unplaced"
+            "geometry": "px:px.exp.lab.course.holes"
           },
           "args": {},
           "into": "px.exp.lab.course.summary",
           "declared_consumes": [
             "px:px.exp.lab.course.graph",
-            "px:px.exp.lab.course.holes",
-            "px:px.exp.lab.holes.unplaced"
+            "px:px.exp.lab.course.holes"
           ],
           "actual_consumes": [
             "px.exp.lab.course.graph",
-            "px.exp.lab.course.holes",
-            "px.exp.lab.holes.unplaced"
+            "px.exp.lab.course.holes"
           ],
           "actual_produces": [
             "px.exp.lab.course.summary"
@@ -955,7 +974,7 @@
           ],
           "duration_ms": null,
           "result_sha256": null,
-          "hit": true,
+          "hit": false,
           "value": {
             "kind": "json",
             "data": {
@@ -964,30 +983,44 @@
               "holes": 2,
               "order": [
                 1,
-                10
+                11
               ],
-              "totalLengthPx": 535.425,
-              "longestHole": 10,
+              "from": "px.exp.lab.holes.straight",
+              "totalLengthPx": 441.001,
+              "longestHole": 11,
               "blockedStraightLegs": [
-                "walk:basket-1->tee-2",
-                "play:tee-2->basket-2"
+                "play:tee-2->basket-1"
               ],
               "cellPx": 16,
               "walkableCells": 1787,
               "obstacleCells": 69,
-              "unplaced": {
-                "holes": [
+              "unplayed": {
+                "doglegs": [
                   {
-                    "number": 11,
-                    "missing": [
-                      "basket"
-                    ]
+                    "badge": "badge-1",
+                    "reading": "10",
+                    "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                  },
+                  {
+                    "badge": "badge-4",
+                    "reading": "11",
+                    "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
                   }
                 ],
-                "badges": [],
-                "tees": [],
-                "baskets": []
-              }
+                "tees": [
+                  "tee-1",
+                  "tee-4",
+                  "tee-5"
+                ],
+                "baskets": [
+                  "basket-2",
+                  "basket-4"
+                ]
+              },
+              "residualPx": [
+                0.5,
+                0.5
+              ]
             },
             "note": null
           }
@@ -996,7 +1029,14 @@
     }
   ],
   "parts": {
-    "px.exp.lab.holes.objects": {
+    "px.exp.lab.holes.straight": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.holes"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.unresolved": {
       "written_by": null,
       "read_by": [
         "px.exp.lab.course.holes"
@@ -1069,13 +1109,6 @@
       ],
       "preexisting": false
     },
-    "px.exp.lab.holes.unplaced": {
-      "written_by": null,
-      "read_by": [
-        "px.exp.lab.course.summary"
-      ],
-      "preexisting": true
-    },
     "px.exp.lab.course.summary": {
       "written_by": "px.exp.lab.course.summary",
       "read_by": [],
@@ -1084,8 +1117,8 @@
   },
   "counters": {
     "invocations": 5,
-    "hits": 3,
-    "computed": 2,
+    "hits": 2,
+    "computed": 3,
     "wall_ms": null
   }
 }

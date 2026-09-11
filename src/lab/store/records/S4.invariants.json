@@ -70,15 +70,15 @@
                   "rejected": 5
                 },
                 "basket": {
-                  "clean": 2,
-                  "recovered": 1,
-                  "total": 3,
-                  "rejected": 5
-                },
-                "tee": {
                   "clean": 3,
                   "recovered": 1,
                   "total": 4,
+                  "rejected": 5
+                },
+                "tee": {
+                  "clean": 4,
+                  "recovered": 1,
+                  "total": 5,
                   "rejected": 5
                 }
               },

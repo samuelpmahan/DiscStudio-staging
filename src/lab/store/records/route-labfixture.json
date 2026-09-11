@@ -89,7 +89,7 @@
                   ]
                 },
                 {
-                  "id": "badge-candidate:black-component-11:white-component-17",
+                  "id": "badge-candidate:black-component-11:white-component-18",
                   "reading": "01",
                   "status": "read",
                   "bbox": [
@@ -130,6 +130,19 @@
                     171,
                     461
                   ]
+                },
+                {
+                  "id": "basket-3",
+                  "bbox": [
+                    305,
+                    654,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    330,
+                    691
+                  ]
                 }
               ],
               "tees": [
@@ -161,6 +174,19 @@
                 },
                 {
                   "id": "tee-3",
+                  "bbox": [
+                    322,
+                    498,
+                    16,
+                    30
+                  ],
+                  "at": [
+                    329.5,
+                    510.5
+                  ]
+                },
+                {
+                  "id": "tee-4",
                   "bbox": [
                     420,
                     518,
@@ -219,7 +245,7 @@
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-candidate:black-component-11:white-component-17",
+                  "badge": "badge-candidate:black-component-11:white-component-18",
                   "at": [
                     330,
                     598
@@ -227,18 +253,18 @@
                   "tee": {
                     "id": "tee-3",
                     "at": [
-                      427.5,
-                      530.5
+                      329.5,
+                      510.5
                     ],
-                    "gapFromBadgePx": 118.585
+                    "gapFromBadgePx": 87.501
                   },
                   "basket": {
-                    "id": "basket-1",
+                    "id": "basket-3",
                     "at": [
-                      248,
-                      411
+                      330,
+                      691
                     ],
-                    "gapFromBadgePx": 204.189
+                    "gapFromBadgePx": 93
                   }
                 },
                 {
@@ -257,12 +283,12 @@
                     "gapFromBadgePx": 160.507
                   },
                   "basket": {
-                    "id": "basket-2",
+                    "id": "basket-1",
                     "at": [
-                      171,
-                      461
+                      248,
+                      411
                     ],
-                    "gapFromBadgePx": 184.201
+                    "gapFromBadgePx": 165.206
                   }
                 },
                 {
@@ -280,17 +306,24 @@
                     ],
                     "gapFromBadgePx": 296.355
                   },
-                  "basket": null
+                  "basket": {
+                    "id": "basket-2",
+                    "at": [
+                      171,
+                      461
+                    ],
+                    "gapFromBadgePx": 198.54
+                  }
                 }
               ],
               "unreadable": [],
               "unbound": {
-                "tees": [],
+                "tees": [
+                  "tee-4"
+                ],
                 "baskets": []
               },
-              "incomplete": [
-                11
-              ]
+              "incomplete": []
             },
             "note": null
           }
@@ -343,27 +376,27 @@
                 "from": {
                   "id": "tee-3",
                   "at": [
-                    427.5,
-                    530.5
+                    329.5,
+                    510.5
                   ]
                 },
                 "to": {
-                  "id": "basket-1",
+                  "id": "basket-3",
                   "at": [
-                    248,
-                    411
+                    330,
+                    691
                   ]
                 },
-                "lengthPx": 215.64
+                "lengthPx": 180.501
               },
               {
                 "kind": "walk",
                 "hole": 10,
                 "from": {
-                  "id": "basket-1",
+                  "id": "basket-3",
                   "at": [
-                    248,
-                    411
+                    330,
+                    691
                   ]
                 },
                 "to": {
@@ -373,7 +406,7 @@
                     150.5
                   ]
                 },
-                "lengthPx": 260.5
+                "lengthPx": 546.76
               },
               {
                 "kind": "play",
@@ -386,13 +419,51 @@
                   ]
                 },
                 "to": {
+                  "id": "basket-1",
+                  "at": [
+                    248,
+                    411
+                  ]
+                },
+                "lengthPx": 260.5
+              },
+              {
+                "kind": "walk",
+                "hole": 11,
+                "from": {
+                  "id": "basket-1",
+                  "at": [
+                    248,
+                    411
+                  ]
+                },
+                "to": {
+                  "id": "tee-1",
+                  "at": [
+                    477.5,
+                    90.5
+                  ]
+                },
+                "lengthPx": 394.196
+              },
+              {
+                "kind": "play",
+                "hole": 11,
+                "from": {
+                  "id": "tee-1",
+                  "at": [
+                    477.5,
+                    90.5
+                  ]
+                },
+                "to": {
                   "id": "basket-2",
                   "at": [
                     171,
                     461
                   ]
                 },
-                "lengthPx": 319.785
+                "lengthPx": 480.846
               }
             ],
             "note": null
@@ -456,14 +527,20 @@
               "holes": [
                 {
                   "number": 1,
-                  "badge": "badge-candidate:black-component-11:white-component-17",
+                  "badge": "badge-candidate:black-component-11:white-component-18",
                   "tee": "tee-3",
-                  "basket": "basket-1"
+                  "basket": "basket-3"
                 },
                 {
                   "number": 10,
                   "badge": "badge-candidate:black-component-5:white-component-8",
                   "tee": "tee-2",
+                  "basket": "basket-1"
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-candidate:black-component-6:white-component-9",
+                  "tee": "tee-1",
                   "basket": "basket-2"
                 }
               ],
@@ -471,8 +548,22 @@
                 {
                   "id": "tee-3",
                   "at": [
-                    427.5,
-                    530.5
+                    329.5,
+                    510.5
+                  ]
+                },
+                {
+                  "id": "basket-3",
+                  "at": [
+                    330,
+                    691
+                  ]
+                },
+                {
+                  "id": "tee-2",
+                  "at": [
+                    247.5,
+                    150.5
                   ]
                 },
                 {
@@ -483,10 +574,10 @@
                   ]
                 },
                 {
-                  "id": "tee-2",
+                  "id": "tee-1",
                   "at": [
-                    247.5,
-                    150.5
+                    477.5,
+                    90.5
                   ]
                 },
                 {
@@ -504,27 +595,27 @@
                   "from": {
                     "id": "tee-3",
                     "at": [
-                      427.5,
-                      530.5
+                      329.5,
+                      510.5
                     ]
                   },
                   "to": {
-                    "id": "basket-1",
+                    "id": "basket-3",
                     "at": [
-                      248,
-                      411
+                      330,
+                      691
                     ]
                   },
-                  "lengthPx": 215.64
+                  "lengthPx": 180.501
                 },
                 {
                   "kind": "walk",
                   "hole": 10,
                   "from": {
-                    "id": "basket-1",
+                    "id": "basket-3",
                     "at": [
-                      248,
-                      411
+                      330,
+                      691
                     ]
                   },
                   "to": {
@@ -534,7 +625,7 @@
                       150.5
                     ]
                   },
-                  "lengthPx": 260.5
+                  "lengthPx": 546.76
                 },
                 {
                   "kind": "play",
@@ -547,25 +638,63 @@
                     ]
                   },
                   "to": {
+                    "id": "basket-1",
+                    "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "lengthPx": 260.5
+                },
+                {
+                  "kind": "walk",
+                  "hole": 11,
+                  "from": {
+                    "id": "basket-1",
+                    "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "to": {
+                    "id": "tee-1",
+                    "at": [
+                      477.5,
+                      90.5
+                    ]
+                  },
+                  "lengthPx": 394.196
+                },
+                {
+                  "kind": "play",
+                  "hole": 11,
+                  "from": {
+                    "id": "tee-1",
+                    "at": [
+                      477.5,
+                      90.5
+                    ]
+                  },
+                  "to": {
                     "id": "basket-2",
                     "at": [
                       171,
                       461
                     ]
                   },
-                  "lengthPx": 319.785
+                  "lengthPx": 480.846
                 }
               ],
-              "playLengthPx": 535.425,
-              "walkLengthPx": 260.5,
-              "totalLengthPx": 795.925,
+              "playLengthPx": 921.847,
+              "walkLengthPx": 940.956,
+              "totalLengthPx": 1862.803,
               "unplaced": {
                 "badges": [],
-                "tees": [],
+                "tees": [
+                  "tee-4"
+                ],
                 "baskets": [],
-                "incompleteHoles": [
-                  11
-                ]
+                "incompleteHoles": []
               }
             },
             "note": null

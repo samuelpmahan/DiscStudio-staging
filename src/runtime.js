@@ -474,7 +474,10 @@ export function createStudioRuntime(initial) {
       // The sample is the LAB fixture at its fullest: three badges (one hole whose
       // basket is missing, so S4 names what it could not place), and a region of
       // terrain, so S5's obstacle map is something a reader can see.
-      sample: () => fixtureCapture(20260911, { hole11: true, obstacle: true }),
+      // The course sample: the overlaps S4 recovers from, the pointing tees S5
+      // reads and the collinear baskets S6 continues onto, and the obstacle S7
+      // has to walk round. Every Stage in labStageSpecs() has something to do.
+      sample: () => fixtureCapture(20260911, { obstacle: true, overlaps: true, aligned: true, aligned2: true }),
       specs: () => labSpecs.map(spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', produces: [...spec.produces], needs: [...(spec.needs ?? [])] })),
       begin: labBegin, stage: labStage, pipeline: labPipeline, addStage: labAddStage,
       state: () => pxc.get(LAB_PIPELINE),

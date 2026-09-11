@@ -34,6 +34,9 @@ import { S3_ADDRESSES, registerS3, s3Document } from './s3.js';
 // s4/s5/s6 to holes-nearest/s7course/s7round -- because every other thing the
 // studio knows about a Stage is an address it publishes, and those did not move.
 import { holesNearestSpec } from './holes-nearest.js';
+import { s4Spec } from './s4.js';
+import { s5Spec } from './s5.js';
+import { s6Spec } from './s6.js';
 import { s7CourseSpec, cellCenter } from './s7course.js';
 import { s7Spec } from './s7round.js';
 import { ROUTE_ADDRESSES, registerRoute, routeDocument } from './route.js';
@@ -99,6 +102,11 @@ export function labStageSpecs() {
       produces: [S3_ADDRESSES.rings, S3_ADDRESSES.family, S3_ADDRESSES.objects],
       ticks: lab => s3Document(lab).Ticks
     },
+    // S4 recovery, S5 the tee-to-badge ray, S6 the straight holes: each brings its
+    // own Calculations and its own document, and S7 below plays what S6 resolved.
+    s4Spec(),
+    s5Spec(),
+    s6Spec(),
     holesNearestSpec(),
     s7CourseSpec(),
     s7Spec(),

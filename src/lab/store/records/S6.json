@@ -85,6 +85,20 @@
                 {
                   "id": "basket-3",
                   "bbox": [
+                    305,
+                    654,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    330,
+                    691
+                  ],
+                  "basis": "body-family"
+                },
+                {
+                  "id": "basket-4",
+                  "bbox": [
                     326,
                     754,
                     50,
@@ -113,6 +127,25 @@
                     374.5
                   ],
                   "distancePx": 224,
+                  "residualPx": 0.5,
+                  "straight": true,
+                  "why": null
+                },
+                {
+                  "tee": "tee-3",
+                  "badge": "badge-3",
+                  "reading": "01",
+                  "basket": "basket-3",
+                  "basketAt": [
+                    330,
+                    691
+                  ],
+                  "basketBasis": "body-family",
+                  "entryAt": [
+                    329.5,
+                    654.5
+                  ],
+                  "distancePx": 144,
                   "residualPx": 0.5,
                   "straight": true,
                   "why": null
@@ -164,6 +197,67 @@
           "value": {
             "kind": "json",
             "data": [
+              {
+                "number": 1,
+                "reading": "01",
+                "tee": {
+                  "id": "tee-3",
+                  "at": [
+                    329.5,
+                    510.5
+                  ],
+                  "basis": "ring-family"
+                },
+                "badge": {
+                  "id": "badge-3",
+                  "at": [
+                    330,
+                    598
+                  ],
+                  "basis": "bright-family"
+                },
+                "basket": {
+                  "id": "basket-3",
+                  "at": [
+                    330,
+                    691
+                  ],
+                  "basis": "body-family"
+                },
+                "direction": [
+                  0,
+                  1
+                ],
+                "teeToBadgePx": 68,
+                "teeToBasketPx": 144,
+                "residualPx": 0.5,
+                "basis": "tee-badge-ray-continued",
+                "has": {
+                  "pointing": {
+                    "fn": "fn.lab.tee.pointing",
+                    "lean": {
+                      "offset": [
+                        0,
+                        2.045
+                      ],
+                      "alongAxisPx": 2.045,
+                      "brightPx": 176
+                    }
+                  },
+                  "castRay": {
+                    "fn": "fn.lab.tee.castray",
+                    "axisAngleDeg": 90
+                  },
+                  "continueRay": {
+                    "fn": "fn.lab.hole.continueray",
+                    "residualPx": 0.5,
+                    "entryAt": [
+                      329.5,
+                      654.5
+                    ]
+                  }
+                }
+              },
               {
                 "number": 11,
                 "reading": "11",
@@ -294,17 +388,6 @@
                   "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
                 },
                 {
-                  "badge": "badge-3",
-                  "reading": "01",
-                  "bbox": [
-                    300,
-                    578,
-                    60,
-                    40
-                  ],
-                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
-                },
-                {
                   "badge": "badge-4",
                   "reading": "11",
                   "bbox": [
@@ -326,7 +409,7 @@
                   "why": "no straight ray entered it"
                 },
                 {
-                  "id": "basket-3",
+                  "id": "basket-4",
                   "at": [
                     351,
                     791
@@ -340,18 +423,18 @@
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 },
                 {
-                  "id": "tee-3",
+                  "id": "tee-4",
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 },
                 {
-                  "id": "tee-4",
+                  "id": "tee-5",
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 }
               ],
               "counts": {
                 "badges": 4,
-                "straight": 1,
-                "doglegs": 3
+                "straight": 2,
+                "doglegs": 2
               }
             },
             "note": null

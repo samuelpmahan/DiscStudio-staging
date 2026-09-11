@@ -10,7 +10,7 @@ import { createStudioRuntime } from '../src/runtime.js';
 import { createSeed } from '../src/seed.js';
 
 const studio = () => createStudioRuntime(createSeed());
-const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-holes-nearest', 'lab-s7-course', 'lab-s7', 'lab-route'];
+const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-s4', 'lab-s5', 'lab-s6', 'lab-holes-nearest', 'lab-s7-course', 'lab-s7', 'lab-route'];
 
 test('the pipeline runs S0 through the round as one composition per Stage', () => {
   const runtime = studio();
@@ -53,19 +53,27 @@ test('the produce is what the fixture draws: three badges read, two baskets, thr
   // A Stage is found here by the address it publishes, the way the studio draws it:
   // the numbers on these Stages moved once already this sprint (task 121).
   const drawn = Object.fromEntries(runtime.lab.views().map(view => [view.address, view]));
-  assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['11', '10', '01']);
-  assert.equal(views.s2.objects.length, 2);
+  // The clean detectors each lose one object to an overlap, and S4 puts it back:
+  // the badge reading "10" arrives from its dark plate, read.
+  assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['11', '01']);
+  assert.equal(views.s2.objects.length, 3);
   assert.equal(views.s3.objects.length, 3);
-  // S4 names the hole it could not finish rather than guessing a basket for it.
-  assert.deepEqual(drawn['px.exp.lab.holes.objects'].objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11 · missing basket']);
-  // S5's obstacle map is derived from the pixels no Stage object owns, and two straight legs cross it.
+  assert.deepEqual(runtime.pxc.get('px.exp.lab.recovered.badges').objects.map(badge => [badge.basis, badge.reading.value]), [['bright-family', '11'], ['bright-family', '01'], ['dark-plate-recovery', '10']]);
+  // S5 pairs each pointing tee with the badge it points at; S6 continues the ray to the basket.
+  assert.equal(runtime.pxc.get('px.exp.lab.teebadge.rays').paired, 2);
+  assert.deepEqual(runtime.pxc.get('px.exp.lab.holes.straight').map(hole => hole.number), [1, 11]);
+  assert.deepEqual(runtime.pxc.get('px.exp.lab.holes.unresolved').doglegs.map(entry => entry.reading), ['10']);
+  // The nearest-anchor fallback still runs beside them, on the clean badges only.
+  assert.deepEqual(drawn['px.exp.lab.holes.objects'].objects.map(object => object.label), ['hole 1', 'hole 11']);
+  // S7's obstacle map is derived from the pixels no Stage object owns, and one straight leg crosses it.
   assert.ok(drawn['px.exp.lab.course.graph'].cells.centres.length > 0);
   // and the round searched over that map is one polyline that had to bend around it
   assert.ok(drawn['px.exp.lab.round.path'].polyline.length > drawn['px.exp.lab.route.labfixture'].points.length);
   assert.ok(runtime.pxc.get('px.exp.lab.round.summary').detourPx > 0);
-  assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').blockedStraightLegs, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
-  // The order is the reading, not the position: hole 1 sits lower in the image than hole 10.
-  assert.deepEqual(views.route.objects.map(object => object.label), ['hole 1', 'hole 10']);
+  assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').blockedStraightLegs, ['play:tee-1->basket-1']);
+  // The course S7 plays is the one S6 resolved, and the dogleg is named, not routed.
+  assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').unplayed.doglegs.map(entry => entry.reading), ['10']);
+  assert.deepEqual(views.route.objects.map(object => object.label), ['hole 1', 'hole 11']);
   assert.equal(views.route.kind, 'path');
   assert.ok(views.route.legs.some(leg => leg.kind === 'play') && views.route.legs.some(leg => leg.kind === 'walk'));
   // Every drawable object names the Part it came from and where it is on the canonical raster.
@@ -112,7 +120,7 @@ test('a Stage still being built joins the pipeline as one spec and runs, draws a
     view: lab => ({ kind: 'boxes', tone: 'hole', objects: lab.get(HOLES).map((hole, index) => ({ id: `hole-${hole.number}`, label: `hole ${hole.number}`, bbox: [0, 0, 8, 8], at: [4, 4], part: HOLES, index, detail: hole })) })
   });
   const state = runtime.lab.pipeline(runtime.lab.sample());
-  assert.equal(state.stages.length, 9);
+  assert.equal(state.stages.length, 12);
   assert.equal(state.stages.at(-1).status, 'produced');
   assert.deepEqual(state.stages.at(-1).produced, [{ address: HOLES, count: 2 }]);
   assert.ok(runtime.pxc.has('px.receipt.lab-stub'));
@@ -145,19 +153,20 @@ test('the course arrangement stands the cards at the holes the Stages found', ()
   runtime.lab.pipeline(runtime.lab.sample());
   const scene = runtime.scene({ mode: 'battle' }), overlay = scene.scene;
   assert.equal(overlay.arrangement, 'course');
-  assert.deepEqual(overlay.placements.map(placement => placement.anchor.id), ['hole-1', 'hole-10', 'hole-11']);
-  // Every anchor is a hole S4 published, and every card is centred on it inside the 1920x1080 frame.
-  const holes = runtime.pxc.get('px.exp.lab.holes.objects');
+  // Two holes, three cards: the placements cycle the anchors rather than invent a third hole.
+  assert.deepEqual(overlay.placements.map(placement => placement.anchor.id), ['hole-1', 'hole-11', 'hole-1']);
+  // Every anchor is a hole S6 resolved, and every card is centred on it inside the 1920x1080 frame.
+  const holes = runtime.pxc.get('px.exp.lab.holes.straight');
   assert.deepEqual(overlay.anchors.map(anchor => anchor.at), holes.map(hole => (hole.basket ?? hole.tee).at));
   for (const placement of overlay.placements) {
     assert.ok(placement.x >= 0 && placement.y >= 0 && placement.x + placement.card.width * overlay.scale <= 1920 && placement.y + placement.card.height * overlay.scale <= 1080, placement.anchor.id);
     assert.ok(Math.abs(placement.x + (placement.card.width * overlay.scale) / 2 - placement.anchor.x) < 1 || placement.x === 60 || placement.x + placement.card.width * overlay.scale === 1860);
   }
   // The layout Calculation read the Stage's own produce Part; nothing was copied into the layout.
-  assert.ok(scene.run.trace.some(step => step.call === 'fn.comparison.layout' && step.inputs.course === 'px.exp.lab.holes.objects'));
+  assert.ok(scene.run.trace.some(step => step.call === 'fn.comparison.layout' && step.inputs.course === 'px.exp.lab.holes.straight'));
   // Same overlay, same cards, same materialize: one group per entry.
   assert.equal((scene.svg.match(/data-entry="entry-/g) ?? []).length, scene.cardCount);
-  assert.equal(runtime.lab.anchorAddress(), 'px.exp.lab.holes.objects');
+  assert.equal(runtime.lab.anchorAddress(), 'px.exp.lab.holes.straight');
 });
 
 test('the anchors come from whichever Part the Stages published', async () => {

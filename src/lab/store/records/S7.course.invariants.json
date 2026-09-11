@@ -58,15 +58,15 @@
               "cells": 1856,
               "cellsByClass": {
                 "terrain": 69,
-                "basket": 49,
-                "tee": 13,
+                "basket": 73,
+                "tee": 17,
                 "badge": 45,
-                "open": 1680
+                "open": 1652
               },
               "walkableCells": 1787,
               "obstacleCells": 69,
               "holes": 2,
-              "incomplete": 1,
+              "unplayed": 2,
               "anchors": 4,
               "edges": 3
             },
@@ -89,22 +89,25 @@
           "inputs": {
             "ledger": "px:px.exp.lab.s7.courseledger",
             "graph": "px:px.exp.lab.course.graph",
-            "holes": "px:px.exp.lab.holes.objects",
-            "obstacles": "px:px.exp.lab.course.obstacles"
+            "holes": "px:px.exp.lab.holes.straight",
+            "obstacles": "px:px.exp.lab.course.obstacles",
+            "summary": "px:px.exp.lab.course.summary"
           },
           "args": {},
           "into": "px.exp.lab.s7.coursecheck",
           "declared_consumes": [
             "px:px.exp.lab.s7.courseledger",
             "px:px.exp.lab.course.graph",
-            "px:px.exp.lab.holes.objects",
-            "px:px.exp.lab.course.obstacles"
+            "px:px.exp.lab.holes.straight",
+            "px:px.exp.lab.course.obstacles",
+            "px:px.exp.lab.course.summary"
           ],
           "actual_consumes": [
             "px.exp.lab.s7.courseledger",
             "px.exp.lab.course.graph",
-            "px.exp.lab.holes.objects",
-            "px.exp.lab.course.obstacles"
+            "px.exp.lab.holes.straight",
+            "px.exp.lab.course.obstacles",
+            "px.exp.lab.course.summary"
           ],
           "actual_produces": [
             "px.exp.lab.s7.coursecheck"
@@ -126,15 +129,15 @@
               "cells": 1856,
               "cellsByClass": {
                 "terrain": 69,
-                "basket": 49,
-                "tee": 13,
+                "basket": 73,
+                "tee": 17,
                 "badge": 45,
-                "open": 1680
+                "open": 1652
               },
               "walkableCells": 1787,
               "obstacleCells": 69,
               "holes": 2,
-              "incomplete": 1,
+              "unplayed": 2,
               "anchors": 4,
               "edges": 3,
               "checks": {
@@ -142,8 +145,9 @@
                 "everyPixelLeavesOnce": true,
                 "theMapIsAPartition": true,
                 "terrainIsWhatNoStageOwns": true,
-                "playOrderIsTheBadgeOrder": true,
-                "everyEdgeIsAnchored": true
+                "playOrderIsTheStraightHoleOrder": true,
+                "everyEdgeIsAnchored": true,
+                "everyDoglegIsNamedNotRouted": true
               },
               "balanced": true
             },
@@ -191,7 +195,14 @@
       ],
       "preexisting": false
     },
-    "px.exp.lab.holes.objects": {
+    "px.exp.lab.holes.straight": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.coursecheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.summary": {
       "written_by": null,
       "read_by": [
         "px.exp.lab.s7.coursecheck"

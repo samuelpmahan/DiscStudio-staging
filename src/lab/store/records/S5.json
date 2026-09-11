@@ -117,6 +117,38 @@
                   "id": "tee-3",
                   "basis": "ring-family",
                   "bbox": [
+                    322,
+                    498,
+                    16,
+                    30
+                  ],
+                  "at": [
+                    329.5,
+                    510.5
+                  ],
+                  "centroid": [
+                    329.5,
+                    512.545
+                  ],
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      2.045
+                    ],
+                    "alongAxisPx": 2.045,
+                    "brightPx": 176
+                  },
+                  "pointing": [
+                    0,
+                    1
+                  ],
+                  "why": null
+                },
+                {
+                  "id": "tee-4",
+                  "basis": "ring-family",
+                  "bbox": [
                     420,
                     518,
                     16,
@@ -143,7 +175,7 @@
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 },
                 {
-                  "id": "tee-4",
+                  "id": "tee-5",
                   "basis": "component-fallback",
                   "bbox": [
                     60,
@@ -312,13 +344,25 @@
                 },
                 {
                   "tee": "tee-3",
+                  "badge": "badge-3",
+                  "reading": "01",
+                  "entryAt": [
+                    329.5,
+                    578.5
+                  ],
+                  "distancePx": 68,
+                  "steps": 68,
+                  "why": null
+                },
+                {
+                  "tee": "tee-4",
                   "badge": null,
                   "distancePx": null,
                   "steps": 0,
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 },
                 {
-                  "tee": "tee-4",
+                  "tee": "tee-5",
                   "badge": null,
                   "distancePx": null,
                   "steps": 0,
@@ -452,6 +496,48 @@
                   "tee": "tee-3",
                   "teeBasis": "ring-family",
                   "origin": [
+                    329.5,
+                    510.5
+                  ],
+                  "direction": [
+                    0,
+                    1
+                  ],
+                  "axisAngleDeg": 90,
+                  "lean": {
+                    "offset": [
+                      0,
+                      2.045
+                    ],
+                    "alongAxisPx": 2.045,
+                    "brightPx": 176
+                  },
+                  "badge": {
+                    "id": "badge-3",
+                    "reading": "01",
+                    "bbox": [
+                      300,
+                      578,
+                      60,
+                      40
+                    ],
+                    "at": [
+                      330,
+                      598
+                    ],
+                    "basis": "bright-family"
+                  },
+                  "distancePx": 68,
+                  "entryAt": [
+                    329.5,
+                    578.5
+                  ],
+                  "why": null
+                },
+                {
+                  "tee": "tee-4",
+                  "teeBasis": "ring-family",
+                  "origin": [
                     427.5,
                     530.5
                   ],
@@ -471,7 +557,7 @@
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 },
                 {
-                  "tee": "tee-4",
+                  "tee": "tee-5",
                   "teeBasis": "component-fallback",
                   "origin": [
                     67.5,
@@ -493,7 +579,7 @@
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 }
               ],
-              "paired": 1,
+              "paired": 2,
               "contested": [],
               "unpointed": [
                 {
@@ -501,11 +587,11 @@
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 },
                 {
-                  "tee": "tee-3",
+                  "tee": "tee-4",
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 },
                 {
-                  "tee": "tee-4",
+                  "tee": "tee-5",
                   "why": "the pad leans 0px along its axis about its own ring, under the 0.5px a nose has to show: this pad is symmetric and no end of it is the front"
                 }
               ],
@@ -517,16 +603,6 @@
                   "bbox": [
                     120,
                     258,
-                    60,
-                    40
-                  ]
-                },
-                {
-                  "id": "badge-3",
-                  "reading": "01",
-                  "bbox": [
-                    300,
-                    578,
                     60,
                     40
                   ]
