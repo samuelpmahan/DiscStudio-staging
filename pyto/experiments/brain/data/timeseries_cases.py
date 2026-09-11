@@ -65,6 +65,7 @@ def brute_rolling(values, width, kind, centred=False):
 
 
 HOLEY = [v if i % 7 else None for i, v in enumerate(SERIES)]
+HOLEY_INSIDE = [v if i not in (3, 4, 9, 14) else None for i, v in enumerate(SHORT)]
 
 
 def brute_rolling_holes(values, width, kind, least):
@@ -119,6 +120,53 @@ def brute_ccf(x, y, nlags):
     full = np.correlate(a, b, mode="full")
     middle = len(full) // 2
     return [float(full[middle + k]) / denominator for k in range(nlags + 1)]
+
+
+def brute_pct_change(values, periods=1):
+    """numpy.diff over the series divided by the series it came from."""
+    a = np.asarray(values, dtype=float)
+    out = [None] * periods
+    for i in range(periods, len(values)):
+        base = a[i - periods]
+        out.append(None if base == 0.0 else float((a[i] - base) / base))
+    return out
+
+
+def brute_expanding(values, kind):
+    """numpy over the whole history at every point: what the expanding engines answer to."""
+    out = []
+    for i in range(len(values)):
+        block = np.asarray(values[:i + 1], dtype=float)
+        if kind == "count":
+            out.append(float(block.size))
+        elif kind == "sum":
+            out.append(float(block.sum()))
+        elif kind == "mean":
+            out.append(float(block.mean()))
+        elif block.size < 2:
+            out.append(None)
+        elif kind == "var":
+            out.append(float(block.var(ddof=1)))
+        else:
+            out.append(float(block.std(ddof=1)))
+    return out
+
+
+def brute_interpolate(values, positions=None):
+    """numpy.interp over the known points: the authority for the straight line."""
+    known = [i for i, v in enumerate(values) if v is not None]
+    positions = list(range(len(values))) if positions is None else list(positions)
+    xp = [float(positions[i]) for i in known]
+    fp = [float(values[i]) for i in known]
+    out = []
+    for i, value in enumerate(values):
+        if value is not None:
+            out.append(float(value))
+        elif known[0] < i < known[-1]:
+            out.append(float(np.interp(float(positions[i]), xp, fp)))
+        else:
+            out.append(None)
+    return out
 
 
 def brute_acf(values, nlags, adjusted=False):
@@ -242,6 +290,28 @@ for _adjust in (True, False):
         {"values": SHORT, "alpha": 0.4, "adjust": _adjust},
         "data.timeseries_cases.brute_ewma (the recurrence written out; numpy has no smoother)",
         (lambda adjust=_adjust: brute_ewma(SHORT, 0.4, adjust)))
+for _periods in (1, 4):
+    ORACLE_CASES += _both(
+        "fn.brain.data.pct_change", "periods%d" % _periods,
+        {"values": SHORT, "periods": _periods},
+        "numpy.diff over the series it came from",
+        (lambda periods=_periods: brute_pct_change(SHORT, periods)))
+for _kind in ("count", "sum", "mean", "var", "std"):
+    for _backend in ("py", "np", "cumsum"):
+        ORACLE_CASES.append(_case(
+            "fn.brain.data.expanding", "whole.history.%s.%s" % (_kind, _backend), _backend,
+            {"values": SHORT, "fn": _kind},
+            "numpy.%s over the whole history at every point" % _kind,
+            (lambda kind=_kind: brute_expanding(SHORT, kind))))
+ORACLE_CASES += _both(
+    "fn.brain.data.interpolate", "inside", {"values": HOLEY_INSIDE},
+    "numpy.interp over the known points", lambda: brute_interpolate(HOLEY_INSIDE))
+ORACLE_CASES += _both(
+    "fn.brain.data.interpolate", "uneven.positions",
+    {"values": HOLEY_INSIDE, "x": [float(i * i) for i in range(len(HOLEY_INSIDE))]},
+    "numpy.interp over the known points",
+    lambda: brute_interpolate(HOLEY_INSIDE,
+                              [float(i * i) for i in range(len(HOLEY_INSIDE))]))
 ORACLE_CASES += _both(
     "fn.brain.data.cross_correlation", "self", {"x": SERIES, "y": SERIES, "nlags": 8},
     "numpy.correlate over the two centred series", lambda: brute_ccf(SERIES, SERIES, 8))
@@ -319,6 +389,11 @@ for _backend in ("py", "np"):
                           {"values": values, "order": 6, "backend": backend})})
 
 for _size, _values in (("n=600", MID), ("n=4000", BIG)):
+    for _engine in ("py", "np", "cumsum"):
+        BENCH_CASES.append({
+            "calc": "fn.brain.data.expanding", "backend": _engine, "size": _size,
+            "make_args": (lambda values=_values, engine=_engine:
+                          {"values": values, "fn": "mean", "backend": engine})})
     BENCH_CASES.append({
         "calc": "fn.brain.data.rolling", "backend": "cumsum", "size": _size,
         "make_args": (lambda values=_values:

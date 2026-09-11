@@ -504,6 +504,84 @@ def ar_forecast(args):
     return {"order": order, "horizon": horizon, "forecast": out}
 
 
+def pct_change(args):
+    """the proportional change over ``periods`` steps; the first ones are ``None``.
+
+    a step whose base is zero has no proportional change, so it is ``None`` too
+    rather than an infinity json cannot hold.
+    """
+    values = _series(args, allow_missing=True)
+    periods = int(args.get("periods", 1))
+    if periods < 1:
+        raise ValueError("pct_change needs periods >= 1, got %d" % periods)
+    _backend(args)
+    out = []
+    for i, value in enumerate(values):
+        base = values[i - periods] if i >= periods else None
+        if value is None or base is None or base == 0.0:
+            out.append(None)
+        else:
+            out.append((value - base) / base)
+    return out
+
+
+def expanding(args):
+    """the statistic over everything seen so far, one value per point.
+
+    the same engines as ``fn.brain.data.rolling`` -- an expanding window IS a
+    rolling window as wide as the series, so this is that call and nothing else,
+    which is why the cumsum engine makes it O(n) instead of O(n^2).
+    """
+    values = _series(args, allow_missing=True)
+    if not values:
+        raise ValueError("an expanding statistic needs at least one point")
+    return rolling(dict(args, window=len(values),
+                        min_periods=int(args.get("min_periods", 1))))
+
+
+def interpolate(args):
+    """the interior holes filled in a straight line between the points either side.
+
+    ``x`` gives the positions to interpolate along (default: 0, 1, 2, ...).
+    leading and trailing holes stay holes unless ``limit_direction`` says
+    "forward", "backward" or "both", which carries the nearest value out to the end.
+    """
+    values = _series(args, allow_missing=True)
+    positions = args.get("x")
+    if positions is None:
+        positions = list(range(len(values)))
+    positions = [float(v) for v in positions]
+    if len(positions) != len(values):
+        raise ValueError("x and the series must be the same length, got %d and %d"
+                         % (len(positions), len(values)))
+    direction = args.get("limit_direction", "none")
+    if direction not in ("none", "forward", "backward", "both"):
+        raise ValueError("limit_direction is none, forward, backward or both, got %r"
+                         % (direction,))
+    _backend(args)
+    known = [i for i, v in enumerate(values) if v is not None]
+    if not known:
+        raise ValueError("there is nothing to interpolate between: every point is a hole")
+    out = list(values)
+    for place in range(len(known) - 1):
+        left, right = known[place], known[place + 1]
+        if right == left + 1:
+            continue
+        span = positions[right] - positions[left]
+        if span == 0.0:
+            raise ValueError("two points share a position, so there is no line between them")
+        for i in range(left + 1, right):
+            share = (positions[i] - positions[left]) / span
+            out[i] = values[left] + share * (values[right] - values[left])
+    if direction in ("backward", "both"):
+        for i in range(0, known[0]):
+            out[i] = values[known[0]]
+    if direction in ("forward", "both"):
+        for i in range(known[-1] + 1, len(values)):
+            out[i] = values[known[-1]]
+    return out
+
+
 def ewma(args):
     """exponentially weighted moving statistics over a series with no holes.
 
@@ -604,6 +682,9 @@ def cross_correlation(args):
 
 
 ROLLING_CALC = Calculation("fn.brain.data.rolling", rolling)
+PCT_CHANGE = Calculation("fn.brain.data.pct_change", pct_change)
+EXPANDING = Calculation("fn.brain.data.expanding", expanding)
+INTERPOLATE = Calculation("fn.brain.data.interpolate", interpolate)
 EWMA = Calculation("fn.brain.data.ewma", ewma)
 CROSS_CORRELATION = Calculation("fn.brain.data.cross_correlation", cross_correlation)
 DIFFERENCE = Calculation("fn.brain.data.difference", difference)
@@ -618,6 +699,7 @@ AR_FORECAST = Calculation("fn.brain.data.ar_forecast", ar_forecast)
 
 CALCS = {
     c.address: c
-    for c in (ROLLING_CALC, EWMA, CROSS_CORRELATION, DIFFERENCE, INTEGRATE, SES, HOLT,
-              SEASONAL_DECOMPOSE, ACF, PACF, AR_FIT, AR_FORECAST)
+    for c in (ROLLING_CALC, EXPANDING, PCT_CHANGE, INTERPOLATE, EWMA, CROSS_CORRELATION,
+              DIFFERENCE, INTEGRATE, SES, HOLT, SEASONAL_DECOMPOSE, ACF, PACF,
+              AR_FIT, AR_FORECAST)
 }
