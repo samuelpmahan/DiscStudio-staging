@@ -4,8 +4,52 @@ Intent: brain/backend five more ops, one of them the bracket's winner made usabl
 Starting point: e3ed1924f43fdbd3f7410705484ff92f824f0170 (land(task-94): brain/stats and brain/data, the second wave: kolmogorov-smirnov one and two sample, the wilcoxon signed-rank test and the p-value beside a pearson correlation, all with a pure-python tail (birnbaum-tingey, hodges, the limiting kolmogorov) that matches scipy exactly; a third group-by engine npsort that sorts once and reduces whole columns with numpy cumsum and reduceat, entered as the third candidate of the group-by bracket; melt as pivot's inverse and describe_table, the one place the data vertical calls the stats vertical)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 10 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/backend/cases.py
+- M  pyto/experiments/brain/backend/ops.py
+- M  pyto/experiments/brain/backend/summary.py
+- M  pyto/experiments/brain/backend/test_ops.py
+- A  pyto/experiments/brain/records/brain_backend_convolve.json
+- A  pyto/experiments/brain/records/brain_backend_interp.json
+- A  pyto/experiments/brain/records/brain_backend_pack.json
+- A  pyto/experiments/brain/records/brain_backend_qr.json
+- A  pyto/experiments/brain/records/brain_backend_unpack.json
+- M  pyto/experiments/brain/store/backend.json
+
+```
+pyto/experiments/brain/backend/cases.py            |   48 +
+ pyto/experiments/brain/backend/ops.py              |  244 +-
+ pyto/experiments/brain/backend/summary.py          |   24 +-
+ pyto/experiments/brain/backend/test_ops.py         |   93 +-
+ .../brain/records/brain_backend_convolve.json      |  751 ++++
+ .../brain/records/brain_backend_interp.json        |  217 +
+ .../brain/records/brain_backend_pack.json          |  187 +
+ .../brain/records/brain_backend_qr.json            |  394 ++
+ .../brain/records/brain_backend_unpack.json        |  292 ++
+ pyto/experiments/brain/store/backend.json          | 4550 ++++++++++++++++++--
+ 10 files changed, 6391 insertions(+), 409 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.1XaveSEQhD) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               549  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
