@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-11 15:57 **started** `task-127`: S7 plays the holes S6 resolved: the course graph binds px.holes.straight and reports px.holes.unresolved as unplayed doglegs, a second pointing tee gives the round more than one leg, and the comparison with the straight-leg route is re-run on that binding (copy EXP/127; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 15:55 **landed** `task-126`: the port's map, honest after the renumbering: S4-S7 under ran, the stubs that S4 recovery actually retired removed, and what S7 still owes the straight holes written down as the next step with its for (6 files since 542b6c9, suites green, receipt 20260911T155152Z-task-126)
 - 2026-09-11 15:47 **started** `task-126`: the port's map, honest after the renumbering: S4-S7 under ran, the stubs that S4 recovery actually retired removed, and what S7 still owes the straight holes written down as the next step with its for (copy EXP/126; it lands only on green, with a receipt, or is killed)
 - 2026-09-11 15:45 **landed** `task-124`: S5 Tee->Badge and S6 straight holes: a tee's pointing end read off its own pixels, the ray cast at the badge it points at, and the basket found by continuing that ray past the badge -- three points on a line, with the badges whose ray finds nothing reported as doglegs (35 files since 896d1d3, suites green, receipt 20260911T154240Z-task-124)
