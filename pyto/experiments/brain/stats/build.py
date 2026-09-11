@@ -18,6 +18,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import harness  # noqa: E402
 
+import stats.comparisons as comparisons  # noqa: E402
+import stats.comparisons_cases as comparisons_cases  # noqa: E402
 import stats.correlation as correlation  # noqa: E402
 import stats.correlation_cases as correlation_cases  # noqa: E402
 import stats.descriptive as descriptive  # noqa: E402
@@ -31,6 +33,7 @@ import stats.intervals_cases as intervals_cases  # noqa: E402
 import stats.nonparametric as nonparametric  # noqa: E402
 import stats.nonparametric_cases as nonparametric_cases  # noqa: E402
 import stats.referee as referee  # noqa: E402
+from stats.tolerance import canonical  # noqa: E402
 import stats.regression as regression  # noqa: E402
 import stats.regression_cases as regression_cases  # noqa: E402
 
@@ -44,6 +47,7 @@ CASE_MODULES = (
     ("regression", regression_cases, regression.CALCS),
     ("intervals", intervals_cases, intervals.CALCS),
     ("nonparametric", nonparametric_cases, nonparametric.CALCS),
+    ("comparisons", comparisons_cases, comparisons.CALCS),
 )
 
 CALCS = {}
@@ -295,6 +299,11 @@ def built_addresses(store):
 
 def the_map(store, decided):
     stubbed = [
+        {"address": "fn.brain.stats.tukey_hsd",
+         "why": "the post-hoc that belongs after an anova; the multiple-comparison "
+                "corrections are here and the studentised range is what is missing"},
+        {"address": "fn.brain.stats.power",
+         "why": "sample-size and power curves need a non-central t, which is its own series"},
         {"address": "fn.brain.stats.ols_weighted",
          "why": "weighted least squares is the same three solvers with a weight vector; "
                 "the tournament had to be settled on the unweighted case first"},
@@ -307,8 +316,6 @@ def the_map(store, decided):
                 "tail with the tie correction is what is built"},
         {"address": "fn.brain.stats.wilcoxon (exact)",
          "why": "same table, same reason: scipy's method='approx' is the one both backends meet"},
-        {"address": "fn.brain.stats.kruskal",
-         "why": "the rank-based one-way anova; f_oneway and mann-whitney cover its two ends"},
     ]
     next_ = [
         {"what": "weighted and robust least squares on the winning solver (%s)" % decided["winner"],
@@ -352,6 +359,8 @@ def main(argv=None):
     parsed = parser.parse_args(argv)
     store, summary = build(parsed.store_dir, parsed.records_dir, parsed.quick,
                            parsed.bench_n, parsed.commit)
+    for address in list(store.written):
+        store.put(address, canonical(store.get(address)))
     path = store.save(VERTICAL)
     print("oracles: %d passed, %d failed" % (summary["oracles_passed"], summary["oracles_failed"]))
     print("ols bracket winner:", summary["winner"])
