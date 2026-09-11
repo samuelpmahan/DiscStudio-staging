@@ -1,0 +1,121 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T144103Z-task-119",
+  "package": "task-119",
+  "base_sha": "d0f0ca26ebda467f33784bfba5bc12dc9068877a",
+  "result": "verified",
+  "verifier": {
+    "command": "node --test tests/*.test.js",
+    "exit": 0,
+    "output_sha256": "eb4541e8b5134e31676b8caa8a704950135ef95a1af4c518755ccb19cc7a293f"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "259d8a0fa2ecc2a90e6efc56398437847f0861d9398dee75b86f0abbd5712e0e",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/119/HANDOFF.md",
+      "bytes": 6852,
+      "sha256": "6896a9d538e82fc69f1d9767b90d7b980a1ff157bcb8a81179d010f6022700cf"
+    },
+    {
+      "path": "pyto/experiments/tasks/119/evidence/check_all.txt",
+      "bytes": 293457,
+      "sha256": "e25a7fe03d1bba27bfccf1b41b4b66f0baf500ba595d2e017b8b9c1e3eae9226"
+    },
+    {
+      "path": "pyto/experiments/tasks/119/evidence/verify.txt",
+      "bytes": 33607,
+      "sha256": "6a24ac21a32e6a93c7ed0fe479d11519253e9afe9f0a29d1677607742b84fd6b"
+    },
+    {
+      "path": "pyto/experiments/tasks/119/packet.md",
+      "bytes": 2568,
+      "sha256": "87351c2c44cc9060a11dca17a206506b0670a89fd35a67c331f80829c811e3c1"
+    },
+    {
+      "path": "src/lab/map.js",
+      "bytes": 24519,
+      "sha256": "aad949fb62f1a94b9ca1932201728710eb04028fc49ce6c1859bf81e3efcf9c7"
+    },
+    {
+      "path": "src/lab/s6.js",
+      "bytes": 18855,
+      "sha256": "1d1bde7c36fc63957414ff3f97fae1ea8275c5bdaa504385b0a75f856326a3c7"
+    },
+    {
+      "path": "src/lab/stage-sources.js",
+      "bytes": 5251,
+      "sha256": "e205eae7995b381b93f8131224440d59799680b65b29b7d7de98918138687ea3"
+    },
+    {
+      "path": "src/lab/stages/S6.args.json",
+      "bytes": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "src/lab/stages/S6.mmd",
+      "bytes": 706,
+      "sha256": "f9b7a53ae226c359e101f8abb6dd79950b449b89737dba1423853f1d2d468ca6"
+    },
+    {
+      "path": "src/lab/store/lab.json",
+      "bytes": 352834,
+      "sha256": "b6bca788ef94ae1bb920518a0acad1da8cb9ba7efa3f9dd04c8315e94595fdb2"
+    },
+    {
+      "path": "src/lab/store/records/S6.invariants.json",
+      "bytes": 4976,
+      "sha256": "3fafeb2c0e51a13ea9ea1f58310ffb2d512e364f3f02a026868affde39137f09"
+    },
+    {
+      "path": "src/lab/store/records/S6.json",
+      "bytes": 26261,
+      "sha256": "a367b93224b665503cc869cc0e522fab586e8e6f6659387020b48aba79101043"
+    },
+    {
+      "path": "src/lab/store/records/S6.vs-straight.json",
+      "bytes": 4772,
+      "sha256": "4d21335ad22294105dcbabdcda1f30760a2631b71ba2160b9ddd850ca4941565"
+    },
+    {
+      "path": "tests/lab-s6.test.js",
+      "bytes": 10865,
+      "sha256": "deaa42bf0fe1713b53576fc2b34c2ccb7e225d0e11088ae0aaad106df96ec4ac"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T14:44:22.546553Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

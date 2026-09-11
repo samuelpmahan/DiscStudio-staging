@@ -1,0 +1,1119 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S6",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Round.legs",
+      "invocations": [
+        {
+          "id": "px.exp.lab.round.legs",
+          "calculation": {
+            "address": "fn.lab.round.legs",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "graph": "px:px.exp.lab.course.graph"
+          },
+          "args": {},
+          "into": "px.exp.lab.round.legs",
+          "declared_consumes": [
+            "px:px.exp.lab.course.graph"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.course.graph"
+          ],
+          "actual_produces": [
+            "px.exp.lab.round.legs"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.round.legs",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "kind": "play",
+                "hole": 1,
+                "from": {
+                  "id": "tee-3",
+                  "at": [
+                    427.5,
+                    530.5
+                  ],
+                  "cell": 1082
+                },
+                "to": {
+                  "id": "basket-2",
+                  "at": [
+                    351,
+                    791
+                  ],
+                  "cell": 1589
+                },
+                "straightLengthPx": 271.5,
+                "straightIsBlocked": false,
+                "reachable": true,
+                "cells": [
+                  1082,
+                  1114,
+                  1146,
+                  1178,
+                  1210,
+                  1242,
+                  1274,
+                  1306,
+                  1338,
+                  1370,
+                  1402,
+                  1434,
+                  1465,
+                  1496,
+                  1527,
+                  1558,
+                  1589
+                ],
+                "points": [
+                  [
+                    427.5,
+                    530.5
+                  ],
+                  [
+                    424,
+                    552
+                  ],
+                  [
+                    424,
+                    568
+                  ],
+                  [
+                    424,
+                    584
+                  ],
+                  [
+                    424,
+                    600
+                  ],
+                  [
+                    424,
+                    616
+                  ],
+                  [
+                    424,
+                    632
+                  ],
+                  [
+                    424,
+                    648
+                  ],
+                  [
+                    424,
+                    664
+                  ],
+                  [
+                    424,
+                    680
+                  ],
+                  [
+                    424,
+                    696
+                  ],
+                  [
+                    424,
+                    712
+                  ],
+                  [
+                    408,
+                    728
+                  ],
+                  [
+                    392,
+                    744
+                  ],
+                  [
+                    376,
+                    760
+                  ],
+                  [
+                    360,
+                    776
+                  ],
+                  [
+                    351,
+                    791
+                  ]
+                ],
+                "lengthPx": 289.786,
+                "cost": 180,
+                "cellLengthPx": 288,
+                "expanded": 71,
+                "why": null,
+                "bends": 15
+              },
+              {
+                "kind": "walk",
+                "hole": 10,
+                "from": {
+                  "id": "basket-2",
+                  "at": [
+                    351,
+                    791
+                  ],
+                  "cell": 1589
+                },
+                "to": {
+                  "id": "tee-2",
+                  "at": [
+                    67.5,
+                    220.5
+                  ],
+                  "cell": 420
+                },
+                "straightLengthPx": 637.058,
+                "straightIsBlocked": true,
+                "reachable": true,
+                "cells": [
+                  1589,
+                  1557,
+                  1525,
+                  1493,
+                  1461,
+                  1429,
+                  1397,
+                  1365,
+                  1333,
+                  1301,
+                  1269,
+                  1237,
+                  1205,
+                  1173,
+                  1141,
+                  1109,
+                  1077,
+                  1045,
+                  1013,
+                  981,
+                  948,
+                  915,
+                  882,
+                  849,
+                  817,
+                  785,
+                  753,
+                  721,
+                  689,
+                  657,
+                  656,
+                  655,
+                  654,
+                  653,
+                  652,
+                  651,
+                  618,
+                  585,
+                  552,
+                  519,
+                  486,
+                  453,
+                  420
+                ],
+                "points": [
+                  [
+                    351,
+                    791
+                  ],
+                  [
+                    344,
+                    776
+                  ],
+                  [
+                    344,
+                    760
+                  ],
+                  [
+                    344,
+                    744
+                  ],
+                  [
+                    344,
+                    728
+                  ],
+                  [
+                    344,
+                    712
+                  ],
+                  [
+                    344,
+                    696
+                  ],
+                  [
+                    344,
+                    680
+                  ],
+                  [
+                    344,
+                    664
+                  ],
+                  [
+                    344,
+                    648
+                  ],
+                  [
+                    344,
+                    632
+                  ],
+                  [
+                    344,
+                    616
+                  ],
+                  [
+                    344,
+                    600
+                  ],
+                  [
+                    344,
+                    584
+                  ],
+                  [
+                    344,
+                    568
+                  ],
+                  [
+                    344,
+                    552
+                  ],
+                  [
+                    344,
+                    536
+                  ],
+                  [
+                    344,
+                    520
+                  ],
+                  [
+                    344,
+                    504
+                  ],
+                  [
+                    344,
+                    488
+                  ],
+                  [
+                    328,
+                    472
+                  ],
+                  [
+                    312,
+                    456
+                  ],
+                  [
+                    296,
+                    440
+                  ],
+                  [
+                    280,
+                    424
+                  ],
+                  [
+                    280,
+                    408
+                  ],
+                  [
+                    280,
+                    392
+                  ],
+                  [
+                    280,
+                    376
+                  ],
+                  [
+                    280,
+                    360
+                  ],
+                  [
+                    280,
+                    344
+                  ],
+                  [
+                    280,
+                    328
+                  ],
+                  [
+                    264,
+                    328
+                  ],
+                  [
+                    248,
+                    328
+                  ],
+                  [
+                    232,
+                    328
+                  ],
+                  [
+                    216,
+                    328
+                  ],
+                  [
+                    200,
+                    328
+                  ],
+                  [
+                    184,
+                    328
+                  ],
+                  [
+                    168,
+                    312
+                  ],
+                  [
+                    152,
+                    296
+                  ],
+                  [
+                    136,
+                    280
+                  ],
+                  [
+                    120,
+                    264
+                  ],
+                  [
+                    104,
+                    248
+                  ],
+                  [
+                    88,
+                    232
+                  ],
+                  [
+                    67.5,
+                    220.5
+                  ]
+                ],
+                "lengthPx": 746.332,
+                "cost": 464,
+                "cellLengthPx": 742.4,
+                "expanded": 597,
+                "why": null,
+                "bends": 41
+              },
+              {
+                "kind": "play",
+                "hole": 10,
+                "from": {
+                  "id": "tee-2",
+                  "at": [
+                    67.5,
+                    220.5
+                  ],
+                  "cell": 420
+                },
+                "to": {
+                  "id": "basket-1",
+                  "at": [
+                    171,
+                    461
+                  ],
+                  "cell": 906
+                },
+                "straightLengthPx": 261.825,
+                "straightIsBlocked": true,
+                "reachable": true,
+                "cells": [
+                  420,
+                  453,
+                  486,
+                  519,
+                  552,
+                  585,
+                  618,
+                  651,
+                  652,
+                  653,
+                  654,
+                  655,
+                  656,
+                  657,
+                  689,
+                  721,
+                  753,
+                  752,
+                  751,
+                  782,
+                  813,
+                  844,
+                  875,
+                  906
+                ],
+                "points": [
+                  [
+                    67.5,
+                    220.5
+                  ],
+                  [
+                    88,
+                    232
+                  ],
+                  [
+                    104,
+                    248
+                  ],
+                  [
+                    120,
+                    264
+                  ],
+                  [
+                    136,
+                    280
+                  ],
+                  [
+                    152,
+                    296
+                  ],
+                  [
+                    168,
+                    312
+                  ],
+                  [
+                    184,
+                    328
+                  ],
+                  [
+                    200,
+                    328
+                  ],
+                  [
+                    216,
+                    328
+                  ],
+                  [
+                    232,
+                    328
+                  ],
+                  [
+                    248,
+                    328
+                  ],
+                  [
+                    264,
+                    328
+                  ],
+                  [
+                    280,
+                    328
+                  ],
+                  [
+                    280,
+                    344
+                  ],
+                  [
+                    280,
+                    360
+                  ],
+                  [
+                    280,
+                    376
+                  ],
+                  [
+                    264,
+                    376
+                  ],
+                  [
+                    248,
+                    376
+                  ],
+                  [
+                    232,
+                    392
+                  ],
+                  [
+                    216,
+                    408
+                  ],
+                  [
+                    200,
+                    424
+                  ],
+                  [
+                    184,
+                    440
+                  ],
+                  [
+                    171,
+                    461
+                  ]
+                ],
+                "lengthPx": 450.478,
+                "cost": 278,
+                "cellLengthPx": 444.8,
+                "expanded": 209,
+                "why": null,
+                "bends": 22
+              }
+            ],
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Round.path",
+      "invocations": [
+        {
+          "id": "px.exp.lab.round.path",
+          "calculation": {
+            "address": "fn.lab.round.path",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "legs": "px:px.exp.lab.round.legs",
+            "graph": "px:px.exp.lab.course.graph"
+          },
+          "args": {},
+          "into": "px.exp.lab.round.path",
+          "declared_consumes": [
+            "px:px.exp.lab.round.legs",
+            "px:px.exp.lab.course.graph"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.round.legs",
+            "px.exp.lab.course.graph"
+          ],
+          "actual_produces": [
+            "px.exp.lab.round.path"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.round.path",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "the round as one path over the canonical raster: every leg searched over the walkable cells, nothing straightened",
+              "course": "labfixture",
+              "cellPx": 16,
+              "from": [
+                "px.exp.lab.course.graph",
+                "px.exp.lab.course.walkable"
+              ],
+              "order": [
+                1,
+                10
+              ],
+              "waypoints": [
+                {
+                  "id": "tee-3",
+                  "at": [
+                    427.5,
+                    530.5
+                  ]
+                },
+                {
+                  "id": "basket-2",
+                  "at": [
+                    351,
+                    791
+                  ]
+                },
+                {
+                  "id": "tee-2",
+                  "at": [
+                    67.5,
+                    220.5
+                  ]
+                },
+                {
+                  "id": "basket-1",
+                  "at": [
+                    171,
+                    461
+                  ]
+                }
+              ],
+              "cells": {
+                "kind": "numbers",
+                "length": 82,
+                "sha256": "896e14cb350b8fa58d7c81a66e432d472ac83f213969c83769dae2547304b5bf"
+              },
+              "points": [
+                [
+                  427.5,
+                  530.5
+                ],
+                [
+                  424,
+                  552
+                ],
+                [
+                  424,
+                  568
+                ],
+                [
+                  424,
+                  584
+                ],
+                [
+                  424,
+                  600
+                ],
+                [
+                  424,
+                  616
+                ],
+                [
+                  424,
+                  632
+                ],
+                [
+                  424,
+                  648
+                ],
+                [
+                  424,
+                  664
+                ],
+                [
+                  424,
+                  680
+                ],
+                [
+                  424,
+                  696
+                ],
+                [
+                  424,
+                  712
+                ],
+                [
+                  408,
+                  728
+                ],
+                [
+                  392,
+                  744
+                ],
+                [
+                  376,
+                  760
+                ],
+                [
+                  360,
+                  776
+                ],
+                [
+                  351,
+                  791
+                ],
+                [
+                  344,
+                  776
+                ],
+                [
+                  344,
+                  760
+                ],
+                [
+                  344,
+                  744
+                ],
+                [
+                  344,
+                  728
+                ],
+                [
+                  344,
+                  712
+                ],
+                [
+                  344,
+                  696
+                ],
+                [
+                  344,
+                  680
+                ],
+                [
+                  344,
+                  664
+                ],
+                [
+                  344,
+                  648
+                ],
+                [
+                  344,
+                  632
+                ],
+                [
+                  344,
+                  616
+                ],
+                [
+                  344,
+                  600
+                ],
+                [
+                  344,
+                  584
+                ],
+                [
+                  344,
+                  568
+                ],
+                [
+                  344,
+                  552
+                ],
+                [
+                  344,
+                  536
+                ],
+                [
+                  344,
+                  520
+                ],
+                [
+                  344,
+                  504
+                ],
+                [
+                  344,
+                  488
+                ],
+                [
+                  328,
+                  472
+                ],
+                [
+                  312,
+                  456
+                ],
+                [
+                  296,
+                  440
+                ],
+                [
+                  280,
+                  424
+                ],
+                [
+                  280,
+                  408
+                ],
+                [
+                  280,
+                  392
+                ],
+                [
+                  280,
+                  376
+                ],
+                [
+                  280,
+                  360
+                ],
+                [
+                  280,
+                  344
+                ],
+                [
+                  280,
+                  328
+                ],
+                [
+                  264,
+                  328
+                ],
+                [
+                  248,
+                  328
+                ],
+                [
+                  232,
+                  328
+                ],
+                [
+                  216,
+                  328
+                ],
+                [
+                  200,
+                  328
+                ],
+                [
+                  184,
+                  328
+                ],
+                [
+                  168,
+                  312
+                ],
+                [
+                  152,
+                  296
+                ],
+                [
+                  136,
+                  280
+                ],
+                [
+                  120,
+                  264
+                ],
+                [
+                  104,
+                  248
+                ],
+                [
+                  88,
+                  232
+                ],
+                [
+                  67.5,
+                  220.5
+                ],
+                [
+                  88,
+                  232
+                ],
+                [
+                  104,
+                  248
+                ],
+                [
+                  120,
+                  264
+                ],
+                [
+                  136,
+                  280
+                ],
+                [
+                  152,
+                  296
+                ],
+                [
+                  168,
+                  312
+                ],
+                [
+                  184,
+                  328
+                ],
+                [
+                  200,
+                  328
+                ],
+                [
+                  216,
+                  328
+                ],
+                [
+                  232,
+                  328
+                ],
+                [
+                  248,
+                  328
+                ],
+                [
+                  264,
+                  328
+                ],
+                [
+                  280,
+                  328
+                ],
+                [
+                  280,
+                  344
+                ],
+                [
+                  280,
+                  360
+                ],
+                [
+                  280,
+                  376
+                ],
+                [
+                  264,
+                  376
+                ],
+                [
+                  248,
+                  376
+                ],
+                [
+                  232,
+                  392
+                ],
+                [
+                  216,
+                  408
+                ],
+                [
+                  200,
+                  424
+                ],
+                [
+                  184,
+                  440
+                ],
+                [
+                  171,
+                  461
+                ]
+              ],
+              "lengthPx": 1486.596,
+              "cost": 922,
+              "playLengthPx": 740.264,
+              "walkLengthPx": 746.332,
+              "unreachable": []
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Round.summary",
+      "invocations": [
+        {
+          "id": "px.exp.lab.round.summary",
+          "calculation": {
+            "address": "fn.lab.round.summary",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "path": "px:px.exp.lab.round.path",
+            "legs": "px:px.exp.lab.round.legs",
+            "course": "px:px.exp.lab.course.summary"
+          },
+          "args": {},
+          "into": "px.exp.lab.round.summary",
+          "declared_consumes": [
+            "px:px.exp.lab.round.path",
+            "px:px.exp.lab.round.legs",
+            "px:px.exp.lab.course.summary"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.round.path",
+            "px.exp.lab.round.legs",
+            "px.exp.lab.course.summary"
+          ],
+          "actual_produces": [
+            "px.exp.lab.round.summary"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.round.summary",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "what the round cost, how much of it was the obstacle, and what could not be walked at all",
+              "course": "labfixture",
+              "holes": 2,
+              "legs": 3,
+              "walked": 3,
+              "unreachable": [],
+              "lengthPx": 1486.596,
+              "straightLengthPx": 1170.383,
+              "detourPx": 316.213,
+              "legsThatHadToBend": [
+                "walk:basket-2->tee-2",
+                "play:tee-2->basket-1"
+              ],
+              "cells": 82,
+              "unplaced": {
+                "holes": [
+                  {
+                    "number": 11,
+                    "missing": [
+                      "basket"
+                    ]
+                  }
+                ],
+                "badges": [],
+                "tees": [],
+                "baskets": []
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.course.graph": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.round.legs",
+        "px.exp.lab.round.path"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.round.legs": {
+      "written_by": "px.exp.lab.round.legs",
+      "read_by": [
+        "px.exp.lab.round.path",
+        "px.exp.lab.round.summary"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.round.path": {
+      "written_by": "px.exp.lab.round.path",
+      "read_by": [
+        "px.exp.lab.round.summary"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.course.summary": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.round.summary"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.round.summary": {
+      "written_by": "px.exp.lab.round.summary",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 3,
+    "hits": 3,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

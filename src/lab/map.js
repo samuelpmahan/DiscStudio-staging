@@ -11,13 +11,14 @@ import { registerS2, runS2 } from './s2.js';
 import { registerS3, runS3 } from './s3.js';
 import { registerS4, runS4 } from './s4.js';
 import { registerS5, runS5 } from './s5.js';
+import { registerS6, runS6 } from './s6.js';
 import { registerRoute, runRoute } from './route.js';
 import { registerPath, pathDocument, putCourses } from './path.js';
 import { fixtureCapture, fixtureBasis } from './fixtures.js';
 
 export function buildMap() {
   const lab = createLab();
-  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerS5(lab); registerRoute(lab); registerPath(lab);
+  registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerS4(lab); registerS5(lab); registerS6(lab); registerRoute(lab); registerPath(lab);
   // The course fixture: the S0..S3 capture plus the two elements S4 and above
   // need -- a hole whose basket is missing, and structure no Stage object owns.
   const fixture = { hole11: true, obstacle: true };
@@ -28,11 +29,13 @@ export function buildMap() {
   const s3 = runS3(lab);
   const s4 = runS4(lab);
   const s5 = runS5(lab);
+  // The straight round first, so S6 can be compared against what it replaces.
   const round = runRoute(lab, { course: 'labfixture' });
+  const s6 = runS6(lab, { compareWith: 'labfixture' });
   putCourses(lab, ['DashsTrack']);
   const path = pathDocument(lab, { course: 'dashstrack', name: 'route', from: 'h1', to: 'h9' });
   lab.run(path.composition.PrincipleComponentRender, path.composition);
-  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'S4', 'S4.invariants', 'S5', 'S5.invariants', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
+  for (const name of ['S0', 'S1', 'S2', 'S3', 'S3.quick-anno', 'S4', 'S4.invariants', 'S5', 'S5.invariants', 'S6', 'S6.invariants', 'S6.vs-straight', round.composition.PrincipleComponentRender, path.composition.PrincipleComponentRender]) lab.saveRecord(name);
 
   lab.put('px.exp.lab.map', {
     for: 'what the ChainSpot S0/S1/Mermaid/traverse port reached in one sprint, and what it did not',
@@ -44,6 +47,7 @@ export function buildMap() {
       { what: 'S3', document: 'the document its three OperationSpecs declare, plus the Python analogue\'s two-Tick accounting PCR', evidence: 'tests/lab-s3.test.js' },
       { what: 'S4 (invented)', document: 'Holes: Hole.readNumbers -> Hole.bindAnchors -> Hole.assemble -> Hole.unplaced over the S1/S2/S3 produce Parts, plus the S4.invariants accounting PCR that is its oracle; stages/S4.mmd compiles to the same document', evidence: 'tests/lab-s4.test.js' },
       { what: 'S5 (invented)', document: 'Course: Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S5.mmd compiles to the same document', evidence: 'tests/lab-s5.test.js' },
+      { what: 'S6 (invented)', document: "Round: Round.legs -> Round.path -> Round.summary, an A* over S5's walkable cells (integer costs 10/14, octile heuristic, no corner cutting, ties by (f, g, cell), no clock and no random), plus S6.invariants and the S6.vs-straight comparison with the route task 114 landed; stages/S6.mmd compiles to the same document", evidence: 'tests/lab-s6.test.js' },
       { what: 'mermaid', document: 'S1.mmd compiles to the same document as the YAML (structural digest)', evidence: 'tests/lab-mermaid.test.js' },
       { what: 'pathfinding (the course)', document: 'Anchors -> Order -> Route -> Settle over the Stage Parts: badges order the holes, tees and baskets anchor them', evidence: 'tests/lab-route.test.js' },
       { what: 'pathfinding (the hex walk)', document: "Anchors -> Start -> Search -> Settle over a course manifest; kept as the LAB's human-in-the-loop tool for a raster no Stage has read yet", evidence: 'tests/lab-path.test.js' }
@@ -53,10 +57,15 @@ export function buildMap() {
       { address: 'px.exp.lab.oracle.*', why: 'no recorded LAB values to check against: S0/S1 read chainspot-corpus/dev/DashsTrack/DashsTrack-full.jpg, absent here, and the Mermaid experiment records no generated output ("no generated output from this revision exists yet")' },
       { address: 'px.exp.lab.route.<course> for a real course', why: 'a route needs Stage outputs, and the Stages need a capture: the only capture here is the fixture, so DashsTrack is routed by the manifest hex walk and not by its own badges, baskets and tees' },
       { address: 'px.exp.lab.s2.recovery', why: "the LAB's S2 receipt says 'recovery: NOT RUN'; a fused or missing shell has no second chance in the clean path either" },
+      { address: 'px.exp.lab.round.<course> for a real course', why: 'the round is searched over the fixture, the only capture this repository has; on a real capture the obstacle map would be a photograph of trees and water rather than one bar drawn to be unclaimable' },
+      { address: 'px.exp.lab.round.legs[].points, smoothed', why: 'a leg is the cell path A* found, so an unobstructed leg still costs about 7% more than its straight line; a line-of-sight pass over the cells (string pulling) would remove that, and it is not written -- the number is reported in px.exp.lab.s6.vsstraight instead of being hidden' },
+      { address: 'px.exp.lab.course.obstacles cost surface', why: 'every walkable cell costs the same. A real course map distinguishes fairway, rough, water and out of bounds, and the grid already has the shape for a cost per cell; nothing here can tell those apart, so nothing here pretends to' },
       { address: 'px.exp.lab.path.truth', why: 'the LAB anchors T/N/B come from the annotation truth file, which needs the corpus; the port searches the blind per-hole viewport the manifest itself carries' }
     ],
     next: [
-      { what: 'S6 Round: a search from tee to basket that respects that map', for: 'a play leg is a straight line today; px.remaining.afterBadges and the Basket and Tee pixels are exactly the obstacle map it does not use' },
+      { what: 'a cost per cell instead of a boolean, and a leg that prefers fairway', for: 'S5 already classifies every pixel; the only reason walkable is 0 or 1 is that the fixture has one kind of obstacle' },
+      { what: 'a line-of-sight smoothing pass over a leg', for: 'an unobstructed leg pays about 7% for being a cell path, and the comparison Part measures exactly that' },
+      { what: 'S7: the round as a score -- throws, not pixels', for: 'S6 says how far the round walks; nobody has said what a throw is, and the LAB has no Stage for it either' },
       { what: 'run the TypeScript S1 on the same fixture and compare value by value', for: 'the port is proved structurally and by invariant, never against the LAB running' },
       { what: 'an `into: []` effect Calculation, or an oc. equivalent in the JS core', for: 'S0 cache is a Tick the studio cannot express without inventing a Part' },
       { what: 'a binding that reads a sibling result with no address', for: "the Mermaid S0's FullImage locality is a property the studio's grammar cannot hold" },
@@ -85,6 +94,11 @@ export function buildMap() {
   finding(lab, 's5.terrainisaresidue', { kind: 'finding', for: 'where an obstacle map comes from when no Stage was ever asked to find obstacles', text: "S5 detects nothing. It classifies every pixel of the canonical raster by which Stage already owns it -- badge (not in px.remaining.afterBadges), basket, tee -- and calls what is left over AND still dark in S1's own black mask `terrain`. On the course fixture that is exactly the 4224 pixels of the drawn bar and not one pixel more, because every basket and tee pixel leaves through its own door first. An obstacle map is a residue of the Stages, and the Stage that produces it is the one that says every pixel leaves once." });
   finding(lab, 's5.walkablerulestated', { kind: 'friction', for: 'the one judgement in S5 that the raster cannot settle', text: "Four of the five classes are printed on a map: a badge, a basket and a tee are symbols, and a tee or a basket is where a leg ENDS, so making them obstacles would make every leg unreachable. Only terrain blocks. That is a choice about what the picture means, not a fact about the pixels, so it is carried in the Part (`px.course.graph.walkableRule`) rather than buried in a predicate.", proposal: 'a real course would classify terrain further (water, trees, out of bounds) and give each class a cost instead of a boolean; the cell grid already has the shape for it.' });
   finding(lab, 's5.blockedbeforerouted', { kind: 'strength', for: 'what a course can say before anything searches it', text: "S5's edges carry `straightIsBlocked`, sampled at half a cell along the straight line between anchors. On the course fixture two of the three edges are blocked -- the walk from basket-2 back to tee-2 and the play of hole 10 -- which is the whole of S6's problem stated before S6 exists, and the reason the S6 landing can be compared against the straight route rather than merely admired." });
+  finding(lab, 's6.themapiswhatchanged', { kind: 'finding', for: 'what the straight route got wrong, measured rather than asserted', text: "The straight route (task 114) and S6 bind the same holes to the same tees and baskets in the same order -- `sameHoles` and `sameAnchors` in px.exp.lab.s6.vsstraight are both true. The straight route was never wrong about WHERE the round goes; it was wrong about the ground in between: two of its three legs pass through four obstacle cells, and on the course fixture respecting the map costs 316.2 px on 1170.4 (+27%), almost all of it on one play leg (+72%). That is the whole difference between a round that is measured and a round that is walked." });
+  finding(lab, 's6.gridoverhead', { kind: 'friction', for: 'what a cell path costs even when nothing is in the way', text: "The leg that nothing blocks (hole 1, tee-3 to basket-2) still comes out 6.7% longer than its straight line, because the path is a sequence of cell centres at 16px and an A* on a grid can only move in eight directions. That is not the obstacle map costing anything; it is the discretisation. It is reported per leg as `detourRatio` rather than smoothed away, so a reader can tell the two costs apart.", proposal: 'a line-of-sight pass (string pulling) over the cells would return the straight line where the straight line is walkable, and only bend where it is not.' });
+  finding(lab, 's6.unreachableisaresult', { kind: 'strength', for: 'the answer a search must be allowed to give', text: "A basket with no walkable path to it makes a leg with `reachable: false`, no cells, no length, the reason, and the count of cells the search did reach; the round carries it under `unreachable` and its length excludes it. The invariant `unreachableIsReportedNotStraightened` refuses the alternative -- a straight line drawn across the thing that blocked it -- and the test builds a sealed room to prove the refusal fires." });
+  finding(lab, 's6.determinismisdesigned', { kind: 'strength', for: 'a search that has to give the same answer on two machines', text: "Integer step costs (10 orthogonal, 14 diagonal) and an octile heuristic in the same units mean no float ever decides an ordering; the frontier is chosen by (f, g, cell index), which is a total order, and the eight moves are visited in a fixed order. No clock, no random, no Map insertion order. Two independent runs of the whole Stage produce the same cells, the same cost and the same length, which is the test." });
+  finding(lab, 'stage.inventedinthelabgrammar', { kind: 'finding', for: 'whether the LAB\'s stage grammar carries a Stage it never wrote', text: "S4, S5 and S6 are not ports: nothing in ChainSpot corresponds to them. They were written in the LAB's own grammar anyway -- a contract naming consumes and produces, Ticks whose names are the OperationSpecs, one published Part per Calculation, a `has` provenance block on each constructed object, an accounting PCR as the oracle where no reference run exists, and a .mmd that compiles to the same document. Every one of those fitted without being bent. The one thing the grammar did not carry is the choice S5 had to make about what an obstacle IS, which is why that choice is a field in the Part rather than a predicate in the code." });
   finding(lab, 's1.recognition', { kind: 'friction', for: 'the one Calculation of S1 that is reduced rather than ported', text: 'fn.s1.whiteDigits.prepare/match segment glyphs with knobs and score them with a logistic model asset (digits/logisticInference, assets/logistic.json). The port normalizes to the same digitW x digitH grid and scores against template Parts; the reading shape (value, status, per-digit rankings) is the LAB\'s.' });
   lab.save('lab');
   return lab;

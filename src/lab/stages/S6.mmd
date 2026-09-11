@@ -1,0 +1,25 @@
+flowchart TD
+    graph["px.course.graph"]
+    courseSummary["px.course.summary"]
+
+    subgraph S6["PCR: S6"]
+        subgraph Legs["Tick: Round.legs"]
+            legs["fn.Round.legs"]
+        end
+        subgraph Path["Tick: Round.path"]
+            path["fn.Round.path"]
+        end
+        subgraph Summary["Tick: Round.summary"]
+            summary["fn.Round.summary"]
+        end
+    end
+
+    graph -->|graph| legs
+    legs --> roundLegs["px.round.legs"]
+    roundLegs -->|legs| path
+    graph -->|graph| path
+    path --> roundPath["px.round.path"]
+    roundPath -->|path| summary
+    roundLegs -->|legs| summary
+    courseSummary -->|course| summary
+    summary --> roundSummary["px.round.summary"]

@@ -1,0 +1,157 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S6.vs-straight",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "CompareWithStraight",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s6.vsstraight",
+          "calculation": {
+            "address": "fn.lab.s6.comparewithstraight",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "legs": "px:px.exp.lab.round.legs",
+            "straight": "px:px.exp.lab.route.labfixture",
+            "graph": "px:px.exp.lab.course.graph"
+          },
+          "args": {},
+          "into": "px.exp.lab.s6.vsstraight",
+          "declared_consumes": [
+            "px:px.exp.lab.round.legs",
+            "px:px.exp.lab.route.labfixture",
+            "px:px.exp.lab.course.graph"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.round.legs",
+            "px.exp.lab.route.labfixture",
+            "px.exp.lab.course.graph"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s6.vsstraight"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s6.vsstraight",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "what respecting the obstacle map costs, measured against the straight-leg route this port landed first",
+              "straight": {
+                "address": "px.exp.lab.route.labfixture",
+                "objective": "play the holes in badge order: each hole tee to basket, then basket to the next hole tee, over the canonical raster",
+                "totalLengthPx": 1170.383
+              },
+              "routed": {
+                "address": "px.exp.lab.round.path",
+                "objective": "the same order over the same anchors, searched over the walkable cells"
+              },
+              "sameHoles": true,
+              "sameAnchors": true,
+              "legs": [
+                {
+                  "leg": "play:tee-3->basket-2",
+                  "hole": 1,
+                  "straightLengthPx": 271.5,
+                  "routedLengthPx": 289.786,
+                  "reachable": true,
+                  "deltaPx": 18.286,
+                  "detourRatio": 1.067,
+                  "obstacleCellsTheStraightLineCrosses": 0,
+                  "cells": []
+                },
+                {
+                  "leg": "walk:basket-2->tee-2",
+                  "hole": 10,
+                  "straightLengthPx": 637.058,
+                  "routedLengthPx": 746.332,
+                  "reachable": true,
+                  "deltaPx": 109.274,
+                  "detourRatio": 1.172,
+                  "obstacleCellsTheStraightLineCrosses": 3,
+                  "cells": [
+                    679,
+                    680,
+                    712
+                  ]
+                },
+                {
+                  "leg": "play:tee-2->basket-1",
+                  "hole": 10,
+                  "straightLengthPx": 261.825,
+                  "routedLengthPx": 450.478,
+                  "reachable": true,
+                  "deltaPx": 188.653,
+                  "detourRatio": 1.721,
+                  "obstacleCellsTheStraightLineCrosses": 3,
+                  "cells": [
+                    679,
+                    711,
+                    712
+                  ]
+                }
+              ],
+              "straightTotalPx": 1170.383,
+              "routedTotalPx": 1486.596,
+              "deltaPx": 316.213,
+              "legsTheStraightRouteWalkedThroughAnObstacle": [
+                "walk:basket-2->tee-2",
+                "play:tee-2->basket-1"
+              ],
+              "obstacleCellsTheStraightRouteCrosses": 4
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.round.legs": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.vsstraight"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.route.labfixture": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.vsstraight"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.graph": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s6.vsstraight"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s6.vsstraight": {
+      "written_by": "px.exp.lab.s6.vsstraight",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 1,
+    "hits": 1,
+    "computed": 0,
+    "wall_ms": null
+  }
+}
