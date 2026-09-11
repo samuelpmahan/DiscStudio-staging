@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/112
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/112:pyto/experiments/tasks/112/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff ddb2428 origin/exp/112 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff bf04bc0 origin/exp/112 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ port ChainSpot's S0 and S1 stage documents to the studio's PxC core as fn.lab.* 
 
 ## Starting point
 
-ddb2428bb3b1a778d404c9ea53409880c5392633 (land(task-111): the brain on the disc shelf: one PxC program over the studio's own material, the seven molds' flight numbers and the twelve discs' weights as dataset Parts, four Ticks (describe, correlate, cluster, regress) through the brain's Calculations, observed, with the record the Tick viewer draws). MAIN may have moved since: `git log --oneline ddb2428..origin/claude/os-sprint-st8hnu` shows how far.
+ddb2428bb3b1a778d404c9ea53409880c5392633 (land(task-111): the brain on the disc shelf: one PxC program over the studio's own material, the seven molds' flight numbers and the twelve discs' weights as dataset Parts, four Ticks (describe, correlate, cluster, regress) through the brain's Calculations, observed, with the record the Tick viewer draws). MAIN may have moved since: `git log --oneline bf04bc0..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -63,6 +63,7 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 - A  src/lab/fixtures.js
 - A  src/lab/lab.js
 - A  src/lab/mermaid.js
+- A  src/lab/path.js
 - A  src/lab/s0.js
 - A  src/lab/source.js
 - A  src/lab/source/S0.args.json
@@ -81,39 +82,42 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 - A  src/lab/source/courses/TowneLake.json
 - A  src/lab/yaml.js
 - A  tests/lab-mermaid.test.js
+- A  tests/lab-path.test.js
 - A  tests/lab-s0.test.js
 
 ```
-src/lab/address.js                       |  43 +++++++++
+src/lab/address.js                       |  43 ++++++++
  src/lab/fixtures.js                      |  52 ++++++++++
- src/lab/lab.js                           |  98 +++++++++++++++++++
- src/lab/mermaid.js                       | 150 +++++++++++++++++++++++++++++
- src/lab/s0.js                            | 159 +++++++++++++++++++++++++++++++
+ src/lab/lab.js                           |  98 ++++++++++++++++++
+ src/lab/mermaid.js                       | 150 +++++++++++++++++++++++++++
+ src/lab/path.js                          | 171 +++++++++++++++++++++++++++++++
+ src/lab/s0.js                            | 159 ++++++++++++++++++++++++++++
  src/lab/source.js                        |   4 +
  src/lab/source/S0.args.json              |   1 +
  src/lab/source/S0.mmd                    |  19 ++++
  src/lab/source/S0.pcr.yaml               |  29 ++++++
  src/lab/source/S0.stage.yaml             |  20 ++++
  src/lab/source/S1.args.json              |  12 +++
- src/lab/source/S1.mmd                    |  81 ++++++++++++++++
- src/lab/source/S1.pcr.yaml               | 137 ++++++++++++++++++++++++++
+ src/lab/source/S1.mmd                    |  81 +++++++++++++++
+ src/lab/source/S1.pcr.yaml               | 137 +++++++++++++++++++++++++
  src/lab/source/courses/AlexClark.json    |   8 ++
- src/lab/source/courses/DashsTrack.json   |  28 ++++++
+ src/lab/source/courses/DashsTrack.json   |  28 +++++
  src/lab/source/courses/HeritagePark.json |   8 ++
  src/lab/source/courses/Lenard.json       |   8 ++
  src/lab/source/courses/NorthPark.json    |   7 ++
  src/lab/source/courses/TheREC.json       |  14 +++
  src/lab/source/courses/TowneLake.json    |   8 ++
- src/lab/yaml.js                          | 100 +++++++++++++++++++
- tests/lab-mermaid.test.js                |  71 ++++++++++++++
- tests/lab-s0.test.js                     |  69 ++++++++++++++
- 23 files changed, 1126 insertions(+)
+ src/lab/yaml.js                          | 100 ++++++++++++++++++
+ tests/lab-mermaid.test.js                |  71 +++++++++++++
+ tests/lab-path.test.js                   |  82 +++++++++++++++
+ tests/lab-s0.test.js                     |  69 +++++++++++++
+ 25 files changed, 1379 insertions(+)
 ```
 
 ## Evidence
 
 - verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.yhUF8BKQi1) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.qNOO1pvDYK) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
