@@ -23,9 +23,10 @@ class TheFacade(unittest.TestCase):
     def test_every_op_has_the_three_engines(self):
         self.assertEqual(
             ops.ops(),
-            ("argsort", "cholesky", "convolve", "cumsum", "eig", "fft", "histogram", "interp", "inv",
-             "lstsq", "matmul", "norm", "pack", "pairwise", "qr", "select_k", "solve", "sort", "svd",
-             "trace", "unpack"),
+            ("argsort", "cholesky", "convolve", "correlate", "cumsum", "diff", "eig", "fft",
+             "gradient", "histogram", "interp", "inv", "lstsq", "matmul", "matrix_rank", "norm",
+             "outer", "pack", "pairwise", "pinv", "qr", "select_k", "solve", "sort", "svd", "trace",
+             "unpack"),
         )
         for op in ops.ops():
             self.assertEqual(ops.engines_of(op), ("np", "py", "sp"), op)
@@ -55,7 +56,7 @@ class EveryEngineAgrees(unittest.TestCase):
         checked = set()
         for case in case_module.cases():
             expected = case["expected"]()
-            for backend in ops.engines_of(case["op"]):
+            for backend in case_module.engines_of_case(case, ops.engines_of(case["op"])):
                 with self.subTest(op=case["op"], case=case["case"], backend=backend):
                     got = ops.call(case["op"], dict(case["args"], backend=backend))
                     passed, worst = harness.close(got, expected, case["tolerance"])
@@ -66,10 +67,12 @@ class EveryEngineAgrees(unittest.TestCase):
 
     def test_the_engines_agree_with_each_other_and_not_only_with_numpy(self):
         for case in case_module.cases():
-            answers = {backend: ops.call(case["op"], dict(case["args"], backend=backend)) for backend in ops.engines_of(case["op"])}
+            engines = case_module.engines_of_case(case, ops.engines_of(case["op"]))
+            answers = {backend: ops.call(case["op"], dict(case["args"], backend=backend)) for backend in engines}
+            reference = "py" if "py" in answers else sorted(answers)[0]
             for backend, got in answers.items():
-                passed, worst = harness.close(got, answers["py"], case["tolerance"])
-                self.assertTrue(passed, f"{case['op']}: {backend} and py disagree by {worst}")
+                passed, worst = harness.close(got, answers[reference], case["tolerance"])
+                self.assertTrue(passed, f"{case['op']}/{case['case']}: {backend} and {reference} disagree by {worst}")
 
 
 class ThePinnedSemantics(unittest.TestCase):
@@ -203,6 +206,55 @@ class TheNewerOps(unittest.TestCase):
     def test_interp_refuses_samples_that_do_not_increase(self):
         with self.assertRaises(ValueError):
             ops.call("interp", {"x": [0.5], "xp": [1.0, 1.0], "fp": [1.0, 2.0], "backend": "py"})
+
+
+class TheLastOps(unittest.TestCase):
+    def test_matrix_rank_sees_the_column_that_is_a_sum_of_two_others(self):
+        for backend in ("py", "np", "sp"):
+            self.assertEqual(ops.call("matrix_rank", {"a": case_module.B64, "backend": backend}), 4, backend)
+        for backend in ("np", "sp"):
+            self.assertEqual(ops.call("matrix_rank", {"a": case_module.DEFICIENT, "backend": backend}), 3, backend)
+
+    def test_the_py_engine_of_matrix_rank_refuses_what_its_svd_cannot_resolve(self):
+        """squaring the condition number is the cost of an svd through a^T a, and it
+        is paid exactly here: the py engine says so instead of guessing."""
+        with self.assertRaises(ValueError) as refused:
+            ops.call("matrix_rank", {"a": case_module.DEFICIENT, "backend": "py"})
+        self.assertIn("cannot resolve a singular value", str(refused.exception))
+
+    def test_pinv_is_a_left_inverse_and_py_refuses_where_it_cannot_be_one(self):
+        for backend in ("py", "np", "sp"):
+            got = ops.call("pinv", {"a": case_module.B64, "backend": backend})["values"]
+            product = [[sum(got[i][k] * case_module.B64[k][j] for k in range(6)) for j in range(4)] for i in range(4)]
+            for i in range(4):
+                for j in range(4):
+                    self.assertAlmostEqual(product[i][j], 1.0 if i == j else 0.0, places=8, msg=backend)
+        with self.assertRaises(ValueError) as refused:
+            ops.call("pinv", {"a": case_module.DEFICIENT, "backend": "py"})
+        self.assertIn("full column rank", str(refused.exception))
+        self.assertEqual(len(ops.call("pinv", {"a": case_module.DEFICIENT, "backend": "np"})["values"]), 4)
+
+    def test_gradient_keeps_the_length_and_diff_does_not(self):
+        values = [1.0, 4.0, 9.0, 16.0]
+        for backend in ("py", "np", "sp"):
+            self.assertEqual(len(ops.call("gradient", {"values": values, "backend": backend})), 4, backend)
+            self.assertEqual(ops.call("diff", {"values": values, "backend": backend}), [3.0, 5.0, 7.0], backend)
+            self.assertEqual(ops.call("diff", {"values": values, "order": 2, "backend": backend}), [2.0, 2.0], backend)
+        with self.assertRaises(ValueError):
+            ops.call("gradient", {"values": [1.0], "backend": "py"})
+
+    def test_correlate_is_not_convolve(self):
+        a, v = [1.0, 2.0, 3.0, 4.0], [0.0, 1.0, 0.5]
+        for backend in ("py", "np", "sp"):
+            correlated = ops.call("correlate", {"a": a, "v": v, "mode": "full", "backend": backend})
+            convolved = ops.call("convolve", {"a": a, "v": v, "mode": "full", "backend": backend})
+            self.assertNotEqual(correlated, convolved, backend)
+            self.assertEqual(correlated, ops.call("convolve", {"a": a, "v": list(reversed(v)), "mode": "full", "backend": backend}), backend)
+
+    def test_outer_is_a_matrix_of_the_two_lengths(self):
+        for backend in ("py", "np", "sp"):
+            got = ops.call("outer", {"a": [1.0, 2.0], "b": [3.0, 4.0, 5.0], "backend": backend})
+            self.assertEqual(got, {"shape": [2, 3], "values": [[3.0, 4.0, 5.0], [6.0, 8.0, 10.0]]}, backend)
 
 
 class TheStubsSayWhy(unittest.TestCase):

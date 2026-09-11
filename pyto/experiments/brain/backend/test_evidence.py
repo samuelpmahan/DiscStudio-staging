@@ -37,7 +37,8 @@ class TheEvidence(unittest.TestCase):
         cls.tmp.cleanup()
 
     def test_every_engine_of_every_case_has_an_oracle_part_and_passes(self):
-        expected = sum(len(ops.engines_of(case["op"])) for case in case_module.cases())
+        expected = sum(len(case_module.engines_of_case(case, ops.engines_of(case["op"])))
+                       for case in case_module.cases())
         self.assertEqual(len(self.verdicts), expected)
         failed = [key for key, ok in self.verdicts.items() if not ok]
         self.assertEqual(failed, [], "a backend that changes semantics is a failed backend")
