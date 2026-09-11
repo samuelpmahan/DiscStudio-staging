@@ -4,8 +4,54 @@ Intent: vertical content: a 1080x1920 portrait canvas beside the 1920x1080 one, 
 Starting point: 2487b379d17d28f07207414f51bdbe976958d8e1 (land(task-131): art assignment as a Calculation over the set, not a hash per item: fn.art.assign spreads first (a golden-ratio walk over the painter's families, every family used before any repeats) then groups (after coverage a disc takes the family of the disc it resembles, by mold), stable in the order the shelf holds its discs; px.art.assignment is a Part the card chain binds, an authored family still wins; four oracles as tests: coverage, spread, grouping, stability; the seed's twelve discs are assigned by it instead of by index)
 Verify: npm test
 Allow: src index.html tests scripts/browser_test.py scripts/demo_beats.py pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 11 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  scripts/browser_test.py
+- M  src/app.js
+- M  src/domain.js
+- A  src/frames.js
+- M  src/media.js
+- M  src/presentation.js
+- M  src/runtime.js
+- M  src/seed.js
+- M  src/style.css
+- M  tests/core.test.js
+- M  tests/fixtures/serial-run-record.json
+
+```
+scripts/browser_test.py               |  39 +++++++
+ src/app.js                            |  39 +++++--
+ src/domain.js                         |  13 ++-
+ src/frames.js                         |  97 ++++++++++++++++++
+ src/media.js                          |   7 +-
+ src/presentation.js                   |  77 ++++++++++----
+ src/runtime.js                        |  15 ++-
+ src/seed.js                           |   2 +-
+ src/style.css                         |   2 +-
+ tests/core.test.js                    |  47 ++++++++-
+ tests/fixtures/serial-run-record.json | 185 ++++++++++++++++++++++++++++------
+ 11 files changed, 448 insertions(+), 75 deletions(-)
+```
+
+## Evidence
+
+- verify: `npm test` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.xhi4yFgnlv) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
