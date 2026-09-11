@@ -33,10 +33,8 @@
  * shape S3's Python analogue uses: AccountHoles publishes a ledger, CheckHoles
  * reads it back and says whether it balances).
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { labAddress, labDocument } from './address.js';
-import { STAGES } from './source.js';
+import { compiledStage } from './stage-sources.js';
 import { compileMermaidPcr, lowerToPql } from './mermaid.js';
 
 export const S4_ADDRESSES = {
@@ -202,11 +200,7 @@ export function s4Document(lab) {
  * into the document `s4Document` builds -- the same Calculations over the same
  * addresses in the same order (structural digest equal).
  */
-export function compiledS4() {
-  const compiled = compileMermaidPcr(readFileSync(join(STAGES, 'S4.mmd'), 'utf8'), JSON.parse(readFileSync(join(STAGES, 'S4.args.json'), 'utf8')));
-  const { document, local } = lowerToPql(compiled);
-  return { compiled, local, document: labDocument(document) };
-}
+export function compiledS4() { return compiledStage('S4', compileMermaidPcr, lowerToPql, labDocument); }
 
 /** The invariants, as their own two-Tick composition: the shape S3's Python analogue uses. */
 export function s4InvariantDocument(lab) {
@@ -214,6 +208,20 @@ export function s4InvariantDocument(lab) {
     { name: 'AccountHoles', Calculations: [{ call: 'fn.lab.s4.accountholes', with: { numbers: S4_ADDRESSES.numbers, binding: S4_ADDRESSES.binding, holes: S4_ADDRESSES.objects, unplaced: S4_ADDRESSES.unplaced }, args: {}, into: S4_ADDRESSES.ledger }] },
     { name: 'CheckHoles', Calculations: [{ call: 'fn.lab.s4.checkholes', with: { ledger: S4_ADDRESSES.ledger, holes: S4_ADDRESSES.objects, binding: S4_ADDRESSES.binding }, args: {}, into: S4_ADDRESSES.summary }] }
   ]);
+}
+
+/**
+ * The Stage as the studio runs it (src/lab/stages.js `labStageSpecs`): the same
+ * document, with what it must read before it can run and the Calculations it
+ * brings. No `view` yet -- the demo decides how a hole is drawn.
+ */
+export function s4Spec() {
+  return {
+    key: 's4', stage: 'S4', title: 'Holes', composition: 'lab-s4',
+    about: 'each hole assembled from the badge that numbers it and the nearest free tee and basket, with what is missing named rather than guessed.',
+    needs: S4_CONTRACT.consumes, produces: S4_CONTRACT.produces,
+    register: registerS4, ticks: lab => s4Document(lab).Ticks
+  };
 }
 
 export function runS4(lab) {

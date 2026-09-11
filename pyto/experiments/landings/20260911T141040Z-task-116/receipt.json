@@ -211,7 +211,7 @@
   },
   "landed_by": "session",
   "at": "2026-09-11T14:13:38.407815Z",
-  "result_sha": null,
+  "result_sha": "37d6b124284dce1c1716c1ef75a7e06693773948",
   "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
   "gate": {
     "mode": "none",
