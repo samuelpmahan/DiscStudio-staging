@@ -1,0 +1,259 @@
+import json
+import math
+import unittest
+
+from harness import close
+
+import data.timeseries as timeseries
+from data.timeseries_cases import (BENCH_CASES, BIG, FLATISH, ORACLE_CASES, SERIES, SHORT,
+                                   brute_ar)
+
+
+def agrees(got, expected, tolerance=1e-9):
+    return close(got, expected, tolerance)[0]
+
+
+class TestOracles(unittest.TestCase):
+    def test_every_oracle_case_matches_its_reference(self):
+        self.assertGreaterEqual(len(ORACLE_CASES), 40)
+        for case in ORACLE_CASES:
+            with self.subTest(case=case["case"], calc=case["calc"]):
+                got = timeseries.CALCS[case["calc"]](case["args"])
+                project = case.get("project")
+                shaped = project(got) if project else got
+                self.assertTrue(
+                    agrees(shaped, case["expected"](), case["tolerance"]),
+                    "%s: got %r, %s says %r"
+                    % (case["case"], shaped, case["reference"], case["expected"]()))
+
+    def test_every_calculation_has_a_case(self):
+        covered = {case["calc"] for case in ORACLE_CASES}
+        self.assertEqual(set(timeseries.CALCS) - covered,
+                         {"fn.brain.data.holt", "fn.brain.data.ar_forecast"})
+
+    def test_every_case_names_a_reference_and_a_backend(self):
+        for case in ORACLE_CASES:
+            self.assertTrue(case["reference"])
+            self.assertIn(case["backend"], ("py", "np"))
+
+
+class TestBackendsAgree(unittest.TestCase):
+    def test_py_and_np_agree(self):
+        for address, args in (
+            ("fn.brain.data.rolling", {"values": SERIES, "window": 9, "fn": "std"}),
+            ("fn.brain.data.acf", {"values": SERIES, "nlags": 15}),
+            ("fn.brain.data.pacf", {"values": SERIES, "nlags": 6}),
+            ("fn.brain.data.ar_fit", {"values": SERIES, "order": 3}),
+            ("fn.brain.data.seasonal_decompose", {"values": SERIES, "period": 5}),
+        ):
+            with self.subTest(calc=address):
+                fn = timeseries.CALCS[address]
+                py = fn(dict(args, backend="py"))
+                np_ = fn(dict(args, backend="np"))
+                self.assertTrue(agrees(np_, py, 1e-8), "%s: %r vs %r" % (address, py, np_))
+
+
+class TestRolling(unittest.TestCase):
+    def test_the_window_is_none_until_it_fills(self):
+        got = timeseries.rolling({"values": SHORT, "window": 4})
+        self.assertEqual(got[:3], [None, None, None])
+        self.assertIsNotNone(got[3])
+
+    def test_min_periods_lets_it_start_early(self):
+        got = timeseries.rolling({"values": SHORT, "window": 4, "min_periods": 1})
+        self.assertEqual(got[0], SHORT[0])
+
+    def test_a_window_of_one_is_the_series_itself(self):
+        self.assertEqual(timeseries.rolling({"values": SHORT, "window": 1}), SHORT)
+
+    def test_holes_are_skipped_not_counted(self):
+        got = timeseries.rolling({"values": [1.0, None, 3.0, 5.0], "window": 3,
+                                  "min_periods": 2, "fn": "mean"})
+        self.assertIsNone(got[0])
+        self.assertAlmostEqual(got[2], 2.0)
+
+    def test_an_unknown_fn_names_the_ones_there_are(self):
+        with self.assertRaises(ValueError) as caught:
+            timeseries.rolling({"values": SHORT, "fn": "skew"})
+        self.assertIn("median", str(caught.exception))
+
+    def test_bad_widths_are_refused(self):
+        for args in ({"values": SHORT, "window": 0},
+                     {"values": SHORT, "window": 3, "min_periods": 0},
+                     {"values": SHORT, "window": 3, "min_periods": 9}):
+            with self.assertRaises(ValueError):
+                timeseries.rolling(args)
+
+
+class TestDifferencing(unittest.TestCase):
+    def test_difference_and_integrate_are_inverses(self):
+        differenced = timeseries.difference({"values": SHORT})
+        back = timeseries.integrate({"values": differenced[1:], "start": SHORT[0]})
+        self.assertTrue(agrees(back, SHORT[1:], 1e-12))
+
+    def test_order_zero_is_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.difference({"values": SHORT, "order": 0})
+
+    def test_a_hole_is_refused_by_a_difference(self):
+        with self.assertRaises(ValueError):
+            timeseries.difference({"values": [1.0, None, 3.0]})
+
+
+class TestSmoothers(unittest.TestCase):
+    def test_alpha_one_follows_the_series_exactly(self):
+        got = timeseries.ses({"values": SHORT, "alpha": 1.0})
+        self.assertAlmostEqual(got["level"], SHORT[-1], delta=1e-12)
+
+    def test_a_smaller_alpha_smooths_a_flat_noisy_series_better(self):
+        slow = timeseries.ses({"values": FLATISH, "alpha": 0.05})["sse"]
+        fast = timeseries.ses({"values": FLATISH, "alpha": 0.9})["sse"]
+        self.assertLess(slow, fast)
+
+    def test_a_bigger_alpha_follows_a_trend_better(self):
+        trending = [3.0 * i for i in range(30)]
+        slow = timeseries.ses({"values": trending, "alpha": 0.05})["sse"]
+        fast = timeseries.ses({"values": trending, "alpha": 0.9})["sse"]
+        self.assertGreater(slow, fast)
+
+    def test_holt_carries_a_straight_line_forward(self):
+        straight = [2.0 * i + 1.0 for i in range(20)]
+        got = timeseries.holt({"values": straight, "alpha": 0.8, "beta": 0.8, "horizon": 3})
+        self.assertAlmostEqual(got["trend"], 2.0, delta=1e-6)
+        self.assertAlmostEqual(got["forecast"][0], straight[-1] + 2.0, delta=1e-5)
+        self.assertAlmostEqual(got["sse"], 0.0, delta=1e-15)
+
+    def test_damping_pulls_the_forecast_in(self):
+        straight = [2.0 * i + 1.0 for i in range(20)]
+        plain = timeseries.holt({"values": straight, "alpha": 0.8, "beta": 0.8, "horizon": 5})
+        damped = timeseries.holt({"values": straight, "alpha": 0.8, "beta": 0.8, "phi": 0.7,
+                                  "horizon": 5})
+        self.assertLess(damped["forecast"][-1], plain["forecast"][-1])
+
+    def test_the_smoothing_parameters_are_checked(self):
+        for args in ({"values": SHORT, "alpha": 0.0}, {"values": SHORT, "alpha": 1.5}):
+            with self.assertRaises(ValueError):
+                timeseries.ses(args)
+        for args in ({"values": SHORT, "beta": 0.0}, {"values": SHORT, "phi": 1.4}):
+            with self.assertRaises(ValueError):
+                timeseries.holt(args)
+
+
+class TestDecomposition(unittest.TestCase):
+    def test_the_additive_parts_add_back_up(self):
+        got = timeseries.seasonal_decompose({"values": SERIES, "period": 4})
+        for value, trend, season, rest in zip(SERIES, got["trend"], got["seasonal"],
+                                              got["remainder"]):
+            if trend is None:
+                continue
+            self.assertAlmostEqual(trend + season + rest, value, delta=1e-9)
+
+    def test_the_additive_season_sums_to_zero(self):
+        got = timeseries.seasonal_decompose({"values": SERIES, "period": 4})
+        self.assertAlmostEqual(math.fsum(got["seasonal"][:4]), 0.0, delta=1e-12)
+
+    def test_the_multiplicative_parts_multiply_back_up(self):
+        got = timeseries.seasonal_decompose({"values": SERIES, "period": 4,
+                                             "model": "multiplicative"})
+        self.assertAlmostEqual(math.fsum(got["seasonal"][:4]) / 4.0, 1.0, delta=1e-12)
+        for value, trend, season, rest in zip(SERIES, got["trend"], got["seasonal"],
+                                              got["remainder"]):
+            if trend is None:
+                continue
+            self.assertAlmostEqual(trend * season * rest, value, delta=1e-9)
+
+    def test_an_odd_period_works_too(self):
+        got = timeseries.seasonal_decompose({"values": SERIES, "period": 5})
+        self.assertEqual(len(got["seasonal"]), len(SERIES))
+
+    def test_two_periods_are_the_minimum(self):
+        with self.assertRaises(ValueError):
+            timeseries.seasonal_decompose({"values": SERIES[:6], "period": 4})
+
+    def test_an_unknown_model_is_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.seasonal_decompose({"values": SERIES, "period": 4, "model": "stl"})
+
+
+class TestAutocorrelation(unittest.TestCase):
+    def test_lag_zero_is_one(self):
+        self.assertAlmostEqual(timeseries.acf({"values": SERIES, "nlags": 3})[0], 1.0, delta=1e-14)
+        self.assertEqual(timeseries.pacf({"values": SERIES, "nlags": 3})[0], 1.0)
+
+    def test_the_first_pacf_is_the_first_acf(self):
+        self.assertAlmostEqual(timeseries.pacf({"values": SERIES, "nlags": 5})[1],
+                               timeseries.acf({"values": SERIES, "nlags": 5})[1], delta=1e-12)
+
+    def test_a_flat_series_has_no_autocorrelation(self):
+        with self.assertRaises(ValueError):
+            timeseries.acf({"values": [4.0] * 10})
+
+    def test_too_many_lags_are_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.acf({"values": FLATISH, "nlags": len(FLATISH)})
+
+
+class TestAutoregression(unittest.TestCase):
+    def test_an_ar1_series_is_recovered(self):
+        values = [1.0]
+        for _ in range(200):
+            values.append(3.0 + 0.65 * values[-1])
+        got = timeseries.ar_fit({"values": values, "order": 1})
+        self.assertAlmostEqual(got["coefficients"][0], 0.65, delta=1e-6)
+        self.assertAlmostEqual(got["intercept"], 3.0, delta=1e-4)
+        self.assertAlmostEqual(got["r2"], 1.0, delta=1e-9)
+
+    def test_the_forecast_feeds_itself(self):
+        fit = timeseries.ar_fit({"values": SERIES, "order": 2})
+        got = timeseries.ar_forecast({"values": SERIES, "fit": fit, "horizon": 4})
+        first = fit["intercept"] + fit["coefficients"][0] * SERIES[-1] \
+            + fit["coefficients"][1] * SERIES[-2]
+        self.assertAlmostEqual(got["forecast"][0], first, delta=1e-12)
+        self.assertEqual(len(got["forecast"]), 4)
+
+    def test_a_forecast_without_a_fit_fits_first(self):
+        got = timeseries.ar_forecast({"values": SERIES, "order": 2, "horizon": 2})
+        self.assertEqual(got["order"], 2)
+        self.assertEqual(len(got["forecast"]), 2)
+
+    def test_a_degenerate_series_is_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.ar_fit({"values": [2.0] * 12, "order": 2})
+
+    def test_too_few_points_are_refused(self):
+        with self.assertRaises(ValueError):
+            timeseries.ar_fit({"values": SHORT[:3], "order": 3})
+
+    def test_the_py_solver_matches_lstsq(self):
+        for order in (1, 2, 4, 6):
+            with self.subTest(order=order):
+                self.assertTrue(agrees(timeseries.ar_fit({"values": SERIES, "order": order}),
+                                       brute_ar(SERIES, order), 1e-8))
+
+
+class TestJsonAble(unittest.TestCase):
+    def test_every_result_survives_json(self):
+        for case in ORACLE_CASES:
+            got = timeseries.CALCS[case["calc"]](case["args"])
+            self.assertEqual(json.loads(json.dumps(got)), got)
+
+    def test_no_nan_ever_leaves_a_calculation(self):
+        for case in ORACLE_CASES:
+            got = timeseries.CALCS[case["calc"]](case["args"])
+            for value in json.dumps(got).split(","):
+                self.assertNotIn("NaN", value)
+
+
+class TestBenchCases(unittest.TestCase):
+    def test_bench_cases_are_paired_and_runnable(self):
+        pairs = {}
+        for case in BENCH_CASES:
+            pairs.setdefault((case["calc"], case["size"]), set()).add(case["backend"])
+        for key, backends in pairs.items():
+            self.assertEqual(backends, {"py", "np"}, "%r is not a comparable pair" % (key,))
+        for case in BENCH_CASES[:3]:
+            timeseries.CALCS[case["calc"]](case["make_args"]())
+
+
+if __name__ == "__main__":
+    unittest.main()
