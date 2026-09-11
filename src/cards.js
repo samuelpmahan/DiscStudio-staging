@@ -7,8 +7,10 @@
  * this file implements.
  *
  * The owner's way this task implements: the preset IS the projection layer.
- * `shelf`/`bag` compose with the `discImage` preset; `single`/`competition`
- * compose with whichever preset `world.layout.presetId` names. A preset's own
+ * `shelf`/`bag` compose with the `discImage` preset; `competition` composes with
+ * whichever preset `world.layout.presetId` names, and `single` -- which IS
+ * OnTheCourse's Single Disc mode -- with the one `world.layout.singlePresetId`
+ * names (task 137: one disc gets a design made for one disc). A preset's own
  * background/foreground/accent/font/radius/sponsor ARE its overrides -- a
  * field set to `null` (or, for sponsor, left absent) inherits from global.
  * There is no separate `px.discstudio.cards.projection.*` Part: the
