@@ -1,0 +1,20 @@
+stage: S0
+name: intake
+
+purpose:
+  produce_one_cropped_image_for: S1
+
+initial_path:
+  - page_load_create_PxC
+  - decode_selected_image_to_FullImage
+  - crop_udisc_chrome_to_CroppedImage
+  - cache_FullImage_last
+
+not_required_yet:
+  - multi_image_intake
+  - scout_thumbnails
+  - generalized_source_classification
+  - generalized_intake_pipeline
+
+exit_when:
+  S1_can_consume: px.course.canonicalPixels

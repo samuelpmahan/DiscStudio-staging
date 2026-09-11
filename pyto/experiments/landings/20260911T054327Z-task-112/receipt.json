@@ -1,0 +1,196 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T054327Z-task-112",
+  "package": "task-112",
+  "base_sha": "bf04bc0f900d22ea2bea3deb6a787fc20a6261c3",
+  "result": "verified",
+  "verifier": {
+    "command": "node --test tests/*.test.js",
+    "exit": 0,
+    "output_sha256": "4b71251dccc05eb1ec3d69c21342cc101433450dec45c70d293249c0751ac208"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "b0f0e39ce9a6535914448e00660e8d359565b47f302251a663c1aaebaedb7008",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/112/HANDOFF.md",
+      "bytes": 7937,
+      "sha256": "95cc3a8f3b7e8c0807a3e80b23f0e7b840ddbe0ca98eb6bfa7fed422c3b13e20"
+    },
+    {
+      "path": "pyto/experiments/tasks/112/evidence/check_all.txt",
+      "bytes": 293448,
+      "sha256": "f0692f119e14cc4f0715d6ac7c4703bf1890c3874be72883c7f4dc78f07944df"
+    },
+    {
+      "path": "pyto/experiments/tasks/112/evidence/verify.txt",
+      "bytes": 18433,
+      "sha256": "6c289241524c52754009b3ba9d9f36f9991bfcf5647a7152f06be4e9a6ac1570"
+    },
+    {
+      "path": "pyto/experiments/tasks/112/packet.md",
+      "bytes": 3929,
+      "sha256": "e0eae55fd51f60c3c68ffa25720a7523b45f7c5f874168585d52cd504c4034b8"
+    },
+    {
+      "path": "src/lab/address.js",
+      "bytes": 2225,
+      "sha256": "c2ee433faa061a6daa8f4776deb78d7101a9c7e0ba3e69e698d94cf291b47711"
+    },
+    {
+      "path": "src/lab/fixtures.js",
+      "bytes": 3114,
+      "sha256": "5b0bf1576f7c6a667e3b41420aafd0dfd191f3e629289c2d1f7c153481635533"
+    },
+    {
+      "path": "src/lab/lab.js",
+      "bytes": 5544,
+      "sha256": "da8aefa35d267b5c6e3a6e9e9013a037fa28bbd937435b1dfa83e755a2c509f4"
+    },
+    {
+      "path": "src/lab/mermaid.js",
+      "bytes": 8960,
+      "sha256": "16ca71c7618fdc50fe12fc4782285f79773ca10a0520ca037d59b330a01ea167"
+    },
+    {
+      "path": "src/lab/path.js",
+      "bytes": 11016,
+      "sha256": "29c3da198c355e56131da33adfc9da93eb77cd10be9ef98f2375fa63214d2ea2"
+    },
+    {
+      "path": "src/lab/s0.js",
+      "bytes": 9111,
+      "sha256": "f47f79727bac00f61295b519ee3612897d5032784a7f7dccacea81fcb0b84c5a"
+    },
+    {
+      "path": "src/lab/source.js",
+      "bytes": 256,
+      "sha256": "d5877a751f1e33a4a1cb91f91e30261204ef131953b3dcf3a5efb3da2d445fef"
+    },
+    {
+      "path": "src/lab/source/S0.args.json",
+      "bytes": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "src/lab/source/S0.mmd",
+      "bytes": 529,
+      "sha256": "b07c0b0b34c1c39cd80ae2735410da1c46628b502eec77dcd6c81ff40041aa24"
+    },
+    {
+      "path": "src/lab/source/S0.pcr.yaml",
+      "bytes": 424,
+      "sha256": "e8e221e8afb32e63fce6f780dd044e0c4961c848221389e65079d2ac7696319b"
+    },
+    {
+      "path": "src/lab/source/S0.stage.yaml",
+      "bytes": 400,
+      "sha256": "1d09d563a0534633f7e64327e0a2a896e464294d1e0c52d5cdbd73838eb4e5c8"
+    },
+    {
+      "path": "src/lab/source/S1.args.json",
+      "bytes": 969,
+      "sha256": "b738cf0dc0eb295b39634fbfde9391da4f4996531c77e617a211f9b42aa4b5f6"
+    },
+    {
+      "path": "src/lab/source/S1.mmd",
+      "bytes": 3570,
+      "sha256": "6324f32f176937eb69744c31b193fc71a50db52e19322506eddca23e911dc3a1"
+    },
+    {
+      "path": "src/lab/source/S1.pcr.yaml",
+      "bytes": 4720,
+      "sha256": "5b7d71a709498e3f747f7b59bf6fa25c9bbb7a12487f5527317a5c08ac5aa3ad"
+    },
+    {
+      "path": "src/lab/source/courses/AlexClark.json",
+      "bytes": 189,
+      "sha256": "3ac6258a09dceb4982bb1cb5b6676a2079145216b56281c9917385b891353094"
+    },
+    {
+      "path": "src/lab/source/courses/DashsTrack.json",
+      "bytes": 1189,
+      "sha256": "9db2fa25977d8d04e703a0a27add91552f8a5306e05319143faf576723c4e9a4"
+    },
+    {
+      "path": "src/lab/source/courses/HeritagePark.json",
+      "bytes": 204,
+      "sha256": "7511478a6842c77e3e8c9766759f338f865f1f69276d610ba246add5a1ba4eb4"
+    },
+    {
+      "path": "src/lab/source/courses/Lenard.json",
+      "bytes": 170,
+      "sha256": "2330ce1e953bc7bba26a71d4ede41bcd17f6c0f5ac88c33008fec5937fd04a93"
+    },
+    {
+      "path": "src/lab/source/courses/NorthPark.json",
+      "bytes": 131,
+      "sha256": "c9f1c6dcfbb85eefe5ce485a418aaa7fe9cbd3dc010608ced9a4f145fbc3e182"
+    },
+    {
+      "path": "src/lab/source/courses/TheREC.json",
+      "bytes": 409,
+      "sha256": "1738d5d69389e5f4ba41cf5855b4593a836f92f11c3cf1950c2bc0fbc8d190ee"
+    },
+    {
+      "path": "src/lab/source/courses/TowneLake.json",
+      "bytes": 194,
+      "sha256": "cb6e0143cef5c3a0a0e7b5a1f5efe2a69143f1fdadfbfed43c0de6e732272156"
+    },
+    {
+      "path": "src/lab/yaml.js",
+      "bytes": 4636,
+      "sha256": "b6ca2597c9ad71e0b9f40873a4c2e5cefae814391b9d77eb4c4d5f77e30b28b1"
+    },
+    {
+      "path": "tests/lab-mermaid.test.js",
+      "bytes": 4568,
+      "sha256": "b6632a6ed7309e493397de86ec43dffc8fabdbc2c30e6269d89c6e24ae9042ff"
+    },
+    {
+      "path": "tests/lab-path.test.js",
+      "bytes": 5202,
+      "sha256": "0e7c76bf190f21ddfd1991af6ffa1df6d3fefd3befad8bec476cc0d78b0b275d"
+    },
+    {
+      "path": "tests/lab-s0.test.js",
+      "bytes": 3757,
+      "sha256": "a0948dc40f0ba28f848b3257b769a1afad233045f2ae72384fc2608328abf7b1"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T05:45:48.698249Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "course": "TowneLake",
+  "aliases": ["Towne Lake", "Town Lake"],
+  "devDir": "TowneLake",
+  "image": "TowneLake-full.png",
+  "annotation": "TowneLake-full.annotation.json"
+}

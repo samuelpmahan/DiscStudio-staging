@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "course": "AlexClark",
+  "aliases": ["Alex Clark", "Alex"],
+  "devDir": "AlexClark",
+  "image": "AlexClark-full.jpg",
+  "annotation": "AlexClark-full.annotation.json"
+}

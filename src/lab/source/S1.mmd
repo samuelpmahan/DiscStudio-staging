@@ -1,0 +1,81 @@
+flowchart TD
+    canonical["px.course.canonicalPixels"]
+    model["px.s1.whiteDigits.model"]
+
+    subgraph S1["PCR: S1"]
+        subgraph RasterInput["Tick: RasterInput"]
+            raster["fn.s0.asMaskRaster"]
+        end
+        subgraph BlackMask["Tick: BlackMask"]
+            blackMask["fn.s1.exp.maskComponents.selectHsvMask"]
+            blackComponents["fn.s1.exp.maskComponents.group8Connected"]
+        end
+        subgraph WhiteMask["Tick: WhiteMask"]
+            whiteMask["fn.s1.exp.maskComponents.selectHsvMask"]
+            whiteComponents["fn.s1.exp.maskComponents.group8Connected"]
+        end
+        subgraph BadgeAssembly["Tick: BadgeAssembly"]
+            plates["fn.s1.exp.badgeAssembly.selectComponents"]
+            borders["fn.s1.exp.badgeAssembly.findRelated"]
+            digits["fn.s1.exp.badgeAssembly.findRelated"]
+            loops["fn.s1.exp.badgeAssembly.findRelated"]
+            assembly["fn.s1.exp.badgeAssembly.assemble"]
+        end
+        subgraph WhiteDigitRecognition["Tick: WhiteDigitRecognition"]
+            prepareDigits["fn.s1.whiteDigits.prepare"]
+            recognizeDigits["fn.s1.whiteDigits.match"]
+        end
+        subgraph BadgeOutputs["Tick: BadgeOutputs"]
+            ownership["fn.s1.badges.declareOwnership"]
+            owned["fn.s1.badges.ownedPixels"]
+            muted["fn.s1.badges.mutedPixels"]
+            remaining["fn.s1.badges.remainingPixels"]
+        end
+    end
+
+    canonical -->|image| raster
+    raster --> rasterPart["px.s1.exp.maskComponents.part.croppedRaster"]
+    rasterPart -->|raster| blackMask
+    rasterPart -->|raster| whiteMask
+    blackMask --> blackMaskPart["px.s1.exp.maskComponents.part.blackMask"]
+    blackMaskPart -->|mask| blackComponents
+    blackComponents --> blackComponentPart["px.s1.exp.maskComponents.part.blackComponents"]
+    whiteMask --> whiteMaskPart["px.s1.exp.maskComponents.part.whiteMask"]
+    whiteMaskPart -->|mask| whiteComponents
+    whiteComponents --> whiteComponentPart["px.s1.exp.maskComponents.part.whiteComponents"]
+
+    blackComponentPart -->|components| plates
+    plates --> platePart["px.s1.exp.badgeAssembly.plates"]
+    platePart -->|anchors| borders
+    whiteComponentPart -->|candidates| borders
+    borders --> borderPart["px.s1.exp.badgeAssembly.plateBorders"]
+    platePart -->|anchors| digits
+    whiteComponentPart -->|candidates| digits
+    digits --> digitPart["px.s1.exp.badgeAssembly.plateDigits"]
+    digitPart -->|anchors| loops
+    blackComponentPart -->|candidates| loops
+    loops --> loopPart["px.s1.exp.badgeAssembly.digitLoops"]
+    platePart -->|plates| assembly
+    borderPart -->|plateBorders| assembly
+    digitPart -->|plateDigits| assembly
+    loopPart -->|digitLoops| assembly
+    assembly --> candidatePart["px.s1.exp.badgeAssembly.badgeCandidates"]
+
+    candidatePart -->|badges| prepareDigits
+    prepareDigits --> preparedPart["px.s1.whiteDigits.prepared"]
+    preparedPart -->|prepared| recognizeDigits
+    model -->|model| recognizeDigits
+    recognizeDigits --> recognizedPart["px.s1.whiteDigits.recognizedBadges"]
+    recognizedPart -->|recognized| ownership
+    ownership --> badges["px.badges.objects"]
+    badges -->|badges| owned
+    canonical -->|raster| owned
+    owned --> ownedPart["px.badges.px"]
+    badges -->|badges| muted
+    ownedPart -->|owned| muted
+    canonical -->|raster| muted
+    muted --> mutedPart["px.badges.muted"]
+    ownedPart -->|owned| remaining
+    mutedPart -->|muted| remaining
+    canonical -->|raster| remaining
+    remaining --> remainingPart["px.remaining.afterBadges"]

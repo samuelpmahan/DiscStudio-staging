@@ -1,0 +1,12 @@
+{
+  "blackMask": {"polarity":"black","valueMax":45,"alpha":"ignored"},
+  "blackComponents": {"connectivity":8,"retainSingletons":true},
+  "whiteMask": {"polarity":"white","valueMin":210,"saturationMax":45,"alpha":"ignored"},
+  "whiteComponents": {"connectivity":8,"retainSingletons":true},
+  "plates": {"predicate":"plate-bbox-and-fill","minWidth":34,"maxWidth":78,"minHeight":24,"maxHeight":54,"minAspect":1,"maxAspect":2.4,"minFill":0.55},
+  "borders": {"anchorRole":"plate","predicate":"candidate-bbox-contains-anchor"},
+  "digits": {"anchorRole":"plate","predicate":"anchor-bbox-contains-candidate"},
+  "loops": {"anchorRole":"related-component","predicate":"anchor-bbox-contains-candidate"},
+  "assembly": {"acceptance":"border-and-digit-material"},
+  "prepareDigits": {"knobs":{"minComponentArea":6,"heightRatioMin":0.5,"wideRatio":0.95,"valleySearchLo":0.3,"valleySearchHi":0.7,"digitW":24,"digitH":32,"confidenceFloorDivisor":8,"labelAmbiguityMargin":0.045}}
+}
