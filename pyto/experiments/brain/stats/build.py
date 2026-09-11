@@ -35,6 +35,8 @@ import stats.nonparametric_cases as nonparametric_cases  # noqa: E402
 import stats.referee as referee  # noqa: E402
 from stats.tolerance import canonical  # noqa: E402
 import stats.regression as regression  # noqa: E402
+import stats.summaries as summaries  # noqa: E402
+import stats.summaries_cases as summaries_cases  # noqa: E402
 import stats.regression_cases as regression_cases  # noqa: E402
 
 VERTICAL = "stats"
@@ -48,6 +50,7 @@ CASE_MODULES = (
     ("intervals", intervals_cases, intervals.CALCS),
     ("nonparametric", nonparametric_cases, nonparametric.CALCS),
     ("comparisons", comparisons_cases, comparisons.CALCS),
+    ("summaries", summaries_cases, summaries.CALCS),
 )
 
 CALCS = {}
