@@ -41,10 +41,10 @@ pyto/experiments/brain/ml/build.py                 |   238 +-
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.GCHrYHmLhS) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.lrvCEb6OJx) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
-    experiments/brain               152  OK
+    experiments/brain               193  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    250  OK

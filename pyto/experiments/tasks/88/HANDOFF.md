@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/88
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/88:pyto/experiments/tasks/88/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 67a55fe origin/exp/88 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff a9f3476 origin/exp/88 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ brain ml classification: logistic regression (gradient descent and newton/irls, 
 
 ## Starting point
 
-67a55fe152b388f79dedc76ba30193cb71c4fa8f (board: **started** `task-87`: brain/backend the facade: fn.brain.backend.<op> w). MAIN may have moved since: `git log --oneline 67a55fe..origin/claude/os-sprint-st8hnu` shows how far.
+67a55fe152b388f79dedc76ba30193cb71c4fa8f (board: **started** `task-87`: brain/backend the facade: fn.brain.backend.<op> w). MAIN may have moved since: `git log --oneline a9f3476..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -91,10 +91,10 @@ pyto/experiments/brain/ml/build.py                 |   238 +-
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.GCHrYHmLhS) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.lrvCEb6OJx) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
-    experiments/brain               152  OK
+    experiments/brain               193  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
     experiments/grouped-ablation    250  OK
