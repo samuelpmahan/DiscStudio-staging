@@ -21,7 +21,10 @@ import data.datasets as datasets_module  # noqa: E402
 import data.frame as frame  # noqa: E402
 import data.frame_cases as frame_cases  # noqa: E402
 import data.referee as referee  # noqa: E402
+from data.table import canonical  # noqa: E402
 import data.shaping as shaping  # noqa: E402
+import data.transform as transform  # noqa: E402
+import data.transform_cases as transform_cases  # noqa: E402
 import data.shaping_cases as shaping_cases  # noqa: E402
 import data.timeseries as timeseries  # noqa: E402
 import data.timeseries_cases as timeseries_cases  # noqa: E402
@@ -32,6 +35,7 @@ CASE_MODULES = (
     ("frame", frame_cases, frame.CALCS),
     ("timeseries", timeseries_cases, timeseries.CALCS),
     ("shaping", shaping_cases, shaping.CALCS),
+    ("transform", transform_cases, transform.CALCS),
 )
 
 CALCS = {}
@@ -48,6 +52,11 @@ def _seg(text):
 def _name_of(address):
     """the calculation's own name, the last segment of its address."""
     return address.rsplit(".", 1)[-1]
+
+
+def _effects_for(address):
+    """the ledger an `oc.` case is given: a fixed list of uniforms, so the draw is a fact."""
+    return transform_cases.Ledger(transform_cases.DRAWS)
 
 
 def _call(address, case):
@@ -126,12 +135,15 @@ def oracles(store):
     for group, module, _ in CASE_MODULES:
         for case in module.ORACLE_CASES:
             project = case.get("project")
-            got = CALCS[case["calc"]](dict(case["args"]))
+            args = dict(case["args"])
+            if case["calc"].startswith("oc."):
+                args["effects"] = _effects_for(case["calc"])
+            got = CALCS[case["calc"]](args)
             expected = case["expected"]()
             if project:
                 got = project(got)
-                if group in ("frame", "shaping") and isinstance(expected, dict) \
-                        and "columns" in expected:
+                if group in ("frame", "shaping", "transform") \
+                        and isinstance(expected, dict) and "columns" in expected:
                     expected = project(expected)
             ok = store.oracle(
                 VERTICAL, _name_of(case["calc"]),
@@ -278,6 +290,8 @@ def the_map(store, decided):
         {"address": "fn.brain.data.group_by (median on the npsort engine)",
          "why": "median has no whole-column reduction, so the third engine falls back to the "
                 "per-group path for it; a sorted-block median is the obvious next piece"},
+        {"address": "fn.brain.data.rolling_join",
+         "why": "an as-of join needs an ordered key and a tolerance; the equi-join is here"},
         {"address": "fn.brain.data.resample",
          "why": "needs a time index with real calendar semantics, which no dataset Part carries yet"},
         {"address": "fn.brain.data.stl",
@@ -295,8 +309,9 @@ def the_map(store, decided):
                 "cannot currently say so"},
         {"what": "column kinds on the dataset Part (see proposal.brain.data.a_dataset_part_has_no_column_types)",
          "for": "every relational calculation re-derives them on every call"},
-        {"what": "melt, resample and a calendar-aware time index",
-         "for": "real time series arrive with dates, not with positions"},
+        {"what": "resample and a calendar-aware time index, and an as-of (rolling) join on it",
+         "for": "real time series arrive with dates, not with positions, and every join "
+                "against them is as-of"},
         {"what": "ARIMA on top of the AR fit, and STL on top of the classical decomposition",
          "for": "forecasting is the first thing anyone asks a data layer for"},
     ]
@@ -330,6 +345,8 @@ def main(argv=None):
     parsed = parser.parse_args(argv)
     store, summary = build(parsed.store_dir, parsed.records_dir, parsed.quick,
                            parsed.bench_n, parsed.commit)
+    for address in list(store.written):
+        store.put(address, canonical(store.get(address)))
     path = store.save(VERTICAL)
     print("oracles: %d passed, %d failed" % (summary["oracles_passed"], summary["oracles_failed"]))
     print("group-by bracket winner:", summary["winner"])
