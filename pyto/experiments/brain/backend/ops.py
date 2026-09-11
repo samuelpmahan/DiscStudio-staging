@@ -74,6 +74,33 @@ def elements(args: Mapping[str, Any]) -> int:
     return total
 
 
+_DEFAULT_PLAN: Any = None
+_DEFAULT_PLAN_READ = False
+
+
+def default_plan():
+    """the committed plan Part, read once from store/backend.json. None if it is not there."""
+    global _DEFAULT_PLAN, _DEFAULT_PLAN_READ
+    if not _DEFAULT_PLAN_READ:
+        _DEFAULT_PLAN_READ = True
+        try:
+            import json
+            import os
+
+            brain = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            with open(os.path.join(brain, "store", "backend.json"), encoding="utf-8") as handle:
+                _DEFAULT_PLAN = json.load(handle).get("px.exp.brain.result.backend.plan")
+        except Exception:  # no store, no plan, no default: py is the reference and always there
+            _DEFAULT_PLAN = None
+    return _DEFAULT_PLAN
+
+
+def choose_engine(plan, op: str, count: int) -> str:
+    from experiments.brain.backend import choose
+
+    return choose.engine_for(plan, op, count)
+
+
 def call(op: str, args: Mapping[str, Any]) -> Any:
     """the facade: pick the engine `args["backend"]` names and run it.
 
@@ -82,9 +109,20 @@ def call(op: str, args: Mapping[str, Any]) -> Any:
     invocation actually has. It is still one pure function of its inputs: the plan
     is an input like any other, and an "auto" with no plan is refused by name.
     """
-    backend = args.get("backend", "py")
+    backend = args.get("backend")
     if op not in _OPS:
         raise ValueError(f"brain: no op named {op!r} (have {', '.join(ops())})")
+    if backend is None:
+        # No engine named: take the one the benchmark Parts measured fastest at this size.
+        # The plan is read from the committed store ONCE, as module data - never inside a
+        # call - so a Calculation is still a pure function of its inputs plus a constant
+        # table, the way any lookup table is. `args["plan"]` overrides it; "py" still
+        # names the reference engine, and an op the plan says nothing about falls back to it.
+        plan = args.get("plan") or default_plan()
+        if plan and op in plan.get("by_op", {}):
+            backend = choose_engine(plan, op, elements(args))
+        else:
+            backend = "py"
     if backend == "auto":
         from experiments.brain.backend import choose
 

@@ -208,10 +208,21 @@ def _ppf_py(dist, params, q):
 
 
 def _apply(dist, params, xs, py, sp, backend):
+    """the py engine per point; the scipy engine ONCE, over the whole array.
+
+    scipy's frozen distributions are vectorised, so calling one per element paid
+    scipy's dispatch cost n times for the same answer: at n=4000 that was 451 ms
+    of the 451 ms. The values are identical - it is the same function on the same
+    numbers - which is what the oracle Parts check.
+    """
     if backend == "py":
         return [py(dist, params, v) for v in xs]
     frozen = _scipy(dist, params)
-    return [float(sp(frozen, v)) for v in xs]
+    if not xs:
+        return []
+    import numpy as np
+
+    return [float(v) for v in np.atleast_1d(sp(frozen, np.asarray(xs, dtype="float64")))]
 
 
 def pdf(args):
@@ -255,7 +266,9 @@ def ppf(args):
         out = [_ppf_py(dist, params, v) for v in qs]
     else:
         frozen = _scipy(dist, params)
-        out = [float(frozen.ppf(v)) for v in qs]
+        import numpy as np
+
+        out = [float(v) for v in np.atleast_1d(frozen.ppf(np.asarray(qs, dtype="float64")))] if qs else []
         if dist in DISCRETE:
             out = [int(v) for v in out]
     return out if _many(q) else out[0]

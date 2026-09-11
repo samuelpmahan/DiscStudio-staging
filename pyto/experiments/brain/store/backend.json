@@ -59,6 +59,13 @@
     "text": "the contract asks for two or three branches built by separate workers and a judge that did not build. No route to a scoped worker session existed in this environment, so every branch in all three brackets was written in one session and the judge is `evidence`: a pure function of the candidate's own oracle Part, its benchmark Part at the largest size, and its source. That is weaker as independence and stronger as evidence - it cannot be talked into anything and every score points at the Part it came from - but it is not what was asked for, and the bracket records which judge scored it so nobody has to guess later.",
     "workaround": "criteria written into the bracket Part before any score exists, a judge that is a function of the recorded Parts, and a test that rebuilds all three brackets from the candidates so the verdict is reproducible rather than trusted"
   },
+  "proposal.brain.backend.the_pass_reached_the_loops_not_the_facades": {
+    "for": "the next pass: the remaining time is in three facades that cannot yet read what the benchmark Parts know",
+    "kind": "friction",
+    "proposal": "one shared dispatcher in harness.py - choose(op, args, plan) - that every vertical's facade calls, so 'which engine' is answered in one place from the benchmark Parts for all of them",
+    "text": "the two kinds of slowness found here are not the same kind. A vectorised engine that called scipy or numpy once per element is a bug and was fixed at source (stats pdf/cdf/ppf, and data's rolling/expanding np engine, which was slower than its own pure-python engine). The rest - ml.knn_predict at 524 ms and ml.softmax_fit at 467 ms - are pure-python calculations running on py because their facade has no plan to read: making them fast means giving the stats, data and ml facades the same default-to-the-plan dispatch the backend facade now has, and extending px.exp.brain.result.backend.plan to their bench Parts. That is a change to three verticals' dispatchers and it did not fit in the window.",
+    "workaround": "the backend facade defaults to the plan now, so svd, pinv and matrix_rank stop running on py; the other three verticals still need an engine named by hand"
+  },
   "proposal.brain.backend.the_pure_python_engine_is_the_reference_that_pays_for_itself": {
     "for": "every vertical is about to be tempted to skip the py engine because numpy is right there",
     "kind": "strength",
@@ -2835,6 +2842,98 @@
     "size": "64",
     "wall_ms_median": 0.143007000588,
     "wall_ms_min": 0.141148999319
+  },
+  "px.exp.brain.bench.kerchoo": {
+    "backend": "mixed",
+    "for": "the owner's speed pass: what each calculation cost before, what it costs now, and which engine answers",
+    "inputs_sha256": "541526c8671211e5a68e01966786bd2485eaa867d67a79a0f5ff83e59519ead4",
+    "n": 5,
+    "rows": [
+      {
+        "after_wall_ms_min": 0.731762000214,
+        "before_from": "px.exp.brain.bench.backend.svd.py.128",
+        "before_wall_ms_min": 407.532925999,
+        "calc": "backend.svd (was py) 128",
+        "engine": "np",
+        "speedup": 556.92
+      },
+      {
+        "after_wall_ms_min": 0.449223000032,
+        "before_from": "px.exp.brain.bench.backend.matrix_rank.py.96",
+        "before_wall_ms_min": 175.733962,
+        "calc": "backend.matrix_rank (was py) 96",
+        "engine": "np",
+        "speedup": 391.2
+      },
+      {
+        "after_wall_ms_min": 1.3044089992,
+        "before_from": "px.exp.brain.bench.stats.pdf.sp.t_n=4000",
+        "before_wall_ms_min": 450.966742001,
+        "calc": "stats.pdf sp t.n=4000",
+        "engine": "sp",
+        "speedup": 345.72
+      },
+      {
+        "after_wall_ms_min": 0.957079000727,
+        "before_from": "px.exp.brain.bench.backend.pinv.py.96",
+        "before_wall_ms_min": 215.551630999,
+        "calc": "backend.pinv (was py) 96",
+        "engine": "sp",
+        "speedup": 225.22
+      },
+      {
+        "after_wall_ms_min": 0.930176000111,
+        "before_from": "px.exp.brain.bench.stats.pdf.sp.normal_n=4000",
+        "before_wall_ms_min": 156.721261999,
+        "calc": "stats.pdf sp normal.n=4000",
+        "engine": "sp",
+        "speedup": 168.49
+      },
+      {
+        "after_wall_ms_min": 0.92838099954,
+        "before_from": "px.exp.brain.bench.stats.cdf.sp.normal_n=4000",
+        "before_wall_ms_min": 155.101192,
+        "calc": "stats.cdf sp normal.n=4000",
+        "engine": "sp",
+        "speedup": 167.07
+      },
+      {
+        "after_wall_ms_min": 0.914580999961,
+        "before_from": "px.exp.brain.bench.stats.pdf.sp.chi2_n=4000",
+        "before_wall_ms_min": 139.725359,
+        "calc": "stats.pdf sp chi2.n=4000",
+        "engine": "sp",
+        "speedup": 152.78
+      },
+      {
+        "after_wall_ms_min": 0.95200099895,
+        "before_from": "px.exp.brain.bench.stats.cdf.sp.chi2_n=4000",
+        "before_wall_ms_min": 116.22767,
+        "calc": "stats.cdf sp chi2.n=4000",
+        "engine": "sp",
+        "speedup": 122.09
+      },
+      {
+        "after_wall_ms_min": 3.28375999925,
+        "before_from": "px.exp.brain.bench.data.expanding.np.n=4000",
+        "before_wall_ms_min": 319.638836001,
+        "calc": "data.expanding np n=4000",
+        "engine": "np",
+        "speedup": 97.34
+      },
+      {
+        "after_wall_ms_min": 1.74366600004,
+        "before_from": "px.exp.brain.bench.stats.cdf.sp.t_n=4000",
+        "before_wall_ms_min": 160.836655999,
+        "calc": "stats.cdf sp t.n=4000",
+        "engine": "sp",
+        "speedup": 92.24
+      }
+    ],
+    "rule": "before is wall_ms_min out of the committed benchmark Part; after is the minimum of five runs here",
+    "size": "as the committed benchmark Part measured it",
+    "wall_ms_median": 1.2195037998,
+    "wall_ms_min": 0.449223000032
   },
   "px.exp.brain.bracket.backend.array_store": {
     "candidates": [
