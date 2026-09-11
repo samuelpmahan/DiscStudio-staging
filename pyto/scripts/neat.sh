@@ -165,7 +165,7 @@ EOF
   if [ "$PYTO_MODE" -eq 1 ]; then
     echo "  making its python (EXP/$id/.venv) so the suite there tests that copy's kernel ..."
     "$PYTHON" -m venv --system-site-packages "$EXP/$id/.venv"
-    "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$(hostpath "$EXP/$id/pyto")[drawing]" 2>&1 | grep -v "^$" | tail -2 || true
+    "$(venv_python "$id")" -m pip install -q --no-build-isolation -e "$(hostpath "$EXP/$id/pyto")[drawing,brain]" 2>&1 | grep -v "^$" | tail -2 || true
     if "$(venv_python "$id")" -c 'import os, sys, pyto; sys.exit(0 if os.path.realpath(pyto.__file__).startswith(os.path.realpath(sys.argv[1])) else 1)' "$(hostpath "$EXP/$id")" 2>/dev/null
     then echo "  its python imports pyto from EXP/$id"
     else die "EXP/$id/.venv does not import pyto from EXP/$id; the suite there would test MAIN's kernel. Fix the install before working."

@@ -1,0 +1,119 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 2,
+    "invocations": 2,
+    "wall_ms": 0.15612599918313208
+  },
+  "parts": {
+    "px.exp.brain.data.example_small": {
+      "preexisting": true,
+      "read_by": [
+        "py",
+        "np"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.mean.example_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "np"
+    },
+    "px.exp.brain.result.backend.mean.example_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "py"
+    }
+  },
+  "pcr": "brain_example",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.example_small"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.mean.example_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.mean",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "bd29813ec7ba587d03dcddc9c03a5d1a85e5b08eb673de7a63861eb6003397bb"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.example_small"
+          ],
+          "duration_ms": 0.030436999622907024,
+          "hit": true,
+          "id": "py",
+          "inputs": {
+            "data": "px:px.exp.brain.data.example_small"
+          },
+          "into": "px.exp.brain.result.backend.mean.example_py",
+          "result_sha256": "4ea2e76befa27485e1359475c7cf39f32ce09090cc0e4062e4dc4e171713b68e",
+          "value": {
+            "data": -0.12181723499644562,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.mean.example_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.example_small"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.mean.example_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.mean",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "bd29813ec7ba587d03dcddc9c03a5d1a85e5b08eb673de7a63861eb6003397bb"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.example_small"
+          ],
+          "duration_ms": 0.12568899956022506,
+          "hit": true,
+          "id": "np",
+          "inputs": {
+            "data": "px:px.exp.brain.data.example_small"
+          },
+          "into": "px.exp.brain.result.backend.mean.example_np",
+          "result_sha256": "da3293b3546ce59c14960a2c28675849ff4db1e00244d9afeb3c45dbdc24014e",
+          "value": {
+            "data": -0.12181723499644566,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.mean.example_np",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "mean"
+    }
+  ]
+}

@@ -1,0 +1,252 @@
+{
+  "proposal.brain.backend.harness_carries": {
+    "for": "every vertical adds an engine without re-arguing correctness",
+    "kind": "strength",
+    "text": "the facade shape (one Calculation, args['backend']) plus an oracle part per engine made 'a backend that changes semantics is a failed backend' a mechanical check rather than a habit"
+  },
+  "px.exp.brain.bench.backend.mean.np.4096": {
+    "backend": "np",
+    "calc": "mean",
+    "for": "where the engine boundary actually pays",
+    "inputs_sha256": "1c962b63609be39733d0fb4aadb75c677e1cbe8af1e9687a250178d56a8912a8",
+    "n": 5,
+    "size": "4096",
+    "wall_ms_median": 0.2899440000874165,
+    "wall_ms_min": 0.27019599974664743
+  },
+  "px.exp.brain.bench.backend.mean.np.64": {
+    "backend": "np",
+    "calc": "mean",
+    "for": "where the engine boundary actually pays",
+    "inputs_sha256": "0321c316eb6dd7911f75810fef3c5c624ef3edc8d82ae2b9cae3e5e0d7e2f5f5",
+    "n": 5,
+    "size": "64",
+    "wall_ms_median": 0.014466999800788471,
+    "wall_ms_min": 0.010306000149284955
+  },
+  "px.exp.brain.bench.backend.mean.np.65536": {
+    "backend": "np",
+    "calc": "mean",
+    "for": "where the engine boundary actually pays",
+    "inputs_sha256": "dbbded2c46dfc66efd49fe5cfd4a374ac8b46cf2e63d1d14630d284e74da1991",
+    "n": 5,
+    "size": "65536",
+    "wall_ms_median": 4.840331000195874,
+    "wall_ms_min": 4.676983000081236
+  },
+  "px.exp.brain.bench.backend.mean.py.4096": {
+    "backend": "py",
+    "calc": "mean",
+    "for": "where the engine boundary actually pays",
+    "inputs_sha256": "1c962b63609be39733d0fb4aadb75c677e1cbe8af1e9687a250178d56a8912a8",
+    "n": 5,
+    "size": "4096",
+    "wall_ms_median": 0.19608999991760356,
+    "wall_ms_min": 0.18481699999028933
+  },
+  "px.exp.brain.bench.backend.mean.py.64": {
+    "backend": "py",
+    "calc": "mean",
+    "for": "where the engine boundary actually pays",
+    "inputs_sha256": "0321c316eb6dd7911f75810fef3c5c624ef3edc8d82ae2b9cae3e5e0d7e2f5f5",
+    "n": 5,
+    "size": "64",
+    "wall_ms_median": 0.004601000000548083,
+    "wall_ms_min": 0.0038790003600297496
+  },
+  "px.exp.brain.bench.backend.mean.py.65536": {
+    "backend": "py",
+    "calc": "mean",
+    "for": "where the engine boundary actually pays",
+    "inputs_sha256": "dbbded2c46dfc66efd49fe5cfd4a374ac8b46cf2e63d1d14630d284e74da1991",
+    "n": 5,
+    "size": "65536",
+    "wall_ms_median": 3.3872320000227774,
+    "wall_ms_min": 3.2129129999702855
+  },
+  "px.exp.brain.bracket.backend.example_mean": {
+    "candidates": [
+      {
+        "address": "px.exp.brain.result.backend.mean.example_py",
+        "branch": "engine_py",
+        "calc": "fn.brain.backend.mean",
+        "note": ""
+      },
+      {
+        "address": "px.exp.brain.result.backend.mean.example_np",
+        "branch": "engine_np",
+        "calc": "fn.brain.backend.mean",
+        "note": ""
+      }
+    ],
+    "criteria": [
+      {
+        "direction": "higher",
+        "how": "the oracle part for this engine passes",
+        "name": "correctness",
+        "weight": 2.0
+      },
+      {
+        "direction": "lower",
+        "how": "wall_ms_median of the largest benchmark",
+        "name": "speed",
+        "weight": 1.0
+      },
+      {
+        "direction": "higher",
+        "how": "lines and docstring",
+        "name": "clarity",
+        "weight": 1.0
+      }
+    ],
+    "for": "the shape of every tournament in this sprint, small enough to read",
+    "judged": [
+      {
+        "candidate": "engine_py",
+        "judge": "reader",
+        "note": "pure python, no import, slow past a few thousand",
+        "scores": {
+          "clarity": 1.0,
+          "correctness": 1.0,
+          "speed": 40.0
+        }
+      },
+      {
+        "candidate": "engine_np",
+        "judge": "reader",
+        "note": "one call, fast, needs the dependency",
+        "scores": {
+          "clarity": 1.0,
+          "correctness": 1.0,
+          "speed": 1.0
+        }
+      }
+    ],
+    "means": {
+      "clarity": {
+        "engine_np": 1.0,
+        "engine_py": 1.0
+      },
+      "correctness": {
+        "engine_np": 1.0,
+        "engine_py": 1.0
+      },
+      "speed": {
+        "engine_np": 1.0,
+        "engine_py": 40.0
+      }
+    },
+    "problem": "example_mean",
+    "refined": true,
+    "refinement": {
+      "address": "",
+      "note": "the winner is the facade's default at size; the loser stays as the reference engine"
+    },
+    "totals": {
+      "engine_np": 4.0,
+      "engine_py": 3.0
+    },
+    "winner": "engine_np"
+  },
+  "px.exp.brain.data.example_small": {
+    "for": "the harness, proven on something real",
+    "kind": "normal",
+    "seed": 11,
+    "shape": [
+      8,
+      4
+    ],
+    "values": [
+      [
+        0.03419276725318417,
+        1.3597475403099617,
+        1.2247210785859324,
+        -0.5103070767876675
+      ],
+      [
+        -0.2979695111064471,
+        -0.5273841930334252,
+        0.5697263575719601,
+        -0.056064439045617594
+      ],
+      [
+        0.7468856162565439,
+        -1.8473247989741095,
+        1.5665487746995206,
+        -0.09643216015562055
+      ],
+      [
+        0.6803784532741461,
+        -0.13656633397682774,
+        -0.3790985670748533,
+        0.46311015859758675
+      ],
+      [
+        0.824513527530113,
+        -0.20252987069345152,
+        -0.15278617857019708,
+        0.685698610809258
+      ],
+      [
+        -0.8703406419471712,
+        -1.5143835037313955,
+        0.39498186274953,
+        -0.6705658236878794
+      ],
+      [
+        -1.9203405901180286,
+        -0.8140536639453595,
+        -0.467597558892747,
+        -1.1932024774322612
+      ],
+      [
+        -1.4924638840630338,
+        0.03663782694480509,
+        0.8972492567277476,
+        -0.23313207796045685
+      ]
+    ]
+  },
+  "px.exp.brain.map.backend": {
+    "built": [
+      "px.exp.brain.bracket.backend.example_mean"
+    ],
+    "for": "what the backend vertical has, and what the other two are waiting on",
+    "next": [
+      {
+        "for": "the stats and ml verticals, which cannot start without them",
+        "what": "fn.brain.backend.<op> for matmul, solve, lstsq, eig/svd, sort/select-k, distances, histogram, cumsum, fft"
+      }
+    ],
+    "stubbed": [
+      {
+        "address": "px.exp.brain.result.backend.*",
+        "why": "the facade ops land as their own neat tasks after the harness"
+      }
+    ]
+  },
+  "px.exp.brain.oracle.backend.mean.example_np": {
+    "calc": "mean",
+    "case": "example_np",
+    "expected": -0.12181723499644566,
+    "for": "every engine answers the same question the same way, or it is a failed backend",
+    "got": -0.12181723499644566,
+    "pass": true,
+    "reference": "numpy.ndarray.mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.backend.mean.example_py": {
+    "calc": "mean",
+    "case": "example_py",
+    "expected": -0.12181723499644566,
+    "for": "every engine answers the same question the same way, or it is a failed backend",
+    "got": -0.12181723499644562,
+    "pass": true,
+    "reference": "numpy.ndarray.mean",
+    "tolerance": 1e-09,
+    "worst_relative_error": 4.163336342344337e-17
+  },
+  "px.exp.brain.result.backend.mean.example_np": -0.12181723499644566,
+  "px.exp.brain.result.backend.mean.example_py": -0.12181723499644562
+}
