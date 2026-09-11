@@ -44,18 +44,23 @@ def brute_group_by(table, by, aggregates):
             column_at = table["columns"].index(spec["column"])
             cells = [row[column_at] for row in members]
             present = [c for c in cells if c is not None]
-            numbers = np.asarray([float(c) for c in present], dtype=float)
             if kind == "count":
                 line.append(len(present))
-            elif kind == "count_missing":
+                continue
+            if kind == "count_missing":
                 line.append(len(cells) - len(present))
-            elif kind == "nunique":
+                continue
+            if kind == "nunique":
                 line.append(len({sort_key(c) for c in present}))
-            elif kind == "first":
+                continue
+            if kind == "first":
                 line.append(present[0] if present else None)
-            elif kind == "last":
+                continue
+            if kind == "last":
                 line.append(present[-1] if present else None)
-            elif numbers.size == 0:
+                continue
+            numbers = np.asarray([float(c) for c in present], dtype=float)
+            if numbers.size == 0:
                 line.append(None)
             elif kind == "sum":
                 line.append(float(numbers.sum()))
@@ -254,6 +259,12 @@ ORACLE_CASES.append(_case(
     "data.frame_cases (the running total written out by hand)",
     lambda: {"columns": list(ORDERS["columns"]) + ["running"],
              "rows": _running(ORDERS, "customer", "items")}, 1e-9, shape_only))
+ORACLE_CASES.append(_case(
+    "fn.brain.data.shape", "orders", "py", {"table": ORDERS},
+    "data.frame_cases (the column kinds read off by hand)",
+    lambda: {"rows": 12, "columns": list(ORDERS["columns"]),
+             "kinds": {"order": "number", "customer": "text", "region": "text",
+                       "items": "number", "price": "number", "expedited": "boolean"}}))
 ORACLE_CASES.append(_case(
     "fn.brain.data.missing_report", "gappy", "py", {"table": GAPPY},
     "data.frame_cases (the holes counted by hand)",
