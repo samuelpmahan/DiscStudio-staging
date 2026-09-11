@@ -83,6 +83,26 @@ def brute_ridge(design, y, penalty, intercept=True):
     return [float(v) for v in beta]
 
 
+WEIGHTS = [1.0 + (i % 5) for i in range(N)]
+
+
+def brute_wls(design, y, weights, intercept=True):
+    """numpy.linalg.lstsq on the sqrt(w)-scaled design: the reference for a weighted fit."""
+    a = np.asarray([([1.0] + list(row)) if intercept else list(row) for row in design],
+                   dtype=float)
+    b = np.asarray(y, dtype=float)
+    root = np.sqrt(np.asarray(weights, dtype=float))
+    beta = np.linalg.lstsq(a * root[:, None], b * root, rcond=None)[0]
+    fitted = a @ beta
+    residuals = b - fitted
+    w = np.asarray(weights, dtype=float)
+    rss = float((w * residuals * residuals).sum())
+    centre = float((w * b).sum() / w.sum())
+    tss = float((w * (b - centre) ** 2).sum())
+    return {"coefficients": [float(v) for v in beta], "rss": rss, "tss": tss,
+            "r2": 1.0 - rss / tss}
+
+
 def _report_fields(got):
     """the fields the reference has an opinion about, in the reference's own shape."""
     return {key: got[key] for key in
@@ -130,6 +150,20 @@ for _penalty in (0.0, 0.5, 25.0):
             "numpy.linalg.solve on the penalised normal equations",
             (lambda penalty=_penalty: brute_ridge(DESIGN, Y, penalty)), 1e-8,
             lambda got: got["coefficients"]))
+
+for _solver, _backend in (("normal", "py"), ("qr", "py"), ("lstsq", "np")):
+    ORACLE_CASES.append(_case(
+        "fn.brain.stats.ols_weighted", "weighted.%s" % _solver, _backend,
+        {"x": DESIGN, "y": Y, "weights": WEIGHTS, "solver": _solver},
+        "numpy.linalg.lstsq on the sqrt(w)-scaled design",
+        lambda: brute_wls(DESIGN, Y, WEIGHTS), 1e-8,
+        (lambda got: {key: got[key] for key in ("coefficients", "rss", "tss", "r2")})))
+ORACLE_CASES.append(_case(
+    "fn.brain.stats.ols_weighted", "all.ones.is.ols", "py",
+    {"x": DESIGN, "y": Y, "weights": [1.0] * N},
+    "numpy.linalg.lstsq on the sqrt(w)-scaled design",
+    lambda: brute_wls(DESIGN, Y, [1.0] * N), 1e-8,
+    (lambda got: {key: got[key] for key in ("coefficients", "rss", "tss", "r2")})))
 
 BENCH_CASES = []
 for _calc, _backend in (("fn.brain.stats.ols_normal", "py"),

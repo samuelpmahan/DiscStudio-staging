@@ -6,7 +6,7 @@ from harness import close
 import data.frame as frame
 import data.shaping as shaping
 from data.datasets import GAPPY, ORDERS, READINGS
-from data.shaping_cases import ORACLE_CASES, WIDE, shape_only
+from data.shaping_cases import ORACLE_CASES, QUOTES, TRADES, WIDE, shape_only
 from data.table import check, column
 
 
@@ -76,6 +76,67 @@ class TestMelt(unittest.TestCase):
     def test_nothing_to_fold_is_refused(self):
         with self.assertRaises(ValueError):
             shaping.melt({"table": ORDERS, "id_vars": list(ORDERS["columns"])})
+
+
+class TestAsOfJoin(unittest.TestCase):
+    def test_every_left_row_survives(self):
+        got = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                    "by": ["sym"]})
+        self.assertEqual(len(got["rows"]), len(TRADES["rows"]))
+        check(got, "the as-of join")
+
+    def test_backward_never_looks_forward(self):
+        got = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                    "by": ["sym"], "direction": "backward"})
+        quotes = {(row[1], row[2]): row[0] for row in QUOTES["rows"]}
+        for trade_t, sym, bid in zip(column(got, "t"), column(got, "sym"),
+                                     column(got, "bid")):
+            self.assertLessEqual(quotes[(sym, bid)], trade_t)
+
+    def test_forward_never_looks_back(self):
+        got = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                    "by": ["sym"], "direction": "forward"})
+        quotes = {(row[1], row[2]): row[0] for row in QUOTES["rows"]}
+        for trade_t, sym, bid in zip(column(got, "t"), column(got, "sym"),
+                                     column(got, "bid")):
+            if bid is not None:
+                self.assertGreaterEqual(quotes[(sym, bid)], trade_t)
+
+    def test_forward_leaves_a_hole_when_nothing_comes_after(self):
+        got = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                    "by": ["sym"], "direction": "forward"})
+        self.assertIsNone(column(got, "bid")[-1])
+
+    def test_a_tolerance_refuses_a_match_that_is_too_far(self):
+        loose = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                      "by": ["sym"]})
+        tight = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                      "by": ["sym"], "tolerance": 0.4})
+        holes = lambda table: sum(1 for v in column(table, "bid") if v is None)  # noqa: E731
+        self.assertGreater(holes(tight), holes(loose))
+
+    def test_by_keeps_the_symbols_apart(self):
+        with_by = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                        "by": ["sym"]})
+        without = shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t"})
+        self.assertIn("sym_right", without["columns"])
+        self.assertNotIn("sym_right", with_by["columns"])
+        for sym, other in zip(column(without, "sym"), column(without, "sym_right")):
+            self.assertEqual(sym, other)
+        self.assertEqual(column(with_by, "bid"), column(without, "bid"))
+
+    def test_an_unknown_direction_is_refused(self):
+        with self.assertRaises(ValueError) as caught:
+            shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                  "direction": "sideways"})
+        self.assertIn("nearest", str(caught.exception))
+
+    def test_a_missing_key_and_a_negative_tolerance_are_refused(self):
+        with self.assertRaises(ValueError):
+            shaping.rolling_join({"table": TRADES, "other": QUOTES})
+        with self.assertRaises(ValueError):
+            shaping.rolling_join({"table": TRADES, "other": QUOTES, "on": "t",
+                                  "tolerance": -1.0})
 
 
 class TestDescribeTable(unittest.TestCase):

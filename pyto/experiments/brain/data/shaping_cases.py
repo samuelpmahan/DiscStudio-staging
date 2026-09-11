@@ -59,6 +59,51 @@ def brute_describe(table, names=None):
     return {"columns": header, "rows": rows}
 
 
+TRADES = {"for": "five trades in two symbols, in time order",
+          "columns": ["t", "sym", "px"],
+          "rows": [[1.0, "a", 10.0], [3.0, "a", 11.0], [5.0, "b", 20.0],
+                   [7.0, "a", 12.0], [9.0, "b", 21.0]]}
+QUOTES = {"for": "six quotes in the same two symbols, on their own clock",
+          "columns": ["t", "sym", "bid"],
+          "rows": [[0.5, "a", 9.9], [2.0, "a", 10.5], [4.0, "b", 19.5],
+                   [6.0, "a", 11.8], [8.0, "b", 20.8], [10.0, "a", 12.5]]}
+
+
+def brute_asof(left, right, on, by, direction, tolerance=None):
+    """an independent as-of join: a full scan of the right table per left row."""
+    lk = left["columns"].index(on)
+    rk = right["columns"].index(on)
+    lb = [left["columns"].index(name) for name in by]
+    rb = [right["columns"].index(name) for name in by]
+    rest = [i for i in range(len(right["columns"])) if i != rk and i not in rb]
+    # the SUFFIX on a clashing name is the vertical's convention, not the thing
+    # under test; which right row each left row takes is what this computes.
+    clashes = set(left["columns"])
+    header = list(left["columns"]) + [
+        right["columns"][i] + ("_right" if right["columns"][i] in clashes else "")
+        for i in rest]
+    rows = []
+    for row in left["rows"]:
+        key = float(row[lk])
+        best = None
+        for other in right["rows"]:
+            if [str(other[i]) for i in rb] != [str(row[i]) for i in lb]:
+                continue
+            gap = float(other[rk]) - key
+            if direction == "backward" and gap > 0:
+                continue
+            if direction == "forward" and gap < 0:
+                continue
+            if tolerance is not None and abs(gap) > tolerance:
+                continue
+            if best is None or abs(gap) < abs(float(best[rk]) - key) or (
+                    abs(gap) == abs(float(best[rk]) - key) and gap < 0):
+                best = other
+        rows.append(list(row) + ([best[i] for i in rest] if best is not None
+                                 else [None] * len(rest)))
+    return {"columns": header, "rows": rows}
+
+
 def shape_only(table):
     return {"columns": list(table["columns"]), "rows": [list(r) for r in table["rows"]]}
 
@@ -86,6 +131,23 @@ ORACLE_CASES = [
           "data.shaping_cases.brute_melt (an independent fold, column by column)",
           lambda: brute_melt(GAPPY, ["step"], ["reading", "label"], "variable", "value")),
 ]
+for _direction in ("backward", "forward", "nearest"):
+    ORACLE_CASES.append(_case(
+        "fn.brain.data.rolling_join", "trades.quotes.%s" % _direction, "py",
+        {"table": TRADES, "other": QUOTES, "on": "t", "by": ["sym"],
+         "direction": _direction},
+        "data.shaping_cases.brute_asof (an independent full scan per left row)",
+        (lambda direction=_direction: brute_asof(TRADES, QUOTES, "t", ["sym"], direction))))
+ORACLE_CASES.append(_case(
+    "fn.brain.data.rolling_join", "trades.quotes.tolerance", "py",
+    {"table": TRADES, "other": QUOTES, "on": "t", "by": ["sym"], "tolerance": 1.0},
+    "data.shaping_cases.brute_asof (an independent full scan per left row)",
+    lambda: brute_asof(TRADES, QUOTES, "t", ["sym"], "backward", 1.0)))
+ORACLE_CASES.append(_case(
+    "fn.brain.data.rolling_join", "trades.quotes.no.by", "py",
+    {"table": TRADES, "other": QUOTES, "on": "t"},
+    "data.shaping_cases.brute_asof (an independent full scan per left row)",
+    lambda: brute_asof(TRADES, QUOTES, "t", [], "backward")))
 for _backend in ("py", "np"):
     ORACLE_CASES.append(_case(
         "fn.brain.data.describe_table", "orders.%s" % _backend, _backend,
