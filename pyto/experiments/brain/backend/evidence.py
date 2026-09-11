@@ -59,14 +59,14 @@ def build_results(store) -> dict:
         for case in group:
             parts, constants = _split(case["args"])
             inputs = {key: _dataset_for(store, op, case["case"], key, value) for key, value in parts.items()}
-            for engine in ops.engines_of(op):
+            for engine in case_module.engines_of_case(case, ops.engines_of(op)):
                 step_id = f"{case['case']}_{engine}"
                 address = harness.result_address(VERTICAL, op, step_id)
                 steps.append({"id": step_id, "calc": calc, "into": address, "args": dict(constants, backend=engine), "inputs": dict(inputs)})
                 produced[(op, case["case"], engine)] = address
         run = store.run(f"brain_backend_{op}", [(op, steps)])
         for case in group:
-            for engine in ops.engines_of(op):
+            for engine in case_module.engines_of_case(case, ops.engines_of(op)):
                 produced[(op, case["case"], engine)] = run.results[f"{case['case']}_{engine}"]
     return produced
 
@@ -76,7 +76,7 @@ def build_oracles(store, produced: dict) -> dict:
     verdicts = {}
     for case in case_module.cases():
         expected = case["expected"]()
-        for engine in ops.engines_of(case["op"]):
+        for engine in case_module.engines_of_case(case, ops.engines_of(case["op"])):
             got = produced[(case["op"], case["case"], engine)]
             verdicts[(case["op"], case["case"], engine)] = harness.oracle(
                 store,

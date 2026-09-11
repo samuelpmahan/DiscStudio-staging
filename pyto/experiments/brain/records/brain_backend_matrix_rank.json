@@ -1,0 +1,257 @@
+{
+  "counters": {
+    "computed": 0,
+    "hits": 5,
+    "invocations": 5,
+    "wall_ms": 0.7205670008261222
+  },
+  "parts": {
+    "px.exp.brain.data.backend_matrix_rank_deficient_6x4_a": {
+      "preexisting": true,
+      "read_by": [
+        "deficient_6x4_np",
+        "deficient_6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.data.backend_matrix_rank_full_6x4_a": {
+      "preexisting": true,
+      "read_by": [
+        "full_6x4_np",
+        "full_6x4_py",
+        "full_6x4_sp"
+      ],
+      "written_by": null
+    },
+    "px.exp.brain.result.backend.matrix_rank.deficient_6x4_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "deficient_6x4_np"
+    },
+    "px.exp.brain.result.backend.matrix_rank.deficient_6x4_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "deficient_6x4_sp"
+    },
+    "px.exp.brain.result.backend.matrix_rank.full_6x4_np": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "full_6x4_np"
+    },
+    "px.exp.brain.result.backend.matrix_rank.full_6x4_py": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "full_6x4_py"
+    },
+    "px.exp.brain.result.backend.matrix_rank.full_6x4_sp": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "full_6x4_sp"
+    }
+  },
+  "pcr": "brain_backend_matrix_rank",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matrix_rank.full_6x4_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matrix_rank",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          ],
+          "duration_ms": 0.16353000137314666,
+          "hit": true,
+          "id": "full_6x4_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.matrix_rank.full_6x4_np",
+          "result_sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+          "value": {
+            "data": 4,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matrix_rank.full_6x4_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matrix_rank.full_6x4_py"
+          ],
+          "args": {
+            "backend": "py"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matrix_rank",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          ],
+          "duration_ms": 0.19205099852115382,
+          "hit": true,
+          "id": "full_6x4_py",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.matrix_rank.full_6x4_py",
+          "result_sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+          "value": {
+            "data": 4,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matrix_rank.full_6x4_py",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matrix_rank.full_6x4_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matrix_rank",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          ],
+          "duration_ms": 0.19533399972715415,
+          "hit": true,
+          "id": "full_6x4_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matrix_rank_full_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.matrix_rank.full_6x4_sp",
+          "result_sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+          "value": {
+            "data": 4,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matrix_rank.full_6x4_sp",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matrix_rank_deficient_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matrix_rank.deficient_6x4_np"
+          ],
+          "args": {
+            "backend": "np"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matrix_rank",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matrix_rank_deficient_6x4_a"
+          ],
+          "duration_ms": 0.0877069996931823,
+          "hit": true,
+          "id": "deficient_6x4_np",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matrix_rank_deficient_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.matrix_rank.deficient_6x4_np",
+          "result_sha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+          "value": {
+            "data": 3,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matrix_rank.deficient_6x4_np",
+              "kind": "new-address"
+            }
+          ]
+        },
+        {
+          "actual_consumes": [
+            "px.exp.brain.data.backend_matrix_rank_deficient_6x4_a"
+          ],
+          "actual_produces": [
+            "px.exp.brain.result.backend.matrix_rank.deficient_6x4_sp"
+          ],
+          "args": {
+            "backend": "sp"
+          },
+          "calculation": {
+            "address": "fn.brain.backend.matrix_rank",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d07c7b6dd8fa6b1580f0397f5ee6c8b26d223739c5df7bfdb40a8a02f721109c"
+          },
+          "declared_consumes": [
+            "px:px.exp.brain.data.backend_matrix_rank_deficient_6x4_a"
+          ],
+          "duration_ms": 0.08194500151148532,
+          "hit": true,
+          "id": "deficient_6x4_sp",
+          "inputs": {
+            "a": "px:px.exp.brain.data.backend_matrix_rank_deficient_6x4_a"
+          },
+          "into": "px.exp.brain.result.backend.matrix_rank.deficient_6x4_sp",
+          "result_sha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+          "value": {
+            "data": 3,
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.brain.result.backend.matrix_rank.deficient_6x4_sp",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "matrix_rank"
+    }
+  ]
+}
