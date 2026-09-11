@@ -139,6 +139,19 @@ export function validatePreset(p) {
   return p;
 }
 
+/**
+ * A new disc paints in its own hue, like every seeded one: the colour a person
+ * actually typed when it names a hue the sample palette knows (the seed's own
+ * Mint is 150, Peach 22, Lilac 268, Gold 45, Blue 204, Sand 41, Rose 330), and
+ * otherwise a hue derived from the disc's key, so two discs added in a row are
+ * never the same colour. Authored artBase/artAccent still win in the painter.
+ */
+const COLOUR_HUES = { red: 4, copper: 18, peach: 22, orange: 26, bronze: 32, sand: 41, gold: 45, amber: 44, yellow: 54, cream: 56, white: 60, glow: 72, lime: 88, green: 124, mint: 150, teal: 172, cyan: 188, sky: 198, silver: 200, blue: 204, navy: 224, indigo: 246, lilac: 268, purple: 278, violet: 286, magenta: 308, pink: 326, rose: 330, black: 214, grey: 210, gray: 210, clear: 190 };
+export function sampleHueFor(colour, key) {
+  for (const word of String(colour ?? '').toLowerCase().match(/[a-z]+/g) ?? []) if (COLOUR_HUES[word] != null) return COLOUR_HUES[word];
+  let h = 7; for (const ch of String(key ?? '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return h % 360;
+}
 /** Product identifiers are linked; this operation rebinds one disc instead of renaming a shared mold. */
 function reidentify(world, disc, manufacturer, mold) {
   const name = manufacturer.trim() || 'Unknown manufacturer', moldName = mold.trim() || 'Unnamed mold';
@@ -164,6 +177,21 @@ export function applyCommand({ world: previous, command }) {
       w.schemas[c.entityType].fields[c.name] = { type: c.fieldType, label: c.label || c.name, optional: true }; break;
     }
     case 'disc.identity': reidentify(w, required('Disc', c.id), c.manufacturer, c.mold); break;
+    case 'disc.create': {
+      // One gesture, one command: the maker, the mold and the disc are made together,
+      // so a single undo takes the whole new disc back out and never leaves a stray
+      // 'Unknown manufacturer' behind. The facts a person actually has in hand come in
+      // with it; a blank nickname is written from them rather than left as a placeholder.
+      if (!safeKey(c.id) || get(w, 'Disc', c.id)) throw new Error('Invalid new disc.');
+      const disc = { id: c.id, type: 'Disc', moldId: null, nickname: '', photo: c.photo ?? null, plastic: String(c.plastic ?? '').trim(), weight: c.weight ?? null, color: String(c.color ?? '').trim(), notes: '', sampleHue: sampleHueFor(c.color, c.id) };
+      w.objects.Disc[c.id] = disc;
+      reidentify(w, disc, String(c.manufacturer ?? ''), String(c.mold ?? ''));
+      const product = get(w, 'Mold', disc.moldId), category = String(c.category ?? '').trim();
+      if (category && !product.category) product.category = category;
+      disc.nickname = String(c.nickname ?? '').trim() || [disc.plastic, product.name, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).join(' ') || 'Your disc';
+      if (c.bagId) required('Bag', c.bagId).discIds = [...get(w, 'Bag', c.bagId).discIds, c.id];
+      break;
+    }
     case 'disc.duplicate': { const d = clone(required('Disc', c.id)); d.id = c.newId; d.nickname = `${d.nickname || 'Disc'} · another specimen`; w.objects.Disc[d.id] = d; break; }
     case 'disc.remove': {
       if (all(w, 'Bag').some(b => b.discIds.includes(c.id)) || w.battle.entries.some(e => e.discId === c.id) || all(w, 'Throw').some(t => t.discId === c.id)) throw new Error('Remove this disc from its bags and comparison first. Discs with recorded throws must be retained.');

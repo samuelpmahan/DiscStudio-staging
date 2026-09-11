@@ -568,3 +568,32 @@ test('fromDiscStudioReceipt takes an array into: the list is the into, and every
   assert.equal(record.counters.invocations, 1);
   assert.ok(validate(record));
 });
+
+test('one disc.create makes the maker, the mold, the disc and its bag place, and one undo takes all of it back', () => {
+  const r = make(), before = r.world();
+  r.dispatch({ type: 'disc.create', id: 'disc-new', manufacturer: 'Kastaplast', mold: 'Berg', category: 'Putter', plastic: 'K1', weight: 174, color: 'Mint', nickname: '', photo: null, bagId: 'everyday' });
+  const w = r.world(), made = w.objects.Disc['disc-new'], mold = w.objects.Mold[made.moldId], maker = w.objects.Manufacturer[mold.manufacturerId];
+  assert.equal(maker.name, 'Kastaplast');
+  assert.equal(mold.name, 'Berg');
+  assert.equal(mold.category, 'Putter');
+  assert.equal(made.nickname, 'K1 Berg 174 g', 'a blank nickname is written from the facts, never left as a placeholder');
+  assert.equal(made.sampleHue, w.objects.Disc['buzzz-mint'].sampleHue, 'a disc the person called Mint paints in the same hue the seeded Mint disc does');
+  assert.ok(w.objects.Bag.everyday.discIds.includes('disc-new'));
+  r.undo.pop('px.studio.world');
+  const after = r.world();
+  assert.equal(after.objects.Disc['disc-new'], undefined);
+  assert.equal(Object.keys(after.objects.Manufacturer).length, Object.keys(before.objects.Manufacturer).length, 'no stray maker is left behind');
+  assert.deepEqual(after.objects.Bag.everyday.discIds, before.objects.Bag.everyday.discIds);
+});
+
+test('disc.create reuses the maker and mold that are already on the shelf, and a disc with an unknown colour still gets its own hue', () => {
+  const r = make();
+  r.dispatch({ type: 'disc.create', id: 'disc-two', manufacturer: 'discraft', mold: 'buzzz', category: 'Midrange', plastic: 'Big Z', weight: null, color: 'Swirly something', nickname: 'The gamer', photo: null, bagId: null });
+  const w = r.world(), made = w.objects.Disc['disc-two'];
+  assert.equal(made.moldId, 'buzzz', 'the mold is matched case-insensitively rather than duplicated');
+  assert.equal(Object.keys(w.objects.Mold).length, 7);
+  assert.equal(made.nickname, 'The gamer');
+  assert.ok(Number.isFinite(made.sampleHue) && made.sampleHue !== w.objects.Disc['buzzz-mint'].sampleHue);
+  const card = r.card('disc-two', 'broadcast', context);
+  assert.match(card.svg, /Buzzz/);
+});

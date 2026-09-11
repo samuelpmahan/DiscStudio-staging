@@ -118,3 +118,23 @@
 .lab-view.tone-ray .lab-leg{stroke:#8fd6ff;stroke-dasharray:4 4}
 .lab-mark.tone-recovered rect,.lab-mark.tone-recovered circle{stroke:#f0e27a}
 .lab-mark.tone-recovered text{fill:#f7f0b8}
+
+/* Adding a disc is one gesture (task 132): the composer that opens above the bag,
+   with the facts a person has in hand while the disc is in their hand. */
+.composer{border:1px solid #b9c9a5;background:#eef2e6;border-radius:12px;padding:22px 24px;margin-bottom:26px}
+.composer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.composer-head h2{font-family:Georgia,serif;font-size:24px;font-weight:400;margin:5px 0 7px}
+.composer-head p{max-width:430px}
+.composer-body{display:flex;gap:22px;align-items:flex-start;margin-top:18px}
+.composer-art{flex:0 0 148px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.composer-art img,.composer-swatch{width:148px;height:148px;border-radius:10px;display:block;object-fit:cover;background:#e6ebde}
+.composer-swatch{border:6px solid #203d36}
+.composer-art .button-row{display:flex;gap:6px;flex-wrap:wrap}
+.composer-grid{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 14px;min-width:0}
+.composer-grid .control{margin:0}
+.composer-foot{display:flex;align-items:flex-end;gap:16px;margin-top:18px;padding-top:16px;border-top:1px solid #d5dfc7;flex-wrap:wrap}
+.composer-foot>.control{flex:1;min-width:180px;margin:0}
+.composer-foot>.check{margin:0 0 9px}
+.composer-foot>.primary{padding:12px 20px;white-space:nowrap}
+@media(max-width:1200px){.composer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.composer{padding:16px}.composer-body{flex-direction:column;gap:14px}.composer-art{flex:none}.composer-art img,.composer-swatch{width:110px;height:110px}.composer-grid{grid-template-columns:1fr 1fr;width:100%}.composer-foot>.primary{width:100%}}
