@@ -34,7 +34,7 @@ PAIRED = draw(34, 93, centre=10.4, spread=3.1)
 SKEWED = [abs(v) ** 1.9 for v in draw(28, 94)]
 GROUPS = [draw(15, 95, 9.0, 2.0), draw(18, 96, 10.5, 2.4), draw(12, 97, 11.2, 2.1)]
 COUNTS = [16, 18, 16, 14, 12, 12]
-EXPECTED = [16.0, 16.0, 16.0, 16.0, 12.0, 8.0]
+EXPECTED = [18.0, 16.0, 16.0, 14.0, 12.0, 12.0]
 TABLE = [[10, 20, 30], [6, 9, 17]]
 TABLE22 = [[10, 20], [6, 9]]
 SHAPIRO_TOLERANCE = 1e-7

@@ -149,6 +149,10 @@ def chisquare(args):
             raise ValueError("observed and expected must have the same number of categories")
     if any(v <= 0.0 for v in expected):
         raise ValueError("every expected count must be positive")
+    if abs(math.fsum(expected) - total) > 1e-8 * max(total, 1.0):
+        raise ValueError(
+            "the expected counts must sum to the observed total (%r vs %r)"
+            % (math.fsum(expected), total))
     ddof = int(args.get("ddof", 0))
     if _backend(args) == "sp":
         from scipy import stats as sp_stats

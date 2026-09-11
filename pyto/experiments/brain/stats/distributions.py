@@ -136,6 +136,11 @@ def _cdf_py(dist, params, x):
         return ndtr((x - params["mu"]) / params["sigma"])
     if dist == "t":
         df = params["df"]
+        if x * x <= df:
+            # near the centre the tail form cancels to nothing, so add the
+            # half-tail to 0.5 instead of subtracting two numbers that agree.
+            half = 0.5 * betainc(0.5, df / 2.0, x * x / (df + x * x))
+            return 0.5 + half if x >= 0.0 else 0.5 - half
         half = betainc(df / 2.0, 0.5, df / (df + x * x))
         return 1.0 - 0.5 * half if x >= 0.0 else 0.5 * half
     if dist == "chi2":

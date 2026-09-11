@@ -144,6 +144,10 @@ def ndtri(p):
         if p == 1.0:
             return float("inf")
         raise ValueError("ndtri needs p in [0, 1], got %r" % (p,))
+    if p > 0.5:
+        # the upper tail is the lower tail reflected: refining there instead keeps
+        # full precision, because ndtr saturates at 1 long before p does.
+        return -ndtri(1.0 - p)
     if p < _SPLIT_LOW:
         q = math.sqrt(-2.0 * math.log(p))
         x = (((((_C[0] * q + _C[1]) * q + _C[2]) * q + _C[3]) * q + _C[4]) * q + _C[5]) / \
