@@ -973,7 +973,7 @@ queries; lines, files, pages, new `px.<x>.<y>` address roots, assertions moved
 in pre-existing tests, fixtures regenerated), then `fn.neat.delta.evaluate`,
 pure over the two measurements, publishes `px.exp.neat.delta.<a>.<b>` under
 `pyto/experiments/review/deltas` with its run record: more verified behaviour
-wins, at a tie the cheaper end state wins, and `rework` counts the lines `b`
+wins, then more capability points, then the cheaper end state, and `rework` counts the lines `b`
 tore out of `a`. What counts is the repository's own manifest,
 `pyto/experiments/delta/patterns.json`. The first record is task 78 (a second
 page built beside the PxC composer) against task 79 (the composer refined).

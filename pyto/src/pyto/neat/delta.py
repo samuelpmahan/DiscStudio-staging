@@ -41,8 +41,8 @@ And for the pair, ``measure_pair``:
 capability per end state (``verified`` first, then the capability patterns),
 cost per end state (lines changed, files, pages, new address roots, moved
 assertions, regenerated fixtures), the rework, and a verdict: the end state
-with more verified behaviour wins; at equal verified behaviour the cheaper
-one wins; the ratio ``capability / cost`` is printed for both.
+with more verified behaviour wins, then more capability points (the capability
+patterns summed), then the cheaper one; the ratio ``capability / cost`` is printed for both.
 
 Same inputs, same bytes: the measurement is deterministic over the git
 history, and the Calculation reads no clock and no environment.
@@ -78,6 +78,7 @@ DEFAULT_PATTERNS: dict[str, Any] = {
         {"name": "moved_assertions", "regex": r"\bassert", "files": r"(^|/)tests?/", "existing_only": True},
     ],
     "fixtures": r"(^|/)fixtures/",
+    "lines_exclude": [r"(^|/)fixtures/", r"\.md$"],
 }
 
 ADDRESS_ROOT = re.compile(r"\bpx\.([a-z][a-zA-Z0-9]*)\.([a-z][a-zA-Z0-9]*)")
@@ -208,12 +209,14 @@ def measure_range(root: str, base: str, result: str, patterns: Mapping[str, Any]
     numstat, added_by, removed_by = diff_lines(root, base, result, patterns)
     fixtures = re.compile(patterns.get("fixtures", r"(^|/)fixtures/"))
     new_files = set(_git(root, "diff", "--diff-filter=A", "--name-only", base, result).split())
+    lines_exclude = [re.compile(x) for x in patterns.get("lines_exclude", [patterns.get("fixtures", r"(^|/)fixtures/"), r"\.md$"])]
+    source = {path: counts for path, counts in numstat.items() if not any(x.search(path) for x in lines_exclude)}
     return {
         "base_sha": base,
         "result_sha": result,
         "files": len(numstat),
-        "added": sum(a for a, _ in numstat.values()),
-        "removed": sum(r for _, r in numstat.values()),
+        "added": sum(a for a, _ in source.values()),
+        "removed": sum(r for _, r in source.values()),
         "patterns": {
             p["name"]: {"added": _count(p, added_by, new_files), "removed": _count(p, removed_by, new_files)}
             for p in [*patterns.get("capability", ()), *patterns.get("cost", ())]
@@ -287,14 +290,18 @@ def evaluate(args: Mapping[str, Any]) -> dict[str, Any]:
         total = _total_cost(state["cost"])
         state["cost"]["total"] = total
         state["ratio"] = round(state["capability"]["verified"] / total, 4) if total else None
-    va, vb = after_a["capability"]["verified"], after_b["capability"]["verified"]
+    points = lambda state: sum(v for k, v in state["capability"].items() if k != "verified")  # noqa: E731
+    for state in (after_a, after_b):
+        state["capability"]["points"] = points(state)
+    ka, kb = (after_a["capability"]["verified"], after_a["capability"]["points"]), (after_b["capability"]["verified"], after_b["capability"]["points"])
     ca, cb = after_a["cost"]["total"], after_b["cost"]["total"]
-    if vb > va or (vb == va and cb < ca):
-        verdict, reason = "b", f"after b: {vb} verified at cost {cb}; after a alone: {va} at {ca}"
-    elif va > vb or (va == vb and ca < cb):
-        verdict, reason = "a", f"after a alone: {va} verified at cost {ca}; after b: {vb} at {cb}"
+    say = lambda k, c: f"{k[0]} verified, {k[1]} capability points, cost {c}"  # noqa: E731
+    if kb > ka or (kb == ka and cb < ca):
+        verdict, reason = "b", f"after b: {say(kb, cb)}; after a alone: {say(ka, ca)}"
+    elif ka > kb or (ka == kb and ca < cb):
+        verdict, reason = "a", f"after a alone: {say(ka, ca)}; after b: {say(kb, cb)}"
     else:
-        verdict, reason = "tie", f"both {va} verified at cost {ca}"
+        verdict, reason = "tie", f"both {say(ka, ca)}"
     if args.get("rework"):
         reason += f"; b removed {args['rework']} lines a had added (the price of building a first)"
     return {

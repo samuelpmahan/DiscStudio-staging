@@ -1,0 +1,308 @@
+{
+  "counters": {
+    "computed": 1,
+    "hits": 0,
+    "invocations": 1,
+    "wall_ms": 0.08695400038050138
+  },
+  "parts": {
+    "px.exp.neat.delta.task-78.task-79": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "evaluate"
+    }
+  },
+  "pcr": "neat-delta",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.neat.delta.task-78.task-79"
+          ],
+          "args": {
+            "a": {
+              "added": 802,
+              "address_roots": [
+                "px.pql.cards",
+                "px.render.recompose"
+              ],
+              "base_sha": "afb918f8226fa7b454b39642594c023185454eb1",
+              "files": 15,
+              "fixtures": [
+                "pyto/viewer/fixtures/discstudio-display-card.json",
+                "tests/fixtures/serial-run-record.json"
+              ],
+              "landing": "20260910T235029Z-task-78",
+              "package": "task-78",
+              "patterns": {
+                "actions": {
+                  "added": 10,
+                  "removed": 1
+                },
+                "calculations": {
+                  "added": 3,
+                  "removed": 0
+                },
+                "moved_assertions": {
+                  "added": 6,
+                  "removed": 6
+                },
+                "pages": {
+                  "added": 3,
+                  "removed": 2
+                },
+                "queries": {
+                  "added": 18,
+                  "removed": 0
+                }
+              },
+              "removed": 31,
+              "result_sha": "2d7934fe4661f5c934ee04296f5d9c693ac993c3",
+              "verified": {
+                "check_all": 1005,
+                "verifier": 57
+              }
+            },
+            "b": {
+              "added": 386,
+              "address_roots": [],
+              "base_sha": "9ea3ae962ca7c71808f100e1adf7f37c273b3998",
+              "files": 15,
+              "fixtures": [
+                "pyto/viewer/fixtures/discstudio-display-card.json",
+                "tests/fixtures/serial-run-record.json"
+              ],
+              "landing": "20260911T011101Z-task-79",
+              "package": "task-79",
+              "patterns": {
+                "actions": {
+                  "added": 15,
+                  "removed": 4
+                },
+                "calculations": {
+                  "added": 0,
+                  "removed": 0
+                },
+                "moved_assertions": {
+                  "added": 40,
+                  "removed": 25
+                },
+                "pages": {
+                  "added": 3,
+                  "removed": 4
+                },
+                "queries": {
+                  "added": 2,
+                  "removed": 3
+                }
+              },
+              "removed": 355,
+              "result_sha": "1bfb60225207404aa08edd77cdb85c9e0bc25153",
+              "verified": {
+                "check_all": 1005,
+                "verifier": 57
+              }
+            },
+            "composite": {
+              "added": 843,
+              "address_roots": [
+                "px.exp.neat",
+                "px.pql.cards",
+                "px.render.recompose"
+              ],
+              "base_sha": "afb918f8226fa7b454b39642594c023185454eb1",
+              "files": 15,
+              "fixtures": [
+                "pyto/viewer/fixtures/discstudio-display-card.json",
+                "tests/fixtures/serial-run-record.json"
+              ],
+              "patterns": {
+                "actions": {
+                  "added": 21,
+                  "removed": 1
+                },
+                "calculations": {
+                  "added": 3,
+                  "removed": 0
+                },
+                "moved_assertions": {
+                  "added": 6,
+                  "removed": 6
+                },
+                "pages": {
+                  "added": 1,
+                  "removed": 1
+                },
+                "queries": {
+                  "added": 17,
+                  "removed": 0
+                }
+              },
+              "removed": 41,
+              "result_sha": "1bfb60225207404aa08edd77cdb85c9e0bc25153",
+              "verified": {
+                "check_all": 1005,
+                "verifier": 57
+              }
+            },
+            "patterns": {
+              "capability": [
+                {
+                  "name": "calculations",
+                  "regex": "register\\('(fn|oc)\\.|Calculation\\(\"(fn|oc)\\."
+                },
+                {
+                  "name": "actions",
+                  "regex": "data-action=\"|data-control=\""
+                },
+                {
+                  "name": "queries",
+                  "regex": "\\.\\*['\"]"
+                }
+              ],
+              "cost": [
+                {
+                  "name": "pages",
+                  "regex": "route === '|ui\\.route = \\["
+                },
+                {
+                  "existing_only": true,
+                  "files": "(^|/)tests?/",
+                  "name": "moved_assertions",
+                  "regex": "\\bassert"
+                }
+              ],
+              "exclude": [
+                "pyto/experiments/tasks/",
+                "pyto/experiments/landings/",
+                "pyto/BOARD.md",
+                "pyto/experiments/review/deltas/"
+              ],
+              "fixtures": "(^|/)fixtures/",
+              "lines_exclude": [
+                "(^|/)fixtures/",
+                "\\.md$"
+              ],
+              "note": "neat delta's manifest for this repository (pyto/src/pyto/neat/delta.py): what counts as capability and as cost in a landing's diff. Regexes run over added and removed lines; 'files' narrows a pattern to paths matching it; 'existing_only' skips files the diff created; 'exclude' drops the evidence a landing writes about itself; 'lines_exclude' keeps regenerated fixtures and prose out of the line count (they are counted as fixtures, and prose is not capability)."
+            },
+            "rework": 620
+          },
+          "calculation": {
+            "address": "fn.neat.delta.evaluate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d0453cd1ac3d079e7afbba5fa88aec30c5741fb1a73e836122af6bb71fbb7a2a"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.08695400038050138,
+          "hit": false,
+          "id": "evaluate",
+          "inputs": {},
+          "into": "px.exp.neat.delta.task-78.task-79",
+          "result_sha256": "dd54636960eeacfe9e7380dcf8c255004c1c05cb9b3a25210ce842c3c29e175e",
+          "value": {
+            "data": {
+              "a": {
+                "capability": {
+                  "actions": 9,
+                  "calculations": 3,
+                  "queries": 18,
+                  "verified": 1062
+                },
+                "cost": {
+                  "address_roots": 2,
+                  "files": 15,
+                  "fixtures": 2,
+                  "lines": 833,
+                  "moved_assertions": 12,
+                  "pages": 5
+                },
+                "landing": "20260910T235029Z-task-78",
+                "package": "task-78"
+              },
+              "address": "px.exp.neat.delta.task-78.task-79",
+              "b": {
+                "capability": {
+                  "actions": 11,
+                  "calculations": 0,
+                  "queries": -1,
+                  "verified": 1062
+                },
+                "cost": {
+                  "address_roots": 0,
+                  "files": 15,
+                  "fixtures": 2,
+                  "lines": 741,
+                  "moved_assertions": 65,
+                  "pages": 7
+                },
+                "landing": "20260911T011101Z-task-79",
+                "package": "task-79"
+              },
+              "end_states": {
+                "after_a": {
+                  "capability": {
+                    "actions": 9,
+                    "calculations": 3,
+                    "points": 30,
+                    "queries": 18,
+                    "verified": 1062
+                  },
+                  "cost": {
+                    "address_roots": 2,
+                    "files": 15,
+                    "fixtures": 2,
+                    "lines": 833,
+                    "moved_assertions": 12,
+                    "pages": 5,
+                    "total": 869
+                  },
+                  "ratio": 1.2221
+                },
+                "after_b": {
+                  "capability": {
+                    "actions": 20,
+                    "calculations": 3,
+                    "points": 40,
+                    "queries": 17,
+                    "verified": 1062
+                  },
+                  "cost": {
+                    "address_roots": 3,
+                    "files": 15,
+                    "fixtures": 2,
+                    "lines": 884,
+                    "moved_assertions": 12,
+                    "pages": 2,
+                    "total": 918
+                  },
+                  "ratio": 1.1569
+                }
+              },
+              "reason": "after b: 1062 verified, 40 capability points, cost 918; after a alone: 1062 verified, 30 capability points, cost 869; b removed 620 lines a had added (the price of building a first)",
+              "rework": 620,
+              "verdict": "b"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.neat.delta.task-78.task-79",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Delta"
+    }
+  ]
+}

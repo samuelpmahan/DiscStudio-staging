@@ -1,5 +1,5 @@
 {
-  "note": "neat delta's manifest for this repository (pyto/src/pyto/neat/delta.py): what counts as capability and as cost in a landing's diff. Regexes run over added and removed lines; 'files' narrows a pattern to paths matching it; 'existing_only' skips files the diff created; 'exclude' drops the evidence a landing writes about itself.",
+  "note": "neat delta's manifest for this repository (pyto/src/pyto/neat/delta.py): what counts as capability and as cost in a landing's diff. Regexes run over added and removed lines; 'files' narrows a pattern to paths matching it; 'existing_only' skips files the diff created; 'exclude' drops the evidence a landing writes about itself; 'lines_exclude' keeps regenerated fixtures and prose out of the line count (they are counted as fixtures, and prose is not capability).",
   "exclude": ["pyto/experiments/tasks/", "pyto/experiments/landings/", "pyto/BOARD.md", "pyto/experiments/review/deltas/"],
   "capability": [
     { "name": "calculations", "regex": "register\\('(fn|oc)\\.|Calculation\\(\"(fn|oc)\\." },
@@ -10,5 +10,6 @@
     { "name": "pages", "regex": "route === '|ui\\.route = \\[" },
     { "name": "moved_assertions", "regex": "\\bassert", "files": "(^|/)tests?/", "existing_only": true }
   ],
-  "fixtures": "(^|/)fixtures/"
+  "fixtures": "(^|/)fixtures/",
+  "lines_exclude": ["(^|/)fixtures/", "\\.md$"]
 }

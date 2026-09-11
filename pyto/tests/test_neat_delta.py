@@ -115,6 +115,7 @@ class DeltaTests(unittest.TestCase):
         self.assertEqual(after_b["cost"]["pages"], 0)
         self.assertEqual(part["verdict"], "b")
         self.assertIn("2 lines a had added", part["reason"])
+        self.assertEqual(after_a["capability"]["points"], 4)
         # At equal verified behaviour the cheaper end state still wins.
         tied = json.loads(json.dumps(pair)); tied["b"]["verified"]["verifier"] = 57; tied["composite"]["verified"]["verifier"] = 57
         self.assertEqual(D.evaluate(tied)["verdict"], "b")
