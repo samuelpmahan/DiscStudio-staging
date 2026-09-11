@@ -1,0 +1,111 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T204102Z-task-134",
+  "package": "task-134",
+  "base_sha": "5b4c38ad8556bdc4b1d6e8e18c54e40ee1a2ba29",
+  "result": "verified",
+  "verifier": {
+    "command": "npm test",
+    "exit": 0,
+    "output_sha256": "bc841bdede7b742e4ce4d9ecc322a316d8ac3a3062416fb1aebf1c671a9a8a0a"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "b8e514d39aafbea1c5cc243d0c2e5e353d4494da04c40193bd2f735b5aff6ee9",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": "pyto/experiments/tasks/134/HANDOFF.md",
+      "bytes": 7126,
+      "sha256": "3f77af8315678903a8b2dbb61356e6083764277f583438f61836bbbd1a67a21f"
+    },
+    {
+      "path": "pyto/experiments/tasks/134/evidence/browser-report.json",
+      "bytes": 4436,
+      "sha256": "ff4efbee9bc1a1af687b3763945b2eff4a5253943436b51eaf17a4da974e3c7e"
+    },
+    {
+      "path": "pyto/experiments/tasks/134/evidence/check_all.txt",
+      "bytes": 293448,
+      "sha256": "36ee4515ab9322353b23f58a6012239f696956de308069aa2af911092bb9ea5c"
+    },
+    {
+      "path": "pyto/experiments/tasks/134/evidence/verify.txt",
+      "bytes": 48627,
+      "sha256": "00d3f0b12d4244ea456e86cb3d63d6c21299b58882d7d8a4dc1de7b2a135f81c"
+    },
+    {
+      "path": "pyto/experiments/tasks/134/packet.md",
+      "bytes": 2551,
+      "sha256": "c6c470be85887451a188e3d3d443fa9ad27017c058be45cf689365940ce039bc"
+    },
+    {
+      "path": "scripts/browser_test.py",
+      "bytes": 55228,
+      "sha256": "dbe6319e995a931a2cdea097698394e198919226f7e99e10f2d7f1ed7a2f063f"
+    },
+    {
+      "path": "scripts/demo_beats.py",
+      "bytes": 14779,
+      "sha256": "6feb8797724ce6f1c6a20feb3130ff1a49270b8b875a36c6dd18ed66a69c3bf1"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 134741,
+      "sha256": "76370ec5475eed84114da5b6a55f54b0a6785537870852478112b2b59d48d5ad"
+    },
+    {
+      "path": "src/runtime.js",
+      "bytes": 40898,
+      "sha256": "34ad0566eb81ab49f89b9677e8cab53ecaa1e0503ad799c739ff22da923db7c1"
+    },
+    {
+      "path": "src/shelf.js",
+      "bytes": 6775,
+      "sha256": "c00de070eb4f1be389955b06b53ff4a3fc7366b929e05bf36dd8642e8ebb698b"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 40750,
+      "sha256": "5b5d1d47340e2e03d2e0389aae701d9cb7fcf19bd3435ba55995e7329eacaa1f"
+    },
+    {
+      "path": "tests/shelf.test.js",
+      "bytes": 6356,
+      "sha256": "9f5be646d6a91a6a7fb6e15e1cb789d452f251eaaca0ffc55c0fe16c223c8400"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T20:43:32.566092Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

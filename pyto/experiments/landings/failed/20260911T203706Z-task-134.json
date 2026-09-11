@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T203706Z-task-134",
+  "package": "task-134",
+  "base_sha": "36ee0cebabb62fa02f1f348f38d5cdcfc7107c79",
+  "result": "failed",
+  "reason": "merge conflict with exp/134 in: src/app.js ",
+  "at": "2026-09-11T20:37:06.981976Z"
+}

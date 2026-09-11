@@ -11,6 +11,7 @@ import { receiptList } from './formats/receipt-list.js';
 import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
 import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
 import { assignArt, shelfItems } from './art.js';
+import { shelfQuery } from './shelf.js';
 import { FAMILIES as ART_FAMILIES } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 import { labStageSpecs, registerLabCalculations, validateStage, stageView, LAB_COURSE } from './lab/stages.js';
 import { fixtureCapture } from './lab/fixtures.js';
@@ -67,6 +68,7 @@ export function createStudioRuntime(initial) {
   register('fn.cards.effective', cardsEffective);
   register('fn.cards.apply', cardsApply);
   register('fn.cards.query', cardsQuery);
+  register('fn.shelf.query', ({ material, request }) => shelfQuery({ ...material, ...request }));
   let previousCardInstances = new Set();
   function publishWorld(world) {
     world = validateWorld(world); pxc.set('px.studio.world', world);
@@ -266,6 +268,19 @@ export function createStudioRuntime(initial) {
     const { ticks, state } = sceneComposition(options);
     const run = await executeAsync('on-the-course-parallel', byStage(ticks), { parallel: true });
     return { ...rendered(state), run };
+  }
+  /**
+   * The shelf a person asked for: their query, their filters, their sort and their
+   * grouping, as one Calculation over one read of the whole shelf (src/shelf.js), on
+   * the record as `shelf-view` like everything else. The UI draws what it returns; it
+   * does no finding of its own.
+   */
+  function shelf({ query = '', sort = 'recent', group = 'none', filters = [], bagId = null } = {}) {
+    const w = world();
+    const material = source('px.shelf.material', { discs: all(w, 'Disc'), molds: w.objects.Mold, makers: w.objects.Manufacturer, bags: all(w, 'Bag') });
+    const request = source('px.shelf.request', { query, sort, group, filters, bagId });
+    const run = execute('shelf-view', [step('Shelf', 'fn.shelf.query', { material, request }, 'px.shelf.view')]);
+    return { ...pxc.get('px.shelf.view'), part: 'px.shelf.view', run };
   }
   /**
    * The battle as Competition[Constraint]: one Tick per enabled Constraint over
@@ -551,7 +566,7 @@ export function createStudioRuntime(initial) {
     return pxc.get(into);
   }
   return {
-    pxc, world, dispatch, card, scene, sceneParallel, constraints, battle: battleRules, counters, runRecord, execute, executeAsync,
+    pxc, world, dispatch, card, scene, sceneParallel, constraints, shelf, battle: battleRules, counters, runRecord, execute, executeAsync,
     receipts,
     cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
     lab: {

@@ -138,3 +138,30 @@
 .composer-foot>.primary{padding:12px 20px;white-space:nowrap}
 @media(max-width:1200px){.composer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.composer{padding:16px}.composer-body{flex-direction:column;gap:14px}.composer-art{flex:none}.composer-art img,.composer-swatch{width:110px;height:110px}.composer-grid{grid-template-columns:1fr 1fr;width:100%}.composer-foot>.primary{width:100%}}
+
+/* Organising and finding, in the sidebar itself (task 134): the quick filters, the
+   sort, the grouping, and the two densities -- both of which keep the disc's art. */
+.shelf-controls{margin:0 0 14px}
+.chip-row{display:flex;flex-wrap:wrap;gap:5px}
+.pill{font-size:10px;padding:5px 9px;border-radius:20px;background:#eef1e7;border:1px solid #dbe1d1;white-space:nowrap}
+.pill.active{background:#dfead5!important;border-color:#9db884!important;color:#3f6030!important;font-weight:600}
+.shelf-order{display:flex;gap:5px;align-items:center;margin-top:7px}
+.shelf-order select{font-size:10px;padding:6px 4px;min-width:0;flex:1}
+.shelf-order .segmented{padding:2px;flex:none}
+.shelf-order .segmented button{font-size:12px;padding:5px 7px;line-height:1}
+.shelf-count{margin-top:8px;display:flex;gap:5px;align-items:center}
+.linky{border:0;background:transparent;padding:0;font-size:10px;color:#5c7b42;text-decoration:underline}
+.shelf-group{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:#7a8a6c;border-bottom:1px solid var(--line);padding:0 3px 6px;margin:14px 0 7px;display:flex;justify-content:space-between;gap:8px;font-weight:500}
+.shelf-group small{font-size:9px;color:#9aa791}
+.disc-facts{font-size:9px;color:#8a9682;letter-spacing:.2px}
+.match-row{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
+.match{font-size:8px;padding:2px 5px;border-radius:3px;background:#e7eddf;color:#4c6b3a;letter-spacing:.2px;white-space:nowrap}
+.disc-list.as-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.disc-list.as-cards .disc-row{flex-direction:column;align-items:stretch;border-color:var(--line);border-radius:10px;background:var(--white);position:relative;overflow:hidden}
+.disc-list.as-cards .disc-pick{flex-direction:column;align-items:stretch;gap:0;padding:0}
+.disc-list.as-cards .disc-thumb{width:100%;height:auto;flex:none;aspect-ratio:1;background:#e6ebde}
+.disc-list.as-cards .disc-copy{padding:8px 9px 10px}
+.disc-list.as-cards .disc-copy small{max-width:none}
+.disc-list.as-cards .row-add{position:absolute;right:5px;top:5px;background:#ffffffc0;border-radius:50%;width:24px;height:24px;padding:0;font-size:15px;line-height:1}
+.empty-note{font-size:11px;color:var(--muted);line-height:1.6;padding:14px 4px}
+@media(max-width:560px){.sidebar .disc-list.as-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.shelf-order{flex-wrap:wrap}.shelf-order select{flex:1 1 45%}}

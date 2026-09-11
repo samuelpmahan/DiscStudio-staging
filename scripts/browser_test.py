@@ -255,6 +255,51 @@ with sync_playwright() as p:
     assert not page.evaluate('d=>!!discStudio.world.objects.Disc[d]',made),'one undo took the whole disc back out'
     assert page.evaluate('Object.keys(discStudio.world.objects.Manufacturer).length')==makers,'no stray maker was left behind'
     record('Adding a disc is one gesture: the shelf + opens a composer of the facts that matter, one disc.create writes the maker, the mold, the disc, its photo and its bag place, and one undo takes all of it back')
+    # Finding the RIGHT disc (task 134): the search box is one Calculation over the whole
+    # shelf -- every field, the plastic and the flight numbers included -- with the terms
+    # a person actually types, ranked, and the row saying what it matched on.
+    rows=lambda:[e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]
+    search=page.locator('[data-search="discs"]')
+    search.fill('buzzz 177')
+    assert rows()[0]=='buzzz-mint',rows()
+    assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .match').all_text_contents()==['Buzzz','177 g'],page.locator('.disc-row[data-disc-row="buzzz-mint"] .match').all_text_contents()
+    assert page.evaluate("discStudio.shelf.rows[0].score")>page.evaluate("discStudio.shelf.rows[1].score")
+    search.fill('midrange -1')
+    assert sorted(rows())==['buzzz-mint','buzzz-rose'],rows()
+    assert any('turn' in t for t in page.locator('.match').all_text_contents()),'the row says it matched on a flight number'
+    search.fill('esp mint')
+    assert rows()==['buzzz-mint'],rows()
+    search.fill('zzzz')
+    assert rows()==[] and page.locator('.empty-note').count()==1
+    page.locator('[data-action="shelf-clear"]').click()
+    assert page.locator('[data-search="discs"]').input_value()==''
+    total=page.evaluate('Object.keys(discStudio.world.objects.Disc).length')
+    assert len(rows())==total
+    record('The shelf search is ranked over every field: "buzzz 177" puts the 177 g Buzzz first, "midrange -1" finds the discs whose disc type and turn both match, and each row says what it matched on')
+    # The quick filters, the sorts, the grouping and the two densities -- the same one read.
+    page.locator('[data-action="shelf-filter"][data-value="photo"]').click()
+    assert rows()==['buzzz-mint'],'only the disc with the uploaded photo'
+    page.locator('[data-action="shelf-filter"][data-value="photo"]').click()
+    page.locator('[data-action="shelf-filter"][data-value="unbagged"]').click()
+    assert page.evaluate('discStudio.shelf.rows.every(r=>r.bagIds.length===0)') and len(rows())<total,rows()
+    page.locator('[data-action="shelf-filter"][data-value="unbagged"]').click()
+    page.locator('[data-control="shelf-sort"]').select_option('weight')
+    weights=page.evaluate('()=>discStudio.shelf.rows.map(r=>discStudio.world.objects.Disc[r.id].weight)')
+    assert weights==sorted(weights,reverse=True),weights
+    assert [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]==page.evaluate('discStudio.shelf.rows.map(r=>r.id)'),'the list is exactly what the Calculation returned'
+    page.locator('[data-control="shelf-group"]').select_option('maker')
+    assert [t.strip() for t in page.locator('.shelf-group').all_text_contents()]==['Discraft8','Innova4'],page.locator('.shelf-group').all_text_contents()
+    assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
+    page.locator('[data-action="shelf-layout"][data-value="cards"]').click()
+    assert page.locator('.disc-list.as-cards').count()==2
+    assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .disc-thumb svg, .disc-row[data-disc-row="buzzz-mint"] .disc-thumb img').count()>=1,'a card view disc still shows its own art'
+    page.screenshot(path=str(out/'shelf-cards.png'))
+    page.locator('[data-action="shelf-layout"][data-value="compact"]').click()
+    assert page.locator('.disc-list.as-cards').count()==0
+    assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .disc-thumb svg, .disc-row[data-disc-row="buzzz-mint"] .disc-thumb img').count()>=1,'and so does a compact one'
+    page.locator('[data-control="shelf-group"]').select_option('none')
+    page.locator('[data-control="shelf-sort"]').select_option('recent')
+    record('The shelf organises itself: quick filters (has photo, in no bag), six sorts, grouping by maker or disc type, and a compact and a card density -- all one fn.shelf.query read, with every disc keeping its own art in both')
     # The Course route (#/course-build): one capture through the LAB Stages, one
     # composition per Stage on the studio's own board. What is asserted is what
     # the record says -- px.exp.lab.pipeline, the produce Parts, the receipts --
