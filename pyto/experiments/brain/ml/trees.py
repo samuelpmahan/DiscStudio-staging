@@ -295,6 +295,8 @@ def forest_fit(args):
         bags.append(sorted(set(picks)))
         bag = core.dataset("a bootstrap of the training rows", core.columns_of(data),
                            [list(rows[i]) + [targets[i]] for i in picks])
+        # the rows this tree never saw are the only honest test set it will ever have,
+        # and they cost nothing: the bootstrap leaves about a third of them out.
         tree = tree_fit({
             "data": bag, "target": target, "criterion": criterion,
             "max_depth": int(args.get("max_depth", 6)),
@@ -317,7 +319,67 @@ def forest_fit(args):
         "max_features": max_features,
         "trees": trees,
         "oob_sizes": [len(rows) - len(bag) for bag in bags],
+        "oob_index": [[i for i in range(len(rows)) if i not in set(bag)] for bag in bags],
+        "rows": rows,
+        "labels": targets,
         "n": len(rows),
+    }
+
+
+def forest_oob(args):
+    """fn.brain.ml.forest_oob -- every row, voted only by the trees that never saw it.
+
+    a bootstrap of n rows drawn with replacement leaves out about 1/e of them, so
+    every row is out-of-bag for roughly a third of the trees. voting a row with only
+    those trees gives a held-out prediction for the whole training set, from the one
+    fit, with no split and no second pass over the data. a row that no tree missed
+    has no honest prediction and is reported rather than guessed at.
+    """
+    from . import calcs
+
+    model = args["model"]
+    rows, truth = model["rows"], model["labels"]
+    columns = model["columns"] + [model["target"]]
+    voters = [[] for _ in rows]
+    for t, (tree, missed) in enumerate(zip(model["trees"], model["oob_index"])):
+        table = core.dataset("the rows this tree never saw", columns,
+                             [list(rows[i]) + [truth[i]] for i in missed])
+        if not missed:
+            continue
+        said = tree_predict({"model": tree, "data": table})["labels"]
+        for i, value in zip(missed, said):
+            voters[i].append(value)
+    labels, scored, uncovered = [], [], []
+    for i, votes in enumerate(voters):
+        if not votes:
+            uncovered.append(i)
+            labels.append(None)
+            continue
+        if model["task"] == "regress":
+            labels.append(core.mean(votes))
+        else:
+            tally = {}
+            for vote in votes:
+                tally[vote] = tally.get(vote, 0) + 1
+            labels.append(max(sorted(tally), key=lambda label: tally[label]))
+        scored.append(i)
+    metric = args.get("metric", "accuracy" if model["task"] == "classify" else "mse")
+    want = [truth[i] for i in scored]
+    got = [labels[i] for i in scored]
+    if model["task"] == "classify":
+        score = calcs.call("classification_metrics", {"y_true": want, "y_pred": got})["accuracy"]
+    else:
+        score = calcs.call("regression_metrics", {"y_true": want, "y_pred": got})[metric]
+    return {
+        "for": args.get("for", "what the forest scores on the rows its trees did not see"),
+        "metric": metric,
+        "score": score,
+        "labels": labels,
+        "scored": len(scored),
+        "uncovered": uncovered,
+        "voters": [len(v) for v in voters],
+        "mean_voters": core.mean([float(len(v)) for v in voters]),
+        "n_trees": model["n_trees"],
     }
 
 
