@@ -1,5 +1,5 @@
 {
-  "note": "Captured by running src/runtime.js under node: createStudioRuntime(createSeed()).card(\"buzzz-mint\",\"broadcast\",ctx) twice. first = every Calculation computed; second = every Calculation served from the memo ring (runtime.js:17-19). Re-captured for task 78: the card chain now carries the Cascade Tick (fn.cards.effective then fn.cards.apply), so first computes 6 and second reuses 6.",
+  "note": "Captured by running src/runtime.js under node: createStudioRuntime(createSeed()).card(\"buzzz-mint\",\"broadcast\",ctx) twice. first = every Calculation computed; second = every Calculation served from the memo ring (runtime.js:17-19). Re-captured for task 79: the Cascade Tick now binds px.presentation.<presetId> (the preset IS the projection layer) instead of a projection Part, and broadcast's own sponsor override reaches the card, so first computes 6 and second reuses 6.",
   "first": {
     "pql": {
       "PrincipleComponentRender": "display-card",
@@ -883,7 +883,7 @@
               "call": "fn.cards.effective",
               "with": {
                 "global": "px.discstudio.cards.global",
-                "projection": "px.discstudio.cards.projection.single",
+                "preset": "px.presentation.broadcast",
                 "instances": "px.discstudio.cards.instance.single.*"
               },
               "args": {
@@ -901,19 +901,212 @@
                   "radius": 16,
                   "sponsor": ""
                 },
-                "projection": {},
+                "preset": {
+                  "kind": "DisplayCard",
+                  "background": null,
+                  "foreground": null,
+                  "accent": null,
+                  "radius": null,
+                  "border": "#456157",
+                  "font": null,
+                  "highlight": "ring",
+                  "scoreMotion": "pulse",
+                  "duration": 350,
+                  "id": "broadcast",
+                  "name": "Studio · lower third",
+                  "width": 400,
+                  "height": 174,
+                  "sponsor": "CHAINSPOT",
+                  "nodes": [
+                    {
+                      "id": "photo",
+                      "kind": "image",
+                      "binding": "disc.photo",
+                      "x": 14,
+                      "y": 28,
+                      "w": 110,
+                      "h": 110,
+                      "size": 14,
+                      "color": "",
+                      "bold": false,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": "",
+                      "fit": "contain",
+                      "radius": 0
+                    },
+                    {
+                      "id": "maker",
+                      "kind": "text",
+                      "binding": "disc.mold.manufacturer.name",
+                      "x": 138,
+                      "y": 16,
+                      "w": 174,
+                      "h": 15,
+                      "size": 11,
+                      "color": "",
+                      "bold": false,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "mold",
+                      "kind": "text",
+                      "binding": "disc.mold.name",
+                      "x": 138,
+                      "y": 37,
+                      "w": 180,
+                      "h": 31,
+                      "size": 25,
+                      "color": "",
+                      "bold": true,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "serif",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "nickname",
+                      "kind": "text",
+                      "binding": "disc.nickname",
+                      "x": 138,
+                      "y": 75,
+                      "w": 171,
+                      "h": 15,
+                      "size": 11,
+                      "color": "",
+                      "bold": false,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "speed",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.speed",
+                      "x": 135,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "glide",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.glide",
+                      "x": 178,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "turn",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.turn",
+                      "x": 221,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "fade",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.fade",
+                      "x": 264,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "score",
+                      "kind": "text",
+                      "binding": "entry.score",
+                      "x": 325,
+                      "y": 51,
+                      "w": 65,
+                      "h": 61,
+                      "size": 38,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": "",
+                      "context": "battle"
+                    }
+                  ]
+                },
                 "instances": {}
               },
               "output": {
                 "projection": "single",
                 "discId": "buzzz-mint",
+                "presetId": "broadcast",
                 "tokens": {
                   "background": "#203d36",
                   "foreground": "#fcfbf5",
                   "accent": "#b9d789",
                   "font": "sans",
                   "radius": 16,
-                  "sponsor": ""
+                  "sponsor": "CHAINSPOT"
                 },
                 "provenance": {
                   "background": "global",
@@ -921,7 +1114,7 @@
                   "accent": "global",
                   "font": "global",
                   "radius": "global",
-                  "sponsor": "global"
+                  "sponsor": "preset"
                 },
                 "layers": {
                   "global": {
@@ -932,7 +1125,9 @@
                     "radius": 16,
                     "sponsor": ""
                   },
-                  "projection": {},
+                  "preset": {
+                    "sponsor": "CHAINSPOT"
+                  },
                   "instance": {}
                 }
               },
@@ -952,12 +1147,12 @@
               "inputs": {
                 "preset": {
                   "kind": "DisplayCard",
-                  "background": "#203d36",
-                  "foreground": "#fcfbf5",
-                  "accent": "#b9d789",
-                  "radius": 16,
+                  "background": null,
+                  "foreground": null,
+                  "accent": null,
+                  "radius": null,
                   "border": "#456157",
-                  "font": "sans",
+                  "font": null,
                   "highlight": "ring",
                   "scoreMotion": "pulse",
                   "duration": 350,
@@ -965,6 +1160,7 @@
                   "name": "Studio · lower third",
                   "width": 400,
                   "height": 174,
+                  "sponsor": "CHAINSPOT",
                   "nodes": [
                     {
                       "id": "photo",
@@ -1145,13 +1341,14 @@
                 "effective": {
                   "projection": "single",
                   "discId": "buzzz-mint",
+                  "presetId": "broadcast",
                   "tokens": {
                     "background": "#203d36",
                     "foreground": "#fcfbf5",
                     "accent": "#b9d789",
                     "font": "sans",
                     "radius": 16,
-                    "sponsor": ""
+                    "sponsor": "CHAINSPOT"
                   },
                   "provenance": {
                     "background": "global",
@@ -1159,7 +1356,7 @@
                     "accent": "global",
                     "font": "global",
                     "radius": "global",
-                    "sponsor": "global"
+                    "sponsor": "preset"
                   },
                   "layers": {
                     "global": {
@@ -1170,7 +1367,9 @@
                       "radius": 16,
                       "sponsor": ""
                     },
-                    "projection": {},
+                    "preset": {
+                      "sponsor": "CHAINSPOT"
+                    },
                     "instance": {}
                   }
                 }
@@ -1190,6 +1389,7 @@
                 "name": "Studio · lower third",
                 "width": 400,
                 "height": 174,
+                "sponsor": "CHAINSPOT",
                 "nodes": [
                   {
                     "id": "photo",
@@ -1364,6 +1564,26 @@
                     "prefix": "",
                     "suffix": "",
                     "context": "battle"
+                  },
+                  {
+                    "id": "sponsor",
+                    "kind": "text",
+                    "binding": "",
+                    "text": "CHAINSPOT",
+                    "x": 230,
+                    "y": 148,
+                    "w": 160,
+                    "h": 18,
+                    "size": 11,
+                    "bold": true,
+                    "align": "right",
+                    "font": "sans",
+                    "color": "#b9d789",
+                    "showLabel": false,
+                    "hideEmpty": false,
+                    "prefix": "",
+                    "suffix": "",
+                    "visible": true
                   }
                 ]
               },
@@ -1854,6 +2074,7 @@
                   "name": "Studio · lower third",
                   "width": 400,
                   "height": 174,
+                  "sponsor": "CHAINSPOT",
                   "nodes": [
                     {
                       "id": "photo",
@@ -2028,6 +2249,26 @@
                       "prefix": "",
                       "suffix": "",
                       "context": "battle"
+                    },
+                    {
+                      "id": "sponsor",
+                      "kind": "text",
+                      "binding": "",
+                      "text": "CHAINSPOT",
+                      "x": 230,
+                      "y": 148,
+                      "w": 160,
+                      "h": 18,
+                      "size": 11,
+                      "bold": true,
+                      "align": "right",
+                      "font": "sans",
+                      "color": "#b9d789",
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "prefix": "",
+                      "suffix": "",
+                      "visible": true
                     }
                   ]
                 },
@@ -2053,6 +2294,7 @@
                   "name": "Studio · lower third",
                   "width": 400,
                   "height": 174,
+                  "sponsor": "CHAINSPOT",
                   "nodes": [
                     {
                       "id": "photo",
@@ -2227,6 +2469,26 @@
                       "prefix": "",
                       "suffix": "",
                       "context": "battle"
+                    },
+                    {
+                      "id": "sponsor",
+                      "kind": "text",
+                      "binding": "",
+                      "text": "CHAINSPOT",
+                      "x": 230,
+                      "y": 148,
+                      "w": 160,
+                      "h": 18,
+                      "size": 11,
+                      "bold": true,
+                      "align": "right",
+                      "font": "sans",
+                      "color": "#b9d789",
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "prefix": "",
+                      "suffix": "",
+                      "visible": true
                     }
                   ]
                 },
@@ -2519,6 +2781,28 @@
                     },
                     "value": 1,
                     "content": "1"
+                  },
+                  {
+                    "id": "sponsor",
+                    "kind": "text",
+                    "binding": "",
+                    "text": "CHAINSPOT",
+                    "x": 230,
+                    "y": 148,
+                    "w": 160,
+                    "h": 18,
+                    "size": 11,
+                    "bold": true,
+                    "align": "right",
+                    "font": "sans",
+                    "color": "#b9d789",
+                    "showLabel": false,
+                    "hideEmpty": false,
+                    "prefix": "",
+                    "suffix": "",
+                    "visible": true,
+                    "value": "CHAINSPOT",
+                    "content": "CHAINSPOT"
                   }
                 ],
                 "warnings": []
@@ -2561,6 +2845,7 @@
                     "name": "Studio · lower third",
                     "width": 400,
                     "height": 174,
+                    "sponsor": "CHAINSPOT",
                     "nodes": [
                       {
                         "id": "photo",
@@ -2735,6 +3020,26 @@
                         "prefix": "",
                         "suffix": "",
                         "context": "battle"
+                      },
+                      {
+                        "id": "sponsor",
+                        "kind": "text",
+                        "binding": "",
+                        "text": "CHAINSPOT",
+                        "x": 230,
+                        "y": 148,
+                        "w": 160,
+                        "h": 18,
+                        "size": 11,
+                        "bold": true,
+                        "align": "right",
+                        "font": "sans",
+                        "color": "#b9d789",
+                        "showLabel": false,
+                        "hideEmpty": false,
+                        "prefix": "",
+                        "suffix": "",
+                        "visible": true
                       }
                     ]
                   },
@@ -3027,13 +3332,35 @@
                       },
                       "value": 1,
                       "content": "1"
+                    },
+                    {
+                      "id": "sponsor",
+                      "kind": "text",
+                      "binding": "",
+                      "text": "CHAINSPOT",
+                      "x": 230,
+                      "y": 148,
+                      "w": 160,
+                      "h": 18,
+                      "size": 11,
+                      "bold": true,
+                      "align": "right",
+                      "font": "sans",
+                      "color": "#b9d789",
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "prefix": "",
+                      "suffix": "",
+                      "visible": true,
+                      "value": "CHAINSPOT",
+                      "content": "CHAINSPOT"
                     }
                   ],
                   "warnings": []
                 }
               },
               "output": {
-                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"wr-disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"wr-depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#e6ebde\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#c6cfc3\"/>\n<circle cx=\"256\" cy=\"256\" r=\"177.8\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<circle cx=\"256\" cy=\"256\" r=\"112\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<path d=\"M431.6 284 L446.4 286.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M407.5 349.1 L420.3 356.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M360.4 400 L369.2 412.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M297.3 429 L300.8 443.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M228 431.6 L225.6 446.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M162.9 407.5 L155.1 420.3\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M112 360.4 L99.9 369.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M83 297.3 L68.4 300.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M80.4 228 L65.6 225.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M104.5 162.9 L91.7 155.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M151.6 112 L142.8 99.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M214.7 83 L211.2 68.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M284 80.4 L286.4 65.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M349.1 104.5 L356.9 91.7\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M400 151.6 L412.1 142.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M429 214.7 L443.6 211.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M354.9 271.8L280.8 279.7L256 256L287 241.2Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M333.1 303.4L269.9 287.4L256 256L290.3 254.2Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M319.5 343.5L256.8 290.3L256 256L288.3 267.4Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M277.1 344.3L243.6 288L256 256L281.5 279Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M240 356.3L232.3 280.8L256 256L270.8 287Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M200 347.2L224.6 269.9L256 256L257.8 290.3Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M180.5 310.7L221.7 256.8L256 256L244.6 288.3Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M153.8 280.4L224 243.6L256 256L233 281.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M170.8 242.4L231.2 232.3L256 256L225 270.8Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M149 190.3L242.1 224.6L256 256L221.7 257.8Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M196 173.3L255.2 221.7L256 256L223.7 244.6Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M220.7 108.5L268.4 224L256 256L230.5 233Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M277.6 120.8L279.7 231.2L256 256L241.2 225Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M345.1 111L287.4 242.1L256 256L254.2 221.7Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M375.1 169.7L290.3 255.2L256 256L267.4 223.7Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M378.5 226.7L288 268.4L256 256L279 230.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7L251.8 217.5Z\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7Z\" fill=\"#456157\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#wr-depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#456157\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"256\" cy=\"256\" r=\"19\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"7\"/>\n<circle cx=\"256\" cy=\"256\" r=\"6.8\" fill=\"#456157\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g></g></svg>",
+                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"wr-disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"wr-depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#e6ebde\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#c6cfc3\"/>\n<circle cx=\"256\" cy=\"256\" r=\"177.8\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<circle cx=\"256\" cy=\"256\" r=\"112\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<path d=\"M431.6 284 L446.4 286.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M407.5 349.1 L420.3 356.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M360.4 400 L369.2 412.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M297.3 429 L300.8 443.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M228 431.6 L225.6 446.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M162.9 407.5 L155.1 420.3\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M112 360.4 L99.9 369.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M83 297.3 L68.4 300.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M80.4 228 L65.6 225.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M104.5 162.9 L91.7 155.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M151.6 112 L142.8 99.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M214.7 83 L211.2 68.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M284 80.4 L286.4 65.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M349.1 104.5 L356.9 91.7\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M400 151.6 L412.1 142.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M429 214.7 L443.6 211.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M354.9 271.8L280.8 279.7L256 256L287 241.2Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M333.1 303.4L269.9 287.4L256 256L290.3 254.2Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M319.5 343.5L256.8 290.3L256 256L288.3 267.4Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M277.1 344.3L243.6 288L256 256L281.5 279Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M240 356.3L232.3 280.8L256 256L270.8 287Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M200 347.2L224.6 269.9L256 256L257.8 290.3Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M180.5 310.7L221.7 256.8L256 256L244.6 288.3Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M153.8 280.4L224 243.6L256 256L233 281.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M170.8 242.4L231.2 232.3L256 256L225 270.8Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M149 190.3L242.1 224.6L256 256L221.7 257.8Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M196 173.3L255.2 221.7L256 256L223.7 244.6Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M220.7 108.5L268.4 224L256 256L230.5 233Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M277.6 120.8L279.7 231.2L256 256L241.2 225Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M345.1 111L287.4 242.1L256 256L254.2 221.7Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M375.1 169.7L290.3 255.2L256 256L267.4 223.7Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M378.5 226.7L288 268.4L256 256L279 230.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7L251.8 217.5Z\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7Z\" fill=\"#456157\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#wr-depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#456157\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"256\" cy=\"256\" r=\"19\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"7\"/>\n<circle cx=\"256\" cy=\"256\" r=\"6.8\" fill=\"#456157\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g><g data-node=\"sponsor\" fill=\"#b9d789\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"390\" y=\"159\" text-anchor=\"end\" font-size=\"11\" font-weight=\"700\">CHAINSPOT</text></g></g></svg>",
                 "width": 400,
                 "height": 174
               },
@@ -3084,7 +3411,7 @@
                 "call": "fn.cards.effective",
                 "with": {
                   "global": "px.discstudio.cards.global",
-                  "projection": "px.discstudio.cards.projection.single",
+                  "preset": "px.presentation.broadcast",
                   "instances": "px.discstudio.cards.instance.single.*"
                 },
                 "args": {
@@ -3171,7 +3498,7 @@
           "call": "fn.cards.effective",
           "inputs": {
             "global": "px.discstudio.cards.global",
-            "projection": "px.discstudio.cards.projection.single",
+            "preset": "px.presentation.broadcast",
             "instances": "px.discstudio.cards.instance.single.*"
           },
           "output": "px.discstudio.cards.effective.single.buzzz-mint",
@@ -3179,7 +3506,7 @@
             "px.discstudio.cards.effective.single.buzzz-mint"
           ],
           "reused": false,
-          "material": "cards.effective:f0e35668",
+          "material": "cards.effective:f5dee0c5",
           "revision": 1
         },
         {
@@ -3194,7 +3521,7 @@
             "px.discstudio.cards.preset.single.buzzz-mint"
           ],
           "reused": false,
-          "material": "cards.apply:bdd66c5a",
+          "material": "cards.apply:a0f0a091",
           "revision": 1
         },
         {
@@ -3211,7 +3538,7 @@
             "px.render.single.buzzz-mint.card"
           ],
           "reused": false,
-          "material": "card.compose:e52a92bf",
+          "material": "card.compose:f5d703f2",
           "revision": 1
         },
         {
@@ -3225,7 +3552,7 @@
             "px.render.single.buzzz-mint.svg"
           ],
           "reused": false,
-          "material": "card.svg:a42800a7",
+          "material": "card.svg:e8042bad",
           "revision": 1
         }
       ],
@@ -4116,7 +4443,7 @@
               "call": "fn.cards.effective",
               "with": {
                 "global": "px.discstudio.cards.global",
-                "projection": "px.discstudio.cards.projection.single",
+                "preset": "px.presentation.broadcast",
                 "instances": "px.discstudio.cards.instance.single.*"
               },
               "args": {
@@ -4134,19 +4461,212 @@
                   "radius": 16,
                   "sponsor": ""
                 },
-                "projection": {},
+                "preset": {
+                  "kind": "DisplayCard",
+                  "background": null,
+                  "foreground": null,
+                  "accent": null,
+                  "radius": null,
+                  "border": "#456157",
+                  "font": null,
+                  "highlight": "ring",
+                  "scoreMotion": "pulse",
+                  "duration": 350,
+                  "id": "broadcast",
+                  "name": "Studio · lower third",
+                  "width": 400,
+                  "height": 174,
+                  "sponsor": "CHAINSPOT",
+                  "nodes": [
+                    {
+                      "id": "photo",
+                      "kind": "image",
+                      "binding": "disc.photo",
+                      "x": 14,
+                      "y": 28,
+                      "w": 110,
+                      "h": 110,
+                      "size": 14,
+                      "color": "",
+                      "bold": false,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": "",
+                      "fit": "contain",
+                      "radius": 0
+                    },
+                    {
+                      "id": "maker",
+                      "kind": "text",
+                      "binding": "disc.mold.manufacturer.name",
+                      "x": 138,
+                      "y": 16,
+                      "w": 174,
+                      "h": 15,
+                      "size": 11,
+                      "color": "",
+                      "bold": false,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "mold",
+                      "kind": "text",
+                      "binding": "disc.mold.name",
+                      "x": 138,
+                      "y": 37,
+                      "w": 180,
+                      "h": 31,
+                      "size": 25,
+                      "color": "",
+                      "bold": true,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "serif",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "nickname",
+                      "kind": "text",
+                      "binding": "disc.nickname",
+                      "x": 138,
+                      "y": 75,
+                      "w": 171,
+                      "h": 15,
+                      "size": 11,
+                      "color": "",
+                      "bold": false,
+                      "align": "left",
+                      "visible": true,
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "speed",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.speed",
+                      "x": 135,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "glide",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.glide",
+                      "x": 178,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "turn",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.turn",
+                      "x": 221,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "fade",
+                      "kind": "text",
+                      "binding": "disc.mold.flight.fade",
+                      "x": 264,
+                      "y": 111,
+                      "w": 39,
+                      "h": 44,
+                      "size": 21,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    {
+                      "id": "score",
+                      "kind": "text",
+                      "binding": "entry.score",
+                      "x": 325,
+                      "y": 51,
+                      "w": 65,
+                      "h": 61,
+                      "size": 38,
+                      "color": "",
+                      "bold": true,
+                      "align": "center",
+                      "visible": true,
+                      "showLabel": true,
+                      "hideEmpty": false,
+                      "font": "sans",
+                      "prefix": "",
+                      "suffix": "",
+                      "context": "battle"
+                    }
+                  ]
+                },
                 "instances": {}
               },
               "output": {
                 "projection": "single",
                 "discId": "buzzz-mint",
+                "presetId": "broadcast",
                 "tokens": {
                   "background": "#203d36",
                   "foreground": "#fcfbf5",
                   "accent": "#b9d789",
                   "font": "sans",
                   "radius": 16,
-                  "sponsor": ""
+                  "sponsor": "CHAINSPOT"
                 },
                 "provenance": {
                   "background": "global",
@@ -4154,7 +4674,7 @@
                   "accent": "global",
                   "font": "global",
                   "radius": "global",
-                  "sponsor": "global"
+                  "sponsor": "preset"
                 },
                 "layers": {
                   "global": {
@@ -4165,7 +4685,9 @@
                     "radius": 16,
                     "sponsor": ""
                   },
-                  "projection": {},
+                  "preset": {
+                    "sponsor": "CHAINSPOT"
+                  },
                   "instance": {}
                 }
               },
@@ -4185,12 +4707,12 @@
               "inputs": {
                 "preset": {
                   "kind": "DisplayCard",
-                  "background": "#203d36",
-                  "foreground": "#fcfbf5",
-                  "accent": "#b9d789",
-                  "radius": 16,
+                  "background": null,
+                  "foreground": null,
+                  "accent": null,
+                  "radius": null,
                   "border": "#456157",
-                  "font": "sans",
+                  "font": null,
                   "highlight": "ring",
                   "scoreMotion": "pulse",
                   "duration": 350,
@@ -4198,6 +4720,7 @@
                   "name": "Studio · lower third",
                   "width": 400,
                   "height": 174,
+                  "sponsor": "CHAINSPOT",
                   "nodes": [
                     {
                       "id": "photo",
@@ -4378,13 +4901,14 @@
                 "effective": {
                   "projection": "single",
                   "discId": "buzzz-mint",
+                  "presetId": "broadcast",
                   "tokens": {
                     "background": "#203d36",
                     "foreground": "#fcfbf5",
                     "accent": "#b9d789",
                     "font": "sans",
                     "radius": 16,
-                    "sponsor": ""
+                    "sponsor": "CHAINSPOT"
                   },
                   "provenance": {
                     "background": "global",
@@ -4392,7 +4916,7 @@
                     "accent": "global",
                     "font": "global",
                     "radius": "global",
-                    "sponsor": "global"
+                    "sponsor": "preset"
                   },
                   "layers": {
                     "global": {
@@ -4403,7 +4927,9 @@
                       "radius": 16,
                       "sponsor": ""
                     },
-                    "projection": {},
+                    "preset": {
+                      "sponsor": "CHAINSPOT"
+                    },
                     "instance": {}
                   }
                 }
@@ -4423,6 +4949,7 @@
                 "name": "Studio · lower third",
                 "width": 400,
                 "height": 174,
+                "sponsor": "CHAINSPOT",
                 "nodes": [
                   {
                     "id": "photo",
@@ -4597,6 +5124,26 @@
                     "prefix": "",
                     "suffix": "",
                     "context": "battle"
+                  },
+                  {
+                    "id": "sponsor",
+                    "kind": "text",
+                    "binding": "",
+                    "text": "CHAINSPOT",
+                    "x": 230,
+                    "y": 148,
+                    "w": 160,
+                    "h": 18,
+                    "size": 11,
+                    "bold": true,
+                    "align": "right",
+                    "font": "sans",
+                    "color": "#b9d789",
+                    "showLabel": false,
+                    "hideEmpty": false,
+                    "prefix": "",
+                    "suffix": "",
+                    "visible": true
                   }
                 ]
               },
@@ -5087,6 +5634,7 @@
                   "name": "Studio · lower third",
                   "width": 400,
                   "height": 174,
+                  "sponsor": "CHAINSPOT",
                   "nodes": [
                     {
                       "id": "photo",
@@ -5261,6 +5809,26 @@
                       "prefix": "",
                       "suffix": "",
                       "context": "battle"
+                    },
+                    {
+                      "id": "sponsor",
+                      "kind": "text",
+                      "binding": "",
+                      "text": "CHAINSPOT",
+                      "x": 230,
+                      "y": 148,
+                      "w": 160,
+                      "h": 18,
+                      "size": 11,
+                      "bold": true,
+                      "align": "right",
+                      "font": "sans",
+                      "color": "#b9d789",
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "prefix": "",
+                      "suffix": "",
+                      "visible": true
                     }
                   ]
                 },
@@ -5286,6 +5854,7 @@
                   "name": "Studio · lower third",
                   "width": 400,
                   "height": 174,
+                  "sponsor": "CHAINSPOT",
                   "nodes": [
                     {
                       "id": "photo",
@@ -5460,6 +6029,26 @@
                       "prefix": "",
                       "suffix": "",
                       "context": "battle"
+                    },
+                    {
+                      "id": "sponsor",
+                      "kind": "text",
+                      "binding": "",
+                      "text": "CHAINSPOT",
+                      "x": 230,
+                      "y": 148,
+                      "w": 160,
+                      "h": 18,
+                      "size": 11,
+                      "bold": true,
+                      "align": "right",
+                      "font": "sans",
+                      "color": "#b9d789",
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "prefix": "",
+                      "suffix": "",
+                      "visible": true
                     }
                   ]
                 },
@@ -5752,6 +6341,28 @@
                     },
                     "value": 1,
                     "content": "1"
+                  },
+                  {
+                    "id": "sponsor",
+                    "kind": "text",
+                    "binding": "",
+                    "text": "CHAINSPOT",
+                    "x": 230,
+                    "y": 148,
+                    "w": 160,
+                    "h": 18,
+                    "size": 11,
+                    "bold": true,
+                    "align": "right",
+                    "font": "sans",
+                    "color": "#b9d789",
+                    "showLabel": false,
+                    "hideEmpty": false,
+                    "prefix": "",
+                    "suffix": "",
+                    "visible": true,
+                    "value": "CHAINSPOT",
+                    "content": "CHAINSPOT"
                   }
                 ],
                 "warnings": []
@@ -5794,6 +6405,7 @@
                     "name": "Studio · lower third",
                     "width": 400,
                     "height": 174,
+                    "sponsor": "CHAINSPOT",
                     "nodes": [
                       {
                         "id": "photo",
@@ -5968,6 +6580,26 @@
                         "prefix": "",
                         "suffix": "",
                         "context": "battle"
+                      },
+                      {
+                        "id": "sponsor",
+                        "kind": "text",
+                        "binding": "",
+                        "text": "CHAINSPOT",
+                        "x": 230,
+                        "y": 148,
+                        "w": 160,
+                        "h": 18,
+                        "size": 11,
+                        "bold": true,
+                        "align": "right",
+                        "font": "sans",
+                        "color": "#b9d789",
+                        "showLabel": false,
+                        "hideEmpty": false,
+                        "prefix": "",
+                        "suffix": "",
+                        "visible": true
                       }
                     ]
                   },
@@ -6260,13 +6892,35 @@
                       },
                       "value": 1,
                       "content": "1"
+                    },
+                    {
+                      "id": "sponsor",
+                      "kind": "text",
+                      "binding": "",
+                      "text": "CHAINSPOT",
+                      "x": 230,
+                      "y": 148,
+                      "w": 160,
+                      "h": 18,
+                      "size": 11,
+                      "bold": true,
+                      "align": "right",
+                      "font": "sans",
+                      "color": "#b9d789",
+                      "showLabel": false,
+                      "hideEmpty": false,
+                      "prefix": "",
+                      "suffix": "",
+                      "visible": true,
+                      "value": "CHAINSPOT",
+                      "content": "CHAINSPOT"
                     }
                   ],
                   "warnings": []
                 }
               },
               "output": {
-                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"wr-disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"wr-depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#e6ebde\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#c6cfc3\"/>\n<circle cx=\"256\" cy=\"256\" r=\"177.8\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<circle cx=\"256\" cy=\"256\" r=\"112\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<path d=\"M431.6 284 L446.4 286.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M407.5 349.1 L420.3 356.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M360.4 400 L369.2 412.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M297.3 429 L300.8 443.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M228 431.6 L225.6 446.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M162.9 407.5 L155.1 420.3\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M112 360.4 L99.9 369.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M83 297.3 L68.4 300.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M80.4 228 L65.6 225.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M104.5 162.9 L91.7 155.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M151.6 112 L142.8 99.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M214.7 83 L211.2 68.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M284 80.4 L286.4 65.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M349.1 104.5 L356.9 91.7\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M400 151.6 L412.1 142.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M429 214.7 L443.6 211.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M354.9 271.8L280.8 279.7L256 256L287 241.2Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M333.1 303.4L269.9 287.4L256 256L290.3 254.2Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M319.5 343.5L256.8 290.3L256 256L288.3 267.4Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M277.1 344.3L243.6 288L256 256L281.5 279Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M240 356.3L232.3 280.8L256 256L270.8 287Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M200 347.2L224.6 269.9L256 256L257.8 290.3Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M180.5 310.7L221.7 256.8L256 256L244.6 288.3Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M153.8 280.4L224 243.6L256 256L233 281.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M170.8 242.4L231.2 232.3L256 256L225 270.8Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M149 190.3L242.1 224.6L256 256L221.7 257.8Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M196 173.3L255.2 221.7L256 256L223.7 244.6Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M220.7 108.5L268.4 224L256 256L230.5 233Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M277.6 120.8L279.7 231.2L256 256L241.2 225Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M345.1 111L287.4 242.1L256 256L254.2 221.7Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M375.1 169.7L290.3 255.2L256 256L267.4 223.7Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M378.5 226.7L288 268.4L256 256L279 230.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7L251.8 217.5Z\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7Z\" fill=\"#456157\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#wr-depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#456157\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"256\" cy=\"256\" r=\"19\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"7\"/>\n<circle cx=\"256\" cy=\"256\" r=\"6.8\" fill=\"#456157\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g></g></svg>",
+                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"wr-disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"wr-depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#e6ebde\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#wr-disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#c6cfc3\"/>\n<circle cx=\"256\" cy=\"256\" r=\"177.8\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<circle cx=\"256\" cy=\"256\" r=\"112\" fill=\"none\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".45\"/>\n<path d=\"M431.6 284 L446.4 286.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M407.5 349.1 L420.3 356.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M360.4 400 L369.2 412.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M297.3 429 L300.8 443.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M228 431.6 L225.6 446.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M162.9 407.5 L155.1 420.3\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M112 360.4 L99.9 369.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M83 297.3 L68.4 300.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M80.4 228 L65.6 225.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M104.5 162.9 L91.7 155.1\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M151.6 112 L142.8 99.9\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M214.7 83 L211.2 68.4\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M284 80.4 L286.4 65.6\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M349.1 104.5 L356.9 91.7\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M400 151.6 L412.1 142.8\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M429 214.7 L443.6 211.2\" stroke=\"#456157\" stroke-width=\"5.3\" opacity=\".6\"/>\n<path d=\"M354.9 271.8L280.8 279.7L256 256L287 241.2Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M333.1 303.4L269.9 287.4L256 256L290.3 254.2Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M319.5 343.5L256.8 290.3L256 256L288.3 267.4Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M277.1 344.3L243.6 288L256 256L281.5 279Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M240 356.3L232.3 280.8L256 256L270.8 287Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M200 347.2L224.6 269.9L256 256L257.8 290.3Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M180.5 310.7L221.7 256.8L256 256L244.6 288.3Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M153.8 280.4L224 243.6L256 256L233 281.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M170.8 242.4L231.2 232.3L256 256L225 270.8Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M149 190.3L242.1 224.6L256 256L221.7 257.8Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M196 173.3L255.2 221.7L256 256L223.7 244.6Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M220.7 108.5L268.4 224L256 256L230.5 233Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M277.6 120.8L279.7 231.2L256 256L241.2 225Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M345.1 111L287.4 242.1L256 256L254.2 221.7Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M375.1 169.7L290.3 255.2L256 256L267.4 223.7Z\" fill=\"#456157\" opacity=\".95\"/>\n<path d=\"M378.5 226.7L288 268.4L256 256L279 230.5Z\" fill=\"#fafbf8\" opacity=\".92\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7L251.8 217.5Z\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"5.3\"/>\n<path d=\"M332 104.1L289.3 236.3L244.6 278.7Z\" fill=\"#456157\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#wr-depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#456157\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"256\" cy=\"256\" r=\"19\" fill=\"#fafbf8\" stroke=\"#456157\" stroke-width=\"7\"/>\n<circle cx=\"256\" cy=\"256\" r=\"6.8\" fill=\"#456157\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g><g data-node=\"sponsor\" fill=\"#b9d789\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"390\" y=\"159\" text-anchor=\"end\" font-size=\"11\" font-weight=\"700\">CHAINSPOT</text></g></g></svg>",
                 "width": 400,
                 "height": 174
               },
@@ -6317,7 +6971,7 @@
                 "call": "fn.cards.effective",
                 "with": {
                   "global": "px.discstudio.cards.global",
-                  "projection": "px.discstudio.cards.projection.single",
+                  "preset": "px.presentation.broadcast",
                   "instances": "px.discstudio.cards.instance.single.*"
                 },
                 "args": {
@@ -6404,7 +7058,7 @@
           "call": "fn.cards.effective",
           "inputs": {
             "global": "px.discstudio.cards.global",
-            "projection": "px.discstudio.cards.projection.single",
+            "preset": "px.presentation.broadcast",
             "instances": "px.discstudio.cards.instance.single.*"
           },
           "output": "px.discstudio.cards.effective.single.buzzz-mint",
@@ -6412,7 +7066,7 @@
             "px.discstudio.cards.effective.single.buzzz-mint"
           ],
           "reused": true,
-          "material": "cards.effective:f0e35668",
+          "material": "cards.effective:f5dee0c5",
           "revision": 1
         },
         {
@@ -6427,7 +7081,7 @@
             "px.discstudio.cards.preset.single.buzzz-mint"
           ],
           "reused": true,
-          "material": "cards.apply:bdd66c5a",
+          "material": "cards.apply:a0f0a091",
           "revision": 1
         },
         {
@@ -6444,7 +7098,7 @@
             "px.render.single.buzzz-mint.card"
           ],
           "reused": true,
-          "material": "card.compose:e52a92bf",
+          "material": "card.compose:f5d703f2",
           "revision": 1
         },
         {
@@ -6458,7 +7112,7 @@
             "px.render.single.buzzz-mint.svg"
           ],
           "reused": true,
-          "material": "card.svg:a42800a7",
+          "material": "card.svg:e8042bad",
           "revision": 1
         }
       ],

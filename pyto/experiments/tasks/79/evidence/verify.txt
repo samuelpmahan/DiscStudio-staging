@@ -1,0 +1,357 @@
+
+> discstudio-pxc-staging@0.2.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: createSeed: broadcast inherits background and overrides sponsor; discImage overrides its own background; the instance override exists
+ok 1 - createSeed: broadcast inherits background and overrides sponsor; discImage overrides its own background; the instance override exists
+  ---
+  duration_ms: 3.001229
+  type: 'test'
+  ...
+# Subtest: validateWorld fills the card cascade defaults for a draft that lacks them, drops a task-78 projections key, and never mutates a frozen world
+ok 2 - validateWorld fills the card cascade defaults for a draft that lacks them, drops a task-78 projections key, and never mutates a frozen world
+  ---
+  duration_ms: 2.282806
+  type: 'test'
+  ...
+# Subtest: effective tokens cascade global -> preset -> instance; a preset field set to null inherits again; null on global is refused; preset.set changes provenance to preset
+ok 3 - effective tokens cascade global -> preset -> instance; a preset field set to null inherits again; null on global is refused; preset.set changes provenance to preset
+  ---
+  duration_ms: 56.852332
+  type: 'test'
+  ...
+# Subtest: recompose: a global radius edit changes all four projections; a global background edit changes exactly single and competition; a preset.set on discImage.accent changes exactly shelf and bag; an instance edit changes exactly one
+ok 4 - recompose: a global radius edit changes all four projections; a global background edit changes exactly single and competition; a preset.set on discImage.accent changes exactly shelf and bag; an instance edit changes exactly one
+  ---
+  duration_ms: 64.76531
+  type: 'test'
+  ...
+# Subtest: the recompose receipt names the four projections' Ticks, and runRecord validates it
+ok 5 - the recompose receipt names the four projections' Ticks, and runRecord validates it
+  ---
+  duration_ms: 16.383609
+  type: 'test'
+  ...
+# Subtest: the Cascade Tick is classified a chain by classifyTick
+ok 6 - the Cascade Tick is classified a chain by classifyTick
+  ---
+  duration_ms: 1.548135
+  type: 'test'
+  ...
+# Subtest: the existing surfaces carry the cascade: OnTheCourse carries the broadcast sponsor lockup, clearing it removes it from the single card too, and the minimal preset still renders its own paper background
+ok 7 - the existing surfaces carry the cascade: OnTheCourse carries the broadcast sponsor lockup, clearing it removes it from the single card too, and the minimal preset still renders its own paper background
+  ---
+  duration_ms: 30.199706
+  type: 'test'
+  ...
+# Subtest: the Component Editor's preset controls are live: after preset.set on a preset's background, the composed card carries the value
+ok 8 - the Component Editor's preset controls are live: after preset.set on a preset's background, the composed card carries the value
+  ---
+  duration_ms: 6.794043
+  type: 'test'
+  ...
+# Subtest: query('overrides') lists the seed's preset and instance overrides
+ok 9 - query('overrides') lists the seed's preset and instance overrides
+  ---
+  duration_ms: 1.689432
+  type: 'test'
+  ...
+# Subtest: query('inherits', { token }) matches the world
+ok 10 - query('inherits', { token }) matches the world
+  ---
+  duration_ms: 2.882696
+  type: 'test'
+  ...
+# Subtest: query('provenance') returns null before a projection/disc pair has ever been composed
+ok 11 - query('provenance') returns null before a projection/disc pair has ever been composed
+  ---
+  duration_ms: 1.815131
+  type: 'test'
+  ...
+# Subtest: a non-empty sponsor token appends a static, validatable text node
+ok 12 - a non-empty sponsor token appends a static, validatable text node
+  ---
+  duration_ms: 9.533766
+  type: 'test'
+  ...
+# Subtest: studio art and single card Parts are byte-identical to the ported painter
+ok 13 - studio art and single card Parts are byte-identical to the ported painter
+  ---
+  duration_ms: 27.172502
+  type: 'test'
+  ...
+# Subtest: ported painter inputs use sanitized authored colors
+ok 14 - ported painter inputs use sanitized authored colors
+  ---
+  duration_ms: 39.856416
+  type: 'test'
+  ...
+# Subtest: manufacturer, mold, optional values and every registered field are discoverable
+ok 15 - manufacturer, mold, optional values and every registered field are discoverable
+  ---
+  duration_ms: 12.627968
+  type: 'test'
+  ...
+# Subtest: new schema fields automatically resolve, compose, serialize and rehydrate
+ok 16 - new schema fields automatically resolve, compose, serialize and rehydrate
+  ---
+  duration_ms: 23.092753
+  type: 'test'
+  ...
+# Subtest: unregistered fields and new related domain objects are surfaced, not silently discarded
+ok 17 - unregistered fields and new related domain objects are surfaced, not silently discarded
+  ---
+  duration_ms: 0.612105
+  type: 'test'
+  ...
+# Subtest: shelf and comparison share physical references; bags do not duplicate discs
+ok 18 - shelf and comparison share physical references; bags do not duplicate discs
+  ---
+  duration_ms: 32.074637
+  type: 'test'
+  ...
+# Subtest: actual PQL consumes rendered Parts, and repeat rendering reuses actual memoized values
+ok 19 - actual PQL consumes rendered Parts, and repeat rendering reuses actual memoized values
+  ---
+  duration_ms: 25.410415
+  type: 'test'
+  ...
+# Subtest: layout and score changes reuse upstream disc art; selected-state changes remain separate from domain
+ok 20 - layout and score changes reuse upstream disc art; selected-state changes remain separate from domain
+  ---
+  duration_ms: 45.489157
+  type: 'test'
+  ...
+# Subtest: presentation edits change real scene and apply to other discs without a second renderer
+ok 21 - presentation edits change real scene and apply to other discs without a second renderer
+  ---
+  duration_ms: 15.945376
+  type: 'test'
+  ...
+# Subtest: three reusable PutterWarz constraints evaluate pass, pending and fail honestly
+ok 22 - three reusable PutterWarz constraints evaluate pass, pending and fail honestly
+  ---
+  duration_ms: 53.165558
+  type: 'test'
+  ...
+# Subtest: constraint group any composition is not the same as all; empty rules do not pretend validation
+ok 23 - constraint group any composition is not the same as all; empty rules do not pretend validation
+  ---
+  duration_ms: 20.034996
+  type: 'test'
+  ...
+# Subtest: closing a short round fails exact-count rule; missing references fail visibly
+ok 24 - closing a short round fails exact-count rule; missing references fail visibly
+  ---
+  duration_ms: 5.671232
+  type: 'test'
+  ...
+# Subtest: states retain independent scores, highlights and winner tags; lineup removal cleans references
+ok 25 - states retain independent scores, highlights and winner tags; lineup removal cleans references
+  ---
+  duration_ms: 27.745678
+  type: 'test'
+  ...
+# Subtest: all placement/layout combinations stay inside the 1920×1080 export frame
+ok 26 - all placement/layout combinations stay inside the 1920×1080 export frame
+  ---
+  duration_ms: 229.45962
+  type: 'test'
+  ...
+# Subtest: untrusted SVG/text never becomes executable and malformed data cannot replace a valid world
+ok 27 - untrusted SVG/text never becomes executable and malformed data cannot replace a valid world
+  ---
+  duration_ms: 23.649656
+  type: 'test'
+  ...
+# Subtest: no synthetic usage is represented as recorded events or exports
+ok 28 - no synthetic usage is represented as recorded events or exports
+  ---
+  duration_ms: 12.427884
+  type: 'test'
+  ...
+# Subtest: identity fields appear first by domain metadata, not a second customizer whitelist
+ok 29 - identity fields appear first by domain metadata, not a second customizer whitelist
+  ---
+  duration_ms: 3.163312
+  type: 'test'
+  ...
+# Subtest: malformed layouts and negative constraint quantities fail before changing the world
+ok 30 - malformed layouts and negative constraint quantities fail before changing the world
+  ---
+  duration_ms: 4.854002
+  type: 'test'
+  ...
+# Subtest: large authored cards and a twelve-disc row still fit the export frame
+ok 31 - large authored cards and a twelve-disc row still fit the export frame
+  ---
+  duration_ms: 95.78831
+  type: 'test'
+  ...
+# Subtest: a seeded composition exports a validated pyto-run-record@1 kept as a Part outside the facts
+ok 32 - a seeded composition exports a validated pyto-run-record@1 kept as a Part outside the facts
+  ---
+  duration_ms: 20.300356
+  type: 'test'
+  ...
+# Subtest: the execution receipt reaches the run record: material digests and reuse are carried
+ok 33 - the execution receipt reaches the run record: material digests and reuse are carried
+  ---
+  duration_ms: 24.594249
+  type: 'test'
+  ...
+# Subtest: composePage builds the same standalone page as buildPage, one section per Tick
+ok 34 - composePage builds the same standalone page as buildPage, one section per Tick
+  ---
+  duration_ms: 47.875535
+  type: 'test'
+  ...
+# Subtest: a disc without a photo shows painted art inside the generic card, never the Add image placeholder
+ok 35 - a disc without a photo shows painted art inside the generic card, never the Add image placeholder
+  ---
+  duration_ms: 4.316272
+  type: 'test'
+  ...
+# Subtest: a Calculation may declare several into: one pass, several Parts, one receipt listing all of them
+ok 36 - a Calculation may declare several into: one pass, several Parts, one receipt listing all of them
+  ---
+  duration_ms: 0.596764
+  type: 'test'
+  ...
+# Subtest: a multi-produce output that does not carry every declared address publishes nothing
+ok 37 - a multi-produce output that does not carry every declared address publishes nothing
+  ---
+  duration_ms: 0.526845
+  type: 'test'
+  ...
+# Subtest: the grammar refuses an empty into, a repeated produce address and a misplaced prefix star
+ok 38 - the grammar refuses an empty into, a repeated produce address and a misplaced prefix star
+  ---
+  duration_ms: 0.46209
+  type: 'test'
+  ...
+# Subtest: a with binding ending in .* is a prefix query over the board, sorted and read as one value
+ok 39 - a with binding ending in .* is a prefix query over the board, sorted and read as one value
+  ---
+  duration_ms: 0.273944
+  type: 'test'
+  ...
+# Subtest: the Inspect receipts list is a PQL query over px.receipt.* publishing two Parts
+ok 40 - the Inspect receipts list is a PQL query over px.receipt.* publishing two Parts
+  ---
+  duration_ms: 27.345667
+  type: 'test'
+  ...
+# Subtest: push then pop restores the exact previous value and the stack depth follows
+ok 41 - push then pop restores the exact previous value and the stack depth follows
+  ---
+  duration_ms: 12.478944
+  type: 'test'
+  ...
+# Subtest: pop on an empty stack changes nothing and is still on the record
+ok 42 - pop on an empty stack changes nothing and is still on the record
+  ---
+  duration_ms: 2.35136
+  type: 'test'
+  ...
+# Subtest: the run record lists the undo invocations, push and pop alike
+ok 43 - the run record lists the undo invocations, push and pop alike
+  ---
+  duration_ms: 7.415583
+  type: 'test'
+  ...
+# \# parallel Fan Tick: work 160ms (4 x 40ms), latency 40.514ms; the same run serially: 162ms
+# Subtest: a Tick of four timer-awaiting Calculations runs at once: latency under the work, testimony byte-identical to the serial run
+ok 44 - a Tick of four timer-awaiting Calculations runs at once: latency under the work, testimony byte-identical to the serial run
+  ---
+  duration_ms: 203.541292
+  type: 'test'
+  ...
+# Subtest: a Tick whose Calculation reads an earlier sibling is a chain: under parallel: true it runs in declared order and each later Calculation sees the earlier value
+ok 45 - a Tick whose Calculation reads an earlier sibling is a chain: under parallel: true it runs in declared order and each later Calculation sees the earlier value
+  ---
+  duration_ms: 41.639463
+  type: 'test'
+  ...
+# Subtest: a chain under parallel: true and the same document serially write byte-identical testimony
+ok 46 - a chain under parallel: true and the same document serially write byte-identical testimony
+  ---
+  duration_ms: 81.556064
+  type: 'test'
+  ...
+# Subtest: the schedule marks a Tick with sibling reads mode chain, on one worker in sequence, and a Tick without them mode parallel
+ok 47 - the schedule marks a Tick with sibling reads mode chain, on one worker in sequence, and a Tick without them mode parallel
+  ---
+  duration_ms: 82.033113
+  type: 'test'
+  ...
+# Subtest: a Calculation that reads a LATER sibling produce is a backwards read, refused by name before the Tick runs
+ok 48 - a Calculation that reads a LATER sibling produce is a backwards read, refused by name before the Tick runs
+  ---
+  duration_ms: 0.885734
+  type: 'test'
+  ...
+# Subtest: two Calculations of one Tick declaring one into are refused by name
+ok 49 - two Calculations of one Tick declaring one into are refused by name
+  ---
+  duration_ms: 0.751599
+  type: 'test'
+  ...
+# Subtest: a budget stops the run at a Tick boundary: the board holds whole Ticks and the record says which was the last
+ok 50 - a budget stops the run at a Tick boundary: the board holds whole Ticks and the record says which was the last
+  ---
+  duration_ms: 1.03703
+  type: 'test'
+  ...
+# Subtest: a serial, unbudgeted run writes the record it always wrote, byte for byte
+ok 51 - a serial, unbudgeted run writes the record it always wrote, byte for byte
+  ---
+  duration_ms: 25.512206
+  type: 'test'
+  ...
+# Subtest: fromDiscStudioReceipt takes an array into: the list is the into, and every declared address is a produce
+ok 52 - fromDiscStudioReceipt takes an array into: the list is the into, and every declared address is a produce
+  ---
+  duration_ms: 1.150627
+  type: 'test'
+  ...
+# Subtest: shelf sheet is deterministic and matches the committed byte fixture
+ok 53 - shelf sheet is deterministic and matches the committed byte fixture
+  ---
+  duration_ms: 19.410976
+  type: 'test'
+  ...
+# Subtest: shelf sheet is registered by the production runtime and leaves a PQL record
+ok 54 - shelf sheet is registered by the production runtime and leaves a PQL record
+  ---
+  duration_ms: 14.765744
+  type: 'test'
+  ...
+# Subtest: seed bag fields can be passed directly from shared domain Parts
+ok 55 - seed bag fields can be passed directly from shared domain Parts
+  ---
+  duration_ms: 14.954679
+  type: 'test'
+  ...
+# Subtest: shelf sheet preserves a safe original disc photo in the tile
+ok 56 - shelf sheet preserves a safe original disc photo in the tile
+  ---
+  duration_ms: 2.82658
+  type: 'test'
+  ...
+# Subtest: browser-safe SHA-256 agrees with Node for empty, Unicode and multiblock input
+ok 57 - browser-safe SHA-256 agrees with Node for empty, Unicode and multiblock input
+  ---
+  duration_ms: 11.733183
+  type: 'test'
+  ...
+1..57
+# tests 57
+# suites 0
+# pass 57
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1404.162565

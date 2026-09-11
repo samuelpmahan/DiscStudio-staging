@@ -21,7 +21,7 @@ const ui = {
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
-  cardsProjection: savedView.cardsProjection || 'single', lastCascade: null
+  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single'
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -53,7 +53,7 @@ function shownPcr() {
   if (!name) throw new Error('Render a composition before exporting its run record.');
   return name;
 }
-function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, cardsProjection: ui.cardsProjection })); } catch { /* Nonessential view state. */ } }
+function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection })); } catch { /* Nonessential view state. */ } }
 runtime.onChange(() => {
   if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
   catch (error) { ui.saved = 'Not saved · download a draft'; message('Browser storage is full or unavailable. Your current work is still open. Download a draft to keep it.', true); }
@@ -61,28 +61,44 @@ runtime.onChange(() => {
 });
 function execute(command) { runtime.dispatch(command); }
 /**
- * Every cascade edit: dispatch cards.set, then mark the edit as pending its
- * recompose. `recompose` itself is called exactly once, by render()'s single
- * pass over the Cards route -- calling it here too would let its own
- * memoization see "nothing changed since the previous call" (the one this
- * function just made) and mark every projection reused, erasing the very
- * `changed` signal the receipt and the preview grid depend on.
+ * Every cascade edit -- global, instance, or a preset's own token -- marks
+ * `ui.lastCascade` as pending its recompose. `recompose` itself is called
+ * exactly once, by render()'s single pass over the All cards tab -- calling
+ * it here too would let its own memoization see "nothing changed since the
+ * previous call" (the one this function just made) and mark every
+ * projection reused, erasing the very `changed` signal the receipt and the
+ * preview grid depend on (task 78's cascadeSet comment, unchanged discipline).
  */
-function cascadeSet(layer, token, value, projection, discId) {
+function cascadeSet(layer, token, value, { projection, discId, presetId } = {}) {
+  if (layer === 'preset') { presetCascadeSet(presetId, token, value); return; }
   // The value the layer holds now (undefined = inherits). A repeated change
   // event carrying the same value is not an edit: nothing is dispatched and the
   // last edit keeps its measured recompose.
-  const cards = w().cards, current = layer === 'global' ? cards.global[token] : layer === 'projection' ? cards.projections[projection]?.[token] : cards.instances[projection]?.[discId]?.[token];
+  const cards = w().cards, current = layer === 'global' ? cards.global[token] : cards.instances[projection]?.[discId]?.[token];
   if ((value === null && current === undefined) || (value !== null && current === value)) return;
   execute({ type: 'cards.set', layer, token, value, ...(projection ? { projection } : {}), ...(discId ? { discId } : {}) });
   ui.lastCascade = { edit: { layer, token, value, projection, discId }, result: null };
 }
+/**
+ * The preset IS the projection layer (task 79): the Component Editor's
+ * existing background/foreground/accent/font/radius/sponsor controls (below,
+ * `preset-color`/`preset-number`/`preset-font`/`preset-sponsor`) dispatch an
+ * ordinary `preset.set`, exactly as they always have -- this just also marks
+ * the edit as a cascade edit, so the same one-recompose-per-render discipline
+ * applies to a preset field as to a global or instance one.
+ */
+function presetCascadeSet(presetId, token, value) {
+  const current = w().presets[presetId]?.[token] ?? null;
+  if ((value === null && current === null) || (value !== null && current === value)) return;
+  execute({ type: 'preset.set', id: presetId, patch: { [token]: value } });
+  ui.lastCascade = { edit: { layer: 'preset', token, value, presetId }, result: null };
+}
 const CARD_TOKENS = ['background', 'foreground', 'accent', 'font', 'radius', 'sponsor'];
 const cardTokenLabel = token => ({ background: 'Background', foreground: 'Foreground', accent: 'Accent', font: 'Font', radius: 'Radius', sponsor: 'Sponsor' }[token] || token);
-/** One editable token control at a given layer. `scope` = {layer, projection?, disc?} becomes the data-layer/data-projection/data-disc attributes the browser test finds. */
+/** One editable token control at a given layer. `scope` = {layer, preset?, projection?, disc?} becomes the data-layer/data-preset/data-projection/data-disc attributes the browser test finds. */
 function tokenControl(token, value, scope) {
-  const label = cardTokenLabel(token), aria = `${label} (${scope.layer}${scope.projection ? ` · ${scope.projection}` : ''}${scope.disc ? ` · ${scope.disc}` : ''})`;
-  const attrs = dataAttr({ layer: scope.layer, token, ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) });
+  const label = cardTokenLabel(token), aria = `${label} (${scope.layer}${scope.preset ? ` · ${scope.preset}` : ''}${scope.projection ? ` · ${scope.projection}` : ''}${scope.disc ? ` · ${scope.disc}` : ''})`;
+  const attrs = dataAttr({ layer: scope.layer, token, ...(scope.preset ? { preset: scope.preset } : {}), ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) });
   let field;
   if (token === 'font') field = `<select data-control="cascade-token" aria-label="${esc(aria)}" ${attrs}>${[['sans', 'Sans'], ['serif', 'Serif'], ['mono', 'Mono']].map(([k, l]) => `<option value="${k}" ${k === value ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
   else if (token === 'radius') field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="number" min="0" max="100" value="${esc(value ?? 0)}" ${attrs}>`;
@@ -90,11 +106,11 @@ function tokenControl(token, value, scope) {
   else field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="color" value="${esc(value ?? '#000000')}" ${attrs}>`;
   return `<label class="control"><span>${esc(label)}</span>${field}</label>`;
 }
-function cascadeResetButton(scope, token) { return button('Reset to inherited', 'cascade-reset', { layer: scope.layer, token, ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) }, 'quiet small'); }
+function cascadeResetButton(scope, token) { return button('Reset to inherited', 'cascade-reset', { layer: scope.layer, token, ...(scope.preset ? { preset: scope.preset } : {}), ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) }, 'quiet small'); }
 function navigate(route) { location.hash = `/${route}`; }
 function syncRoute() {
   const [path, query] = location.hash.slice(1).split('?'), params = new URLSearchParams(query);
-  ui.route = ['shelf', 'course', 'components', 'competition', 'cards'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
+  ui.route = ['shelf', 'course', 'components', 'competition'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
   if (params.has('node')) { ui.nodeId = params.get('node'); ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; }
   if (params.has('trace')) ui.traceOpen = true;
   render();
@@ -102,7 +118,7 @@ function syncRoute() {
 window.addEventListener('hashchange', syncRoute);
 const safeThumb = (discId, preset = 'discImage', projection = 'bag') => { try { return runtime.card(discId, preset, context(), null, projection).svg; } catch { return '<span class="missing">Missing disc</span>'; } };
 function header() {
-  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a><a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a><a href="#/cards" class="${ui.route === 'cards' ? 'active' : ''}">Cards</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
+  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a><a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
 }
 function bagSelect(control = 'bag') { return select(control, ui.bagId, all(w(), 'Bag').map(b => [b.id, `${b.name} · ${b.discIds.length}`])); }
 function shelfSidebar() {
@@ -145,22 +161,75 @@ function courseInspector() {
   const { disc, mold, maker } = discInfo();
   return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE & CUSTOMIZE</span><h2>Make it your own.</h2><section class="export-section">${button(ui.busy ? 'Preparing export…' : 'Save overlay PNG ↓', 'export-png', {}, 'primary wide', ui.busy ? 'disabled' : '')}${button('Save editable SVG ↓', 'export-svg', {}, 'wide quiet')}<p class="tiny muted">Transparent 1920 × 1080. The actual PxC-produced scene. No footage, editor outlines or motion baked in.</p>${ui.latestReceipt ? `<p class="tiny mono">PNG SHA-256<br>${esc(ui.latestReceipt.pngHash.slice(0, 24))}…</p>` : ''}</section><section class="control-section"><label class="control"><span>Shared DisplayCard design</span>${select('course-preset', w().layout.presetId, Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]))}</label>${button('Edit this design ↗', 'go-editor', {}, 'wide secondary')}<p class="tiny muted">Photo, manufacturer, mold, every field. No fixed identity text hiding outside your design.</p></section>${layoutControls()}<section class="control-section"><h3>Selected physical disc <span>DOMAIN</span></h3><div class="selected-summary"><span class="disc-thumb">${disc ? safeThumb(disc.id) : ''}</span><div><strong>${esc(mold?.name || 'None')}</strong><small>${esc(maker?.name)}</small></div></div><p class="tiny muted">${esc(disc?.nickname || '')}</p>${button('Edit facts & exact photo ↗', 'go-shelf', {}, 'wide')}</section><div class="subtle-box"><span class="eyebrow">PLAY BY YOUR RULES</span><p>Compose PutterWarz from reusable constraints.</p>${button('Open competition sandbox ↗', 'go-competition', {}, 'quiet small')}</div></aside>`;
 }
-function componentTabs() { return `<div class="component-tabs">${[['DiscImage', 'Disc'], ['DisplayCard', 'DisplayCard'], ['DiscComp', 'DiscComp'], ['Competition', 'Competition']].map(([value, label]) => button(label, 'component', { value }, (ui.route === 'competition' ? value === 'Competition' : ui.component === value) ? 'active' : '')).join('')}</div>`; }
+function componentTabs() { return `<div class="component-tabs">${[['DiscImage', 'Disc'], ['DisplayCard', 'DisplayCard'], ['DiscComp', 'DiscComp'], ['AllCards', 'All cards'], ['Competition', 'Competition']].map(([value, label]) => button(label, 'component', { value }, (ui.route === 'competition' ? value === 'Competition' : ui.component === value) ? 'active' : '')).join('')}</div>`; }
 function componentSidebar(result) {
   const p = w().presets[ui.presetId], fields = result?.fields ?? [];
   const query = ui.fieldQuery.toLowerCase(), matching = fields.filter(f => `${f.label} ${f.group} ${f.path}`.toLowerCase().includes(query));
   const groups = Object.groupBy(matching, f => f.group);
   return `<aside class="sidebar component-sidebar" data-scroll="library"><span class="eyebrow">PxC COMPONENT LIBRARY</span><h2>Build with your material.</h2><label class="control"><span>Presentation</span>${select('edit-preset', ui.presetId, Object.values(w().presets).map(p => [p.id, p.name]))}</label><div class="button-row">${button('Duplicate', 'preset-duplicate', {}, 'quiet small')}${button('Import', 'preset-import', {}, 'quiet small')}${button('Export ↓', 'preset-export', {}, 'quiet small')}</div><div class="segmented library-tabs">${button('All fields', 'library', { value: 'fields' }, ui.library === 'fields' ? 'active' : '')}${button(`Layers · ${p?.nodes.length || 0}`, 'library', { value: 'layers' }, ui.library === 'layers' ? 'active' : '')}</div>${ui.library === 'layers' ? `<div class="layer-list">${(p?.nodes || []).map(n => `<div class="layer-item ${ui.nodeId === n.id ? 'selected' : ''}">${button(`${n.kind === 'image' ? '▧' : 'T'} <span>${esc(fields.find(f => f.path === n.binding)?.label || n.binding || 'Static text')}</span>`, 'node-select', { id: n.id }, 'layer-select')}${button(n.visible ? '◉' : '○', 'node-visible', { id: n.id }, 'quiet', `aria-label="${n.visible ? 'Hide' : 'Show'} ${esc(n.binding)}"`)}</div>`).join('')}</div>` : `<input class="search" data-search="fields" aria-label="Find any field" placeholder="⌕  Name, maker, score, weight…" value="${esc(ui.fieldQuery)}"><p class="tiny muted field-help">Every registered field, including missing values. Click to place or select it.</p><div class="field-groups">${Object.entries(groups).map(([group, fs]) => `<section class="field-group"><h3>${esc(group)}</h3>${fs.map(f => { const present = p?.nodes.find(n => n.binding === f.path); return `<button class="field-item ${present?.id === ui.nodeId ? 'selected' : ''}" data-action="field-add" data-path="${esc(f.path)}" title="${esc(f.path)}"><span class="field-icon">${f.type === 'image' ? '▧' : f.type === 'number' ? '#' : f.type === 'boolean' ? '◉' : 'T'}</span><span><strong>${esc(f.label)}</strong><small>${f.type === 'image' ? f.available ? 'Your local photo' : 'Sample · no photo yet' : f.available ? esc(String(Array.isArray(f.value) ? `${f.value.length} references` : f.value).slice(0, 35)) : 'Not entered · still available'}</small></span><span class="field-add">${present ? '✓' : '+'}</span></button>`; }).join('')}</section>`).join('')}</div>${button('+ Register a domain field', 'field-new', {}, 'wide secondary small')}<p class="tiny muted">One definition → fact inspector + field picker + bound graphic.</p>`}<div class="sidebar-footer"><label class="control"><span>Additional object context</span>${select('extra-type', ui.extraType, [['', 'Disc, Bag, Competition & Round'], ...Object.keys(w().schemas).filter(t => t !== 'BattleEntry').map(t => [t, t])])}</label>${ui.extraType ? select('extra-id', ui.extraId, all(w(), ui.extraType).map(o => [o.id, o.name || o.nickname || o.id])) : ''}</div></aside>`;
 }
-function editorCenter(result) {
-  const p = w().presets[ui.presetId];
-  const sceneMode = ui.component === 'DiscComp';
-  return `<section class="center editor-center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">DESIGN SANDBOX · ACTUAL PRODUCT COMPONENTS</span><h1>A little more you.</h1><p>Arrange the material. Save the look. Use it everywhere.</p></div>${button('See it OnTheCourse ↗', 'go-course', {}, 'primary')}</div>${componentTabs()}${sceneMode ? coursePreview(result, true) : `<div class="editor-toolbar"><label class="inline-control">Specimen ${select('editor-disc', ui.discId, all(w(), 'Disc').map(d => [d.id, d.nickname]))}</label><div class="segmented">${['idle', 'highlight', 'winner'].map(value => button(value[0].toUpperCase() + value.slice(1), 'preview-state', { value }, ui.previewState === value ? 'active' : '')).join('')}</div></div><div class="editor-stage"><div class="editor-stage-label"><span class="eyebrow">LIVE BOUND COMPOSITION</span><span class="mono tiny">${p.width} × ${p.height} px</span></div><div class="editor-card" style="aspect-ratio:${p.width}/${p.height};width:min(100%,${p.width * (p.height > p.width ? 1 : 1.4)}px)">${result.svg}<svg class="selection-overlay" viewBox="0 0 ${p.width} ${p.height}" aria-label="Select and drag presentation elements">${result.card.nodes.map(n => `<rect data-node-select="${esc(n.id)}" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="2" class="${ui.nodeId === n.id ? 'selected-node' : ''}"/>`).join('')}</svg></div><div class="editor-stage-footer"><span>Click a piece to inspect it. Drag to move. Arrow keys nudge; Shift moves 10 px.</span><span>Editor outlines are never exported.</span></div></div>`}<div class="pxc-strip"><span class="mono">${esc(result.part)}</span><span>${result.run.computed} computed · ${result.run.reused} reused</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${result.card?.warnings.length || result.warnings?.length ? `<div class="warning-panel">${(result.card?.warnings || result.warnings).map(esc).join('<br>')}</div>` : ''}${ui.newField ? `<section class="new-field-panel"><h2>Define it once.</h2><p>A new physical-disc field becomes available in the Shelf inspector and in every presentation.</p><div class="form-row">${input('Field label', 'new-field-label', '', 'text', 'id="new-field-label"')}${select('new-field-type', 'text', [['text', 'Text'], ['number', 'Number'], ['boolean', 'Yes / no']])}${button('Register field', 'field-register', {}, 'primary')}${button('Cancel', 'field-new', {}, 'quiet')}</div></section>` : ''}<div class="principle-strip"><span>NOT A SECOND RENDERER.</span><p>This is the same card composition used by your OnTheCourse preview and exported graphic.</p></div>${tracePanel(result.run)}</section>`;
+/** The four live previews, one per projection, for the current specimen -- `runtime.cards.recompose` run once by render() (see cascadeSet above). */
+function cardPreviewTile(p, card) {
+  const preset = runtime.cards.presetFor(p), provenance = runtime.cards.query('provenance', { projection: p, discId: ui.discId });
+  // "recomposed" is the last edit's measured recompose (the one render took right after it), not this render's: a later render reuses everything and would erase the story.
+  const changed = !!ui.lastCascade?.result?.cards?.[p]?.changed;
+  const chips = provenance ? `<div class="provenance-chips">${CARD_TOKENS.map(token => `<span class="chip chip-${esc(provenance[token])}">${esc(token)} · ${esc(provenance[token])}</span>`).join('')}</div>` : '';
+  return `<div class="card-preview-tile" data-projection-preview="${esc(p)}" data-changed="${changed ? 'true' : 'false'}"><div class="card-preview-head"><span class="eyebrow">${esc(p.toUpperCase())}</span>${changed ? '<span class="changed-marker">recomposed</span>' : ''}</div><div class="card-preview-art">${card.svg}</div><div class="card-preview-foot"><span class="tiny muted mono">${esc(preset)}</span></div>${chips}</div>`;
 }
-function nodeInspector(result) {
+function allCardsGrid(cascade) {
+  return `<div class="editor-toolbar"><label class="inline-control">Specimen ${select('editor-disc', ui.discId, all(w(), 'Disc').map(d => [d.id, d.nickname]))}</label></div><div class="cards-preview-grid">${runtime.cards.projections.map(p => cardPreviewTile(p, cascade.cards[p])).join('')}</div>`;
+}
+function editorCenter(result, cascade = null) {
+  const p = w().presets[ui.presetId];
+  const sceneMode = ui.component === 'DiscComp', allCards = ui.component === 'AllCards';
+  const stage = allCards ? allCardsGrid(cascade) : sceneMode ? coursePreview(result, true) : `<div class="editor-toolbar"><label class="inline-control">Specimen ${select('editor-disc', ui.discId, all(w(), 'Disc').map(d => [d.id, d.nickname]))}</label><div class="segmented">${['idle', 'highlight', 'winner'].map(value => button(value[0].toUpperCase() + value.slice(1), 'preview-state', { value }, ui.previewState === value ? 'active' : '')).join('')}</div></div><div class="editor-stage"><div class="editor-stage-label"><span class="eyebrow">LIVE BOUND COMPOSITION</span><span class="mono tiny">${p.width} × ${p.height} px</span></div><div class="editor-card" style="aspect-ratio:${p.width}/${p.height};width:min(100%,${p.width * (p.height > p.width ? 1 : 1.4)}px)">${result.svg}<svg class="selection-overlay" viewBox="0 0 ${p.width} ${p.height}" aria-label="Select and drag presentation elements">${result.card.nodes.map(n => `<rect data-node-select="${esc(n.id)}" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="2" class="${ui.nodeId === n.id ? 'selected-node' : ''}"/>`).join('')}</svg></div><div class="editor-stage-footer"><span>Click a piece to inspect it. Drag to move. Arrow keys nudge; Shift moves 10 px.</span><span>Editor outlines are never exported.</span></div></div>`;
+  return `<section class="center editor-center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">DESIGN SANDBOX · ACTUAL PRODUCT COMPONENTS</span><h1>A little more you.</h1><p>Arrange the material. Save the look. Use it everywhere.</p></div>${button('See it OnTheCourse ↗', 'go-course', {}, 'primary')}</div>${componentTabs()}${stage}<div class="pxc-strip"><span class="mono">${esc(result.part)}</span><span>${result.run.computed} computed · ${result.run.reused} reused</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${result.card?.warnings.length || result.warnings?.length ? `<div class="warning-panel">${(result.card?.warnings || result.warnings).map(esc).join('<br>')}</div>` : ''}${ui.newField ? `<section class="new-field-panel"><h2>Define it once.</h2><p>A new physical-disc field becomes available in the Shelf inspector and in every presentation.</p><div class="form-row">${input('Field label', 'new-field-label', '', 'text', 'id="new-field-label"')}${select('new-field-type', 'text', [['text', 'Text'], ['number', 'Number'], ['boolean', 'Yes / no']])}${button('Register field', 'field-register', {}, 'primary')}${button('Cancel', 'field-new', {}, 'quiet')}</div></section>` : ''}<div class="principle-strip"><span>NOT A SECOND RENDERER.</span><p>This is the same card composition used by your OnTheCourse preview and exported graphic.</p></div>${tracePanel(result.run)}</section>`;
+}
+/** The last measured recompose (task 78's cascadeSet comment): what an edit actually reached, not a fresh recompute on every render. */
+function recomposeLine() {
+  const c = ui.lastCascade;
+  if (!c || !c.result) return '<p class="tiny mono cascade-receipt">No cascade edit made yet this session.</p>';
+  const { edit, result } = c, changed = Object.entries(result.cards).filter(([, card]) => card.changed).map(([p]) => p);
+  return `<p class="tiny mono cascade-receipt">${esc(edit.layer)}.${esc(edit.token)} -> ${esc(String(edit.value))} recomposed: ${esc(changed.join(', ') || 'none')}</p>`;
+}
+/** The global-tokens inspector for the All cards tab: the root of the cascade, live. */
+function allCardsInspector() {
+  const global = w().cards.global, count = runtime.cards.projections.length;
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">GLOBAL DEFAULTS</span><span class="live-tag">LIVE · PxC</span></div><h2>All cards</h2><p class="tiny muted">The root of the cascade. Every preset inherits these six tokens unless it overrides one.</p><section class="control-section">${CARD_TOKENS.map(token => {
+    const inherits = runtime.cards.query('inherits', { token }), n = Object.values(inherits.projections).filter(Boolean).length;
+    return `<div class="cascade-token-row">${tokenControl(token, global[token], { layer: 'global' })}<p class="tiny muted">inherited by ${n} of ${count} projections</p></div>`;
+  }).join('')}</section>${recomposeLine()}<div class="undo-row">${button('↶ Undo last change', 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p></aside>`;
+}
+/** "The whole card": the preset's own six cascade tokens, each marked inherited or overridden, with Reset to inherited on an override. */
+function wholeCardSection(p) {
+  const global = w().cards.global;
+  const row = (control, token) => {
+    const raw = p[token], overridden = raw !== null && raw !== undefined;
+    return `<div class="cascade-token-row">${control}<div class="token-meta"><span class="tiny ${overridden ? 'provenance-here' : 'muted'}">${overridden ? 'overridden here' : 'inherited from global'}</span>${overridden ? cascadeResetButton({ layer: 'preset', preset: p.id }, token) : ''}</div></div>`;
+  };
+  const value = token => (p[token] !== null && p[token] !== undefined) ? p[token] : global[token];
+  return `<section class="control-section"><h3>The whole card <span>PRESET</span></h3>${input('Design name', 'preset-name', p.name)}<div class="four-inputs two">${input('Card width', 'preset-number', p.width, 'number', 'data-key="width" min="100" max="2000"')}${input('Card height', 'preset-number', p.height, 'number', 'data-key="height" min="100" max="2000"')}</div>${row(input('Card background', 'preset-color', value('background') === 'transparent' ? '#ffffff' : value('background'), 'color', 'data-key="background"'), 'background')}${check('Transparent card background', 'preset-transparent', value('background') === 'transparent')}${row(input('Default text', 'preset-color', value('foreground'), 'color', 'data-key="foreground"'), 'foreground')}${row(input('Accent', 'preset-color', value('accent'), 'color', 'data-key="accent"'), 'accent')}${row(`<label class="control"><span>Typeface</span>${select('preset-font', value('font'), [['sans', 'Sans'], ['serif', 'Serif'], ['mono', 'Mono']])}</label>`, 'font')}${row(input('Card corner radius', 'preset-number', value('radius'), 'number', 'data-key="radius" min="0" max="100"'), 'radius')}${row(input('Sponsor lockup', 'preset-sponsor', value('sponsor') ?? '', 'text', 'maxlength="40"'), 'sponsor')}<p class="tiny muted">Background, text, accent, font, radius and sponsor cascade global → preset → instance across shelf, bag, single and competition.</p></section>`;
+}
+/** "This disc, this projection": the instance layer for the current specimen, on whichever projection composes with this preset. */
+function instanceSection(p) {
+  const options = p.kind === 'DiscImage' ? ['shelf', 'bag'] : ['single', 'competition'];
+  if (!options.includes(ui.instanceProjection)) ui.instanceProjection = options[0];
+  const projection = ui.instanceProjection, discId = ui.discId;
+  const composedPreset = w().presets[runtime.cards.presetFor(projection)], global = w().cards.global;
+  const instance = (w().cards.instances[projection] || {})[discId] || {};
+  const provenance = runtime.cards.query('provenance', { projection, discId }) || {};
+  return `<section class="control-section"><h3>This disc, this projection <span>${esc(projection.toUpperCase())} · ${esc(discId)}</span></h3><label class="control"><span>Projection</span>${select('instance-projection', projection, options.map(o => [o, o[0].toUpperCase() + o.slice(1)]))}</label>${CARD_TOKENS.map(token => {
+    const overridden = Object.hasOwn(instance, token), presetOverridden = composedPreset[token] !== null && composedPreset[token] !== undefined;
+    const value = overridden ? instance[token] : presetOverridden ? composedPreset[token] : global[token];
+    const layer = provenance[token] || (overridden ? 'instance' : (presetOverridden ? 'preset' : 'global')), label = layer === 'instance' ? 'here' : layer;
+    return `<div class="cascade-token-row">${tokenControl(token, value, { layer: 'instance', projection, disc: discId })}<div class="token-meta"><span class="tiny ${layer === 'instance' ? 'provenance-here' : 'muted'}">${esc(label)}</span>${overridden ? cascadeResetButton({ layer: 'instance', projection, disc: discId }, token) : ''}</div></div>`;
+  }).join('')}</section>${recomposeLine()}`;
+}
+function nodeInspector(result, cascade = null) {
+  if (ui.component === 'AllCards') return allCardsInspector();
   if (ui.component === 'DiscComp') return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE DISPLAYCARDS</span><h2>DiscComp</h2><p class="muted">A comparison is an arrangement of the same reusable cards, not a parallel card renderer.</p>${layoutControls()}${button('Edit participants & scores ↗', 'go-course', {}, 'wide secondary')}${button('Compose competition rules ↗', 'go-competition', {}, 'wide quiet')}</aside>`;
   const p = w().presets[ui.presetId], n = p.nodes.find(n => n.id === ui.nodeId), field = result.fields.find(f => f.path === n?.binding);
-  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & COMPOSE</span><span class="live-tag">LIVE</span></div><h2>${esc(n ? field?.label || 'Presentation element' : 'Select a component')}</h2>${n ? `<p class="binding-path mono">${esc(n.binding || 'Static text')}</p><section class="control-section"><label class="control"><span>Bind to domain material</span>${select('node-binding', n.binding, [['', 'Static text'], ...result.fields.filter(f => (n.kind === 'image') === (f.type === 'image')).map(f => [f.path, `${f.group} · ${f.label}`])])}</label>${!n.binding ? input('Static text', 'node-text', n.text || '') : `<div class="value-box"><span class="eyebrow">CURRENT VALUE</span><strong>${n.kind === 'image' ? field?.available ? 'Your exact photo' : 'Labelled sample artwork' : esc(field?.value == null ? 'Not entered' : String(field.value))}</strong></div>`}<div class="four-inputs two">${[['X', 'x'], ['Y', 'y'], ['Width', 'w'], ['Height', 'h']].map(([label, key]) => input(label, 'node-number', n[key], 'number', `data-key="${key}" step="1"`)).join('')}</div>${n.kind === 'text' ? `${input('Type size (px)', 'node-number', n.size, 'number', 'data-key="size" min="4" max="200"')}<label class="control"><span>Typeface</span>${select('node-font', n.font || 'sans', [['sans', 'Clean sans'], ['serif', 'Editorial serif'], ['mono', 'Monospace']])}</label><label class="control"><span>Alignment</span>${select('node-align', n.align, [['left', 'Left'], ['center', 'Center'], ['right', 'Right']])}</label>${input('Text color', 'node-color', n.color || p.foreground, 'color')}${check('Bold', 'node-bold', n.bold)}${check('Show field label', 'node-showLabel', n.showLabel)}${check('Hide when empty', 'node-hideEmpty', n.hideEmpty)}${input('Prefix', 'node-prefix', n.prefix || '')}${input('Suffix', 'node-suffix', n.suffix || '')}` : `<label class="control"><span>Image fit</span>${select('node-fit', n.fit || 'contain', [['contain', 'Contain · preserve all'], ['cover', 'Cover · crop to frame']])}</label>${input('Corner radius', 'node-number', n.radius || 0, 'number', 'data-key="radius" min="0"')}`}${check('Visible in presentation', 'node-visible', n.visible)}<div class="button-row">${button('Move back', 'node-move', { value: -1 }, 'quiet small')}${button('Move front', 'node-move', { value: 1 }, 'quiet small')}</div><div class="button-row">${button('Duplicate element', 'node-duplicate', {}, 'quiet small')}${button('Remove', 'node-remove', {}, 'quiet danger small')}</div></section>` : '<p class="muted">Choose a field on the left or a piece of the graphic. Its binding and presentation become editable here.</p>'}<section class="control-section"><h3>The whole card <span>PRESET</span></h3>${input('Design name', 'preset-name', p.name)}<div class="four-inputs two">${input('Card width', 'preset-number', p.width, 'number', 'data-key="width" min="100" max="2000"')}${input('Card height', 'preset-number', p.height, 'number', 'data-key="height" min="100" max="2000"')}</div>${input('Card background', 'preset-color', p.background === 'transparent' ? '#ffffff' : p.background, 'color', 'data-key="background"')}${check('Transparent card background', 'preset-transparent', p.background === 'transparent')}${input('Default text', 'preset-color', p.foreground, 'color', 'data-key="foreground"')}${input('Accent', 'preset-color', p.accent, 'color', 'data-key="accent"')}${input('Card corner radius', 'preset-number', p.radius, 'number', 'data-key="radius" min="0" max="100"')}${button('Cards ↗', 'go-cards', {}, 'wide secondary small')}<p class="tiny muted">Background, text, accent, font, radius and sponsor cascade global → projection → instance across shelf, bag, single and competition.</p></section><section class="control-section"><h3>State treatments <span>REUSABLE</span></h3><label class="control"><span>Highlight</span>${select('preset-highlight', p.highlight, [['ring', 'Accent ring'], ['stripe', 'Accent stripe']])}</label><label class="control"><span>Score-change preview</span>${select('preset-motion', p.scoreMotion, [['pulse', 'Small pulse'], ['none', 'No animation']])}</label>${input('Motion duration (ms)', 'preset-number', p.duration, 'number', 'data-key="duration" min="100" max="1500"')}<p class="tiny muted">Motion respects reduced-motion preferences. Exports are static states.</p></section></aside>`;
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & COMPOSE</span><span class="live-tag">LIVE</span></div><h2>${esc(n ? field?.label || 'Presentation element' : 'Select a component')}</h2>${n ? `<p class="binding-path mono">${esc(n.binding || 'Static text')}</p><section class="control-section"><label class="control"><span>Bind to domain material</span>${select('node-binding', n.binding, [['', 'Static text'], ...result.fields.filter(f => (n.kind === 'image') === (f.type === 'image')).map(f => [f.path, `${f.group} · ${f.label}`])])}</label>${!n.binding ? input('Static text', 'node-text', n.text || '') : `<div class="value-box"><span class="eyebrow">CURRENT VALUE</span><strong>${n.kind === 'image' ? field?.available ? 'Your exact photo' : 'Labelled sample artwork' : esc(field?.value == null ? 'Not entered' : String(field.value))}</strong></div>`}<div class="four-inputs two">${[['X', 'x'], ['Y', 'y'], ['Width', 'w'], ['Height', 'h']].map(([label, key]) => input(label, 'node-number', n[key], 'number', `data-key="${key}" step="1"`)).join('')}</div>${n.kind === 'text' ? `${input('Type size (px)', 'node-number', n.size, 'number', 'data-key="size" min="4" max="200"')}<label class="control"><span>Typeface</span>${select('node-font', n.font || 'sans', [['sans', 'Clean sans'], ['serif', 'Editorial serif'], ['mono', 'Monospace']])}</label><label class="control"><span>Alignment</span>${select('node-align', n.align, [['left', 'Left'], ['center', 'Center'], ['right', 'Right']])}</label>${input('Text color', 'node-color', n.color || p.foreground, 'color')}${check('Bold', 'node-bold', n.bold)}${check('Show field label', 'node-showLabel', n.showLabel)}${check('Hide when empty', 'node-hideEmpty', n.hideEmpty)}${input('Prefix', 'node-prefix', n.prefix || '')}${input('Suffix', 'node-suffix', n.suffix || '')}` : `<label class="control"><span>Image fit</span>${select('node-fit', n.fit || 'contain', [['contain', 'Contain · preserve all'], ['cover', 'Cover · crop to frame']])}</label>${input('Corner radius', 'node-number', n.radius || 0, 'number', 'data-key="radius" min="0"')}`}${check('Visible in presentation', 'node-visible', n.visible)}<div class="button-row">${button('Move back', 'node-move', { value: -1 }, 'quiet small')}${button('Move front', 'node-move', { value: 1 }, 'quiet small')}</div><div class="button-row">${button('Duplicate element', 'node-duplicate', {}, 'quiet small')}${button('Remove', 'node-remove', {}, 'quiet danger small')}</div></section>` : '<p class="muted">Choose a field on the left or a piece of the graphic. Its binding and presentation become editable here.</p>'}${wholeCardSection(p)}${instanceSection(p)}<section class="control-section"><h3>State treatments <span>REUSABLE</span></h3><label class="control"><span>Highlight</span>${select('preset-highlight', p.highlight, [['ring', 'Accent ring'], ['stripe', 'Accent stripe']])}</label><label class="control"><span>Score-change preview</span>${select('preset-motion', p.scoreMotion, [['pulse', 'Small pulse'], ['none', 'No animation']])}</label>${input('Motion duration (ms)', 'preset-number', p.duration, 'number', 'data-key="duration" min="100" max="1500"')}<p class="tiny muted">Motion respects reduced-motion preferences. Exports are static states.</p></section></aside>`;
 }
 function competitionSidebar() {
   const comp = get(w(), 'Competition', ui.competitionId);
@@ -179,54 +248,6 @@ function competitionCenter(result) {
 function competitionInspector() {
   const comp = get(w(), 'Competition', ui.competitionId);
   return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPETITION OBJECTS</span><h2>Teams & bags</h2>${input('Competition name', 'competition-name', comp.name)}${comp.teamIds.map(key => { const team = get(w(), 'Team', key); return `<section class="control-section">${input('Team name', 'team-name', team?.name, 'text', `data-id="${esc(key)}"`)}<label class="control"><span>Referenced bag</span>${select('team-bag', team?.bagId, all(w(), 'Bag').map(b => [b.id, b.name]), `data-id="${esc(key)}"`)}</label>${button('Edit this bag ↗', 'team-bag-open', { id: team?.bagId }, 'wide quiet')}</section>`; }).join('')}${button('Use these discs OnTheCourse ↗', 'competition-course', {}, 'wide primary')}<p class="tiny muted">Adds the team bags’ physical discs to your current comparison. It does not infer points or replace authored states.</p><div class="subtle-box"><span class="eyebrow">LOCAL INSTRUMENTATION</span><p>${w().events.length} recorded edits<br>${w().exports.length} actual PNG exports<br>${all(w(), 'Throw').length} recorded throws</p>${button('Export local activity ↓', 'activity-export', {}, 'quiet small')}<p class="tiny muted">Nothing is transmitted. Sample objects are not usage, sales, reach or performance evidence.</p></div></aside>`;
-}
-function cardsSidebar() {
-  const global = w().cards.global, projectionCount = runtime.cards.projections.length;
-  return `<aside class="sidebar cards-sidebar" data-scroll="cards"><div class="sidebar-heading"><div><span class="eyebrow">GLOBAL DEFAULTS</span><h2>All cards</h2></div></div><p class="tiny muted">The root of the cascade. Every projection inherits these six tokens unless it overrides one.</p>${CARD_TOKENS.map(token => {
-    const inherits = runtime.cards.query('inherits', { token }), count = Object.values(inherits.projections).filter(Boolean).length;
-    return `<div class="cascade-token-row">${tokenControl(token, global[token], { layer: 'global' })}<p class="tiny muted">inherited by ${count} of ${projectionCount} projections</p></div>`;
-  }).join('')}</aside>`;
-}
-function cardPreviewTile(p, card) {
-  const preset = runtime.cards.presetFor(p), selected = ui.cardsProjection === p, provenance = runtime.cards.query('provenance', { projection: p, discId: ui.discId });
-  // "recomposed" is the last edit's measured recompose (the one render took right after it), not this render's: a later render reuses everything and would erase the story.
-  const changed = !!ui.lastCascade?.result?.cards?.[p]?.changed;
-  const chips = provenance ? `<div class="provenance-chips">${CARD_TOKENS.map(token => `<span class="chip chip-${esc(provenance[token])}">${esc(token)} · ${esc(provenance[token])}</span>`).join('')}</div>` : '';
-  return `<button class="card-preview-tile ${selected ? 'selected' : ''}" data-action="cascade-tab" data-value="${esc(p)}" data-projection-preview="${esc(p)}" data-changed="${changed ? 'true' : 'false'}"><div class="card-preview-head"><span class="eyebrow">${esc(p.toUpperCase())}</span>${changed ? '<span class="changed-marker">recomposed</span>' : ''}</div><div class="card-preview-art">${card.svg}</div><div class="card-preview-foot"><span class="tiny muted mono">${esc(preset)}</span></div>${chips}</button>`;
-}
-function cardsProjectionEditor() {
-  const p = ui.cardsProjection, proj = w().cards.projections[p] || {}, global = w().cards.global;
-  return `<section class="control-section cards-projection-editor"><h3>Projection layer <span>${esc(p.toUpperCase())}</span></h3>${CARD_TOKENS.map(token => {
-    const overridden = Object.hasOwn(proj, token), value = overridden ? proj[token] : global[token];
-    return `<div class="cascade-token-row">${tokenControl(token, value, { layer: 'projection', projection: p })}<div class="token-meta"><span class="tiny ${overridden ? 'provenance-here' : 'muted'}">${overridden ? 'overridden here' : 'inherited from global'}</span>${overridden ? cascadeResetButton({ layer: 'projection', projection: p }, token) : ''}</div></div>`;
-  }).join('')}</section>`;
-}
-function cardsCenter(result) {
-  const projections = runtime.cards.projections;
-  return `<section class="center cards-center" data-scroll="cards-center"><div class="section-heading"><div><span class="eyebrow">CASCADE · GLOBAL → PROJECTION → INSTANCE</span><h1>Card cascade.</h1><p>Change a token once. Watch which of the four surfaces actually recompose.</p></div></div><div class="segmented cards-tabs">${projections.map(p => button(p, 'cascade-tab', { value: p }, ui.cardsProjection === p ? 'active' : '')).join('')}</div><div class="cards-preview-grid">${projections.map(p => cardPreviewTile(p, result.cards[p])).join('')}</div>${cardsProjectionEditor()}</section>`;
-}
-function cardsCascadeReceipt() {
-  const c = ui.lastCascade;
-  if (!c || !c.result) return '<p class="tiny mono cascade-receipt">No cascade edit made yet this session.</p>';
-  const { edit, result } = c, changed = Object.entries(result.cards).filter(([, card]) => card.changed).map(([p]) => p);
-  return `<p class="tiny mono cascade-receipt">${esc(edit.layer)}.${esc(edit.token)} -> ${esc(String(edit.value))} recomposed: ${esc(changed.join(', ') || 'none')}</p>`;
-}
-function cardsFindingsStrip() {
-  let rows; try { rows = runtime.select('proposal.cards.'); } catch (error) { return `<div class="findings-strip"><h3 class="eyebrow">FINDINGS</h3><p class="tiny muted">${esc(error.message)}</p></div>`; }
-  const isFriction = r => r.value && (r.value.kind === 'friction' || r.value.for);
-  const strengths = rows.filter(r => !isFriction(r)), frictions = rows.filter(isFriction);
-  const line = r => `<p class="tiny finding-row"><span class="mono">${esc(r.address)}</span> ${esc(r.value?.text ?? r.value?.summary ?? (typeof r.value === 'string' ? r.value : JSON.stringify(r.value)))}${r.value?.for ? ` <span class="finding-for">for ${esc(r.value.for)}</span>` : ''}${r.value?.workaround ? `<br><span class="finding-workaround">Workaround: ${esc(r.value.workaround)}</span>` : ''}</p>`;
-  return `<div class="findings-strip"><h3 class="eyebrow">FINDINGS · px.discstudio.cards</h3>${rows.length ? '' : '<p class="tiny muted">No findings published.</p>'}${strengths.length ? `<div class="findings-group"><span class="tiny caps muted">Strengths</span>${strengths.map(line).join('')}</div>` : ''}${frictions.length ? `<div class="findings-group"><span class="tiny caps muted">Frictions</span>${frictions.map(line).join('')}</div>` : ''}</div>`;
-}
-function cardsInspector() {
-  const p = ui.cardsProjection, discId = ui.discId;
-  const instance = (w().cards.instances[p] || {})[discId] || {}, proj = w().cards.projections[p] || {}, global = w().cards.global;
-  const provenance = runtime.cards.query('provenance', { projection: p, discId }) || {};
-  return `<aside class="inspector cards-inspector" data-scroll="cards-inspector"><div class="inspector-title"><span class="eyebrow">SELECTED CARD</span><span class="live-tag">LIVE · PxC</span></div><h2>Instance</h2><label class="control"><span>Disc</span>${select('cascade-disc', discId, all(w(), 'Disc').map(d => [d.id, d.nickname]))}</label><section class="control-section"><h3>Instance layer <span>${esc(p.toUpperCase())} · ${esc(discId)}</span></h3>${CARD_TOKENS.map(token => {
-    const overridden = Object.hasOwn(instance, token), value = overridden ? instance[token] : (Object.hasOwn(proj, token) ? proj[token] : global[token]);
-    const layer = provenance[token] || (overridden ? 'instance' : (Object.hasOwn(proj, token) ? 'projection' : 'global')), label = layer === 'instance' ? 'here' : layer;
-    return `<div class="cascade-token-row">${tokenControl(token, value, { layer: 'instance', projection: p, disc: discId })}<div class="token-meta"><span class="tiny ${layer === 'instance' ? 'provenance-here' : 'muted'}">${esc(label)}</span>${overridden ? cascadeResetButton({ layer: 'instance', projection: p, disc: discId }, token) : ''}</div></div>`;
-  }).join('')}</section>${cardsCascadeReceipt()}<div class="undo-row">${button('↶ Undo last change', 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p>${cardsFindingsStrip()}</aside>`;
 }
 function summaryValue(value) { return JSON.stringify(value, (key, v) => key === 'signature' ? '[full input signature retained in PxC; omitted here]' : typeof v === 'string' && v.startsWith('data:image/') ? `[embedded photo: ${v.length} characters]` : key === 'svg' && typeof v === 'string' && v.length > 1000 ? `${v.slice(0, 600)}… [${v.length} characters, full value in Part]` : v, 2); }
 /**
@@ -264,17 +285,22 @@ function render() {
       ui.lastResult = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() });
       body = `${shelfSidebar()}${courseCenter(ui.lastResult)}${courseInspector()}`;
     } else if (ui.route === 'components') {
-      let result;
+      let result, cascade = null;
       if (ui.component === 'DiscComp') result = { ...runtime.scene({ mode: 'battle', ...context() }), fields: runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single').fields };
-      else result = runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single');
+      else if (ui.component === 'AllCards') {
+        // The All cards tab's recompose is taken exactly once here, per task 78's
+        // cascadeSet comment: calling it again in a handler would let the memo see
+        // nothing changed since this very call and erase `changed`. It must also be
+        // the ONLY card() call this render makes for this disc: a second, ordinary
+        // runtime.card(..., 'single') call (as the DisplayCard/Disc tabs make below)
+        // would materialize the very same Cascade Tick moments earlier and leave
+        // recompose() reading its own reused reflection instead of a fresh compose.
+        cascade = runtime.cards.recompose(ui.discId, context());
+        if (ui.lastCascade && !ui.lastCascade.result) ui.lastCascade.result = cascade;
+        result = { fields: [], run: cascade.receipt, part: 'px.discstudio.cards.query.recompose' };
+      } else result = runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single');
       ui.lastResult = result;
-      body = `${componentSidebar(result)}${editorCenter(result)}${nodeInspector(result)}`;
-    } else if (ui.route === 'cards') {
-      if (!runtime.cards.projections.includes(ui.cardsProjection)) ui.cardsProjection = 'single';
-      const result = runtime.cards.recompose(ui.discId, context());
-      if (ui.lastCascade && !ui.lastCascade.result) ui.lastCascade.result = result; // the one recompose this edit gets to be measured against
-      ui.lastResult = result;
-      body = `${cardsSidebar()}${cardsCenter(result)}${cardsInspector()}`;
+      body = `${componentSidebar(result)}${editorCenter(result, cascade)}${nodeInspector(result, cascade)}`;
     } else {
       ui.lastResult = runtime.constraints(ui.competitionId);
       body = `${competitionSidebar()}${competitionCenter(ui.lastResult)}${competitionInspector()}`;
@@ -334,9 +360,7 @@ async function action(name, el) {
     case 'go-course': navigate('course'); return;
     case 'go-competition': navigate('competition'); return;
     case 'go-editor': ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; navigate('components'); return;
-    case 'go-cards': ui.cardsProjection = 'single'; navigate('cards'); return;
-    case 'cascade-tab': ui.cardsProjection = d.value; break;
-    case 'cascade-reset': cascadeSet(d.layer, d.token, null, d.projection || undefined, d.disc || undefined); break;
+    case 'cascade-reset': cascadeSet(d.layer, d.token, null, { projection: d.projection || undefined, discId: d.disc || undefined, presetId: d.preset || undefined }); break;
     case 'dismiss': ui.message = ''; break;
     case 'save-draft': downloadJson(w(), 'discstudio-draft.json'); message('Draft downloaded with domain objects, photos, presentations and states.'); break;
     case 'save-protected': downloadBlob(new Blob([localStorage.getItem(DATA_KEY) || ''], { type: 'application/json' }), 'discstudio-protected-original.json'); break;
@@ -460,8 +484,8 @@ function controlChange(el) {
     case 'gap': execute({ type: 'layout.set', patch: { gap: number() } }); break;
     case 'edit-preset': ui.presetId = value; ui.component = w().presets[value].kind; ui.nodeId = w().presets[value].nodes[0]?.id; if (w().presets[value].kind === 'DisplayCard') execute({ type: 'layout.set', patch: { presetId: value } }); break;
     case 'editor-disc': ui.discId = value; break;
-    case 'cascade-disc': ui.discId = value; break;
-    case 'cascade-token': cascadeSet(d.layer, d.token, d.token === 'radius' ? number() : value, d.projection || undefined, d.disc || undefined); break;
+    case 'instance-projection': ui.instanceProjection = value; break;
+    case 'cascade-token': cascadeSet(d.layer, d.token, d.token === 'radius' ? number() : value, { projection: d.projection || undefined, discId: d.disc || undefined, presetId: d.preset || undefined }); break;
     case 'extra-type': ui.extraType = value; ui.extraId = all(w(), value)[0]?.id || ''; break;
     case 'extra-id': ui.extraId = value; break;
     case 'node-binding': setNode({ binding: value, context: value.startsWith('entry.') ? 'battle' : null }); break;
@@ -475,9 +499,14 @@ function controlChange(el) {
     case 'node-suffix': setNode({ suffix: value }); break;
     case 'node-bold': case 'node-showLabel': case 'node-hideEmpty': case 'node-visible': setNode({ [key.slice(5)]: el.checked }); break;
     case 'preset-name': setPreset({ name: value }); break;
-    case 'preset-number': setPreset({ [d.key]: number() }); break;
-    case 'preset-color': setPreset({ [d.key]: value }); break;
-    case 'preset-transparent': setPreset({ background: el.checked ? 'transparent' : '#203d36' }); break;
+    case 'preset-number': if (d.key === 'radius') presetCascadeSet(ui.presetId, 'radius', number()); else setPreset({ [d.key]: number() }); break;
+    // background/foreground/accent are cascade fields: the preset's own override
+    // (task 79, "the preset IS the projection layer"), so the edit is marked as a
+    // cascade edit too and picked up by the All cards tab's one-recompose-per-render.
+    case 'preset-color': presetCascadeSet(ui.presetId, d.key, value); break;
+    case 'preset-transparent': presetCascadeSet(ui.presetId, 'background', el.checked ? 'transparent' : '#203d36'); break;
+    case 'preset-font': presetCascadeSet(ui.presetId, 'font', value); break;
+    case 'preset-sponsor': presetCascadeSet(ui.presetId, 'sponsor', value); break;
     case 'preset-highlight': setPreset({ highlight: value }); break;
     case 'preset-motion': setPreset({ scoreMotion: value }); break;
     case 'competition': ui.competitionId = value; ui.roundId = get(w(), 'Competition', value).roundIds[0]; break;
