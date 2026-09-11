@@ -1,0 +1,586 @@
+EEEEE...EEEEEE......E.......EEEEEEEEEEEEEEEEEEEEEEE.........E
+======================================================================
+ERROR: backend.test_choose (unittest.loader._FailedTest.backend.test_choose)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: backend.test_choose
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/backend/test_choose.py", line 14, in <module>
+    from pyto import PQL
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: backend.test_evidence (unittest.loader._FailedTest.backend.test_evidence)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: backend.test_evidence
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/backend/test_evidence.py", line 15, in <module>
+    from pyto import PQL
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: backend.test_ops (unittest.loader._FailedTest.backend.test_ops)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: backend.test_ops
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/backend/test_ops.py", line 15, in <module>
+    from pyto import PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: backend.test_tournament (unittest.loader._FailedTest.backend.test_tournament)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: backend.test_tournament
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/backend/test_tournament.py", line 16, in <module>
+    from pyto import PQL
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: data.test_build (unittest.loader._FailedTest.data.test_build)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: data.test_build
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/data/test_build.py", line 7, in <module>
+    import harness
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/harness.py", line 26, in <module>
+    from pyto import PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: data.test_datasets (unittest.loader._FailedTest.data.test_datasets)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: data.test_datasets
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/data/test_datasets.py", line 4, in <module>
+    import data.datasets as datasets
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/data/datasets.py", line 16, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: data.test_frame (unittest.loader._FailedTest.data.test_frame)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: data.test_frame
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/data/test_frame.py", line 4, in <module>
+    from harness import close
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/harness.py", line 26, in <module>
+    from pyto import PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: data.test_shaping (unittest.loader._FailedTest.data.test_shaping)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: data.test_shaping
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/data/test_shaping.py", line 4, in <module>
+    from harness import close
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/harness.py", line 26, in <module>
+    from pyto import PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: data.test_timeseries (unittest.loader._FailedTest.data.test_timeseries)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: data.test_timeseries
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/data/test_timeseries.py", line 5, in <module>
+    from harness import close
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/harness.py", line 26, in <module>
+    from pyto import PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: data.test_transform (unittest.loader._FailedTest.data.test_transform)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: data.test_transform
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/data/test_transform.py", line 4, in <module>
+    from harness import close
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/harness.py", line 26, in <module>
+    from pyto import PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: ml.test_classify (unittest.loader._FailedTest.ml.test_classify)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_classify
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_classify.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_matmul_against_numpy (ml.test_core.LinearAlgebra.test_matmul_against_numpy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_core.py", line 37, in test_matmul_against_numpy
+    self.assertTrue(core.close(core.matmul(a, b), (np.array(a) @ np.array(b)).tolist()))
+                                                   ^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'array'
+
+======================================================================
+ERROR: ml.test_distance (unittest.loader._FailedTest.ml.test_distance)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_distance
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_distance.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_linear (unittest.loader._FailedTest.ml.test_linear)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_linear
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_linear.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_metrics (unittest.loader._FailedTest.ml.test_metrics)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_metrics
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_metrics.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_multiclass (unittest.loader._FailedTest.ml.test_multiclass)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_multiclass
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_multiclass.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_nnet (unittest.loader._FailedTest.ml.test_nnet)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_nnet
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_nnet.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_resample (unittest.loader._FailedTest.ml.test_resample)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_resample
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_resample.py", line 3, in <module>
+    from . import calcs, core
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/calcs.py", line 10, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: ml.test_store (unittest.loader._FailedTest.ml.test_store)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_store
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_store.py", line 7, in <module>
+    from . import build, parts
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/build.py", line 12, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_tournament (unittest.loader._FailedTest.ml.test_tournament)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_tournament
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/parts.py", line 16, in <module>
+    from .. import harness as H
+ImportError: attempted relative import beyond top-level package
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_tournament.py", line 5, in <module>
+    from . import parts, tournament
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/parts.py", line 18, in <module>
+    import harness as H
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/harness.py", line 26, in <module>
+    from pyto import PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: ml.test_trees (unittest.loader._FailedTest.ml.test_trees)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_trees
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_trees.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_unsup (unittest.loader._FailedTest.ml.test_unsup)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_unsup
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_unsup.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: ml.test_validate (unittest.loader._FailedTest.ml.test_validate)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: ml.test_validate
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/test_validate.py", line 3, in <module>
+    from . import calcs, core
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/ml/calcs.py", line 10, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_build (unittest.loader._FailedTest.stats.test_build)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_build
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_build.py", line 7, in <module>
+    import harness
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/harness.py", line 26, in <module>
+    from pyto import PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_comparisons (unittest.loader._FailedTest.stats.test_comparisons)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_comparisons
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_comparisons.py", line 4, in <module>
+    import stats.comparisons as comparisons
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/comparisons.py", line 10, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_correlation (unittest.loader._FailedTest.stats.test_correlation)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_correlation
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_correlation.py", line 4, in <module>
+    import stats.correlation as correlation
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/correlation.py", line 10, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_descriptive (unittest.loader._FailedTest.stats.test_descriptive)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_descriptive
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_descriptive.py", line 5, in <module>
+    import stats.descriptive as descriptive
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/descriptive.py", line 10, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_distributions (unittest.loader._FailedTest.stats.test_distributions)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_distributions
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_distributions.py", line 4, in <module>
+    import stats.distributions as distributions
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/distributions.py", line 15, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_hypothesis (unittest.loader._FailedTest.stats.test_hypothesis)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_hypothesis
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_hypothesis.py", line 4, in <module>
+    import stats.hypothesis as hypothesis
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/hypothesis.py", line 14, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_intervals (unittest.loader._FailedTest.stats.test_intervals)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_intervals
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_intervals.py", line 5, in <module>
+    import stats.intervals as intervals
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/intervals.py", line 11, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_nonparametric (unittest.loader._FailedTest.stats.test_nonparametric)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_nonparametric
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_nonparametric.py", line 5, in <module>
+    from scipy import stats as sp_stats
+ModuleNotFoundError: No module named 'scipy'
+
+
+======================================================================
+ERROR: stats.test_regression (unittest.loader._FailedTest.stats.test_regression)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_regression
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_regression.py", line 5, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: stats.test_robust (unittest.loader._FailedTest.stats.test_robust)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_robust
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_robust.py", line 4, in <module>
+    import stats.robust as robust
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/robust.py", line 12, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: stats.test_special (unittest.loader._FailedTest.stats.test_special)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_special
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_special.py", line 4, in <module>
+    from scipy import special
+ModuleNotFoundError: No module named 'scipy'
+
+
+======================================================================
+ERROR: stats.test_summaries (unittest.loader._FailedTest.stats.test_summaries)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: stats.test_summaries
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/test_summaries.py", line 5, in <module>
+    import stats.summaries as summaries
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/stats/summaries.py", line 10, in <module>
+    from pyto import Calculation
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+ERROR: test_harness (unittest.loader._FailedTest.test_harness)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_harness
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/home/user/DiscStudio-staging/EXP/102/pyto/experiments/brain/test_harness.py", line 14, in <module>
+    from pyto import Calculation, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 61 tests in 0.003s
+
+FAILED (errors=36)
