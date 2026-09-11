@@ -4,8 +4,36 @@ Intent: brain/backend the three findings the night itself produced, as Parts: th
 Starting point: 254f751e28aea4736c0d4dd0d99dfc9325f1be52 (land(task-105): brain ml out-of-bag: a random forest scores itself on the rows each of its trees never saw, so a held-out number comes free with the fit; the bag each tree drew is recorded, oob_predict votes only the trees that missed a row, and the oob score is oracled against a real held-out split)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 2 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/backend/summary.py
+- M  pyto/experiments/brain/store/backend.json
+
+```
+pyto/experiments/brain/backend/summary.py |   42 +
+ pyto/experiments/brain/store/backend.json | 1499 +++++++++++++++--------------
+ 2 files changed, 801 insertions(+), 740 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.TOaE62bxLV) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               751  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
