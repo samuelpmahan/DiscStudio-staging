@@ -28,6 +28,8 @@
 #   neat answers               every filed answer: label, digest, n, k
 #   neat default <n> <k> "<sentence>"   file the session's default for one item; it stands until an answer overturns it
 #   neat gate <id> [--mode github|stub:<file>|none]   the join's gate for the copy's head: open only on a human's approval of that exact sha
+#   neat delta <a> <b> [--json] [--out-dir D]   two landings' capability delta against cost, computed: px.exp.neat.delta.<a>.<b>
+#                             under pyto/experiments/review/deltas (end states, rework, verdict); patterns in pyto/experiments/delta/patterns.json
 #
 # The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
 # owner sees what is coming; those lines go through land.sh --note (commit and push, no receipt).
@@ -70,7 +72,7 @@ URL="$(git -C "$ROOT" remote get-url origin 2>/dev/null | strip_creds || echo '<
 cmd="${1:-}"; shift || true
 
 die() { echo "neat: $*" >&2; exit 1; }
-usage() { sed -n '4,28p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
+usage() { sed -n '4,32p' "${BASH_SOURCE[0]}" | sed 's/^#  *//'; exit 2; }
 field() { # <name> <file>  -> the value after "<name>: ", empty when the line is missing
   # (grep exits 1 on no match; under set -e -o pipefail that used to end the script with no message)
   { grep -m1 "^$1: " "$2" || true; } | sed "s/^$1: //"
@@ -651,6 +653,13 @@ cmd_gate() {
   ( cd "$ROOT" && "$PYTHON" -m pyto.neat.gate --package "task-$id" --head "$head" --branch "exp/$id" --root "$ROOT" "$@" )
 }
 
+cmd_delta() {
+  # neat delta <a> <b>: a thin forward to the Calculation's host (pyto/src/pyto/neat/delta.py), from MAIN's root
+  # so the landings directory and git history are the ones it measures.
+  [ "$PYTO_MODE" -eq 1 ] || die "neat delta needs a pyto repository (pyto/pyproject.toml)"
+  "$PYTHON" -m pyto.neat.delta --root "$ROOT" "$@"
+}
+
 cmd_walk() {
   # neat walk          -> the index, one line per landing on the board (walk.py --list)
   # neat walk N        -> step N as text, for an agent (walk.py --text N)
@@ -735,6 +744,6 @@ case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
-  list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
+  delta) cmd_delta "$@";;
   ask) cmd_ask "$@";; answer) cmd_answer "$@";; default) cmd_default "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; crisp) cmd_crisp "$@";; *) usage;;
 esac

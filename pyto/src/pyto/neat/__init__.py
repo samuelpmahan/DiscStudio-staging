@@ -15,5 +15,6 @@ module pre-loaded under a second name.
 
 `pyto.neat.diff` (task 66) computes a candidate pair's difference before it is
 shown; `pyto.neat.gate` (task 67) is the join's gate: only a human's approval of an
-exact head sha opens a landing.
+exact head sha opens a landing; `pyto.neat.delta` (task 80) is `neat delta <a> <b>`: two
+landings' capability delta against cost, computed from their receipts and diffs, never noted.
 """
