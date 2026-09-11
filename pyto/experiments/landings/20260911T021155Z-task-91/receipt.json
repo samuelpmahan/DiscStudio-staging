@@ -1,0 +1,56 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T021155Z-task-91",
+  "package": "task-91",
+  "base_sha": "487c5dcc2fc5c7c2018ab354a2adbe46ad3eaf32",
+  "result": "verified",
+  "verifier": {
+    "command": "cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'",
+    "exit": 0,
+    "output_sha256": "1c1c7cd2f9fc56233cb8c41cbed69a6647df85069b632bc97032a97e530406d3"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "bf96f3fd9d8138ff8d763baae0ce016e8494e5f02baf6a34dab0f9d7fe37857e",
+    "counts": {
+      "library": 439,
+      "experiments/brain": 314,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [],
+  "unclaimed": [
+    {
+      "path": "pyto/BOARD.md",
+      "bytes": 112749,
+      "sha256": "31fa57d270814e78aa334acb98bfcf569c5f0d560dc79b04e6f738f0f9b30eb6"
+    }
+  ],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-11T02:13:21.747541Z",
+  "result_sha": "0a38836789a9ba3ab9ac885428da3096c1a7d318",
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}
