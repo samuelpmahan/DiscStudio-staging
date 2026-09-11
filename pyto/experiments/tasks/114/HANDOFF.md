@@ -1,4 +1,4 @@
-# Task 114: port S2 basket detection onto the studio core: the PQL document its OperationSpec composition implies, fn.lab.basket.* Calculations, the LAB basket sprite, and a fixture drawn to the S2 knobs
+# Task 114: port S2 (baskets) and S3 (visible tees) onto the studio core as the documents their OperationSpecs declare, with the Python analogue's ring balance as S3's oracle, and redefine pathfinding on the Stage outputs: the round in badge order, tee to basket to the next tee
 
 You are a fresh agent. Everything you need is on this page and in the files it names. The
 conversation that produced this task is not needed and you will not see it.
@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/114
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/114:pyto/experiments/tasks/114/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff d4c5188 origin/exp/114 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 6eebd23 origin/exp/114 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -50,42 +50,58 @@ and the owner answers; read it before assuming. `pyto/BOARD.md` is the owner's o
 
 ## What was asked
 
-port S2 basket detection onto the studio core: the PQL document its OperationSpec composition implies, fn.lab.basket.* Calculations, the LAB basket sprite, and a fixture drawn to the S2 knobs
+port S2 (baskets) and S3 (visible tees) onto the studio core as the documents their OperationSpecs declare, with the Python analogue's ring balance as S3's oracle, and redefine pathfinding on the Stage outputs: the round in badge order, tee to basket to the next tee
 
 ## Starting point
 
-d4c51885da95f2fcc8f379a79dcf030f7f77810b (land(task-113): run the LAB's own S1 PrincipleComponentRender.yaml on the studio core, and land the port's map and findings as Parts). MAIN may have moved since: `git log --oneline d4c5188..origin/claude/os-sprint-st8hnu` shows how far.
+d4c51885da95f2fcc8f379a79dcf030f7f77810b (land(task-113): run the LAB's own S1 PrincipleComponentRender.yaml on the studio core, and land the port's map and findings as Parts). MAIN may have moved since: `git log --oneline 6eebd23..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
 
 - M  src/lab/fixtures.js
 - M  src/lab/map.js
+- A  src/lab/route.js
 - A  src/lab/s2.js
+- A  src/lab/s3.js
 - A  src/lab/source/basket-sprite.json
 - M  src/lab/store/lab.json
 - M  src/lab/store/records/S0.json
 - M  src/lab/store/records/S1.json
 - A  src/lab/store/records/S2.json
+- A  src/lab/store/records/S3.json
+- A  src/lab/store/records/S3.quick-anno.json
+- A  src/lab/store/records/route-labfixture.json
+- A  tests/lab-route.test.js
+- M  tests/lab-s1.test.js
 - A  tests/lab-s2.test.js
+- A  tests/lab-s3.test.js
 
 ```
-src/lab/fixtures.js               |  22 +-
- src/lab/map.js                    |  14 +-
- src/lab/s2.js                     | 183 ++++++++
- src/lab/source/basket-sprite.json |  73 +++
- src/lab/store/lab.json            | 944 +++++++++++++++++++++++++++++++-------
- src/lab/store/records/S0.json     |  30 ++
- src/lab/store/records/S1.json     | 452 +++++++++++-------
- src/lab/store/records/S2.json     | 633 +++++++++++++++++++++++++
- tests/lab-s2.test.js              |  92 ++++
- 9 files changed, 2101 insertions(+), 342 deletions(-)
+src/lab/fixtures.js                         |   57 +-
+ src/lab/map.js                              |   28 +-
+ src/lab/route.js                            |  133 ++
+ src/lab/s2.js                               |  226 +++
+ src/lab/s3.js                               |  289 +++
+ src/lab/source/basket-sprite.json           |   73 +
+ src/lab/store/lab.json                      | 2801 +++++++++++++++++++++------
+ src/lab/store/records/S0.json               |   68 +-
+ src/lab/store/records/S1.json               | 1122 ++++++-----
+ src/lab/store/records/S2.json               |  733 +++++++
+ src/lab/store/records/S3.json               |  646 ++++++
+ src/lab/store/records/S3.quick-anno.json    |  165 ++
+ src/lab/store/records/route-labfixture.json |  593 ++++++
+ tests/lab-route.test.js                     |  105 +
+ tests/lab-s1.test.js                        |    4 +-
+ tests/lab-s2.test.js                        |   92 +
+ tests/lab-s3.test.js                        |   95 +
+ 17 files changed, 6162 insertions(+), 1068 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.brgIkukLWO) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.2a4xTDSfID) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
@@ -113,5 +129,5 @@ src/lab/fixtures.js               |  22 +-
    packet is rewritten, the suite runs again).
 3. Land: `bash pyto/scripts/neat.sh land 114`. It merges the candidate into MAIN, runs the suite
    again on the merged tree, writes a receipt under `pyto/experiments/landings/`, commits
-   `land(task-114): port S2 basket detection onto the studio core: the PQL document its OperationSpec composition implies, fn.lab.basket.* Calculations, the LAB basket sprite, and a fixture drawn to the S2 knobs`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
+   `land(task-114): port S2 (baskets) and S3 (visible tees) onto the studio core as the documents their OperationSpecs declare, with the Python analogue's ring balance as S3's oracle, and redefine pathfinding on the Stage outputs: the round in badge order, tee to basket to the next tee`, pushes, and writes one line under "Today" on `pyto/BOARD.md`.
    If it refuses, it says exactly why, and nothing has changed.
