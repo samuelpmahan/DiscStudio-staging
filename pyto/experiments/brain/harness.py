@@ -56,6 +56,12 @@ FINDING = "proposal.brain."
 
 KINDS = ("data", "result", "oracle", "bench", "bracket", "map")
 DEFAULT_TOLERANCE = 1e-9
+# An oracle Part is evidence, and a 192x192 matrix of distances is 1.4 MB of decimal text in it -
+# four candidates at three sizes was 6.5 MB of store before this cap. A value a reader could
+# plausibly read is kept whole; past that, what is kept is what a reader can actually check (how
+# big it is, what it digests to, its shape, where it starts). The comparison itself always runs on
+# the full value, never on the outline.
+ORACLE_VALUE_CAP = 65536
 
 
 # --- addresses -----------------------------------------------------------------
@@ -124,6 +130,44 @@ def jsonable(value: Any) -> Any:
         f"brain: {type(value).__name__} is not json-able; every part value must be "
         "(the store is persisted as json and digested as json)"
     )
+
+
+def shape_of(value: Any) -> list[int]:
+    """the dimensions of a nested list, as far as it is rectangular."""
+    dims = []
+    while isinstance(value, (list, tuple)):
+        dims.append(len(value))
+        value = value[0] if value else None
+    return dims
+
+
+def outline(value: Any, cap: int = ORACLE_VALUE_CAP) -> Any:
+    """`value` if it is small; otherwise the same shape with its big parts outlined.
+
+    a mapping keeps its keys - `{"shape": [192, 192]}` stays readable and only its
+    `values` is replaced - and a long sequence becomes how long it is, what it
+    digests to, and the numbers it starts with. nothing that reads a Part has to
+    know which it got: `outline` is true on the ones that were replaced.
+    """
+    plain = jsonable(value)
+    text = json.dumps(plain, separators=(",", ":"), default=str)
+    if len(text) <= cap:
+        return plain
+    if isinstance(plain, dict):
+        return {key: outline(inner, cap) for key, inner in plain.items()}
+    flat: list[Any] = []
+
+    def walk(node):
+        if len(flat) >= 8:
+            return
+        if isinstance(node, list):
+            for one in node:
+                walk(one)
+        else:
+            flat.append(node)
+
+    walk(plain)
+    return {"outline": True, "json_bytes": len(text), "sha256": digest(plain), "shape": shape_of(plain), "head": flat}
 
 
 def digest(value: Any) -> str:
@@ -453,7 +497,9 @@ def oracle(
     """one backend's answer against the reference, as a part. returns the verdict.
 
     a backend that changes semantics is a failed backend: this is where that is
-    decided, and the failing part stays in the store as the evidence.
+    decided, and the failing part stays in the store as the evidence. the verdict
+    is decided on the full values; what the Part keeps is `outline` of each, so a
+    store stays a store and not a copy of every matrix anyone ever compared.
     """
     passed, worst = close(got, expected, tolerance)
     store.put(
@@ -463,8 +509,8 @@ def oracle(
             "calc": calc,
             "case": case,
             "reference": reference,
-            "expected": expected,
-            "got": got,
+            "expected": outline(expected),
+            "got": outline(got),
             "tolerance": tolerance,
             "worst_relative_error": worst,
             "pass": bool(passed),
