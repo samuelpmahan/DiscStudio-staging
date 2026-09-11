@@ -4,8 +4,40 @@ Intent: brain harness (and the one line of ml/parts.py that is the same bug): a 
 Starting point: a4db7c65fe9b7376574412a3cc13f298f0e16663 (land(task-85): brain/data dataframe-like Calculations fn.brain.data.* over the columns/rows dataset shape: select project filter group-by with aggregates join pivot sort window/rolling and missing-value handling, with py and np backends where the shape pays, dataset Parts px.exp.brain.data.* and oc.brain.data.load that reads csv and json through the effects handle's read_text)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 4 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/harness.py
+- M  pyto/experiments/brain/ml/build.py
+- M  pyto/experiments/brain/ml/parts.py
+- M  pyto/experiments/brain/test_harness.py
+
+```
+pyto/experiments/brain/harness.py      | 61 ++++++++++++++++++++++++++++++----
+ pyto/experiments/brain/ml/build.py     |  4 ++-
+ pyto/experiments/brain/ml/parts.py     | 23 +++++++++++--
+ pyto/experiments/brain/test_harness.py | 52 +++++++++++++++++++++++++++++
+ 4 files changed, 130 insertions(+), 10 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.Wr1fblvI3z) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               314  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
