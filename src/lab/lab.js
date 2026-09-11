@@ -8,14 +8,25 @@
  * `settle` files the same receipt shape runtime.js files, so `runRecord` can
  * hand the run to the shared pyto-run-record adapter unchanged.
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { createExecBoard, pxFn, readPql, invokePql } from '../core/exec.js';
 import { sha256HexSyncText } from '../core/sha256.js';
 import { fromDiscStudioReceipt, validate } from '../../pyto/viewer/adapters.js';
 
-export const STORE = join(dirname(fileURLToPath(import.meta.url)), 'store');
+/**
+ * The store is a folder of files, and the Stage modules beside this one now also
+ * run in the browser, where there is no file system at all: src/runtime.js
+ * registers the same `fn.lab.*` Calculations on the studio's own board. So node's
+ * modules are imported only where there is a node to import them from, and
+ * `save`/`saveRecord` refuse in plain words anywhere else. Nothing below is
+ * evaluated in a browser, and every other export here is portable.
+ */
+const ON_NODE = !!globalThis.process?.versions?.node;
+const nodeModules = ON_NODE ? { fs: await import('node:fs'), path: await import('node:path'), url: await import('node:url') } : null;
+export const STORE = ON_NODE ? nodeModules.path.join(nodeModules.path.dirname(nodeModules.url.fileURLToPath(import.meta.url)), 'store') : null;
+function onDisk() {
+  if (!nodeModules) throw new Error('lab: the store is a folder of files, and this runtime has no file system. Read the Parts off the board instead.');
+  return nodeModules;
+}
 
 /** The one digest rule (pyto/src/pyto/neat/diff.py `structural_digest`): sha256 of canonical JSON. */
 export function canonicalJson(value) {
@@ -77,15 +88,16 @@ export function createLab() {
     /** Every `px.exp.lab.*` and `proposal.lab.*` Part, summarized, as one JSON file. */
     save(name, extra = {}) {
       const parts = Object.fromEntries([...addresses].filter(address => address.startsWith('px.exp.lab.') || address.startsWith('proposal.lab.')).sort().map(address => [address, summarize(pxc.get(address))]));
-      mkdirSync(STORE, { recursive: true });
-      writeFileSync(join(STORE, `${name}.json`), JSON.stringify({ ...extra, parts }, null, 2) + '\n');
-      return join(STORE, `${name}.json`);
+      const { fs, path } = onDisk(), file = path.join(STORE, `${name}.json`);
+      fs.mkdirSync(STORE, { recursive: true });
+      fs.writeFileSync(file, JSON.stringify({ ...extra, parts }, null, 2) + '\n');
+      return file;
     },
     /** One run record per composition, under store/records, the way the brain's harness files them. */
     saveRecord(name) {
-      const { record } = lab.runRecord(name);
-      mkdirSync(join(STORE, 'records'), { recursive: true });
-      writeFileSync(join(STORE, 'records', `${name}.json`), JSON.stringify(summarize(record), null, 2) + '\n');
+      const { record } = lab.runRecord(name), { fs, path } = onDisk(), records = path.join(STORE, 'records');
+      fs.mkdirSync(records, { recursive: true });
+      fs.writeFileSync(path.join(records, `${name}.json`), JSON.stringify(summarize(record), null, 2) + '\n');
       return record;
     }
   };

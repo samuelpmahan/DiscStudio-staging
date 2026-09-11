@@ -19,10 +19,8 @@
  * the corpus it was fitted on are not in this repository
  * (proposal.lab.s1.recognition).
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { labAddress, labDocument } from './address.js';
-import { SOURCE } from './source.js';
+import { readSource, readSourceJson } from './source-data.js';
 import { parseYaml } from './yaml.js';
 import { compileMermaidPcr, lowerToPql } from './mermaid.js';
 import { S0_ADDRESSES } from './s0.js';
@@ -242,11 +240,11 @@ export const S1_ADDRESSES = {
 };
 
 /** The LAB's S1 document, lowercased: the baseline path, with the raster seeded warm. */
-export function s1YamlDocument(lab) { return lab.document('S1', labDocument(parseYaml(readFileSync(join(SOURCE, 'S1.pcr.yaml'), 'utf8'))).Ticks); }
+export function s1YamlDocument(lab) { return lab.document('S1', labDocument(parseYaml(readSource('S1.pcr.yaml'))).Ticks); }
 
 /** The compiled Mermaid S1: the same Calculations, plus the RasterInput Tick that computes the warm raster. */
 export function s1MermaidDocument(lab) {
-  const compiled = compileMermaidPcr(readFileSync(join(SOURCE, 'S1.mmd'), 'utf8'), JSON.parse(readFileSync(join(SOURCE, 'S1.args.json'), 'utf8')));
+  const compiled = compileMermaidPcr(readSource('S1.mmd'), readSourceJson('S1.args.json'));
   return lab.document('S1-mermaid', labDocument(lowerToPql(compiled).document).Ticks);
 }
 
@@ -272,7 +270,7 @@ export function digitModel(knobs) {
 /** Seed one board for S1 and run one of its two documents. */
 export function runS1(lab, { croppedImage, document, seedRaster }) {
   lab.put(S0_ADDRESSES.canonicalPixels, croppedImage);
-  const knobs = labDocument(parseYaml(readFileSync(join(SOURCE, 'S1.pcr.yaml'), 'utf8'))).Ticks.find(tick => tick.name === 'WhiteDigitRecognition').Calculations[0].args.knobs;
+  const knobs = labDocument(parseYaml(readSource('S1.pcr.yaml'))).Ticks.find(tick => tick.name === 'WhiteDigitRecognition').Calculations[0].args.knobs;
   lab.put(S1_ADDRESSES.model, digitModel(knobs));
   if (seedRaster) lab.put(S1_ADDRESSES.croppedRaster, asMaskRaster(croppedImage));
   const { run, receipt } = lab.run(document.PrincipleComponentRender, document);

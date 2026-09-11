@@ -10,9 +10,7 @@
  * Deterministic: one seeded LCG, no clock, no `Math.random`, so the S0 crop and
  * every S1 component below is the same on every machine.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { SOURCE } from './source.js';
+import { readSourceJson } from './source-data.js';
 
 export const CHROME_TOP = 40, CHROME_BOTTOM = 60, WIDTH = 512, HEIGHT = 1024;
 
@@ -83,7 +81,7 @@ export function fixtureCapture(seed = 20260911) {
   // Two badges reading different hole numbers, so the route's order is the
   // reading and not the position: badge "01" is hole 1, badge "10" is hole 10.
   const badges = [badge(rgba, WIDTH, 120, 300, '10'), badge(rgba, WIDTH, 300, 620, '01')];
-  const sprite = JSON.parse(readFileSync(join(SOURCE, 'basket-sprite.json'), 'utf8'));
+  const sprite = readSourceJson('basket-sprite.json');
   const baskets = [basket(rgba, WIDTH, 150, 470, sprite), basket(rgba, WIDTH, 330, 800, sprite)];
   const tees = [tee(rgba, WIDTH, 60, 250), tee(rgba, WIDTH, 420, 560)];
   return { imageId: `lab-fixture-${seed}`, widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length, badges, baskets, tees };
