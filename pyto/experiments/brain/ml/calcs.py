@@ -59,6 +59,7 @@ _FUNCTIONS = {
     "tree_predict": trees.tree_predict,
     "forest_fit": trees.forest_fit,
     "forest_predict": trees.forest_predict,
+    "forest_oob": trees.forest_oob,
     "gbm_fit": trees.gbm_fit,
     "gbm_predict": trees.gbm_predict,
     "learning_curve": trees.learning_curve,

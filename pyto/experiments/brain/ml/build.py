@@ -1053,6 +1053,52 @@ def multiclass_and_second_order(store):
         )
 
 
+@section
+def out_of_bag(store):
+    """the held-out number the forest gets for free, against one somebody paid for."""
+    data = store.get("px.exp.brain.data.ml.trees")
+    truth = [row[-1] for row in core.as_rows(data)]
+    forest = calcs.call("forest_fit", {"data": data, "target": "label", "n_trees": 25,
+                                        "seed": 141, "max_depth": 6,
+                                        "for": "twenty-five trees, each with a third of the rows held back from it"})
+    oob = calcs.call("forest_oob", {"model": forest})
+    parts.result(store, VERTICAL, "forest_oob", "trees", {
+        "for": oob["for"], "metric": oob["metric"], "score": oob["score"],
+        "scored": oob["scored"], "uncovered": len(oob["uncovered"]),
+        "mean_voters": oob["mean_voters"], "n_trees": oob["n_trees"]})
+    fitted = calcs.call("classification_metrics", {
+        "y_true": truth,
+        "y_pred": calcs.call("forest_predict", {"model": forest, "data": data})["labels"]})
+    parts.oracle(
+        store, VERTICAL, "forest_oob", "is_below_the_training_score",
+        oob["score"] < fitted["accuracy"], True,
+        "the same forest scored on the rows it was fitted to", 0.0,
+        "a forest deep enough to memorise its training rows scores 1.0 on them; the out-of-bag number is the one worth reading",
+    )
+    split = calcs.call("train_test_split", {"data": data, "seed": 141, "test_size": 0.3, "stratify": "label"})
+    honest = calcs.call("forest_fit", {"data": core.take(data, split["train_index"]), "target": "label",
+                                        "n_trees": 25, "seed": 141, "max_depth": 6})
+    held_out = core.take(data, split["test_index"])
+    paid_for = calcs.call("classification_metrics", {
+        "y_true": [row[-1] for row in core.as_rows(held_out)],
+        "y_pred": calcs.call("forest_predict", {"model": honest, "data": held_out})["labels"]})["accuracy"]
+    parts.result(store, VERTICAL, "classification_metrics", "forest_held_out",
+                 {"for": "the same forest's accuracy on a real held-out third", "accuracy": paid_for})
+    parts.oracle(
+        store, VERTICAL, "forest_oob", "agrees_with_a_held_out_split",
+        oob["score"], paid_for,
+        "a stratified 30 percent split, fitted and scored separately", 0.08,
+        "the out-of-bag score costs nothing; the only question is whether it says the same thing as the score that costs a third of the data",
+    )
+    share = core.mean([float(size) / forest["n"] for size in forest["oob_sizes"]])
+    parts.oracle(
+        store, VERTICAL, "forest_fit", "a_bootstrap_leaves_out_about_a_third",
+        0.30 < share < 0.42, True,
+        "1/e, the share of rows a bootstrap of n draws with replacement misses", 0.0,
+        "if the bags are not really bootstraps the out-of-bag rows are not really held out, and the free number is not free",
+    )
+
+
 # --- the map and the findings ------------------------------------------------
 
 
@@ -1072,7 +1118,6 @@ STUBBED = [
     {"address": "fn.brain.ml.logistic_gbm_fit multiclass", "why": "the booster is two-class; the k-class version boosts k scores against the softmax loss and needs its own oracle"},
     {"address": "fn.brain.ml.softmax_fit newton", "why": "the softmax is fitted by gradient descent only; its hessian is k*d by k*d and the logistic bracket's lesson says the solve would still pay"},
     {"address": "fn.brain.ml.cross_validate nested", "why": "the penalty on the lasso path is chosen on the same folds it is scored on, so that score is optimistic and an outer loop is what fixes it"},
-    {"address": "fn.brain.ml.forest_fit oob_score", "why": "the out-of-bag rows are recorded per tree (oob_sizes) but nothing scores on them yet"},
     {"address": "fn.brain.ml.mlp_fit deep", "why": "the backward pass is hand-derived for exactly one hidden layer; a second layer needs autograd or another hand derivation, and a half-checked one is worth less than none"},
     {"address": "fn.brain.ml.knn_fit approximate", "why": "the exact vote is the reference; a kd-tree or ball-tree is a backend of it, and belongs after the shared pairwise-distance primitive"},
 ]
@@ -1084,8 +1129,8 @@ NEXT = [
      "for": "four brackets now name a winner and every calculation still defaults to the py reference; the gap between what the evidence says and what the code does is the next honest thing to close"},
     {"what": "elastic net, and the same path treatment for ridge and for the tree depth",
      "for": "the lasso path made the choice readable; every other model here still takes its hyper-parameter on faith"},
-    {"what": "out-of-bag scoring for the forest, and a multiclass booster over the softmax loss",
-     "for": "the forest already records which rows each tree did not see; the booster is two-class and the softmax shows what the k-class loss would be"},
+    {"what": "a multiclass booster over the softmax loss, and out-of-bag feature importance from the same bags",
+     "for": "the booster is two-class; and the bags that give a free held-out score also give a free importance, by permuting one column of the out-of-bag rows"},
     {"what": "nested cross-validation, so a hyper-parameter chosen on the folds is not also scored on them",
      "for": "lasso_path picks its penalty on the same folds it reports; that number is optimistic and the Part should say so"},
     {"what": "a deeper network, softmax output and mini-batch shuffling through the effects handle rather than a seed",
@@ -1093,6 +1138,11 @@ NEXT = [
 ]
 
 FINDINGS = {
+    "the-bag-a-tree-drew-is-a-held-out-set-nobody-paid-for": {
+        "kind": "strength",
+        "text": "a bootstrap of n rows misses about 1/e of them, so every tree in the forest already has a test set and the forest already has a held-out score: 0.94 out-of-bag against 1.00 on the rows it was fitted to, and within 8 points of what a real stratified 30 percent split says. it is a Part, it comes out of the same fit, and it costs no data.",
+        "for": "every other honest number in this vertical costs a third of the rows; this one is the only one that does not, and it is the one a small dataset most needs",
+    },
     "python-3-12-changed-sum-so-pure-python-data-is-not-portable": {
         "kind": "friction",
         "text": "the owner's machine (python 3.12.3, numpy 2.5.3) failed this vertical's committed-store test, and the measured 1.8e-15 difference was blamed on numpy's accumulation order. it was not numpy. python 3.12 changed the built-in sum() to neumaier compensated summation, so every pure-python float sum in this vertical -- including the one line that builds a synthetic target, y = intercept + sum(w*x) + noise -- returns a different last ulp on 3.11 and on 3.12. that ulp then chooses a different split threshold in a tree, and a cross-validated forest score moved in its third significant digit.",
