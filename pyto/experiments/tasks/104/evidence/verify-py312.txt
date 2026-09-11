@@ -1,0 +1,4 @@
+# the same suite on the owner's stack: python 3.12.3, numpy 2.5.3, scipy 1.18.1
+
+Ran 736 tests in 41.618s
+OK

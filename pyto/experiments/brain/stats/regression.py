@@ -17,6 +17,21 @@ from pyto import Calculation
 from stats.distributions import cdf as distribution_cdf
 
 
+def _weights(args, rows):
+    """the observation weights, checked. no weights is the same as all-ones."""
+    weights = args.get("weights")
+    if weights is None:
+        return None
+    weights = [float(v) for v in weights]
+    if len(weights) != rows:
+        raise ValueError("there are %d rows and %d weights" % (rows, len(weights)))
+    if any(v < 0.0 for v in weights):
+        raise ValueError("a weight cannot be negative")
+    if not any(v > 0.0 for v in weights):
+        raise ValueError("at least one weight has to be positive")
+    return weights
+
+
 def _design(args):
     x = args["x"]
     if isinstance(x, dict):
@@ -215,6 +230,49 @@ def ols_lstsq(args):
                    [[float(v) for v in row] for row in inverse])
 
 
+def wls(args):
+    """weighted least squares, through whichever of the three solvers is named.
+
+    the weights go into the DESIGN, not into a fourth solver: each row of X and
+    each y is multiplied by sqrt(w), which makes the weighted normal equations
+    the ordinary ones of the scaled problem. so the tournament's answer still
+    holds -- `solver` picks the same three routes -- and the reported residuals
+    and fitted values are put back on the original scale before they are handed
+    out. reference: numpy.linalg.lstsq on the scaled design.
+    """
+    rows = args["x"]
+    length = len(rows["rows"]) if isinstance(rows, dict) else len(rows)
+    weights = _weights(args, length)
+    if weights is None:
+        return ols(args)
+    solver = args.get("solver", DEFAULT_SOLVER)
+    if solver not in SOLVERS:
+        raise ValueError("unknown solver %r: one of %s" % (solver, ", ".join(sorted(SOLVERS))))
+    design, y, names = _design(args)
+    roots = [math.sqrt(w) for w in weights]
+    scaled_rows = [[value * root for value in row] for row, root in zip(design, roots)]
+    scaled_y = [value * root for value, root in zip(y, roots)]
+    backend = "np" if solver == "lstsq" else "py"
+    fit = SOLVERS[solver]({"x": scaled_rows, "y": scaled_y, "intercept": False,
+                           "columns": names, "backend": backend})
+    beta = fit["coefficients"]
+    fitted = [math.fsum(b * v for b, v in zip(beta, row)) for row in design]
+    residuals = [actual - guess for actual, guess in zip(y, fitted)]
+    weighted_rss = math.fsum(w * r * r for w, r in zip(weights, residuals))
+    total_weight = math.fsum(weights)
+    centre = math.fsum(w * value for w, value in zip(weights, y)) / total_weight
+    weighted_tss = math.fsum(w * (value - centre) ** 2 for w, value in zip(weights, y))
+    out = dict(fit)
+    out.update({"names": names, "weights": weights, "fitted": fitted,
+                "residuals": residuals, "rss": weighted_rss, "tss": weighted_tss,
+                "r2": (1.0 - weighted_rss / weighted_tss) if weighted_tss > 0 else None,
+                "solver": solver})
+    free = out["df_residual"]
+    out["adj_r2"] = ((1.0 - (1.0 - out["r2"]) * (len(y) - 1) / free)
+                     if (out["r2"] is not None and free > 0) else None)
+    return out
+
+
 SOLVERS = {"normal": ols_normal, "qr": ols_qr, "lstsq": ols_lstsq}
 
 DEFAULT_SOLVER = "lstsq"
@@ -370,6 +428,7 @@ def predict(args):
 
 
 OLS = Calculation("fn.brain.stats.ols", ols)
+WLS = Calculation("fn.brain.stats.ols_weighted", wls)
 OLS_NORMAL = Calculation("fn.brain.stats.ols_normal", ols_normal)
 OLS_QR = Calculation("fn.brain.stats.ols_qr", ols_qr)
 OLS_LSTSQ = Calculation("fn.brain.stats.ols_lstsq", ols_lstsq)
@@ -377,4 +436,5 @@ RIDGE = Calculation("fn.brain.stats.ridge", ridge)
 LOGISTIC = Calculation("fn.brain.stats.logistic", logistic)
 PREDICT = Calculation("fn.brain.stats.predict", predict)
 
-CALCS = {c.address: c for c in (OLS, OLS_NORMAL, OLS_QR, OLS_LSTSQ, RIDGE, LOGISTIC, PREDICT)}
+CALCS = {c.address: c
+         for c in (OLS, WLS, OLS_NORMAL, OLS_QR, OLS_LSTSQ, RIDGE, LOGISTIC, PREDICT)}
