@@ -10,7 +10,7 @@ import { createStudioRuntime } from '../src/runtime.js';
 import { createSeed } from '../src/seed.js';
 
 const studio = () => createStudioRuntime(createSeed());
-const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-s4', 'lab-s5', 'lab-route'];
+const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-s4', 'lab-s5', 'lab-s6', 'lab-route'];
 
 test('the pipeline runs S0 through the round as one composition per Stage', () => {
   const runtime = studio();
@@ -106,7 +106,7 @@ test('a Stage still being built joins the pipeline as one spec and runs, draws a
     view: lab => ({ kind: 'boxes', tone: 'hole', objects: lab.get(HOLES).map((hole, index) => ({ id: `hole-${hole.number}`, label: `hole ${hole.number}`, bbox: [0, 0, 8, 8], at: [4, 4], part: HOLES, index, detail: hole })) })
   });
   const state = runtime.lab.pipeline(runtime.lab.sample());
-  assert.equal(state.stages.length, 8);
+  assert.equal(state.stages.length, 9);
   assert.equal(state.stages.at(-1).status, 'produced');
   assert.deepEqual(state.stages.at(-1).produced, [{ address: HOLES, count: 2 }]);
   assert.ok(runtime.pxc.has('px.receipt.lab-stub'));
@@ -166,4 +166,36 @@ test('the anchors come from whichever Part the Stages published', async () => {
   assert.ok(fromRound.frame.widthPx < 512);
   assert.throws(() => courseAnchors(null), /No course has been built yet/);
   assert.throws(() => courseAnchors([]), /no hole a card could stand at/);
+});
+
+test('a Stage the studio has never seen draws itself by the address it publishes', () => {
+  const runtime = studio();
+  const RAYS = 'px.exp.lab.teebadge.rays', STRAIGHT = 'px.exp.lab.holes.straight', MYSTERY = 'px.exp.lab.mystery.thing';
+  const stub = (key, stage, produces, calculate, bindings) => runtime.lab.addStage({
+    key, stage, title: stage, composition: `lab-${key}`, needs: Object.values(bindings), produces,
+    register: lab => lab.register(`fn.lab.stub.${key}`, calculate),
+    ticks: () => [{ name: `${stage}.stub`, Calculations: [{ call: `fn.lab.stub.${key}`, with: bindings, args: {}, into: produces[0] }] }]
+  });
+  // A Stage numbered S5 today and S6 tomorrow: the drawing follows the address.
+  stub('rays', 'Tee → Badge', [RAYS], ({ badges, tees }) => tees.map((tee, index) => ({ hole: index + 1, from: tee.center, to: badges[index % badges.length].unaccountedButOwned.bbox.slice(0, 2) })), { badges: 'px.exp.lab.badges.objects', tees: 'px.exp.lab.tees' });
+  // An address the table does not know: the Stage runs, produces and inspects, and is simply not drawn.
+  stub('mystery', 'S9', [MYSTERY], ({ tees }) => ({ counted: tees.length }), { tees: 'px.exp.lab.tees' });
+  // A known address whose shape the table cannot read: produced, not drawn, with the reason.
+  stub('odd', 'S6', [STRAIGHT], ({ tees }) => tees.map(tee => ({ nothing: tee.px.length })), { tees: 'px.exp.lab.tees' });
+  const state = runtime.lab.pipeline(runtime.lab.sample());
+  assert.deepEqual(state.stages.slice(-3).map(stage => stage.status), ['produced', 'produced', 'produced']);
+  const views = Object.fromEntries(runtime.lab.views().map(view => [view.key, view]));
+  assert.equal(views.rays.kind, 'rays');
+  assert.equal(views.rays.tone, 'ray');
+  assert.equal(views.rays.legs.length, 3);
+  assert.equal(views.rays.objects.length, 3);
+  assert.ok(views.rays.legs.every(leg => leg.from.length === 2 && leg.to.length === 2));
+  assert.equal(views.mystery, undefined, 'an unknown address is not drawn');
+  assert.equal(views.odd.kind, 'undrawn');
+  assert.match(views.odd.note, /this studio could not draw it: a straight hole carries no tee and basket points/);
+  // Not drawn is not not-run: the Parts are there and the receipt is listed.
+  assert.ok(runtime.pxc.has(MYSTERY) && runtime.pxc.has(STRAIGHT));
+  assert.ok(runtime.receipts().rows.some(row => row.name === 'lab-mystery'));
+  // And the cards follow the holes: S6's straight holes take the anchor over the fallbacks once they exist.
+  assert.equal(runtime.lab.anchorAddress(), STRAIGHT);
 });

@@ -2,31 +2,39 @@
  * The LAB Stages, as the studio runs them.
  *
  * `src/lab/*.js` is the port: the Calculations, and the PQL document each Stage
- * declares (S1's own `PrincipleComponentRender.yaml`, the documents S0's, S2's
- * and S3's OperationSpecs imply, and the round over their produce Parts). Node
+ * declares (S1's own `PrincipleComponentRender.yaml`, the documents the other
+ * Stages' OperationSpecs imply, and the rounds over their produce Parts). Node
  * runs them through `createLab()`; the studio runs the same modules on its own
  * board (src/runtime.js `lab`), so this file is the one place that says, per
  * Stage: what it is called, what it must read before it can run, what it seeds,
- * which Ticks it runs, what it publishes, and what a reader can see of its
- * produce on a raster.
+ * which Ticks it runs and what it publishes.
  *
  * One spec is one composition. The studio names them `lab-s0`, `lab-s1`, ... and
  * each binds the previous Stage's produce Parts by address, exactly as the
  * documents already do -- nothing here re-plumbs a Stage.
  *
- * Adding S4/S5/S6: append a spec to `labStageSpecs()` below (or hand one to
- * `runtime.lab.addStage` for a stage that is still being built). `validateStage`
- * says what a spec owes, and the Course route draws any spec's `view()` with no
- * new drawing code: `boxes` for objects with a bbox, `path` for a round. A spec that
- * brings its own Calculations carries them as `register(lab)`, which the pipeline
- * calls once when the Stage joins.
+ * A Stage is drawn by the ADDRESSES IT PUBLISHES, not by its number or its name:
+ * `DRAWINGS` below is a table from a produce address to what a reader sees of
+ * it, and `stageView` picks the first row a Stage's produce matches. A Stage
+ * whose number changes keeps its drawing; a Stage that publishes an address the
+ * table does not know still runs, still produces, still inspects, and says so
+ * ("produced, not drawn") instead of refusing. Drawing one is one row here.
+ *
+ * Adding a Stage: append its spec to `labStageSpecs()` (or hand one to
+ * `runtime.lab.addStage` while it is still being built), and add its address to
+ * `DRAWINGS` if it has something to show. `validateStage` says what a spec owes;
+ * a spec that brings its own Calculations carries them as `register(lab)`.
  */
 import { S0_ADDRESSES, registerS0, s0Document } from './s0.js';
 import { S1_ADDRESSES, registerS1, s1YamlDocument, digitModel, asMaskRaster } from './s1.js';
 import { S2_ADDRESSES, registerS2, s2Document } from './s2.js';
 import { S3_ADDRESSES, registerS3, s3Document } from './s3.js';
-import { S4_ADDRESSES, s4Spec } from './s4.js';
-import { S5_ADDRESSES, s5Spec, cellCenter } from './s5.js';
+// The Stages after S3 are each their own module's spec. A module that is renamed
+// (S4..S7 were renumbered mid-sprint) changes exactly these import lines: every
+// other thing the studio knows about a Stage is an address it publishes.
+import { s4Spec } from './s4.js';
+import { s5Spec, cellCenter } from './s5.js';
+import { s6Spec } from './s6.js';
 import { ROUTE_ADDRESSES, registerRoute, routeDocument } from './route.js';
 import { labAddress, labDocument } from './address.js';
 import { parseYaml } from './yaml.js';
@@ -41,17 +49,16 @@ export function s1Knobs() {
   return labDocument(parseYaml(readSource('S1.pcr.yaml'))).Ticks.find(tick => tick.name === 'WhiteDigitRecognition').Calculations[0].args.knobs;
 }
 
-/** Every `fn.lab.*` Calculation the Stages below call, on whichever board is given. */
+/** Every `fn.lab.*` Calculation the Stages written here call, on whichever board is given. */
 export function registerLabCalculations(lab) {
   registerS0(lab); registerS1(lab); registerS2(lab); registerS3(lab); registerRoute(lab);
 }
 
-const box = (bbox, extra) => ({ bbox, at: [bbox[0] + bbox[2] / 2, bbox[1] + bbox[3] / 2], ...extra });
-
 /**
- * The Stages that are landed. Order is load-bearing: S3's family vote only
- * sees a clean pair because S1's badge mute already ran (proposal.lab.s3.badgemute),
- * and the round has no anchors until S1, S2 and S3 have published theirs.
+ * The Stages, in the order they must run. Order is load-bearing: S3's family
+ * vote only sees a clean pair because S1's badge mute already ran
+ * (proposal.lab.s3.badgemute), and no round has an anchor until the Stages that
+ * find tees, baskets and holes have published theirs.
  */
 export function labStageSpecs() {
   return [
@@ -64,14 +71,7 @@ export function labStageSpecs() {
         if (!capture || !Array.isArray(capture.rgba)) throw new Error('lab S0: a capture is { imageId, widthPx, heightPx, rgba }.');
         lab.put(S0_ADDRESSES.selectedInput, { decoded: capture, label });
       },
-      ticks: lab => s0Document(lab).Ticks,
-      view(lab) {
-        const crop = lab.get(S0_ADDRESSES.cropBounds), raster = lab.get(S0_ADDRESSES.canonicalPixels);
-        return { kind: 'raster', tone: 'raster', objects: [{
-          id: 'canonical-pixels', label: `${raster.widthPx} × ${raster.heightPx} canonical pixels`,
-          part: S0_ADDRESSES.canonicalPixels, detail: { crop: crop.source, insets: crop.insets }
-        }] };
-      }
+      ticks: lab => s0Document(lab).Ticks
     },
     {
       key: 's1', stage: 'S1', title: 'Badges', composition: 'lab-s1',
@@ -82,98 +82,214 @@ export function labStageSpecs() {
         lab.put(S1_ADDRESSES.model, digitModel(s1Knobs()));
         lab.put(S1_ADDRESSES.croppedRaster, asMaskRaster(lab.get(S0_ADDRESSES.canonicalPixels)));
       },
-      ticks: lab => s1YamlDocument(lab).Ticks,
-      view(lab) {
-        return { kind: 'boxes', tone: 'badge', objects: lab.get(BADGES).map((badge, index) => box(badge.unaccountedButOwned.bbox, {
-          id: badge.id, label: badge.reading.status === 'read' ? `hole ${Number(badge.reading.value)}` : 'badge · unread',
-          part: BADGES, index, detail: { reading: badge.reading.value, status: badge.reading.status, digits: badge.digits.length, pixels: badge.pixels.length }
-        })) };
-      }
+      ticks: lab => s1YamlDocument(lab).Ticks
     },
     {
       key: 's2', stage: 'S2', title: 'Baskets', composition: 'lab-s2',
       about: 'the substrate S1 publishes beside its badges, then the basket family: a bright body that matches the sprite inside a dark shell whose margins the family agrees on.',
       needs: [labAddress('px.s1.exp.maskComponents.part.blackMask'), BADGES],
       produces: [S2_ADDRESSES.fields, S2_ADDRESSES.family, S2_ADDRESSES.shellFamily, S2_ADDRESSES.objects],
-      ticks: lab => s2Document(lab).Ticks,
-      view(lab) {
-        return { kind: 'boxes', tone: 'basket', labelBelow: true, objects: lab.get(S2_ADDRESSES.objects).map((basket, index) => box(basket.bbox, {
-          id: `basket-${index + 1}`, label: `basket ${index + 1}`, part: S2_ADDRESSES.objects, index,
-          detail: { whitePx: basket.whitePx, blackPx: basket.blackPx, px: basket.px.length }
-        })) };
-      }
+      ticks: lab => s2Document(lab).Ticks
     },
     {
       key: 's3', stage: 'S3', title: 'Visible tees', composition: 'lab-s3',
       about: "enclosed rings that are elongated and are not a badge's own digit hole, voted into one family by their frames: the tees a reader can actually see on the map.",
       needs: [S2_ADDRESSES.fields, BADGES],
       produces: [S3_ADDRESSES.rings, S3_ADDRESSES.family, S3_ADDRESSES.objects],
-      ticks: lab => s3Document(lab).Ticks,
-      view(lab) {
-        return { kind: 'boxes', tone: 'tee', objects: lab.get(S3_ADDRESSES.objects).map((tee, index) => box(tee.bbox, {
-          id: `tee-${index + 1}`, label: `tee ${index + 1}`, part: S3_ADDRESSES.objects, index,
-          at: tee.center, detail: { center: tee.center, px: tee.px.length, angleRad: tee.angleRad }
-        })) };
-      }
+      ticks: lab => s3Document(lab).Ticks
     },
+    s4Spec(),
+    s5Spec(),
+    s6Spec(),
     {
-      // S4 and S5 arrive as their own modules' specs (src/lab/s4.js `s4Spec`,
-      // src/lab/s5.js `s5Spec`): the Stage says what it consumes, produces, and
-      // runs, and only what a reader sees of it is added here.
-      ...s4Spec(),
-      view(lab) {
-        const holes = lab.get(S4_ADDRESSES.objects);
-        return { kind: 'boxes', tone: 'hole', labelBelow: true, hitOutline: true, objects: holes.map((hole, index) => {
-          const anchors = [hole.badge.at, hole.tee?.at, hole.basket?.at].filter(Boolean);
-          const xs = anchors.map(at => at[0]), ys = anchors.map(at => at[1]), pad = 14;
-          const bbox = [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + pad * 2, Math.max(...ys) - Math.min(...ys) + pad * 2];
-          return {
-            id: `hole-${hole.number}`, label: hole.complete ? `hole ${hole.number}` : `hole ${hole.number} · missing ${hole.missing.join(' + ')}`,
-            bbox, part: S4_ADDRESSES.objects, index,
-            detail: { number: hole.number, tee: hole.tee?.id ?? null, basket: hole.basket?.id ?? null, confidence: hole.confidence, missing: hole.missing }
-          };
-        }) };
-      }
-    },
-    {
-      ...s5Spec(),
-      view(lab) {
-        const graph = lab.get(S5_ADDRESSES.graph), frame = graph.frame;
-        const at = id => graph.nodes.find(node => node.id === id)?.at ?? null;
-        return {
-          kind: 'cells', tone: 'obstacle',
-          // The obstacle map, as the cells it is: one square per terrain cell, in raster coordinates.
-          cells: { size: frame.cellPx, centres: graph.obstacles.terrainCells.map(cell => cellCenter(frame, cell)) },
-          legs: graph.edges.map(edge => ({ kind: edge.straightIsBlocked ? 'blocked' : edge.kind, hole: edge.hole, from: at(edge.from), to: at(edge.to), lengthPx: edge.straightLengthPx })).filter(edge => edge.from && edge.to),
-          objects: graph.holes.map((hole, index) => ({
-            id: `course-hole-${hole.number}`, label: `${hole.lengthPx} px`, part: S5_ADDRESSES.graph, index,
-            at: [(hole.tee.at[0] + hole.basket.at[0]) / 2, (hole.tee.at[1] + hole.basket.at[1]) / 2],
-            detail: { number: hole.number, lengthPx: hole.lengthPx, bearingDeg: hole.bearingDeg, confidence: hole.confidence }
-          }))
-        };
-      }
-    },
-    {
-      key: 'route', stage: 'Round', title: 'The round', composition: 'lab-route',
-      about: 'the course itself: the holes in the order S1 read off the badges, each tee to its basket and on to the next tee, over the canonical raster.',
+      key: 'route', stage: 'Straight round', title: 'The round, measured straight', composition: 'lab-route',
+      about: 'the holes in the order S1 read off the badges, each tee to its basket and on to the next tee in a straight line: the measure a searched round is compared against.',
       needs: [BADGES, S2_ADDRESSES.objects, S3_ADDRESSES.objects],
       produces: [ROUTE_ADDRESSES.anchors, ROUTE_ADDRESSES.order, ROUTE_ADDRESSES.legs, ROUTE_ADDRESSES.path(LAB_COURSE)],
-      ticks: lab => routeDocument(lab, { course: LAB_COURSE }).composition.Ticks,
-      view(lab) {
-        const address = ROUTE_ADDRESSES.path(LAB_COURSE), path = lab.get(address);
-        return {
-          kind: 'path', tone: 'round',
-          points: path.waypoints.map(point => ({ id: point.id, at: point.at })),
-          legs: path.legs.map(leg => ({ kind: leg.kind, hole: leg.hole, from: leg.from.at, to: leg.to.at, lengthPx: leg.lengthPx })),
-          objects: path.holes.map((hole, index) => ({
-            id: `hole-${hole.number}`, label: `hole ${hole.number}`, part: address, index,
-            at: path.legs.find(leg => leg.kind === 'play' && leg.hole === hole.number)?.from.at ?? null,
-            detail: { ...hole, playLengthPx: path.legs.find(leg => leg.kind === 'play' && leg.hole === hole.number)?.lengthPx ?? null }
-          }))
-        };
-      }
+      ticks: lab => routeDocument(lab, { course: LAB_COURSE }).composition.Ticks
     }
   ];
+}
+
+/* ------------------------------------------------------------------ */
+/* what a reader sees of a Stage, by the address the Stage publishes    */
+/* ------------------------------------------------------------------ */
+
+const box = (bbox, extra) => ({ bbox, at: [bbox[0] + bbox[2] / 2, bbox[1] + bbox[3] / 2], ...extra });
+/** A point, however the Stage that published it wrote one: `[x, y]`, `{ at }`, or `{ x, y }`. */
+export function pointOf(value) {
+  if (Array.isArray(value) && typeof value[0] === 'number' && typeof value[1] === 'number') return [value[0], value[1]];
+  if (!value || typeof value !== 'object') return null;
+  if (value.at) return pointOf(value.at);
+  if (typeof value.x === 'number' && typeof value.y === 'number') return [value.x, value.y];
+  if (Array.isArray(value.centre ?? value.center)) return pointOf(value.centre ?? value.center);
+  return null;
+}
+const firstList = value => Array.isArray(value) ? value : Object.values(value ?? {}).find(Array.isArray) ?? [];
+const numbered = (item, index, what) => item.number ?? item.hole ?? item.id ?? `${what}-${index + 1}`;
+
+/**
+ * One row per address a Stage can publish. `build` is given the board and the
+ * address; anything it throws is reported as "produced, not drawn" rather than
+ * taking the route down, because a Stage landing with a shape this table has not
+ * seen is a drawing to add, not a broken studio.
+ */
+export const DRAWINGS = [
+  {
+    address: S0_ADDRESSES.canonicalPixels, kind: 'raster', tone: 'raster',
+    build: (lab, address) => {
+      const raster = lab.get(address), crop = lab.has(S0_ADDRESSES.cropBounds) ? lab.get(S0_ADDRESSES.cropBounds) : null;
+      return { objects: [{ id: 'canonical-pixels', label: `${raster.widthPx} × ${raster.heightPx} canonical pixels`, part: address, detail: { crop: crop?.source ?? null, insets: crop?.insets ?? null } }] };
+    }
+  },
+  {
+    address: BADGES, kind: 'boxes', tone: 'badge',
+    build: (lab, address) => ({ objects: lab.get(address).map((badge, index) => box(badge.unaccountedButOwned.bbox, {
+      id: badge.id, label: badge.reading.status === 'read' ? `hole ${Number(badge.reading.value)}` : 'badge · unread',
+      part: address, index, detail: { reading: badge.reading.value, status: badge.reading.status, digits: badge.digits.length, pixels: badge.pixels.length }
+    })) })
+  },
+  {
+    address: S2_ADDRESSES.objects, kind: 'boxes', tone: 'basket', labelBelow: true,
+    build: (lab, address) => ({ objects: lab.get(address).map((basket, index) => box(basket.bbox, {
+      id: `basket-${index + 1}`, label: `basket ${index + 1}`, part: address, index,
+      detail: { whitePx: basket.whitePx, blackPx: basket.blackPx, px: basket.px.length }
+    })) })
+  },
+  {
+    address: S3_ADDRESSES.objects, kind: 'boxes', tone: 'tee',
+    build: (lab, address) => ({ objects: lab.get(address).map((tee, index) => box(tee.bbox, {
+      id: `tee-${index + 1}`, label: `tee ${index + 1}`, part: address, index, at: tee.center,
+      detail: { center: tee.center, px: tee.px.length, angleRad: tee.angleRad }
+    })) })
+  },
+  {
+    // S4, recovery: objects that overlapped and were taken apart again.
+    prefix: 'px.exp.lab.recovered.', kind: 'boxes', tone: 'recovered',
+    build: (lab, address) => ({ objects: firstList(lab.get(address)).map((item, index) => {
+      const bbox = item.bbox ?? item.box, at = pointOf(item);
+      if (!bbox && !at) throw new Error('a recovered object carries neither a bbox nor a point');
+      return { ...(bbox ? box(bbox, {}) : { at }), id: `recovered-${numbered(item, index, 'object')}`, label: `recovered ${item.kind ?? ''} ${numbered(item, index, 'object')}`.replace(/\s+/g, ' ').trim(), part: address, index, detail: item };
+    }) })
+  },
+  {
+    // S5, Tee -> Badge: the ray each tee points along, at the badge it names.
+    address: 'px.exp.lab.teebadge.rays', kind: 'rays', tone: 'ray',
+    build: (lab, address) => {
+      const rays = firstList(lab.get(address));
+      const legs = rays.map((ray, index) => {
+        const from = pointOf(ray.from ?? ray.tee ?? ray.origin), to = pointOf(ray.to ?? ray.badge ?? ray.target);
+        if (!from || !to) throw new Error(`a ray carries no tee-to-badge points (keys: ${Object.keys(ray).join(', ')})`);
+        return { kind: 'ray', hole: numbered(ray, index, 'ray'), from, to, lengthPx: ray.lengthPx ?? null };
+      });
+      return { legs, objects: legs.map((leg, index) => ({ id: `ray-${leg.hole}`, label: `tee → badge ${leg.hole}`, at: [(leg.from[0] + leg.to[0]) / 2, (leg.from[1] + leg.to[1]) / 2], part: address, index, detail: rays[index] })) };
+    }
+  },
+  {
+    // S6, straight holes: tee, badge and basket on one line; what the ray could not resolve is a dogleg.
+    address: 'px.exp.lab.holes.straight', kind: 'holes', tone: 'hole', labelBelow: true,
+    build: (lab, address) => {
+      const holes = firstList(lab.get(address)), unresolvedAddress = 'px.exp.lab.holes.unresolved';
+      const legs = [], objects = [];
+      holes.forEach((hole, index) => {
+        const tee = pointOf(hole.tee), basket = pointOf(hole.basket), badge = pointOf(hole.badge);
+        if (!tee || !basket) throw new Error(`a straight hole carries no tee and basket points (keys: ${Object.keys(hole).join(', ')})`);
+        legs.push({ kind: 'play', hole: numbered(hole, index, 'hole'), from: tee, to: basket, lengthPx: hole.lengthPx ?? null });
+        objects.push({ id: `hole-${numbered(hole, index, 'hole')}`, label: `hole ${numbered(hole, index, 'hole')}`, at: badge ?? [(tee[0] + basket[0]) / 2, (tee[1] + basket[1]) / 2], part: address, index, detail: hole });
+      });
+      if (lab.has(unresolvedAddress)) firstList(lab.get(unresolvedAddress)).forEach((item, index) => {
+        const at = pointOf(item.badge ?? item);
+        if (at) objects.push({ id: `dogleg-${numbered(item, index, 'badge')}`, label: `dogleg · ${numbered(item, index, 'badge')}`, at, part: unresolvedAddress, index, detail: item });
+      });
+      return { legs, objects };
+    }
+  },
+  {
+    // The nearest-anchor hole assembly, kept as the fallback: a hole is the extent of its badge, tee and basket.
+    address: 'px.exp.lab.holes.objects', kind: 'boxes', tone: 'hole', labelBelow: true, hitOutline: true,
+    build: (lab, address) => ({ objects: lab.get(address).map((hole, index) => {
+      const anchors = [pointOf(hole.badge), pointOf(hole.tee), pointOf(hole.basket)].filter(Boolean);
+      const xs = anchors.map(at => at[0]), ys = anchors.map(at => at[1]), pad = 14;
+      return {
+        ...box([Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + pad * 2, Math.max(...ys) - Math.min(...ys) + pad * 2], {}),
+        id: `hole-${hole.number}`, label: hole.complete ? `hole ${hole.number}` : `hole ${hole.number} · missing ${hole.missing.join(' + ')}`,
+        part: address, index, detail: { number: hole.number, tee: hole.tee?.id ?? null, basket: hole.basket?.id ?? null, confidence: hole.confidence, missing: hole.missing }
+      };
+    }) })
+  },
+  {
+    // The course graph: the obstacle map as the cells it is, and the edges over it.
+    address: 'px.exp.lab.course.graph', kind: 'cells', tone: 'obstacle',
+    build: (lab, address) => {
+      const graph = lab.get(address), frame = graph.frame, at = id => graph.nodes.find(node => node.id === id)?.at ?? null;
+      return {
+        cells: { size: frame.cellPx, centres: graph.obstacles.terrainCells.map(cell => cellCenter(frame, cell)) },
+        legs: graph.edges.map(edge => ({ kind: edge.straightIsBlocked ? 'blocked' : edge.kind, hole: edge.hole, from: at(edge.from), to: at(edge.to), lengthPx: edge.straightLengthPx })).filter(edge => edge.from && edge.to),
+        objects: graph.holes.map((hole, index) => ({
+          id: `course-hole-${hole.number}`, label: `${hole.lengthPx} px`, part: address, index,
+          at: [(hole.tee.at[0] + hole.basket.at[0]) / 2, (hole.tee.at[1] + hole.basket.at[1]) / 2],
+          detail: { number: hole.number, lengthPx: hole.lengthPx, bearingDeg: hole.bearingDeg, confidence: hole.confidence }
+        }))
+      };
+    }
+  },
+  {
+    // The round actually walked: the searched polyline, bends and all.
+    address: 'px.exp.lab.round.path', kind: 'path', tone: 'round',
+    build: (lab, address) => {
+      // The searched round is one polyline, not a line per cell: the path bends
+      // as often as the obstacle map makes it bend.
+      const path = lab.get(address), points = path.points.map(pointOf).filter(Boolean);
+      const middle = points[Math.floor(points.length / 2)] ?? null;
+      return {
+        polyline: points,
+        points: path.waypoints.map(point => ({ id: point.id, at: pointOf(point) })).filter(point => point.at),
+        objects: middle ? [{
+          id: 'round', label: `round · ${path.lengthPx} px`, at: middle, part: address, index: 0,
+          detail: { lengthPx: path.lengthPx, playLengthPx: path.playLengthPx, walkLengthPx: path.walkLengthPx, cost: path.cost, cells: path.cells.length, waypoints: path.waypoints.map(waypoint => waypoint.id), unreachable: path.unreachable }
+        }] : []
+      };
+    }
+  },
+  {
+    // The straight round: the legs as drawn lines, the holes in badge order.
+    address: ROUTE_ADDRESSES.path(LAB_COURSE), kind: 'path', tone: 'straight',
+    build: (lab, address) => {
+      const path = lab.get(address);
+      return {
+        points: path.waypoints.map(point => ({ id: point.id, at: point.at })),
+        legs: path.legs.map(leg => ({ kind: leg.kind, hole: leg.hole, from: leg.from.at, to: leg.to.at, lengthPx: leg.lengthPx })),
+        objects: path.holes.map((hole, index) => ({
+          id: `straight-hole-${hole.number}`, label: `hole ${hole.number}`, part: address, index,
+          at: path.legs.find(leg => leg.kind === 'play' && leg.hole === hole.number)?.from.at ?? null,
+          detail: { ...hole, playLengthPx: path.legs.find(leg => leg.kind === 'play' && leg.hole === hole.number)?.lengthPx ?? null }
+        }))
+      };
+    }
+  }
+];
+
+/** The first drawing this Stage's produce matches, and the address it matched on. */
+export function drawingFor(spec, lab) {
+  for (const drawing of DRAWINGS) {
+    const address = (spec.produces ?? []).find(candidate => drawing.address ? candidate === drawing.address : candidate.startsWith(drawing.prefix));
+    if (address && lab.has(address)) return { drawing, address };
+  }
+  return null;
+}
+
+/**
+ * What a reader sees of one Stage. A Stage with no drawing yet, or one whose
+ * produce does not fit the drawing it matched, is reported and not drawn: the
+ * Stage still ran, its Parts are still on the board and still inspectable.
+ */
+export function stageView(spec, lab) {
+  const matched = drawingFor(spec, lab);
+  if (!matched) return null;
+  const { drawing, address } = matched;
+  const head = { key: spec.key, stage: spec.stage, title: spec.title, kind: drawing.kind, tone: drawing.tone, address, ...(drawing.labelBelow ? { labelBelow: true } : {}), ...(drawing.hitOutline ? { hitOutline: true } : {}) };
+  try { return { ...head, ...drawing.build(lab, address) }; }
+  catch (error) { return { ...head, kind: 'undrawn', objects: [], note: `${spec.stage} produced ${address}; this studio could not draw it: ${error.message}` }; }
 }
 
 /** What a Stage spec owes, checked once when it joins the pipeline. */

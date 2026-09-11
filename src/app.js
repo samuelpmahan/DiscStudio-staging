@@ -209,6 +209,7 @@ function labViewMarks(view) {
   const cells = view.cells ? `<path class="lab-cells" d="${view.cells.centres.map(([x, y]) => `M${x - size / 2} ${y - size / 2}h${size}v${size}h-${size}z`).join('')}"><title>${view.cells.centres.length} obstacle cells</title></path>` : '';
   const legs = (view.legs ?? []).map(leg => `<line class="lab-leg ${esc(leg.kind)}" x1="${leg.from[0]}" y1="${leg.from[1]}" x2="${leg.to[0]}" y2="${leg.to[1]}" vector-effect="non-scaling-stroke"><title>${esc(leg.kind)} · hole ${esc(leg.hole)} · ${esc(leg.lengthPx)} px</title></line>`).join('');
   const points = (view.points ?? []).map(point => `<circle class="lab-waypoint" cx="${point.at[0]}" cy="${point.at[1]}" r="5"><title>${esc(point.id)}</title></circle>`).join('');
+  const polyline = view.polyline?.length ? `<polyline class="lab-path" points="${view.polyline.map(point => point.join(',')).join(' ')}" vector-effect="non-scaling-stroke"/>` : '';
   const objects = view.objects.map(object => {
     const shape = object.bbox ? `<rect x="${object.bbox[0]}" y="${object.bbox[1]}" width="${object.bbox[2]}" height="${object.bbox[3]}" rx="2" vector-effect="non-scaling-stroke"/>` : object.at ? `<circle cx="${object.at[0]}" cy="${object.at[1]}" r="13" vector-effect="non-scaling-stroke"/>` : '';
     if (!shape) return '';
@@ -221,7 +222,7 @@ function labViewMarks(view) {
   }).join('');
   // A Stage whose boxes enclose another Stage's objects is grabbed by its outline,
   // so the badge inside a hole is still the thing a click on the badge selects.
-  return `<g class="lab-view tone-${esc(view.tone)}" data-lab-view="${esc(view.key)}" ${view.hitOutline ? 'data-hit="outline"' : ''}>${cells}${legs}${points}${objects}</g>`;
+  return `<g class="lab-view tone-${esc(view.tone)}" data-lab-view="${esc(view.key)}" ${view.hitOutline ? 'data-hit="outline"' : ''}>${cells}${legs}${polyline}${points}${objects}</g>`;
 }
 function labOverlaySvg(raster) {
   const marks = runtime.lab.views().filter(view => !ui.labHidden.has(view.key)).map(labViewMarks).join('');
