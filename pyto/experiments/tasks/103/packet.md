@@ -4,8 +4,58 @@ Intent: brain/backend six more primitives and the case table learns which engine
 Starting point: daad2bf5dc3d87920640b20d188bfe6599b28c97 (land(task-102): brain ml multiclass: softmax (multinomial) logistic regression beside the one-vs-rest one, and gradient boosting for classification on the logistic loss with its second-order step, each fit and predict a separate Calculation over a json-able model Part, oracled against scipy minimising the same cross-entropy and against the probabilities the fit itself recorded)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 13 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/backend/cases.py
+- M  pyto/experiments/brain/backend/evidence.py
+- M  pyto/experiments/brain/backend/ops.py
+- M  pyto/experiments/brain/backend/summary.py
+- M  pyto/experiments/brain/backend/test_evidence.py
+- M  pyto/experiments/brain/backend/test_ops.py
+- A  pyto/experiments/brain/records/brain_backend_correlate.json
+- A  pyto/experiments/brain/records/brain_backend_diff.json
+- A  pyto/experiments/brain/records/brain_backend_gradient.json
+- A  pyto/experiments/brain/records/brain_backend_matrix_rank.json
+- A  pyto/experiments/brain/records/brain_backend_outer.json
+- A  pyto/experiments/brain/records/brain_backend_pinv.json
+- M  pyto/experiments/brain/store/backend.json
+
+```
+pyto/experiments/brain/backend/cases.py            |   52 +-
+ pyto/experiments/brain/backend/evidence.py         |    6 +-
+ pyto/experiments/brain/backend/ops.py              |  203 +-
+ pyto/experiments/brain/backend/summary.py          |   11 +-
+ pyto/experiments/brain/backend/test_evidence.py    |    3 +-
+ pyto/experiments/brain/backend/test_ops.py         |   66 +-
+ .../brain/records/brain_backend_correlate.json     |  730 +++
+ .../brain/records/brain_backend_diff.json          |  355 ++
+ .../brain/records/brain_backend_gradient.json      |  358 ++
+ .../brain/records/brain_backend_matrix_rank.json   |  257 +
+ .../brain/records/brain_backend_outer.json         |  262 +
+ .../brain/records/brain_backend_pinv.json          |  452 ++
+ pyto/experiments/brain/store/backend.json          | 6697 +++++++++++++++++---
+ 13 files changed, 8698 insertions(+), 754 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.IRoxcfSl7z) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               728  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
