@@ -104,8 +104,8 @@
     "inputs_sha256": "fe80738db269fd0886652bf2a909b03afc8ca07651ff9787d8ca1f42be8615b8",
     "n": 3,
     "size": "bracket_n900_k6_d8",
-    "wall_ms_median": 17.792769000152475,
-    "wall_ms_min": 17.77299200057314
+    "wall_ms_median": 17.77456899981189,
+    "wall_ms_min": 17.574759999661183
   },
   "px.exp.brain.bench.ml.kmeans.gram.n600_k5_d6": {
     "backend": "gram",
@@ -114,8 +114,8 @@
     "inputs_sha256": "c87c6e2ea8afad5d785315d5b5f241fc4710d4f69bc209abd6df3d79fee54e0c",
     "n": 3,
     "size": "n600_k5_d6",
-    "wall_ms_median": 7.324804000745644,
-    "wall_ms_min": 7.276669999555452
+    "wall_ms_median": 7.143570000152977,
+    "wall_ms_min": 7.13601400002517
   },
   "px.exp.brain.bench.ml.kmeans.np.bracket_n900_k6_d8": {
     "backend": "np",
@@ -124,8 +124,8 @@
     "inputs_sha256": "fe80738db269fd0886652bf2a909b03afc8ca07651ff9787d8ca1f42be8615b8",
     "n": 3,
     "size": "bracket_n900_k6_d8",
-    "wall_ms_median": 18.002030000388913,
-    "wall_ms_min": 17.9319190001479
+    "wall_ms_median": 18.252429999847664,
+    "wall_ms_min": 18.231311999443278
   },
   "px.exp.brain.bench.ml.kmeans.np.n600_k5_d6": {
     "backend": "np",
@@ -134,8 +134,8 @@
     "inputs_sha256": "c87c6e2ea8afad5d785315d5b5f241fc4710d4f69bc209abd6df3d79fee54e0c",
     "n": 3,
     "size": "n600_k5_d6",
-    "wall_ms_median": 7.724230000349053,
-    "wall_ms_min": 7.659247000447067
+    "wall_ms_median": 7.4918740001521655,
+    "wall_ms_min": 7.338594999964698
   },
   "px.exp.brain.bench.ml.kmeans.py.bracket_n900_k6_d8": {
     "backend": "py",
@@ -144,8 +144,8 @@
     "inputs_sha256": "fe80738db269fd0886652bf2a909b03afc8ca07651ff9787d8ca1f42be8615b8",
     "n": 3,
     "size": "bracket_n900_k6_d8",
-    "wall_ms_median": 34.02846199969645,
-    "wall_ms_min": 33.81415300009394
+    "wall_ms_median": 34.24573100073758,
+    "wall_ms_min": 33.85507199982385
   },
   "px.exp.brain.bench.ml.kmeans.py.n600_k5_d6": {
     "backend": "py",
@@ -154,8 +154,8 @@
     "inputs_sha256": "c87c6e2ea8afad5d785315d5b5f241fc4710d4f69bc209abd6df3d79fee54e0c",
     "n": 3,
     "size": "n600_k5_d6",
-    "wall_ms_median": 14.855601999443024,
-    "wall_ms_min": 14.602543000364676
+    "wall_ms_median": 14.550329000485362,
+    "wall_ms_min": 14.51370999984647
   },
   "px.exp.brain.bench.ml.knn_predict.np.n600_d8_k7": {
     "backend": "np",
@@ -164,8 +164,8 @@
     "inputs_sha256": "d642a954e900b4caff127884b71212c279e4a7789811a1bcf1685c04a8f09f4f",
     "n": 3,
     "size": "n600_d8_k7",
-    "wall_ms_median": 108.39914099960879,
-    "wall_ms_min": 99.12521500064031
+    "wall_ms_median": 109.07902300004935,
+    "wall_ms_min": 106.0129079996841
   },
   "px.exp.brain.bench.ml.knn_predict.py.n600_d8_k7": {
     "backend": "py",
@@ -174,8 +174,8 @@
     "inputs_sha256": "d642a954e900b4caff127884b71212c279e4a7789811a1bcf1685c04a8f09f4f",
     "n": 3,
     "size": "n600_d8_k7",
-    "wall_ms_median": 469.7628510002687,
-    "wall_ms_min": 469.6289009998509
+    "wall_ms_median": 464.02163700076926,
+    "wall_ms_min": 458.9009579995036
   },
   "px.exp.brain.bench.ml.lasso_fit.np.n180_d4_a0_5": {
     "backend": "np",
@@ -184,8 +184,8 @@
     "inputs_sha256": "b2a2bb87a5998ad05f583edd48b5201b661f8469ebca9668031f8a8a63e66aed",
     "n": 3,
     "size": "n180_d4_a0_5",
-    "wall_ms_median": 0.4934210001010797,
-    "wall_ms_min": 0.4593799994836445
+    "wall_ms_median": 0.4884330001004855,
+    "wall_ms_min": 0.463212999420648
   },
   "px.exp.brain.bench.ml.lasso_fit.py.n180_d4_a0_5": {
     "backend": "py",
@@ -194,8 +194,8 @@
     "inputs_sha256": "b2a2bb87a5998ad05f583edd48b5201b661f8469ebca9668031f8a8a63e66aed",
     "n": 3,
     "size": "n180_d4_a0_5",
-    "wall_ms_median": 1.0297650005668402,
-    "wall_ms_min": 0.9879589997581206
+    "wall_ms_median": 0.9918310006469255,
+    "wall_ms_min": 0.9740600007717148
   },
   "px.exp.brain.bench.ml.linreg_fit.np.medium_n2000_d12": {
     "backend": "np",
@@ -204,8 +204,8 @@
     "inputs_sha256": "ec662e3be97a74b6c5ee20e63b02347e66e87c0b84f25a9cb8bd70a448532dba",
     "n": 5,
     "size": "medium_n2000_d12",
-    "wall_ms_median": 2.469466000547982,
-    "wall_ms_min": 2.4131019999913406
+    "wall_ms_median": 2.529007000703132,
+    "wall_ms_min": 2.3830359996281913
   },
   "px.exp.brain.bench.ml.linreg_fit.np.small_n200_d12": {
     "backend": "np",
@@ -214,8 +214,8 @@
     "inputs_sha256": "b064927aea589364ee4666010799243a607436bfab78b6836375afe9c19bf2d0",
     "n": 5,
     "size": "small_n200_d12",
-    "wall_ms_median": 0.27949099967372604,
-    "wall_ms_min": 0.26232399977743626
+    "wall_ms_median": 0.2760299994406523,
+    "wall_ms_min": 0.254468000093766
   },
   "px.exp.brain.bench.ml.linreg_fit.py.medium_n2000_d12": {
     "backend": "py",
@@ -224,8 +224,8 @@
     "inputs_sha256": "ec662e3be97a74b6c5ee20e63b02347e66e87c0b84f25a9cb8bd70a448532dba",
     "n": 5,
     "size": "medium_n2000_d12",
-    "wall_ms_median": 15.780147000441502,
-    "wall_ms_min": 15.196322000520013
+    "wall_ms_median": 15.216097000120499,
+    "wall_ms_min": 14.790735000133282
   },
   "px.exp.brain.bench.ml.linreg_fit.py.small_n200_d12": {
     "backend": "py",
@@ -234,8 +234,8 @@
     "inputs_sha256": "b064927aea589364ee4666010799243a607436bfab78b6836375afe9c19bf2d0",
     "n": 5,
     "size": "small_n200_d12",
-    "wall_ms_median": 1.6494100000272738,
-    "wall_ms_min": 1.6247290004685055
+    "wall_ms_median": 1.6664819995639846,
+    "wall_ms_min": 1.6355469997506589
   },
   "px.exp.brain.bench.ml.logreg_fit.gd-np.bracket_n400_d6": {
     "backend": "gd-np",
@@ -244,8 +244,8 @@
     "inputs_sha256": "9e82327eb43463c045b6a8a927f8336a255f52b90abc603a45dadd0df74629e7",
     "n": 3,
     "size": "bracket_n400_d6",
-    "wall_ms_median": 153.76807900065614,
-    "wall_ms_min": 153.19527899919194
+    "wall_ms_median": 153.3860179997646,
+    "wall_ms_min": 153.09258799970848
   },
   "px.exp.brain.bench.ml.logreg_fit.newton-np.bracket_n400_d6": {
     "backend": "newton-np",
@@ -254,8 +254,8 @@
     "inputs_sha256": "9e82327eb43463c045b6a8a927f8336a255f52b90abc603a45dadd0df74629e7",
     "n": 3,
     "size": "bracket_n400_d6",
-    "wall_ms_median": 0.7525070004703593,
-    "wall_ms_min": 0.727374000234704
+    "wall_ms_median": 0.9837469997364678,
+    "wall_ms_min": 0.843719999465975
   },
   "px.exp.brain.bench.ml.logreg_fit.newton-py.bracket_n400_d6": {
     "backend": "newton-py",
@@ -264,8 +264,8 @@
     "inputs_sha256": "9e82327eb43463c045b6a8a927f8336a255f52b90abc603a45dadd0df74629e7",
     "n": 3,
     "size": "bracket_n400_d6",
-    "wall_ms_median": 15.857630000027712,
-    "wall_ms_min": 15.47872399987682
+    "wall_ms_median": 19.25521200064395,
+    "wall_ms_min": 17.157061999569123
   },
   "px.exp.brain.bench.ml.logreg_fit.np.n600_d8_newton": {
     "backend": "np",
@@ -274,8 +274,8 @@
     "inputs_sha256": "d9b6ca41d658fdd336a65b378086371d45a5781ab2e101cb337af579e29d6307",
     "n": 3,
     "size": "n600_d8_newton",
-    "wall_ms_median": 1.3683069992111996,
-    "wall_ms_min": 1.3317920002009487
+    "wall_ms_median": 1.5010399993116152,
+    "wall_ms_min": 1.3583879999714554
   },
   "px.exp.brain.bench.ml.logreg_fit.py.n600_d8_newton": {
     "backend": "py",
@@ -284,8 +284,8 @@
     "inputs_sha256": "d9b6ca41d658fdd336a65b378086371d45a5781ab2e101cb337af579e29d6307",
     "n": 3,
     "size": "n600_d8_newton",
-    "wall_ms_median": 51.540127000407665,
-    "wall_ms_min": 50.99398200036376
+    "wall_ms_median": 51.03304400017805,
+    "wall_ms_min": 49.870359000124154
   },
   "px.exp.brain.bench.ml.silhouette.np.n400_k4": {
     "backend": "np",
@@ -294,8 +294,8 @@
     "inputs_sha256": "9f7a724942d5d21ce6a76831a83a26b45ebd6ba401b285e8c753d746a1bca82b",
     "n": 3,
     "size": "n400_k4",
-    "wall_ms_median": 14.25230999939231,
-    "wall_ms_min": 13.54112700028054
+    "wall_ms_median": 14.083015999858617,
+    "wall_ms_min": 13.072261000161234
   },
   "px.exp.brain.bench.ml.silhouette.py.n400_k4": {
     "backend": "py",
@@ -304,8 +304,8 @@
     "inputs_sha256": "9f7a724942d5d21ce6a76831a83a26b45ebd6ba401b285e8c753d746a1bca82b",
     "n": 3,
     "size": "n400_k4",
-    "wall_ms_median": 115.45444399962435,
-    "wall_ms_min": 110.34351499984041
+    "wall_ms_median": 107.19748900010018,
+    "wall_ms_min": 105.28089499985072
   },
   "px.exp.brain.bench.ml.tree_fit.hist-256.bracket_n840_d6_depth6": {
     "backend": "hist-256",
@@ -314,8 +314,8 @@
     "inputs_sha256": "4cb2287f609c2bf9075d43381d3ec0fa280aaa1c0a6595502765df9a0a341dff",
     "n": 3,
     "size": "bracket_n840_d6_depth6",
-    "wall_ms_median": 70.10985000033543,
-    "wall_ms_min": 69.8299979994772
+    "wall_ms_median": 69.85445600003004,
+    "wall_ms_min": 69.78596899989498
   },
   "px.exp.brain.bench.ml.tree_fit.hist-32.bracket_n840_d6_depth6": {
     "backend": "hist-32",
@@ -324,8 +324,8 @@
     "inputs_sha256": "4cb2287f609c2bf9075d43381d3ec0fa280aaa1c0a6595502765df9a0a341dff",
     "n": 3,
     "size": "bracket_n840_d6_depth6",
-    "wall_ms_median": 15.256833000421466,
-    "wall_ms_min": 15.2146399996127
+    "wall_ms_median": 14.695092999318149,
+    "wall_ms_min": 14.681175000077928
   },
   "px.exp.brain.bench.ml.tree_fit.hist.n1500_d8_hist32": {
     "backend": "hist",
@@ -334,8 +334,8 @@
     "inputs_sha256": "643df1fbc579dbc715130a8dfa1c4010a71843dd3b4b44d557adb3406804012e",
     "n": 3,
     "size": "n1500_d8_hist32",
-    "wall_ms_median": 33.88051700039796,
-    "wall_ms_min": 33.68168599990895
+    "wall_ms_median": 32.54148799987888,
+    "wall_ms_min": 32.43662499971833
   },
   "px.exp.brain.bench.ml.tree_fit.sort.bracket_n840_d6_depth6": {
     "backend": "sort",
@@ -344,8 +344,8 @@
     "inputs_sha256": "4cb2287f609c2bf9075d43381d3ec0fa280aaa1c0a6595502765df9a0a341dff",
     "n": 3,
     "size": "bracket_n840_d6_depth6",
-    "wall_ms_median": 42.66959300002782,
-    "wall_ms_min": 42.37496000041574
+    "wall_ms_median": 41.82194900022296,
+    "wall_ms_min": 41.608736999478424
   },
   "px.exp.brain.bench.ml.tree_fit.sort.n1500_d8_sort": {
     "backend": "sort",
@@ -354,8 +354,8 @@
     "inputs_sha256": "45f212e540244f9b522999de620a6ef238ea0f1152649b201300c5a34d4b2eb1",
     "n": 3,
     "size": "n1500_d8_sort",
-    "wall_ms_median": 140.1350599999205,
-    "wall_ms_min": 120.70103400037624
+    "wall_ms_median": 117.39388699970732,
+    "wall_ms_min": 116.83049699968251
   },
   "px.exp.brain.bracket.ml.kmeans_assignment": {
     "candidates": [
@@ -413,7 +413,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 0.0,
-          "log2_wall_ms": 5.0886700415016675,
+          "log2_wall_ms": 5.097852250904325,
           "source_lines": 11.0
         }
       },
@@ -424,7 +424,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": 4.170087696240198,
+          "log2_wall_ms": 4.1900166419131075,
           "source_lines": 10.0
         }
       },
@@ -435,7 +435,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": 4.153219142419072,
+          "log2_wall_ms": 4.151742672488862,
           "source_lines": 11.0
         }
       }
@@ -452,9 +452,9 @@
         "py": 0.0
       },
       "log2_wall_ms": {
-        "gram": 4.153219142419072,
-        "np": 4.170087696240198,
-        "py": 5.0886700415016675
+        "gram": 4.151742672488862,
+        "np": 4.1900166419131075,
+        "py": 5.097852250904325
       },
       "source_lines": {
         "gram": 11.0,
@@ -470,7 +470,7 @@
     },
     "totals": {
       "gram": 5.0,
-      "np": 5.472951193102168,
+      "np": 5.439318916702525,
       "py": 3.0
     },
     "winner": "np"
@@ -531,7 +531,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": 7.2646122324297275,
+          "log2_wall_ms": 7.261023168823144,
           "source_lines": 19.0
         }
       },
@@ -542,7 +542,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": 3.9871052642456926,
+          "log2_wall_ms": 4.2671771022390335,
           "source_lines": 30.0
         }
       },
@@ -553,7 +553,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": -0.41022309175669197,
+          "log2_wall_ms": -0.02364076423869421,
           "source_lines": 24.0
         }
       }
@@ -570,9 +570,9 @@
         "newton-py": 1.0
       },
       "log2_wall_ms": {
-        "gd-np": 7.2646122324297275,
-        "newton-np": -0.41022309175669197,
-        "newton-py": 3.9871052642456926
+        "gd-np": 7.261023168823144,
+        "newton-np": -0.02364076423869421,
+        "newton-py": 4.2671771022390335
       },
       "source_lines": {
         "gd-np": 19.0,
@@ -589,7 +589,7 @@
     "totals": {
       "gd-np": 4.0,
       "newton-np": 5.2727272727272725,
-      "newton-py": 4.140568851918292
+      "newton-py": 4.116468946425184
     },
     "winner": "newton-np"
   },
@@ -649,7 +649,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": 5.4151364444786045,
+          "log2_wall_ms": 5.386188391330322,
           "source_lines": 47.0
         }
       },
@@ -660,7 +660,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": 3.931383614807539,
+          "log2_wall_ms": 3.8772625841406803,
           "source_lines": 61.0
         }
       },
@@ -671,7 +671,7 @@
         "scores": {
           "correct": 1.0,
           "documented": 1.0,
-          "log2_wall_ms": 6.131545243093917,
+          "log2_wall_ms": 6.126280242649519,
           "source_lines": 61.0
         }
       }
@@ -688,9 +688,9 @@
         "sort": 1.0
       },
       "log2_wall_ms": {
-        "hist-256": 6.131545243093917,
-        "hist-32": 3.931383614807539,
-        "sort": 5.4151364444786045
+        "hist-256": 6.126280242649519,
+        "hist-32": 3.8772625841406803,
+        "sort": 5.386188391330322
       },
       "source_lines": {
         "hist-256": 61.0,
@@ -707,7 +707,7 @@
     "totals": {
       "hist-256": 3.5,
       "hist-32": 5.0,
-      "sort": 4.488424661219069
+      "sort": 4.493610075838554
     },
     "winner": "hist-32"
   },
@@ -20764,6 +20764,9 @@
       "px.exp.brain.data.ml.trees_train",
       "px.exp.brain.oracle.ml.classification_metrics.three_classes",
       "px.exp.brain.oracle.ml.confusion_matrix.three_classes",
+      "px.exp.brain.oracle.ml.cross_validate.held_out_error_is_not_below_training_error",
+      "px.exp.brain.oracle.ml.cross_validate.the_linear_truth_is_fitted_best_by_a_linear_model",
+      "px.exp.brain.oracle.ml.cross_validate.the_same_folds_for_every_model",
       "px.exp.brain.oracle.ml.dbscan.finds_the_same_four_groups",
       "px.exp.brain.oracle.ml.dbscan.hand_case",
       "px.exp.brain.oracle.ml.forest_fit.the_seed_is_the_whole_forest",
@@ -20782,6 +20785,8 @@
       "px.exp.brain.oracle.ml.lasso_fit.alpha_0_05",
       "px.exp.brain.oracle.ml.lasso_fit.alpha_0_5",
       "px.exp.brain.oracle.ml.lasso_fit.selects_where_ridge_only_shrinks",
+      "px.exp.brain.oracle.ml.lasso_path.columns_only_ever_drop_out",
+      "px.exp.brain.oracle.ml.lasso_path.the_chosen_penalty_is_the_one_the_folds_preferred",
       "px.exp.brain.oracle.ml.learning_curve.gbm_test_error_falls",
       "px.exp.brain.oracle.ml.learning_curve.linreg_test_error_falls",
       "px.exp.brain.oracle.ml.learning_curve.tree_train_accuracy_is_at_least_test",
@@ -20825,6 +20830,9 @@
       "px.exp.brain.result.ml.column.regression_test_y",
       "px.exp.brain.result.ml.column.trees_test_label",
       "px.exp.brain.result.ml.confusion_matrix.three_classes",
+      "px.exp.brain.result.ml.cross_validate.forest",
+      "px.exp.brain.result.ml.cross_validate.linreg",
+      "px.exp.brain.result.ml.cross_validate.ridge_a1",
       "px.exp.brain.result.ml.dbscan.clusters",
       "px.exp.brain.result.ml.dbscan.hand_case",
       "px.exp.brain.result.ml.forest.trees",
@@ -20842,6 +20850,7 @@
       "px.exp.brain.result.ml.knn_predict.classification_test",
       "px.exp.brain.result.ml.lasso.regression_a0_05",
       "px.exp.brain.result.ml.lasso.regression_a0_5",
+      "px.exp.brain.result.ml.lasso_path.regression",
       "px.exp.brain.result.ml.learning_curve.gbm",
       "px.exp.brain.result.ml.learning_curve.linreg",
       "px.exp.brain.result.ml.learning_curve.tree",
@@ -20886,8 +20895,8 @@
         "what": "a pairwise-distance calculation in the backend vertical, with knn, silhouette, k-means and dbscan routed through it"
       },
       {
-        "for": "the lasso is here but a single alpha is a guess; the path is what makes the choice readable",
-        "what": "elastic net, and a lasso regularisation path over a grid of alphas as one Part"
+        "for": "the lasso path made the choice readable; every other model here still takes its hyper-parameter on faith",
+        "what": "elastic net, and the same path treatment for ridge and for the tree depth"
       },
       {
         "for": "one-vs-rest probabilities are renormalised, not calibrated, and the difference shows up in any ranking read off them",
@@ -20898,8 +20907,8 @@
         "what": "gradient boosting for classification (logistic loss) and out-of-bag scoring for the forest"
       },
       {
-        "for": "kfold exists and every metric exists, but the loop between them is still written at each call site",
-        "what": "a cross_validate calculation that folds fit, predict and score into one Part per fold"
+        "for": "lasso_path picks its penalty on the same folds it reports; that number is optimistic and the Part should say so",
+        "what": "nested cross-validation, so a hyper-parameter chosen on the folds is not also scored on them"
       },
       {
         "for": "one hidden layer and one output is where this stops; the next step needs a real autograd or an honest admission that it is hand-derived",
@@ -20907,6 +20916,10 @@
       }
     ],
     "stubbed": [
+      {
+        "address": "fn.brain.ml.cross_validate nested",
+        "why": "the penalty on the lasso path is chosen on the same folds it is scored on, so that score is optimistic and an outer loop is what fixes it"
+      },
       {
         "address": "fn.brain.ml.gbm_fit logistic",
         "why": "boosting here is squared loss only; the logistic loss needs a second-order step and its own oracle"
@@ -20918,14 +20931,6 @@
       {
         "address": "fn.brain.ml.mlp_fit deep",
         "why": "the backward pass is hand-derived for exactly one hidden layer; a second layer needs autograd or another hand derivation, and a half-checked one is worth less than none"
-      },
-      {
-        "address": "fn.brain.ml.lasso_path",
-        "why": "one alpha is fitted and oracled; the path over a grid of alphas is a loop away and is the part worth reading"
-      },
-      {
-        "address": "fn.brain.ml.cross_validate",
-        "why": "kfold and every metric exist; the loop that folds them together is still at each call site"
       },
       {
         "address": "fn.brain.ml.logreg_fit multinomial",
@@ -20994,6 +20999,69 @@
     ],
     "pass": true,
     "reference": "counted by hand from the ten pairs",
+    "tolerance": 0.0,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.ml.cross_validate.held_out_error_is_not_below_training_error": {
+    "calc": "cross_validate",
+    "case": "held_out_error_is_not_below_training_error",
+    "expected": true,
+    "for": "a held-out error below the training error means the fold leaked, and every number above it is worthless",
+    "got": true,
+    "pass": true,
+    "reference": "each model's own training error on the same folds",
+    "tolerance": 0.0,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.ml.cross_validate.the_linear_truth_is_fitted_best_by_a_linear_model": {
+    "calc": "cross_validate",
+    "case": "the_linear_truth_is_fitted_best_by_a_linear_model",
+    "expected": true,
+    "for": "cross-validation is only worth having if it prefers the model that is actually right",
+    "got": true,
+    "pass": true,
+    "reference": "the same folds, a linear model and a forest, on data drawn from a linear truth",
+    "tolerance": 0.0,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.ml.cross_validate.the_same_folds_for_every_model": {
+    "calc": "cross_validate",
+    "case": "the_same_folds_for_every_model",
+    "expected": [
+      [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      [
+        48,
+        48,
+        48,
+        48,
+        48
+      ]
+    ],
+    "for": "two models compared on different folds are compared on the luck of the split, not on the model",
+    "got": [
+      [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      [
+        48,
+        48,
+        48,
+        48,
+        48
+      ]
+    ],
+    "pass": true,
+    "reference": "the fold sizes of the seeded kfold every one of them was handed",
     "tolerance": 0.0,
     "worst_relative_error": 0.0
   },
@@ -29085,6 +29153,34 @@
     "tolerance": 0.0,
     "worst_relative_error": 0.0
   },
+  "px.exp.brain.oracle.ml.lasso_path.columns_only_ever_drop_out": {
+    "calc": "lasso_path",
+    "case": "columns_only_ever_drop_out",
+    "expected": [
+      true,
+      0
+    ],
+    "for": "a path that is not monotone means the coordinate descent stopped somewhere that is not the minimum",
+    "got": [
+      true,
+      0
+    ],
+    "pass": true,
+    "reference": "the l1 penalty's own definition: a larger penalty can only zero more coefficients",
+    "tolerance": 0.0,
+    "worst_relative_error": 0.0
+  },
+  "px.exp.brain.oracle.ml.lasso_path.the_chosen_penalty_is_the_one_the_folds_preferred": {
+    "calc": "lasso_path",
+    "case": "the_chosen_penalty_is_the_one_the_folds_preferred",
+    "expected": 0.001,
+    "for": "the choice has to be readable back out of the Part, or it is a number somebody remembered",
+    "got": 0.001,
+    "pass": true,
+    "reference": "the cross-validated error the path itself recorded at every penalty",
+    "tolerance": 0.0,
+    "worst_relative_error": 0.0
+  },
   "px.exp.brain.oracle.ml.learning_curve.gbm_test_error_falls": {
     "calc": "learning_curve",
     "case": "gbm_test_error_falls",
@@ -31063,6 +31159,99 @@
         2
       ]
     ]
+  },
+  "px.exp.brain.result.ml.cross_validate.forest": {
+    "fit": "forest_fit",
+    "for": "forest scored on every row of the same five folds, exactly once",
+    "k": 5,
+    "mean": 1.6830876857973345,
+    "metric": "mse",
+    "seed": 105,
+    "sizes": [
+      48,
+      48,
+      48,
+      48,
+      48
+    ],
+    "spread": 1.5737480729968003,
+    "test": [
+      0.7708947688204337,
+      2.344642841817234,
+      1.4873372573580077,
+      2.0750407575732295,
+      1.7375228034177663
+    ],
+    "train": [
+      0.6728178299368519,
+      0.7278600779332082,
+      0.7304868841550042,
+      0.653142992044102,
+      0.5494099858371021
+    ],
+    "worst": 2.344642841817234
+  },
+  "px.exp.brain.result.ml.cross_validate.linreg": {
+    "fit": "linreg_fit",
+    "for": "linreg scored on every row of the same five folds, exactly once",
+    "k": 5,
+    "mean": 0.058018152145449975,
+    "metric": "mse",
+    "seed": 105,
+    "sizes": [
+      48,
+      48,
+      48,
+      48,
+      48
+    ],
+    "spread": 0.027550216281258103,
+    "test": [
+      0.047327210026808175,
+      0.05719954520507297,
+      0.05390210358567633,
+      0.07487742630806628,
+      0.05678447560162613
+    ],
+    "train": [
+      0.05752617522384609,
+      0.05532751793090302,
+      0.05604544569532665,
+      0.05112194766506417,
+      0.055066047348074375
+    ],
+    "worst": 0.07487742630806628
+  },
+  "px.exp.brain.result.ml.cross_validate.ridge_a1": {
+    "fit": "ridge_fit",
+    "for": "ridge_a1 scored on every row of the same five folds, exactly once",
+    "k": 5,
+    "mean": 0.0587296053835674,
+    "metric": "mse",
+    "seed": 105,
+    "sizes": [
+      48,
+      48,
+      48,
+      48,
+      48
+    ],
+    "spread": 0.024996597344900374,
+    "test": [
+      0.04817287128115794,
+      0.06061373666457568,
+      0.05347463197323049,
+      0.07316946862605832,
+      0.05821731837281449
+    ],
+    "train": [
+      0.057903845614611704,
+      0.055755951586600405,
+      0.056417616054333146,
+      0.051508098189796986,
+      0.05547811108035683
+    ],
+    "worst": 0.07316946862605832
   },
   "px.exp.brain.result.ml.dbscan.clusters": {
     "backend": "np",
@@ -43037,6 +43226,165 @@
       -0.048930938455734596,
       1.1228999174375904,
       0.0
+    ],
+    "target": "y"
+  },
+  "px.exp.brain.result.ml.lasso_path.regression": {
+    "alphas": [
+      0.001,
+      0.01,
+      0.05,
+      0.1,
+      0.3,
+      1.0,
+      3.0,
+      10.0
+    ],
+    "chosen": 0.001,
+    "columns": [
+      "x0",
+      "x1",
+      "x2",
+      "x3",
+      "y"
+    ],
+    "for": "where each column drops out as the penalty rises, and which penalty the folds prefer",
+    "monotone": true,
+    "path": [
+      {
+        "alpha": 0.001,
+        "coef": [
+          -3.6015600133045127,
+          -0.49525824159028375,
+          1.574254173550445,
+          -0.40666311649799886
+        ],
+        "count": 4,
+        "cv_mse": 0.05804525416600444,
+        "intercept": 0.141782624727708,
+        "nonzero": [
+          "x0",
+          "x1",
+          "x2",
+          "x3"
+        ]
+      },
+      {
+        "alpha": 0.01,
+        "coef": [
+          -3.5938605458415016,
+          -0.48715321665553757,
+          1.5671073432151756,
+          -0.39789101347384326
+        ],
+        "count": 4,
+        "cv_mse": 0.05863209389015293,
+        "intercept": 0.14084190229216778,
+        "nonzero": [
+          "x0",
+          "x1",
+          "x2",
+          "x3"
+        ]
+      },
+      {
+        "alpha": 0.05,
+        "coef": [
+          -3.55964069045034,
+          -0.45113088361222164,
+          1.5353436528361983,
+          -0.3589038889220408
+        ],
+        "count": 4,
+        "cv_mse": 0.06870833951664614,
+        "intercept": 0.13666091368976693,
+        "nonzero": [
+          "x0",
+          "x1",
+          "x2",
+          "x3"
+        ]
+      },
+      {
+        "alpha": 0.1,
+        "coef": [
+          -3.51686587121139,
+          -0.40610296730807677,
+          1.4956390398624764,
+          -0.3101699832322878
+        ],
+        "count": 4,
+        "cv_mse": 0.09844972350703285,
+        "intercept": 0.1314346779367662,
+        "nonzero": [
+          "x0",
+          "x1",
+          "x2",
+          "x3"
+        ]
+      },
+      {
+        "alpha": 0.3,
+        "coef": [
+          -3.3457665942555845,
+          -0.22599130209149693,
+          1.33682058796759,
+          -0.115234360473275
+        ],
+        "count": 4,
+        "cv_mse": 0.40792722566047185,
+        "intercept": 0.11052973492476234,
+        "nonzero": [
+          "x0",
+          "x1",
+          "x2",
+          "x3"
+        ]
+      },
+      {
+        "alpha": 1.0,
+        "coef": [
+          -2.737910179073625,
+          0.0,
+          0.7412049239186639,
+          0.0
+        ],
+        "count": 2,
+        "cv_mse": 2.3154557285128345,
+        "intercept": 0.054370266848243226,
+        "nonzero": [
+          "x0",
+          "x2"
+        ]
+      },
+      {
+        "alpha": 3.0,
+        "coef": [
+          -0.831299517548715,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "count": 1,
+        "cv_mse": 12.294771909308519,
+        "intercept": -0.1206128958485248,
+        "nonzero": [
+          "x0"
+        ]
+      },
+      {
+        "alpha": 10.0,
+        "coef": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "count": 0,
+        "cv_mse": 17.676102115415734,
+        "intercept": -0.20631378856792046,
+        "nonzero": []
+      }
     ],
     "target": "y"
   },

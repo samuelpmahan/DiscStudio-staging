@@ -2,18 +2,16 @@
 
 import json
 import os
-import shutil
-import tempfile
 import unittest
 
 from . import build, parts
 
 
 def scratch_store(cases):
-    """a store whose records go to a temp directory: a test never writes a tracked path."""
-    directory = tempfile.mkdtemp(prefix="brain-ml-")
-    cases.addClassCleanup(shutil.rmtree, directory, True)
-    return parts.Store("ml", records_dir=directory)
+    """a store that may not commit: it reads the committed store and writes only a scratch one."""
+    store = parts.Store("ml")
+    assert not store.commit, "a test store must not be able to write what the repository tracks"
+    return store
 
 
 class TheStoreBuilds(unittest.TestCase):

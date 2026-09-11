@@ -1,17 +1,13 @@
 """a bracket that cannot be re-run is a memory, not a record."""
 
-import shutil
-import tempfile
 import unittest
 
 from . import parts, tournament
 
 
 def scratch_store(cases):
-    """a store whose records go to a temp directory: a test never writes a tracked path."""
-    directory = tempfile.mkdtemp(prefix="brain-ml-")
-    cases.addClassCleanup(shutil.rmtree, directory, True)
-    return parts.Store("ml", records_dir=directory)
+    """a store that may not commit: it reads the committed store and writes only a scratch one."""
+    return parts.Store("ml")
 
 
 class EveryBracketRebuilds(unittest.TestCase):
@@ -25,7 +21,7 @@ class EveryBracketRebuilds(unittest.TestCase):
             self.assertIn(part["winner"], [c["branch"] for c in part["candidates"]])
 
     def test_the_verdict_is_the_same_on_a_second_run(self):
-        again, _ = tournament.run(parts.Store("ml", records_dir=self.store.records_dir))
+        again, _ = tournament.run(parts.Store("ml"))
         for name, part in self.decided.items():
             self.assertEqual(again[name]["winner"], part["winner"], name)
 
