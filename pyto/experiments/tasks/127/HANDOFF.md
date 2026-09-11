@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/127
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/127:pyto/experiments/tasks/127/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 878f7a9 origin/exp/127 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff c48e19f origin/exp/127 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ S7 plays the holes S6 resolved: the course graph binds px.holes.straight and rep
 
 ## Starting point
 
-878f7a91d29db8f1b13ee8cabf4f58bb8ec01e56 (land(task-126): the port's map, honest after the renumbering: S4-S7 under ran, the stubs that S4 recovery actually retired removed, and what S7 still owes the straight holes written down as the next step with its for). MAIN may have moved since: `git log --oneline 878f7a9..origin/claude/os-sprint-st8hnu` shows how far.
+878f7a91d29db8f1b13ee8cabf4f58bb8ec01e56 (land(task-126): the port's map, honest after the renumbering: S4-S7 under ran, the stubs that S4 recovery actually retired removed, and what S7 still owes the straight holes written down as the next step with its for). MAIN may have moved since: `git log --oneline c48e19f..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -97,7 +97,7 @@ src/lab/fixtures.js                                |   25 +-
  src/lab/s7course.js                                |   67 +-
  src/lab/s7round.js                                 |   32 +-
  src/lab/stage-sources.js                           |    2 +-
- src/lab/stages.js                                  |    8 +
+ src/lab/stages.js                                  |    2 +
  src/lab/stages/S7.course.mmd                       |    6 +-
  src/lab/store/lab.json                             | 2716 ++++++++++++++------
  .../records/HolesByNearestAnchor.invariants.json   |   24 +-
@@ -119,17 +119,17 @@ src/lab/fixtures.js                                |   25 +-
  src/lab/store/records/S7.round.json                |  606 +++--
  src/lab/store/records/S7.vs-straight.json          |   84 +-
  src/lab/store/records/route-labfixture.json        |  237 +-
- src/runtime.js                                     |    5 +-
- tests/lab-pipeline.test.js                         |   39 +-
+ src/runtime.js                                     |    4 +-
+ tests/lab-pipeline.test.js                         |   23 +-
  tests/lab-s7course.test.js                         |   70 +-
  tests/lab-s7round.test.js                          |   46 +-
- 31 files changed, 3877 insertions(+), 1662 deletions(-)
+ 31 files changed, 3860 insertions(+), 1656 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.6wsVJ3yPfO) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.2Z1jYdFeik) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK

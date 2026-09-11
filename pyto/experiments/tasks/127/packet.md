@@ -47,7 +47,7 @@ src/lab/fixtures.js                                |   25 +-
  src/lab/s7course.js                                |   67 +-
  src/lab/s7round.js                                 |   32 +-
  src/lab/stage-sources.js                           |    2 +-
- src/lab/stages.js                                  |    8 +
+ src/lab/stages.js                                  |    2 +
  src/lab/stages/S7.course.mmd                       |    6 +-
  src/lab/store/lab.json                             | 2716 ++++++++++++++------
  .../records/HolesByNearestAnchor.invariants.json   |   24 +-
@@ -69,17 +69,17 @@ src/lab/fixtures.js                                |   25 +-
  src/lab/store/records/S7.round.json                |  606 +++--
  src/lab/store/records/S7.vs-straight.json          |   84 +-
  src/lab/store/records/route-labfixture.json        |  237 +-
- src/runtime.js                                     |    5 +-
- tests/lab-pipeline.test.js                         |   39 +-
+ src/runtime.js                                     |    4 +-
+ tests/lab-pipeline.test.js                         |   23 +-
  tests/lab-s7course.test.js                         |   70 +-
  tests/lab-s7round.test.js                          |   46 +-
- 31 files changed, 3877 insertions(+), 1662 deletions(-)
+ 31 files changed, 3860 insertions(+), 1656 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.6wsVJ3yPfO) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.2Z1jYdFeik) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
