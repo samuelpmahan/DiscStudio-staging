@@ -1,0 +1,260 @@
+{
+  "px.exp.brain.data.shelf_molds": {
+    "columns": [
+      "speed",
+      "glide",
+      "turn",
+      "fade"
+    ],
+    "for": "the sample shelf's seven molds, flight numbers only",
+    "rows": [
+      [
+        5,
+        4,
+        -1,
+        1
+      ],
+      [
+        4,
+        3,
+        0,
+        3
+      ],
+      [
+        12,
+        5,
+        -1,
+        3
+      ],
+      [
+        7,
+        5,
+        -2,
+        1
+      ],
+      [
+        5,
+        5,
+        0,
+        0
+      ],
+      [
+        8,
+        4,
+        0,
+        2
+      ],
+      [
+        3,
+        3,
+        0,
+        3
+      ]
+    ]
+  },
+  "px.exp.brain.data.shelf_weights": [
+    177.0,
+    173.0,
+    172.0,
+    170.0,
+    180.0,
+    173.0,
+    175.0,
+    173.0,
+    174.0,
+    173.0,
+    174.0,
+    173.0
+  ],
+  "px.exp.brain.result.shelf.describe_weights.sample": {
+    "iqr": 1.25,
+    "kurtosis": 1.08883859591,
+    "max": 180.0,
+    "mean": 173.916666667,
+    "median": 173.0,
+    "min": 170.0,
+    "n": 12,
+    "q25": 173.0,
+    "q75": 174.25,
+    "skewness": 1.07156852582,
+    "stdev": 2.53908835943,
+    "variance": 6.44696969697
+  },
+  "px.exp.brain.result.shelf.fade_from_flight.sample": {
+    "backend": "np",
+    "coef": [
+      0.368968077209,
+      -1.67112100965,
+      -0.126206384558
+    ],
+    "columns": [
+      "speed",
+      "glide",
+      "turn"
+    ],
+    "fit_intercept": true,
+    "for": "fade explained by speed, glide and turn",
+    "intercept": 6.38901262064,
+    "iters": 0,
+    "l2": 0.0,
+    "method": "closed",
+    "model": "linreg",
+    "n": 7,
+    "target": "fade"
+  },
+  "px.exp.brain.result.shelf.flight_correlation.sample": {
+    "columns": [
+      "speed",
+      "glide",
+      "turn",
+      "fade"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.652989115314,
+        -0.408207819753,
+        0.148291455709
+      ],
+      [
+        0.652989115314,
+        1.0,
+        -0.571771874897,
+        -0.588069236523
+      ],
+      [
+        -0.408207819753,
+        -0.571771874897,
+        1.0,
+        0.249067740693
+      ],
+      [
+        0.148291455709,
+        -0.588069236523,
+        0.249067740693,
+        1.0
+      ]
+    ]
+  },
+  "px.exp.brain.result.shelf.flight_pca.sample": {
+    "backend": "np",
+    "components": [
+      [
+        0.973054072485,
+        0.19639801824,
+        -0.111701205947,
+        0.0460046849918
+      ],
+      [
+        0.0779580015989,
+        -0.45213568204,
+        0.23685130712,
+        0.856386205709
+      ]
+    ],
+    "explained_variance": [
+      9.73646984622,
+      1.93129251438
+    ],
+    "explained_variance_ratio": [
+      0.801826928513,
+      0.159047618831
+    ],
+    "for": "the two directions flight numbers actually vary in",
+    "mean": [
+      6.28571428571,
+      4.14285714286,
+      -0.571428571429,
+      1.85714285714
+    ],
+    "model": "pca",
+    "n": 7,
+    "n_components": 2,
+    "scores": [
+      [
+        -1.27068702325,
+        -0.871193926852
+      ],
+      [
+        -2.45983094993,
+        1.45260747213
+      ],
+      [
+        5.82909887238,
+        0.935148813719
+      ],
+      [
+        0.983520345912,
+        -1.40426491281
+      ],
+      [
+        -1.23199489594,
+        -1.94286450748
+      ],
+      [
+        1.58277867326,
+        0.455917590773
+      ],
+      [
+        -3.43288502242,
+        1.37464947053
+      ]
+    ],
+    "singular_values": [
+      7.64322046505,
+      3.40407918331
+    ],
+    "total_variance": 12.1428571429
+  },
+  "px.exp.brain.result.shelf.mold_clusters.sample": {
+    "backend": "py",
+    "centres": [
+      [
+        12.0,
+        5.0,
+        -1.0,
+        3.0
+      ],
+      [
+        4.25,
+        3.75,
+        -0.25,
+        1.75
+      ],
+      [
+        7.5,
+        4.5,
+        -1.0,
+        1.5
+      ]
+    ],
+    "for": "three families of flight",
+    "history": [
+      26.0,
+      22.04,
+      16.5,
+      16.5
+    ],
+    "inertia": 16.5,
+    "init": "kmeans++",
+    "iters": 3,
+    "k": 3,
+    "labels": [
+      1,
+      1,
+      0,
+      2,
+      1,
+      2,
+      1
+    ],
+    "model": "kmeans",
+    "n": 7,
+    "seed": 7,
+    "seeded_from": [
+      2,
+      0,
+      5
+    ]
+  }
+}
