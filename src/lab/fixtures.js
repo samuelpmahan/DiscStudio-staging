@@ -10,6 +10,10 @@
  * Deterministic: one seeded LCG, no clock, no `Math.random`, so the S0 crop and
  * every S1 component below is the same on every machine.
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { SOURCE } from './source.js';
+
 export const CHROME_TOP = 40, CHROME_BOTTOM = 60, WIDTH = 512, HEIGHT = 1024;
 
 function lcg(seed) { let state = seed >>> 0; return () => (state = (state * 1664525 + 1013904223) >>> 0) / 4294967296; }
@@ -22,6 +26,20 @@ function ring(rgba, width, x, y, w, h, thickness, value) {
 }
 
 const BLACK = 12, WHITE = 245;
+
+/**
+ * One basket, in the shape S2 looks for: the LAB's own basket sprite as the
+ * white body (bbox 42x66, 1746 white pixels, one 8-connected component), inside
+ * a dark shell whose bbox clears it by the same margin on every side. S2 learns
+ * that margin as the family's modal shell (learnBasketShellFamilyV1) and keeps
+ * only the bodies that agree.
+ */
+export const BASKET_MARGIN = 4;
+function basket(rgba, width, x, y, sprite) {
+  rect(rgba, width, x - BASKET_MARGIN, y - BASKET_MARGIN, sprite.width + BASKET_MARGIN * 2, sprite.height + BASKET_MARGIN * 2, BLACK);
+  sprite.rows.forEach((row, dy) => [...row].forEach((value, dx) => { if (value === '1') put(rgba, width, x + dx, y + dy, WHITE); }));
+  return { body: [x, y, sprite.width, sprite.height], shell: [x - BASKET_MARGIN, y - BASKET_MARGIN, sprite.width + BASKET_MARGIN * 2, sprite.height + BASKET_MARGIN * 2] };
+}
 
 /**
  * One badge, in the shape S1's knobs accept: border ring 60x40 (white), plate
@@ -45,7 +63,9 @@ export function fixtureCapture(seed = 20260911) {
     for (let x = 0; x < WIDTH; x++) put(rgba, WIDTH, x, y, chrome ? 70 : 80 + Math.floor(random() * 120));
   }
   const badges = [badge(rgba, WIDTH, 120, 300), badge(rgba, WIDTH, 300, 620)];
-  return { imageId: `lab-fixture-${seed}`, widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length, badges };
+  const sprite = JSON.parse(readFileSync(join(SOURCE, 'basket-sprite.json'), 'utf8'));
+  const baskets = [basket(rgba, WIDTH, 150, 470, sprite), basket(rgba, WIDTH, 330, 800, sprite)];
+  return { imageId: `lab-fixture-${seed}`, widthPx: WIDTH, heightPx: HEIGHT, rgba, sourceByteLength: rgba.length, badges, baskets };
 }
 
 /** The same capture already cropped, for an S1 run that does not need S0 first. */

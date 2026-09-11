@@ -1,0 +1,633 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S2",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "components.publish",
+      "invocations": [
+        {
+          "id": "px.exp.lab.components",
+          "calculation": {
+            "address": "fn.lab.components.publish",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "blackMask": "px:px.exp.lab.s1.maskcomponents.part.blackmask",
+            "blackComponents": "px:px.exp.lab.s1.maskcomponents.part.blackcomponents",
+            "whiteMask": "px:px.exp.lab.s1.maskcomponents.part.whitemask",
+            "whiteComponents": "px:px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          },
+          "args": {},
+          "into": "px.exp.lab.components",
+          "declared_consumes": [
+            "px:px.exp.lab.s1.maskcomponents.part.blackmask",
+            "px:px.exp.lab.s1.maskcomponents.part.blackcomponents",
+            "px:px.exp.lab.s1.maskcomponents.part.whitemask",
+            "px:px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s1.maskcomponents.part.blackmask",
+            "px.exp.lab.s1.maskcomponents.part.blackcomponents",
+            "px.exp.lab.s1.maskcomponents.part.whitemask",
+            "px.exp.lab.s1.maskcomponents.part.whitecomponents"
+          ],
+          "actual_produces": [
+            "px.exp.lab.components"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.components",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "bright": {
+                "mask": {
+                  "width": 512,
+                  "height": 920,
+                  "data": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "2c035465f9e02236378722f8d48a530ded08d1e64672f1d226084bee1e92f42a"
+                  }
+                },
+                "labels": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "2c035465f9e02236378722f8d48a530ded08d1e64672f1d226084bee1e92f42a"
+                },
+                "components": [
+                  {
+                    "label": 1,
+                    "area": 564,
+                    "cx": 149.5,
+                    "cy": 277.5,
+                    "bboxX": 120,
+                    "bboxY": 258,
+                    "bboxW": 60,
+                    "bboxH": 40
+                  },
+                  {
+                    "label": 2,
+                    "area": 120,
+                    "cx": 134.5,
+                    "cy": 277.5,
+                    "bboxX": 132,
+                    "bboxY": 268,
+                    "bboxW": 6,
+                    "bboxH": 20
+                  },
+                  {
+                    "label": 3,
+                    "area": 156,
+                    "cx": 153.5,
+                    "cy": 277.5,
+                    "bboxX": 148,
+                    "bboxY": 268,
+                    "bboxW": 12,
+                    "bboxH": 20
+                  },
+                  {
+                    "label": 4,
+                    "area": 1746,
+                    "cx": 170.5,
+                    "cy": 455.31500572737684,
+                    "bboxX": 150,
+                    "bboxY": 428,
+                    "bboxW": 42,
+                    "bboxH": 66
+                  },
+                  {
+                    "label": 5,
+                    "area": 564,
+                    "cx": 329.5,
+                    "cy": 597.5,
+                    "bboxX": 300,
+                    "bboxY": 578,
+                    "bboxW": 60,
+                    "bboxH": 40
+                  },
+                  {
+                    "label": 6,
+                    "area": 120,
+                    "cx": 314.5,
+                    "cy": 597.5,
+                    "bboxX": 312,
+                    "bboxY": 588,
+                    "bboxW": 6,
+                    "bboxH": 20
+                  },
+                  {
+                    "label": 7,
+                    "area": 156,
+                    "cx": 333.5,
+                    "cy": 597.5,
+                    "bboxX": 328,
+                    "bboxY": 588,
+                    "bboxW": 12,
+                    "bboxH": 20
+                  },
+                  {
+                    "label": 8,
+                    "area": 1746,
+                    "cx": 350.5,
+                    "cy": 785.3150057273768,
+                    "bboxX": 330,
+                    "bboxY": 758,
+                    "bboxW": 42,
+                    "bboxH": 66
+                  }
+                ]
+              },
+              "dark": {
+                "mask": {
+                  "width": 512,
+                  "height": 920,
+                  "data": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "2c035465f9e02236378722f8d48a530ded08d1e64672f1d226084bee1e92f42a"
+                  }
+                },
+                "labels": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "2c035465f9e02236378722f8d48a530ded08d1e64672f1d226084bee1e92f42a"
+                },
+                "components": [
+                  {
+                    "label": 1,
+                    "area": 1176,
+                    "cx": 150.21428571428572,
+                    "cy": 277.5,
+                    "bboxX": 126,
+                    "bboxY": 262,
+                    "bboxW": 48,
+                    "bboxH": 32
+                  },
+                  {
+                    "label": 2,
+                    "area": 84,
+                    "cx": 153.5,
+                    "cy": 277.5,
+                    "bboxX": 151,
+                    "bboxY": 271,
+                    "bboxW": 6,
+                    "bboxH": 14
+                  },
+                  {
+                    "label": 3,
+                    "area": 1954,
+                    "cx": 170.5,
+                    "cy": 465.13306038894575,
+                    "bboxX": 146,
+                    "bboxY": 424,
+                    "bboxW": 50,
+                    "bboxH": 74
+                  },
+                  {
+                    "label": 4,
+                    "area": 1176,
+                    "cx": 330.2142857142857,
+                    "cy": 597.5,
+                    "bboxX": 306,
+                    "bboxY": 582,
+                    "bboxW": 48,
+                    "bboxH": 32
+                  },
+                  {
+                    "label": 5,
+                    "area": 84,
+                    "cx": 333.5,
+                    "cy": 597.5,
+                    "bboxX": 331,
+                    "bboxY": 591,
+                    "bboxW": 6,
+                    "bboxH": 14
+                  },
+                  {
+                    "label": 6,
+                    "area": 1954,
+                    "cx": 350.5,
+                    "cy": 795.1330603889458,
+                    "bboxX": 326,
+                    "bboxY": 754,
+                    "bboxW": 50,
+                    "bboxH": 74
+                  }
+                ]
+              }
+            },
+            "note": "4 array(s) truncated to the first 200 entries; original lengths: [471040, 471040, 471040, 471040]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Basket.detectFamily",
+      "invocations": [
+        {
+          "id": "px.exp.lab.baskets.family",
+          "calculation": {
+            "address": "fn.lab.basket.detectfamily",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {},
+          "into": "px.exp.lab.baskets.family",
+          "declared_consumes": [
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.baskets.family"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.baskets.family",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "templateSize": [
+                42,
+                66
+              ],
+              "members": [
+                {
+                  "body": {
+                    "label": 4,
+                    "area": 1746,
+                    "cx": 170.5,
+                    "cy": 455.31500572737684,
+                    "bboxX": 150,
+                    "bboxY": 428,
+                    "bboxW": 42,
+                    "bboxH": 66
+                  },
+                  "areaRatio": 1,
+                  "whiteCoverage": 1
+                },
+                {
+                  "body": {
+                    "label": 8,
+                    "area": 1746,
+                    "cx": 350.5,
+                    "cy": 785.3150057273768,
+                    "bboxX": 330,
+                    "bboxY": 758,
+                    "bboxW": 42,
+                    "bboxH": 66
+                  },
+                  "areaRatio": 1,
+                  "whiteCoverage": 1
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Basket.findShellFamily",
+      "invocations": [
+        {
+          "id": "px.exp.lab.baskets.shellfamily",
+          "calculation": {
+            "address": "fn.lab.basket.findshellfamily",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "family": "px:px.exp.lab.baskets.family",
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {},
+          "into": "px.exp.lab.baskets.shellfamily",
+          "declared_consumes": [
+            "px:px.exp.lab.baskets.family",
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.baskets.family",
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.baskets.shellfamily"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.baskets.shellfamily",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "margins": [
+                4,
+                4,
+                4,
+                4
+              ],
+              "shellOffsets": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "3aff9a6fb6509b8968896ebe61adb4c30173323aa5a8564336c4474b2f015a25"
+              },
+              "members": [
+                {
+                  "candidate": {
+                    "body": {
+                      "label": 4,
+                      "area": 1746,
+                      "cx": 170.5,
+                      "cy": 455.31500572737684,
+                      "bboxX": 150,
+                      "bboxY": 428,
+                      "bboxW": 42,
+                      "bboxH": 66
+                    },
+                    "areaRatio": 1,
+                    "whiteCoverage": 1
+                  },
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "blackPx": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "f6d30e08bbdc46cb28bdbab801e5fb718767da412f1a9d8176f4e07432618cb6"
+                  }
+                },
+                {
+                  "candidate": {
+                    "body": {
+                      "label": 8,
+                      "area": 1746,
+                      "cx": 350.5,
+                      "cy": 785.3150057273768,
+                      "bboxX": 330,
+                      "bboxY": 758,
+                      "bboxW": 42,
+                      "bboxH": 66
+                    },
+                    "areaRatio": 1,
+                    "whiteCoverage": 1
+                  },
+                  "bbox": [
+                    326,
+                    754,
+                    50,
+                    74
+                  ],
+                  "blackPx": {
+                    "kind": "numbers",
+                    "length": 200,
+                    "sha256": "2bc7ccd12e25e2b259dd76df3f385d2e38f195ec02fe5a8d0b7bf486105b0506"
+                  }
+                }
+              ]
+            },
+            "note": "3 array(s) truncated to the first 200 entries; original lengths: [1954, 1954, 1954]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Basket.findPx",
+      "invocations": [
+        {
+          "id": "px.exp.lab.baskets",
+          "calculation": {
+            "address": "fn.lab.basket.findpx",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "shellFamily": "px:px.exp.lab.baskets.shellfamily",
+            "fields": "px:px.exp.lab.components"
+          },
+          "args": {},
+          "into": "px.exp.lab.baskets",
+          "declared_consumes": [
+            "px:px.exp.lab.baskets.shellfamily",
+            "px:px.exp.lab.components"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.baskets.shellfamily",
+            "px.exp.lab.components"
+          ],
+          "actual_produces": [
+            "px.exp.lab.baskets"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.baskets",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "bbox": [
+                  146,
+                  424,
+                  50,
+                  74
+                ],
+                "px": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "f6d30e08bbdc46cb28bdbab801e5fb718767da412f1a9d8176f4e07432618cb6"
+                },
+                "whitePx": 1746,
+                "blackPx": 1954,
+                "has": {
+                  "detectFamily": {
+                    "fn": "fn.lab.basket.detectfamily",
+                    "body": {
+                      "polarity": "bright",
+                      "label": 4,
+                      "bbox": [
+                        150,
+                        428,
+                        42,
+                        66
+                      ]
+                    }
+                  },
+                  "findShellFamily": {
+                    "fn": "fn.lab.basket.findshellfamily",
+                    "margins": [
+                      4,
+                      4,
+                      4,
+                      4
+                    ],
+                    "blackPx": 1954
+                  },
+                  "findPx": {
+                    "fn": "fn.lab.basket.findpx",
+                    "body": {
+                      "polarity": "bright",
+                      "label": 4
+                    }
+                  }
+                }
+              },
+              {
+                "bbox": [
+                  326,
+                  754,
+                  50,
+                  74
+                ],
+                "px": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "2bc7ccd12e25e2b259dd76df3f385d2e38f195ec02fe5a8d0b7bf486105b0506"
+                },
+                "whitePx": 1746,
+                "blackPx": 1954,
+                "has": {
+                  "detectFamily": {
+                    "fn": "fn.lab.basket.detectfamily",
+                    "body": {
+                      "polarity": "bright",
+                      "label": 8,
+                      "bbox": [
+                        330,
+                        758,
+                        42,
+                        66
+                      ]
+                    }
+                  },
+                  "findShellFamily": {
+                    "fn": "fn.lab.basket.findshellfamily",
+                    "margins": [
+                      4,
+                      4,
+                      4,
+                      4
+                    ],
+                    "blackPx": 1954
+                  },
+                  "findPx": {
+                    "fn": "fn.lab.basket.findpx",
+                    "body": {
+                      "polarity": "bright",
+                      "label": 8
+                    }
+                  }
+                }
+              }
+            ],
+            "note": "2 array(s) truncated to the first 200 entries; original lengths: [3700, 3700]"
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.s1.maskcomponents.part.blackmask": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.components"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s1.maskcomponents.part.blackcomponents": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.components"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s1.maskcomponents.part.whitemask": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.components"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s1.maskcomponents.part.whitecomponents": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.components"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.components": {
+      "written_by": "px.exp.lab.components",
+      "read_by": [
+        "px.exp.lab.baskets.family",
+        "px.exp.lab.baskets.shellfamily",
+        "px.exp.lab.baskets"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.baskets.family": {
+      "written_by": "px.exp.lab.baskets.family",
+      "read_by": [
+        "px.exp.lab.baskets.shellfamily"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.baskets.shellfamily": {
+      "written_by": "px.exp.lab.baskets.shellfamily",
+      "read_by": [
+        "px.exp.lab.baskets"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.baskets": {
+      "written_by": "px.exp.lab.baskets",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 4,
+    "hits": 1,
+    "computed": 3,
+    "wall_ms": null
+  }
+}

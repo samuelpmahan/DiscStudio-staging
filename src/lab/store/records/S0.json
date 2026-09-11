@@ -122,6 +122,36 @@
                     14
                   ]
                 }
+              ],
+              "baskets": [
+                {
+                  "body": [
+                    150,
+                    470,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    146,
+                    466,
+                    50,
+                    74
+                  ]
+                },
+                {
+                  "body": [
+                    330,
+                    800,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    326,
+                    796,
+                    50,
+                    74
+                  ]
+                }
               ]
             },
             "note": "1 array(s) truncated to the first 200 entries; original lengths: [2097152]"
