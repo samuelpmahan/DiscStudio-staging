@@ -4,7 +4,7 @@ Intent: renumber the invented Stages to the owner's S4-S7: the nearest-anchor ho
 Starting point: b83025b8e686ff8c61585ab351a86d7e1d9e1c53 (land(task-119): S6 Round: a deterministic search over S5's walkable cells from each tee to its basket and on to the next tee, legs that never cross an obstacle cell, unreachable reported rather than straightened, and the difference from the straight-leg route as a Part)
 Verify: node --test tests/*.test.js
 Allow: src/lab tests pyto/experiments/tasks
-Candidate: 22 files, see below
+Candidate: 24 files, see below
 Evidence: suite exit 0, see below
 
 ## Candidate
@@ -14,6 +14,7 @@ Evidence: suite exit 0, see below
 - R081  src/lab/s5.js  src/lab/s7course.js
 - R079  src/lab/s6.js  src/lab/s7round.js
 - M  src/lab/stage-sources.js
+- M  src/lab/stages.js
 - R100  src/lab/stages/S4.args.json  src/lab/stages/HolesByNearestAnchor.args.json
 - R095  src/lab/stages/S4.mmd  src/lab/stages/HolesByNearestAnchor.mmd
 - R100  src/lab/stages/S5.args.json  src/lab/stages/S7.course.args.json
@@ -29,6 +30,7 @@ Evidence: suite exit 0, see below
 - R099  src/lab/store/records/S6.json  src/lab/store/records/S7.round.json
 - R090  src/lab/store/records/S6.vs-straight.json  src/lab/store/records/S7.vs-straight.json
 - R077  tests/lab-s4.test.js  tests/lab-holes-nearest.test.js
+- M  tests/lab-pipeline.test.js
 - R080  tests/lab-s5.test.js  tests/lab-s7course.test.js
 - R082  tests/lab-s6.test.js  tests/lab-s7round.test.js
 
@@ -38,6 +40,7 @@ src/lab/{s4.js => holes-nearest.js}                |  86 +++++++------
  src/lab/{s5.js => s7course.js}                     |  77 ++++++------
  src/lab/{s6.js => s7round.js}                      |  97 +++++++--------
  src/lab/stage-sources.js                           |  12 +-
+ src/lab/stages.js                                  |  26 ++--
  ...S4.args.json => HolesByNearestAnchor.args.json} |   0
  .../stages/{S4.mmd => HolesByNearestAnchor.mmd}    |   2 +-
  .../stages/{S5.args.json => S7.course.args.json}   |   0
@@ -53,15 +56,16 @@ src/lab/{s4.js => holes-nearest.js}                |  86 +++++++------
  src/lab/store/records/{S6.json => S7.round.json}   |   2 +-
  .../{S6.vs-straight.json => S7.vs-straight.json}   |  22 ++--
  .../{lab-s4.test.js => lab-holes-nearest.test.js}  |  48 ++++----
+ tests/lab-pipeline.test.js                         |  10 +-
  tests/{lab-s5.test.js => lab-s7course.test.js}     |  44 +++----
  tests/{lab-s6.test.js => lab-s7round.test.js}      |  46 +++----
- 22 files changed, 392 insertions(+), 374 deletions(-)
+ 24 files changed, 412 insertions(+), 390 deletions(-)
 ```
 
 ## Evidence
 
 - verify: `node --test tests/*.test.js` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.Q5mfnsCRYr) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.oKuPtehjZO) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               756  OK
