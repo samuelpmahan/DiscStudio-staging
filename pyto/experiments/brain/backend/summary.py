@@ -116,6 +116,21 @@ def findings(store) -> list[str]:
 
     # px.exp.brain.bench.backend.<calc>.<engine>.<size>: the tournaments put a branch name where
     # the engine goes, so only the three real engines are counted here.
+    plan = store.get("px.exp.brain.result.backend.plan") if store.has("px.exp.brain.result.backend.plan") else None
+    if plan:
+        flips = [op for op, steps in plan["by_op"].items() if len({step[1] for step in steps}) > 1]
+        written.append(harness.finding(
+            store, VERTICAL, "the_benchmark_parts_are_what_decides", "strength",
+            "the benchmark Parts are folded into one Part - px.exp.brain.result.backend.plan - and `backend=\"auto\"` "
+            "reads it, so 'which engine' stops being a habit and becomes a thing the store answers at the size the "
+            "caller actually has. It is still a pure Calculation: the plan is an input like any other, and an auto with "
+            "no plan is refused by name rather than quietly given numpy. Of the %d ops with a plan, %d change engine "
+            "somewhere across their three measured sizes (%s), which is the whole argument for not hard-coding one."
+            % (len(plan["ops"]), len(flips), ", ".join(sorted(flips)) or "none tonight"),
+            for_="the stats and ml verticals, which are each about to pick a default backend per calculation and would "
+                 "otherwise pick it from reflex",
+        ))
+
     written.append(harness.finding(
         store, VERTICAL, "packing_wins_by_how_long_the_numbers_are", "strength",
         "the array_store bracket's winner is now fn.brain.backend.pack / unpack, and the round trip is exact rather "
@@ -188,9 +203,10 @@ def map_part(store) -> str:
              "for": "the stats vertical's regression and covariance work, which is doing it by hand today"},
             {"what": "convolve, correlate, interpolate, rfft/irfft and a windowing op",
              "for": "the data vertical's time series calculations"},
-            {"what": "a backend chooser: the op's default engine read from the benchmark Parts at the caller's size, "
-                     "rather than hard-coded",
-             "for": "everyone, because 'numpy is faster' is false at the sizes most calculations actually run"},
+            {"what": "the plan rebuilt on the machine that runs it, and a Calculation that rebuilds it as a Part rather "
+                     "than a module function, so a run record shows which engine was chosen and why",
+             "for": "everyone: backend='auto' is built and reads px.exp.brain.result.backend.plan, but the plan is "
+                    "measured here and a slower or faster machine would choose differently"},
             {"what": "PQL.pattern with named address segments and group/best (proposal.brain.backend.pql_cannot_ask_across_a_prefix)",
              "for": "the map, which is a deliverable and is python over matches today"},
         ],

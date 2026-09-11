@@ -49,11 +49,52 @@ def ops() -> tuple[str, ...]:
     return tuple(sorted(_OPS))
 
 
+def elements(args: Mapping[str, Any]) -> int:
+    """how many numbers this invocation was handed. the size the plan is read at.
+
+    it counts the same thing for a call and for a benchmark, which is the only
+    reason a plan built from benchmark Parts can say anything about a call.
+    """
+    total = 0
+    for key, value in args.items():
+        if key in ("backend", "plan"):
+            continue
+        if isinstance(value, Mapping) and "shape" in value and "values" not in value and "rows" not in value:
+            product = 1
+            for dimension in value["shape"]:
+                product *= int(dimension)
+            total += product
+            continue
+        rows: Any = value
+        if isinstance(value, Mapping):
+            rows = value.get("values", value.get("rows"))
+        if isinstance(rows, (list, tuple)):
+            width = len(rows[0]) if rows and isinstance(rows[0], (list, tuple)) else 1
+            total += len(rows) * width
+    return total
+
+
 def call(op: str, args: Mapping[str, Any]) -> Any:
-    """the facade: pick the engine `args["backend"]` names and run it."""
+    """the facade: pick the engine `args["backend"]` names and run it.
+
+    `"auto"` reads the engine out of `args["plan"]` - the Part the benchmark Parts
+    were folded into by `experiments.brain.backend.choose` - at the size this
+    invocation actually has. It is still one pure function of its inputs: the plan
+    is an input like any other, and an "auto" with no plan is refused by name.
+    """
     backend = args.get("backend", "py")
     if op not in _OPS:
         raise ValueError(f"brain: no op named {op!r} (have {', '.join(ops())})")
+    if backend == "auto":
+        from experiments.brain.backend import choose
+
+        if args.get("plan") is None:
+            raise ValueError(
+                f"brain: backend 'auto' for {op!r} needs args['plan'] - the Part at "
+                "px.exp.brain.result.backend.plan, which is what the benchmark Parts decided. "
+                "A facade that read it off disk would not be a pure Calculation"
+            )
+        backend = choose.engine_for(args["plan"], op, elements(args))
     if backend not in _OPS[op]:
         raise ValueError(
             f"brain: {op!r} has no {backend!r} engine (have {', '.join(engines_of(op))}); "
