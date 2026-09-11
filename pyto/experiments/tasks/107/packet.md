@@ -4,8 +4,50 @@ Intent: brain/stats and brain/data close the night: the empirical cdf and its qu
 Starting point: 248fb102ae3ca440fed84d80fce22400f3846cc0 (board: **started** `task-106`: brain/backend the three findings the night itsel)
 Verify: cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'
 Allow: pyto/experiments/brain pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 9 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/experiments/brain/data/build.py
+- M  pyto/experiments/brain/records/data.pipeline.json
+- M  pyto/experiments/brain/records/stats.analysis.json
+- M  pyto/experiments/brain/stats/build.py
+- M  pyto/experiments/brain/stats/summaries.py
+- M  pyto/experiments/brain/stats/summaries_cases.py
+- M  pyto/experiments/brain/stats/test_summaries.py
+- M  pyto/experiments/brain/store/data.json
+- M  pyto/experiments/brain/store/stats.json
+
+```
+pyto/experiments/brain/data/build.py               |   15 +
+ pyto/experiments/brain/records/data.pipeline.json  |   10 +-
+ pyto/experiments/brain/records/stats.analysis.json |   12 +-
+ pyto/experiments/brain/stats/build.py              |   16 +
+ pyto/experiments/brain/stats/summaries.py          |   48 +-
+ pyto/experiments/brain/stats/summaries_cases.py    |   15 +
+ pyto/experiments/brain/stats/test_summaries.py     |   30 +
+ pyto/experiments/brain/store/data.json             |  234 ++---
+ pyto/experiments/brain/store/stats.json            | 1020 ++++++++++++++------
+ 9 files changed, 992 insertions(+), 408 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.jvoV3GZ1ZH) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
