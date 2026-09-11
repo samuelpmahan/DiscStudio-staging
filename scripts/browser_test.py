@@ -300,6 +300,64 @@ with sync_playwright() as p:
     page.locator('[data-control="shelf-group"]').select_option('none')
     page.locator('[data-control="shelf-sort"]').select_option('recent')
     record('The shelf organises itself: quick filters (has photo, in no bag), six sorts, grouping by maker or disc type, and a compact and a card density -- all one fn.shelf.query read, with every disc keeping its own art in both')
+    # Bags: simple, intuitive, and never the thing that says no. One disc is in as many
+    # bags as its owner likes and every row says which; the order inside a bag is the
+    # owner's, by the arrows or by dragging the grip (one drop, one command, one undo);
+    # a bag is duplicated and renamed in place; an empty bag invites instead of refusing.
+    route(page,'shelf')
+    order=lambda:page.evaluate('discStudio.world.objects.Bag[discStudio.view.bagId].discIds')
+    before=order()
+    assert page.locator('.disc-row[data-disc-row="zone-peach"] .bag-tag').all_text_contents()==['Everyday bag','Zone squad'],page.locator('.disc-row[data-disc-row="zone-peach"] .bag-tag').all_text_contents()
+    page.locator('.bag-card[data-bag-card="%s"] [data-action="bag-move"]'%before[0]).last.click()
+    assert order()[1]==before[0] and sorted(order())==sorted(before),order()
+    page.locator('.bag-card[data-bag-card="%s"] [data-action="bag-move"]'%before[0]).first.click()
+    assert order()==before,order()
+    page.locator('.bag-card[data-bag-card="%s"] .bag-grip'%before[0]).scroll_into_view_if_needed()
+    grip=page.locator('.bag-card[data-bag-card="%s"] .bag-grip'%before[0]).bounding_box()
+    target=page.locator('.bag-card[data-bag-card="%s"]'%before[1]).bounding_box()
+    page.mouse.move(grip['x']+grip['width']/2,grip['y']+grip['height']/2)
+    page.mouse.down();page.mouse.move(target['x']+target['width']/2,target['y']+target['height']/2,steps=8)
+    assert page.locator('.bag-card.is-dragging').count()==1 and page.locator('.bag-card.is-drop-target').count()==1
+    page.mouse.up()
+    assert order()[:2]==[before[1],before[0]] and sorted(order())==sorted(before),order()
+    page.locator('[data-action="undo"]').click()
+    assert order()==before,'the whole drag is one undo step'
+    # one tap from the shelf puts a disc in a second bag, and one tap takes it out again --
+    # out of a bag, never off the shelf
+    row='[data-disc-row="luna-mint"] [data-action="membership"]'
+    page.locator(row).click()
+    assert 'luna-mint' in order() and page.evaluate('discStudio.world.objects.Bag["luna-bag"].discIds.includes("luna-mint")'),'a disc is in both bags at once'
+    assert page.locator('.disc-row[data-disc-row="luna-mint"] .bag-tag').count()==2
+    page.locator('.bag-card[data-bag-card="luna-mint"] .bag-remove').click()
+    assert 'luna-mint' not in order() and page.evaluate('!!discStudio.world.objects.Disc["luna-mint"]'),'out of one bag is not off the shelf'
+    assert page.evaluate('discStudio.world.objects.Bag["luna-bag"].discIds.includes("luna-mint")')
+    # duplicated, then renamed in place
+    count=lambda:page.evaluate('Object.keys(discStudio.world.objects.Bag).length')
+    bags_before=count()
+    page.locator('[data-action="bag-duplicate"]').click()
+    copy=page.evaluate('discStudio.view.bagId')
+    assert count()==bags_before+1 and copy!='everyday'
+    assert page.evaluate('b=>discStudio.world.objects.Bag[b].discIds',copy)==before,'the copy holds the same discs in the same order'
+    change(page,'.bag-title','Sunday singles')
+    assert page.evaluate('b=>discStudio.world.objects.Bag[b].name',copy)=='Sunday singles'
+    assert page.evaluate('discStudio.world.objects.Bag.everyday.name')=='Everyday bag','renaming the copy leaves the original alone'
+    # emptied, it invites: one tap from the invitation puts a disc back in
+    for disc in list(page.evaluate('b=>discStudio.world.objects.Bag[b].discIds',copy)):
+        page.locator('.bag-card[data-bag-card="%s"] .bag-remove'%disc).click()
+    assert page.locator('.invite-row .invite-disc').count()>0,'an empty bag offers discs instead of a wall'
+    page.locator('.invite-row .invite-disc').first.click()
+    assert len(page.evaluate('b=>discStudio.world.objects.Bag[b].discIds',copy))==1
+    # and nothing on the shelf side caps it
+    for disc in page.evaluate('Object.keys(discStudio.world.objects.Disc)'):
+        page.evaluate('d=>discStudio.runtime.dispatch({type:"bag.membership",bagId:discStudio.view.bagId,discId:d,include:true})',disc)
+    page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:discStudio.world.battle.currentStateId})')
+    route(page,'shelf')
+    assert len(order())==page.evaluate('Object.keys(discStudio.world.objects.Disc).length'),'a bag holds whatever its owner puts in it'
+    assert page.locator('.notice.error').count()==0
+    page.screenshot(path=str(out/'shelf-bags.png'))
+    page.locator('[data-action="bag-remove"]').click()
+    assert count()==bags_before and page.evaluate('Object.keys(discStudio.world.objects.Disc).length')>0,'deleting a bag keeps every disc'
+    record("Bags are simple and never limiting: a disc reads as being in several bags at once, one tap adds or removes it from the shelf or from the bag, the order inside a bag is set by arrows or by dragging (one drop, one undo), a bag duplicates and is renamed in place, an empty bag invites, and nothing on the shelf side caps a bag")
     # The Course route (#/course-build): one capture through the LAB Stages, one
     # composition per Stage on the studio's own board. What is asserted is what
     # the record says -- px.exp.lab.pipeline, the produce Parts, the receipts --

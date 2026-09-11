@@ -95,6 +95,15 @@ with sync_playwright() as p:
     page.locator('[data-action="shelf-clear"]').click()
     page.wait_for_timeout(120)
 
+    # 1c. One tap and the same disc is in a second bag. Nothing is copied, nothing is moved.
+    discs_before = len(page.evaluate('Object.keys(discStudio.world.objects.Disc)'))
+    page.locator('[data-disc-row="luna-mint"] [data-action="membership"]').click()
+    page.wait_for_timeout(150)
+    tags = page.locator('.disc-row[data-disc-row="luna-mint"] .bag-tag').all_text_contents()
+    assert len(tags) == 2 and len(page.evaluate('Object.keys(discStudio.world.objects.Disc)')) == discs_before, tags
+    beat(page, 'tease', 'tease-01c-one-disc-many-bags', 'One tap, and the same disc is in two bags — not copied, not moved',
+         'the bags this disc is in', ' · '.join(tags))
+
     # 2. One exact photo, and every place that disc appears is your disc.
     disc = page.evaluate('discStudio.view.discId')
     page.locator(f'[data-action="disc-select"][data-id="{disc}"]').first.click()

@@ -137,13 +137,18 @@ const flightLine = mold => ['speed', 'glide', 'turn', 'fade'].map(key => mold?.f
 function discFacts(disc, mold) {
   return [disc.plastic, disc.weight == null ? '' : `${disc.weight} g`, flightLine(mold)].filter(Boolean).map(esc).join(' · ');
 }
+/** Which bags this disc is in, on the row, because being in several is the ordinary case. */
+function rowBags(row) {
+  const bags = row.bagIds.map(key => get(w(), 'Bag', key)).filter(Boolean);
+  return bags.length ? `<span class="row-bags">${bags.map(bag => `<span class="bag-tag ${bag.id === ui.bagId ? 'here' : ''}">${esc(bag.name)}</span>`).join('')}</span>` : '';
+}
 /** One shelf row. The same markup compact or card; the list decides which it is. */
 function shelfEntry(row) {
   const disc = get(w(), 'Disc', row.id); if (!disc) return '';
   const { mold, maker } = discInfo(row.id), bag = get(w(), 'Bag', ui.bagId);
   const membership = bag?.discIds.includes(row.id), inLineup = w().battle.entries.some(e => e.discId === row.id), course = ui.route === 'course';
   const matched = row.matched.length ? `<span class="match-row">${row.matched.map(m => `<span class="match">${esc(m)}</span>`).join('')}</span>` : '';
-  return `<div class="disc-row ${ui.discId === row.id ? 'selected' : ''}" data-disc-row="${esc(row.id)}"><button class="disc-pick" data-action="disc-select" data-id="${esc(row.id)}"><span class="disc-thumb">${safeThumb(row.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(disc.nickname)}</small><small class="disc-facts mono">${discFacts(disc, mold)}</small>${matched}</span></button>${button(course ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), course ? 'lineup-add' : 'membership', { id: row.id }, 'row-add', `aria-label="${course ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(disc.nickname)}" ${course && inLineup ? 'disabled' : ''}`)}</div>`;
+  return `<div class="disc-row ${ui.discId === row.id ? 'selected' : ''}" data-disc-row="${esc(row.id)}"><button class="disc-pick" data-action="disc-select" data-id="${esc(row.id)}"><span class="disc-thumb">${safeThumb(row.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(disc.nickname)}</small><small class="disc-facts mono">${discFacts(disc, mold)}</small>${rowBags(row)}${matched}</span></button>${button(course ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), course ? 'lineup-add' : 'membership', { id: row.id }, 'row-add', `aria-label="${course ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(disc.nickname)}" ${course && inLineup ? 'disabled' : ''}`)}</div>`;
 }
 /** Organising, in the sidebar itself: the quick filters, the sort, the grouping and the two densities. */
 function shelfControls(view) {
@@ -173,12 +178,22 @@ function discComposer() {
   const auto = [a.plastic.trim(), a.mold.trim(), a.weight === '' ? '' : `${a.weight} g`].filter(Boolean).join(' ') || 'your new disc';
   return `<section class="composer" data-composer><div class="composer-head"><div><span class="eyebrow">ONE GESTURE</span><h2>Add a disc you own</h2><p class="tiny muted">Mold is the only thing this needs. Everything else is here because you usually know it while the disc is in your hand.</p></div>${button('×', 'compose-cancel', {}, 'circle', 'aria-label="Cancel adding a disc"')}</div><div class="composer-body"><div class="composer-art">${a.photo ? `<img src="${esc(a.photo)}" alt="The photo this disc will be added with">` : `<span class="composer-swatch" style="background:${esc(base)};border-color:${esc(accent)}"></span>`}<span class="tiny muted">${a.photo ? 'Your photo. It never leaves this browser.' : `Its own hue${a.color.trim() ? `, from “${esc(a.color.trim())}”` : ''} until you add a photo.`}</span><div class="button-row">${button(a.photo ? 'Replace photo' : '↑ Photo of this disc', 'compose-photo', {}, 'quiet small')}${a.photo ? button('Remove', 'compose-photo-clear', {}, 'quiet small') : ''}</div></div><div class="composer-grid">${composeField('Maker', 'maker', 'text', 'list="suggest-maker" placeholder="Discraft"')}${composeField('Mold', 'mold', 'text', 'list="suggest-mold" placeholder="Buzzz" required')}${composeField('Disc type', 'category', 'text', 'list="suggest-category" placeholder="Midrange"')}${composeField('Plastic', 'plastic', 'text', 'list="suggest-plastic" placeholder="ESP"')}${composeField('Weight (g)', 'weight', 'number', 'step="1" min="20" max="400" placeholder="177"')}${composeField('Colour', 'color', 'text', 'list="suggest-color" placeholder="Mint"')}</div></div>${datalist('maker', s.maker)}${datalist('mold', s.mold)}${datalist('category', s.category)}${datalist('plastic', s.plastic)}${datalist('color', s.color)}<div class="composer-foot">${composeField('Nickname', 'nickname', 'text', `placeholder="${esc(auto)}"`)}${bag ? `<label class="check"><input data-compose="toBag" type="checkbox" ${a.toBag ? 'checked' : ''}> Put it in ${esc(bag.name)}</label>` : ''}${button('Add to shelf', 'compose-add', {}, 'primary')}</div></section>`;
 }
+/** One disc in the bag, in the place the bag holds it: reorder by the grip or the arrows, out by one tap. */
+function bagCard(key, index, total) {
+  const { disc, mold, maker } = discInfo(key);
+  if (!disc) return `<div class="error-panel">Missing physical disc ${esc(key)}. Fix this reference before using the bag.</div>`;
+  const others = all(w(), 'Bag').filter(other => other.id !== ui.bagId && other.discIds.includes(key));
+  const dragging = bagDrag?.discId === key, dropping = bagDrag?.over === key;
+  return `<article class="bag-card ${ui.discId === key ? 'is-selected' : ''} ${dragging ? 'is-dragging' : ''} ${dropping ? 'is-drop-target' : ''}" data-bag-card="${esc(key)}"><button class="bag-card-select" data-action="disc-select" data-id="${esc(key)}"><div class="bag-art">${safeThumb(key, undefined, 'shelf')}</div><div class="bag-card-caption"><span class="eyebrow">${esc(maker?.name)}</span><h3>${esc(mold?.name)}</h3><p>${esc(disc.nickname)}</p><span class="tiny">${[disc.plastic, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).map(esc).join(' · ')}</span></div></button>${others.length ? `<div class="also-in"><span class="tiny muted">also in</span>${others.map(other => button(esc(other.name), 'bag-open', { id: other.id }, 'bag-tag linkish')).join('')}</div>` : ''}<div class="bag-card-order"><span class="bag-grip" data-bag-drag="${esc(key)}" title="Drag to reorder">⠿</span>${button('◀', 'bag-move', { id: key, value: index - 1 }, 'step', `aria-label="Move ${esc(disc.nickname)} earlier in this bag" ${index === 0 ? 'disabled' : ''}`)}<span class="tiny muted" data-bag-place="${esc(key)}">${index + 1}</span>${button('▶', 'bag-move', { id: key, value: index + 1 }, 'step', `aria-label="Move ${esc(disc.nickname)} later in this bag" ${index === total - 1 ? 'disabled' : ''}`)}</div>${button('−', 'membership', { id: key }, 'bag-remove', `aria-label="Take ${esc(disc.nickname)} out of this bag only"`)}</article>`;
+}
+/** An empty bag is an invitation: the discs you would most likely reach for, one tap each. */
+function bagInvitation() {
+  const suggestions = runtime.shelf({ sort: 'recent', bagId: ui.bagId }).rows.filter(row => !row.bagIds.includes(ui.bagId)).slice(0, 6);
+  return `<div class="empty-state"><h2>An empty bag is just one you have not packed yet.</h2><p>One tap puts a disc in. The same disc can be in as many bags as you like — it is never moved out of another one, and there is no limit on what a bag holds.</p><div class="invite-row">${suggestions.map(row => { const { disc, mold } = discInfo(row.id); return `<button class="invite-disc" data-action="membership" data-id="${esc(row.id)}"><span class="invite-art">${safeThumb(row.id)}</span><span class="invite-copy"><strong>${esc(mold?.name || 'Disc')}</strong><small>${esc(disc.nickname)}</small></span><span class="invite-plus">+</span></button>`; }).join('')}</div></div>`;
+}
 function shelfCenter() {
-  const bag = get(w(), 'Bag', ui.bagId);
-  return `<section class="center" data-scroll="center">${ui.adding ? discComposer() : ''}<div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Rename', 'bag-rename', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description"><span class="eyebrow">${bag ? `${bag.discIds.length} PHYSICAL DISCS · SHARED REFERENCES` : 'CREATE YOUR FIRST BAG'}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${(bag?.discIds || []).map(key => {
-    const { disc, mold, maker } = discInfo(key); if (!disc) return `<div class="error-panel">Missing physical disc ${esc(key)}. Fix this reference before using the bag.</div>`;
-    return `<article class="bag-card ${ui.discId === key ? 'is-selected' : ''}"><button class="bag-card-select" data-action="disc-select" data-id="${esc(key)}"><div class="bag-art">${safeThumb(key, undefined, 'shelf')}</div><div class="bag-card-caption"><span class="eyebrow">${esc(maker?.name)}</span><h3>${esc(mold?.name)}</h3><p>${esc(disc.nickname)}</p><span class="tiny">${[disc.plastic, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).map(esc).join(' · ')}</span></div></button>${button('−', 'membership', { id: key }, 'bag-remove', 'aria-label="Remove from this bag only"')}</article>`;
-  }).join('') || '<div class="empty-state"><h2>Start with the discs you actually throw.</h2><p>Use the + beside any shelf disc to put it in this bag. One disc can belong to several bags.</p></div>'}</div><div class="principle-strip"><span>ONE DISC. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bound card sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
+  const bag = get(w(), 'Bag', ui.bagId), discIds = bag?.discIds ?? [];
+  return `<section class="center" data-scroll="center">${ui.adding ? discComposer() : ''}<div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Duplicate bag', 'bag-duplicate', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description">${bag ? `<input class="bag-title" data-control="bag-name" aria-label="Bag name" value="${esc(bag.name)}">` : '<span class="eyebrow">CREATE YOUR FIRST BAG</span>'}<span class="tiny muted">${bag ? `${discIds.length} disc${discIds.length === 1 ? '' : 's'} · drag the grip or use ◀ ▶ to set the order · no limits here, a cap belongs to a competition` : ''}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${discIds.map((key, index) => bagCard(key, index, discIds.length)).join('') || bagInvitation()}</div><div class="principle-strip"><span>ONE DISC. MANY BAGS. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bag it is in, and every bound card, sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
 }
 function discInspector() {
   const { disc, mold, maker } = discInfo(); if (!disc) return '<aside class="inspector"><p>Select or add a disc.</p></aside>';
@@ -731,7 +746,9 @@ async function action(name, el) {
     case 'disc-remove': if (confirm('Remove this physical disc from your shelf? Bag/lineup references must be removed first.')) execute({ type: 'disc.remove', id: disc.id }); break;
     case 'membership': if (!ui.bagId) throw new Error('Create a bag first.'); execute({ type: 'bag.membership', bagId: ui.bagId, discId: d.id, include: !get(w(), 'Bag', ui.bagId).discIds.includes(d.id) }); break;
     case 'bag-add': { const name = prompt('Name this bag', 'New bag'); if (name?.trim()) { const key = id('bag'); execute({ type: 'entity.add', record: { id: key, type: 'Bag', name: name.trim(), discIds: [], notes: '' } }); ui.bagId = key; } break; }
-    case 'bag-rename': { const name = prompt('Bag name', get(w(), 'Bag', ui.bagId)?.name || ''); if (name?.trim()) execute({ type: 'entity.set', entityType: 'Bag', id: ui.bagId, path: 'name', value: name.trim() }); break; }
+    case 'bag-open': ui.bagId = d.id; break;
+    case 'bag-duplicate': { const source = get(w(), 'Bag', ui.bagId); if (!source) throw new Error('Open a bag first.'); const key = id('bag'); execute({ type: 'bag.duplicate', id: source.id, newId: key, name: `${source.name} · copy` }); ui.bagId = key; message(`${get(w(), 'Bag', key).name} holds the same discs, in the same order. Rename it in place; the originals are untouched.`); break; }
+    case 'bag-move': execute({ type: 'bag.reorder', bagId: ui.bagId, discId: d.id, toIndex: +d.value }); break;
     case 'bag-remove': if (confirm('Delete this bag? Physical discs remain on your shelf.')) execute({ type: 'bag.remove', id: ui.bagId }); break;
     case 'photo': ui.photoTarget = 'disc'; ui.photoDiscId = d.id || ui.discId; document.querySelector('#photo-file').click(); return;
     case 'photo-remove': execute({ type: 'entity.set', entityType: 'Disc', id: ui.discId, path: 'photo', value: null }); break;
@@ -848,6 +865,7 @@ function controlChange(el) {
   switch (key) {
     case 'bag': ui.bagId = value; break;
     case 'only-bag': ui.onlyBag = el.checked; break;
+    case 'bag-name': execute({ type: 'entity.set', entityType: 'Bag', id: ui.bagId, path: 'name', value: value.trim() || 'Bag' }); break;
     case 'shelf-sort': ui.shelfSort = value; break;
     case 'shelf-group': ui.shelfGroup = value; break;
     case 'identity-maker': execute({ type: 'disc.identity', id: disc.id, manufacturer: value, mold: mold?.name || '' }); break;
@@ -909,6 +927,28 @@ function controlChange(el) {
 }
 app.addEventListener('change', event => { const el = event.target.closest('[data-control]'); if (!el) return; try { controlChange(el); } catch (error) { message(error.cause?.message || error.message, true); render(); } });
 app.addEventListener('input', event => { const el = event.target; if (el.dataset.search) { if (el.dataset.search === 'discs') ui.query = el.value; else ui.fieldQuery = el.value; render(); } });
+let bagDrag = null;
+app.addEventListener('pointerdown', event => {
+  const grip = event.target.closest('[data-bag-drag]'); if (!grip || event.button !== 0) return;
+  event.preventDefault(); grip.setPointerCapture?.(event.pointerId);
+  bagDrag = { discId: grip.dataset.bagDrag, bagId: ui.bagId, over: null }; render();
+});
+window.addEventListener('pointermove', event => {
+  if (!bagDrag) return;
+  const card = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-bag-card]');
+  const over = card && card.dataset.bagCard !== bagDrag.discId ? card.dataset.bagCard : null;
+  if (over !== bagDrag.over) { bagDrag.over = over; render(); }
+});
+/** The drop is the command: one move, one undo step, wherever the pointer travelled to get there. */
+window.addEventListener('pointerup', () => {
+  const move = bagDrag; bagDrag = null;
+  if (!move?.over) { if (move) render(); return; }
+  const bag = get(w(), 'Bag', move.bagId), toIndex = bag ? bag.discIds.indexOf(move.over) : -1;
+  try { if (toIndex >= 0) execute({ type: 'bag.reorder', bagId: move.bagId, discId: move.discId, toIndex }); }
+  catch (error) { message(error.message, true); }
+  render();
+});
+window.addEventListener('pointercancel', () => { bagDrag = null; render(); });
 let drag = null, dragFrame = null, pendingMove = null;
 app.addEventListener('pointerdown', event => {
   const hit = event.target.closest('[data-node-select]'); if (!hit || event.button !== 0) return;
