@@ -846,10 +846,11 @@ def map_and_findings(store):
 
 
 STUBBED = [
+    {"address": "fn.brain.ml.gbm_fit logistic", "why": "boosting here is squared loss only; the logistic loss needs a second-order step and its own oracle"},
+    {"address": "fn.brain.ml.forest_fit oob_score", "why": "the out-of-bag rows are recorded per tree (oob_sizes) but nothing scores on them yet"},
     {"address": "fn.brain.ml.mlp_fit deep", "why": "the backward pass is hand-derived for exactly one hidden layer; a second layer needs autograd or another hand derivation, and a half-checked one is worth less than none"},
     {"address": "fn.brain.ml.lasso_path", "why": "one alpha is fitted and oracled; the path over a grid of alphas is a loop away and is the part worth reading"},
     {"address": "fn.brain.ml.cross_validate", "why": "kfold and every metric exist; the loop that folds them together is still at each call site"},
-    {"address": "fn.brain.ml.dbscan", "why": "density clustering is behind k-means and the hierarchies in the queue"},
     {"address": "fn.brain.ml.logreg_fit multinomial", "why": "multiclass is one-vs-rest, not a softmax; the softmax needs its own oracle and is not worth a half-checked one"},
     {"address": "fn.brain.ml.knn_fit approximate", "why": "the exact vote is the reference; a kd-tree or ball-tree is a backend of it, and belongs after the shared pairwise-distance primitive"},
 ]
