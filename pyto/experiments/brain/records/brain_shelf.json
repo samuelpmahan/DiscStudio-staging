@@ -3,7 +3,7 @@
     "computed": 0,
     "hits": 5,
     "invocations": 5,
-    "wall_ms": 61.535834000096656
+    "wall_ms": 61.00411700026598
   },
   "parts": {
     "px.exp.brain.data.shelf_molds": {
@@ -78,7 +78,7 @@
           "declared_consumes": [
             "px:px.exp.brain.data.shelf_weights"
           ],
-          "duration_ms": 0.0944540006457828,
+          "duration_ms": 0.14054500024940353,
           "hit": true,
           "id": "weights",
           "inputs": {
@@ -135,7 +135,7 @@
           "declared_consumes": [
             "px:px.exp.brain.data.shelf_molds"
           ],
-          "duration_ms": 0.1311859996349085,
+          "duration_ms": 0.13659800060850102,
           "hit": true,
           "id": "flight",
           "inputs": {
@@ -214,7 +214,7 @@
           "declared_consumes": [
             "px:px.exp.brain.data.shelf_molds"
           ],
-          "duration_ms": 0.22343599994201213,
+          "duration_ms": 0.22505900051328354,
           "hit": true,
           "id": "kmeans",
           "inputs": {
@@ -303,7 +303,7 @@
           "declared_consumes": [
             "px:px.exp.brain.data.shelf_molds"
           ],
-          "duration_ms": 47.005616999740596,
+          "duration_ms": 46.73956799888401,
           "hit": true,
           "id": "pca",
           "inputs": {
@@ -417,7 +417,7 @@
           "declared_consumes": [
             "px:px.exp.brain.data.shelf_molds"
           ],
-          "duration_ms": 14.081141000133357,
+          "duration_ms": 13.762347000010777,
           "hit": true,
           "id": "fade",
           "inputs": {
