@@ -25,7 +25,7 @@ pyto/experiments/brain/backend/cases.py           | 125 +++++
 ## Evidence
 
 - verify: `cd pyto && python -m unittest discover -s experiments/brain -p 'test_*.py'` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.HVXRWd0uVx) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.yNuyg1TCGK) (evidence/check_all.txt)
     suite                         tests  status
     library                         439  OK
     experiments/brain               133  OK
