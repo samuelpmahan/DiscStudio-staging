@@ -9,6 +9,7 @@ import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
 import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
 import { labStageSpecs, registerLabCalculations, validateStage, stageView, LAB_COURSE } from './lab/stages.js';
 import { fixtureCapture } from './lab/fixtures.js';
+import { studioProposalParts } from './proposals.js';
 
 /** Application adapter over the existing ChainSpot runtime. No second execution engine. */
 export function createStudioRuntime(initial) {
@@ -72,6 +73,9 @@ export function createStudioRuntime(initial) {
   }
   publishWorld(freeze(validateWorld(initial)));
   pxc.set('px.undo.studio', emptyStack('studio'));
+  // What running the LAB's Stages here asked of this core and could not quite
+  // say (src/proposals.js), on the board beside the receipts a reader reads.
+  for (const [address, proposal] of studioProposalParts()) pxc.set(address, proposal);
   const world = () => pxc.get('px.studio.world');
   const calc = (call, bindings, into, args = {}) => ({ call, with: bindings, args, into });
   const tick = (name, calcs) => ({ name, Calculations: calcs });
@@ -471,10 +475,12 @@ export function createStudioRuntime(initial) {
     cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
     lab: {
       course: LAB_COURSE, address: LAB_PIPELINE,
-      // The sample is the LAB fixture at its fullest: three badges (one hole whose
-      // basket is missing, so S4 names what it could not place), and a region of
-      // terrain, so S5's obstacle map is something a reader can see.
-      sample: () => fixtureCapture(20260911, { hole11: true, obstacle: true }),
+      // The sample is the LAB fixture with something for every Stage to do: a
+      // tee that points at its badge with a basket on the same line (the ray and
+      // the straight hole), badges no ray can finish (the doglegs), and a region
+      // of terrain the round has to walk around. `{ overlaps: true }` also hides
+      // one object of each kind from the clean detectors, for the recovery Stage.
+      sample: (options = {}) => fixtureCapture(20260911, { obstacle: true, aligned: true, ...options }),
       specs: () => labSpecs.map(spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', produces: [...spec.produces], needs: [...(spec.needs ?? [])] })),
       begin: labBegin, stage: labStage, pipeline: labPipeline, addStage: labAddStage,
       state: () => pxc.get(LAB_PIPELINE),
