@@ -7,6 +7,8 @@ import { shelfSheet } from './formats/shelf-sheet.js';
 import { receiptList } from './formats/receipt-list.js';
 import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
 import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
+import { assignArt, shelfItems } from './art.js';
+import { FAMILIES as ART_FAMILIES } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
 import { labStageSpecs, registerLabCalculations, validateStage, stageView, LAB_COURSE } from './lab/stages.js';
 import { fixtureCapture } from './lab/fixtures.js';
 import { studioProposalParts } from './proposals.js';
@@ -34,6 +36,7 @@ export function createStudioRuntime(initial) {
   register('fn.studio.applyCommand', applyCommand, { memo: false });
   register('fn.domain.fields', ({ material }) => discoverFields(material));
   register('fn.disc.art', prepareDiscArt);
+  register('fn.art.assign', ({ world, families, key }) => assignArt({ items: shelfItems(world, key), families, key }));
   register('fn.card.compose', composeCard);
   register('fn.card.svg', cardSvg);
   // `course` is bound only by the course arrangement (sceneComposition below);
@@ -82,6 +85,16 @@ export function createStudioRuntime(initial) {
   const step = (name, call, bindings, into, args = {}) => tick(name, [calc(call, bindings, into, args)]);
   const compose = (name, ticks) => readPql(JSON.stringify({ PrincipleComponentRender: name, Ticks: ticks }), JSON.parse);
   /**
+   * The shelf-wide art assignment (src/art.js): one Calculation over the whole
+   * shelf, on the record as `art-assignment`, publishing `px.art.assignment`,
+   * which every card's Art step binds. Re-run after every publishWorld, so a
+   * disc added or re-identified gets its family the same way the seed did.
+   */
+  function refreshArt() {
+    execute('art-assignment', [{ name: 'Assign', Calculations: [{ call: 'fn.art.assign', with: { world: 'px.studio.world' }, args: { families: ART_FAMILIES, key: 'moldId' }, into: 'px.art.assignment' }] }]);
+  }
+  refreshArt(); // the seed's shelf, assigned the same way every later shelf is
+  /**
    * One receipt for one run. `run.schedule` is filed on it only when exec.js
    * reported one -- a parallel run, a budgeted run, or a run a budget stopped --
    * so a plain serial receipt is byte for byte the receipt it always was
@@ -123,7 +136,7 @@ export function createStudioRuntime(initial) {
     push('px.studio.world');
     source('px.input.command', { ...command, eventId: id('event'), time: new Date().toISOString() });
     const run = execute('studio-command', [step('ApplyCommand', 'fn.studio.applyCommand', { world: 'px.studio.world', command: 'px.input.command' }, 'px.studio.nextWorld')]);
-    publishWorld(pxc.get('px.studio.nextWorld')); listener(world(), command, run); return run;
+    publishWorld(pxc.get('px.studio.nextWorld')); refreshArt(); listener(world(), command, run); return run;
   }
   /**
    * The shared card chain, now with the cascade Tick task 78 asks for:
@@ -150,7 +163,7 @@ export function createStudioRuntime(initial) {
       prefix,
       ticks: [
         step(`Fields:${label}`, 'fn.domain.fields', { material: mat }, `${prefix}.fields`),
-        step(`Art:${label}`, 'fn.disc.art', { disc: partAddress('Disc', discId), mold: partAddress('Mold', mold.id), maker: partAddress('Manufacturer', maker.id) }, `${prefix}.art`),
+        step(`Art:${label}`, 'fn.disc.art', { disc: partAddress('Disc', discId), mold: partAddress('Mold', mold.id), maker: partAddress('Manufacturer', maker.id), assignment: 'px.art.assignment' }, `${prefix}.art`),
         tick(`Cascade:${label}`, [
           calc('fn.cards.effective', { global: 'px.discstudio.cards.global', preset: `px.presentation.${presetId}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
           calc('fn.cards.apply', { preset: `px.presentation.${presetId}`, effective: effectiveAddress }, presetAddress)
@@ -240,7 +253,7 @@ export function createStudioRuntime(initial) {
       step('Restore', 'fn.undo.pop', { stack: stackAddress(scope), current: address }, address, { address, scope }),
       step('Settle', 'fn.undo.settle', { stack: stackAddress(scope) }, stackAddress(scope), { address, scope })
     ]);
-    if (address === 'px.studio.world') { publishWorld(freeze(validateWorld(pxc.get(address)))); listener(world(), { type: 'undo.pop', address, scope }, run); }
+    if (address === 'px.studio.world') { publishWorld(freeze(validateWorld(pxc.get(address)))); refreshArt(); listener(world(), { type: 'undo.pop', address, scope }, run); }
     return run;
   }
   /** The studio's own receipts, read back through the PQL prefix query px.receipt.*. */
@@ -491,7 +504,7 @@ export function createStudioRuntime(initial) {
     },
     undo: { push, pop, stack: undoStack, depth: (scope = 'studio') => undoStack(scope).depth },
     onChange(fn) { listener = fn; },
-    replace(next) { publishWorld(freeze(validateWorld(next))); listener(world(), { type: 'draft.import' }, null); },
+    replace(next) { publishWorld(freeze(validateWorld(next))); refreshArt(); listener(world(), { type: 'draft.import' }, null); },
     parts() { return [...addresses].sort().map(address => ({ address, value: pxc.get(address) })); },
     /** Read/select Parts without building another state store. */
     select(prefix) { return [...addresses].filter(a => a.startsWith(prefix)).map(a => ({ address: a, value: pxc.get(a) })); }

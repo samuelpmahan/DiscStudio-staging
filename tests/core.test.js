@@ -294,12 +294,13 @@ test('a with binding ending in .* is a prefix query over the board, sorted and r
 test('the Inspect receipts list is a PQL query over px.receipt.* publishing two Parts', () => {
   const r = seededScene();
   const first = r.receipts();
-  assert.deepEqual(first.rows.map(row => row.name), ['on-the-course']);
-  assert.deepEqual(first.summary, { receipts: 1, invocations: 20, produces: 20, digest: first.summary.digest });
+  // task 131: the shelf's art assignment is a run of its own (art-assignment, one invocation, one Part), listed beside the scene
+  assert.deepEqual(first.rows.map(row => row.name), ['art-assignment', 'on-the-course']);
+  assert.deepEqual(first.summary, { receipts: 2, invocations: 21, produces: 21, digest: first.summary.digest });
   assert.match(first.summary.digest, /^[0-9a-f]{8}$/);
   assert.deepEqual(r.pxc.get('px.studio.receipts'), first.rows);
   assert.deepEqual(r.pxc.get('px.studio.receipts.summary'), first.summary);
-  const scene = first.rows[0];
+  const scene = first.rows.find(row => row.name === 'on-the-course');
   assert.equal(scene.address, 'px.receipt.on-the-course');
   assert.equal(scene.invocations, 20); // task 78: each of the 3 lineup entries now gains a Cascade Tick of 2 Calculations (14 + 3*2)
   assert.ok(scene.consumes.includes('px.domain.Disc.buzzz-mint') && scene.consumes.includes('px.course.scene'));
@@ -307,11 +308,11 @@ test('the Inspect receipts list is a PQL query over px.receipt.* publishing two 
   assert.deepEqual(scene.consumes, [...scene.consumes].sort());
   // The query is over the record, so the second reading sees the first one's own receipt.
   const second = r.receipts(), listed = second.rows.find(row => row.name === 'studio-receipts');
-  assert.deepEqual(second.rows.map(row => row.name), ['on-the-course', 'studio-receipts']);
+  assert.deepEqual(second.rows.map(row => row.name), ['art-assignment', 'on-the-course', 'studio-receipts']);
   assert.deepEqual(listed.consumes, ['px.receipt.*']);
   assert.deepEqual(listed.produces, ['px.studio.receipts', 'px.studio.receipts.summary']);
   assert.equal(listed.invocations, 1);
-  assert.equal(seededScene().receipts().rows[0].digest, scene.digest, 'the same workspace and composition label the same materials');
+  assert.equal(seededScene().receipts().rows.find(row => row.name === 'on-the-course').digest, scene.digest, 'the same workspace and composition label the same materials');
 });
 
 // Kills: an undo that keeps its own history outside the store, and a pop that

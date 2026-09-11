@@ -1,5 +1,5 @@
 {
-  "note": "Captured by running src/runtime.js under node: createStudioRuntime(createSeed()).card(\"buzzz-mint\",\"broadcast\",ctx) twice. first = every Calculation computed; second = every Calculation served from the memo ring (runtime.js:17-19). Re-captured for task 79: the Cascade Tick now binds px.presentation.<presetId> (the preset IS the projection layer) instead of a projection Part, and broadcast's own sponsor override reaches the card, so first computes 6 and second reuses 6. Re-captured for task 130: a disc with no authored art colours is painted in its own sample hue and the sample discs each carry one of the painter's families (presentation.js sampleColors/sampleFamily, seed.js), so the art bytes moved and nothing else.",
+  "note": "Captured by running src/runtime.js under node: createStudioRuntime(createSeed()).card(\"buzzz-mint\",\"broadcast\",ctx) twice. first = every Calculation computed; second = every Calculation served from the memo ring (runtime.js:17-19). Re-captured for task 79: the Cascade Tick now binds px.presentation.<presetId> (the preset IS the projection layer) instead of a projection Part, and broadcast's own sponsor override reaches the card, so first computes 6 and second reuses 6. Re-captured for task 131: the Art step binds px.art.assignment (fn.art.assign over the whole shelf: spread first, then like with like), so the art bytes and the Art step's inputs moved and nothing else.",
   "first": {
     "pql": {
       "PrincipleComponentRender": "display-card",
@@ -27,7 +27,6 @@
                         "weight": 177,
                         "color": "Mint",
                         "sampleHue": 150,
-                        "artFamily": "orbit-foundry",
                         "photo": null,
                         "notes": "",
                         "type": "Disc"
@@ -604,19 +603,6 @@
                   "available": true
                 },
                 {
-                  "path": "disc.artFamily",
-                  "label": "artFamily",
-                  "group": "Physical disc",
-                  "order": 100,
-                  "type": "text",
-                  "unit": "",
-                  "optional": false,
-                  "discovered": true,
-                  "source": "px.domain.Disc.buzzz-mint",
-                  "value": "orbit-foundry",
-                  "available": true
-                },
-                {
                   "path": "bag.name",
                   "label": "Bag name",
                   "group": "Bag",
@@ -832,7 +818,8 @@
               "with": {
                 "disc": "px.domain.Disc.buzzz-mint",
                 "mold": "px.domain.Mold.buzzz",
-                "maker": "px.domain.Manufacturer.discraft"
+                "maker": "px.domain.Manufacturer.discraft",
+                "assignment": "px.art.assignment"
               },
               "args": {},
               "into": "px.render.single.buzzz-mint.art",
@@ -846,7 +833,6 @@
                   "weight": 177,
                   "color": "Mint",
                   "sampleHue": 150,
-                  "artFamily": "orbit-foundry",
                   "photo": null,
                   "notes": "",
                   "type": "Disc"
@@ -869,15 +855,83 @@
                   "name": "Discraft",
                   "website": "",
                   "type": "Manufacturer"
+                },
+                "assignment": {
+                  "families": [
+                    "orbit-foundry",
+                    "petal-press",
+                    "signal-stamp",
+                    "tessellated-flight",
+                    "pressed-fern",
+                    "nodding-seedhead",
+                    "wind-rose",
+                    "halftone-screen",
+                    "register-mark",
+                    "hot-foil",
+                    "chevron-run",
+                    "score-bug",
+                    "sweep-clock",
+                    "contour-basin",
+                    "fairway-plat",
+                    "block-print"
+                  ],
+                  "key": "moldId",
+                  "spread": 8,
+                  "assignment": {
+                    "buzzz-mint": "hot-foil",
+                    "zone-peach": "tessellated-flight",
+                    "destroyer-lilac": "contour-basin",
+                    "leopard3-gold": "halftone-screen",
+                    "mako3-blue": "petal-press",
+                    "teebird3-sand": "score-bug",
+                    "buzzz-rose": "nodding-seedhead",
+                    "luna-mint": "block-print",
+                    "luna-lilac": "block-print",
+                    "luna-blue": "block-print",
+                    "zone-gold": "tessellated-flight",
+                    "zone-rose": "tessellated-flight"
+                  },
+                  "phase": {
+                    "buzzz-mint": "spread",
+                    "zone-peach": "spread",
+                    "destroyer-lilac": "spread",
+                    "leopard3-gold": "spread",
+                    "mako3-blue": "spread",
+                    "teebird3-sand": "spread",
+                    "buzzz-rose": "spread",
+                    "luna-mint": "spread",
+                    "luna-lilac": "grouped",
+                    "luna-blue": "grouped",
+                    "zone-gold": "grouped",
+                    "zone-rose": "grouped"
+                  },
+                  "histogram": {
+                    "orbit-foundry": 0,
+                    "petal-press": 1,
+                    "signal-stamp": 0,
+                    "tessellated-flight": 3,
+                    "pressed-fern": 0,
+                    "nodding-seedhead": 1,
+                    "wind-rose": 0,
+                    "halftone-screen": 1,
+                    "register-mark": 0,
+                    "hot-foil": 1,
+                    "chevron-run": 0,
+                    "score-bug": 1,
+                    "sweep-clock": 0,
+                    "contour-basin": 1,
+                    "fairway-plat": 0,
+                    "block-print": 3
+                  }
                 }
               },
               "output": {
                 "kind": "painted",
-                "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                 "alt": "Sample artwork · Discraft · Buzzz",
                 "sample": true,
                 "inputs": [
-                  "orbit-foundry",
+                  "hot-foil",
                   150,
                   "#9fd1b8",
                   "#4b8166",
@@ -1859,19 +1913,6 @@
                     "available": true
                   },
                   {
-                    "path": "disc.artFamily",
-                    "label": "artFamily",
-                    "group": "Physical disc",
-                    "order": 100,
-                    "type": "text",
-                    "unit": "",
-                    "optional": false,
-                    "discovered": true,
-                    "source": "px.domain.Disc.buzzz-mint",
-                    "value": "orbit-foundry",
-                    "available": true
-                  },
-                  {
                     "path": "bag.name",
                     "label": "Bag name",
                     "group": "Bag",
@@ -2075,11 +2116,11 @@
                 ],
                 "art": {
                   "kind": "painted",
-                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                   "alt": "Sample artwork · Discraft · Buzzz",
                   "sample": true,
                   "inputs": [
-                    "orbit-foundry",
+                    "hot-foil",
                     150,
                     "#9fd1b8",
                     "#4b8166",
@@ -2522,11 +2563,11 @@
                 },
                 "art": {
                   "kind": "painted",
-                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                   "alt": "Sample artwork · Discraft · Buzzz",
                   "sample": true,
                   "inputs": [
-                    "orbit-foundry",
+                    "hot-foil",
                     150,
                     "#9fd1b8",
                     "#4b8166",
@@ -3073,11 +3114,11 @@
                   },
                   "art": {
                     "kind": "painted",
-                    "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                    "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                     "alt": "Sample artwork · Discraft · Buzzz",
                     "sample": true,
                     "inputs": [
-                      "orbit-foundry",
+                      "hot-foil",
                       150,
                       "#9fd1b8",
                       "#4b8166",
@@ -3388,7 +3429,7 @@
                 }
               },
               "output": {
-                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g><g data-node=\"sponsor\" fill=\"#b9d789\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"390\" y=\"159\" text-anchor=\"end\" font-size=\"11\" font-weight=\"700\">CHAINSPOT</text></g></g></svg>",
+                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g><g data-node=\"sponsor\" fill=\"#b9d789\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"390\" y=\"159\" text-anchor=\"end\" font-size=\"11\" font-weight=\"700\">CHAINSPOT</text></g></g></svg>",
                 "width": 400,
                 "height": 174
               },
@@ -3425,7 +3466,8 @@
                 "with": {
                   "disc": "px.domain.Disc.buzzz-mint",
                   "mold": "px.domain.Mold.buzzz",
-                  "maker": "px.domain.Manufacturer.discraft"
+                  "maker": "px.domain.Manufacturer.discraft",
+                  "assignment": "px.art.assignment"
                 },
                 "args": {},
                 "into": "px.render.single.buzzz-mint.art"
@@ -3502,7 +3544,7 @@
             "px.render.single.buzzz-mint.fields"
           ],
           "reused": false,
-          "material": "domain.fields:060cc5b7",
+          "material": "domain.fields:d0eb884e",
           "revision": 1
         },
         {
@@ -3511,14 +3553,15 @@
           "inputs": {
             "disc": "px.domain.Disc.buzzz-mint",
             "mold": "px.domain.Mold.buzzz",
-            "maker": "px.domain.Manufacturer.discraft"
+            "maker": "px.domain.Manufacturer.discraft",
+            "assignment": "px.art.assignment"
           },
           "output": "px.render.single.buzzz-mint.art",
           "produces": [
             "px.render.single.buzzz-mint.art"
           ],
           "reused": false,
-          "material": "disc.art:acead650",
+          "material": "disc.art:8bd96cfd",
           "revision": 1
         },
         {
@@ -3566,7 +3609,7 @@
             "px.render.single.buzzz-mint.card"
           ],
           "reused": false,
-          "material": "card.compose:e2afa0c2",
+          "material": "card.compose:3f47a89c",
           "revision": 1
         },
         {
@@ -3580,7 +3623,7 @@
             "px.render.single.buzzz-mint.svg"
           ],
           "reused": false,
-          "material": "card.svg:4f21e4c7",
+          "material": "card.svg:ac1cd4ad",
           "revision": 1
         }
       ],
@@ -3615,7 +3658,6 @@
                         "weight": 177,
                         "color": "Mint",
                         "sampleHue": 150,
-                        "artFamily": "orbit-foundry",
                         "photo": null,
                         "notes": "",
                         "type": "Disc"
@@ -4192,19 +4234,6 @@
                   "available": true
                 },
                 {
-                  "path": "disc.artFamily",
-                  "label": "artFamily",
-                  "group": "Physical disc",
-                  "order": 100,
-                  "type": "text",
-                  "unit": "",
-                  "optional": false,
-                  "discovered": true,
-                  "source": "px.domain.Disc.buzzz-mint",
-                  "value": "orbit-foundry",
-                  "available": true
-                },
-                {
                   "path": "bag.name",
                   "label": "Bag name",
                   "group": "Bag",
@@ -4420,7 +4449,8 @@
               "with": {
                 "disc": "px.domain.Disc.buzzz-mint",
                 "mold": "px.domain.Mold.buzzz",
-                "maker": "px.domain.Manufacturer.discraft"
+                "maker": "px.domain.Manufacturer.discraft",
+                "assignment": "px.art.assignment"
               },
               "args": {},
               "into": "px.render.single.buzzz-mint.art",
@@ -4434,7 +4464,6 @@
                   "weight": 177,
                   "color": "Mint",
                   "sampleHue": 150,
-                  "artFamily": "orbit-foundry",
                   "photo": null,
                   "notes": "",
                   "type": "Disc"
@@ -4457,15 +4486,83 @@
                   "name": "Discraft",
                   "website": "",
                   "type": "Manufacturer"
+                },
+                "assignment": {
+                  "families": [
+                    "orbit-foundry",
+                    "petal-press",
+                    "signal-stamp",
+                    "tessellated-flight",
+                    "pressed-fern",
+                    "nodding-seedhead",
+                    "wind-rose",
+                    "halftone-screen",
+                    "register-mark",
+                    "hot-foil",
+                    "chevron-run",
+                    "score-bug",
+                    "sweep-clock",
+                    "contour-basin",
+                    "fairway-plat",
+                    "block-print"
+                  ],
+                  "key": "moldId",
+                  "spread": 8,
+                  "assignment": {
+                    "buzzz-mint": "hot-foil",
+                    "zone-peach": "tessellated-flight",
+                    "destroyer-lilac": "contour-basin",
+                    "leopard3-gold": "halftone-screen",
+                    "mako3-blue": "petal-press",
+                    "teebird3-sand": "score-bug",
+                    "buzzz-rose": "nodding-seedhead",
+                    "luna-mint": "block-print",
+                    "luna-lilac": "block-print",
+                    "luna-blue": "block-print",
+                    "zone-gold": "tessellated-flight",
+                    "zone-rose": "tessellated-flight"
+                  },
+                  "phase": {
+                    "buzzz-mint": "spread",
+                    "zone-peach": "spread",
+                    "destroyer-lilac": "spread",
+                    "leopard3-gold": "spread",
+                    "mako3-blue": "spread",
+                    "teebird3-sand": "spread",
+                    "buzzz-rose": "spread",
+                    "luna-mint": "spread",
+                    "luna-lilac": "grouped",
+                    "luna-blue": "grouped",
+                    "zone-gold": "grouped",
+                    "zone-rose": "grouped"
+                  },
+                  "histogram": {
+                    "orbit-foundry": 0,
+                    "petal-press": 1,
+                    "signal-stamp": 0,
+                    "tessellated-flight": 3,
+                    "pressed-fern": 0,
+                    "nodding-seedhead": 1,
+                    "wind-rose": 0,
+                    "halftone-screen": 1,
+                    "register-mark": 0,
+                    "hot-foil": 1,
+                    "chevron-run": 0,
+                    "score-bug": 1,
+                    "sweep-clock": 0,
+                    "contour-basin": 1,
+                    "fairway-plat": 0,
+                    "block-print": 3
+                  }
                 }
               },
               "output": {
                 "kind": "painted",
-                "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                 "alt": "Sample artwork · Discraft · Buzzz",
                 "sample": true,
                 "inputs": [
-                  "orbit-foundry",
+                  "hot-foil",
                   150,
                   "#9fd1b8",
                   "#4b8166",
@@ -5447,19 +5544,6 @@
                     "available": true
                   },
                   {
-                    "path": "disc.artFamily",
-                    "label": "artFamily",
-                    "group": "Physical disc",
-                    "order": 100,
-                    "type": "text",
-                    "unit": "",
-                    "optional": false,
-                    "discovered": true,
-                    "source": "px.domain.Disc.buzzz-mint",
-                    "value": "orbit-foundry",
-                    "available": true
-                  },
-                  {
                     "path": "bag.name",
                     "label": "Bag name",
                     "group": "Bag",
@@ -5663,11 +5747,11 @@
                 ],
                 "art": {
                   "kind": "painted",
-                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                   "alt": "Sample artwork · Discraft · Buzzz",
                   "sample": true,
                   "inputs": [
-                    "orbit-foundry",
+                    "hot-foil",
                     150,
                     "#9fd1b8",
                     "#4b8166",
@@ -6110,11 +6194,11 @@
                 },
                 "art": {
                   "kind": "painted",
-                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                  "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                   "alt": "Sample artwork · Discraft · Buzzz",
                   "sample": true,
                   "inputs": [
-                    "orbit-foundry",
+                    "hot-foil",
                     150,
                     "#9fd1b8",
                     "#4b8166",
@@ -6661,11 +6745,11 @@
                   },
                   "art": {
                     "kind": "painted",
-                    "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
+                    "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"96\" viewBox=\"0 0 512 512\" role=\"img\" aria-label=\"Discraft · Buzzz\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg>\n",
                     "alt": "Sample artwork · Discraft · Buzzz",
                     "sample": true,
                     "inputs": [
-                      "orbit-foundry",
+                      "hot-foil",
                       150,
                       "#9fd1b8",
                       "#4b8166",
@@ -6976,7 +7060,7 @@
                 }
               },
               "output": {
-                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".28\"/></linearGradient></defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7\" opacity=\".9\"/>\n<circle cx=\"256\" cy=\"256\" r=\"201\" stroke=\"#fff\" stroke-width=\"5.3\" opacity=\".28\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<ellipse cx=\"256\" cy=\"256\" rx=\"92\" ry=\"35.0\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(7.8 256 256)\"/>\n<ellipse cx=\"256\" cy=\"256\" rx=\"146\" ry=\"55.5\" fill=\"none\" stroke=\"#4b8166\" stroke-width=\"8\" opacity=\".8\" transform=\"rotate(35.8 256 256)\"/>\n</g>\n<g id=\"stamp\">\n<circle cx=\"388.7\" cy=\"338.0\" r=\"12\" fill=\"#4b8166\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g><g data-node=\"sponsor\" fill=\"#b9d789\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"390\" y=\"159\" text-anchor=\"end\" font-size=\"11\" font-weight=\"700\">CHAINSPOT</text></g></g></svg>",
+                "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 174\" width=\"400\" height=\"174\" role=\"img\" aria-label=\"DisplayCard\"><g data-entry=\"\" data-motion=\"pulse\" data-duration=\"350\"><rect x=\"2\" y=\"2\" width=\"396\" height=\"170\" rx=\"16\" fill=\"#203d36\" stroke=\"#456157\" stroke-width=\"1\"/><g data-node=\"photo\" transform=\"translate(14 28)\"><defs><clipPath id=\"card-photo\"><rect width=\"110\" height=\"110\" rx=\"0\"/></clipPath></defs><g clip-path=\"url(#card-photo)\"><svg width=\"110\" height=\"110\" viewBox=\"0 0 512 512\" preserveAspectRatio=\"xMidYMid meet\">\n<defs><clipPath id=\"disc\"><circle cx=\"256\" cy=\"256\" r=\"220\"/></clipPath>\n<linearGradient id=\"depth\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\".16\"/><stop offset=\"1\" stop-color=\"#000000\" stop-opacity=\".30\"/></linearGradient>\n<clipPath id=\"die\"><polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\"/></clipPath>\n</defs>\n<g id=\"base\" clip-path=\"url(#disc)\">\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"#9fd1b8\"/>\n<circle cx=\"256\" cy=\"256\" r=\"220\" fill=\"url(#depth)\"/>\n</g>\n<g id=\"art\" clip-path=\"url(#disc)\">\n<g id=\"knurl\" stroke=\"#4b8166\" stroke-width=\"14.0\" stroke-linecap=\"butt\" opacity=\".92\">\n<line x1=\"430.8\" y1=\"276.5\" x2=\"464.6\" y2=\"280.4\"/>\n<line x1=\"415.9\" y1=\"329.5\" x2=\"446.8\" y2=\"343.7\"/>\n<line x1=\"385.4\" y1=\"375.3\" x2=\"410.4\" y2=\"398.4\"/>\n<line x1=\"342.2\" y1=\"409.5\" x2=\"358.8\" y2=\"439.1\"/>\n<line x1=\"290.5\" y1=\"428.6\" x2=\"297.2\" y2=\"461.9\"/>\n<line x1=\"235.5\" y1=\"430.8\" x2=\"231.6\" y2=\"464.6\"/>\n<line x1=\"182.5\" y1=\"415.9\" x2=\"168.3\" y2=\"446.8\"/>\n<line x1=\"136.7\" y1=\"385.4\" x2=\"113.6\" y2=\"410.4\"/>\n<line x1=\"102.5\" y1=\"342.2\" x2=\"72.9\" y2=\"358.8\"/>\n<line x1=\"83.4\" y1=\"290.5\" x2=\"50.1\" y2=\"297.2\"/>\n<line x1=\"81.2\" y1=\"235.5\" x2=\"47.4\" y2=\"231.6\"/>\n<line x1=\"96.1\" y1=\"182.5\" x2=\"65.2\" y2=\"168.3\"/>\n<line x1=\"126.6\" y1=\"136.7\" x2=\"101.6\" y2=\"113.6\"/>\n<line x1=\"169.8\" y1=\"102.5\" x2=\"153.2\" y2=\"72.9\"/>\n<line x1=\"221.5\" y1=\"83.4\" x2=\"214.8\" y2=\"50.1\"/>\n<line x1=\"276.5\" y1=\"81.2\" x2=\"280.4\" y2=\"47.4\"/>\n<line x1=\"329.5\" y1=\"96.1\" x2=\"343.7\" y2=\"65.2\"/>\n<line x1=\"375.3\" y1=\"126.6\" x2=\"398.4\" y2=\"101.6\"/>\n<line x1=\"409.5\" y1=\"169.8\" x2=\"439.1\" y2=\"153.2\"/>\n<line x1=\"428.6\" y1=\"221.5\" x2=\"461.9\" y2=\"214.8\"/>\n</g>\n</g>\n<g id=\"stamp\">\n<polygon points=\"393.4,299.0 287.4,396.5 150.0,353.5 118.6,213.0 224.6,115.5 362.0,158.5\" fill=\"#4b8166\"/>\n<g clip-path=\"url(#die)\">\n<g transform=\"rotate(-23.7 256 256)\">\n<rect x=\"-16\" y=\"-16\" width=\"544\" height=\"256\" fill=\"#ffffff\" opacity=\".22\"/>\n<rect x=\"-16\" y=\"256\" width=\"544\" height=\"272\" fill=\"#000000\" opacity=\".20\"/>\n<rect x=\"-16\" y=\"232\" width=\"544\" height=\"26\" fill=\"#ffffff\" opacity=\".55\"/>\n<rect x=\"-16\" y=\"300\" width=\"544\" height=\"14\" fill=\"#ffffff\" opacity=\".22\"/>\n</g>\n</g>\n<polygon points=\"361.0,288.9 280.0,363.3 175.0,330.5 151.0,223.1 232.0,148.7 337.0,181.5\" fill=\"none\" stroke=\"#9fd1b8\" stroke-width=\"9.0\" opacity=\".75\"/>\n</g>\n<g id=\"rim\" fill=\"none\">\n<circle cx=\"256\" cy=\"256\" r=\"216\" stroke=\"#4b8166\" stroke-width=\"7.0\" opacity=\".92\"/>\n<circle cx=\"256\" cy=\"256\" r=\"203\" stroke=\"#ffffff\" stroke-width=\"5.3\" opacity=\".30\"/>\n</g>\n<title>Discraft · Buzzz</title>\n</svg></g></g><g data-node=\"maker\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"27\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Discraft</text></g><g data-node=\"mold\" fill=\"#fcfbf5\" font-family=\"Georgia, Times New Roman, serif\"><text x=\"138\" y=\"62\" text-anchor=\"start\" font-size=\"25\" font-weight=\"700\">Buzzz</text></g><g data-node=\"nickname\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"138\" y=\"86\" text-anchor=\"start\" font-size=\"11\" font-weight=\"400\">Mint practice disc</text></g><g data-node=\"speed\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"154.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">5</text><text x=\"154.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Speed</text></g><g data-node=\"glide\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"197.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">4</text><text x=\"197.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Glide</text></g><g data-node=\"turn\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"240.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">-1</text><text x=\"240.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Turn</text></g><g data-node=\"fade\" fill=\"#fcfbf5\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"283.5\" y=\"132\" text-anchor=\"middle\" font-size=\"21\" font-weight=\"700\">1</text><text x=\"283.5\" y=\"145.2\" text-anchor=\"middle\" font-size=\"9\" opacity=\".68\" letter-spacing=\".6\">Fade</text></g><g data-node=\"sponsor\" fill=\"#b9d789\" font-family=\"Arial, Helvetica, sans-serif\"><text x=\"390\" y=\"159\" text-anchor=\"end\" font-size=\"11\" font-weight=\"700\">CHAINSPOT</text></g></g></svg>",
                 "width": 400,
                 "height": 174
               },
@@ -7013,7 +7097,8 @@
                 "with": {
                   "disc": "px.domain.Disc.buzzz-mint",
                   "mold": "px.domain.Mold.buzzz",
-                  "maker": "px.domain.Manufacturer.discraft"
+                  "maker": "px.domain.Manufacturer.discraft",
+                  "assignment": "px.art.assignment"
                 },
                 "args": {},
                 "into": "px.render.single.buzzz-mint.art"
@@ -7090,7 +7175,7 @@
             "px.render.single.buzzz-mint.fields"
           ],
           "reused": true,
-          "material": "domain.fields:060cc5b7",
+          "material": "domain.fields:d0eb884e",
           "revision": 1
         },
         {
@@ -7099,14 +7184,15 @@
           "inputs": {
             "disc": "px.domain.Disc.buzzz-mint",
             "mold": "px.domain.Mold.buzzz",
-            "maker": "px.domain.Manufacturer.discraft"
+            "maker": "px.domain.Manufacturer.discraft",
+            "assignment": "px.art.assignment"
           },
           "output": "px.render.single.buzzz-mint.art",
           "produces": [
             "px.render.single.buzzz-mint.art"
           ],
           "reused": true,
-          "material": "disc.art:acead650",
+          "material": "disc.art:8bd96cfd",
           "revision": 1
         },
         {
@@ -7154,7 +7240,7 @@
             "px.render.single.buzzz-mint.card"
           ],
           "reused": true,
-          "material": "card.compose:e2afa0c2",
+          "material": "card.compose:3f47a89c",
           "revision": 1
         },
         {
@@ -7168,7 +7254,7 @@
             "px.render.single.buzzz-mint.svg"
           ],
           "reused": true,
-          "material": "card.svg:4f21e4c7",
+          "material": "card.svg:ac1cd4ad",
           "revision": 1
         }
       ],
