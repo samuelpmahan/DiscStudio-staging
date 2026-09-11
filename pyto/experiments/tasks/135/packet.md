@@ -4,8 +4,60 @@ Intent: constraints defining DiscComp: a battle is composed from reusable Constr
 Starting point: bbcf4dc374ee3aa50d76b2c5d1e557e8f64b7e10 (land(task-133): vertical content: a 1080x1920 portrait canvas beside the 1920x1080 one, composed by the same fn.comparison.layout, plus a reusable frame preset (fill, safe area, title strip, sponsor lockup on the cards cascade's global tokens) materialized by the same fn.overlay.svg, and exports that honour the orientation)
 Verify: npm test
 Allow: src index.html tests scripts/browser_test.py scripts/demo_beats.py pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 14 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  scripts/browser_test.py
+- M  src/app.js
+- A  src/battle.js
+- M  src/constraints.js
+- M  src/domain.js
+- M  src/presentation.js
+- M  src/review-data.js
+- M  src/runtime.js
+- M  src/seed.js
+- M  src/style.css
+- A  tests/battle.test.js
+- M  tests/core.test.js
+- M  tests/embedded_harness.py
+- M  tests/fixtures/serial-run-record.json
+
+```
+scripts/browser_test.py               |   59 ++
+ src/app.js                            |   70 ++-
+ src/battle.js                         |  141 +++++
+ src/constraints.js                    |   55 ++
+ src/domain.js                         |   30 +-
+ src/presentation.js                   |    4 +-
+ src/review-data.js                    |    1 +
+ src/runtime.js                        |   69 +-
+ src/seed.js                           |    2 +-
+ src/style.css                         |    2 +-
+ tests/battle.test.js                  |  101 +++
+ tests/core.test.js                    |   11 +-
+ tests/embedded_harness.py             |   42 +-
+ tests/fixtures/serial-run-record.json | 1114 +++++++++++++++++++++++++++------
+ 14 files changed, 1487 insertions(+), 214 deletions(-)
+```
+
+## Evidence
+
+- verify: `npm test` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.hxRbxPzjpw) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         439  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
