@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260911T014717Z-task-88",
+  "package": "task-88",
+  "base_sha": "67a55fe152b388f79dedc76ba30193cb71c4fa8f",
+  "result": "failed",
+  "reason": "merge conflict with exp/88 in: pyto/experiments/brain/records/ml.regression.json ",
+  "at": "2026-09-11T01:47:17.821151Z"
+}
