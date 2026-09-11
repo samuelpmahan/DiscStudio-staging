@@ -10,7 +10,7 @@ import { createStudioRuntime } from '../src/runtime.js';
 import { createSeed } from '../src/seed.js';
 
 const studio = () => createStudioRuntime(createSeed());
-const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-route'];
+const STAGES = ['lab-s0', 'lab-s1', 'lab-s2', 'lab-s3', 'lab-s4', 'lab-s5', 'lab-route'];
 
 test('the pipeline runs S0 through the round as one composition per Stage', () => {
   const runtime = studio();
@@ -27,7 +27,7 @@ test('the pipeline runs S0 through the round as one composition per Stage', () =
     }
   }
   // The Stages read each other by address: S1 reads S0's canonical pixels, the round reads all three.
-  assert.deepEqual(runtime.lab.specs()[4].needs, ['px.exp.lab.badges.objects', 'px.exp.lab.baskets', 'px.exp.lab.tees']);
+  assert.deepEqual(runtime.lab.specs().at(-1).needs, ['px.exp.lab.badges.objects', 'px.exp.lab.baskets', 'px.exp.lab.tees']);
 });
 
 test('each Stage leaves the receipt and the run record every other composition leaves', () => {
@@ -46,13 +46,18 @@ test('each Stage leaves the receipt and the run record every other composition l
   assert.deepEqual(runtime.runRecord('lab-s1').record.ticks.map(tick => tick.name), ['BlackMask', 'WhiteMask', 'BadgeAssembly', 'WhiteDigitRecognition', 'BadgeOutputs']);
 });
 
-test('the produce is what the fixture draws: two badges read, two baskets, two tees, a round in badge order', () => {
+test('the produce is what the fixture draws: three badges read, two baskets, three tees, a round in badge order', () => {
   const runtime = studio();
   runtime.lab.pipeline(runtime.lab.sample());
   const views = Object.fromEntries(runtime.lab.views().map(view => [view.key, view]));
-  assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['10', '01']);
+  assert.deepEqual(views.s1.objects.map(object => object.detail.reading), ['11', '10', '01']);
   assert.equal(views.s2.objects.length, 2);
-  assert.equal(views.s3.objects.length, 2);
+  assert.equal(views.s3.objects.length, 3);
+  // S4 names the hole it could not finish rather than guessing a basket for it.
+  assert.deepEqual(views.s4.objects.map(object => object.label), ['hole 1', 'hole 10', 'hole 11 · missing basket']);
+  // S5's obstacle map is derived from the pixels no Stage object owns, and two straight legs cross it.
+  assert.ok(views.s5.cells.centres.length > 0);
+  assert.deepEqual(runtime.pxc.get('px.exp.lab.course.summary').blockedStraightLegs, ['walk:basket-2->tee-2', 'play:tee-2->basket-1']);
   // The order is the reading, not the position: hole 1 sits lower in the image than hole 10.
   assert.deepEqual(views.route.objects.map(object => object.label), ['hole 1', 'hole 10']);
   assert.equal(views.route.kind, 'path');
@@ -83,7 +88,7 @@ test('a Stage that cannot run refuses with its reason, and the Stages after it s
   assert.equal(state.stages[0].status, 'not-run');
   assert.equal(state.stages[1].status, 'refused');
   assert.match(state.stages[1].reason, /S0 has not produced yet/);
-  assert.deepEqual(state.stages.slice(2).map(stage => stage.status), ['not-run', 'not-run', 'not-run']);
+  assert.deepEqual(state.stages.slice(2).map(stage => stage.status), state.stages.slice(2).map(() => 'not-run'));
   // The refusal is on the record as a Part, not only in a message.
   assert.equal(runtime.pxc.get('px.exp.lab.pipeline').stages[1].status, 'refused');
   assert.throws(() => runtime.lab.pipeline({ imageId: 'not-a-capture' }), /a capture is/);
@@ -101,9 +106,9 @@ test('a Stage still being built joins the pipeline as one spec and runs, draws a
     view: lab => ({ kind: 'boxes', tone: 'hole', objects: lab.get(HOLES).map((hole, index) => ({ id: `hole-${hole.number}`, label: `hole ${hole.number}`, bbox: [0, 0, 8, 8], at: [4, 4], part: HOLES, index, detail: hole })) })
   });
   const state = runtime.lab.pipeline(runtime.lab.sample());
-  assert.equal(state.stages.length, 6);
-  assert.equal(state.stages[5].status, 'produced');
-  assert.deepEqual(state.stages[5].produced, [{ address: HOLES, count: 2 }]);
+  assert.equal(state.stages.length, 8);
+  assert.equal(state.stages.at(-1).status, 'produced');
+  assert.deepEqual(state.stages.at(-1).produced, [{ address: HOLES, count: 2 }]);
   assert.ok(runtime.pxc.has('px.receipt.lab-stub'));
   assert.equal(runtime.runRecord('lab-stub').record.ticks[0].name, 'Stub.holes');
   assert.equal(runtime.lab.views().at(-1).objects.length, 2);
@@ -124,4 +129,41 @@ test('the lab Calculations are the studio\'s own, and no domain fact is written 
   assert.ok(receipt.trace.every(step => step.call.startsWith('fn.lab.')));
   // A card still renders after a pipeline: one board, one set of Calculations.
   assert.ok(runtime.card('buzzz-mint', 'discImage', {}).svg.startsWith('<svg'));
+});
+
+test('the course arrangement stands the cards at the holes the Stages found', () => {
+  const runtime = studio();
+  runtime.dispatch({ type: 'layout.set', patch: { arrangement: 'course' } });
+  // Before a course exists the comparison refuses in plain words instead of inventing positions.
+  assert.throws(() => runtime.scene({ mode: 'battle' }), /No course has been built yet/);
+  runtime.lab.pipeline(runtime.lab.sample());
+  const scene = runtime.scene({ mode: 'battle' }), overlay = scene.scene;
+  assert.equal(overlay.arrangement, 'course');
+  assert.deepEqual(overlay.placements.map(placement => placement.anchor.id), ['hole-1', 'hole-10', 'hole-11']);
+  // Every anchor is a hole S4 published, and every card is centred on it inside the 1920x1080 frame.
+  const holes = runtime.pxc.get('px.exp.lab.holes.objects');
+  assert.deepEqual(overlay.anchors.map(anchor => anchor.at), holes.map(hole => (hole.basket ?? hole.tee).at));
+  for (const placement of overlay.placements) {
+    assert.ok(placement.x >= 0 && placement.y >= 0 && placement.x + placement.card.width * overlay.scale <= 1920 && placement.y + placement.card.height * overlay.scale <= 1080, placement.anchor.id);
+    assert.ok(Math.abs(placement.x + (placement.card.width * overlay.scale) / 2 - placement.anchor.x) < 1 || placement.x === 60 || placement.x + placement.card.width * overlay.scale === 1860);
+  }
+  // The layout Calculation read the Stage's own produce Part; nothing was copied into the layout.
+  assert.ok(scene.run.trace.some(step => step.call === 'fn.comparison.layout' && step.inputs.course === 'px.exp.lab.holes.objects'));
+  // Same overlay, same cards, same materialize: one group per entry.
+  assert.equal((scene.svg.match(/data-entry="entry-/g) ?? []).length, scene.cardCount);
+  assert.equal(runtime.lab.anchorAddress(), 'px.exp.lab.holes.objects');
+});
+
+test('the anchors come from whichever Part the Stages published', async () => {
+  const { courseAnchors } = await import('../src/presentation.js');
+  const fromS4 = courseAnchors([{ number: 3, tee: { at: [10, 10] }, basket: { at: [30, 40] } }, { number: 4, tee: { at: [50, 60] }, basket: null }]);
+  assert.deepEqual(fromS4.anchors, [{ id: 'hole-3', label: 'Hole 3', at: [30, 40] }, { id: 'hole-4', label: 'Hole 4', at: [50, 60] }]);
+  const fromRound = courseAnchors({ waypoints: [{ id: 'tee-1', at: [4, 5] }, { id: 'basket-1', at: [9, 9] }], legs: [] });
+  assert.deepEqual(fromRound.anchors.map(anchor => anchor.id), ['tee-1', 'basket-1']);
+  // Only S5's graph carries the raster it was measured in; the others are framed by their own extent.
+  const fromGraph = courseAnchors({ frame: { widthPx: 512, heightPx: 920, cellPx: 16 }, holes: [{ number: 1, tee: { at: [1, 2] }, basket: { at: [3, 4] } }] });
+  assert.equal(fromGraph.frame.widthPx, 512);
+  assert.ok(fromRound.frame.widthPx < 512);
+  assert.throws(() => courseAnchors(null), /No course has been built yet/);
+  assert.throws(() => courseAnchors([]), /no hole a card could stand at/);
 });

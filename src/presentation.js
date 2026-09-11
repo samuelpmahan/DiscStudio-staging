@@ -86,9 +86,64 @@ export function cardMarkup(card, uid = 'card') {
   return `<g data-entry="${esc(card.entry?.id || '')}" data-motion="${esc(p.scoreMotion || 'none')}" data-duration="${Number(p.duration) || 350}">${body}</g>`;
 }
 export function cardSvg({ card }) { return { svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${card.width} ${card.height}" width="${card.width}" height="${card.height}" role="img" aria-label="DisplayCard">${cardMarkup(card)}</svg>`, width: card.width, height: card.height }; }
-export function composeOverlay({ cards, layout }) {
+/**
+ * The anchors a course arrangement stands cards on, out of whichever Part the
+ * Stages have published: S4's holes (`px.holes.objects`), the round's own
+ * waypoints, or S5's course graph. One anchor per hole -- the basket, where the
+ * disc it is credited for ends up, falling back to the tee for a hole whose
+ * basket S4 could not place.
+ *
+ * A frame is the canonical raster the anchors were measured in. Only S5's graph
+ * carries one; for the others the anchors' own extent is the frame, padded, so
+ * the arrangement never claims a raster size it was not given.
+ */
+export function courseAnchors(course) {
+  if (!course) throw new Error('No course has been built yet. Open Course, give it a capture and run the pipeline; then this arrangement can stand your cards at its holes.');
+  let anchors = [];
+  if (Array.isArray(course)) anchors = course.map(hole => ({ id: `hole-${hole.number}`, label: `Hole ${hole.number}`, at: (hole.basket ?? hole.tee)?.at ?? null })).filter(anchor => anchor.at);
+  else if (Array.isArray(course.holes) && course.holes.length && course.holes[0].basket?.at) anchors = course.holes.map(hole => ({ id: `hole-${hole.number}`, label: `Hole ${hole.number}`, at: hole.basket.at }));
+  else if (Array.isArray(course.waypoints)) anchors = course.waypoints.map(point => ({ id: point.id, label: point.id, at: point.at }));
+  if (!anchors.length) throw new Error('The course that was built has no hole a card could stand at.');
+  const frame = course.frame && course.frame.widthPx
+    ? { widthPx: course.frame.widthPx, heightPx: course.frame.heightPx }
+    : (() => {
+      const xs = anchors.map(anchor => anchor.at[0]), ys = anchors.map(anchor => anchor.at[1]);
+      const pad = Math.max(40, Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) * 0.2);
+      return { widthPx: Math.max(...xs) + pad, heightPx: Math.max(...ys) + pad, originX: Math.min(...xs) - pad, originY: Math.min(...ys) - pad };
+    })();
+  return { anchors, frame: { originX: 0, originY: 0, ...frame } };
+}
+/**
+ * The course arrangement: the same cards, placed where the holes are. The frame
+ * is fitted into the 1920x1080 overlay, each card is centred on its hole, and a
+ * card past the last hole starts the holes again one card-height lower, so a
+ * twelve-disc comparison on a nine-hole course is still every card, placed.
+ */
+function courseScene({ items, layout, course, width, height, gap }) {
+  const { anchors, frame } = courseAnchors(course);
+  const maxW = Math.max(...items.map(card => card.width)), maxH = Math.max(...items.map(card => card.height));
+  const inset = 60, frameW = Math.max(1, frame.widthPx - frame.originX), frameH = Math.max(1, frame.heightPx - frame.originY);
+  const fit = Math.min((width - inset * 2) / frameW, (height - inset * 2) / frameH);
+  const scale = Math.min(Number(layout.scale) || 1, (width - inset * 2) / maxW, (height - inset * 2) / maxH);
+  const offsetX = (width - frameW * fit) / 2, offsetY = (height - frameH * fit) / 2;
+  const placements = items.map((card, index) => {
+    const anchor = anchors[index % anchors.length], round = Math.floor(index / anchors.length);
+    const centreX = offsetX + (anchor.at[0] - frame.originX) * fit, centreY = offsetY + (anchor.at[1] - frame.originY) * fit + round * (maxH + gap) * scale;
+    const x = Math.max(inset, Math.min(width - inset - card.width * scale, centreX - (card.width * scale) / 2));
+    const y = Math.max(inset, Math.min(height - inset - card.height * scale, centreY - (card.height * scale) / 2));
+    return { card, x, y, anchor: { id: anchor.id, label: anchor.label, at: anchor.at, x: centreX, y: centreY } };
+  });
+  const xs = placements.map(placement => placement.x), ys = placements.map(placement => placement.y);
+  return {
+    width, height, scale, arrangement: 'course', frame, anchors,
+    bounds: { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) + maxW * scale - Math.min(...xs), height: Math.max(...ys) + maxH * scale - Math.min(...ys) },
+    cards: items, placements, warnings: items.flatMap(card => card.warnings)
+  };
+}
+export function composeOverlay({ cards, layout, course = null }) {
   const items = Object.values(cards), width = 1920, height = 1080, gap = Math.max(0, Math.min(100, Number(layout.gap) || 0));
   if (!items.length) return { width, height, placements: [], bounds: { x: 0, y: 0, width: 0, height: 0 }, cards: items, empty: true };
+  if (layout.arrangement === 'course') return courseScene({ items, layout, course, width, height, gap });
   const columns = layout.arrangement === 'stack' ? 1 : layout.arrangement === 'grid' ? Math.min(2, items.length) : items.length;
   const maxW = Math.max(...items.map(c => c.width)), maxH = Math.max(...items.map(c => c.height)), rows = Math.ceil(items.length / columns);
   const w = columns * maxW + (columns - 1) * gap, h = rows * maxH + (rows - 1) * gap;

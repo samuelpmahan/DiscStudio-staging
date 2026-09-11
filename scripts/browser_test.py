@@ -235,22 +235,31 @@ with sync_playwright() as p:
     page.wait_for_function('!discStudio.lab().state.stages.some(s=>s.status==="not-run")',timeout=120000)
     state=page.evaluate('discStudio.lab().state')
     assert all(s['status']=='produced' for s in state['stages']),[(s['stage'],s['status'],s['reason']) for s in state['stages']]
-    assert [s['composition'] for s in state['stages']][:5]==['lab-s0','lab-s1','lab-s2','lab-s3','lab-route']
+    assert [s['composition'] for s in state['stages']]==['lab-s0','lab-s1','lab-s2','lab-s3','lab-s4','lab-s5','lab-route'],[s['composition'] for s in state['stages']]
     for stage in state['stages']:
         assert stage['produced'],stage
         for part in stage['produced']:
             assert page.evaluate('a=>discStudio.runtime.pxc.has(a)',part['address']),part
     assert page.locator('[data-lab-stage][data-status="produced"]').count()==len(state['stages'])
     # every Stage's produce is on the one raster: badges read, baskets, tees, the round's holes
-    views=page.evaluate('discStudio.lab().views.map(v=>({key:v.key,kind:v.kind,tone:v.tone,n:v.objects.length,labels:v.objects.map(o=>o.label)}))')
+    views=page.evaluate('discStudio.lab().views.map(v=>({key:v.key,kind:v.kind,tone:v.tone,n:v.objects.length,legs:(v.legs||[]).length,labels:v.objects.map(o=>o.label)}))')
     by_key={v['key']:v for v in views}
-    assert set(by_key)>= {'s0','s1','s2','s3','route'},list(by_key)
-    assert by_key['s1']['labels']==['hole 10','hole 1'],by_key['s1']
+    assert set(by_key)>= {'s0','s1','s2','s3','s4','s5','route'},list(by_key)
+    assert by_key['s1']['labels']==['hole 11','hole 10','hole 1'],by_key['s1']
+    # S4 names the hole whose basket it could not place instead of guessing one.
+    assert by_key['s4']['labels']==['hole 1','hole 10','hole 11 · missing basket'],by_key['s4']
+    assert page.locator('.lab-cells').count()==1 and page.evaluate('discStudio.lab().views.find(v=>v.key==="s5").cells.centres.length')>0
     assert by_key['route']['labels']==['hole 1','hole 10'],by_key['route']  # the order is the badge reading, not the position
     for key in ['s1','s2','s3']:
         assert page.locator('.lab-mark.tone-%s'%by_key[key]['tone']).count()==by_key[key]['n'],key
-    assert page.locator('.lab-leg').count()==len(page.evaluate('discStudio.lab().views.find(v=>v.kind==="path").legs'))
+    # every leg any Stage published is drawn, whichever Stage published it
+    assert page.locator('.lab-leg').count()==sum(view['legs'] for view in views),[(v['key'],v['legs']) for v in views]
     assert page.locator('.lab-overlay').get_attribute('viewBox')=='0 0 %d %d'%tuple(page.evaluate('[discStudio.runtime.lab.raster().widthPx,discStudio.runtime.lab.raster().heightPx]'))
+    marks=page.locator('.lab-mark').count()
+    page.locator('[data-lab-stage="s1"] [data-action="lab-toggle"]').click()
+    assert page.locator('.lab-mark').count()==marks-by_key['s1']['n']
+    page.locator('[data-lab-stage="s1"] [data-action="lab-toggle"]').click()
+    assert page.locator('.lab-mark').count()==marks
     record('The Course route runs one capture through every landed Stage as lab-s0 … lab-route, each producing its Parts, and draws every produced object on the one canonical raster')
     # The selected object's Part, with the Calculation that published it, read off the receipts.
     page.locator('.lab-mark.tone-badge').first.click()
@@ -273,6 +282,29 @@ with sync_playwright() as p:
     page.locator('[data-action="toggle-trace"]').first.click()
     page.screenshot(path=str(out/'course-build.png'))
     record('A Stage run exports a validated pyto-run-record@1 the Tick viewer draws, Tick for Tick with its PQL document')
+    # The discs on the course the studio just built: the comparison's own layout
+    # gains one arrangement, and the cards stand at the holes S4 assembled. Same
+    # fn.comparison.layout, same card chain, same materializeOverlay.
+    route(page,'course')
+    page.locator('[data-control="arrangement"]').select_option('course')
+    assert_world(page,'discStudio.world.layout.arrangement==="course"')
+    scene=page.evaluate('discStudio.preview.scene')
+    assert scene['arrangement']=='course',scene.get('arrangement')
+    holes=page.evaluate('discStudio.runtime.pxc.get("px.exp.lab.holes.objects")')
+    anchors=[(hole['basket'] or hole['tee'])['at'] for hole in holes]
+    assert [placement['anchor']['at'] for placement in scene['placements']]==anchors,(scene['placements'],anchors)
+    assert len(scene['placements'])==page.evaluate('discStudio.preview.cardCount')
+    for placement in scene['placements']:
+        assert 0<=placement['x'] and placement['x']+placement['card']['width']*scene['scale']<=1920,placement
+        assert 0<=placement['y'] and placement['y']+placement['card']['height']*scene['scale']<=1080,placement
+    # the layout Calculation read the Stage's produce Part by address, not a copy of it
+    assert page.evaluate('discStudio.preview.run.trace.some(t=>t.call==="fn.comparison.layout"&&t.inputs.course==="px.exp.lab.holes.objects")')
+    assert page.locator('.inspector .mono').filter(has_text='px.exp.lab.holes.objects').count()>=1
+    svg=page.evaluate('discStudio.preview.svg')
+    assert svg.count('data-entry="entry-')==page.evaluate('discStudio.preview.cardCount')
+    page.screenshot(path=str(out/'cards-on-the-course.png'))
+    record('OnTheCourse gains one arrangement: the bag\'s DisplayCards stand at the holes the Stages read off the capture, through the same fn.comparison.layout and the same card chain')
+    page.locator('[data-control="arrangement"]').select_option('row')
     # Reset screenshot state without erasing the verified export/review artifacts.
     page.evaluate('discStudio.runtime.dispatch({type:"battle.state.select",id:"state-1"})')
     for name in ['shelf','course','course-build','components','competition']:
