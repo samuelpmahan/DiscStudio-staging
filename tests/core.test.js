@@ -4,7 +4,7 @@ import { createSeed } from '../src/seed.js';
 import { createStudioRuntime } from '../src/runtime.js';
 import { classifyTick, createExecBoard, invokePql, invokePqlAsync, pxFn, queryPrefix, readPql } from '../src/core/exec.js';
 import { discoverFields, materialFor, currentBattle, clone, validateWorld } from '../src/domain.js';
-import { fieldNode } from '../src/presentation.js';
+import { fieldNode, sampleColors } from '../src/presentation.js';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
@@ -27,7 +27,7 @@ test('ported painter inputs use sanitized authored colors', () => {
   r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'artAccent', value: '#abc' });
   const rendered = r.card('buzzz-mint', 'broadcast', context);
   const art = r.pxc.get(rendered.run.trace.find(step => step.call === 'fn.disc.art').output);
-  assert.deepEqual(art.inputs.slice(2, 4), ['#e6ebde', '#456157']);
+  assert.deepEqual(art.inputs.slice(2, 4), sampleColors(150), 'an invalid authored colour falls back to the disc\'s own sample colours (buzzz-mint, hue 150)');
   assert.equal(art.svg, painterRender(...art.inputs));
 });
 
