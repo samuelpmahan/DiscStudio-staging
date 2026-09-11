@@ -7009,7 +7009,7 @@
           "evidence": "tests/lab-holes-nearest.test.js"
         },
         {
-          "what": "S7 Pathfinding, the course half (invented)",
+          "what": "S7 Pathfinding, the course half (invented; still reading the fallback's holes)",
           "document": "Course.holeGeometry -> Course.obstacleMap -> Course.walkable -> Course.graph -> Course.summary; the obstacle map is a five-class partition of every pixel of the canonical raster and terrain is what no Stage object owns; stages/S7.course.mmd compiles to the same document",
           "evidence": "tests/lab-s7course.test.js"
         },
@@ -7048,8 +7048,8 @@
           "why": "a route needs Stage outputs, and the Stages need a capture: the only capture here is the fixture, so DashsTrack is routed by the manifest hex walk and not by its own badges, baskets and tees"
         },
         {
-          "address": "px.exp.lab.s2.recovery",
-          "why": "the LAB's S2 receipt says 'recovery: NOT RUN'; a fused or missing shell has no second chance in the clean path either"
+          "address": "px.exp.lab.recovered.* on a real capture",
+          "why": "the three recovery rules are proved on three overlaps this port drew on purpose, each breaking exactly one clean predicate. A photograph overlaps objects in ways nobody designed, and the knobs that accept a recovery (plate glyph fraction, exact shell geometry, family fill) would meet cases the fixture cannot produce: a shell that is itself cut, a plate half off the frame, two tees fused into one component"
         },
         {
           "address": "px.exp.lab.round.<course> for a real course",
@@ -7078,8 +7078,16 @@
           "for": "an unobstructed leg pays about 7% for being a cell path, and the comparison Part measures exactly that"
         },
         {
-          "what": "S4 recovery, S5 the tee-to-badge ray, S6 the straight holes",
-          "for": "the owner's numbering (2026-09-11): a tee points at its badge and three points make a line, so a hole is resolved by geometry the picture carries rather than by nearest-anchor distance; S7 pathfinding then runs on those holes"
+          "what": "S7 pathfinding over px.holes.straight instead of the fallback's px.holes.objects",
+          "for": "S7's course graph still binds px.holes.objects, which is the nearest-anchor fallback's list. The holes the picture actually supports are S6's straight ones, and its doglegs are exactly the holes a round cannot yet play: until that binding moves, the round is played over holes that were guessed by distance while a better list sits beside it. The rebase is a binding and a shape (a straight hole has no `complete`/`missing`), plus a fixture with two pointing tees so a round has more than one leg"
+        },
+        {
+          "what": "a stage that follows a dogleg",
+          "for": "S6 lists the badges whose hole bends, with the reason and the anchors left over, and refuses to guess their baskets; nothing yet turns a bend into a hole"
+        },
+        {
+          "what": "a pointing end measured on a real tee pad",
+          "for": "the fixture's nose is a block this port drew; a UDisc tee pad is a rounded rectangle whose front is a matter of degree, and the lean measurement (bright centroid against the ring centre, half a pixel of threshold) is the thing that would have to survive it"
         },
         {
           "what": "run the TypeScript S1 on the same fixture and compare value by value",
@@ -7092,10 +7100,6 @@
         {
           "what": "a binding that reads a sibling result with no address",
           "for": "the Mermaid S0's FullImage locality is a property the studio's grammar cannot hold"
-        },
-        {
-          "what": "a Basket recovery path",
-          "for": "the LAB's S2 receipt says 'recovery: NOT RUN'; a fused or missing shell has no second chance yet"
         },
         {
           "what": "one corpus capture through S0..S3 and then the route",
