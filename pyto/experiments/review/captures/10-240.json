@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.10.240.response",
+  "recordedAt": 1789173194967.1333,
+  "sha256": "cb567a971f0b662cde5e64798999d0c0e2ef1c4ebaa08fb8d0416c2c89bef763",
+  "value": {
+    "k": 240,
+    "label": "FrameIsPartOfTheLayout",
+    "n": 10,
+    "text": "The default stands: layout.orientation owns the canvas and the frame Part restates it (the owner, 2026-09-12: \"No idea\")."
+  }
+}

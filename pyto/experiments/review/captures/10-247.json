@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.10.247.response",
+  "recordedAt": 1789173194629.1377,
+  "sha256": "246717efa97b0c3ad8dc62875bef9c599770bc7b7fd41bc61da81fa55de3afb0",
+  "value": {
+    "k": 247,
+    "label": "QueueIsSessionState",
+    "n": 10,
+    "text": "\u201cbe a Part\u201d is weird because it has to be a Part to be runnable but I think you mean instantiated? It can start as a Sequence or whatever that starts getting consumed once they choose to do so and eventually for longer batches can have a smart start"
+  }
+}

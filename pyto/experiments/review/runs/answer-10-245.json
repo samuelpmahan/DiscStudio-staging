@@ -1,0 +1,189 @@
+{
+  "counters": {
+    "computed": 3,
+    "hits": 0,
+    "invocations": 3,
+    "wall_ms": 1.3402029981079977
+  },
+  "parts": {
+    "neat.capture.review.10.245.response": {
+      "preexisting": false,
+      "read_by": [
+        "freeze",
+        "file"
+      ],
+      "written_by": "capture"
+    },
+    "neat.review.answer.OneBattleTwoReceipts": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "file"
+    },
+    "tidy.freeze.review.10.245.response": {
+      "preexisting": false,
+      "read_by": [
+        "file"
+      ],
+      "written_by": "freeze"
+    }
+  },
+  "pcr": "neat-review",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.capture.review.10.245.response"
+          ],
+          "args": {
+            "k": 245,
+            "label": "OneBattleTwoReceipts",
+            "n": 10,
+            "text": "In Chainspot, a Receipt IS the text and renders together. Food for thought"
+          },
+          "calculation": {
+            "address": "oc.neat.review.captureHumanText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "10f627e77507802a88022151a217dbe346338d1b93648075ff28062ccc2bc87c"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.12166399756097235,
+          "effects": [
+            {
+              "args": {},
+              "kind": "now_ms",
+              "result": 1789173194742.1426,
+              "result_sha256": "ae1700b0c30d354448c5f67e02ae1b5a41595aef0c3d9fc155693e92dbc96f1e"
+            }
+          ],
+          "hit": false,
+          "id": "capture",
+          "inputs": {},
+          "into": "neat.capture.review.10.245.response",
+          "result_sha256": "ef5111620898baa664965085e19ed2a677e071fec45ca86ec37229c4c7adba6d",
+          "value": {
+            "data": {
+              "k": 245,
+              "label": "OneBattleTwoReceipts",
+              "n": 10,
+              "recordedAt": 1789173194742.1426,
+              "text": "In Chainspot, a Receipt IS the text and renders together. Food for thought"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.capture.review.10.245.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Capture"
+    },
+    {
+      "index": 1,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "tidy.freeze.review.10.245.response"
+          ],
+          "args": {},
+          "calculation": {
+            "address": "fn.tidy.freezeText",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "f79fbb982013adb7349270b07b46c69541a0eee46ce01962a25b44bafd2ce212"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.021537001885008067,
+          "effects": [],
+          "hit": false,
+          "id": "freeze",
+          "inputs": {
+            "capture": "fn:capture"
+          },
+          "into": "tidy.freeze.review.10.245.response",
+          "result_sha256": "17722a680ca50ba356f777126517ba6204a94f91df8096a3ad9b8a8eff3d9132",
+          "value": {
+            "data": {
+              "bytes": "In Chainspot, a Receipt IS the text and renders together. Food for thought",
+              "sha256": "e539bf9f52bc3c099121b7b0e2d7dea6e2c408e9101221717fba3021d7d5a51d"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "tidy.freeze.review.10.245.response",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Freeze"
+    },
+    {
+      "index": 2,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "neat.review.answer.OneBattleTwoReceipts"
+          ],
+          "args": {
+            "k": 245,
+            "kind": "owner",
+            "label": "OneBattleTwoReceipts",
+            "n": 10,
+            "pyto_root": "/home/user/DiscStudio-staging/EXP/143/pyto",
+            "technical": null
+          },
+          "calculation": {
+            "address": "fn.neat.review.file",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "084bdac00ed6fe5109b92daf6e66295aee719707cca1eb77a01d7661243c5f00"
+          },
+          "declared_consumes": [],
+          "duration_ms": 1.1970019986620173,
+          "effects": [],
+          "hit": false,
+          "id": "file",
+          "inputs": {
+            "capture": "fn:capture",
+            "frozen": "fn:freeze"
+          },
+          "into": "neat.review.answer.OneBattleTwoReceipts",
+          "result_sha256": "303952676cf02dfe2b58495447aac6f4c56c70fd319a169866d3abc7a2ab6bc6",
+          "value": {
+            "data": {
+              "k": 245,
+              "kind": "owner",
+              "label": "OneBattleTwoReceipts",
+              "n": 10,
+              "sha256": "e539bf9f52bc3c099121b7b0e2d7dea6e2c408e9101221717fba3021d7d5a51d"
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "neat.review.answer.OneBattleTwoReceipts",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "File"
+    }
+  ]
+}

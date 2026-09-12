@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.10.247.response",
+  "sha256": "5ceb19e731f5d559c844f3fc0330cb8fa19c381b1c8794d756f4a6d5e812e9fa",
+  "value": {
+    "bytes": "\u201cbe a Part\u201d is weird because it has to be a Part to be runnable but I think you mean instantiated? It can start as a Sequence or whatever that starts getting consumed once they choose to do so and eventually for longer batches can have a smart start",
+    "sha256": "770a4252b505c8aa5fd98d9353833ff82ffdbfee847fd3bd2e9bd35f49b334a5"
+  }
+}

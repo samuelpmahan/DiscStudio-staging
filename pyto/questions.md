@@ -992,3 +992,19 @@ Filed from batch 7 item 7, frozen 7bdf5e7f3b4f
 ### {?} ChainLatencyIsTheWholeTick
 Owner, 2026-09-10: "8 a Tick is when its Sequence of Calculations becomes Inspectable. It is our MINIMAL COMPARATIVE UNIT. Dispatch a sonnet to see how the ChainSpot Stages are composed of sequences of ticks"
 Filed from batch 8 item 157, frozen 4deb371d6b50
+
+### {?} QueueIsSessionState
+Owner, 2026-09-12: "“be a Part” is weird because it has to be a Part to be runnable but I think you mean instantiated? It can start as a Sequence or whatever that starts getting consumed once they choose to do so and eventually for longer batches can have a smart start"
+Filed from batch 10 item 247, frozen 770a4252b505
+
+### {?} OneBattleTwoReceipts
+Owner, 2026-09-12: "In Chainspot, a Receipt IS the text and renders together. Food for thought"
+Filed from batch 10 item 245, frozen e539bf9f52bc
+
+### {?} SinglePresetIsTheProjection
+Owner, 2026-09-12: "that is what single was supposed to mean, yes"
+Filed from batch 10 item 249, frozen 7d7589bbe347
+
+### {?} FrameIsPartOfTheLayout
+Default (session, 2026-09-12): "The default stands: layout.orientation owns the canvas and the frame Part restates it (the owner, 2026-09-12: "No idea")."
+Filed from batch 10 item 240, frozen 85c9cb1bbed7 (default)
