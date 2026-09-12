@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/143
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/143:pyto/experiments/tasks/143/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff aa56e29 origin/exp/143 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 1b354dd origin/exp/143 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ the owner's answers of 2026-09-12 filed in his words: the export queue (a queued
 
 ## Starting point
 
-aa56e2932a7ec1fa0bfb4bf4309fbbc2318e04d0 (land(task-142): the demo gets a URL: the Pages workflow also deploys on a push to the sprint branch (the owner, 2026-09-12: 'PageRouter'), so the studio, its build, the browser test and the review page go live from claude/os-sprint-st8hnu without a merge to main). MAIN may have moved since: `git log --oneline aa56e29..origin/claude/os-sprint-st8hnu` shows how far.
+aa56e2932a7ec1fa0bfb4bf4309fbbc2318e04d0 (land(task-142): the demo gets a URL: the Pages workflow also deploys on a push to the sprint branch (the owner, 2026-09-12: 'PageRouter'), so the studio, its build, the browser test and the review page go live from claude/os-sprint-st8hnu without a merge to main). MAIN may have moved since: `git log --oneline 1b354dd..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -105,7 +105,7 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 ## Evidence
 
 - verify: `cd pyto && python -m unittest tests.test_neat_review` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.edXbqlpLPK) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.zYDwQWoFl7) (evidence/check_all.txt)
     suite                         tests  status
     library                         447  OK
     experiments/brain               756  OK
