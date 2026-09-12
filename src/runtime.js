@@ -95,6 +95,28 @@ export function createStudioRuntime(initial) {
   register('fn.cards.apply', cardsApply);
   register('fn.cards.query', cardsQuery);
   register('fn.shelf.query', ({ material, request }) => shelfQuery({ ...material, ...request }));
+  /**
+   * The Experience frame's merge, as an ordinary Calculation: the base definition
+   * carries the shared requirements and parameter, the variant its additional
+   * requirements and its DiscVizType. Nothing is composed by object spread in a
+   * view; the frame invokes this through PQL and reads the effective Part back.
+   */
+  register('fn.studio.effectiveDefinition', ({ base, variant }) => {
+    if (!base || typeof base !== 'object' || Array.isArray(base)) throw new Error('fn.studio.effectiveDefinition binds the base definition Part as `base`.');
+    if (!variant || typeof variant !== 'object' || Array.isArray(variant)) throw new Error('fn.studio.effectiveDefinition binds the variant definition Part as `variant`.');
+    return {
+      id: variant.id ?? base.id ?? null, for: variant.for ?? base.for ?? null,
+      base: typeof base.id === 'string' ? base.id : null, variant: typeof variant.id === 'string' ? variant.id : null,
+      parameter: base.parameter ?? null, shared: [...(base.shared ?? [])], additional: [...(variant.additional ?? [])],
+      actions: variant.actions ?? base.actions ?? {}, discVizType: variant.discVizType ?? null,
+      continues: [...(base.continues ?? [])], contextPrefix: base.contextPrefix ?? null
+    };
+  });
+  /** A frame context record published under px.studio.uds.context.* on USE. */
+  register('fn.studio.contextRecord', ({ record }) => {
+    if (!record || typeof record !== 'object' || Array.isArray(record)) throw new Error('fn.studio.contextRecord takes the context record as `record`.');
+    return { ...record };
+  });
   let previousCardInstances = new Set();
   function publishWorld(world) {
     world = validateWorld(world); pxc.set('px.studio.world', world);
@@ -592,9 +614,63 @@ export function createStudioRuntime(initial) {
     execute('cards-query', [step('Query', 'fn.cards.query', bindings, into, { name, ...args })]);
     return pxc.get(into);
   }
+  /**
+   * The Experience frame (src/experiences.js): the loaded definitions, discovered,
+   * never assembled in a view. UploadDiscToShelf is usable after this pass; the
+   * other five stay defined, their existing views still available and their
+   * Experience integration explicitly pending. Context lives in real Parts under
+   * the declared `px.studio.uds.context.*` prefix and is published on USE --
+   * selecting an Experience, choosing a variant, opening the composer -- never
+   * at load, so a fresh runtime carries an empty prefix.
+   */
+  const EXPERIENCE_KEYS = ['uds', 'exploreshelf', 'createbag', 'managebags', 'creategraphics', 'exportgraphics'];
+  const EXPERIENCE_USABLE = new Set(['uds']);
+  function experienceDescriptor(key) {
+    const address = `px.studio.${key}.definition`;
+    if (!pxc.has(address)) throw new Error(`No Experience definition at '${address}'.`);
+    const definition = pxc.get(address);
+    // Variants are declared as Part addresses, not inline objects: resolve each
+    // one to the { variant, discVizType } the frame reads, from the Parts themselves.
+    const variants = (definition.variants ?? []).map(variantAddress => {
+      const variantDef = pxc.has(variantAddress) ? pxc.get(variantAddress) : null;
+      const variant = String(variantAddress).split('.').at(-2) ?? variantAddress;
+      return { variant, address: variantAddress, discVizType: variantDef?.discVizType ?? null };
+    });
+    return { key, address, name: definition.id ?? key, purpose: definition.for ?? '', status: EXPERIENCE_USABLE.has(key) ? 'usable' : (definition.status ?? 'defined'), definition, variants };
+  }
+  function experienceList() { return EXPERIENCE_KEYS.map(experienceDescriptor); }
+  function experienceVariantAddress(key, variantKey) {
+    const address = `px.studio.${key}.${variantKey}.definition`;
+    if (!pxc.has(address)) throw new Error(`No Experience variant at '${address}'.`);
+    return address;
+  }
+  /**
+   * USE: publish the selection context and, when a variant is chosen, compose
+   * the effective definition through fn.studio.effectiveDefinition -- via PQL,
+   * no view-layer object spread -- into px.studio.uds.context.effective.*.
+   */
+  function experienceSelect(key, variantKey = null) {
+    const { address, variants } = experienceDescriptor(key);
+    const variantAddress = variantKey ? experienceVariantAddress(key, variantKey) : null;
+    let effectiveAddress = null;
+    if (variantAddress) {
+      effectiveAddress = `px.studio.uds.context.effective.${variantKey}`;
+      execute('experience-effective', [step('Effective', 'fn.studio.effectiveDefinition', { base: address, variant: variantAddress }, effectiveAddress)]);
+    }
+    const record = source('px.studio.uds.context.selection.value', { experience: key, definition: address, variant: variantAddress, effective: effectiveAddress, variantKeys: variants.map(v => v.variant), at: new Date().toISOString() });
+    execute('experience-context', [step('Context', 'fn.studio.contextRecord', { record }, 'px.studio.uds.context.selection')]);
+    return pxc.get('px.studio.uds.context.selection');
+  }
+  /** USE: the composer's current depiction choice, as a context Part. */
+  function experienceDraft({ depiction, paint = null, hasPhoto = false } = {}) {
+    const record = source('px.studio.uds.context.draft.value', { depiction: depiction === 'photo' ? 'photo' : 'paint', recipe: depiction === 'paint' ? { ...paint } : null, hasPhoto: !!hasPhoto, at: new Date().toISOString() });
+    execute('experience-draft', [step('Draft', 'fn.studio.contextRecord', { record }, 'px.studio.uds.context.draft')]);
+    return pxc.get('px.studio.uds.context.draft');
+  }
+  function experienceFrame() { return { list: experienceList, select: experienceSelect, draft: experienceDraft, usable: [...EXPERIENCE_USABLE] }; }
   return {
     pxc, world, dispatch, card, scene, sceneParallel, constraints, shelf, battle: battleRules, counters, runRecord, execute, executeAsync,
-    receipts,
+    receipts, experiences: experienceFrame,
     cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
     lab: {
       course: LAB_COURSE, address: LAB_PIPELINE,

@@ -18,7 +18,13 @@ test('Studio loads general UDS and referenced photo/paint specializations withou
   const starters = parts['px.studio.uds.paint.starterfamilies'].values;
   assert.equal(starters.length, 3);
   assert.ok(starters.every(family => FAMILIES.includes(family)));
-  assert.deepEqual(runtime.world(), before);
+  // Loading definitions creates no specimen -- and the legacy seed discs are
+  // normalised to the depiction default (no photo, so paint; no recipe) rather
+  // than refused, exactly as a pre-split draft would be.
+  const expected = structuredClone(before);
+  for (const disc of Object.values(expected.objects.Disc)) Object.assign(disc, { depiction: disc.photo ? 'photo' : 'paint', paint: null });
+  assert.deepEqual(runtime.world(), expected);
+  for (const disc of Object.values(runtime.world().objects.Disc)) assert.deepEqual([disc.depiction, disc.paint], ['paint', null]);
   assert.deepEqual(queryPrefix(runtime.pxc, 'px.studio.uds.context.*'), {});
   for (const address of runtime.pxc.get('px.studio.experiences').definitions) assert.ok(runtime.pxc.has(address));
 });

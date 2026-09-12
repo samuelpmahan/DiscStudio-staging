@@ -274,7 +274,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "domain.fields:f65aa0ba",
+          "result_sha256": "domain.fields:a9ead9bd",
           "hit": true,
           "value": {
             "kind": "json",
@@ -329,6 +329,19 @@
                 "discovered": false,
                 "source": "px.domain.Disc.buzzz-mint",
                 "value": "Mint practice disc",
+                "available": true
+              },
+              {
+                "path": "disc.depiction",
+                "label": "Depiction",
+                "group": "Disc identity",
+                "order": 4,
+                "type": "text",
+                "unit": "",
+                "optional": true,
+                "discovered": false,
+                "source": "px.domain.Disc.buzzz-mint",
+                "value": "paint",
                 "available": true
               },
               {
@@ -563,6 +576,84 @@
                 "discovered": false,
                 "source": "px.domain.Disc.buzzz-mint",
                 "value": "",
+                "available": false
+              },
+              {
+                "path": "disc.paint.family",
+                "label": "Painter family",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.buzzz-mint",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.seed",
+                "label": "Paint seed",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "number",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.buzzz-mint",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.base",
+                "label": "Base colour",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.buzzz-mint",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.accent",
+                "label": "Accent colour",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.buzzz-mint",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.target",
+                "label": "Render target",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "number",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.buzzz-mint",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.label",
+                "label": "Artwork label",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.buzzz-mint",
+                "value": null,
                 "available": false
               },
               {
@@ -826,7 +917,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "disc.art:8bd96cfd",
+          "result_sha256": "disc.art:21ace3cf",
           "hit": true,
           "value": {
             "kind": "json",
@@ -842,7 +933,8 @@
                 "#4b8166",
                 96,
                 "Discraft · Buzzz"
-              ]
+              ],
+              "retained": false
             },
             "note": null
           }
@@ -1246,7 +1338,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.compose:de623ae6",
+          "result_sha256": "card.compose:c1769ce2",
           "hit": false,
           "value": {
             "kind": "json",
@@ -1500,7 +1592,8 @@
                   "#4b8166",
                   96,
                   "Discraft · Buzzz"
-                ]
+                ],
+                "retained": false
               },
               "entry": {
                 "id": "entry-1",
@@ -1885,7 +1978,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.svg:47491253",
+          "result_sha256": "card.svg:e36a53b8",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -1988,7 +2081,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "domain.fields:fed4cb10",
+          "result_sha256": "domain.fields:1442449d",
           "hit": true,
           "value": {
             "kind": "json",
@@ -2043,6 +2136,19 @@
                 "discovered": false,
                 "source": "px.domain.Disc.zone-peach",
                 "value": "Peach approach disc",
+                "available": true
+              },
+              {
+                "path": "disc.depiction",
+                "label": "Depiction",
+                "group": "Disc identity",
+                "order": 4,
+                "type": "text",
+                "unit": "",
+                "optional": true,
+                "discovered": false,
+                "source": "px.domain.Disc.zone-peach",
+                "value": "paint",
                 "available": true
               },
               {
@@ -2277,6 +2383,84 @@
                 "discovered": false,
                 "source": "px.domain.Disc.zone-peach",
                 "value": "",
+                "available": false
+              },
+              {
+                "path": "disc.paint.family",
+                "label": "Painter family",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.zone-peach",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.seed",
+                "label": "Paint seed",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "number",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.zone-peach",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.base",
+                "label": "Base colour",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.zone-peach",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.accent",
+                "label": "Accent colour",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.zone-peach",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.target",
+                "label": "Render target",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "number",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.zone-peach",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.label",
+                "label": "Artwork label",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.zone-peach",
+                "value": null,
                 "available": false
               },
               {
@@ -2540,7 +2724,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "disc.art:07f4fd03",
+          "result_sha256": "disc.art:3ee3b295",
           "hit": true,
           "value": {
             "kind": "json",
@@ -2556,7 +2740,8 @@
                 "#815f4b",
                 96,
                 "Discraft · Zone"
-              ]
+              ],
+              "retained": false
             },
             "note": null
           }
@@ -2960,7 +3145,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.compose:229bdf33",
+          "result_sha256": "card.compose:5fb76f9b",
           "hit": false,
           "value": {
             "kind": "json",
@@ -3214,7 +3399,8 @@
                   "#815f4b",
                   96,
                   "Discraft · Zone"
-                ]
+                ],
+                "retained": false
               },
               "entry": {
                 "id": "entry-2",
@@ -3599,7 +3785,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.svg:c6fbff6a",
+          "result_sha256": "card.svg:83e55415",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -3702,7 +3888,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "domain.fields:7cdd81a1",
+          "result_sha256": "domain.fields:f5aacff0",
           "hit": true,
           "value": {
             "kind": "json",
@@ -3757,6 +3943,19 @@
                 "discovered": false,
                 "source": "px.domain.Disc.destroyer-lilac",
                 "value": "Lilac bomber",
+                "available": true
+              },
+              {
+                "path": "disc.depiction",
+                "label": "Depiction",
+                "group": "Disc identity",
+                "order": 4,
+                "type": "text",
+                "unit": "",
+                "optional": true,
+                "discovered": false,
+                "source": "px.domain.Disc.destroyer-lilac",
+                "value": "paint",
                 "available": true
               },
               {
@@ -3991,6 +4190,84 @@
                 "discovered": false,
                 "source": "px.domain.Disc.destroyer-lilac",
                 "value": "",
+                "available": false
+              },
+              {
+                "path": "disc.paint.family",
+                "label": "Painter family",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.destroyer-lilac",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.seed",
+                "label": "Paint seed",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "number",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.destroyer-lilac",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.base",
+                "label": "Base colour",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.destroyer-lilac",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.accent",
+                "label": "Accent colour",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.destroyer-lilac",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.target",
+                "label": "Render target",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "number",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.destroyer-lilac",
+                "value": null,
+                "available": false
+              },
+              {
+                "path": "disc.paint.label",
+                "label": "Artwork label",
+                "group": "Physical disc / Paint recipe",
+                "order": 100,
+                "type": "text",
+                "unit": "",
+                "optional": false,
+                "discovered": false,
+                "source": "px.domain.Disc.destroyer-lilac",
+                "value": null,
                 "available": false
               },
               {
@@ -4254,7 +4531,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "disc.art:ac2b83b5",
+          "result_sha256": "disc.art:60995ca1",
           "hit": true,
           "value": {
             "kind": "json",
@@ -4270,7 +4547,8 @@
                 "#654b81",
                 96,
                 "Innova · Destroyer"
-              ]
+              ],
+              "retained": false
             },
             "note": null
           }
@@ -4674,7 +4952,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.compose:4d8d3842",
+          "result_sha256": "card.compose:36348b79",
           "hit": false,
           "value": {
             "kind": "json",
@@ -4928,7 +5206,8 @@
                   "#654b81",
                   96,
                   "Innova · Destroyer"
-                ]
+                ],
+                "retained": false
               },
               "entry": {
                 "id": "entry-3",
@@ -5313,7 +5592,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "card.svg:aabd9c9e",
+          "result_sha256": "card.svg:88a782d7",
           "hit": false,
           "value": {
             "kind": "svg",
@@ -5367,7 +5646,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "comparison.layout:0cd7acdb",
+          "result_sha256": "comparison.layout:aebb433a",
           "hit": true,
           "value": {
             "kind": "json",
@@ -5663,7 +5942,8 @@
                       "#4b8166",
                       96,
                       "Discraft · Buzzz"
-                    ]
+                    ],
+                    "retained": false
                   },
                   "entry": {
                     "id": "entry-1",
@@ -6261,7 +6541,8 @@
                       "#815f4b",
                       96,
                       "Discraft · Zone"
-                    ]
+                    ],
+                    "retained": false
                   },
                   "entry": {
                     "id": "entry-2",
@@ -6859,7 +7140,8 @@
                       "#654b81",
                       96,
                       "Innova · Destroyer"
-                    ]
+                    ],
+                    "retained": false
                   },
                   "entry": {
                     "id": "entry-3",
@@ -7460,7 +7742,8 @@
                         "#4b8166",
                         96,
                         "Discraft · Buzzz"
-                      ]
+                      ],
+                      "retained": false
                     },
                     "entry": {
                       "id": "entry-1",
@@ -8062,7 +8345,8 @@
                         "#815f4b",
                         96,
                         "Discraft · Zone"
-                      ]
+                      ],
+                      "retained": false
                     },
                     "entry": {
                       "id": "entry-2",
@@ -8664,7 +8948,8 @@
                         "#654b81",
                         96,
                         "Innova · Destroyer"
-                      ]
+                      ],
+                      "retained": false
                     },
                     "entry": {
                       "id": "entry-3",
@@ -9058,7 +9343,7 @@
             }
           ],
           "duration_ms": null,
-          "result_sha256": "overlay.svg:faaea23e",
+          "result_sha256": "overlay.svg:f30fc340",
           "hit": false,
           "value": {
             "kind": "svg",

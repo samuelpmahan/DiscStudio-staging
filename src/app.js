@@ -10,6 +10,8 @@ import { SORTS, GROUPS, FILTERS } from './shelf.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
 import { planExports, queueProgress } from './exports.js';
 import { composePage, fetchPageSources } from '../pyto/viewer/embed.mjs';
+import { render as paintRender } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
+import { TARGETS as PAINT_TARGETS } from '../pyto/consumers/discstudio-card/port/painter/core.mjs';
 
 const DATA_KEY = 'discstudio.pxc.staging.world.v2', VIEW_KEY = 'discstudio.pxc.staging.view.v2';
 const app = document.querySelector('#app');
@@ -27,7 +29,8 @@ const ui = {
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
   lastCascade: null, instanceProjection: savedView.instanceProjection || 'single', battleRules: null, queue: [], queueRunning: false,
-  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null
+  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null,
+  selectedExperience: savedView.selectedExperience || 'uds', experienceVariant: savedView.experienceVariant || null
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -59,7 +62,7 @@ function shownPcr() {
   if (!name) throw new Error('Render a composition before exporting its run record.');
   return name;
 }
-function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout })); } catch { /* Nonessential view state. */ } }
+function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout, selectedExperience: ui.selectedExperience, experienceVariant: ui.experienceVariant })); } catch { /* Nonessential view state. */ } }
 runtime.onChange(() => {
   if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
   catch (error) { ui.saved = 'Not saved · download a draft'; message('Browser storage is full or unavailable. Your current work is still open. Download a draft to keep it.', true); }
@@ -116,7 +119,7 @@ function cascadeResetButton(scope, token) { return button('Reset to inherited', 
 function navigate(route) { location.hash = `/${route}`; }
 function syncRoute() {
   const [path, query] = location.hash.slice(1).split('?'), params = new URLSearchParams(query);
-  ui.route = ['shelf', 'course', 'course-build', 'components', 'competition'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
+  ui.route = ['shelf', 'course', 'course-build', 'components', 'competition', 'experiences'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
   if (params.has('node')) { ui.nodeId = params.get('node'); ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; }
   if (params.has('trace')) ui.traceOpen = true;
   render();
@@ -124,7 +127,7 @@ function syncRoute() {
 window.addEventListener('hashchange', syncRoute);
 const safeThumb = (discId, preset = 'discImage', projection = 'bag') => { try { return runtime.card(discId, preset, context(), null, projection).svg; } catch { return '<span class="missing">Missing disc</span>'; } };
 function header() {
-  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a>${ui.route === 'course-build' ? '<a href="#/course-build" class="active">Course</a>' : ''}<a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
+  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a>${ui.route === 'course-build' ? '<a href="#/course-build" class="active">Course</a>' : ''}<a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a><a href="#/experiences" class="${ui.route === 'experiences' ? 'active' : ''}">Experiences</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
 }
 function bagSelect(control = 'bag') { return select(control, ui.bagId, all(w(), 'Bag').map(b => [b.id, `${b.name} · ${b.discIds.length}`])); }
 /** What the shelf is asked for right now: the search box, the quick filters, the sort and the grouping. */
@@ -160,9 +163,17 @@ function shelfSidebar() {
   const lists = view.groups.map(group => `${ui.shelfGroup === 'none' ? '' : `<h3 class="shelf-group" data-shelf-group="${esc(group.label)}">${esc(group.label)}<small>${group.discIds.length}</small></h3>`}<div class="disc-list ${ui.shelfLayout === 'cards' ? 'as-cards' : ''}">${group.discIds.map(discId => shelfEntry(view.rows.find(row => row.id === discId))).join('')}</div>`).join('');
   return `<aside class="sidebar" data-scroll="shelf"><div class="sidebar-heading"><div><span class="eyebrow">YOUR RAW MATERIAL</span><h2>Disc shelf <small>${view.total}</small></h2></div>${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div><input class="search" data-search="discs" aria-label="Find a disc" placeholder="⌕  buzzz 177 · midrange -1" value="${esc(ui.query)}">${ui.route === 'course' ? `<div class="sidebar-bag"><label class="eyebrow">SOURCE BAG</label>${bagSelect()}${check('Show only this bag', 'only-bag', ui.onlyBag)}</div>` : ''}${shelfControls(view)}${view.shown ? lists : `<p class="empty-note">Nothing on the shelf matches${view.terms.length ? ` “${esc(ui.query.trim())}”` : ' these filters'}. Try a mold, a plastic, a colour, a weight or a flight number.</p>`}<footer class="sidebar-footer">${ui.route === 'course' ? button('+ Add bag to comparison', 'bag-lineup', {}, 'wide secondary') : button('+ New physical disc', 'disc-add', {}, 'wide secondary')}<p class="tiny muted">Every disc keeps its own art in both views. Your photos stay on your device.</p></footer></aside>`;
 }
-/** The composer keeps its own typing in the DOM until a render needs it, exactly as the new-field panel does. */
-function captureComposer() { if (!ui.adding) return; for (const el of app.querySelectorAll('[data-compose]')) ui.adding[el.dataset.compose] = el.type === 'checkbox' ? el.checked : el.value; }
-const composeField = (label, key, type = 'text', attrs = '') => `<label class="control"><span>${esc(label)}</span><input aria-label="${esc(label)}" data-compose="${esc(key)}" type="${type}" value="${esc(ui.adding?.[key] ?? '')}" ${attrs}></label>`;
+/** The composer keeps its own typing in the DOM until a render needs it, exactly as the new-field panel does. Dotted keys (paint.family) nest into the paint recipe; touching any of them marks the recipe as the user's own. */
+function captureComposer() {
+  if (!ui.adding) return;
+  for (const el of app.querySelectorAll('[data-compose]')) {
+    const value = el.type === 'checkbox' ? el.checked : el.value, path = el.dataset.compose.split('.');
+    if (path.length === 1) ui.adding[path[0]] = value;
+    else { ui.adding.paintTouched = true; (ui.adding.paint ??= {})[path[1]] = value; }
+  }
+}
+const composeValue = key => key.split('.').reduce((o, k) => o?.[k], ui.adding);
+const composeField = (label, key, type = 'text', attrs = '') => `<label class="control"><span>${esc(label)}</span><input aria-label="${esc(label)}" data-compose="${esc(key)}" type="${type}" value="${esc(composeValue(key) ?? '')}" ${attrs}></label>`;
 const datalist = (key, values) => `<datalist id="suggest-${key}">${[...new Set(values.map(v => String(v ?? '').trim()).filter(Boolean))].sort().map(v => `<option value="${esc(v)}"></option>`).join('')}</datalist>`;
 /** Everything already on the shelf, offered back as suggestions: the second Buzzz is typed once. */
 function shelfSuggestions() { const molds = all(w(), 'Mold'), discs = all(w(), 'Disc'); return { maker: all(w(), 'Manufacturer').map(m => m.name), mold: molds.map(m => m.name), category: molds.map(m => m.category), plastic: discs.map(d => d.plastic), color: discs.map(d => d.color) }; }
@@ -174,9 +185,8 @@ function shelfSuggestions() { const molds = all(w(), 'Mold'), discs = all(w(), '
  */
 function discComposer() {
   const a = ui.adding, s = shelfSuggestions(), bag = get(w(), 'Bag', ui.bagId);
-  const [base, accent] = sampleColors(sampleHueFor(a.color, a.key));
   const auto = [a.plastic.trim(), a.mold.trim(), a.weight === '' ? '' : `${a.weight} g`].filter(Boolean).join(' ') || 'your new disc';
-  return `<section class="composer" data-composer><div class="composer-head"><div><span class="eyebrow">ONE GESTURE</span><h2>Add a disc you own</h2><p class="tiny muted">Mold is the only thing this needs. Everything else is here because you usually know it while the disc is in your hand.</p></div>${button('×', 'compose-cancel', {}, 'circle', 'aria-label="Cancel adding a disc"')}</div><div class="composer-body"><div class="composer-art">${a.photo ? `<img src="${esc(a.photo)}" alt="The photo this disc will be added with">` : `<span class="composer-swatch" style="background:${esc(base)};border-color:${esc(accent)}"></span>`}<span class="tiny muted">${a.photo ? 'Your photo. It never leaves this browser.' : `Its own hue${a.color.trim() ? `, from “${esc(a.color.trim())}”` : ''} until you add a photo.`}</span><div class="button-row">${button(a.photo ? 'Replace photo' : '↑ Photo of this disc', 'compose-photo', {}, 'quiet small')}${a.photo ? button('Remove', 'compose-photo-clear', {}, 'quiet small') : ''}</div></div><div class="composer-grid">${composeField('Maker', 'maker', 'text', 'list="suggest-maker" placeholder="Discraft"')}${composeField('Mold', 'mold', 'text', 'list="suggest-mold" placeholder="Buzzz" required')}${composeField('Disc type', 'category', 'text', 'list="suggest-category" placeholder="Midrange"')}${composeField('Plastic', 'plastic', 'text', 'list="suggest-plastic" placeholder="ESP"')}${composeField('Weight (g)', 'weight', 'number', 'step="1" min="20" max="400" placeholder="177"')}${composeField('Colour', 'color', 'text', 'list="suggest-color" placeholder="Mint"')}</div></div>${datalist('maker', s.maker)}${datalist('mold', s.mold)}${datalist('category', s.category)}${datalist('plastic', s.plastic)}${datalist('color', s.color)}<div class="composer-foot">${composeField('Nickname', 'nickname', 'text', `placeholder="${esc(auto)}"`)}${bag ? `<label class="check"><input data-compose="toBag" type="checkbox" ${a.toBag ? 'checked' : ''}> Put it in ${esc(bag.name)}</label>` : ''}${button('Add to shelf', 'compose-add', {}, 'primary')}</div></section>`;
+  return `<section class="composer" data-composer><div class="composer-head"><div><span class="eyebrow">ONE GESTURE</span><h2>Add a disc you own</h2><p class="tiny muted">Mold is the only thing this needs. Everything else is here because you usually know it while the disc is in your hand.</p></div>${button('×', 'compose-cancel', {}, 'circle', 'aria-label="Cancel adding a disc"')}</div><div class="composer-body">${composerDepictionArt(a)}<div class="composer-grid">${composeField('Maker', 'maker', 'text', 'list="suggest-maker" placeholder="Discraft"')}${composeField('Mold', 'mold', 'text', 'list="suggest-mold" placeholder="Buzzz" required')}${composeField('Disc type', 'category', 'text', 'list="suggest-category" placeholder="Midrange"')}${composeField('Plastic', 'plastic', 'text', 'list="suggest-plastic" placeholder="ESP"')}${composeField('Weight (g)', 'weight', 'number', 'step="1" min="20" max="400" placeholder="177"')}${composeField('Colour', 'color', 'text', 'list="suggest-color" placeholder="Mint"')}</div></div>${datalist('maker', s.maker)}${datalist('mold', s.mold)}${datalist('category', s.category)}${datalist('plastic', s.plastic)}${datalist('color', s.color)}<div class="composer-foot">${composeField('Nickname', 'nickname', 'text', `placeholder="${esc(auto)}"`)}${bag ? `<label class="check"><input data-compose="toBag" type="checkbox" ${a.toBag ? 'checked' : ''}> Put it in ${esc(bag.name)}</label>` : ''}${button('Add to shelf', 'compose-add', {}, 'primary')}</div></section>`;
 }
 /** One disc in the bag, in the place the bag holds it: reorder by the grip or the arrows, out by one tap. */
 function bagCard(key, index, total) {
@@ -195,11 +205,21 @@ function shelfCenter() {
   const bag = get(w(), 'Bag', ui.bagId), discIds = bag?.discIds ?? [];
   return `<section class="center" data-scroll="center">${ui.adding ? discComposer() : ''}<div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Duplicate bag', 'bag-duplicate', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description">${bag ? `<input class="bag-title" data-control="bag-name" aria-label="Bag name" value="${esc(bag.name)}">` : '<span class="eyebrow">CREATE YOUR FIRST BAG</span>'}<span class="tiny muted">${bag ? `${discIds.length} disc${discIds.length === 1 ? '' : 's'} · drag the grip or use ◀ ▶ to set the order · no limits here, a cap belongs to a competition` : ''}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${discIds.map((key, index) => bagCard(key, index, discIds.length)).join('') || bagInvitation()}</div><div class="principle-strip"><span>ONE DISC. MANY BAGS. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bag it is in, and every bound card, sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
 }
+/** What the depiction switch keeps: both sources, whichever one is not showing. */
+function depictionNote(disc) {
+  const photo = disc.photo ? 'The photo is kept.' : 'No photo yet.';
+  const recipe = disc.paint ? `The paint recipe is kept (${esc(disc.paint.family)}, seed ${esc(String(disc.paint.seed))}).` : 'No paint recipe yet.';
+  const fallback = (disc.depiction || 'paint') === 'photo' && !disc.photo ? ' The painted depiction shows until a photo is added.' : '';
+  return `${photo} ${recipe} Switching never destroys either source, and it undoes like every change here.${fallback}`;
+}
 function discInspector() {
   const { disc, mold, maker } = discInfo(); if (!disc) return '<aside class="inspector"><p>Select or add a disc.</p></aside>';
   const fields = w().schemas.Disc.fields;
-  const primitiveFields = Object.entries(fields).filter(([, d]) => ['text', 'number', 'boolean'].includes(d.type));
-  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & CHANGE</span><span class="live-tag">LIVE · PxC</span></div><h2>${esc(mold?.name || 'Disc')}</h2><div class="inspector-art">${safeThumb(disc.id)}</div>${button(disc.photo ? 'Replace exact disc photo' : '↑ Add exact disc photo', 'photo', { id: disc.id }, 'wide')}${disc.photo ? button('Remove photo', 'photo-remove', {}, 'quiet small') : '<p class="tiny muted">Sample illustration, not your disc. No photo leaves this browser.</p>'}<section class="control-section"><h3>Disc identity <span>DOMAIN</span></h3>${input('Manufacturer', 'identity-maker', maker?.name || '')}${input('Mold / disc name', 'identity-mold', mold?.name || '')}<p class="tiny muted">These fields link this specimen to its product identity. Re-identifying it does not rename other discs.</p>${primitiveFields.map(([key, def]) => def.type === 'boolean' ? check(def.label, 'disc-field', disc[key], `data-key="${esc(key)}"`) : input(def.label + (def.unit ? ` (${def.unit})` : ''), 'disc-field', disc[key], def.type === 'number' ? 'number' : 'text', `data-key="${esc(key)}" data-kind="${def.type}"`)).join('')}<div class="four-inputs">${Object.entries(w().schemas.Mold.fields.flight.fields).map(([key, def]) => input(def.label, 'flight', mold?.flight?.[key], 'number', `data-key="${key}" step="0.5"`)).join('')}</div><p class="tiny muted">Flight numbers are optional product facts. Blank means unknown, not zero.</p><div class="button-row">${button('Another specimen', 'disc-duplicate', {}, 'quiet')}${button('Remove disc', 'disc-remove', {}, 'quiet danger')}</div><div class="undo-row">${button(`↶ Undo last change`, 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p></section><div class="subtle-box"><span class="eyebrow">PRESENTATION IS SEPARATE</span><p>Want a bigger photo or a different layout?</p>${button('Open Component Editor ↗', 'go-editor', {}, 'wide secondary')}</div></aside>`;
+  // Depiction gets its own switch below, not a free-text field: only the two
+  // retained depictions are ever valid.
+  const primitiveFields = Object.entries(fields).filter(([key, d]) => ['text', 'number', 'boolean'].includes(d.type) && key !== 'depiction');
+  const depiction = disc.depiction === 'photo' || disc.depiction === 'paint' ? disc.depiction : 'paint';
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & CHANGE</span><span class="live-tag">LIVE · PxC</span></div><h2>${esc(mold?.name || 'Disc')}</h2><div class="inspector-art">${safeThumb(disc.id)}</div>${button(disc.photo ? 'Replace exact disc photo' : '↑ Add exact disc photo', 'photo', { id: disc.id }, 'wide')}${disc.photo ? button('Remove photo', 'photo-remove', {}, 'quiet small') : '<p class="tiny muted">Sample illustration, not your disc. No photo leaves this browser.</p>'}<section class="control-section"><h3>Depiction <span>DOMAIN</span></h3><div class="segmented" role="group" aria-label="Depiction">${button('Photo', 'depiction', { value: 'photo' }, depiction === 'photo' ? 'active' : '')}${button('Paint', 'depiction', { value: 'paint' }, depiction === 'paint' ? 'active' : '')}</div><p class="tiny muted">${depictionNote(disc)}</p></section><section class="control-section"><h3>Disc identity <span>DOMAIN</span></h3>${input('Manufacturer', 'identity-maker', maker?.name || '')}${input('Mold / disc name', 'identity-mold', mold?.name || '')}<p class="tiny muted">These fields link this specimen to its product identity. Re-identifying it does not rename other discs.</p>${primitiveFields.map(([key, def]) => def.type === 'boolean' ? check(def.label, 'disc-field', disc[key], `data-key="${esc(key)}"`) : input(def.label + (def.unit ? ` (${def.unit})` : ''), 'disc-field', disc[key], def.type === 'number' ? 'number' : 'text', `data-key="${esc(key)}" data-kind="${def.type}"`)).join('')}<div class="four-inputs">${Object.entries(w().schemas.Mold.fields.flight.fields).map(([key, def]) => input(def.label, 'flight', mold?.flight?.[key], 'number', `data-key="${key}" step="0.5"`)).join('')}</div><p class="tiny muted">Flight numbers are optional product facts. Blank means unknown, not zero.</p><div class="button-row">${button('Another specimen', 'disc-duplicate', {}, 'quiet')}${button('Remove disc', 'disc-remove', {}, 'quiet danger')}</div><div class="undo-row">${button(`↶ Undo last change`, 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p></section><div class="subtle-box"><span class="eyebrow">PRESENTATION IS SEPARATE</span><p>Want a bigger photo or a different layout?</p>${button('Open Component Editor ↗', 'go-editor', {}, 'wide secondary')}</div></aside>`;
 }
 /**
  * Single Disc mode. One disc, the design made for one disc, and the same state a
@@ -555,6 +575,52 @@ function tracePanel(run) {
   return `<section class="trace-panel ${ui.traceOpen ? 'open' : ''}"><button class="trace-heading" data-action="toggle-trace"><span>◎ <strong>PxC · actual execution</strong></span><span>${run.computed} computed / ${run.reused} reused <b>${ui.traceOpen ? '−' : '+'}</b></span></button>${ui.traceOpen ? `<div class="trace-flow"><span>Domain Parts</span><b>→</b><span>Registered Calculations</span><b>→</b><span>Bound presentation</span><b>→</b><span>SVG Part</span></div><div class="trace-table"><div class="trace-row table-heading"><span>Calculation</span><span>Output Part</span><span>This invocation</span></div>${run.trace.map(t => `<div class="trace-row"><span class="mono" title="${esc(Object.values(t.inputs).join('\n'))}">${esc(t.call)}</span><span class="part-links">${(t.produces || [t.output]).map(address => button(esc(address), 'inspect-part', { value: address }, 'part-link mono')).join('')}</span><span class="cache-state ${t.reused ? 'reused' : ''}">${t.reused ? '↺ reused material' : '● computed'}</span></div>`).join('')}</div><div class="button-row">${button('Inspect PQL composition', 'inspect-pql', {}, 'quiet small')}${button('Browse all Parts', 'inspect-all', {}, 'quiet small')}${button('Download this execution receipt ↓', 'trace-export', {}, 'quiet small')}${button('Export run record ↓', 'record-export', {}, 'quiet small')}${button('Open Tick render ↗', 'record-render', {}, 'quiet small')}</div>${ui.inspectAddress ? `<div class="part-view"><h3>${esc(ui.inspectAddress)}</h3><pre>${esc(ui.inspectAddress === 'PQL' ? JSON.stringify(run.composition, null, 2) : ui.inspectAddress === 'Part index' ? runtime.parts().map(p => p.address).join('\n') : runtime.pxc.has(ui.inspectAddress) ? summaryValue(runtime.pxc.get(ui.inspectAddress)) : 'Part no longer exists in this context.')}</pre></div>` : ''}${receiptsSection()}<p class="tiny muted">Cache hits return retained material from PxC. Each invocation is still recorded. A hit is not a claim that the calculation ran again.</p>` : ''}</section>`;
 }
 let renderedRoute = null;
+/** Where a defined-only Experience still lives: the existing route that already does its job. */
+const EXPERIENCE_FALLBACK = {
+  exploreshelf: ['#/shelf', 'DiscShelf'], createbag: ['#/shelf', 'DiscShelf'], managebags: ['#/shelf', 'DiscShelf'],
+  creategraphics: ['#/course', 'OnTheCourse'], exportgraphics: ['#/course', 'OnTheCourse']
+};
+const safePart = address => { try { return runtime.pxc.get(address); } catch { return null; } };
+/** The bound material a definition Part declares, rendered straight -- nothing here is assembled by hand. */
+function experienceBoundMaterial(exp) {
+  const def = exp.definition, variants = exp.variants ?? [];
+  const codes = items => (items ?? []).map(item => `<code>${esc(item)}</code>`).join(' ');
+  const sections = [];
+  if (def.shared?.length) sections.push(`<div><span class="eyebrow">SHARED REQUIREMENTS</span><p>${codes(def.shared)}</p></div>`);
+  if (def.bindings) sections.push(`<div><span class="eyebrow">BOUND MATERIAL</span><p>${codes(Object.entries(def.bindings).map(([k, v]) => `${k} → ${v}`))}</p></div>`);
+  if (variants.length) sections.push(`<div><span class="eyebrow">VARIANTS</span><p>${variants.map(v => `<code>${esc(v.variant)}</code> → ${esc(v.discVizType)}`).join('<br>')}</p></div>`);
+  if (def.actions && Object.keys(def.actions).length) sections.push(`<div><span class="eyebrow">ACTIONS</span><p>${Object.entries(def.actions).map(([k, v]) => `<code>${esc(k)}</code>${v?.opens ? ` opens <code>${esc(v.opens)}</code>` : ''}`).join('<br>')}</p></div>`);
+  if (def.continues?.length) sections.push(`<div><span class="eyebrow">CONTINUES TO</span><p>${codes(def.continues)}</p></div>`);
+  return sections.length ? `<div class="exp-material">${sections.join('')}</div>` : '';
+}
+/**
+ * The usable Experience: choosing a DiscVizType composes the effective
+ * definition through fn.studio.effectiveDefinition (PQL, no view-layer spread)
+ * and opens the composer in that depiction. The other lens is the composer itself.
+ */
+function udsDetail(exp) {
+  const variants = exp.variants ?? [];
+  const effective = ui.experienceVariant ? safePart(`px.studio.uds.context.effective.${ui.experienceVariant}`) : null;
+  return `<p class="lede">${esc(exp.purpose)}</p><div class="exp-variants"><span class="eyebrow">DISC VIZ TYPE — CHOOSE ONE</span><div class="button-row">${variants.map(v => button(`${v.variant === 'photo' ? '↑ Photo' : '◈ Paint'} · ${esc(v.discVizType)}`, 'experience-variant', { value: v.variant }, ui.experienceVariant === v.variant ? 'secondary' : 'quiet')).join('')}</div></div>${effective ? `<div class="subtle-box"><span class="eyebrow">EFFECTIVE DEFINITION — COMPOSED BY fn.studio.effectiveDefinition THROUGH PQL</span><p><strong>Shared</strong> ${effective.shared.map(s => `<code>${esc(s)}</code>`).join(' ')}</p><p><strong>Additional</strong> ${effective.additional.map(s => `<code>${esc(s)}</code>`).join(' ')}</p><p class="tiny muted">Read back from <span class="mono">px.studio.uds.context.effective.${esc(ui.experienceVariant)}</span>; nothing here was assembled by object spread.</p></div>` : '<p class="tiny muted">Choose a DiscVizType to compose its effective definition: the shared UploadDiscToShelf requirements plus that variant’s additional ones.</p>'}<div class="button-row">${button('+ Add a disc', 'disc-add', {}, 'primary')}</div>${ui.adding ? discComposer() : ''}${experienceBoundMaterial(exp)}`;
+}
+/** A defined Experience: honest about the pending integration, with the views that already work. */
+function pendingDetail(exp) {
+  const [href, label] = EXPERIENCE_FALLBACK[exp.key] ?? ['#/shelf', 'DiscShelf'];
+  return `<p class="lede">${esc(exp.purpose)}</p><div class="notice"><h3>${esc(exp.name)} is defined — its Experience integration is pending.</h3><p>The definition, its purpose and its bound material are on the record; the frame does not run it yet, and it does not pretend to.</p><p>The existing views stay available: <a href="${href}">${label} ↗</a></p></div>${experienceBoundMaterial(exp)}`;
+}
+/**
+ * The #/experiences route: the six loaded Experience Parts, discovered from
+ * px.studio.experiences, each with its defined/usable status. Selecting one is
+ * USE -- it publishes frame context under px.studio.uds.context.* -- so leaving
+ * the route and returning finds the selection and its Parts where they were.
+ */
+function experiencesCenter() {
+  const list = runtime.experiences().list();
+  if (!list.some(e => e.key === ui.selectedExperience)) ui.selectedExperience = 'uds';
+  const selected = list.find(e => e.key === ui.selectedExperience);
+  const selection = safePart('px.studio.uds.context.selection');
+  return `<section class="center exp-center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">EXPERIENCE FRAME</span><h1>Experiences</h1><p>The loaded Experience definitions, discovered from <span class="mono">px.studio.experiences</span> — never assembled in a view. UploadDiscToShelf is usable; the other five are defined, their existing views still available and their Experience integration explicitly pending.</p></div></div><div class="exp-layout"><aside class="exp-list" aria-label="Experiences">${list.map(e => `<button class="exp-item ${e.key === selected.key ? 'is-selected' : ''}" data-action="experience-select" data-id="${esc(e.key)}"><span class="exp-item-head"><strong>${esc(e.name)}</strong><span class="status-chip" data-status="${e.status}">${e.status}</span></span><small>${esc(e.purpose)}</small></button>`).join('')}</aside><div class="exp-detail"><div class="exp-detail-head"><h2>${esc(selected.name)}</h2><span class="status-chip" data-status="${selected.status}">${selected.status}</span><span class="mono tiny">${esc(selected.address)}</span></div>${selected.key === 'uds' ? udsDetail(selected) : pendingDetail(selected)}${selection ? `<p class="tiny muted">Frame context on the record: <span class="mono">px.studio.uds.context.selection</span> → ${esc(selection.experience)}${selection.variant ? ` · variant ${esc(String(selection.variant).split('.')[3])}` : ''}</p>` : '<p class="tiny muted">No frame context published yet — select an Experience above to publish it.</p>'}</div></div></section>`;
+}
 function render() {
   captureComposer();
   const active = document.activeElement;
@@ -595,6 +661,8 @@ function render() {
       } else result = runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single');
       ui.lastResult = result;
       body = `${componentSidebar(result)}${editorCenter(result, cascade)}${nodeInspector(result, cascade)}`;
+    } else if (ui.route === 'experiences') {
+      body = experiencesCenter();
     } else {
       ui.lastResult = runtime.constraints(ui.competitionId);
       body = `${competitionSidebar()}${competitionCenter(ui.lastResult)}${competitionInspector()}`;
@@ -623,9 +691,38 @@ function render() {
   review.getContext = () => ({ route: location.hash, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, stateId: w().battle.currentStateId, runRecordAddress: ui.recordAddress || null, worldLabel: labelHash({ objects: w().objects, presets: w().presets, battle: w().battle }) });
 }
 /** The + on the shelf opens the composer instead of dropping a blank record named 'My new disc'. */
-function openComposer() {
+/** The three starter families the UDS paint variant offers; the full sixteen stay valid render targets. */
+function starterFamilies() {
+  try { const part = runtime.pxc.get('px.studio.uds.paint.starterfamilies'); if (Array.isArray(part?.values) && part.values.length) return part.values; } catch { /* The Part loads with the experience definitions. */ }
+  return ['chevron-run', 'pressed-fern', 'contour-basin'];
+}
+/** A fresh paint recipe: the first starter family, a rolled seed, the disc's own hue as colours, and a live label until the person writes one. */
+function defaultPaintRecipe() {
+  const [base, accent] = sampleColors(sampleHueFor('', 'new-disc'));
+  return { family: starterFamilies()[0], seed: Math.floor(Math.random() * 90000) + 10000, base, accent, target: 96, label: null };
+}
+function openComposer(depiction = 'paint') {
   const { maker } = discInfo();
-  ui.adding = { key: id('disc'), maker: maker?.name || '', mold: '', category: '', plastic: '', weight: '', color: '', nickname: '', photo: null, toBag: !!ui.bagId, focus: true };
+  ui.adding = { key: id('disc'), maker: maker?.name || '', mold: '', category: '', plastic: '', weight: '', color: '', nickname: '', photo: null, toBag: !!ui.bagId, focus: true, depiction, paint: defaultPaintRecipe(), paintTouched: false };
+  // USE: the composer's depiction choice is published as frame context, never at load.
+  runtime.experiences().draft({ depiction, paint: ui.adding.paint, hasPhoto: false });
+}
+/** The live painted preview: the recipe in the composer's state, through the same render() the cards use. A blank label previews live, from the current maker and mold. */
+function composerPaintPreview(a) {
+  const p = a.paint ?? {}, typed = String(p.label ?? '').trim();
+  const label = typed || [a.maker.trim(), a.mold.trim()].filter(Boolean).join(' · ') || 'Your disc';
+  try {
+    return `<div class="composer-paint">${paintRender(p.family, Number(p.seed), p.base, p.accent, Number(p.target), label)}</div><span class="tiny muted">Painted live from the recipe below — the seed only changes when you reroll it. A blank label stays live: name the disc later and the artwork follows.</span>`;
+  } catch (error) { return `<p class="error-panel">${esc(error.message)}</p>`; }
+}
+/** The deliberate Photo/Paint choice: Paint is the default and needs no file. */
+function composerDepictionArt(a) {
+  const segmented = `<div class="segmented" role="group" aria-label="Depiction"><button class="${a.depiction === 'photo' ? 'active' : ''}" data-action="compose-depiction" data-value="photo">Photo</button><button class="${a.depiction === 'paint' ? 'active' : ''}" data-action="compose-depiction" data-value="paint">Paint</button></div>`;
+  if (a.depiction === 'photo') return `${segmented}<div class="composer-art">${a.photo ? `<img src="${esc(a.photo)}" alt="The photo this disc will be added with">` : `<span class="composer-swatch" style="background:${esc(sampleColors(sampleHueFor(a.color, a.key))[0])};border-color:${esc(sampleColors(sampleHueFor(a.color, a.key))[1])}"></span>`}<span class="tiny muted">${a.photo ? 'Your photo. It never leaves this browser.' : 'No photo yet — add one, or paint instead.'}</span><div class="button-row">${button(a.photo ? 'Replace photo' : '↑ Photo of this disc', 'compose-photo', {}, 'quiet small')}${a.photo ? button('Remove', 'compose-photo-clear', {}, 'quiet small') : ''}</div></div>`;
+  const families = starterFamilies(), p = a.paint ?? {};
+  const familyOptions = families.map(f => `<option value="${esc(f)}" ${f === p.family ? 'selected' : ''}>${esc(f)}</option>`).join('');
+  const targetOptions = PAINT_TARGETS.map(t => `<option value="${t}" ${Number(p.target) === t ? 'selected' : ''}>${t}</option>`).join('');
+  return `${segmented}<div class="composer-art">${composerPaintPreview(a)}<div class="button-row">${button('Reroll seed', 'compose-reroll', {}, 'quiet small')}</div></div><div class="composer-grid"><label class="control"><span>Painter family</span><select aria-label="Painter family" data-compose="paint.family">${familyOptions}</select></label>${composeField('Seed', 'paint.seed', 'number', 'step="1" min="0"')}${composeField('Base colour', 'paint.base', 'color')}${composeField('Accent colour', 'paint.accent', 'color')}<label class="control"><span>Render target</span><select aria-label="Render target" data-compose="paint.target">${targetOptions}</select></label>${composeField('Label', 'paint.label', 'text', `placeholder="${esc([a.maker.trim(), a.mold.trim()].filter(Boolean).join(' · ') || 'Maker · mold')}"`)}</div>`;
 }
 function addLineup(discId) { if (!w().battle.entries.some(e => e.discId === discId)) execute({ type: 'battle.add', discId, id: id('entry') }); }
 /**
@@ -727,8 +824,10 @@ async function action(name, el) {
     case 'shelf-filter': ui.shelfFilters = ui.shelfFilters.includes(d.value) ? ui.shelfFilters.filter(key => key !== d.value) : [...ui.shelfFilters, d.value]; break;
     case 'shelf-layout': ui.shelfLayout = d.value; break;
     case 'shelf-clear': ui.query = ''; ui.shelfFilters = []; break;
-    case 'disc-add': openComposer(); if (ui.route !== 'shelf') { persistView(); navigate('shelf'); return; } break;
+    case 'disc-add': openComposer(); if (!['shelf', 'experiences'].includes(ui.route)) { persistView(); navigate('shelf'); return; } break;
     case 'compose-cancel': ui.adding = null; break;
+    case 'compose-depiction': ui.adding.depiction = d.value; runtime.experiences().draft({ depiction: d.value, paint: ui.adding.paint, hasPhoto: !!ui.adding.photo }); break;
+    case 'compose-reroll': ui.adding.paint.seed = Math.floor(Math.random() * 90000) + 10000; ui.adding.paintTouched = true; break;
     case 'compose-photo': document.querySelector('#compose-file').click(); return;
     case 'compose-photo-clear': ui.adding.photo = null; break;
     case 'compose-add': {
@@ -736,10 +835,20 @@ async function action(name, el) {
       const a = ui.adding, weight = a.weight === '' ? null : Number(a.weight);
       if (!a.mold.trim()) throw new Error('Name the mold — the disc’s product name — and this disc goes on the shelf. Everything else can wait.');
       if (weight !== null && !Number.isFinite(weight)) throw new Error('Weight is a number of grams, or blank when you have not weighed it.');
-      execute({ type: 'disc.create', id: a.key, manufacturer: a.maker, mold: a.mold, category: a.category, plastic: a.plastic, weight, color: a.color, nickname: a.nickname, photo: a.photo, bagId: a.toBag && ui.bagId ? ui.bagId : null });
+      // The recipe lives in the composer's state, so unrelated edits never reroll
+      // it. It is retained whenever the person engaged the paint panel -- and
+      // always when the depiction is paint -- so one disc.create carries the
+      // depiction and the recipe atomically with the specimen and its bag place.
+      // A blank label stays null, meaning live: the disc's current maker and
+      // mold name the artwork at render time. Typed text is a fixed override.
+      const paintLabel = String(a.paint?.label ?? '').trim() || null;
+      const paint = a.depiction === 'paint' || a.paintTouched
+        ? { family: a.paint.family, seed: Number(a.paint.seed), base: a.paint.base, accent: a.paint.accent, target: Number(a.paint.target), label: paintLabel }
+        : null;
+      execute({ type: 'disc.create', id: a.key, manufacturer: a.maker, mold: a.mold, category: a.category, plastic: a.plastic, weight, color: a.color, nickname: a.nickname, photo: a.photo, depiction: a.depiction, paint, bagId: a.toBag && ui.bagId ? ui.bagId : null });
       const made = get(w(), 'Disc', a.key), bag = get(w(), 'Bag', ui.bagId);
       ui.discId = a.key; ui.adding = null;
-      message(`${made.nickname} is on your shelf${a.toBag && bag ? ` and in ${bag.name}` : ''}. One undo takes the whole disc back out, maker and mold included.`);
+      message(`${made.nickname} is on your shelf${a.toBag && bag ? ` and in ${bag.name}` : ''}${made.depiction === 'paint' ? ', painted from your recipe' : ''}. One undo takes the whole disc back out, maker and mold included.`);
       break;
     }
     case 'disc-duplicate': { const key = id('disc'); execute({ type: 'disc.duplicate', id: disc.id, newId: key }); ui.discId = key; break; }
@@ -752,6 +861,21 @@ async function action(name, el) {
     case 'bag-remove': if (confirm('Delete this bag? Physical discs remain on your shelf.')) execute({ type: 'bag.remove', id: ui.bagId }); break;
     case 'photo': ui.photoTarget = 'disc'; ui.photoDiscId = d.id || ui.discId; document.querySelector('#photo-file').click(); return;
     case 'photo-remove': execute({ type: 'entity.set', entityType: 'Disc', id: ui.discId, path: 'photo', value: null }); break;
+    // The inspector's depiction switch is one undoable entity.set: both sources
+    // stay on the disc, the switch only chooses which one renders.
+    case 'depiction': execute({ type: 'entity.set', entityType: 'Disc', id: ui.discId, path: 'depiction', value: d.value }); break;
+    // The Experience frame: selecting is USE -- it publishes frame context under
+    // px.studio.uds.context.*, never at load. Leaving the route and returning
+    // finds the selection and its Parts exactly where they were.
+    case 'experience-select': ui.selectedExperience = d.id; ui.experienceVariant = null; runtime.experiences().select(d.id); persistView(); break;
+    case 'experience-variant': {
+      ui.experienceVariant = d.value;
+      runtime.experiences().select('uds', d.value);
+      const depiction = d.value === 'photo' ? 'photo' : 'paint';
+      if (ui.adding) { ui.adding.depiction = depiction; runtime.experiences().draft({ depiction, paint: ui.adding.paint, hasPhoto: !!ui.adding.photo }); }
+      else openComposer(depiction);
+      persistView(); break;
+    }
     case 'mode': ui.mode = d.value; break;
     case 'orientation': {
       // Switching to the vertical canvas takes a wide row of cards down the

@@ -191,3 +191,18 @@
 .invite-copy small{font-size:9px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .invite-plus{font-size:16px;color:#8ca573}
 @media(max-width:560px){.invite-row{grid-template-columns:1fr 1fr}.bag-title{font-size:20px}.bag-card-order{padding:0 6px 9px}}
+.exp-layout{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:22px;align-items:start}
+.exp-list{display:flex;flex-direction:column;gap:8px}
+.exp-item{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fafbf5;cursor:pointer}
+.exp-item.is-selected{border-color:#a0b784;background:#eef3e4}
+.exp-item-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.exp-item small{color:var(--muted);font-size:11px}
+.status-chip{font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:4px 8px;border-radius:20px;background:#e9ede2;color:#5c6b54}
+.status-chip[data-status="usable"]{background:#dce8c8;color:#3f5a2e;font-weight:700}
+.exp-detail-head{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.exp-detail .lede{font-size:14px;max-width:64ch}
+.exp-material{display:grid;gap:12px;margin-top:18px}
+.exp-material code{background:#eef1e6;padding:2px 6px;border-radius:4px;font-size:11px}
+.exp-variants{margin:16px 0}
+.composer-paint svg{width:100%;height:auto;display:block;border-radius:8px}
+.composer-art .segmented{margin-bottom:10px}

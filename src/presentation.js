@@ -29,10 +29,34 @@ export function defaultPresets() {
 }
 
 /** One material, reused by shelf, card editor and comparison. No photo recognition is claimed. */
+/** The renderer inputs a disc's depiction carries. With no retained recipe this
+ * reproduces the legacy derivation below byte-identically, so every disc saved
+ * before the depiction split paints exactly as it always did. A retained null
+ * label resolves live at render time (see prepareDiscArt). */
+export function recipeFor(disc, assignment = null, mold = null, maker = null) {
+  const retained = disc.paint;
+  if (retained && typeof retained === 'object' && !Array.isArray(retained)) return [retained.family, retained.seed, retained.base, retained.accent, retained.target, retained.label];
+  return artInputs({ disc, mold, maker, assignment });
+}
+/** Photo stays the exact uploaded photo; otherwise the depiction paints from the
+ * retained recipe, falling back to the legacy derivation when there is none. A
+ * photo depiction with no usable photo paints the fallback rather than nothing.
+ * A null retained label is live: the disc's current facts name the artwork, so
+ * a pre-release named later -- or a re-identified mold -- renames the card
+ * without touching the recipe. */
 export function prepareDiscArt({ disc, mold, maker, assignment = null }) {
-  if (disc.photo && safeImage(disc.photo)) return { kind: 'photo', src: disc.photo, alt: disc.nickname || mold?.name || 'Physical disc', sample: false };
-  const inputs = artInputs({ disc, mold, maker, assignment });
-  return { kind: 'painted', svg: paintDisc(...inputs), alt: `Sample artwork · ${inputs[5]}`, sample: true, inputs };
+  const depiction = disc.depiction === 'photo' || disc.depiction === 'paint' ? disc.depiction : (disc.photo ? 'photo' : 'paint');
+  if (depiction === 'photo' && disc.photo && safeImage(disc.photo)) return { kind: 'photo', src: disc.photo, alt: disc.nickname || mold?.name || 'Physical disc', sample: false };
+  const inputs = recipeFor(disc, assignment, mold, maker);
+  const label = inputs[5] ?? discLabel(disc, mold, maker);
+  const retained = !!(disc.paint && typeof disc.paint === 'object' && !Array.isArray(disc.paint));
+  const resolved = [inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], label];
+  return { kind: 'painted', svg: paintDisc(...resolved), alt: `${retained ? 'Painted depiction' : 'Sample artwork'} · ${label}`, sample: !retained, inputs: resolved, retained };
+}
+/** The words on the artwork are the disc's, not the recipe's: maker and mold
+ * (or nickname) resolved from current facts at render time. */
+export function discLabel(disc, mold, maker) {
+  return `${maker?.name || 'Disc Studio'} · ${mold?.name || disc.nickname || 'Your disc'}`;
 }
 /** hsl -> #rrggbb, so a disc's sample hue can be handed to the painter as authored colours are. */
 export function hslHex(h, s, l) {
@@ -65,7 +89,7 @@ export function artInputs({ disc, mold, maker, assignment = null }) {
   const base = paintColor(disc.artBase, sampleBase);
   const accent = paintColor(disc.artAccent, sampleAccent);
   const target = 96;
-  const label = `${maker?.name || 'Disc Studio'} · ${mold?.name || disc.nickname || 'Your disc'}`;
+  const label = discLabel(disc, mold, maker);
   return [family, seed, base, accent, target, label];
 }
 const paintColor = (value, fallback) => {

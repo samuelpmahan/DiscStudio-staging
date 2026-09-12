@@ -1,10 +1,12 @@
 # DiscStudio Experiences
 
-Status: Experience definition Parts now load into the existing Studio board from
-`src/experiences.js`. Specialized interactions and persistent contexts remain a
-focused build described in [CLOUD-START.md](../CLOUD-START.md). Source base:
-`455f66db91fc34ac0d8d32b66aa6ccbef224b774` on
-`codex/card-render-experiment`, with the existing local work retained.
+Status: Experience definition Parts load into the existing Studio board from
+`src/experiences.js`. The #/experiences frame is live: six definitions discovered
+from `px.studio.experiences` — UDS usable with its photo/paint specializations,
+the other five defined with their existing views linked and their Experience
+integration honestly pending. Frame context publishes under
+`px.studio.uds.context.*` on use. [CLOUD-START.md](../CLOUD-START.md) carries the
+remaining cloud pass.
 
 ## Definition
 

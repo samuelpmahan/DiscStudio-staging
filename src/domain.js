@@ -2,6 +2,8 @@ import { defaultCards, validateCards, applyCardsSet, validatePresetCascade } fro
 import { validateBattleRule } from './constraints.js';
 import { battleTemplates, placeOrder } from './battle.js';
 import { framePresets, orientations } from './frames.js';
+import { FAMILIES } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
+import { TARGETS as PAINT_TARGETS } from '../pyto/consumers/discstudio-card/port/painter/core.mjs';
 /** Runtime domain definitions drive both fact editing and presentation discovery. */
 export const schema = {
   // `place`, `points`, `total` and `standing` are produced by fn.battle.standings
@@ -16,7 +18,18 @@ export const schema = {
   Disc: { label: 'Physical disc', fields: {
     photo: { type: 'image', label: 'Exact disc photo', optional: true, group: 'Disc identity', order: 2 }, mold: { type: 'ref', target: 'Mold', key: 'moldId', label: 'Mold' },
     nickname: { type: 'text', label: 'Nickname', group: 'Disc identity', order: 3 }, plastic: { type: 'text', label: 'Plastic', optional: true }, weight: { type: 'number', label: 'Weight', unit: 'g', optional: true },
-    color: { type: 'text', label: 'Color', optional: true }, notes: { type: 'text', label: 'Specimen notes', optional: true }
+    color: { type: 'text', label: 'Color', optional: true }, notes: { type: 'text', label: 'Specimen notes', optional: true },
+    // Depiction is retained domain state, independent from the sources: a disc keeps
+    // both its photo and its paint recipe, and depiction chooses which one renders.
+    depiction: { type: 'text', label: 'Depiction', optional: true, group: 'Disc identity', order: 4 },
+    paint: { type: 'object', label: 'Paint recipe', optional: true, group: 'Disc identity', order: 5, fields: {
+      family: { type: 'text', label: 'Painter family' },
+      seed: { type: 'number', label: 'Paint seed' },
+      base: { type: 'text', label: 'Base colour' },
+      accent: { type: 'text', label: 'Accent colour' },
+      target: { type: 'number', label: 'Render target' },
+      label: { type: 'text', label: 'Artwork label' }
+    } }
   } },
   Bag: { label: 'Bag', fields: { name: { type: 'text', label: 'Bag name' }, discIds: { type: 'array', target: 'Disc', label: 'Physical discs' }, notes: { type: 'text', label: 'Bag notes', optional: true } } },
   Team: { label: 'Team', fields: { name: { type: 'text', label: 'Team name' }, bag: { type: 'ref', target: 'Bag', key: 'bagId', label: 'Bag' } } },
@@ -90,11 +103,50 @@ export function setPath(record, path, value) {
   target[keys.at(-1)] = value;
 }
 
+/** A paint recipe is the six renderer inputs a depiction retains. The label is
+ * nullable: null means "live" -- the disc's current maker and mold name the
+ * artwork at render time -- while a string is a fixed override the person
+ * typed. The recipe owns how it looks; the disc owns what it says. */
+export function validatePaintRecipe(recipe) {
+  if (!recipe || typeof recipe !== 'object' || Array.isArray(recipe)) throw new Error('A paint recipe is an object with family, seed, base, accent, target and label.');
+  const { family, seed, base, accent, target, label } = recipe;
+  if (!FAMILIES.includes(family)) throw new Error(`Unknown painter family '${family}'.`);
+  if (!Number.isFinite(seed)) throw new Error('A paint recipe seed is a finite number.');
+  for (const [name, value] of [['base', base], ['accent', accent]]) if (typeof value !== 'string' || !/^#[0-9a-f]{6}$/i.test(value)) throw new Error(`A paint recipe ${name} is a #rrggbb colour.`);
+  if (!PAINT_TARGETS.includes(target)) throw new Error(`A paint recipe target is one of ${PAINT_TARGETS.join(', ')}.`);
+  if (label !== null && (typeof label !== 'string' || !label.trim())) throw new Error('A paint recipe label is null for a live label, or the fixed text.');
+  return { family, seed, base, accent, target, label: label === null ? null : label.trim() };
+}
+/** Drafts are normalised, never refused: a missing or malformed recipe is no recipe. */
+export function recipeOrNull(value) {
+  try { return value == null ? null : validatePaintRecipe(value); } catch { return null; }
+}
+function sameRecipe(a, b) { return stable(recipeOrNull(a)) === stable(recipeOrNull(b)); }
+
 /** Validate every imported/command-produced world before it can replace the current Part. */
 export function validateWorld(world) {
   if (!world || world.version !== 2 || !world.objects || !world.schemas || !world.presets || !world.battle) throw new Error('This is not a DiscStudio v2 draft.');
   if (JSON.stringify(world).length > 12_000_000) throw new Error('Draft is too large (12 MB maximum).');
-  for (const [type, records] of Object.entries(world.objects)) {
+  // A draft saved before the depiction split carries no depiction or paint on its
+  // discs: depiction defaults to the photo when one is present, and a missing or
+  // malformed recipe normalises to nothing -- so the disc renders exactly as it
+  // always did. Same rule as the battle above: normalise, never refuse.
+  let objects = world.objects;
+  const discs = objects.Disc;
+  if (discs && typeof discs === 'object' && !Array.isArray(discs)) {
+    let next = null;
+    for (const [key, record] of Object.entries(discs)) {
+      if (!record || typeof record !== 'object') continue;
+      const depiction = record.depiction === 'photo' || record.depiction === 'paint' ? record.depiction : (record.photo ? 'photo' : 'paint');
+      const paint = recipeOrNull(record.paint);
+      if (record.depiction !== depiction || !sameRecipe(record.paint, paint)) {
+        next ??= { ...discs };
+        next[key] = { ...record, depiction, paint };
+      }
+    }
+    if (next) objects = { ...objects, Disc: next };
+  }
+  for (const [type, records] of Object.entries(objects)) {
     if (!safeKey(type) || !records || typeof records !== 'object' || Array.isArray(records)) throw new Error('Invalid domain collection.');
     if (Object.keys(records).length > 500) throw new Error('A domain collection exceeds 500 records.');
     for (const [key, record] of Object.entries(records)) {
@@ -145,7 +197,7 @@ export function validateWorld(world) {
   let cards = world.cards;
   if (!cards) cards = defaultCards();
   else if (Object.hasOwn(cards, 'projections')) { const { projections, ...rest } = cards; cards = rest; }
-  const result = cards === world.cards && layout === world.layout && battle === world.battle ? world : { ...world, cards, layout, battle };
+  const result = cards === world.cards && layout === world.layout && battle === world.battle && objects === world.objects ? world : { ...world, cards, layout, battle, objects };
   validateCards(result.cards);
   return result;
 }
@@ -209,6 +261,12 @@ export function applyCommand({ world: previous, command }) {
       // with it; a blank nickname is written from them rather than left as a placeholder.
       if (!safeKey(c.id) || get(w, 'Disc', c.id)) throw new Error('Invalid new disc.');
       const disc = { id: c.id, type: 'Disc', moldId: null, nickname: '', photo: c.photo ?? null, plastic: String(c.plastic ?? '').trim(), weight: c.weight ?? null, color: String(c.color ?? '').trim(), notes: '', sampleHue: sampleHueFor(c.color, c.id) };
+      // Depiction is chosen atomically with the rest: photo when a photo was handed
+      // in, paint otherwise, and an explicitly requested depiction is honoured. The
+      // paint recipe is validated here so a bad one fails the whole creation, never
+      // a half-made disc; both sources are retained so switching never destroys one.
+      disc.depiction = c.depiction === 'photo' || c.depiction === 'paint' ? c.depiction : (disc.photo ? 'photo' : 'paint');
+      disc.paint = c.paint == null ? null : validatePaintRecipe(c.paint);
       w.objects.Disc[c.id] = disc;
       reidentify(w, disc, String(c.manufacturer ?? ''), String(c.mold ?? ''));
       const product = get(w, 'Mold', disc.moldId), category = String(c.category ?? '').trim();
