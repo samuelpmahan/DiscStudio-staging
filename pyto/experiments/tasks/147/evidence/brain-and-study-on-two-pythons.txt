@@ -1,0 +1,21 @@
+== brain suite, this copy's venv (Python 3.11.15)
+----------------------------------------------------------------------
+Ran 756 tests in 43.483s
+
+OK
+
+== brain suite, $S/venv312 (Python 3.12.3, numpy 2.5.3, scipy 1.18.1)
+----------------------------------------------------------------------
+Ran 756 tests in 44.529s
+
+OK
+
+== tests.test_study, $S/venv312
+----------------------------------------------------------------------
+Ran 30 tests in 5.116s
+
+OK
+
+== tests.test_use is NOT run on $S/venv312: it executes every USE.md block with -I (isolated), which
+   ignores PYTHONPATH, so pyto is unimportable there unless the interpreter has it installed.
+   It is green on the copy's venv (see evidence/verify.txt) and in check_all.

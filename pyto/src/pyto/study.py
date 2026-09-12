@@ -66,6 +66,12 @@ ALPHA = 0.05           # the assumption checks' threshold, written down once
 CORRELATION_THRESHOLD = 0.5
 MAX_PROFILE_COLUMNS = 16
 MAX_CLUSTER_COLUMNS = 10
+# Two methods here cost more than linearly in the rows: the silhouette compares every row
+# with every other one, and the tree and forest engines are pure python. Past these counts
+# the study fits them on a seeded sample of the rows rather than quietly taking minutes --
+# and the sample is a Part, named in the plan and in the summary, never a silent narrowing.
+CLUSTER_MAX_ROWS = 1200
+MODEL_MAX_ROWS = 2000
 
 
 # --- finding the brain --------------------------------------------------------
@@ -445,8 +451,15 @@ def study_plan(args):
     # clustering
     cluster_columns = steady[:MAX_CLUSTER_COLUMNS]
     ks = []
+    cluster_rows, cluster_sample = complete_rows, None
+    if complete_rows > CLUSTER_MAX_ROWS:
+        cluster_rows = CLUSTER_MAX_ROWS
+        cluster_sample = {"rows": CLUSTER_MAX_ROWS, "of": complete_rows, "seed": seed,
+                          "why": "the silhouette compares every row with every other row, so its cost is "
+                                 "quadratic; the clustering is fitted and scored on a seeded sample of the "
+                                 "rows, and every Part of it says so"}
     if len(cluster_columns) >= 2 and complete_rows >= MIN_CLUSTER_ROWS:
-        ks = list(range(2, min(6, max(2, complete_rows // 3)) + 1))
+        ks = list(range(2, min(6, max(2, cluster_rows // 3)) + 1))
     if not ks:
         skipped.append({"what": "clustering",
                         "why": "clustering needs two varying numeric columns and enough complete rows for three rows a cluster",
@@ -455,6 +468,7 @@ def study_plan(args):
 
     # the model comparison
     models, model_kind, classes, folds, baseline = [], None, None, 0, None
+    model_rows, model_sample, smallest = 0, None, 0
     features = [c for c in steady if c != target]
     if target is not None:
         target_kind = kinds.get(target)
@@ -465,11 +479,11 @@ def study_plan(args):
             skipped.append({"what": "model", "why": "a model needs at least one varying numeric column that is not the target",
                             "needed": 1, "had": 0})
         else:
-            model_rows = [row for row in table["rows"]
-                          if all(row[list(table["columns"]).index(c)] is not None for c in features + [target])]
-            n = len(model_rows)
+            kept = [row for row in table["rows"]
+                    if all(row[list(table["columns"]).index(c)] is not None for c in features + [target])]
+            n = len(kept)
             at = list(table["columns"]).index(target)
-            distinct = _levels_of([row[at] for row in model_rows])
+            distinct = _levels_of([row[at] for row in kept])
             asked = args.get("task", "auto")
             label_like = max(2, min(10, n // 5))
             if asked == "regression" or (asked == "auto" and target_kind == "number"
@@ -477,14 +491,26 @@ def study_plan(args):
                 model_kind, classes = "regression", None
             else:
                 model_kind, classes = "classification", [one[0] for one in distinct]
-            folds = max(2, min(5, n // 4))
+            model_rows = min(n, MODEL_MAX_ROWS)
+            if n > MODEL_MAX_ROWS:
+                model_sample = {"rows": MODEL_MAX_ROWS, "of": n, "seed": seed,
+                                "why": "the tree and the forest are pure-python engines; the candidates are "
+                                       "compared on a seeded sample of the rows, and the Part says so"}
+            folds = max(2, min(5, model_rows // 4))
+            smallest = min((one[2] for one in distinct), default=0) * model_rows // max(1, n)
             if n < MIN_MODEL_ROWS:
                 skipped.append({"what": "model", "why": "fewer rows than a cross-validated comparison can say anything with",
                                 "needed": MIN_MODEL_ROWS, "had": n})
                 model_kind = None
-            elif model_kind == "classification" and min((one[2] for one in distinct), default=0) < folds:
+            elif model_kind == "regression" and (model_rows - model_rows // folds) < len(features) + 2:
+                skipped.append({"what": "model",
+                                "why": "a training fold would hold fewer rows than the fit has columns, "
+                                       "and a least-squares solve there is singular or memorised",
+                                "needed": len(features) + 2, "had": model_rows - model_rows // folds})
+                model_kind = None
+            elif model_kind == "classification" and smallest < folds:
                 skipped.append({"what": "model", "why": f"a class with fewer than {folds} rows cannot appear in every fold",
-                                "needed": folds, "had": min((one[2] for one in distinct), default=0)})
+                                "needed": folds, "had": smallest})
                 model_kind = None
             elif model_kind == "classification" and len(distinct) < 2:
                 skipped.append({"what": "model", "why": "a classifier needs at least two classes in the target column",
@@ -516,11 +542,13 @@ def study_plan(args):
         "correlation": {"run": correlate, "columns": steady, "threshold": CORRELATION_THRESHOLD},
         "hypothesis": {"run": hypothesis, "group": group, "value": value,
                        "levels": group_levels, "sizes": group_sizes, "rows": tested, "alpha": ALPHA},
-        "clustering": {"run": bool(ks), "columns": cluster_columns, "ks": ks},
+        "clustering": {"run": bool(ks), "columns": cluster_columns, "ks": ks,
+                       "rows": cluster_rows, "sample": cluster_sample},
         "model": {"run": bool(model_kind), "kind": model_kind, "target": target,
                   "kind_rule": ("--task says so, or: a numeric target with more distinct values than "
                                 "max(2, min(10, rows // 5)) is a regression, anything else is a classification"),
                   "features": features, "classes": classes, "folds": folds,
+                  "rows": model_rows if model_kind else None, "sample": model_sample,
                   "metric": ("r2" if model_kind == "regression" else "accuracy") if model_kind else None,
                   "baseline": baseline,
                   "candidates": [one["name"] for one in models]},
@@ -803,21 +831,20 @@ def _p(value):
 def study_summary(args):
     """fn.study.summary -- the study in sentences, every number citing its Part.
 
-    it computes nothing. Each line carries `cites`: the address, the key path and
-    the value, so `tests/test_study.py` can walk the store and check the prose
-    against the Parts rather than against another copy of the same arithmetic.
+    it decides nothing and re-derives nothing: each line carries `cites` -- the
+    address, the key path and the value it printed -- so `tests/test_study.py` can
+    walk the store and check the prose against the Parts rather than against
+    another copy of the same arithmetic.
     """
     addresses = dict(args.get("addresses", {}))
     plan = args["plan"]
     sections = []
 
-    def cite(binding, path, transform=None):
+    def cite(binding, path):
         value = args[binding]
         for step in path:
-            value = value[step] if not isinstance(value, list) else value[int(step)]
-        return {"address": addresses.get(binding), "binding": binding, "path": list(path), "value": value} \
-            if transform is None else {"address": addresses.get(binding), "binding": binding,
-                                       "path": list(path), "value": transform(value)}
+            value = value[int(step)] if isinstance(value, list) else value[step]
+        return {"address": addresses.get(binding), "binding": binding, "path": list(path), "value": value}
 
     def line(text, *cites):
         return {"text": text, "cites": [one for one in cites if one is not None]}
@@ -953,6 +980,10 @@ def study_summary(args):
                  + f", over {len(plan['clustering']['columns'])} standardised columns ("
                  + ", ".join(plan["clustering"]["columns"]) + ")."),
         ]
+        drawn = plan["clustering"].get("sample")
+        if drawn:
+            lines.append(line(f"fitted and scored on a seeded sample of {drawn['rows']} of "
+                              f"{drawn['of']} complete rows (seed {drawn['seed']}): {drawn['why']}"))
         section("the clusters", lines, note=scale)
 
     # 6. the directions
@@ -992,6 +1023,9 @@ def study_summary(args):
             line(f"{model['folds']}-fold cross-validation of {model['target']} on "
                  f"{len(model['features'])} column(s) ({', '.join(model['features'])}), seed {plan['seed']}."),
         ]
+        if model.get("sample"):
+            drawn = model["sample"]
+            lines.append(line(f"on a seeded sample of {drawn['rows']} of {drawn['of']} rows: {drawn['why']}"))
         section("the best predictor", lines, note=(args.get("model_note") or "").strip() or None)
 
     # 8. what the study would not say
@@ -1136,13 +1170,15 @@ class Program:
         return run
 
 
-def read_program(store, prefix, plan_part, source_name, fmt, target, seed, for_, task="auto"):
+def read_program(store, prefix, plan_part, source_name, fmt, target, seed, for_, task="auto",
+                 delimiter=",", missing=None):
     """`study_read`: the table, its shape, its per-column summary, and the plan."""
     program = Program(store, prefix, plan_part)
     auto = lambda v, c, e: engine(plan_part, v, c, e)  # noqa: E731
     steps = program.tick("read")
     table = program.step(steps, "load", brain_calc("oc.brain.data.load"), program.at("table"),
-                         {"path": source_name, "format": fmt, "for": for_})
+                         {"path": source_name, "format": fmt, "delimiter": delimiter,
+                          "missing": missing or ["", "na", "nan", "null"], "for": for_})
     steps = program.tick("shape")
     shape = program.step(steps, "shape", brain_calc("fn.brain.data.shape"), program.at("shape"), table=table)
     holes = program.step(steps, "missing", brain_calc("fn.brain.data.missing_report"),
@@ -1267,8 +1303,21 @@ def study_program(store, prefix, plan_part, plan, choice, source, name):
                         test=verdict, effect=effect)
 
     if plan["clustering"]["run"]:
+        base = complete
+        if plan["clustering"].get("sample"):
+            drawn = plan["clustering"]["sample"]
+            steps = program.tick("sample the rows")
+            split = program.step(steps, "cluster_split", brain_calc("fn.brain.ml.train_test_split"),
+                                 program.at("cluster", "split"),
+                                 {"seed": plan["seed"], "test_size": drawn["of"] - drawn["rows"],
+                                  "for": drawn["why"]}, data=complete)
+            base = program.step(steps, "cluster_rows", brain_calc("fn.brain.ml.subset"),
+                                program.at("cluster", "rows"),
+                                {"which": "train_index",
+                                 "for": f"a seeded sample of {drawn['rows']} of {drawn['of']} complete rows"},
+                                data=complete, index=split)
         steps = program.tick("standardise")
-        source_table = complete
+        source_table = base
         zs = []
         for column, key in zip(plan["clustering"]["columns"], slugs(plan["clustering"]["columns"])):
             label = f"{column}__z"
@@ -1320,6 +1369,17 @@ def study_program(store, prefix, plan_part, plan, choice, source, name):
         fitting = program.step(steps, "model_table", calcs()["model_table"], program.at("model", "table"),
                                {"target": model["target"], "features": model["features"],
                                 "classes": model["classes"]}, table=kept)
+        if model.get("sample"):
+            drawn = model["sample"]
+            split = program.step(steps, "model_split", brain_calc("fn.brain.ml.train_test_split"),
+                                 program.at("model", "split"),
+                                 {"seed": plan["seed"], "test_size": drawn["of"] - drawn["rows"],
+                                  "for": drawn["why"]}, data=fitting)
+            fitting = program.step(steps, "model_sample", brain_calc("fn.brain.ml.subset"),
+                                   program.at("model", "sample"),
+                                   {"which": "train_index",
+                                    "for": f"a seeded sample of {drawn['rows']} of {drawn['of']} rows"},
+                                   data=fitting, index=split)
         steps = program.tick("cross-validate")
         candidates, addresses = [], {}
         for one in plan["models"]:
@@ -1436,6 +1496,10 @@ def write_page(out_dir, summary, record_paths):
             with open(path, encoding="utf-8") as handle:
                 records.append(json.load(handle))
         page = fallback_page(summary, records)
+    title = escape(summary.get("name") or "study")
+    for was in ("<title>Tick viewer &mdash; pyto-run-record@1</title>",
+                "<title>Tick viewer — pyto-run-record@1</title>"):
+        page = page.replace(was, f"<title>{title} &middot; a pyto study</title>")
     with open(target, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(page)
     return target
@@ -1527,10 +1591,12 @@ def write_findings(store):
 
 
 def study(path, target=None, out_dir="study", seed=7, fmt=None, name=None, page=True,
-          quiet=False, task="auto"):
-    """read the table at `path` and write the study under `out_dir`. returns the store."""
-    from experiments.brain.backend import choose as chooser  # noqa: F401  (imported through brain())
+          quiet=False, task="auto", delimiter=",", missing=None):
+    """read the table at `path` and write the study under `out_dir`. returns the store.
 
+    the one entry point: `main` is a thin wrapper over it, and `brain()` is the
+    first thing it calls, because until then `experiments.brain` is not importable.
+    """
     b = brain()
     source = os.path.abspath(path)
     if not os.path.isfile(source):
@@ -1546,7 +1612,8 @@ def study(path, target=None, out_dir="study", seed=7, fmt=None, name=None, page=
     prefix = f"{PX}{study_name}."
 
     first = read_program(store, prefix, plan_part, os.path.basename(source), fmt, target, int(seed),
-                         f"the table at {os.path.basename(source)}, as the study read it", task)
+                         f"the table at {os.path.basename(source)}, as the study read it", task,
+                         delimiter, missing)
     first.run("study_read", effects_root=os.path.dirname(source) or ".")
     plan = store.get(prefix + "plan")
     ran, skipped = list(first.ran), list(first.skipped)
@@ -1750,6 +1817,9 @@ def main(argv=None):
     parser.add_argument("--name", default=None, help="the study's name in its addresses (default: the file's)")
     parser.add_argument("--example", choices=sorted(EXAMPLES), default=None,
                         help="write one of the built-in examples into --out and study that")
+    parser.add_argument("--delimiter", default=",", help="the csv separator (default a comma)")
+    parser.add_argument("--missing", default=None,
+                        help="comma-separated spellings that mean a hole (default: empty, na, nan, null)")
     parser.add_argument("--task", choices=("auto", "regression", "classification"), default="auto",
                         help="what --target is: a number to predict or a label to sort into (default auto)")
     parser.add_argument("--no-page", action="store_true", help="skip study.html")
@@ -1771,7 +1841,9 @@ def main(argv=None):
         parser.error("name a file to study, or --example shelf")
 
     store = study(source, target=target, out_dir=parsed.out, seed=parsed.seed, fmt=parsed.fmt,
-                  name=parsed.name, page=not parsed.no_page, quiet=parsed.quiet, task=parsed.task)
+                  name=parsed.name, page=not parsed.no_page, quiet=parsed.quiet, task=parsed.task,
+                  delimiter=parsed.delimiter,
+                  missing=parsed.missing.split(",") if parsed.missing is not None else None)
     if parsed.example == "planted" and truth:
         checks = planted_oracle(store, parsed.name or "planted", truth)
         if not parsed.quiet:
