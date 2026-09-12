@@ -30,6 +30,9 @@
 #   neat gate <id> [--mode github|stub:<file>|none]   the join's gate for the copy's head: open only on a human's approval of that exact sha
 #   neat delta <a> <b> [--json] [--out-dir D]   two landings' capability delta against cost, computed: px.exp.neat.delta.<a>.<b>
 #                             under pyto/experiments/review/deltas (end states, rework, verdict); patterns in pyto/experiments/delta/patterns.json
+#   neat study <file.csv> [--target <column>] [--out <dir>]   an honest study of a table you have: every step a
+#                             Calculation from the brain through an observed PCR, so what comes out is a store, the
+#                             run records and one page (study.html). `neat study --example shelf` studies the disc shelf.
 #
 # The board says when a task starts (neat new) and when one is killed, not only when one lands, so the
 # owner sees what is coming; those lines go through land.sh --note (commit and push, no receipt).
@@ -660,6 +663,14 @@ cmd_delta() {
   "$PYTHON" -m pyto.neat.delta --root "$ROOT" "$@"
 }
 
+cmd_study() {
+  # neat study <file.csv> [...]: a thin forward to the study's host (pyto/src/pyto/study.py). It runs
+  # from MAIN's root so the brain the study reads (pyto/experiments/brain) is this checkout's, and the
+  # file the caller named stays relative to where the caller stood.
+  [ "$PYTO_MODE" -eq 1 ] || die "neat study needs a pyto repository (pyto/pyproject.toml)"
+  PYTO_BRAIN="${PYTO_BRAIN:-$PY/experiments/brain}" "$PYTHON" -m pyto.study "$@"
+}
+
 cmd_walk() {
   # neat walk          -> the index, one line per landing on the board (walk.py --list)
   # neat walk N        -> step N as text, for an agent (walk.py --text N)
@@ -744,6 +755,6 @@ case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
-  delta) cmd_delta "$@";;
+  delta) cmd_delta "$@";; study) cmd_study "$@";;
   ask) cmd_ask "$@";; answer) cmd_answer "$@";; default) cmd_default "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; crisp) cmd_crisp "$@";; *) usage;;
 esac
