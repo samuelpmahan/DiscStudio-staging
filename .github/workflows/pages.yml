@@ -1,0 +1,57 @@
+name: Verify and deploy DiscStudio staging
+on:
+  push:
+    branches: [main, claude/os-sprint-st8hnu, boone/uds-live-label]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: discstudio-staging-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    if: github.repository == 'samuelpmahan/DiscStudio-staging'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify domain, bindings, reuse and constraints
+        run: |
+          mkdir -p test-results
+          node --test --test-reporter=tap tests/*.test.js > test-results/unit.tap
+          cat test-results/unit.tap
+      - name: Build exact static source
+        run: npm run build
+      - name: Install browser verifier
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Verify actual browser storage, editing, PNG and review export
+        run: |
+          node scripts/serve.mjs dist > test-results/server.log 2>&1 &
+          python scripts/browser_test.py --url http://127.0.0.1:4173/
+      - name: Materialize exact-commit neat review handoff
+        run: node scripts/review_checkpoint.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: discstudio-verification
+          path: |
+            test-results
+            dist/review
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4
+        id: deployment
