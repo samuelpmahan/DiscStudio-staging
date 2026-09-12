@@ -1,0 +1,219 @@
+{
+  "address": "px.exp.neat.hot.evo-dense",
+  "calculations": [
+    {
+      "bytes": 599415,
+      "calculation": "fn.evo.render",
+      "elements": 196608,
+      "invocations": 32,
+      "kind": "json",
+      "max_ms": 266.995,
+      "moved": 196608,
+      "ns_per_element": 1358.01,
+      "shape": [
+        196608
+      ],
+      "share": 0.7863,
+      "total_ms": 6597.379
+    },
+    {
+      "bytes": 208,
+      "calculation": "fn.evo.fitness",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "json",
+      "max_ms": 67.792,
+      "moved": 196608,
+      "ns_per_element": 344.81,
+      "shape": null,
+      "share": 0.1947,
+      "total_ms": 1633.493
+    },
+    {
+      "bytes": 14266,
+      "calculation": "fn.evo.encode",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "png-data-url",
+      "max_ms": 16.839,
+      "moved": 196608,
+      "ns_per_element": 85.65,
+      "shape": null,
+      "share": 0.0177,
+      "total_ms": 148.263
+    },
+    {
+      "bytes": 175,
+      "calculation": "oc.evo.export",
+      "elements": 0,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 8.623,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.001,
+      "total_ms": 8.623
+    },
+    {
+      "bytes": 1845,
+      "calculation": "fn.evo.bind",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "json",
+      "max_ms": 0.064,
+      "moved": 32,
+      "ns_per_element": 1997.88,
+      "shape": null,
+      "share": 0.0001,
+      "total_ms": 0.956
+    },
+    {
+      "bytes": 7842,
+      "calculation": "fn.evo.mutate",
+      "elements": 32,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 0.596,
+      "moved": 32,
+      "ns_per_element": 18623.38,
+      "shape": [
+        32
+      ],
+      "share": 0.0001,
+      "total_ms": 0.596
+    },
+    {
+      "bytes": 6988,
+      "calculation": "oc.evo.load",
+      "elements": 0,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 0.57,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.0001,
+      "total_ms": 0.57
+    },
+    {
+      "bytes": 3954,
+      "calculation": "fn.evo.select",
+      "elements": 16,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 0.247,
+      "moved": 16,
+      "ns_per_element": 15452.0,
+      "shape": [
+        16
+      ],
+      "share": 0.0,
+      "total_ms": 0.247
+    },
+    {
+      "bytes": 2249,
+      "calculation": "fn.evo.findings",
+      "elements": 0,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 0.129,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.0,
+      "total_ms": 0.129
+    }
+  ],
+  "findings": [
+    {
+      "calculation": "fn.evo.render",
+      "finding": "hot",
+      "for": "fn.evo.render is 78.6% of this run (6597.379 ms over 32 invocation(s)): fix here first",
+      "invocations": 32,
+      "share": 0.7863,
+      "total_ms": 6597.379
+    },
+    {
+      "calculation": "fn.evo.fitness",
+      "finding": "hot",
+      "for": "fn.evo.fitness is 19.5% of this run (1633.493 ms over 32 invocation(s)): fix here first",
+      "invocations": 32,
+      "share": 0.1947,
+      "total_ms": 1633.493
+    },
+    {
+      "calculation": "fn.evo.encode",
+      "finding": "hot",
+      "for": "fn.evo.encode is 1.8% of this run (148.263 ms over 32 invocation(s)): fix here first",
+      "invocations": 32,
+      "share": 0.0177,
+      "total_ms": 148.263
+    },
+    {
+      "bytes": 592938,
+      "calculation": "fn.evo.render",
+      "elements": 196608,
+      "finding": "dense-list",
+      "for": "fn.evo.render returns a list of 196608 numbers (592938 bytes in the record) that would be an array",
+      "invocations": 32,
+      "shape": [
+        196608
+      ],
+      "truncated": false
+    },
+    {
+      "calculation": "fn.evo.render",
+      "elements": 196608,
+      "finding": "per-element",
+      "for": "fn.evo.render spends 1358.01 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass",
+      "invocations": 32,
+      "ns_per_element": 1358.01,
+      "total_ms": 6597.379
+    },
+    {
+      "calculation": "fn.evo.fitness",
+      "elements": 196608,
+      "finding": "per-element",
+      "for": "fn.evo.fitness spends 344.81 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass",
+      "invocations": 32,
+      "ns_per_element": 344.81,
+      "total_ms": 1633.493
+    },
+    {
+      "calculation": "fn.evo.encode",
+      "elements": 196608,
+      "finding": "per-element",
+      "for": "fn.evo.encode spends 85.65 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass",
+      "invocations": 1,
+      "ns_per_element": 85.65,
+      "total_ms": 16.839
+    },
+    {
+      "bytes": 607752,
+      "calculation": "fn.evo.render",
+      "cap": 262144,
+      "finding": "over-cap",
+      "for": "fn.evo.render puts 19169813 bytes into the record over 32 invocation(s), each over the 262144 byte cap: the record carries them only because the run raised the cap",
+      "invocations": 32,
+      "kept": true,
+      "total_bytes": 19169813
+    }
+  ],
+  "for": "name the hot Calculations of one run and the shape of their values, so the next pass is chosen and not guessed",
+  "quiet": false,
+  "record": {
+    "invocations": 133,
+    "measured_ms": 8390.256,
+    "path": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json",
+    "pcr": "evo",
+    "wall_ms": 8390.256094007782
+  },
+  "thresholds": {
+    "cap_bytes": 262144,
+    "dense_list": 4096,
+    "element_floor": 1024,
+    "per_element_ns": 50.0,
+    "top": 3
+  }
+}

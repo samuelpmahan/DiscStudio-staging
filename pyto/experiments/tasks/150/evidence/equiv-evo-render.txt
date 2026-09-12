@@ -1,0 +1,9 @@
+$ neat equiv observed/record.json --calc fn.evo.render --candidate exp/evo-pxc/fast_render.py:render
+
+record: /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json  pcr=evo
+calculation: fn.evo.render
+candidate: /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/fast_render.py:render  sha256=f906b0024286
+
+matched 32/32  mismatched 0  not rebuildable 0
+
+trusted: true (32/32 receipts of fn.evo.render reproduced by /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/fast_render.py:render, value for value)

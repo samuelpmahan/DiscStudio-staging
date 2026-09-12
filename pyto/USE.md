@@ -1075,6 +1075,131 @@ what the study said with what was planted -- the right number of clusters, the
 decoy left out of the findings, the constant column refused, the planted group
 difference found, and a linear model winning because the truth is linear.
 
+## 12. neat hot and neat equiv
+
+Two verbs over a run record: one names what a run spent itself on and the shape
+that made it expensive, the other is how a faster way earns being believed. The
+owner, 2026-09-12, after a generation of 32 renders kept every render as a list
+of 196,608 ints and paid per pixel in every stage: "come up with some
+compiler-ish efficiency pass to prevent things like this? Encode a path to
+trusting the sparsification of things."
+
+```sh
+bash pyto/scripts/neat.sh hot observed/record.json                       # or: python -m pyto.neat.hot ...
+bash pyto/scripts/neat.sh equiv observed/record.json --calc fn.evo.render \
+    --candidate exp/evo-pxc/fast_render.py:render --store observed/parts.json
+```
+
+`neat hot` (`pyto/src/pyto/neat/hot.py`) reads one `pyto-run-record@1` and
+nothing else -- no clock, no import of the program that made it -- and publishes
+`px.exp.neat.hot.<record-stem>` under `pyto/experiments/review/hot` with its own
+run record. Per invocation it takes the receipt's `duration_ms` and the shape of
+its value: the kind, the bytes, the elements when the value is a list (flattened;
+a rectangular nested list is an array written the long way, and a record written
+with the default array cap is measured at the lengths its truncation note
+carries), and the duration per element -- its own elements, or the largest list
+its recorded inputs handed it, because a receipt that returns one dict still paid
+per element when it read 196,608 of them. Then the findings, each naming the
+Calculation, its numbers and its `for`: **dense-list** (a result that is a list of
+more than 4096 numbers and would be an array), **per-element** (more than 50 ns
+per element over at least 1024 elements), **over-cap** (a value omitted over the
+record's cap, or kept only because the run raised it, with the bytes it costs),
+**repeat-input** (two or more receipts of one Calculation with the same resolved
+input digests and args: a cache that isn't there), and **hot** (the top three
+Calculations by total duration, always).
+
+The 50 ns is calibrated on the generation this was written for: dense, every
+stage trips it (render 1358 ns per pixel, fitness 345, encode 86); rewritten over
+arrays, nothing does. 50 ns is about one Python bytecode's worth of work per
+element -- above it the elements are being walked in Python, below it they are
+being moved in one pass.
+
+`neat equiv` (`pyto/src/pyto/neat/equiv.py`) is the trust path, and it is the
+owner's own test: what made him believe the faster renderer was that it
+reproduced all 32 result hashes of the recorded run. For every receipt of one
+Calculation it rebuilds the inputs that receipt was given -- from the record
+first, then from `--store` for an input bound to a Part the record does not carry
+-- runs the candidate on them, and compares the results. An input that is neither
+is a refusal naming the receipt, the input, what was needed and what was had:
+nothing is claimed over a receipt that could not be rebuilt. The answer is
+`px.exp.neat.equiv.<calc>.<candidate-sha-prefix>` under
+`pyto/experiments/review/equiv`, `trusted: true` only when every receipt matched
+and none was left unrebuilt, and per-receipt rows when they did not.
+
+**The whole trust rests on one function**, `equiv.canonical`, so it is one
+function with its own tests: two results are the same when they are the same
+*values*, not the same Python object. An ndarray of single-byte integers
+(duck-typed on `tobytes`/`dtype`/`shape` -- this kernel imports no numpy) and a
+flat or rectangular nested list of ints in 0..255 both canonicalize to the raw
+bytes in C order, so a `(256, 256, 3)` uint8 array and the 196,608-int list the
+same render wrote are one value. Everything else canonicalizes to canonical
+JSON. When the record omitted a result over the value cap, its note carries the
+sha256 of the JSON payload and the comparison runs against that, saying so.
+
+```python
+from pyto import Calculation, PCR, Part, PxC
+from pyto.materialize import run_record
+from pyto.neat.equiv import canonical, check, describe, judge
+from pyto.neat.hot import evaluate, measure
+
+FIELD = Part("px.demo.field")
+TINT = Part("px.demo.tint")
+
+
+def tint(args):
+    """The dense way: 20,000 ints in, Python arithmetic per element, 20,000 ints out."""
+    out = []
+    for value in args["field"]:
+        lit = value * 0.35 + 12.5
+        out.append(min(255, max(0, int(round(lit)))))
+    return out
+
+
+def tint_sparse(args):
+    """The candidate: the same formula, the pixels kept as bytes instead of a list of ints."""
+    return bytes(min(255, max(0, int(round(value * 0.35 + 12.5)))) for value in args["field"])
+
+
+pxc = PxC()
+pxc.set(FIELD, [(index * 37) % 256 for index in range(20000)])
+pcr = PCR("demo")
+pcr.calc("Tint", Calculation("fn.demo.tint", tint), id="tint", into=TINT, field=FIELD)
+run = pcr.run(pxc, observe=True)
+record = run_record(run, pxc, preexisting={"px.demo.field"}, array_cap=20000)
+
+# the pass: what is hot here, and the shape that made it hot
+found = evaluate({"measured": measure(record, path="demo-record.json"), "stem": "demo"})
+print("hot:      ", [f["calculation"] for f in found["findings"] if f["finding"] == "hot"])
+print("findings: ", [(f["finding"], f["calculation"]) for f in found["findings"] if f["finding"] != "hot"])
+print("elements: ", [f["elements"] for f in found["findings"] if f["finding"] == "dense-list"])
+
+# the canonical rule: the same values, not the same object
+print("canonical:", canonical([0, 1, 255])[1], canonical(b"\x00\x01\xff") == canonical([0, 1, 255]))
+
+# the trust path: every receipt rebuilt, the candidate run on it, the results compared
+checked = check(record, "fn.demo.tint", tint_sparse, store={"px.demo.field": pxc.get(FIELD)})
+witness = judge({**checked, "candidate": describe(tint_sparse)})
+print("counts:   ", witness["counts"])
+print("trusted:  ", witness["trusted"], "|", witness["reason"])
+```
+
+```text
+hot:       ['fn.demo.tint']
+findings:  [('dense-list', 'fn.demo.tint'), ('per-element', 'fn.demo.tint')]
+elements:  [20000]
+canonical: bytes True
+counts:    {'receipts': 1, 'matched': 1, 'mismatched': 0, 'not_rebuildable': 0}
+trusted:   True | 1/1 receipts of fn.demo.tint reproduced by __main__:tint_sparse, value for value
+```
+
+Over the generation itself: `neat hot` on the dense record names `fn.evo.render`
+(78.6% of the run), `fn.evo.fitness` and `fn.evo.encode` as hot, the render's
+196,608-number list as `dense-list`, all three as `per-element`, and 19,169,813
+bytes of over-cap value; on the array record it is quiet but for `hot`. `neat
+equiv --calc fn.evo.render --candidate fast_render.py:render` witnesses 32/32
+`trusted: true` from the record alone, and the same renderer with the palette
+swapped witnesses 0/32 with a row per receipt.
+
 ## Where to go next
 
 - `experiments/students/homework.py` — section 7, as a program you can run.

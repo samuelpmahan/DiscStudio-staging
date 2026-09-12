@@ -233,6 +233,7 @@ class UseMarkdownIsPortable(unittest.TestCase):
                 "9. crisp",
                 "9. crisp",
                 "9. crisp",
+                "12. neat hot and neat equiv",
             ],
         )
 
