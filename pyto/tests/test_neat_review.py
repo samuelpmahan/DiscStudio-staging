@@ -300,5 +300,95 @@ class OwnerFirstAndDefaults(unittest.TestCase):
             self.assertNotIn("PrintForm", [it["label"] for it in review.collate({"pyto_root": root, "n": 3})["items"]])
 
 
+class SplitQuestionLine(unittest.TestCase):
+    """`split_question_line`'s contract: a label only, never invented from prose."""
+
+    def test_labelled_line_splits(self):
+        self.assertEqual(review.split_question_line("{?} Alpha: a question"), ("Alpha", "a question"))
+
+    def test_prose_with_spaces_before_colon_is_none(self):
+        self.assertIsNone(review.split_question_line(
+            "{?} both runs are in the packet: the copy's venv (python 3.11, numpy 2.4.6)"))
+
+    def test_prose_with_no_colon_is_none(self):
+        self.assertIsNone(review.split_question_line(
+            "{?} a case may now carry engines. It is not a way to excuse a disagreement."))
+
+
+class NotesLeftOut(unittest.TestCase):
+    """Task 103's defect: a `{?}` line is a question only in the labelled form `{?} Label: text`;
+    everything else is a note, counted per task, never turned into a batch item."""
+
+    def test_one_labelled_and_one_prose_yields_one_item(self):
+        tmp, root = _scratch_root()
+        try:
+            _one_packet(
+                root, "1",
+                "{?} FrameIsPartOfTheLayout: owner, is this the intended layout?",
+                "{?} both runs are in the packet: the copy's venv and python 3.12, 728 tests OK in both.",
+            )
+            batch = review.collate({"pyto_root": root, "n": 1})
+            self.assertEqual([it["label"] for it in batch["items"]], ["FrameIsPartOfTheLayout"])
+            self.assertEqual(batch["notes_left_out"], {"total": 1, "by_task": {"task-1": 1}})
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_prose_note_with_an_embedded_colon_is_one_note_not_several(self):
+        """Task 103's own first note: a colon appears mid-sentence, but the label before it has
+        spaces, so the whole line is one note -- not split into two, not zero."""
+        tmp, root = _scratch_root()
+        try:
+            _one_packet(
+                root, "103",
+                "{?} both runs are in the packet: the copy's venv (python 3.11, numpy 2.4.6) through "
+                "the Verify line, and python 3.12.3 with numpy 2.5.3 and scipy 1.18.1. 728 tests, OK "
+                "in both.",
+            )
+            batch = review.collate({"pyto_root": root, "n": 1})
+            self.assertEqual(batch["items"], [])
+            self.assertEqual(batch["notes_left_out"], {"total": 1, "by_task": {"task-103": 1}})
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_prose_note_wrapped_over_several_lines_still_counts_once(self):
+        """Only the opening `{?}` line is ever inspected; continuation lines carry no `{?}` and are
+        never visited, so a paragraph never becomes more than one note."""
+        tmp, root = _scratch_root()
+        try:
+            _one_packet(
+                root, "1",
+                "{?} a case may now carry `engines=(\"np\", \"sp\")`. It is not a way to excuse",
+                "a disagreement - every engine a case names must still match the reference.",
+            )
+            batch = review.collate({"pyto_root": root, "n": 1})
+            self.assertEqual(batch["items"], [])
+            self.assertEqual(batch["notes_left_out"], {"total": 1, "by_task": {"task-1": 1}})
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_no_notes_is_an_empty_total(self):
+        tmp, root = _scratch_root()
+        try:
+            _one_packet(root, "1", "{?} Alpha: a real question")
+            batch = review.collate({"pyto_root": root, "n": 1})
+            self.assertEqual(batch["notes_left_out"], {"total": 0, "by_task": {}})
+        finally:
+            shutil.rmtree(tmp)
+
+
+class Ranking(unittest.TestCase):
+    """Batch order: within the items that need the owner, the newest task sorts first."""
+
+    def test_owner_items_newest_task_first(self):
+        tmp, root = _scratch_root()
+        try:
+            _one_packet(root, "5", "{?} Old: owner, is this right?")
+            _one_packet(root, "9", "{?} New: owner, and this?")
+            batch = review.collate({"pyto_root": root, "n": 1})
+            self.assertEqual([it["label"] for it in batch["items"]], ["New", "Old"])
+        finally:
+            shutil.rmtree(tmp)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,2927 @@
+{
+  "address": "proposal.neat.batch.9",
+  "sha256": "62d6cb8fd375b5f96cd4c583be2e8d8dbca0ec3968fc0e85abd812b5bec66ced",
+  "value": {
+    "defaults": 142,
+    "items": [
+      {
+        "label": "NeedsOwnerIsAWord",
+        "needs": "owner",
+        "number": 1,
+        "origin": "packet",
+        "task": "task-70",
+        "text": "a packet line needs the owner when it contains the word owner; that is the agent's own declaration and it misses lines that change meaning without saying so (ChainLatencyIsTheWholeTick, MoleculeAddress, FileIsNotAnEffect were filed as defaults by this rule and are raised in chat by hand)."
+      },
+      {
+        "label": "RootIsCounted",
+        "needs": "owner",
+        "number": 2,
+        "origin": "packet",
+        "task": "task-70",
+        "text": "root entries are counted as open on the root and never re-asked in a batch, because the root is the owner's own page; an entry that quotes him deciding is answered."
+      },
+      {
+        "label": "InternalWording",
+        "needs": "owner",
+        "number": 3,
+        "origin": "packet",
+        "task": "task-73",
+        "text": "I named the packet's \"MINUS addresses produced inside the Tick\" set `internal` (packet's own parenthetical: \"those are internal to the chain\") -- the field name, the CLI label, and the JSON key all read `internal`. If the owner would rather `chain`, `links`, or something else, it is one rename in `tick_projection` (px.py), `tickProjection` (adapters.js) and their tests/fixtures."
+      },
+      {
+        "label": "WriteKindInConsumes",
+        "needs": "owner",
+        "number": 4,
+        "origin": "packet",
+        "task": "task-73",
+        "text": "`produces` carries each write's kind (RECORD.md `writes[].kind`, one of new-address/refinement/replacement); `consumes` and `internal` carry bare addresses only, no kind, because a *read* has no write kind of its own to report -- the kind describes what happened when the address was written, elsewhere in the same or an earlier Tick. If the owner wants each `consumes`/`internal` entry annotated with the kind under which it was originally produced, that is an additional lookup (which invocation, anywhere in the record, first wrote this address) rather than a Tick-local one."
+      },
+      {
+        "label": "LatencyRoundingDivergence",
+        "needs": "owner",
+        "number": 5,
+        "origin": "packet",
+        "task": "task-73",
+        "text": "the two *shared* Tick-latency fallbacks already disagreed before this task -- `viewer/test/record_schema.py` `tick_latency_ms` sums raw durations; `adapters.js` `tickLatencyMsFromRecord` rounds that sum to 3 decimals -- but nothing had compared them on the no-explicit-`latency_ms` path until `viewer/test/tick-projection.test.mjs` did, for the students record. The new test tolerates it by rounding both sides to 3 decimals before comparing `latency_ms`, rather than changing either shared reader. Flagging in case the owner wants the two harmonized instead."
+      },
+      {
+        "label": "TestUseSectionListOutsideAllow",
+        "needs": "owner",
+        "number": 6,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "making `tests.test_use` green (this packet's own outer Verify line) required adding \"9. crisp\" three times to the hardcoded section list in `test_the_sections_are_the_ones_the_page_promises` (pyto/tests/test_use.py) -- a file this packet's Allow list does not name. I made the two-line edit rather than leave the suite red, since it is a literal enumeration of USE.md's own headings with no behaviour beyond that; the owner may prefer the test enumerate sections some other way, or to have this called out instead of changed."
+      },
+      {
+        "label": "PncExcludesLabels",
+        "needs": "owner",
+        "number": 7,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "pnc's formula names \"PQL\" as one of its inputs, and a PQL document (`root.pql.json`) already carries its own top-level \"labels\" list beside \"Ticks\". Since the test requires a label to change review and never pnc, I read \"PQL\" in pnc's formula as `{\"Ticks\": ...}` only -- dropping \"labels\" (and any other top-level PQL key) before digesting for pnc, while review digests the value (and so the PQL, labels included) whole. If the owner meant something else by \"PQL\" in the pnc formula, this is the one place it would show."
+      },
+      {
+        "label": "TableScope",
+        "needs": "root",
+        "number": 8,
+        "origin": "root",
+        "task": "root",
+        "text": "Is the store per user or shared?"
+      },
+      {
+        "label": "PortableKernel",
+        "needs": "root",
+        "number": 9,
+        "origin": "root",
+        "task": "root",
+        "text": "Is this becoming a portable AI Linux?"
+      },
+      {
+        "label": "StewardshipGate",
+        "needs": "root",
+        "number": 10,
+        "origin": "root",
+        "task": "root",
+        "text": "The stewardship doc says no Pyto implementation starts before the owner confirms the"
+      },
+      {
+        "label": "GuardEnforcement",
+        "needs": "root",
+        "number": 11,
+        "origin": "root",
+        "task": "root",
+        "text": "An agent writes through a shell command instead of the editor. Is that caught before or after?"
+      },
+      {
+        "label": "StaleContext",
+        "needs": "root",
+        "number": 12,
+        "origin": "root",
+        "task": "root",
+        "text": "An agent reads B to edit A; B changes. Is the proposed edit recognized as stale?"
+      },
+      {
+        "label": "ConflictingEvidence",
+        "needs": "root",
+        "number": 13,
+        "origin": "root",
+        "task": "root",
+        "text": "The tracker says done; the latest tests failed. Are both kept and the disagreement exposed?"
+      },
+      {
+        "label": "Recovery",
+        "needs": "root",
+        "number": 14,
+        "origin": "root",
+        "task": "root",
+        "text": "The orchestrator stops halfway. On restart, can it tell proposed, written and checked apart?"
+      },
+      {
+        "label": "Completion",
+        "needs": "root",
+        "number": 15,
+        "origin": "root",
+        "task": "root",
+        "text": "Tests pass but the result misses the request. What keeps \"execution succeeded\" from becoming \"done\"?"
+      },
+      {
+        "label": "CacheInvalidation",
+        "needs": "root",
+        "number": 16,
+        "origin": "root",
+        "task": "root",
+        "text": "The content key's `revision` is a calculation identity; `implementation_sha256` excludes helpers"
+      },
+      {
+        "label": "CrossProjectReuse",
+        "needs": "root",
+        "number": 17,
+        "origin": "root",
+        "task": "root",
+        "text": "Can a second domain get a verified hit on material the first produced?"
+      },
+      {
+        "label": "StorageKinds",
+        "needs": "root",
+        "number": 18,
+        "origin": "root",
+        "task": "root",
+        "text": "Should PxC keep one facade over several specialized backends (raster, graph, JSON), chosen by"
+      },
+      {
+        "label": "NeatOnPxC",
+        "needs": "root",
+        "number": 19,
+        "origin": "root",
+        "task": "root",
+        "text": "Should neat and tidy keep work-item and git state as Parts in their own PxC, so a change resolves"
+      },
+      {
+        "label": "SilentRules",
+        "needs": "root",
+        "number": 20,
+        "origin": "root",
+        "task": "root",
+        "text": "Args silently override inputs; a forward ResultRef fails only at run; `Tick.calc` bypasses PCR"
+      },
+      {
+        "label": "ShadowRule",
+        "needs": "root",
+        "number": 21,
+        "origin": "root",
+        "task": "root",
+        "text": "Same authored program errors in JS and returns a wrong value in Python. Status: open."
+      },
+      {
+        "label": "TransactionalTick",
+        "needs": "root",
+        "number": 22,
+        "origin": "root",
+        "task": "root",
+        "text": "Wumpus rolls back a failed Tick; pyto leaves earlier writes. Status: open."
+      },
+      {
+        "label": "KernelMerge",
+        "needs": "root",
+        "number": 23,
+        "origin": "root",
+        "task": "root",
+        "text": "`Pcr` (graph) and `PCR` emit identical Mermaid; merging would give PCR an exporter. Status: open."
+      },
+      {
+        "label": "PromotionScope",
+        "needs": "root",
+        "number": 24,
+        "origin": "root",
+        "task": "root",
+        "text": "PromotionScope"
+      },
+      {
+        "label": "ReceiptExport",
+        "needs": "root",
+        "number": 25,
+        "origin": "root",
+        "task": "root",
+        "text": "ReceiptExport"
+      },
+      {
+        "label": "ReplayIsolation",
+        "needs": "root",
+        "number": 26,
+        "origin": "root",
+        "task": "root",
+        "text": "ReplayIsolation"
+      },
+      {
+        "label": "SeamGate",
+        "needs": "root",
+        "number": 27,
+        "origin": "root",
+        "task": "root",
+        "text": "SeamGate"
+      },
+      {
+        "label": "Telemetry",
+        "needs": "root",
+        "number": 28,
+        "origin": "root",
+        "task": "root",
+        "text": "Telemetry"
+      },
+      {
+        "label": "LineEndings",
+        "needs": "root",
+        "number": 29,
+        "origin": "root",
+        "task": "root",
+        "text": "LineEndings"
+      },
+      {
+        "label": "JoblibComparison",
+        "needs": "root",
+        "number": 30,
+        "origin": "root",
+        "task": "root",
+        "text": "JoblibComparison"
+      },
+      {
+        "label": "DiscStatsCodec",
+        "needs": "root",
+        "number": 31,
+        "origin": "root",
+        "task": "root",
+        "text": "DiscStatsCodec"
+      },
+      {
+        "label": "WheelVersion",
+        "needs": "root",
+        "number": 32,
+        "origin": "root",
+        "task": "root",
+        "text": "WheelVersion"
+      },
+      {
+        "label": "MatrixManifest",
+        "needs": "root",
+        "number": 33,
+        "origin": "root",
+        "task": "root",
+        "text": "MatrixManifest"
+      },
+      {
+        "label": "InteriorPartVisibility",
+        "needs": "root",
+        "number": 34,
+        "origin": "root",
+        "task": "root",
+        "text": "Status: open; each is described where it was raised (`research/ULTRACODE-WEEK.md`, `CHANGES.md`,"
+      },
+      {
+        "label": "AdapterHashChange",
+        "needs": "root",
+        "number": 35,
+        "origin": "root",
+        "task": "root",
+        "text": "Status: open; each is described where it was raised (`research/ULTRACODE-WEEK.md`, `CHANGES.md`,"
+      },
+      {
+        "label": "VisibilityAxisInOracle",
+        "needs": "root",
+        "number": 36,
+        "origin": "root",
+        "task": "root",
+        "text": "A truth-holder can mark a case UNKNOWN, so a miss is neither pass nor fail. Status: open, lean"
+      },
+      {
+        "label": "ReceiptWordCollision",
+        "needs": "root",
+        "number": 37,
+        "origin": "root",
+        "task": "root",
+        "text": "Status: open; described in the mining appendix. Lean: custody facts are ordinary Parts; the"
+      },
+      {
+        "label": "Evidence regenerated on Windows",
+        "needs": "reviewed",
+        "number": 38,
+        "origin": "packet",
+        "task": "task-1",
+        "text": "fixed experiments/grouped-ablation/features.py's make_data() (random.Random.gauss -> an Irwin-Hall sum-of-12-random()-minus-6 approximation) because gauss() goes through libm and drifted by 1 ULP between this Windows box and the Linux machine that produced the originally committed evidence, which replay.py byte-compares. Regenerated every evidence/run-*/ file that derives from the fixture on this Windows machine (via run.py/run_regrouped.py/run_reinput.py/run_from_retained.py/run_cached.py/replay.py, each with --force) and committed it. commit.txt/retained.commit in that evidence now stamp this worktree's sha rather than the Linux run's. Is committing Windows-generated evidence acceptable, or should it instead be regenerated on the Linux CI box and pulled back in?"
+      },
+      {
+        "label": "grouped-ablation still fails one test on this machine, unrelated to the two assigned failures",
+        "needs": "reviewed",
+        "number": 39,
+        "origin": "packet",
+        "task": "task-1",
+        "text": "test_replay.ChildModuleTable.test_the_full_table_check_is_strictly_stronger_than_the_old_difference asserts the child interpreter has a non-stdlib startup-resident module (comment names _distutils_hack/sitecustomize, from setuptools) before it imports anything; this worktree's .venv has no setuptools installed (no _distutils_hack, no *.pth for it), so the assertion sees an empty list and fails. Not touched, per scope (not one of the two diagnosed failures, and fixing it means either installing setuptools into .venv or loosening the test's environment assumption -- both owner calls). `bash pyto/scripts/check_all.sh` therefore still exits 1 with only experiments/grouped-ablation FAILED; every other suite (library, s3-synthetic, consumer, disc-stats, examples, art-registry-md, viewer, viewer-record-schema) is OK."
+      },
+      {
+        "label": "Untracked debris found, not touched",
+        "needs": "reviewed",
+        "number": 40,
+        "origin": "packet",
+        "task": "task-1",
+        "text": "two directories literally named `%SystemDrive%` (`pyto/%SystemDrive%/ProgramData/...` and `pyto/experiments/grouped-ablation/%SystemDrive%/ProgramData/...`, each holding a handful of real Windows Caches/*.db files) appeared while running the suites on this machine -- something somewhere is treating a cmd.exe-style `%SystemDrive%` env-var reference as a literal path instead of expanding it. Left untracked and uncommitted since it's unrelated to the two assigned failures and its origin wasn't tracked down; worth a look if it recurs."
+      },
+      {
+        "label": "Receipt result vocabulary",
+        "needs": "reviewed",
+        "number": 41,
+        "origin": "packet",
+        "task": "task-12",
+        "text": "proof.sh writes `\"result\": \"green\"/\"red\"` per the brief, but"
+      },
+      {
+        "label": "`cd` tracking is best-effort",
+        "needs": "reviewed",
+        "number": 42,
+        "origin": "packet",
+        "task": "task-12",
+        "text": "proof.sh only recognizes a bare `cd <path>` line (optionally with"
+      },
+      {
+        "label": "Step granularity",
+        "needs": "reviewed",
+        "number": 43,
+        "origin": "packet",
+        "task": "task-12",
+        "text": "each *line* of the fenced block is treated as one step, so"
+      },
+      {
+        "label": "QuestionsStatusClassifier",
+        "needs": "reviewed",
+        "number": 44,
+        "origin": "packet",
+        "task": "task-13",
+        "text": "questions.sh buckets a Status value as \"resolved\" only when it"
+      },
+      {
+        "label": "QuestionsDuplicateLabels",
+        "needs": "reviewed",
+        "number": 45,
+        "origin": "packet",
+        "task": "task-13",
+        "text": "`{?} AddressRootIsAMount`, `{?} ValueRetention` and"
+      },
+      {
+        "label": "QuestionsDefaultRedundancy",
+        "needs": "reviewed",
+        "number": 46,
+        "origin": "packet",
+        "task": "task-13",
+        "text": "in most of the ChainSpot-mining entries the lean is fused into the"
+      },
+      {
+        "label": "Default speed",
+        "needs": "reviewed",
+        "number": 47,
+        "origin": "packet",
+        "task": "task-16",
+        "text": "the speed selector defaults to \"10x slower\" rather than \"1x real\" (a 26 ms run is over before anyone can watch it at 1x) or \"100x slower\" (dramatic but slow for a big record). Should the default depend on the record's total duration instead of being fixed?"
+      },
+      {
+        "label": "Now marker placement",
+        "needs": "reviewed",
+        "number": 48,
+        "origin": "packet",
+        "task": "task-16",
+        "text": "\"now\" is shown only as text in the toolbar (`tick N \u00b7 id`) plus the clock, not as a highlight on the Calculation's own card in the list below. Should the currently-completing card also get a visual (e.g. an outline or scroll-into-view), given the owner's \"activations appearing\" framing?"
+      },
+      {
+        "label": "Speed change mid-playback",
+        "needs": "reviewed",
+        "number": 49,
+        "origin": "packet",
+        "task": "task-16",
+        "text": "changing the speed dropdown while Play is running restarts the schedule from the beginning at the new speed, rather than rescaling the remaining Calculations and continuing from where it was. Is restarting the right call, or should progress be preserved?"
+      },
+      {
+        "label": "`?play=1` / `--play` autostart",
+        "needs": "reviewed",
+        "number": 50,
+        "origin": "packet",
+        "task": "task-16",
+        "text": "both begin playing immediately (not just switch to playback mode with the page paused, empty, waiting for a press of Play). Is autostart the right default for someone opening a shared link or an `embed.mjs --play` file?"
+      },
+      {
+        "label": "Partial durations",
+        "needs": "reviewed",
+        "number": 51,
+        "origin": "packet",
+        "task": "task-16",
+        "text": "RECORD.md allows `duration_ms: null` per invocation. A record where only some Calculations have a duration still plays in \"real duration\" mode, and the untimed ones complete instantly (cost 0 ms) rather than falling back to 400 ms just for themselves. Is instant-for-the-untimed-ones the right mix, or should a missing duration cost the 400 ms fallback even inside an otherwise-timed run?"
+      },
+      {
+        "label": "Picker widget",
+        "needs": "reviewed",
+        "number": 52,
+        "origin": "packet",
+        "task": "task-18",
+        "text": "built the world picker as a single `<select id=\"world\">` in the toolbar rather than a tab strip, since it stays dependency-free and legible with six-plus worlds; a tab row (as the task text also allowed) would read better with only two or three, but scales worse. Worth revisiting if the owner wants worlds to feel more like distinct \"screens\"."
+      },
+      {
+        "label": "Label format",
+        "needs": "reviewed",
+        "number": 53,
+        "origin": "packet",
+        "task": "task-18",
+        "text": "labelled a working world `${pcr} \u00b7 ${source.runtime}` (e.g. `ablation.grouped \u00b7 pyto`) and a failed one by its filename with the extension stripped (e.g. `garbled`). Reasonable, but arbitrary \u2014 no existing convention in RECORD.md or the viewer fixes this spelling."
+      },
+      {
+        "label": "UNKNOWN convention",
+        "needs": "reviewed",
+        "number": 54,
+        "origin": "packet",
+        "task": "task-18",
+        "text": "the viewer had no existing panel literally named \"UNKNOWN\" to mirror \u2014 the closest precedent is `say()`'s `status error` styling and `validate()`'s thrown, path-naming `RecordSchemaError`. I built `renderUnknown` to reuse that same CSS class and put the raw validator message in the panel. If the owner had a different \"loud failure\" convention in mind (e.g. from another part of the OS reframing), this may not be it."
+      },
+      {
+        "label": "Playback-bar `[hidden]` CSS gap",
+        "needs": "reviewed",
+        "number": 55,
+        "origin": "packet",
+        "task": "task-18",
+        "text": "found and fixed a pre-existing bug (not introduced by this task) where `.playback-bar { display: flex }` always overrides the `hidden` attribute's UA `display: none`, because an author rule beats a user-agent rule regardless of specificity \u2014 so toggling `bar.hidden = true` (both the existing single-record \"Watch it think\" off-switch and the new `forceOff()`) never visually hid the bar. Added `.playback-bar[hidden] { display: none; }` in `tick-viewer.html` to fix it, since it directly undermines \"a picker switch ... must reset playback state\" being visible. Flagging in case the owner wants this split into its own change instead of riding along here."
+      },
+      {
+        "label": "Fifth world / \"four worlds\"",
+        "needs": "reviewed",
+        "number": 56,
+        "origin": "packet",
+        "task": "task-18",
+        "text": "the packet's Intent line names five records (ChainSpot, ChessLab, Wumpus, DiscStudio, pyto) under a title that says \"four\" \u2014 I read ChainSpot as the founding, still-unadapted world (no fixture, no adapter) and the other four as the ones actually rendered, which is why `--worlds` bakes those four fixtures' five records (pyto has two fixtures) plus ChainSpot as the labelled empty slot. If \"four worlds\" was meant literally, one of the five should probably be dropped instead."
+      },
+      {
+        "label": "RunRecordAddress",
+        "needs": "reviewed",
+        "number": 57,
+        "origin": "packet",
+        "task": "task-21",
+        "text": "the record is kept at `px.run.<pcr>` (the reserved `run` second segment, pyto/BOARD.md:135-136), so a second export of the same composition replaces the first; if one document per execution must be retained, the address needs a run-id segment."
+      },
+      {
+        "label": "EmbeddedHarnessOrigin",
+        "needs": "reviewed",
+        "number": 58,
+        "origin": "packet",
+        "task": "task-21",
+        "text": "tests/embedded_harness.py (outside the allowed set) mounts the app on about:blank, where no relative URL resolves and the viewer sources cannot be fetched, so scripts/browser_test.py --embedded runs the new run-record block on a real local origin (Python stdlib server) and opens the produced page over file://."
+      },
+      {
+        "label": "ChromiumPath",
+        "needs": "reviewed",
+        "number": 59,
+        "origin": "packet",
+        "task": "task-21",
+        "text": "scripts/browser_test.py --embedded launched /usr/bin/chromium, which does not exist in this worktree; it now prefers /opt/pw-browsers/chromium and falls back to the old path."
+      },
+      {
+        "label": "EmbedTopLevelAwait",
+        "needs": "reviewed",
+        "number": 60,
+        "origin": "packet",
+        "task": "task-21",
+        "text": "pyto/viewer/embed.mjs now loads node:fs/node:path/node:url behind a top-level `await import()` guarded on `process.versions.node`, so the same module imports in the browser; the CLI and buildPage/embedFile signatures are unchanged."
+      },
+      {
+        "label": "MergedEmbedShape",
+        "needs": "reviewed",
+        "number": 61,
+        "origin": "packet",
+        "task": "task-21",
+        "text": "merging MAIN put `--play` and the multi-world builders (loadWorldEntry, buildWorldsPage, buildWorldsFromFixtures) into pyto/viewer/embed.mjs; they read the file system, so they now go through the same `process.versions.node` guarded `nodeFs`/`nodePath` handles as buildPage/embedFile. Only composePage/fetchPageSources stay browser-safe, and buildPage forwards `play` to composePage \u2014 the multi-world page has no browser caller yet, so nothing exercises it from the studio."
+      },
+      {
+        "label": "StaleBuildNoteInReview",
+        "needs": "reviewed",
+        "number": 62,
+        "origin": "packet",
+        "task": "task-21",
+        "text": "src/review-data.js's `record` verification still reads \"scripts/build.mjs (outside this task's allowed set) ... pyto/viewer/ is absent from dist/\", but this branch already changed build.mjs to copy pyto/viewer/ (dist/pyto/viewer/ exists after npm run build). The reviewer-facing sentence is now wrong; left untouched by the merge because rewriting it is an authoring decision, not a conflict resolution."
+      },
+      {
+        "label": "ReceiptInputNotRefused",
+        "needs": "reviewed",
+        "number": 63,
+        "origin": "packet",
+        "task": "task-22",
+        "text": "the design constraint refuses only a declared `into`/produces under `px.receipt.`, so a Calculation may still *bind a receipt Part as an input* (a test does exactly that); if \"no Calculation may bind a px.receipt address\" was meant to cover reads too, the guard has to move from `into` to the whole binding map."
+      },
+      {
+        "label": "ReceiptPreexisting",
+        "needs": "reviewed",
+        "number": 64,
+        "origin": "packet",
+        "task": "task-22",
+        "text": "`run_record`'s inferred `preexisting` excludes only the receipt addresses *this* run wrote, so a receipt left in the store by an earlier run still reports `preexisting: true` when an invocation reads it -- correct by the letter of RECORD.md, but the owner may want no `px.receipt.` Part ever counted as preexisting."
+      },
+      {
+        "label": "ReceiptNameSegments",
+        "needs": "reviewed",
+        "number": 65,
+        "origin": "packet",
+        "task": "task-22",
+        "text": "the PCR name and the Tick name go into the address verbatim, so a name carrying a dot silently adds a segment (`ablation.grouped` -> `px.receipt.ablation.grouped.Fit.fit.all`) and a name carrying a space makes an address `address.check` cannot flag; slugifying in `receipt_address`, or constraining PCR/Tick names, is a rule I did not want to invent."
+      },
+      {
+        "label": "ReceiptRerunOverwrite",
+        "needs": "reviewed",
+        "number": 66,
+        "origin": "packet",
+        "task": "task-22",
+        "text": "the scheme has no run identity, so running the same PCR twice against one store replaces each receipt Part in place (one address, no history) and only the last run's receipts survive; adding a run id or an invocation index would keep both, at the cost of an address a reader can no longer predict from the PCR alone."
+      },
+      {
+        "label": "ReceiptStoreSetUnguarded",
+        "needs": "reviewed",
+        "number": 67,
+        "origin": "packet",
+        "task": "task-22",
+        "text": "the refusal lives in the binder (`PCR.calc`/`Tick.calc`), not in `PxC.set`, so anything holding the store can still write a forged Part under `px.receipt.` -- consistent with `address.py` describing and enforcing nothing, but it means the segment is reserved against programs, not against callers."
+      },
+      {
+        "label": "ActualEdgeCoverage",
+        "needs": "reviewed",
+        "number": 68,
+        "origin": "packet",
+        "task": "task-26",
+        "text": "(Codex, as built) records often leave `actual_consumes` empty, so the tool as briefed reported only observed actual edges. Resolved before landing: reads are now every input binding, `fn:` resolved through the producer's `into`, unioned with actual consumes (pyto/questions.md, ResultReadsAreReads)."
+      },
+      {
+        "label": "TimingSemantics",
+        "needs": "reviewed",
+        "number": 69,
+        "origin": "packet",
+        "task": "task-26",
+        "text": "Run records provide invocation durations, not measured parallel scheduling; work and critical path are a Tick-model estimate, and unknown durations remain null."
+      },
+      {
+        "label": "BindingSpelling",
+        "needs": "reviewed",
+        "number": 70,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "a produce-qualified result binding is spelled `fn:<id>#<address>` and a reader resolves it by using the whole text after `fn:` when it names an invocation in the record and otherwise splitting at the LAST `#` -- which keeps an invocation id that itself carries a `#` readable (`adapters.js uniqueId` mints `<id>#2` for foreign records) but leaves the spelling ambiguous by construction; the alternatives were a separator no id may contain, or refusing `#` in `PCR.calc` ids, and I did not want to add a refusal the owner had not asked for."
+      },
+      {
+        "label": "ProduceDigestField",
+        "needs": "reviewed",
+        "number": 71,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "the per-produce digest is `Receipt.produce_sha256`, a `{address: sha256 or None}` mapping in declared order, beside the unchanged `result_sha256` of the whole returned value; for a one-address invocation it is `{into: result_sha256}`, which is a restatement -- a field that is only ever new information would have to be null or absent there instead."
+      },
+      {
+        "label": "RecordProduceDigest",
+        "needs": "reviewed",
+        "number": 72,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "`produce_sha256` is on the Receipt only; the run record document gained no field, because both validators check exact key sets, so a new required key would change the bytes of every record ever written -- including `evidence/run-1/record.json`, which `viewer/fixtures/pyto-grouped-ablation.json` must be a byte copy of and which is outside this task's allowed paths. If the owner wants the digests in the record too, that is a second change and it rewrites every committed record."
+      },
+      {
+        "label": "MultiReturnShape",
+        "needs": "reviewed",
+        "number": 73,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "a multi-produce Calculation may return EITHER a mapping keyed by the declared addresses OR a sequence in the declared order; both are accepted because both are honest spellings of \"one value per address\" (a mapping says which is which at the call site, a sequence is what a Python function returns when it returns two things). Picking one would be a smaller contract."
+      },
+      {
+        "label": "MultiReturnStrict",
+        "needs": "reviewed",
+        "number": 74,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "the split is strict in both directions -- a missing address, an address nobody declared, and a sequence of the wrong length all raise, and nothing is published unless every address has its value. The forgiving reading (publish what matched, ignore the rest) was rejected because it lands a Part holding the wrong value silently."
+      },
+      {
+        "label": "OneElementList",
+        "needs": "reviewed",
+        "number": 75,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "the SHAPE of `into` decides, not the count: `into=Part(\"a\")` publishes the returned value at one address, `into=[\"a\"]` is the multi-produce form and its Calculation must return a mapping or a sequence of one. So a program cannot slide between the two meanings by the length of a computed list -- at the cost that `into=[x]` and `into=x` are different declarations."
+      },
+      {
+        "label": "BareRefInARecord",
+        "needs": "reviewed",
+        "number": 76,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "pyto refuses to WRITE a bare `fn:<id>` on an invocation that published several Parts, but a record from another runtime could carry one; both reference readers read it as a read of every Part that invocation published, rather than dropping the edge. A reader that refused it instead would make a foreign record invalid on a clause pyto's kernel already enforces."
+      },
+      {
+        "label": "MultiWriteKinds",
+        "needs": "reviewed",
+        "number": 77,
+        "origin": "packet",
+        "task": "task-27",
+        "text": "the writes happen in declared order and each `PxWrite.kind` is decided against the store as it stood at that moment, so publishing two addresses where the second already exists gives `new-address` then `replacement` from one invocation. That is what the tracked board already did per write; a per-invocation kind would have to invent a rule for the mixed case."
+      },
+      {
+        "label": "HandoffConfessesTheOldReason",
+        "needs": "reviewed",
+        "number": 78,
+        "origin": "packet",
+        "task": "task-29",
+        "text": "the new paragraph says in the student's voice that the earlier reason was wrong and names it, rather than silently replacing it. That is a claim about the student's own history, which a cold reader has no way to check and which will read oddly to a reader who never saw the five-Tick version; the alternative is to state only the honest reason. Left as the confession because the point of the experiment was that a cold read caught it."
+      },
+      {
+        "label": "TickLawsReadmeQuotesLiveMicroseconds",
+        "needs": "reviewed",
+        "number": 79,
+        "origin": "packet",
+        "task": "task-29",
+        "text": "the tick-laws worked example now quotes work_ms and latency_ms from the committed `evidence/run-1`, which change on every regeneration, and the paragraph says so in a trailing clause. Whether a README should carry numbers that go stale the next time anyone runs `homework.py --out evidence/run-1` is the owner's call; the alternative is to name only the inequality."
+      },
+      {
+        "label": "TickReportsHaveNoNames",
+        "needs": "reviewed",
+        "number": 80,
+        "origin": "packet",
+        "task": "task-29",
+        "text": "`tick_laws.analyze_record` reports Ticks by index only, so the new test has to map \"Stats\" to an index through the record's own tick list before it can assert on it. A `name` beside `tick` in each tick report would let a checker's caller say \"the Stats Tick\" directly, but `tick_laws.py` is outside this task's allow list and was not touched."
+      },
+      {
+        "label": "PqlMultiProduceIsRefused",
+        "needs": "reviewed",
+        "number": 81,
+        "origin": "packet",
+        "task": "task-30",
+        "text": "`to_pql_document` REFUSES a multi-produce invocation instead of emitting one, naming the invocation (`<Tick>.<id>`) and every address it declared. The readPql grammar has one `into` per Calculation and reads it with `text(...)`, a nonempty string (`src/core/exec.js:46`), and `invokePql` writes exactly that one address (`pxc.set(calculation.into, output)`, exec.js:58) -- there is no place in the document for a second address and no rule by which the reader could split one result across two, so emitting the first address (or a JSON array the reader rejects at parse time) would be a document that says something false about the program. Widening the grammar was not this task's to do; if the owner wants the browser to run multi-produce Calculations, that is a change to exec.js and to `candidates/readpql_check.mjs`, and this refusal is the line it would replace."
+      },
+      {
+        "label": "ConsumersOfOverlap",
+        "needs": "reviewed",
+        "number": 82,
+        "origin": "packet",
+        "task": "task-30",
+        "text": "`consumers_of` now matches two `fn:` refs when they read a Part in common, not only when they are the same string -- a bare `fn:<id>` (every Part that invocation published) lists the ids that bind `fn:<id>#<address>` for any one of them, and a qualified ref lists only the readers of that one produce. Exact string equality still matches, so every one-address answer is unchanged; the alternative was to leave it literal, which reports \"nothing consumes `stats`\" for an invocation whose whole fan-out binds it by qualified spelling."
+      },
+      {
+        "label": "PxWriterLastWins",
+        "needs": "reviewed",
+        "number": 83,
+        "origin": "packet",
+        "task": "task-30",
+        "text": "`_writer_of` keeps the old \"later declaration wins\" rule when two invocations publish the same address, now per address rather than per `into` field. A multi-produce invocation can therefore be the writer of one address and not of another it also declared, if a later invocation republishes the second. Nothing here refuses a republished address; `PxWrite.kind` already reports it as a `replacement` (task 27 `{?} MultiWriteKinds`)."
+      },
+      {
+        "label": "Score column",
+        "needs": "reviewed",
+        "number": 84,
+        "origin": "packet",
+        "task": "task-32",
+        "text": "`neat list` grew a fourth column (`id state files score intent`) instead of reusing the"
+      },
+      {
+        "label": "Several score lines",
+        "needs": "reviewed",
+        "number": 85,
+        "origin": "packet",
+        "task": "task-32",
+        "text": "the LAST line matching `^score: N of M` wins, so a verifier that scores parts can"
+      },
+      {
+        "label": "Refused landings",
+        "needs": "reviewed",
+        "number": 86,
+        "origin": "packet",
+        "task": "task-32",
+        "text": "the refusal's board line carries ` score N/M`, but the failed receipt under"
+      },
+      {
+        "label": "Which receipt `neat list` reads",
+        "needs": "reviewed",
+        "number": 87,
+        "origin": "packet",
+        "task": "task-32",
+        "text": "the newest `<stamp>-task-<id>` landing, so a task landed twice shows its"
+      },
+      {
+        "label": "NeatFromRefName",
+        "needs": "reviewed",
+        "number": 88,
+        "origin": "packet",
+        "task": "task-33",
+        "text": "the fetched desk lands from `refs/neat/from/<id>`, namespaced by id so it never collides with a local `exp/<id>` (task 0 here and task 0 on a desk are different tasks), and deleted on success and on refusal; a plain branch `neat-from-<id>` would be visible in `git branch` instead, at the price of showing up in every branch listing. Say the word if you want it visible."
+      },
+      {
+        "label": "NeatFromVerify",
+        "needs": "reviewed",
+        "number": 89,
+        "origin": "packet",
+        "task": "task-33",
+        "text": "\"the same verifier\" is read literally: the shared packet's Verify line is run in the class repo exactly as written. If the desk's Verify names a path only that desk has (its own test file), the verifier exits non-zero and the landing refuses with that exit code and a failed receipt, which is honest but unhelpful for a class where the teacher's tests are the real verifier. The alternative is a `--verify` override on the landing that replaces the packet's line; that means a shared desk can be graded by the class's verifier rather than its own."
+      },
+      {
+        "label": "NeatFromId",
+        "needs": "reviewed",
+        "number": 90,
+        "origin": "packet",
+        "task": "task-33",
+        "text": "the id on the command line names the packet path inside the incoming branch (`<tasks>/<id>/packet.md`), so a desk packed as task 3 must land here as task 3 and takes that number in the class repo. Ids are not translated. If two desks pack task 0, the second one lands only after the first has landed or been undone."
+      },
+      {
+        "label": "NeatFromCleanup",
+        "needs": "reviewed",
+        "number": 91,
+        "origin": "packet",
+        "task": "task-33",
+        "text": "a landing from a remote deletes nothing on the other side and nothing local: no `rm -rf EXP/<id>` (that folder here would be a different task) and no `push origin --delete exp/<id>`. The desk's branch stays until its owner removes it; unsharing here is `neat undo <id>`."
+      },
+      {
+        "label": "InterruptTagAnywhere",
+        "needs": "reviewed",
+        "number": 92,
+        "origin": "packet",
+        "task": "task-34",
+        "text": "the reason tag may sit anywhere in the line (`**owner** the suite is red [broke]` passes as readily as `**owner** [broke] the suite is red`), and matching is literal and case sensitive, so `[Broke]` or `(broke)` is refused. Tightening it to \"the tag comes first, right after `**owner**`\" would make every interrupt read the same way at the price of refusing lines that name their reason plainly in the middle. Nothing checks that the tag is the truth: the rule makes the writer choose one of the three, it does not judge the choice."
+      },
+      {
+        "label": "InterruptOnlyOwnerLines",
+        "needs": "reviewed",
+        "number": 93,
+        "origin": "packet",
+        "task": "task-34",
+        "text": "only a line beginning `**owner**` is checked. A **started**, **killed**, **landed**, **refused** or **for Codex** line, or any plain note, is untouched even when it is addressed to the owner in words, and a line that mentions `**owner**` after the first character is not an interrupt. That is the board's own wording (\"everything else is a note, not an interrupt\") read literally; say the word if a note should be checked wherever it addresses the owner."
+      },
+      {
+        "label": "NeatLandOverrideScope",
+        "needs": "reviewed",
+        "number": 94,
+        "origin": "packet",
+        "task": "task-34",
+        "text": "`--verify`/`--allow` are accepted only after `--from`, so a local `neat land <id>` still runs exactly the packet its own copy packed and there is no way to grade your own desk with a different command from the command line. This answers task 33's `{?} NeatFromVerify` in the direction it named (the class's tests are the real grade) without opening the same door for ordinary landings."
+      },
+      {
+        "label": "GradedHereMeansOverridden",
+        "needs": "reviewed",
+        "number": 95,
+        "origin": "packet",
+        "task": "task-34",
+        "text": "the Today line says `graded here` whenever either flag is given, including `--allow` alone, where the verifier is still the desk's and only the scope changed. One marker for \"this landing was judged by the landing repository's brief, not the packet's\" seemed better than two; the receipt is the place that says exactly which command ran and which paths were allowed."
+      },
+      {
+        "label": "PacketKeepsTheDeskWords",
+        "needs": "reviewed",
+        "number": 96,
+        "origin": "packet",
+        "task": "task-34",
+        "text": "an override changes only what this landing runs; the packet that lands at `pyto/experiments/tasks/<id>/` still carries the desk's own Verify and Allow lines, so the record shows both what the student claimed and what the class checked (the receipt). Rewriting the landed packet to the grader's brief would lose the student's half of that."
+      },
+      {
+        "label": "DecidedLineWentIntoTask29sPacket",
+        "needs": "reviewed",
+        "number": 97,
+        "origin": "packet",
+        "task": "task-35",
+        "text": "the brief said to replace the `{?} MissingTickTestStillRemovesHistogram` note by adding \"- Decided: check 4 needs one list line per Tick; the substring gap from task 29 is closed.\" to packet.md's Uncertain section. The note lives in `tasks/29/packet.md`, so the Decided line replaced it there (with a parenthetical saying it was settled in task 35) rather than being added here, where it would leave the note itself standing. If the owner wanted the line in this packet instead, it is one move."
+      },
+      {
+        "label": "ScheduleFieldsOptional",
+        "needs": "reviewed",
+        "number": 98,
+        "origin": "packet",
+        "task": "task-39",
+        "text": "the contract says a serial run writes `\"placement\": null`, but a serial run's record is compared byte for byte against committed evidence by `experiments/students/grade.py` (check 2 drops `duration_ms` and `counters.wall_ms` and nothing else, and `students/` is outside this task's allow list), and `latency_ms` is a wall clock that moves between two identical runs. Taken as the default: the four fields are written **together and only** when the run was parallel, was given a budget, or was stopped by one, so \"absent means serial, unbudgeted\" is the whole rule in both validators and a serial record is byte for byte what it was. Owner: say the word and `run_record` writes them always, and `students/evidence/run-1/record.json` is regenerated with `latency_ms` added to grade.py's not-compared list."
+      },
+      {
+        "label": "ReceiptWriteMarker (merge with task 41, decided by the record)",
+        "needs": "reviewed",
+        "number": 99,
+        "origin": "packet",
+        "task": "task-39",
+        "text": "after merging MAIN, `pcr.py` files its receipts with `pxc.set(..., _from_run=True)` -- the marker `core.py`'s new guard names as the run's own (`PxC.set`, \"``_from_run`` is the run's marker: ``PcrRun``'s observe branch passes it when it files a receipt\"). The guard's frame fallback (`RUN_MODULE = \"pyto.pcr\"`) still passes for this kernel, and was written only because `pcr.py` was another team's file at the time; saying so beats being recognised, and it is what lets a store *view* between the run and the PxC relay a receipt write without owning a frame in `pyto.pcr` -- which is exactly what `tests/test_parallel.RecordingPxC`, the oracle for \"the store never holds half a Tick\", is. Two lines: the marker in `pcr.py:_publish`, and `**marker` relayed by that test's view."
+      },
+      {
+        "label": "TwoLatencyFallbacks",
+        "needs": "reviewed",
+        "number": 100,
+        "origin": "packet",
+        "task": "task-39",
+        "text": "`viewer/adapters.js` and `viewer/tick-viewer.js` (task 40) both answer \"how long did this Tick take\". They agree whenever the record carries `latency_ms`, which is the only case a record decides. With the field **absent** they disagree on purpose: the record contract's fallback is the **sum** of the Tick's durations (RECORD.md, \"Placement and budget\"; `record_schema.py tick_latency_ms`, `adapters.js tickLatencyMsFromRecord`), because a serial Tick's latency *is* that sum; the viewer's fallback is the **longest branch**, because that is the critical path it draws. A record from a serial runtime that never writes `latency_ms` therefore reads one way in the validator and another in the page. Mine is renamed rather than merged (`embed.mjs` concatenates both files into one module, so two top-level `tickLatencyMs` bindings are a SyntaxError, and `tick-viewer.js` is another team's file). Owner: one of the two fallbacks should win and the other should call it."
+      },
+      {
+        "label": "ParallelFailure",
+        "needs": "reviewed",
+        "number": 101,
+        "origin": "packet",
+        "task": "task-39",
+        "text": "a branch that raises stops the run before anything of its Tick is published, so its siblings' work is discarded and they file no receipts -- the price of \"the store never sees half a Tick\". `{?} TicksAsCircuits` wants the other reading (\"a failing branch leaves its siblings' receipts and shows as a hole downstream\"), which needs a partial-Tick publish and a receipt for a Calculation whose Part was never written. Left as it is, with a test only for the atomicity, until the owner picks which of the two the record should show."
+      },
+      {
+        "label": "ParallelDurations",
+        "needs": "reviewed",
+        "number": 102,
+        "origin": "packet",
+        "task": "task-39",
+        "text": "in a parallel run an invocation's `duration_ms` is measured from the worker picking it up to its Part being published, so it includes the wait for its slowest sibling, and a Tick's `sum(duration_ms)` is therefore *not* the work it would have taken serially. `latency_ms` is exact either way. Alternative: stop the clock when the call returns and leave the publish out of it, which makes the work figure honest and the \"what did PCR.run do on this invocation's behalf\" reading less so."
+      },
+      {
+        "label": "WorkerNumbering",
+        "needs": "reviewed",
+        "number": 103,
+        "origin": "packet",
+        "task": "task-39",
+        "text": "`placement.worker` is handed out in the order threads first pick work up **within one Tick**, so it is stable in a run but means nothing across Ticks or across runs, and the same OS thread can be worker 0 in one Tick and worker 1 in the next. Enough to read \"these two really did overlap\" off a record; not enough to say \"the same worker ran both of these\"."
+      },
+      {
+        "label": "TickReportShape",
+        "needs": "reviewed",
+        "number": 104,
+        "origin": "packet",
+        "task": "task-40",
+        "text": "the packet asked tick_laws for `\"tick\": {\"index\": i, \"name\": ...}`; `experiments/students/test_students.py` (outside this task's allow list) builds `{tick[\"tick\"]: tick for tick in report[\"ticks\"]}`, so a mapping there is an unhashable key and fails a suite this task must keep green. Shipped as `\"tick\": <index>` with a sibling `\"name\"`, which reads the same in text (`Tick 1 Stats: work_ms=...`); say the word and the nested shape lands with that test updated in the same commit."
+      },
+      {
+        "label": "ContractKeysFailThePythonValidator",
+        "needs": "reviewed",
+        "number": 105,
+        "origin": "packet",
+        "task": "task-40",
+        "text": "`viewer/test/record_schema.py` refuses unknown document fields, so the moment a real record carries `parallel`, `budget`, per-tick `latency_ms` or per-invocation `placement`, `tick_laws.py --check` (which validates through that file) refuses it -- the JS validator ignores them and renders them. `viewer/fixtures/parallel-demo.json` is therefore validated by the JS side only. record_schema.py belongs to another team and was not touched; the four keys need adding to its key tuples before any producer ships them."
+      },
+      {
+        "label": "LatencyOfASerialTick",
+        "needs": "reviewed",
+        "number": 106,
+        "origin": "packet",
+        "task": "task-40",
+        "text": "latency is `latency_ms` when the record carries it and otherwise the longest branch, for every Tick, including one whose Calculations are a chain -- so such a Tick prints a latency shorter than its work, which is what parallel would buy and not what the Tick took. This is exactly what `tick_laws.py` already reports, so the page and the checker agree; the alternative (sum for a serial Tick, max for a parallel one) would make them disagree."
+      },
+      {
+        "label": "ViolationLinesStillSayTickIndexOnly",
+        "needs": "reviewed",
+        "number": 107,
+        "origin": "packet",
+        "task": "task-40",
+        "text": "the per-Tick text lines now name the Tick, but law-violation messages still read `... in Tick 0`, because those strings are part of `--json` and the packet fixed `--json` as unchanged otherwise."
+      },
+      {
+        "label": "StudentsDemoPageIsBakedAndStale",
+        "needs": "reviewed",
+        "number": 108,
+        "origin": "packet",
+        "task": "task-40",
+        "text": "`experiments/students/evidence/run-1/tick-viewer.html` is baked by `homework.py` through `embed.mjs`, so the committed demo page still carries the previous renderer -- the side-by-side Stats Tick is in `pyto/viewer/tick-viewer.html` (drop the record on it) but not in that committed file. Regenerating it means writing under `experiments/students/evidence/`, outside this task's allow list, so it was left alone; one `python homework.py --out evidence/run-1` re-bakes it."
+      },
+      {
+        "label": "PlaybackClockIsNowTheCriticalPath",
+        "needs": "reviewed",
+        "number": 109,
+        "origin": "packet",
+        "task": "task-40",
+        "text": "with a parallel Tick's cards appearing together at the Tick's latency, the playback clock's last event lands on the run's critical path rather than on the sum of every duration; `viewer/test/playback.test.mjs` was rewritten to that law (5 of its tests changed), which is the one place an existing test's expectations were replaced rather than added to."
+      },
+      {
+        "label": "ReceiptInputNotRefused",
+        "needs": "reviewed",
+        "number": 110,
+        "origin": "packet",
+        "task": "task-41",
+        "text": "decided in code as it already stood -- only a declared `into` under `px.receipt.` is refused, so a receipt may be *bound as an input* and `PxC.set`'s new guard was deliberately not extended to reads (`tests/test_pql.py::ReceiptsAsInputsAndOnRerun::test_a_receipt_may_be_bound_as_an_input`); if the owner meant reads too, the guard moves from `into` to the whole binding map and `px receipts` output can never be fed back into a program."
+      },
+      {
+        "label": "ReceiptRerunOverwrite",
+        "needs": "reviewed",
+        "number": 111,
+        "origin": "packet",
+        "task": "task-41",
+        "text": "decided in code as it already stood -- a rerun of the same PCR against one store replaces each receipt Part in place, one address per invocation and only the last run's receipts survive (`::test_a_rerun_replaces_the_receipt_part_in_place` pins it so the change is visible when someone makes it). FRONTIER.md add C says \"a rerun replaces, and the record keeps the run id\"; the record has a `pcr` name and no run id, so the run-id half is not done and is the open part of this line."
+      },
+      {
+        "label": "ReceiptNameSegments",
+        "needs": "reviewed",
+        "number": 112,
+        "origin": "packet",
+        "task": "task-41",
+        "text": "left untouched, as the brief asked. `PQL.receipts` reads the address exactly as `receipt_address` writes it, so a PCR or Tick name carrying a dot shifts which segment `tick=` matches; the docstring says so rather than slugifying. `address.check` gained no reserved-segment-shape rule."
+      },
+      {
+        "label": "ReceiptGuardIsFrameShaped",
+        "needs": "reviewed",
+        "number": 113,
+        "origin": "packet",
+        "task": "task-41",
+        "text": "`PxC.set`'s guard recognises the run by the calling frame's module (`core.RUN_MODULE == \"pyto.pcr\"`) because `pcr.py` is another team's file and could not be edited to pass `_from_run=True`. It is deterministic and cheap, but it is a rule about *file layout*: split `pcr.py`, or file a receipt from a helper in another module, and the write is refused. The intended end state is `pcr.py` calling `set(..., _from_run=True)` or wrapping its observe branch in `receipt_writes_allowed()`, after which `RUN_MODULE` can be deleted; one line in `pcr.py`, whenever that team is willing."
+      },
+      {
+        "label": "PxLawsPrintsNoPath",
+        "needs": "reviewed",
+        "number": 114,
+        "origin": "packet",
+        "task": "task-41",
+        "text": "`px laws` does not delegate to `tick_laws.main`, because `tick_laws`' own text output echoes the path it was handed and no `px` command may print an absolute path. It calls `analyze_record` and renders the report itself, keeping `tick_laws`' exit codes (0 / 1) and its `LIMITATION` line verbatim. If the owner wants `px laws` to be exactly `tick_laws`' output, the fix belongs in `tick_laws._print_text` (print the record's `pcr`, not the path), which is outside this task's Allow line."
+      },
+      {
+        "label": "PxReceiptsReadsTheRecordNotTheStore",
+        "needs": "reviewed",
+        "number": 115,
+        "origin": "packet",
+        "task": "task-41",
+        "text": "`px receipts <record>` derives its rows from the record's invocations (`declared_consumes` / `actual_consumes` / `into` / `writes` / `result_sha256` / `implementation_sha256`), because a `pyto-run-record@1` document carries no receipt store rows at all (RECORD.md, \"Receipts as Parts\"). That makes it a witness of each `Receipt`, not the `Receipt` itself, and `produce_sha256` -- the per-produce digest that lives only on the `Receipt` -- cannot be shown. A `px receipts` over a live `PxC` (via `PQL.receipts`) would show it; that is a second command and no record format exists for it."
+      },
+      {
+        "label": "RecordAdapterHasOneIntoPerInvocation",
+        "needs": "reviewed",
+        "number": 116,
+        "origin": "packet",
+        "task": "task-42",
+        "text": "the record contract already allows an array `into` (RECORD.md:117-119; `requireInto` and `produceAddresses` in pyto/viewer/adapters.js handle it), but the DiscStudio reader in the same file does not -- `fromDiscStudioReceipt` writes `id: uniqueId(into)`, `actual_produces: [into]` and `writes: [{address: into}]`, so a composition with several `into` fails `validate()` on the id and on `actual_produces` being an array of arrays. pyto/viewer belongs to another team and is outside this task's allow list, so the studio's own multi-produce Calculation (`fn.studio.receipts`) is never run-recorded, and `fn.undo.pop` was split into a pop that restores the value at the address and an `fn.undo.settle` in a second Tick that shortens the stack, so `runRecord('studio-undo')` still validates. One pop publishing both Parts is the honest shape and is one adapter change away; the owner decides whether that change is asked of the viewer team."
+      },
+      {
+        "label": "UndoIsScopedToTheWholeWorld",
+        "needs": "reviewed",
+        "number": 117,
+        "origin": "packet",
+        "task": "task-42",
+        "text": "`px.undo.studio` records `px.studio.world` and every `dispatch` pushes it, so the Shelf card's Undo button reverses one command whatever it touched, and the sample workspace comes back exactly. The Part and the three Calculations are generic (`push(address, scope)`), so a per-format scope -- undo for the customizer alone, or per node -- is a caller's choice and nothing in the grammar forbids it; nothing yet uses one, and no `redo` exists (the popped value is dropped rather than moved to a forward stack)."
+      },
+      {
+        "label": "TheReceiptsQueryListsItsOwnReceipt",
+        "needs": "reviewed",
+        "number": 118,
+        "origin": "packet",
+        "task": "task-42",
+        "text": "`fn.studio.receipts` writes `px.receipt.studio-receipts` after the query has read the board, so the first reading of the Inspect list does not list itself and every later one does. That is honest -- the query is over the record as it stood -- and it is what the browser check exercises by opening the panel twice, but it means the row count moves by one on the first open of a session. Suppressing the self-row would be a lie about what `px.receipt.*` holds; the owner decides whether the page should say so in words."
+      },
+      {
+        "label": "PqlDocumentKeepsAStaleLineReference",
+        "needs": "reviewed",
+        "number": 119,
+        "origin": "packet",
+        "task": "task-42",
+        "text": "`pql_document.to_pql_document`'s \"has no 'into'\" refusal still names `exec.js:46` because `test_retain.py` pins that exact token and is outside this task's allow list; the message now names `produces` at exec.js:50-57 beside it. Every other reference in that module was renumbered to today's exec.js. The tidy fix is one line in a file this task may not touch."
+      },
+      {
+        "label": "NoSubagentToolInThisEnvironment",
+        "needs": "reviewed",
+        "number": 120,
+        "origin": "packet",
+        "task": "task-42",
+        "text": "the packet asked for two Sonnet lanes spawned with the Agent tool; this session has no Agent/Task tool (only SendMessage to already-running peers), so both lanes were built here, in the order Lane A -> Lane B -> integration, on the same allow list. Nothing about the result depends on it, but the two-lane shape was not tested."
+      },
+      {
+        "label": "ClassScore",
+        "needs": "reviewed",
+        "number": 121,
+        "origin": "packet",
+        "task": "task-43",
+        "text": "the brief asks the grader for both `score: N of 4` with a landing receipt of `\"passed\": 4` AND a combined `score: N of M` over grade.py's four checks plus the cold reader's names (`e.g. score: 8 of 8`). Only one of those can be the receipt's score: land.sh keeps the LAST line matching `^score: [0-9]+ of [0-9]+` (land.sh, `SCORE_LINE=\"$(tr -d '\\r' < \"$WORK/verifier.txt\" | grep -E '^score: [0-9]+ of [0-9]+' | tail -n 1 ...)`). Taken: the four mechanical checks are the landing's score (receipt `\"passed\": 4`, board `score 4/4`, as the brief's own selftest assertions ask), and the cold reader's count rides in the same verifier output as `cold reader: 13 of 13 named` with an explicit `combined: 17 of 17` line beside it. A single combined number would make the two halves one figure and lose which half failed, and the two halves are not the same kind of thing: one is a rubric, one is a floor under a human read. The owner decides whether the receipt should carry the combined total instead."
+      },
+      {
+        "label": "ColdReaderFileCount",
+        "needs": "reviewed",
+        "number": 122,
+        "origin": "packet",
+        "task": "task-43",
+        "text": "`cold_reader.py` counts every file the hand-off *names* (nine, including `tick_laws.py`, which the students page names in prose), while `grade.py` check 4 counts every file that is actually *beside* the hand-off (eight). So the two totals differ by one on the same page and both are right about different questions. Taken: the cold reader is checked against the page, because the page is all the reader was given. If the owner wants one number, check 4's directory listing is the one that cannot be padded by mentioning a file."
+      },
+      {
+        "label": "ColdReaderAnswerLives",
+        "needs": "reviewed",
+        "number": 123,
+        "origin": "packet",
+        "task": "task-43",
+        "text": "the canned cold-reader answer is committed inside `submissions/<student>/cold-reader.txt`, so the grade can be redone from the class repository alone; the grader leaves it out of the graded copy because grade.py check 4 asks the hand-off to account for every file beside it. That puts the reader's answer in the student's own submission, which the student could read before writing the page. The alternative is a teacher-only path outside the allowed paths, which no landing can write."
+      },
+      {
+        "label": "DeskSeed",
+        "needs": "reviewed",
+        "number": 124,
+        "origin": "packet",
+        "task": "task-43",
+        "text": "`neat land --from` is a merge, so the class repo and the desk must share a commit; make_class.sh cuts both from one seed, which puts the student's `tools/` and `BRIEF.md` at the class root too. A real class would fork the class repo into each desk instead, and then the seed is the assignment package itself. Not decided here because it changes what a desk starts with."
+      },
+      {
+        "label": "NeatUndoFreesTheId",
+        "needs": "reviewed",
+        "number": 125,
+        "origin": "packet",
+        "task": "task-43",
+        "text": "after `neat undo <id>` the id is handed out again by the next `neat new` (`next_id()` scans EXP dirs, landed packets and exp/* branches, and an undone landing leaves none of the three), so a fourth task on the desk came back as task 2 and collided with the undone one. Worked around in make_class.sh by reading the id back out of what `neat new` printed and by killing before undoing (a killed task keeps its branch, so its id stays taken). The line is `neat.sh:next_id()`; not fixed here because neat.sh is not in this task's allowed paths."
+      },
+      {
+        "label": "NotAVersionDrift",
+        "needs": "reviewed",
+        "number": 126,
+        "origin": "packet",
+        "task": "task-46",
+        "text": "the task and the board both start from \"digests drift between Python 3.11 and 3.14\", and that is not what these two suites were failing on. Both suites are green here under 3.11 (the worktree .venv), 3.12 and 3.13, byte for byte, and both CI failures reproduce with no interpreter change at all. Nothing was loosened and no pinned digest was touched, so there is no version to record in a receipt for this fix. The 3.11 ubuntu matrix entry is still added, because the drift claim itself is still unproved and now at least two versions are watched on every push."
+      },
+      {
+        "label": "ShallowCloneSkip",
+        "needs": "reviewed",
+        "number": 127,
+        "origin": "packet",
+        "task": "task-46",
+        "text": "`test_the_committed_stamp_names_a_commit_git_knows` now skips, rather than fails, when `git cat-file -e` cannot resolve the stamped sha AND `git rev-parse --is-shallow-repository` says the checkout is truncated. That is a real weakening of one claim in one situation, and the honest reading is \"the history was not checked here\". Two things hold it: the sha-shape assertion is never skipped, and `test_the_shallow_escape_hatch_is_shut_in_this_checkout` fails if the helper ever says \"shallow\" where git says \"not shallow\". The primary fix is the workflow's `fetch-depth: 0`, so CI checks the claim for real; the owner may prefer to drop the skip entirely and let a shallow clone go red."
+      },
+      {
+        "label": "DirtyStamp",
+        "needs": "reviewed",
+        "number": 128,
+        "origin": "packet",
+        "task": "task-46",
+        "text": "`evidence/run-1/retained.json` records `retained.commit` as `af0e30f21c2e64cdf66a01932d6c558ab18d509f-dirty`, i.e. the evidence was regenerated from a tree with uncommitted edits and the record says so. The test strips the suffix and always has. Not touched here (regenerating evidence is out of scope), but the `-dirty` says that what was measured is not exactly any commit, which is worth a decision."
+      },
+      {
+        "label": "UnverifiedOnWindows",
+        "needs": "reviewed",
+        "number": 129,
+        "origin": "packet",
+        "task": "task-46",
+        "text": "the `grade.py` fix is for a `ValueError` that only arises when two paths are on different Windows drive letters, which cannot happen on this Linux machine. What is verified here is the premise and the fallback: `ntpath.relpath` is asserted to raise on the exact `C:` / `D:` pair the runner produces, and `display_path` is asserted to return the absolute path when `os.path.relpath` raises. The end-to-end claim -- that the four windows tests now pass -- is inferred from the log (returncode 1 with an empty stdout, from the first line of the report) and is unproved until a windows job runs."
+      },
+      {
+        "label": "LogsInTheWorkspace",
+        "needs": "reviewed",
+        "number": 130,
+        "origin": "packet",
+        "task": "task-46",
+        "text": "`CHECK_ALL_LOGS` points CI at `$PWD/test-results/check-all-logs`, inside the checkout. `test-results/` is gitignored, so the suites that compare `git status --porcelain` see nothing new, but it is still the repository rather than a temp dir; `${{ runner.temp }}` was not used because its value is a backslash path that bash on windows-latest mangles."
+      },
+      {
+        "label": "ParallelIsAsync",
+        "needs": "reviewed",
+        "number": 131,
+        "origin": "packet",
+        "task": "task-48",
+        "text": "a Tick whose branches overlap can only be awaited, so `parallel: true` is `invokePqlAsync(doc, pxc, {parallel: true})` and the synchronous `invokePql(doc, pxc, {budgetMs, clock})` refuses it by name. Keeping one synchronous entry point is what leaves the studio's own path -- dispatch, card, scene, constraints, undo -- unchanged and its serial record byte for byte what it was; a budget needs no awaiting and works in both. Owner: say the word and `invokePql` returns a Promise always, and every caller in src/ and every browser check becomes async."
+      },
+      {
+        "label": "PlacementInAOneBranchTick",
+        "needs": "reviewed",
+        "number": 132,
+        "origin": "packet",
+        "task": "task-48",
+        "text": "a parallel run writes a placement for every invocation, including a Tick that holds one Calculation (worker 0, started_ms ~0), because the run, not the Tick, is what was parallel -- which is also what pyto.materialize does with `reports_schedule`. The other reading is that `isParallelTick` decides it (a Tick of one branch is not parallel and has no placement to report), which would make the field null for exactly the Ticks the viewer draws as a single card."
+      },
+      {
+        "label": "StageGroupedSampleComposition",
+        "needs": "reviewed",
+        "number": 133,
+        "origin": "packet",
+        "task": "task-48",
+        "text": "`runtime.sceneParallel` runs the sample composition as one Tick per stage (every card's Fields, then every card's Art, ...) instead of one Tick per card step, because that is the grouping the node law allows to overlap; the serial `scene()` still writes the fourteen one-Calculation Ticks the record review item names. Two shapes of the same composition now exist. Owner: if the grouped shape is the real one, `scene()` should use it too and the review item's \"14 Ticks, 14 invocations\" is rewritten."
+      },
+      {
+        "label": "DiscStudioLatencyIsMeasured",
+        "needs": "reviewed",
+        "number": 134,
+        "origin": "packet",
+        "task": "task-48",
+        "text": "a DiscStudio invocation has no `duration_ms` (runtime.js records reuse and material identity, never a duration), so a Tick's `latency_ms` here is exec.js's own measurement rather than the sum of its durations, and `tickLatencyMs`'s fallback cannot check it. A budgeted serial run therefore reports a real wall time where the Python kernel would report the sum; the injected clock is what makes it deterministic in tests."
+      },
+      {
+        "label": "EffectsFieldOptional",
+        "needs": "reviewed",
+        "number": 135,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "the task asked for `effects` on every invocation; it is written on every invocation of a run that had effects (an `oc.` ran, or a receipt carries a ledger) and left out entirely when the run had none, exactly as `{?} ScheduleFieldsOptional` treats placement -- because unconditional presence changes the bytes of every record ever written, and `experiments/students/grade.py` check 2 compares a fresh record against the committed one field for field (its evidence is outside this task's allow list). Absent therefore means \"this run performed no effect\", and inside a record that carries the field an empty list means \"this invocation performed none\"."
+      },
+      {
+        "label": "EffectsInTestimony",
+        "needs": "reviewed",
+        "number": 136,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "\"testimony includes the effects ledger\" is implemented as `PcrRun.effects` filled with `observe` on and off (an effect is what happened, not an observation of it) rather than as a new field on `CalculationTestimony`, because `ticks` is the bytes consumers embed (`consumers/discstudio-card/card_composition.py:177`) and `experiments/grouped-ablation/retain.py` requires a retained program to equal `asdict(run.ticks)`; if the owner wants the ledger inside `ticks` itself, that is a testimony-bytes change and wants its own task."
+      },
+      {
+        "label": "ParallelEffectsOptIn",
+        "needs": "reviewed",
+        "number": 137,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "an `oc.` inside a parallel Tick is refused unless `PCR.run(..., allow_parallel_effects=True)` -- the simplest honest rule, since \"their effects are file writes to distinct paths\" is not checkable before the branches run; the alternative (check the ledgers afterwards and refuse a collision) would let both writes happen first, so it is not obviously better."
+      },
+      {
+        "label": "RandomSeedIsAnEffect",
+        "needs": "reviewed",
+        "number": 138,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "`random(n)` draws from a seeded generator whose seed is drawn once per handle and recorded as its own ledger entry (`random_seed`), so the demo's \"a write, a clock and two draws\" is five entries and not four, and a kind was added that the intent's five verbs do not name."
+      },
+      {
+        "label": "EffectDigestIsCanonicalJson",
+        "needs": "reviewed",
+        "number": 139,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "`result_sha256` is sha256 of the canonical JSON of the recorded value for every kind, including `write_text`, so a written file's ledger digest is the digest of the JSON string, not `sha256sum` of the file's bytes; one rule makes any two entries comparable, but a reader who wants to check a file on disk has to digest it the same way."
+      },
+      {
+        "label": "OcNeedsEffectsRoot",
+        "needs": "reviewed",
+        "number": 140,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "reaching an `oc.` with no `effects_root` refuses the run rather than defaulting to the cwd, and when `replay_effects` is given every `oc.` invocation must have a ledger in it (an id it does not name would perform a real effect in the middle of a replay)."
+      },
+      {
+        "label": "ViewerBundleDuplicateBeforeThisTask",
+        "needs": "reviewed",
+        "number": 141,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "**resolved by the merge.** Before merging MAIN, `check_all.sh` ended in SOME SUITES FAILED because `viewer/adapters.js:576` and `viewer/tick-viewer.js:138` both exported `tickLatencyMs` and the inlined bundle would not parse -- at the branch's starting commit `c087bd7`, before this task's first edit, and in two files outside this allow list. MAIN's rename to `tickLatencyMsFromRecord` (task 39's landing) fixes it; after the merge every suite passes."
+      },
+      {
+        "label": "EffectsDemoFixtureShape",
+        "needs": "reviewed",
+        "number": 142,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "`viewer/fixtures/effects-demo.json` (task 50's hand-made witness, another team's file) is **not** a record this task's validator accepts: its ledger entries carry no `result` key and their paths are absolute (`/tmp/effects-demo/roster.csv`), where RECORD.md's \"Effects\" says an entry is exactly `{kind, args, result, result_sha256}` and a path is relative to the run's `effects_root` and never absolute. Nothing in Python reads that fixture, so no suite fails; the JS side accepts what pyto writes, and the disagreement is only about what a *hand-made* record may claim. Either the fixture is regenerated from a real run or the shape is loosened -- both are the owner's call, and this task changed neither."
+      },
+      {
+        "label": "JsEffectKindsMissRandomSeed",
+        "needs": "reviewed",
+        "number": 143,
+        "origin": "packet",
+        "task": "task-49",
+        "text": "`viewer/tick-viewer.js` `EFFECT_KINDS` lists five kinds (`write_text, read_text, now_ms, random, env`) and not `random_seed`, which this kernel records because the seed is an effect; the viewer draws an unknown kind unstyled rather than refusing it, so a real record renders, with its seed row plainer than its neighbours."
+      },
+      {
+        "label": "EffectsFailThePythonValidatorTheSameWayTheParallelKeysDo",
+        "needs": "reviewed",
+        "number": 144,
+        "origin": "packet",
+        "task": "task-50",
+        "text": "`viewer/fixtures/effects-demo.json` is otherwise valid on purpose -- the only thing `viewer/test/record_schema.py` refuses in it is the word `effects` (`ticks[0].invocations[0]: unknown field(s) effects not in RECORD.md`), so `px ps`, `px laws` and anything else that validates through that file exit 2 on it today. The JS validator ignores unknown fields and renders them, which is why the fixture is validated by the JS side only. This is exactly task 40's `{?} ContractKeysFailThePythonValidator` with a fifth key: `effects` needs adding to record_schema.py's invocation key tuple (and RECORD.md needs the field written down) before any producer ships it. Both files belong to other teams and were not touched. The fixture drops task 40's `latency_ms` for the same reason -- it is not part of this contract and it was the only other refusal."
+      },
+      {
+        "label": "EffectDigestIsTwelveHexWithTheWholeOneOnTheTitle",
+        "needs": "reviewed",
+        "number": 145,
+        "origin": "packet",
+        "task": "task-50",
+        "text": "the packet said \"the digest's first 12 hex\", and the card already prints `impl <12 hex>\u2026` and `digest <16 hex>\u2026`, so an effect row prints the first twelve with the same ellipsis and carries the whole digest on the row's `title`. Nothing is lost and the row stays one line; if the owner wants the bare twelve with no ellipsis, or sixteen to match the invocation's own digest, it is one argument in `renderEffects`."
+      },
+      {
+        "label": "OcIsAboutTheAddressNotTheEffects",
+        "needs": "reviewed",
+        "number": 146,
+        "origin": "packet",
+        "task": "task-50",
+        "text": "the `oc` chip and the card's border come from the calculation address alone, so an `oc.` Calculation that performed no effect is still drawn as an oc card with nothing under it, and a `fn.` Calculation that somehow carried effects would show the rows without the chip. That reads the contract as \"oc is what a Calculation *is*, effects are what it *did*\". The alternative -- mark the cards that actually did something -- would hide the OperationalCalculation that was allowed to touch the world and chose not to, which is the more interesting of the two."
+      },
+      {
+        "label": "TheAsBeforeTestIsACommittedTree",
+        "needs": "reviewed",
+        "number": 147,
+        "origin": "packet",
+        "task": "task-50",
+        "text": "\"renders exactly as before\" is pinned against `viewer/test/students-card-tree.golden.txt`, a 280-line serialization of the whole students page taken from the renderer as task 40 left it, before any of this task's code existed. It is the strongest form of the claim available without a browser, and it means a deliberate change to any card must regenerate that file -- and no script does: it is written by the test's own `serialize`, so regenerating it is a copy of eight lines. If the owner would rather that file did not exist, the weaker version is asserting the students page carries no `effect` nodes, which the two mutations below would both have survived."
+      },
+      {
+        "label": "TheDemoPageWasRebuiltNotRerun",
+        "needs": "reviewed",
+        "number": 148,
+        "origin": "packet",
+        "task": "task-50",
+        "text": "`experiments/students/evidence/run-1/tick-viewer.html` was rebuilt from its own committed `record.json` with `embed.mjs`, so `record.json` and `receipts.json` are byte for byte what they were (git diff empty) and run-1 is still the run that was shipped. Task 40's `{?} StudentsDemoPageIsBakedAndStale` suggested `python homework.py --out evidence/run-1`, which would rewrite all three; the record would very probably come back identical apart from the durations, and the durations are exactly what nothing may compare. Rebuilding only the page keeps the evidence and fixes the staleness."
+      },
+      {
+        "label": "SprintAddsAreNamedByTheirTaskIntent",
+        "needs": "reviewed",
+        "number": 149,
+        "origin": "packet",
+        "task": "task-50",
+        "text": "the owner named the sprint (his sentence is quoted at the head of FRONTIER's \"Landed adds\") and named none of the eight adds under it, so each entry is named by its own task intent line and the sentence after it is this session's description of what you see, marked as such in the file's header. Tasks 39 and 46 landed at 03:06 and 03:03 on the sprint branch, after this copy was cut, so their entries are written from the board's landed lines rather than from their packets, which are not in this copy."
+      },
+      {
+        "label": "FIsPartlyLandedNotLanded",
+        "needs": "reviewed",
+        "number": 150,
+        "origin": "packet",
+        "task": "task-50",
+        "text": "adds A to E moved to \"Landed adds\" whole; F did not. CI proves `check_all.sh` on three operating systems (44, 46), but F's own two sentences -- `proof.sh` green on the Mac with the same receipt shape, and a landing that edits `land.sh` itself landing cleanly -- are both untouched and both want the machine. F is therefore left in the open list with a \"partly landed\" head and what is left spelled out, rather than moved. Four residuals of the landed adds are listed under them so they are not lost with the add."
+      },
+      {
+        "label": "AddressModuleNotExported",
+        "needs": "reviewed",
+        "number": 151,
+        "origin": "packet",
+        "task": "task-52",
+        "text": "`USE.md` section 1 teaches the three roots, and the only code that"
+      },
+      {
+        "label": "MaterializeNotExported",
+        "needs": "reviewed",
+        "number": 152,
+        "origin": "packet",
+        "task": "task-52",
+        "text": "same shape, and this one is on the main path -- the record is section 5"
+      },
+      {
+        "label": "PqlReceiptsIsNotAPQL",
+        "needs": "reviewed",
+        "number": 153,
+        "origin": "packet",
+        "task": "task-52",
+        "text": "every other PQL constructor returns a `PQL` you can refine --"
+      },
+      {
+        "label": "ReceiptConsumesHideResultReads",
+        "needs": "reviewed",
+        "number": 154,
+        "origin": "packet",
+        "task": "task-52",
+        "text": "in `USE.md` section 3 the invocation `split` binds"
+      },
+      {
+        "label": "HavenBriefSaysOneResult",
+        "needs": "reviewed",
+        "number": 155,
+        "origin": "packet",
+        "task": "task-52",
+        "text": "`research/haven-brief.md:41-44` still defines a Calculation as taking"
+      },
+      {
+        "label": "UseMdFixtureRegeneration",
+        "needs": "reviewed",
+        "number": 156,
+        "origin": "packet",
+        "task": "task-52",
+        "text": "`tests/fixtures/use/order-record.json` is the document section 5's"
+      },
+      {
+        "label": "ThreeCoreRunner",
+        "needs": "reviewed",
+        "number": 157,
+        "origin": "packet",
+        "task": "task-55",
+        "text": "macos-latest has 3 cores and the Fan Tick has 4 branches, so its pool is 3 workers and the fourth branch can never overlap the first three there. The overlap test now asserts min(branches, cpu_count) branches started before the first finished. The latency test two below it still expects the Fan Tick under 150 ms (4 x 50 x 0.75); on 3 cores that is two rounds, about 100 ms plus thread start, and a slow runner could cross it. Left as is until it fails once; cure would be the same measured-against-the-branches shape."
+      },
+      {
+        "label": "WindowsNewlines",
+        "needs": "reviewed",
+        "number": 158,
+        "origin": "packet",
+        "task": "task-55",
+        "text": "the CRLF undo is in test_use.py's run_block, Windows only, before the byte comparison. The alternative was to reconfigure stdout inside every USE.md block, which would have put a Windows line in a document meant to be read. The document stays clean; the test carries the platform."
+      },
+      {
+        "label": "SidecarDigest",
+        "needs": "reviewed",
+        "number": 159,
+        "origin": "packet",
+        "task": "task-57",
+        "text": "pyto/experiments/grouped-ablation/evidence/disc-stats-sidecar.json carries pcr.py's source digest and the disc-stats suite rewrites it whenever the kernel changes, so it is on this task's allow list as it was on task 39's; a kernel change that forgets it is refused at landing, which is what happened to this task's first attempt (20260910T041052Z-task-57)."
+      },
+      {
+        "label": "EvidencePinsTheKernel",
+        "needs": "reviewed",
+        "number": 160,
+        "origin": "packet",
+        "task": "task-57",
+        "text": "the grouped-ablation evidence (retained.json, the replay logs, the cached ledger) carries pcr.py's provider digest, so a kernel change turns that suite red on MAIN even when every kernel test is green (second attempt, 20260910T041436Z-task-57). Regenerated here with the experiment's own scripts (run.py, run_regrouped.py, run_reinput.py, run_from_retained.py, run_cached.py, replay.py, all --force), as tasks 22 and 39 did; 250 tests green after. Whether evidence should pin the kernel's source at all, or only the Calculations' own, is the open question."
+      },
+      {
+        "label": "ChainSuffixOnlyWhenChained",
+        "needs": "reviewed",
+        "number": 161,
+        "origin": "packet",
+        "task": "task-58",
+        "text": "`px laws` prints `(N parallel, M chain)` on the node-law line, and `chain` on a `--times` Tick line, only when the record has at least one chain; a chain-free record prints exactly as before. Reason: `tests/fixtures/px/laws-*.txt` (the byte-for-byte expected output of the two committed records) sit outside this task's Allow line. If you want `(4 parallel, 0 chain)` on every record, drop the guard in `cmd_laws` and regenerate the three fixtures."
+      },
+      {
+        "label": "SingletonCountsAsParallel",
+        "needs": "reviewed",
+        "number": 162,
+        "origin": "packet",
+        "task": "task-58",
+        "text": "tick_laws.py classifies a Tick of one Calculation (and an empty Tick) as `parallel` (no sibling reads), so the students record counts 4 parallel; the viewer's `isParallelTick`/`isChainTick` keep requiring two Calculations for either badge, as before."
+      },
+      {
+        "label": "LimitationLineUnchanged",
+        "needs": "reviewed",
+        "number": 163,
+        "origin": "packet",
+        "task": "task-58",
+        "text": "LIMITATION never stated the old rule (it speaks of reads, writes and what parallel would buy) and is the first line of the three px fixtures, so it stays; the rule and the owner's sentence live in tick_laws.py's docstring and README."
+      },
+      {
+        "label": "HandoffSentence",
+        "needs": "reviewed",
+        "number": 164,
+        "origin": "packet",
+        "task": "task-58",
+        "text": "HANDOFF.md's \"inside one Tick it claims none\" stated the old rule, so one clause was added in the student's voice (\"claims an order only where one Calculation reads another's result\"); the rest of the page is left as the cold read caught it (questions.md, WhatIsATick)."
+      },
+      {
+        "label": "LawsParity",
+        "needs": "reviewed",
+        "number": 165,
+        "origin": "packet",
+        "task": "task-59",
+        "text": "exec.js's docstring used to claim it refuses exactly the Ticks pyto/experiments/tick-laws/tick_laws.py refuses; at this starting point tick_laws.py still flags a sibling read as a node-law violation and task 58 is changing it separately, so the docstring now states the laws on its own and does not claim the two readers agree until 58 lands."
+      },
+      {
+        "label": "SerialMode",
+        "needs": "reviewed",
+        "number": 166,
+        "origin": "packet",
+        "task": "task-59",
+        "text": "a serial run's schedule (written only when budgeted) carries no per-Tick `mode`, matching RECORD.md's \"absent means serial\" for placement; the owner may prefer an explicit 'serial' value there instead of absence."
+      },
+      {
+        "label": "ViewerRecord",
+        "needs": "reviewed",
+        "number": 167,
+        "origin": "packet",
+        "task": "task-59",
+        "text": "pyto/viewer/adapters.js copies only placements and latency_ms off run.schedule and rejects no extra field, so per this task's rule adapters.js and RECORD.md are untouched: the receipt's `schedule` says which Ticks were chains, but the pyto-run-record@1 the viewer exports does not carry `mode` yet."
+      },
+      {
+        "label": "RefusalPrefix",
+        "needs": "reviewed",
+        "number": 168,
+        "origin": "packet",
+        "task": "task-59",
+        "text": "the backwards read and the duplicate producer are still refused only under parallel: true and keep the \"parallel refused:\" message prefix; a serial run is unchanged, where a backwards read reads whatever the board already holds or fails as a missing address."
+      },
+      {
+        "label": "TournamentScope",
+        "needs": "reviewed",
+        "number": 169,
+        "origin": "root",
+        "task": "root",
+        "text": "Was the art tournament on the critical path of the vision?"
+      },
+      {
+        "label": "EvidenceDirtiness",
+        "needs": "reviewed",
+        "number": 170,
+        "origin": "root",
+        "task": "root",
+        "text": "evidence trees are excluded from the `-dirty` stamp; the owner may prefer stamping"
+      },
+      {
+        "label": "VerificationOracleStamp",
+        "needs": "reviewed",
+        "number": 171,
+        "origin": "root",
+        "task": "root",
+        "text": "The retained-record oracle compares everything except `retained.commit`."
+      },
+      {
+        "label": "InputPartsChangedScope",
+        "needs": "reviewed",
+        "number": 172,
+        "origin": "root",
+        "task": "root",
+        "text": "`input_parts_changed` counts an input Part that one run reads and the other does not."
+      },
+      {
+        "label": "DirtyStampUnderAConcurrentSession",
+        "needs": "reviewed",
+        "number": 173,
+        "origin": "root",
+        "task": "root",
+        "text": "Does a `-dirty` working tree caused by ANOTHER session's in-flight files count as"
+      },
+      {
+        "label": "ExternalInputBoundary",
+        "needs": "reviewed",
+        "number": 174,
+        "origin": "root",
+        "task": "root",
+        "text": "In the DiscStudio card path, normalized presentation is computed outside the PCR and seeded as a"
+      },
+      {
+        "label": "ProposalsNotFacts",
+        "needs": "reviewed",
+        "number": 175,
+        "origin": "root",
+        "task": "root",
+        "text": "Predicted transitions (a score rises, a card grows) are written to `px.proposal.*`, never to the"
+      },
+      {
+        "label": "ObservationSeam",
+        "needs": "reviewed",
+        "number": 176,
+        "origin": "root",
+        "task": "root",
+        "text": "Digests and durations live in `PcrRun.receipts` rather than testimony fields, so consumer bytes"
+      },
+      {
+        "label": "ValueRetention",
+        "needs": "reviewed",
+        "number": 177,
+        "origin": "root",
+        "task": "root",
+        "text": "Status: open; each is described where it was raised (`research/ULTRACODE-WEEK.md`, `CHANGES.md`,"
+      },
+      {
+        "label": "MaterialsLocation",
+        "needs": "reviewed",
+        "number": 178,
+        "origin": "root",
+        "task": "root",
+        "text": "Status: open; each is described where it was raised (`research/ULTRACODE-WEEK.md`, `CHANGES.md`,"
+      },
+      {
+        "label": "AddressRootIsAMount",
+        "needs": "reviewed",
+        "number": 179,
+        "origin": "root",
+        "task": "root",
+        "text": "ChainSpot keeps the world (course, game, repo) outside the address as a mount and has a test that"
+      },
+      {
+        "label": "RootIdIsContent",
+        "needs": "reviewed",
+        "number": 180,
+        "origin": "root",
+        "task": "root",
+        "text": "ChainSpot's mount id is a content digest of the image, with the human label in a side map. Status:"
+      },
+      {
+        "label": "ScratchRootConflict",
+        "needs": "reviewed",
+        "number": 181,
+        "origin": "root",
+        "task": "root",
+        "text": "ChainSpot's TS puts scratch inside `px.<stage>.exp.*`, its Python uses a `scratch.*` root, neither"
+      },
+      {
+        "label": "MaterialIsAKindNotARoot",
+        "needs": "reviewed",
+        "number": 182,
+        "origin": "root",
+        "task": "root",
+        "text": "Round four had a `material.<sha>` root; ChainSpot carries `kind` as a declared field on a"
+      },
+      {
+        "label": "DuckDBIsAWorkshopBackend",
+        "needs": "reviewed",
+        "number": 183,
+        "origin": "root",
+        "task": "root",
+        "text": "The archive measured 3.80 s Node and 5.79 s browser startup against 69 to 228 ms queries; the owner"
+      },
+      {
+        "label": "TickEqualsReceipt",
+        "needs": "reviewed",
+        "number": 184,
+        "origin": "root",
+        "task": "root",
+        "text": "ChainSpot production declares a Tick's testimony and its receipt to be one type; pyto freezes the"
+      },
+      {
+        "label": "StorybookAsVehicle",
+        "needs": "reviewed",
+        "number": 185,
+        "origin": "root",
+        "task": "root",
+        "text": "ChainSpot's per-Tick viewer ships through Storybook and a staging build. Status: open, lean yes:"
+      },
+      {
+        "label": "SilentRewritePredatesPyto",
+        "needs": "reviewed",
+        "number": 186,
+        "origin": "root",
+        "task": "root",
+        "text": "The declaration-time rewrite of a Part binding to its writer's ResultRef was already in ChainSpot's"
+      },
+      {
+        "label": "UnrunProofsCount",
+        "needs": "reviewed",
+        "number": 187,
+        "origin": "root",
+        "task": "root",
+        "text": "The Mermaid PCR compiler's seven rejection rules are a design that was never run. Status: open,"
+      },
+      {
+        "label": "S3DefectOwnership",
+        "needs": "reviewed",
+        "number": 188,
+        "origin": "root",
+        "task": "root",
+        "text": "Three of eighteen accepted Tee objects on one course are iOS map-chrome false positives, reported"
+      },
+      {
+        "label": "MiningCoverage",
+        "needs": "reviewed",
+        "number": 189,
+        "origin": "root",
+        "task": "root",
+        "text": "Four tips failed on output formatting (fa44a45, the parent of the two most important tips, among"
+      },
+      {
+        "label": "ParkingIsManual",
+        "needs": "reviewed",
+        "number": 190,
+        "origin": "root",
+        "task": "root",
+        "text": "Should the landing script move another writer's files aside itself? Status: provisional, no: it"
+      },
+      {
+        "label": "MailboxInRepo",
+        "needs": "reviewed",
+        "number": 191,
+        "origin": "root",
+        "task": "root",
+        "text": "The owner offered `D:\\mailbox\\` for messages to Astra; this session runs in a cloud container and"
+      },
+      {
+        "label": "PartialWritesOnFailure",
+        "needs": "reviewed",
+        "number": 192,
+        "origin": "root",
+        "task": "root",
+        "text": "ChainSpot's S1 lane keeps a failed Tick's earlier writes visible in its fork and defers partial"
+      },
+      {
+        "label": "ThreeReceiptShapes",
+        "needs": "reviewed",
+        "number": 193,
+        "origin": "root",
+        "task": "root",
+        "text": "One ChainSpot tip carries three receipt vocabularies at once. Status: provisional: pyto has one,"
+      },
+      {
+        "label": "MaterializerAsTemplate",
+        "needs": "reviewed",
+        "number": 194,
+        "origin": "root",
+        "task": "root",
+        "text": "A plain script that runs the PCR, queries the finished store by address, asserts a partition"
+      },
+      {
+        "label": "PqlRunRootStatus",
+        "needs": "reviewed",
+        "number": 195,
+        "origin": "root",
+        "task": "root",
+        "text": "`px.pql.<Name>` has two independent ChainSpot precedents. Status: open, lean: `pql` joins the"
+      },
+      {
+        "label": "MatrixAddressRoot",
+        "needs": "reviewed",
+        "number": 196,
+        "origin": "root",
+        "task": "root",
+        "text": "`matrix.material.<key>` is a live unprefixed cache address in shipped LAB tooling. Status: open,"
+      },
+      {
+        "label": "TelemetryGateRule",
+        "needs": "reviewed",
+        "number": 197,
+        "origin": "root",
+        "task": "root",
+        "text": "A value computed only for logging must never influence its own Calculation's output. Status:"
+      },
+      {
+        "label": "TruthTaintAsReceiptField",
+        "needs": "reviewed",
+        "number": 198,
+        "origin": "root",
+        "task": "root",
+        "text": "ChainSpot marks truth-assisted evaluations with a mode so no consumer treats them as production"
+      },
+      {
+        "label": "SnapshotVsMaterialization",
+        "needs": "reviewed",
+        "number": 199,
+        "origin": "root",
+        "task": "root",
+        "text": "A whole-board serialized snapshot, digest-gated, is a third storage answer. Status: open, lean"
+      },
+      {
+        "label": "CustodyReceiptFamily",
+        "needs": "reviewed",
+        "number": 200,
+        "origin": "root",
+        "task": "root",
+        "text": "CustodyReceiptFamily"
+      },
+      {
+        "label": "OperationLevelReceiptWrapper",
+        "needs": "reviewed",
+        "number": 201,
+        "origin": "root",
+        "task": "root",
+        "text": "OperationLevelReceiptWrapper"
+      },
+      {
+        "label": "ForkAsTickTransaction",
+        "needs": "reviewed",
+        "number": 202,
+        "origin": "root",
+        "task": "root",
+        "text": "ForkAsTickTransaction"
+      },
+      {
+        "label": "ScratchRootOrigin",
+        "needs": "reviewed",
+        "number": 203,
+        "origin": "root",
+        "task": "root",
+        "text": "Status: open; described in the mining appendix. Lean: custody facts are ordinary Parts; the"
+      },
+      {
+        "label": "TelemetryGateBoundary",
+        "needs": "reviewed",
+        "number": 204,
+        "origin": "root",
+        "task": "root",
+        "text": "Status: open; described in the mining appendix. Lean: custody facts are ordinary Parts; the"
+      },
+      {
+        "label": "ValueRetention",
+        "needs": "reviewed",
+        "number": 205,
+        "origin": "root",
+        "task": "root",
+        "text": "What happens to a Part's value when it is too large for the run record to carry whole?"
+      },
+      {
+        "label": "MaterialsLocation",
+        "needs": "reviewed",
+        "number": 206,
+        "origin": "root",
+        "task": "root",
+        "text": "Where does the content-addressed materials store live, and is it shared or per checkout?"
+      },
+      {
+        "label": "TaskIds",
+        "needs": "reviewed",
+        "number": 207,
+        "origin": "root",
+        "task": "root",
+        "text": "Base64 ids or plain numbers? Status: provisional: plain numbers from 0; base64 is an encoding and"
+      },
+      {
+        "label": "FoldersNotBranches",
+        "needs": "reviewed",
+        "number": 208,
+        "origin": "root",
+        "task": "root",
+        "text": "The owner wants one tree, no branch sprawl. Status: provisional: EXP/<id> is a folder the owner"
+      },
+      {
+        "label": "PacketTravels",
+        "needs": "reviewed",
+        "number": 209,
+        "origin": "root",
+        "task": "root",
+        "text": "Where does the packet live so a fresh agent on another machine gets it? Status: provisional:"
+      },
+      {
+        "label": "ConvincingAFreshAgent",
+        "needs": "reviewed",
+        "number": 210,
+        "origin": "root",
+        "task": "root",
+        "text": "Fresh agents often dismiss pyto. Status: provisional: the hand-off carries a short primer that"
+      },
+      {
+        "label": "BPlusTree",
+        "needs": "reviewed",
+        "number": 211,
+        "origin": "root",
+        "task": "root",
+        "text": "Could neat be a B+ tree? Status: open, lean later: a B+ tree organizes stored records for lookup;"
+      },
+      {
+        "label": "EverythingIsAPart",
+        "needs": "reviewed",
+        "number": 212,
+        "origin": "root",
+        "task": "root",
+        "text": "The owner: \"The function stopped being the subject; the receipt became the subject. One of the"
+      },
+      {
+        "label": "NearHit",
+        "needs": "reviewed",
+        "number": 213,
+        "origin": "root",
+        "task": "root",
+        "text": "The owner pointed at Annoy (approximate nearest neighbours, read-only mmapped index shared by"
+      },
+      {
+        "label": "ResidueMining",
+        "needs": "reviewed",
+        "number": 214,
+        "origin": "root",
+        "task": "root",
+        "text": "The owner: could SUBDUE-style mining find shared substructure in ANN logs, or be the CV substrate"
+      },
+      {
+        "label": "HidingPrimitives",
+        "needs": "reviewed",
+        "number": 215,
+        "origin": "root",
+        "task": "root",
+        "text": "The owner: the ANN logs would be neat's, the LAB's, the paint studio's, to see if they hide"
+      },
+      {
+        "label": "UndoStack",
+        "needs": "reviewed",
+        "number": 216,
+        "origin": "root",
+        "task": "root",
+        "text": "The owner: a generic Part that would do the site good the way undo did neat. Status: provisional,"
+      },
+      {
+        "label": "CardRenderer",
+        "needs": "reviewed",
+        "number": 217,
+        "origin": "root",
+        "task": "root",
+        "text": "Astra, handing back `astra/discstudio-1`: \"The fixed port cannot preserve arbitrary authored"
+      },
+      {
+        "default_sha256": "9767e1c750b961c1f72f0f36e0325b6598a8868421d9fc11c269901ffd4c5413",
+        "label": "PartLabelKind",
+        "needs": "default",
+        "number": 218,
+        "origin": "packet",
+        "task": "task-60",
+        "text": "Parts are labelled by full address (exact) or the constant \"part\" (shape); labelling by value kind (json/text/svg) would sit between the two and was not tried."
+      },
+      {
+        "default_sha256": "642b4f903d359cd3d317cd7ac4f489211c791eb24872e06039ffe592ad34512a",
+        "label": "CompoundMolecules",
+        "needs": "default",
+        "number": 219,
+        "origin": "packet",
+        "task": "task-60",
+        "text": "later SUBDUE ranks are built on an earlier rank's SUB node; they are listed with their instances but no PQL document is emitted for them (only primitive ranks embed vertex-for-vertex)."
+      },
+      {
+        "default_sha256": "97fb9740987ebbf71a260378e9e689198d754b5da3d72872e9fe3949e755b4ac",
+        "label": "PxMolecules",
+        "needs": "default",
+        "number": 220,
+        "origin": "packet",
+        "task": "task-60",
+        "text": "\"px molecules <record...>\" in px.py is not done (time)."
+      },
+      {
+        "default_sha256": "e6f97ac4c21c0568a0dc8a681ab0d37b462cc32f690ccaebdc815b8227c16990",
+        "label": "DocumentDropsArgs",
+        "needs": "default",
+        "number": 221,
+        "origin": "packet",
+        "task": "task-60",
+        "text": "the emitted PQL document carries call, with and into but not the invocation's args or id, so where two Calculations differ only by args (exact rank 1: fn.ablation.fit all versus drop_g0) the document names the molecule's wiring and cannot run the instance it was cut from; args belong in it, and the spelling should follow pyto's own writer (src/pyto/graph.py to_pcr_dict) rather than the studio's bare-address form. Found by the verifier, not fixed in the 30 minutes."
+      },
+      {
+        "default_sha256": "1c3ae0264867e609b1dc18ed2f61133a66b30e91499484551b1afc1cc633275d",
+        "label": "OnePartQuery",
+        "needs": "default",
+        "number": 222,
+        "origin": "packet",
+        "task": "task-60",
+        "text": "a one-Part molecule is spelled PQL.prefix(address), which also matches longer addresses; PQL.part(address) is the exact form the API has."
+      },
+      {
+        "default_sha256": "05aef5349b7100359cec98b7250e4909a7daa3a5b7ee2fb279a58a3a629d590e",
+        "label": "HashRefUnchecked",
+        "needs": "default",
+        "number": 223,
+        "origin": "packet",
+        "task": "task-60",
+        "text": "the fn:<id>#<address> branch of resolve() trusts the address without checking it is among the producer's into (record_schema.py does check); no committed record uses the form."
+      },
+      {
+        "default_sha256": "72522db6c8022c2d72435573b8242014b0874891fd0a71da361c68af6802759f",
+        "label": "ConceptMap",
+        "needs": "default",
+        "number": 224,
+        "origin": "packet",
+        "task": "task-63",
+        "text": "changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to Calculation, materialize.py and pyto/viewer to receipt and record, neat.sh, land.sh and the classroom to neat, src/ to the studio, pyto/experiments to experiments, the rest to docs). Three of those names (record, the studio, experiments, docs) are not among the seven and get one-line meanings of their own; a landing whose only changed files are receipts and evidence shows as \"experiments\"."
+      },
+      {
+        "default_sha256": "7bcf7f1d95239a7374b41bed30c327b3bf466c73ded1b00ce4719a1215e67df3",
+        "label": "AbsolutePathsInTheRecord",
+        "needs": "default",
+        "number": 225,
+        "origin": "packet",
+        "task": "task-63",
+        "text": "the record itself carries a machine's absolute path in places (refused lines on the board, check_all.txt); the page replaces every such path with \"(absolute path cut)\" so the same tree gives the same bytes on any machine. The receipts and the board are untouched."
+      },
+      {
+        "default_sha256": "f087e58e24d550c1b0f2ef041a1ac5e0144d219972da1a83f1fd890c1bd5bb34",
+        "label": "NeatWalkCheck",
+        "needs": "default",
+        "number": 226,
+        "origin": "packet",
+        "task": "task-63",
+        "text": "neat walk --check is also accepted (dispatches to walk.py --check) though the brief named only walk, walk N and walk --page."
+      },
+      {
+        "default_sha256": "cee77363d849cf639ddbd9e01ca724cb870207b1e3e7ee1b9926ada3e1808ed9",
+        "label": "PathCutSwallowedQuotes",
+        "needs": "default",
+        "number": 227,
+        "origin": "packet",
+        "task": "task-63",
+        "text": "the first build cut an escaped quote along with a path 190 times (the verifier's find); the cut now stops before an html entity. The concept map also filed tests and the other kernel files under docs; tests are their own concept now and the rest of pyto/src is PxC."
+      },
+      {
+        "default_sha256": "65b0279c75a517d055451c87d9c5ac364ece53fcbc673363ed2fb7d58ac38373",
+        "label": "RootItemText",
+        "needs": "default",
+        "number": 228,
+        "origin": "packet",
+        "task": "task-65",
+        "text": "collate's root-origin items (task=\"root\") use the heading's first non-empty body line as `text` (falling back to the label when a heading has none before the next), since the packet names only \"the labels of pyto/questions.md (### {?} Label)\" as the input and does not say what \"text\" should be for a root item. Is the first body line the right preview, or should it be the bare label, the whole entry, or something else?"
+      },
+      {
+        "default_sha256": "9cdb7825d1ab52f07af4ba3eaefb2d73ceb7960477d438f021a5e910b6372152",
+        "label": "RootItemScope",
+        "needs": "default",
+        "number": 229,
+        "origin": "packet",
+        "task": "task-65",
+        "text": "the real questions.md carries 102 \"### {?}\" headings naming 117 labels (five headings group several labels on one comma-separated line, e.g. \"### {?} PromotionScope, {?} ReceiptExport, ...\"; three of the 117 are themselves duplicate labels, already flagged as {?} QuestionsDuplicateLabels), and since \"answered\" means only \"an answer file exists for its label\", every one of the 117 surfaces as an open root item the first time neat ask runs, including ones already marked \"Status: resolved\" in prose -- 263 items in batch 1 on this tree (146 packet + 117 root). Is surfacing every historical label right (a one-time backlog the TinyQuestions pipeline works through), or should root items be limited to labels whose own Status line says open/provisional?"
+      },
+      {
+        "default_sha256": "c9f5aed26d240da88b96bf7e3902d258dcba5a0c026bee8ccd714838137380b8",
+        "label": "WalkReachability",
+        "needs": "default",
+        "number": 230,
+        "origin": "packet",
+        "task": "task-65",
+        "text": "the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent; on MAIN this is the same set as before."
+      },
+      {
+        "default_sha256": "e5c2d8a22a4e067b2d5ad7d0f52da48a29711b4f17bd0e1df00c28151e15f911",
+        "label": "DiffNewIsAsymmetric",
+        "needs": "default",
+        "number": 231,
+        "origin": "packet",
+        "task": "task-66",
+        "text": "the outputs vocabulary (same/changed/new/unknown) has no fifth word for \"removed\", so an address only one of the two documents declares as `into` -- on either side -- is reported \"new\" rather than told apart by direction. Every fixture here has matching address sets on both sides so this never actually fires; worth a direction-aware word if a future diff compares documents that genuinely add or drop an address."
+      },
+      {
+        "default_sha256": "687ad0f4d40932d8d1587a9acdbb37121a055717a512e1f5006efd08a1b5c0c3",
+        "label": "DiffPrintForm",
+        "needs": "default",
+        "number": 232,
+        "origin": "packet",
+        "task": "task-66",
+        "text": "the CLI prints the diff value pretty (two-space indent, sorted keys -- px.py's own meaning of \"canonical JSON\" for a value meant to be read) while the sha256 inside the written Part hashes the compact, no-whitespace form (retain.py's canonical_json/digest_of, reused for the digest only). \"Prints the diff value as canonical JSON\" could mean either spelling; I kept the two uses separate rather than picking one JSON style for both."
+      },
+      {
+        "default_sha256": "4e4755797624efaea7955f5122c22fc94aa184be5c22febfa3c13bff41618a3c",
+        "label": "NeatDiffCalculationRunForm",
+        "needs": "default",
+        "number": 233,
+        "origin": "packet",
+        "task": "task-66",
+        "text": "`fn.neat.diff.candidates` is registered in a PxC and invoked with `pxc.call(...)` (USE.md section 3's plain form), not run through a PCR of its own with observe=True; only the two document sub-runs it triggers are `PCR.run(..., observe=True)` and materialized (the two records the packet asks for beside the Part). A more literal reading of \"every Calculation runs through an observed PCR\" would also wrap the comparison step itself, leaving it a receipt too."
+      },
+      {
+        "default_sha256": "8dded9bfe7b916be1c49a7e66dd08eea554c2431c8ff668add0d1eeb976a0f71",
+        "label": "DiffRemainderOcOrder",
+        "needs": "default",
+        "number": 234,
+        "origin": "packet",
+        "task": "task-66",
+        "text": "the remainder lists every label (a's then b's) followed by one \"not run: <call> is oc.\" line per oc. call found, in encounter order (a's Ticks then b's), not deduplicated -- a document naming the same oc. call twice gets two identical lines. Not specified either way in the packet."
+      },
+      {
+        "default_sha256": "794f107046019e2fa0830d6eda824f5c6fb197cd6ad4a7dd8eb372c1086b019a",
+        "label": "LabelsOutsideReadPqlGrammar",
+        "needs": "default",
+        "number": 235,
+        "origin": "packet",
+        "task": "task-66",
+        "text": "documents here carry a top-level `labels` list the JS `readPql` grammar (pql_document.py's own docstring) does not define; treated as this module's private, presentation-only extension and stripped before `structural_digest`/`run_document` see the document. Untested against the real reader, which would presumably just ignore the unknown key."
+      },
+      {
+        "default_sha256": "7e8502b6357b5bb62311bc9606b60a262d18e2b5df1222b7023df7022f7cc4f6",
+        "label": "SecretsAreNotEffects",
+        "needs": "default",
+        "number": 236,
+        "origin": "packet",
+        "task": "task-67",
+        "text": "Effects.env records the value it reads, so the GitHub token is read with os.environ and never through the handle; a secret is an effect the ledger must not carry, and the handle has no verb for that."
+      },
+      {
+        "default_sha256": "d19cd833da48cb9f50ff423b9fafe901d55d2f839c33eeb52ef3d994d4c63e7f",
+        "label": "HttpIsNotAnEffectKind",
+        "needs": "default",
+        "number": 237,
+        "origin": "packet",
+        "task": "task-67",
+        "text": "the GitHub requests are not ledgered (the handle has write_text, read_text, now_ms, random, env); the event they return is the Part, the request is not; a network verb on the handle is a kernel decision."
+      },
+      {
+        "default_sha256": "5df979ba149bcfffa10cb87ca6357a5335d2b42f378f06bfe316e3174be01b0d",
+        "label": "SubjectIsTheHeadSha",
+        "needs": "default",
+        "number": 238,
+        "origin": "packet",
+        "task": "task-67",
+        "text": "the frozen subject is the package plus the candidate's head sha, because the sha fixes the packet and every claimed byte; the receipt's per-file digests are derived from it and are not in the subject."
+      },
+      {
+        "label": "ReviewPageScope",
+        "needs": "default",
+        "number": 239,
+        "origin": "packet",
+        "task": "task-70",
+        "text": "every packet up to task 59 is the review page's, so its lines are not asked again; the number is a constant in review.py."
+      },
+      {
+        "label": "DefaultSentences",
+        "needs": "default",
+        "number": 240,
+        "origin": "packet",
+        "task": "task-70",
+        "text": "the 23 defaults filed here restate each packet line's first clause; two were mangled by the shell on the first pass and refiled by hand."
+      },
+      {
+        "label": "FiledDefaultsBecomeRootEntries",
+        "needs": "default",
+        "number": 241,
+        "origin": "packet",
+        "task": "task-71",
+        "text": "filing a default under a label that had no root entry creates one (### {?} Label with a Default line), and the collator then lists it twice, as the packet item and as a root item; the second is counted as default too, so nothing is asked twice, but the batch is longer than it need be."
+      },
+      {
+        "label": "ReviewedItemsStillAnswerable",
+        "needs": "default",
+        "number": 242,
+        "origin": "packet",
+        "task": "task-71",
+        "text": "a reviewed item (task 58 and earlier) keeps its number in the batch JSON though it is not printed, so neat answer reaches it; ChainLatencyIsTheWholeTick was answered that way."
+      },
+      {
+        "label": "ProduceDigestIsInvocationLevel",
+        "needs": "default",
+        "number": 243,
+        "origin": "packet",
+        "task": "task-73",
+        "text": "RECORD.md carries one `result_sha256` per invocation and no per-produce digest (`{?} RecordProduceDigest`, already on the record). `tick_projection`'s `produces` therefore gives every write of a multi-produce invocation the *same* digest -- its one `result_sha256` -- rather than a digest specific to that one address. This is exercised by neither fixture (students and grouped-ablation are one-address invocations throughout); if RECORD.md ever grows a `produce_sha256` per address (as the Receipt already carries, \"Receipts as Parts\"), `tick_projection` should prefer it there."
+      },
+      {
+        "label": "DiffModeLatencyExcluded",
+        "needs": "default",
+        "number": 244,
+        "origin": "packet",
+        "task": "task-73",
+        "text": "`px diff`'s Tick section compares only consumes/internal/produces/calculations, per the packet; a Tick whose `latency_ms` or run-level `parallel` mode changed between two records (same computation, different schedule) reads `same`. This mirrors the existing invocation-level rule (\"Two records that differ only in how long they took are not different\") but is worth confirming, since RECORD.md frames `parallel`/`latency_ms` as schedule rather than program on purpose."
+      },
+      {
+        "label": "FnReadFallbackDivergence",
+        "needs": "default",
+        "number": 245,
+        "origin": "packet",
+        "task": "task-73",
+        "text": "`tick_projection`'s consumes/internal reuse `tick_laws._reads`/`_writes` verbatim, as asked. That function's handling of a produce-qualified `fn:<id>#<address>` binding whose `id` is *not* in this record's `into_by_id` differs from `adapters.js` `parseBinding` (tick_laws still adds the bare address; parseBinding adds nothing) -- a pre-existing divergence between the two shared readers, not something this task introduced, and not exercised by either fixture (neither uses multi-produce)."
+      },
+      {
+        "label": "RegeneratedGolden",
+        "needs": "default",
+        "number": 246,
+        "origin": "packet",
+        "task": "task-73",
+        "text": "`viewer/test/students-card-tree.golden.txt` (task 40's committed tree) is regenerated, not kept green -- adding the facts block to every Tick card necessarily changes it. Regenerated with a small throwaway script using the same `serialize`/`createStubDocument` shim `effects-view.test.mjs` defines inline; the diff is four new lines (`dl.tick-facts` and its eight `dt`/`dd` children) per Tick, nothing else moved."
+      },
+      {
+        "label": "RegistryInputNames",
+        "needs": "default",
+        "number": 247,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "the packet says a registry may map address -> {\"calculation\": ..., \"inputs\": [...]} but not how \"inputs\" lines up with a skeleton's matched Parts when there are several of each. I filled a shared cursor positionally, in matched-address order, across every matched Calculation in address order (documented in crisp.py's module docstring and exercised by the one-input, one-Part fixture); with two-plus inputs on one Calculation and an ambiguous pool this could bind the wrong Part to the wrong name and nothing would catch it."
+      },
+      {
+        "label": "ValueKindKindOfCompat",
+        "needs": "default",
+        "number": 248,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "Variation A groups by JSON type (number/string/list/mapping) per the packet's own words, so I used that literally. A kind match says nothing about the two values meaning the same thing (px.canvas.width could have been a number Part meant as a swatch id) -- it is the cheapest rule that fits the fixture, not necessarily the right one for a real store."
+      },
+      {
+        "label": "OptionSlugSpelling",
+        "needs": "default",
+        "number": 249,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "slugs are \"a<n>-<last address segment>\"/\"b<n>-<last address segment>\", derived to match the packet's own examples (a2-paper, b1-coordinatesInverted) exactly. The packet's own text also raised \"whether option slugs should be digests\" as an open question; I did not use the digest for the slug (only for the revision segment after it), since the address-derived slug is what made the given examples reproducible."
+      },
+      {
+        "label": "ProduceShapeByInvocation",
+        "needs": "default",
+        "number": 250,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "Variation B decides \"same produce shape\" by actually calling each candidate Calculation with the entry's own resolved inputs and counting the result -- the registry has no declared output count to compare against instead. This runs every fn. candidate in the registry once per vary; an oc. candidate is never invoked or offered, but a fn. candidate with a side effect disguised as purity would still run."
+      },
+      {
+        "label": "ForceSkeletonRefusal",
+        "needs": "default",
+        "number": 251,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "`crisp template --mode force` without `--pql` refuses outright (\"force mode needs --pql\") rather than trying to resolve a skeleton's \"with\" bindings and leaving \"into\" unresolved -- there is no way to invent an output address, and a half-resolved force skeleton felt worse than a clear refusal. Untested by any of the required tests either way."
+      },
+      {
+        "label": "ProposedPartsFromInto",
+        "needs": "default",
+        "number": 252,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "when deriving a proposal from a given --pql document, only \"with\" bindings and \"call\"s are classified as existing/proposed (the packet's literal rule); a Calculation's own new \"into\" outputs are never added to proposedParts, even though they are exactly the new behaviour capabilityDelta describes. They are still visible inside the embedded PQL, just not enumerated as their own proposedParts entries."
+      },
+      {
+        "label": "VaryAlwaysClassifiesImply",
+        "needs": "default",
+        "number": 253,
+        "origin": "packet",
+        "task": "task-74",
+        "text": "`crisp vary`'s options are always built with the lenient (imply-style) with/call classification, regardless of whether the base proposal was made in imply or force mode, so a variant's existingParts/existingCalculations can never trip a refusal. This keeps vary simple and total, but a force-mode base's variants are not themselves re-verified against force mode's stricter rule."
+      },
+      {
+        "label": "PinVerifiedOnlyAtImport",
+        "needs": "default",
+        "number": 254,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "\"Template and force mode accept both\" (live/pinned) I read as accepting the syntax only; the actual sha256 check (\"import resolves a pinned binding by checking...\") I put solely in `crisp import`, never in `crisp template --mode force`. A proposal can therefore be written and inspected with a pin that no longer matches the store -- only import refuses it. If force-mode template building should also refuse a stale pin immediately, that is a small change to `build_pql_proposal`."
+      },
+      {
+        "label": "PinDigestLength",
+        "needs": "default",
+        "number": 255,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "a pin's `sha256` is accepted as either the full 64-hex digest or a short prefix of one (`_check_pins` compares by `startswith`), matching the \"expected <12> got <12>\" example in the packet, which shows 12-char values. I did not standardize on one length for the field itself (crisp's own `pins` writes carry whatever length the input gave, or the vary-substituted pin's fresh full digest) -- if pins should always be stored as exactly 12 hex, that's a one-line change."
+      },
+      {
+        "label": "CardsNeedsStore",
+        "needs": "default",
+        "number": 256,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "`crisp cards`'s CLI signature in the packet (`crisp cards <set-dir-or-proposal.json> --labels \"...\" [--out cards.json]`) has no `--store`, but \"the exact input values from the store for its bindings\" cannot be rendered without one, so I added `--store` as a required flag (matching template/vary/import's own style). Confirming this is fine, or that cards should instead read values already inside the proposal (it does not carry raw store values today, only value digests)."
+      },
+      {
+        "label": "CardsLabelsIsOneString",
+        "needs": "default",
+        "number": 257,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "`--labels` takes one string, becoming the root labelled card's sole `labels` entry (`[\"<text>\"]`); I did not split on comma, since the fixture's own example label (\"One color, two representations\") itself contains a comma. Repeating `--labels` for more than one label is not supported today."
+      },
+      {
+        "label": "AstarNoPqlWiring",
+        "needs": "default",
+        "number": 258,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "an A-Star study's `known` seeds `existingParts`/`existingCalculations` but I did not have it wire a Calculation invocation (the produced proposal's `PQL` carries one Tick with an empty `Calculations` list) -- A-Star intake reads as \"what do we know and not know yet\", with the wiring left to a follow-up `crisp vary`/hand edit, or a second `--pql` pass. If A-Star should also fill a skeleton-style \"with\" from its known Parts by declared input name, that is a related but separate addition."
+      },
+      {
+        "label": "PartBasisIncludesTheRootItself",
+        "needs": "default",
+        "number": 259,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "`px.part_basis`/crisp's `is_part` treat a root part address (`proposal.*`/`px.exp.*`) as standing on itself (`basis[addr] = {addr}`), so a part address that a run merely reads (never computed from another part) still shows `provisional (basis: <itself>)` in `px ls`. An alternative reading marks only *derived* addresses provisional and leaves a root part's own row as `-`; I judged the inclusive reading more useful (nothing under those two mounts should read as ordinary/production) and it is what the new `px.py`/`crisp.py` tests check."
+      },
+      {
+        "label": "GateSelectionPncRequiredWhenSubjectHasPnc",
+        "needs": "default",
+        "number": 260,
+        "origin": "packet",
+        "task": "task-75",
+        "text": "when `subject.pnc` is set, `evaluate` now also refuses an event that carries no `selection_pnc` at all (treated the same as a mismatch), not only one that names a different pnc. If a human approval that simply doesn't mention pnc should still open the gate whenever the head sha matches, that check needs loosening."
+      },
+      {
+        "label": "dataset/synthetic arity",
+        "needs": "default",
+        "number": 261,
+        "origin": "packet",
+        "task": "task-81",
+        "text": "CONTRACT.md lists `dataset(name, for_, columns, rows)` and"
+      },
+      {
+        "label": "store/<vertical>.json scope",
+        "needs": "default",
+        "number": 262,
+        "origin": "packet",
+        "task": "task-81",
+        "text": "`save(vertical)` persists the addresses THIS process wrote, merged over"
+      },
+      {
+        "label": "non-finite floats",
+        "needs": "default",
+        "number": 263,
+        "origin": "packet",
+        "task": "task-81",
+        "text": "a part value holding nan/inf round-trips through python's json but is not valid JSON"
+      },
+      {
+        "label": "the committed store/backend.json and records/brain_example.json hold wall-clock benchmark numbers, so",
+        "needs": "default",
+        "number": 264,
+        "origin": "packet",
+        "task": "task-81",
+        "text": ""
+      },
+      {
+        "label": "sp engines that are numpy's",
+        "needs": "default",
+        "number": 265,
+        "origin": "packet",
+        "task": "task-87",
+        "text": "cumsum, sort and argsort have no distinct scipy call worth the"
+      },
+      {
+        "label": "svd returns singular values only. u and v carry a per-column sign freedom that the engines",
+        "needs": "default",
+        "number": 266,
+        "origin": "packet",
+        "task": "task-87",
+        "text": ""
+      },
+      {
+        "label": "eig refuses a complex spectrum rather than returning `{\"real\", \"imag\"}` the way fft does.",
+        "needs": "default",
+        "number": 267,
+        "origin": "packet",
+        "task": "task-87",
+        "text": ""
+      },
+      {
+        "label": "the py engine of solve refuses a singular matrix at |pivot| < 1e-300, which is a different",
+        "needs": "default",
+        "number": 268,
+        "origin": "packet",
+        "task": "task-87",
+        "text": ""
+      },
+      {
+        "label": "this task changes three files in pyto/experiments/brain",
+        "needs": "default",
+        "number": 269,
+        "origin": "packet",
+        "task": "task-91",
+        "text": "harness.py (the shared Store), and"
+      },
+      {
+        "label": "reading and writing now default to different places",
+        "needs": "default",
+        "number": 270,
+        "origin": "packet",
+        "task": "task-91",
+        "text": "`load_store()` still reads the committed"
+      },
+      {
+        "label": "ml/parts.py `save()` is left alone",
+        "needs": "default",
+        "number": 271,
+        "origin": "packet",
+        "task": "task-91",
+        "text": "it writes store/ml.json unconditionally, and only"
+      },
+      {
+        "label": "BRAIN_RECORDS is read at Store construction, not cached at import, so a test may set and unset",
+        "needs": "default",
+        "number": 272,
+        "origin": "packet",
+        "task": "task-91",
+        "text": ""
+      },
+      {
+        "label": "the oracle value cap (harness.outline, 65536 bytes of json) changes what an oracle Part keeps,",
+        "needs": "default",
+        "number": 273,
+        "origin": "packet",
+        "task": "task-93",
+        "text": ""
+      },
+      {
+        "label": "the judge in all three tournaments is `evidence`, a function that scores from the candidate's",
+        "needs": "default",
+        "number": 274,
+        "origin": "packet",
+        "task": "task-93",
+        "text": ""
+      },
+      {
+        "label": "three oracle Parts in the store are FAILING on purpose",
+        "needs": "default",
+        "number": 275,
+        "origin": "packet",
+        "task": "task-93",
+        "text": "pairwise_tournament.py_gram_unguarded_*."
+      },
+      {
+        "label": "the sp engine of cumsum, sort, argsort, select_k and trace is numpy's",
+        "needs": "default",
+        "number": 276,
+        "origin": "packet",
+        "task": "task-93",
+        "text": "scipy has no distinct"
+      },
+      {
+        "label": "the committed store/backend.json and records/brain_backend_*.json hold wall-clock numbers, so",
+        "needs": "default",
+        "number": 277,
+        "origin": "packet",
+        "task": "task-93",
+        "text": ""
+      },
+      {
+        "label": "pack/unpack are the array_store bracket's winner as facade ops, and they are float64 only.",
+        "needs": "default",
+        "number": 278,
+        "origin": "packet",
+        "task": "task-96",
+        "text": ""
+      },
+      {
+        "label": "a packed Part is a string to everything above the facade",
+        "needs": "default",
+        "number": 279,
+        "origin": "packet",
+        "task": "task-96",
+        "text": "`materialize` still digests it as"
+      },
+      {
+        "label": "the packing boundary is a test, not a slogan",
+        "needs": "default",
+        "number": 280,
+        "origin": "packet",
+        "task": "task-96",
+        "text": "base64 of float64 is a flat 11 bytes per number,"
+      },
+      {
+        "label": "qr here is the reduced factorisation only, and it refuses a matrix wider than it is tall. The",
+        "needs": "default",
+        "number": 281,
+        "origin": "packet",
+        "task": "task-96",
+        "text": ""
+      },
+      {
+        "label": "convolve's py engine is the direct O(n*m) sum; scipy's engine is pinned to method=\"direct\" so",
+        "needs": "default",
+        "number": 282,
+        "origin": "packet",
+        "task": "task-96",
+        "text": ""
+      },
+      {
+        "label": "Two stacks, not one",
+        "needs": "default",
+        "number": 283,
+        "origin": "packet",
+        "task": "task-97",
+        "text": "evidence/verify-py312.txt is the same suite on python 3.12.3 + numpy"
+      },
+      {
+        "label": "Committed documents",
+        "needs": "default",
+        "number": 284,
+        "origin": "packet",
+        "task": "task-97",
+        "text": "store/stats.json and store/data.json are written through a"
+      },
+      {
+        "label": "the second interpreter's run is committed at experiments/tasks/98/evidence/verify-python312-numpy253.txt",
+        "needs": "default",
+        "number": 285,
+        "origin": "packet",
+        "task": "task-98",
+        "text": ""
+      },
+      {
+        "label": "twelve significant digits on save is a choice about where to cut",
+        "needs": "default",
+        "number": 286,
+        "origin": "packet",
+        "task": "task-98",
+        "text": "it is five orders of"
+      },
+      {
+        "label": "eig's np engine now returns a real spectrum when the imaginary parts are below 1e-9 of the",
+        "needs": "default",
+        "number": 287,
+        "origin": "packet",
+        "task": "task-98",
+        "text": ""
+      },
+      {
+        "label": "the pairwise tournament's `cancelling` case is three points a million from the origin and a",
+        "needs": "default",
+        "number": 288,
+        "origin": "packet",
+        "task": "task-98",
+        "text": ""
+      },
+      {
+        "label": "Two stacks, not one",
+        "needs": "default",
+        "number": 289,
+        "origin": "packet",
+        "task": "task-99",
+        "text": "evidence/verify-py312.txt is the same suite on python 3.12.3 + numpy"
+      },
+      {
+        "label": "Three tournaments now, all re-runnable from the store",
+        "needs": "default",
+        "number": 290,
+        "origin": "packet",
+        "task": "task-99",
+        "text": "ols_solver (lstsq), group_by_aggregation"
+      },
+      {
+        "label": "Committed documents are canonicalised to twelve significant digits before saving, so a fresh",
+        "needs": "default",
+        "number": 291,
+        "origin": "packet",
+        "task": "task-99",
+        "text": ""
+      },
+      {
+        "label": "both runs are in the packet",
+        "needs": "default",
+        "number": 292,
+        "origin": "packet",
+        "task": "task-100",
+        "text": "the copy's venv (python 3.11, numpy 2.4.6) through the Verify"
+      },
+      {
+        "label": "the plan is measured on THIS machine. A slower or faster host, or a numpy built against a",
+        "needs": "default",
+        "number": 293,
+        "origin": "packet",
+        "task": "task-100",
+        "text": ""
+      },
+      {
+        "label": "`backend=\"auto\"` needs `args[\"plan\"]`. Reading the plan off disk inside the facade would have",
+        "needs": "default",
+        "number": 294,
+        "origin": "packet",
+        "task": "task-100",
+        "text": ""
+      },
+      {
+        "label": "the plan only decides at sizes where every engine of an op was measured; a partially measured",
+        "needs": "default",
+        "number": 295,
+        "origin": "packet",
+        "task": "task-100",
+        "text": ""
+      },
+      {
+        "label": "the plan is worth reading before anyone hard-codes numpy",
+        "needs": "default",
+        "number": 296,
+        "origin": "packet",
+        "task": "task-100",
+        "text": "cumsum is fastest in PURE PYTHON at"
+      },
+      {
+        "label": "Two stacks",
+        "needs": "default",
+        "number": 297,
+        "origin": "packet",
+        "task": "task-101",
+        "text": "evidence/verify-py312.txt is the whole brain suite on python 3.12.3 + numpy"
+      },
+      {
+        "label": "fn.brain.data.expanding is fn.brain.data.rolling with the window set to the length of the",
+        "needs": "default",
+        "number": 298,
+        "origin": "packet",
+        "task": "task-101",
+        "text": ""
+      },
+      {
+        "label": "theil_sen reproduces scipy's confidence interval exactly, including the two rank indices",
+        "needs": "default",
+        "number": 299,
+        "origin": "packet",
+        "task": "task-101",
+        "text": ""
+      },
+      {
+        "label": "both runs are in the packet",
+        "needs": "default",
+        "number": 300,
+        "origin": "packet",
+        "task": "task-103",
+        "text": "the copy's venv (python 3.11, numpy 2.4.6) through the Verify"
+      },
+      {
+        "label": "a case may now carry `engines=(\"np\", \"sp\")`. It is not a way to excuse a disagreement - every",
+        "needs": "default",
+        "number": 301,
+        "origin": "packet",
+        "task": "task-103",
+        "text": ""
+      },
+      {
+        "label": "the py engine of matrix_rank refuses a band rather than answering in it",
+        "needs": "default",
+        "number": 302,
+        "origin": "packet",
+        "task": "task-103",
+        "text": "between numpy's rank"
+      },
+      {
+        "label": "the py engine of pinv is r^-1 q^T from the reduced qr, so it is a left inverse of a",
+        "needs": "default",
+        "number": 303,
+        "origin": "packet",
+        "task": "task-103",
+        "text": ""
+      },
+      {
+        "label": "correlate's sp engine is pinned to scipy.signal.correlate(method=\"direct\") so all three engines",
+        "needs": "default",
+        "number": 304,
+        "origin": "packet",
+        "task": "task-103",
+        "text": ""
+      },
+      {
+        "label": "Two stacks, both green (736 tests)",
+        "needs": "default",
+        "number": 305,
+        "origin": "packet",
+        "task": "task-104",
+        "text": "evidence/verify-py312.txt is the whole brain suite on"
+      },
+      {
+        "label": "Two named stubs close here, and the map says so",
+        "needs": "default",
+        "number": 306,
+        "origin": "packet",
+        "task": "task-104",
+        "text": "fn.brain.stats.ols_weighted and"
+      },
+      {
+        "label": "The weights go into the DESIGN, not into a fourth solver",
+        "needs": "default",
+        "number": 307,
+        "origin": "packet",
+        "task": "task-104",
+        "text": "ols_weighted scales each row by"
+      },
+      {
+        "label": "both runs are in the packet",
+        "needs": "default",
+        "number": 308,
+        "origin": "packet",
+        "task": "task-106",
+        "text": "the copy's venv (python 3.11, numpy 2.4.6) through the Verify"
+      },
+      {
+        "label": "`the_judge_could_not_be_another_session` is a finding about how this vertical's own evidence",
+        "needs": "default",
+        "number": 309,
+        "origin": "packet",
+        "task": "task-106",
+        "text": ""
+      },
+      {
+        "label": "`a_copy_that_did_not_really_merge_claims_mains_commits` is a finding about neat, not about the",
+        "needs": "default",
+        "number": 310,
+        "origin": "packet",
+        "task": "task-106",
+        "text": ""
+      },
+      {
+        "label": "nothing in this task changes a Calculation or an engine",
+        "needs": "default",
+        "number": 311,
+        "origin": "packet",
+        "task": "task-106",
+        "text": "the only source change is"
+      },
+      {
+        "label": "Two stacks, both green (756 tests)",
+        "needs": "default",
+        "number": 312,
+        "origin": "packet",
+        "task": "task-107",
+        "text": "evidence/verify-py312.txt is the whole brain suite on"
+      },
+      {
+        "label": "The two findings this adds are addressed to the BACKEND vertical and name what each of",
+        "needs": "default",
+        "number": 313,
+        "origin": "packet",
+        "task": "task-107",
+        "text": ""
+      },
+      {
+        "label": "both runs are in the packet",
+        "needs": "default",
+        "number": 314,
+        "origin": "packet",
+        "task": "task-108",
+        "text": "the copy's venv (python 3.11, numpy 2.4.6) through the Verify"
+      },
+      {
+        "label": "nothing here changes an answer. The stats sp engine now calls scipy ONCE over the array",
+        "needs": "default",
+        "number": 315,
+        "origin": "packet",
+        "task": "task-108",
+        "text": ""
+      },
+      {
+        "label": "the backend facade now defaults to the plan when the caller names no engine. The plan is read",
+        "needs": "default",
+        "number": 316,
+        "origin": "packet",
+        "task": "task-108",
+        "text": ""
+      },
+      {
+        "label": "what this pass did NOT reach, recorded as proposal.brain.backend.the_pass_reached_the_loops_not_the_facades",
+        "needs": "default",
+        "number": 317,
+        "origin": "packet",
+        "task": "task-108",
+        "text": ""
+      },
+      {
+        "label": "px.exp.brain.bench.kerchoo holds the table. `before` is read out of the committed benchmark",
+        "needs": "default",
+        "number": 318,
+        "origin": "packet",
+        "task": "task-108",
+        "text": ""
+      },
+      {
+        "label": "both runs are in the packet",
+        "needs": "default",
+        "number": 319,
+        "origin": "packet",
+        "task": "task-109",
+        "text": "the copy's venv and python 3.12.3 / numpy 2.5.3 / scipy 1.18.1 at"
+      },
+      {
+        "label": "proposal.brain.blok_generation sits at proposal.brain.<k>, not proposal.brain.<vertical>.<k>.",
+        "needs": "default",
+        "number": 320,
+        "origin": "packet",
+        "task": "task-109",
+        "text": ""
+      },
+      {
+        "label": "nothing here changes a Calculation, an engine or an answer. The only source change is",
+        "needs": "default",
+        "number": 321,
+        "origin": "packet",
+        "task": "task-109",
+        "text": ""
+      },
+      {
+        "label": "the lane is filed, not started. The first thing it needs is the cross-kind PQL join that three",
+        "needs": "default",
+        "number": 322,
+        "origin": "packet",
+        "task": "task-109",
+        "text": ""
+      },
+      {
+        "label": "both runs are in the packet",
+        "needs": "default",
+        "number": 323,
+        "origin": "packet",
+        "task": "task-110",
+        "text": "the copy's venv and python 3.12.3 / numpy 2.5.3 / scipy 1.18.1 at"
+      },
+      {
+        "label": "`core.backend_of({})` is still \"py\". A calculation opts into the plan by passing its own",
+        "needs": "default",
+        "number": 324,
+        "origin": "packet",
+        "task": "task-110",
+        "text": ""
+      },
+      {
+        "label": "six ml calcs are wired",
+        "needs": "default",
+        "number": 325,
+        "origin": "packet",
+        "task": "task-110",
+        "text": "knn_predict, softmax_fit, linreg_fit, logreg_fit, silhouette,"
+      },
+      {
+        "label": "the plan now carries `by_calc` for 47 calcs across stats, data and ml, keyed \"<vertical>.<calc>\".",
+        "needs": "default",
+        "number": 326,
+        "origin": "packet",
+        "task": "task-110",
+        "text": ""
+      },
+      {
+        "label": "the kerchoo Part now has 12 rows. `before` is read out of the committed benchmark Parts;",
+        "needs": "default",
+        "number": 327,
+        "origin": "packet",
+        "task": "task-110",
+        "text": ""
+      },
+      {
+        "label": "FrameIsPartOfTheLayout",
+        "needs": "default",
+        "number": 328,
+        "origin": "packet",
+        "task": "task-133",
+        "text": "the frame is a Part (`px.overlay.frame`) that `fn.comparison.layout` reads"
+      },
+      {
+        "label": "SponsorIsGlobalOnly",
+        "needs": "default",
+        "number": 329,
+        "origin": "packet",
+        "task": "task-133",
+        "text": "the frame's sponsor lockup reads `px.discstudio.cards.global.sponsor` and not"
+      },
+      {
+        "label": "FixtureIsByteForByte",
+        "needs": "default",
+        "number": 330,
+        "origin": "packet",
+        "task": "task-133",
+        "text": "`tests/fixtures/serial-run-record.json` is compared byte for byte, so every"
+      },
+      {
+        "label": "HarnessWasExponential",
+        "needs": "default",
+        "number": 331,
+        "origin": "packet",
+        "task": "task-135",
+        "text": "tests/embedded_harness.py inlined every module's data: URL into its"
+      },
+      {
+        "label": "EntryIsAPart",
+        "needs": "default",
+        "number": 332,
+        "origin": "packet",
+        "task": "task-135",
+        "text": "a card's BattleEntry is now published by `fn.battle.entry`, and `fn.domain.fields`"
+      },
+      {
+        "label": "OneBattleTwoReceipts",
+        "needs": "default",
+        "number": 333,
+        "origin": "packet",
+        "task": "task-135",
+        "text": "the battle's Constraints run as their own composition (`discomp`) and its"
+      },
+      {
+        "label": "TieShareRounding",
+        "needs": "default",
+        "number": 334,
+        "origin": "packet",
+        "task": "task-135",
+        "text": "`tieRule: share` averages the tied places' points and rounds to two decimals, so"
+      },
+      {
+        "label": "QueueIsSessionState",
+        "needs": "default",
+        "number": 335,
+        "origin": "packet",
+        "task": "task-137",
+        "text": "the export queue lives in the page's own `ui` object, not on the board: a job is"
+      },
+      {
+        "label": "SvgExportsAreRecorded",
+        "needs": "default",
+        "number": 336,
+        "origin": "packet",
+        "task": "task-137",
+        "text": "the queue files an `export.record` for SVG jobs too (`type: 'SVG'`), so"
+      },
+      {
+        "label": "SinglePresetIsTheProjection",
+        "needs": "default",
+        "number": 337,
+        "origin": "packet",
+        "task": "task-137",
+        "text": "`single` in the card cascade now means OnTheCourse's Single Disc mode and"
+      },
+      {
+        "label": "DialogsAfterRehydrate",
+        "needs": "default",
+        "number": 338,
+        "origin": "packet",
+        "task": "task-137",
+        "text": "scripts/browser_test.py rehydrates by closing the page and mounting a new one,"
+      },
+      {
+        "default_sha256": "9767e1c750b961c1f72f0f36e0325b6598a8868421d9fc11c269901ffd4c5413",
+        "label": "PartLabelKind",
+        "needs": "default",
+        "number": 339,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-60's packet stands: Parts are labelled by full address (exact) or the constant 'part' (shape).\""
+      },
+      {
+        "default_sha256": "642b4f903d359cd3d317cd7ac4f489211c791eb24872e06039ffe592ad34512a",
+        "label": "CompoundMolecules",
+        "needs": "default",
+        "number": 340,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-60's packet stands: later SUBDUE ranks are built on an earlier rank's SUB node.\""
+      },
+      {
+        "default_sha256": "97fb9740987ebbf71a260378e9e689198d754b5da3d72872e9fe3949e755b4ac",
+        "label": "PxMolecules",
+        "needs": "default",
+        "number": 341,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-60's packet stands: 'px molecules <record...>' in px.py is not done (time).\""
+      },
+      {
+        "default_sha256": "e6f97ac4c21c0568a0dc8a681ab0d37b462cc32f690ccaebdc815b8227c16990",
+        "label": "DocumentDropsArgs",
+        "needs": "default",
+        "number": 342,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-60's packet stands: the emitted PQL document carries call, with and into but not the invocation's args or id, so where two Calculations differ only by args (exact rank 1: fn.ablati.\""
+      },
+      {
+        "default_sha256": "1c3ae0264867e609b1dc18ed2f61133a66b30e91499484551b1afc1cc633275d",
+        "label": "OnePartQuery",
+        "needs": "default",
+        "number": 343,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-60's packet stands: a one-Part molecule is spelled PQL.prefix(address), which also matches longer addresses.\""
+      },
+      {
+        "default_sha256": "05aef5349b7100359cec98b7250e4909a7daa3a5b7ee2fb279a58a3a629d590e",
+        "label": "HashRefUnchecked",
+        "needs": "default",
+        "number": 344,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-60's packet stands: the fn:<id>#<address> branch of resolve() trusts the address without checking it is among the producer's into (record_schema.py does check).\""
+      },
+      {
+        "default_sha256": "72522db6c8022c2d72435573b8242014b0874891fd0a71da361c68af6802759f",
+        "label": "ConceptMap",
+        "needs": "default",
+        "number": 345,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-63's packet stands: changed paths map to the seven words by a fixed table (core.py and px.py to PxC and Part, pql.py to PQL, pcr.py to PCR and Tick and Calculation, effects.py to C.\""
+      },
+      {
+        "default_sha256": "7bcf7f1d95239a7374b41bed30c327b3bf466c73ded1b00ce4719a1215e67df3",
+        "label": "AbsolutePathsInTheRecord",
+        "needs": "default",
+        "number": 346,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-63's packet stands: the record itself carries a machine's absolute path in places (refused lines on the board, check_all.txt).\""
+      },
+      {
+        "default_sha256": "f087e58e24d550c1b0f2ef041a1ac5e0144d219972da1a83f1fd890c1bd5bb34",
+        "label": "NeatWalkCheck",
+        "needs": "default",
+        "number": 347,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-63's packet stands: neat walk --check is also accepted (dispatches to walk.py --check) though the brief named only walk, walk N and walk --page.\""
+      },
+      {
+        "default_sha256": "cee77363d849cf639ddbd9e01ca724cb870207b1e3e7ee1b9926ada3e1808ed9",
+        "label": "PathCutSwallowedQuotes",
+        "needs": "default",
+        "number": 348,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-63's packet stands: the first build cut an escaped quote along with a path 190 times (the verifier's find).\""
+      },
+      {
+        "default_sha256": "65b0279c75a517d055451c87d9c5ac364ece53fcbc673363ed2fb7d58ac38373",
+        "label": "RootItemText",
+        "needs": "default",
+        "number": 349,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-65's packet stands: collate's root-origin items (task='root') use the heading's first non-empty body line as  (falling back to the label when a heading has none before the ne.\""
+      },
+      {
+        "default_sha256": "9cdb7825d1ab52f07af4ba3eaefb2d73ceb7960477d438f021a5e910b6372152",
+        "label": "RootItemScope",
+        "needs": "default",
+        "number": 350,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-65's packet stands: the real questions.md carries 102 '### {?}' headings naming 117 labels (five headings group several labels on one comma-separated line, e.g.\""
+      },
+      {
+        "default_sha256": "c9f5aed26d240da88b96bf7e3902d258dcba5a0c026bee8ccd714838137380b8",
+        "label": "WalkReachability",
+        "needs": "default",
+        "number": 351,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-65's packet stands: the walk lists every landing commit reachable from HEAD (a copy that merged MAIN sees MAIN's landings behind the merge), each diffed against its first parent.\""
+      },
+      {
+        "default_sha256": "e5c2d8a22a4e067b2d5ad7d0f52da48a29711b4f17bd0e1df00c28151e15f911",
+        "label": "DiffNewIsAsymmetric",
+        "needs": "default",
+        "number": 352,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-66's packet stands: the outputs vocabulary (same/changed/new/unknown) has no fifth word for 'removed', so an address only one of the two documents declares as  -- on either s.\""
+      },
+      {
+        "default_sha256": "687ad0f4d40932d8d1587a9acdbb37121a055717a512e1f5006efd08a1b5c0c3",
+        "label": "DiffPrintForm",
+        "needs": "default",
+        "number": 353,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-66's packet stands: the CLI prints the diff value pretty (two-space indent, sorted keys -- px.py's own meaning of 'canonical JSON' for a value meant to be read) while the sha256 in.\""
+      },
+      {
+        "default_sha256": "4e4755797624efaea7955f5122c22fc94aa184be5c22febfa3c13bff41618a3c",
+        "label": "NeatDiffCalculationRunForm",
+        "needs": "default",
+        "number": 354,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-66's packet stands: fn.neat.diff.candidates is registered in a PxC and invoked with pxc.call, not as its own observed PCR.\""
+      },
+      {
+        "default_sha256": "8dded9bfe7b916be1c49a7e66dd08eea554c2431c8ff668add0d1eeb976a0f71",
+        "label": "DiffRemainderOcOrder",
+        "needs": "default",
+        "number": 355,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-66's packet stands: the remainder lists every label (a's then b's) followed by one 'not run: <call> is oc.' line per oc.\""
+      },
+      {
+        "default_sha256": "794f107046019e2fa0830d6eda824f5c6fb197cd6ad4a7dd8eb372c1086b019a",
+        "label": "LabelsOutsideReadPqlGrammar",
+        "needs": "default",
+        "number": 356,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-66's packet stands: documents here carry a top-level labels list that the JS readPql grammar does not know; labels stay Python-side.\""
+      },
+      {
+        "default_sha256": "7e8502b6357b5bb62311bc9606b60a262d18e2b5df1222b7023df7022f7cc4f6",
+        "label": "SecretsAreNotEffects",
+        "needs": "default",
+        "number": 357,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-67's packet stands: Effects.env records the value it reads, so the GitHub token is read with os.environ and never through the handle.\""
+      },
+      {
+        "default_sha256": "d19cd833da48cb9f50ff423b9fafe901d55d2f839c33eeb52ef3d994d4c63e7f",
+        "label": "HttpIsNotAnEffectKind",
+        "needs": "default",
+        "number": 358,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-67's packet stands: the GitHub requests are not ledgered (the handle has write_text, read_text, now_ms, random, env).\""
+      },
+      {
+        "default_sha256": "5df979ba149bcfffa10cb87ca6357a5335d2b42f378f06bfe316e3174be01b0d",
+        "label": "SubjectIsTheHeadSha",
+        "needs": "default",
+        "number": 359,
+        "origin": "root",
+        "task": "root",
+        "text": "Default (session, 2026-09-10): \"The default stated in task-67's packet stands: the frozen subject is the package plus the candidate's head sha, because the sha fixes the packet and every claimed byte.\""
+      }
+    ],
+    "n": 9,
+    "needs_owner": 7,
+    "reviewed": 180,
+    "root_open": 30
+  }
+}

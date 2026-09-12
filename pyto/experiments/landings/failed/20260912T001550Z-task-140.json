@@ -1,0 +1,9 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260912T001550Z-task-140",
+  "package": "task-140",
+  "base_sha": "aa83ee97c41128ad428da05564428a35c60d6761",
+  "result": "failed",
+  "reason": "dirty file outside allowed paths: pyto/scripts/walk.py  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- pyto/scripts/walk.py  then land, then git stash pop)",
+  "at": "2026-09-12T00:15:50.630256Z"
+}
