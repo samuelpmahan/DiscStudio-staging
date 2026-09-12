@@ -22,8 +22,8 @@ pyto/scripts/neat.sh     |   13 +-
 
 ## Evidence
 
-- verify: `cd pyto && python -m unittest tests.test_study tests.test_use` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.HOWo28Qboo) (evidence/check_all.txt)
+- verify: `cd pyto && ${PYTHON:-python} -m unittest tests.test_study tests.test_use` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.clZ0CqedoI) (evidence/check_all.txt)
     suite                         tests  status
     library                         472  OK
     experiments/brain               756  OK
