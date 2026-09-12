@@ -61,6 +61,10 @@
       "text": "The studio reads its own receipts through PQL, and undo is one more Calculation on the record",
       "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cInspect PxC \u2197\u201d and read the Receipts section, expect one row per px.receipt.* Part with its name, consumes, produces and result digest; on the Shelf, press \u201c\u21b6 Undo last change\u201d, expect the exact previous workspace back and a studio-undo row in that same list.",
       "verification": "Verified by npm test (tests/core.test.js: `into` may be an array and both Parts are published or neither is, the px.receipt.* prefix query is answered sorted, the Receipts rows and summary are the two Parts one Calculation publishes, push/pop restores the exact previous value, a pop on an empty stack is a recorded no-op, and the run record carries the undo invocations), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose eleventh check drives the Undo button and compares the rendered rows against px.receipt.* in the store and whose twelfth runs the sample composition with parallel: true, reads parallel, placement, latency_ms and budget off the exported record and checks the Tick page draws that Tick's branches on one row. scripts/review_checkpoint.mjs pins the count at 12. Automated verification only; no human acceptance is recorded."
+    },
+    {
+      "id": "frame",
+      "text": "Landscape and vertical export frames"
     }
   ],
   "dependencies": [],

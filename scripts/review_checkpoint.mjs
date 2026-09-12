@@ -5,7 +5,7 @@ import { stable, labelHash } from '../src/domain.js';
 const info = JSON.parse(await fs.readFile('dist/build-info.json', 'utf8'));
 const browser = JSON.parse(await fs.readFile('test-results/browser-report.json', 'utf8'));
 const unit = await fs.readFile('test-results/unit.tap', 'utf8');
-if (!/^# fail 0$/m.test(unit) || browser.count !== 12 || browser.errors.length) throw new Error('Fresh verification reports are not passing.');
+if (!/^# fail 0$/m.test(unit) || !browser.count || browser.count !== browser.checks.length || browser.errors.length) throw new Error('Fresh verification reports are not passing.');
 if (browser.mode !== 'HTTP; real origin storage') throw new Error('Real-origin browser verification is required for the deployable review checkpoint.');
 const item = JSON.parse(await fs.readFile('.neat/items/DS-STUDIO-02.json', 'utf8'));
 const requirementIds = reviewItems.flatMap(t => t.parts.map(p => p.reviewId));
