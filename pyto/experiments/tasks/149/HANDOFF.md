@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/149
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/149:pyto/experiments/tasks/149/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff a0b1b1c origin/exp/149 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 04009ce origin/exp/149 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ a record of big values is cheap and an array is an array: one canonical json dum
 
 ## Starting point
 
-a0b1b1c877246bd20f33fcb05a413f01e67fb1e0 (land(task-147): pyto study on a table that is not tiny: a seeded sample where the method's cost is quadratic, a refusal where a training fold is narrower than the fit, the separator and the hole spelling the caller's, the entry point callable in a fresh process, and USE.md section 11). MAIN may have moved since: `git log --oneline a0b1b1c..origin/main` shows how far.
+a0b1b1c877246bd20f33fcb05a413f01e67fb1e0 (land(task-147): pyto study on a table that is not tiny: a seeded sample where the method's cost is quadratic, a refusal where a training fold is narrower than the fit, the separator and the hole spelling the caller's, the entry point callable in a fresh process, and USE.md section 11). MAIN may have moved since: `git log --oneline 04009ce..origin/main` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -149,7 +149,7 @@ pyto/USE.md                                        |  21 ++
 ## Evidence
 
 - verify: `bash pyto/scripts/check_all.sh` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.nXLid8x7sV) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.CAXJ229chI) (evidence/check_all.txt)
     suite                         tests  status
     library                         493  OK
     experiments/brain               756  OK
