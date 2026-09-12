@@ -1,0 +1,91 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260912T014759Z-task-146",
+  "package": "task-146",
+  "base_sha": "44cfba2efd0c70f54bd590539efff7b02224ab61",
+  "result": "verified",
+  "verifier": {
+    "command": "bash scripts/verify_pages.sh",
+    "exit": 0,
+    "output_sha256": "63d2ff75d0a74fe5697bac204d1277b47d0e384353dfcf74ee1d8c59483d47a3"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "563aef32421632b387e09ded70fd702f1ac91a2d283179d51fac2626aabcbf13",
+    "counts": {
+      "library": 447,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": ".neat/items/DS-STUDIO-02.json",
+      "bytes": 5405,
+      "sha256": "8b67ebcc287aab78f8345827a8cf127715ff23b74475f01b32b45c3d071d0b85"
+    },
+    {
+      "path": "package.json",
+      "bytes": 365,
+      "sha256": "d1dea0dafc5cc5c9cc17760cebaf30140a3dd965d1f229f77136d600e6a82f0b"
+    },
+    {
+      "path": "pyto/experiments/tasks/146/HANDOFF.md",
+      "bytes": 7030,
+      "sha256": "bd4788640fde03d1e6f54d34bb1a86ceb0615055db564a2408a88d66125beb06"
+    },
+    {
+      "path": "pyto/experiments/tasks/146/evidence/check_all.txt",
+      "bytes": 294626,
+      "sha256": "3428d82152d58096b2581fcb36c89ce36aa8fcbed0c04814a7d8a0fcbab4c76e"
+    },
+    {
+      "path": "pyto/experiments/tasks/146/evidence/verify.txt",
+      "bytes": 466,
+      "sha256": "24a6414f22e74b5f744c1f9a0892c530cf94ba52e4f3d833cba0a7872387772e"
+    },
+    {
+      "path": "pyto/experiments/tasks/146/packet.md",
+      "bytes": 2464,
+      "sha256": "fbbb207776e2214f3493b6281df26fa0a2c22b1f6a69ab2b318d15e22e527b42"
+    },
+    {
+      "path": "scripts/review_checkpoint.mjs",
+      "bytes": 2759,
+      "sha256": "2c791ad89da6f960a52929435866b4d82f242d23244f1a4fa87ad09d2d83e31a"
+    },
+    {
+      "path": "scripts/verify_pages.sh",
+      "bytes": 907,
+      "sha256": "0004fbffe2124323c94b0e411e19bfe8fb4591feb9d544de91908cd12bb644e1"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-12T01:50:54.366759Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

@@ -1,0 +1,16 @@
+# tests 211
+# suites 0
+# pass 211
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14729.318025
+Built /home/user/DiscStudio-staging/dist
+Commit: 44cfba2efd0c70f54bd590539efff7b02224ab61
+Source/test fingerprint: 8548818107b47972bb3ee17bb0c4b3ab70d17df3795d3c970e8ec22b3cca182a
+  ],
+  "count": 30,
+  "errors": []
+}
+neat review discstudio-pxc-02-8548818107b47972; commit 44cfba2efd0c70f54bd590539efff7b02224ab61; acceptance/promotion are not recorded.
