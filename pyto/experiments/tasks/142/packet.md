@@ -19,9 +19,9 @@ Evidence: suite exit 0, see below
 ## Evidence
 
 - verify: `node -e "const y=require('fs').readFileSync('.github/workflows/pages.yml','utf8'); if(!/branches: \[main, claude\/os-sprint-st8hnu\]/.test(y)) process.exit(1)"` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.jOMz1LkcXI) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.gRizfmganQ) (evidence/check_all.txt)
     suite                         tests  status
-    library                         439  OK
+    library                         447  OK
     experiments/brain               756  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
