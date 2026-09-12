@@ -4,8 +4,34 @@ Intent: the Pages deploy on main failed in its own browser check: the served pag
 Starting point: 96561d1290183a306dba950876e02961a191e43f (board: **started** `task-144`: python -m pyto.study: an honest study of a csv,)
 Verify: npm test && node scripts/build.mjs && node -e "require('fs').accessSync('dist/pyto/consumers/discstudio-card/port/painter/painter.mjs')"
 Allow: scripts/build.mjs pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 1 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  scripts/build.mjs
+
+```
+scripts/build.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+```
+
+## Evidence
+
+- verify: `npm test && node scripts/build.mjs && node -e "require('fs').accessSync('dist/pyto/consumers/discstudio-card/port/painter/painter.mjs')"` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.2myxBRqWID) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         447  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
