@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-12 00:17 **killed** `task-140`: nothing landed; exp/140 is kept
 - 2026-09-12 00:16 **started** `task-141`: neat ask surfaces questions, not notes: batch 9 collated 359 items because a {?} line with no Label: form was accepted with its whole sentence as the label, so 88 evidence notes in packets became questions; a question is a labelled {?} Label: text line, prose after {?} is a note the batch counts per task and leaves out, the walk reads such a line as a note instead of failing, and batch 9 as collated is kept as the record of the defect (copy EXP/141; it lands only on green, with a receipt, or is killed)
 - 2026-09-12 00:15 **refused** `task-140`: dirty file outside allowed paths: pyto/scripts/walk.py  (someone else's candidate; when its writer is done, park it with: git stash push -u -m parked -- pyto/scripts/walk.py  then land, then git stash pop)
 - 2026-09-12 00:02 **started** `task-140`: neat ask surfaces questions, not notes: batch 9 collated 359 items because every packet's Uncertain section is harvested whether it carries a {?} label or an evidence note; collate keeps only {?}-labelled items and filed defaults, ranks the owner's open ones first, and the batch says how many notes it left out; batch 9 as collated tonight is kept as the record of the defect (copy EXP/140; it lands only on green, with a receipt, or is killed)
