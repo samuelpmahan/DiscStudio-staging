@@ -21,7 +21,7 @@ Evidence: suite exit 0, see below
 ## Evidence
 
 - verify: `test -s .claude/skills/sam-mode/SKILL.md && head -1 .claude/skills/sam-mode/SKILL.md | grep -q '^---$' && grep -q '^name: sam-mode$' .claude/skills/sam-mode/SKILL.md && grep -q sam-mode CLAUDE.md` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.P6jUY23ipf) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.tntUNiPkcv) (evidence/check_all.txt)
     suite                         tests  status
     library                         472  OK
     experiments/brain               756  OK

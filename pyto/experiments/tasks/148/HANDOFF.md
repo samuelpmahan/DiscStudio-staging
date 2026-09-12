@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/148
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/148:pyto/experiments/tasks/148/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 510b5ae origin/exp/148 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 24b16b5 origin/exp/148 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ sam-mode: the owner's working conventions, mined from his own words across the s
 
 ## Starting point
 
-510b5aed3836aa83c8c4423fd752844b13d971d4 (board: **started** `task-147`: pyto study on a table that is not tiny: a seeded). MAIN may have moved since: `git log --oneline 510b5ae..origin/main` shows how far.
+510b5aed3836aa83c8c4423fd752844b13d971d4 (board: **started** `task-147`: pyto study on a table that is not tiny: a seeded). MAIN may have moved since: `git log --oneline 24b16b5..origin/main` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -71,7 +71,7 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 ## Evidence
 
 - verify: `test -s .claude/skills/sam-mode/SKILL.md && head -1 .claude/skills/sam-mode/SKILL.md | grep -q '^---$' && grep -q '^name: sam-mode$' .claude/skills/sam-mode/SKILL.md && grep -q sam-mode CLAUDE.md` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.P6jUY23ipf) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.tntUNiPkcv) (evidence/check_all.txt)
     suite                         tests  status
     library                         472  OK
     experiments/brain               756  OK
