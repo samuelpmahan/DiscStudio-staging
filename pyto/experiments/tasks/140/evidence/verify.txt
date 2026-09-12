@@ -1,0 +1,113 @@
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+.......EFFF/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py:283: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpqc9kw099/questions.md' mode='r' encoding='utf-8'>
+  text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py:298: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpqc9kw099/questions.md' mode='r' encoding='utf-8'>
+  text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..F..FF
+======================================================================
+ERROR: test_no_notes_is_an_empty_total (tests.test_neat_review.NotesLeftOut.test_no_notes_is_an_empty_total)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py", line 374, in test_no_notes_is_an_empty_total
+    self.assertEqual(batch["notes_left_out"], {"total": 0, "by_task": {}})
+                     ~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'notes_left_out'
+
+======================================================================
+FAIL: test_one_labelled_and_one_prose_yields_one_item (tests.test_neat_review.NotesLeftOut.test_one_labelled_and_one_prose_yields_one_item)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py", line 331, in test_one_labelled_and_one_prose_yields_one_item
+    self.assertEqual([it["label"] for it in batch["items"]], ["FrameIsPartOfTheLayout"])
+AssertionError: Lists differ: ['FrameIsPartOfTheLayout', 'both runs are in the packet'] != ['FrameIsPartOfTheLayout']
+
+First list contains 1 additional elements.
+First extra element 1:
+'both runs are in the packet'
+
+- ['FrameIsPartOfTheLayout', 'both runs are in the packet']
++ ['FrameIsPartOfTheLayout']
+
+======================================================================
+FAIL: test_prose_note_with_an_embedded_colon_is_one_note_not_several (tests.test_neat_review.NotesLeftOut.test_prose_note_with_an_embedded_colon_is_one_note_not_several)
+Task 103's own first note: a colon appears mid-sentence, but the label before it has
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py", line 348, in test_prose_note_with_an_embedded_colon_is_one_note_not_several
+    self.assertEqual(batch["items"], [])
+AssertionError: Lists differ: [{'number': 1, 'label': 'both runs are in [223 chars]lt'}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'number': 1, 'label': 'both runs are in the packet', 'task': 'task-103', 'text': "the copy's venv (python 3.11, numpy 2.4.6) through the Verify line, and python 3.12.3 with numpy 2.5.3 and scipy 1.18.1. 728 tests, OK in both.", 'origin': 'packet', 'needs': 'default'}
+
++ []
+- [{'label': 'both runs are in the packet',
+-   'needs': 'default',
+-   'number': 1,
+-   'origin': 'packet',
+-   'task': 'task-103',
+-   'text': "the copy's venv (python 3.11, numpy 2.4.6) through the Verify line, "
+-           'and python 3.12.3 with numpy 2.5.3 and scipy 1.18.1. 728 tests, OK '
+-           'in both.'}]
+
+======================================================================
+FAIL: test_prose_note_wrapped_over_several_lines_still_counts_once (tests.test_neat_review.NotesLeftOut.test_prose_note_wrapped_over_several_lines_still_counts_once)
+Only the opening `{?}` line is ever inspected; continuation lines carry no `{?}` and are
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py", line 364, in test_prose_note_wrapped_over_several_lines_still_counts_once
+    self.assertEqual(batch["items"], [])
+AssertionError: Lists differ: [{'number': 1, 'label': 'a case may now ca[121 chars]lt'}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'number': 1, 'label': 'a case may now carry `engines=("np", "sp")`. It is not a way to excuse', 'task': 'task-1', 'text': '', 'origin': 'packet', 'needs': 'default'}
+
++ []
+- [{'label': 'a case may now carry `engines=("np", "sp")`. It is not a way to '
+-            'excuse',
+-   'needs': 'default',
+-   'number': 1,
+-   'origin': 'packet',
+-   'task': 'task-1',
+-   'text': ''}]
+
+======================================================================
+FAIL: test_owner_items_newest_task_first (tests.test_neat_review.Ranking.test_owner_items_newest_task_first)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py", line 388, in test_owner_items_newest_task_first
+    self.assertEqual([it["label"] for it in batch["items"]], ["New", "Old"])
+AssertionError: Lists differ: ['Old', 'New'] != ['New', 'Old']
+
+First differing element 0:
+'Old'
+'New'
+
+- ['Old', 'New']
++ ['New', 'Old']
+
+======================================================================
+FAIL: test_prose_with_no_colon_is_none (tests.test_neat_review.SplitQuestionLine.test_prose_with_no_colon_is_none)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py", line 314, in test_prose_with_no_colon_is_none
+    self.assertIsNone(review.split_question_line(
+AssertionError: ('a case may now carry engines. It is not a way to excuse a disagreement.', '') is not None
+
+======================================================================
+FAIL: test_prose_with_spaces_before_colon_is_none (tests.test_neat_review.SplitQuestionLine.test_prose_with_spaces_before_colon_is_none)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/140/pyto/tests/test_neat_review.py", line 310, in test_prose_with_spaces_before_colon_is_none
+    self.assertIsNone(review.split_question_line(
+AssertionError: ('both runs are in the packet', "the copy's venv (python 3.11, numpy 2.4.6)") is not None
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.487s
+
+FAILED (failures=6, errors=1)
