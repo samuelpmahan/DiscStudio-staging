@@ -1,7 +1,7 @@
 name: Verify and deploy DiscStudio staging
 on:
   push:
-    branches: [main]
+    branches: [main, claude/os-sprint-st8hnu]
   workflow_dispatch:
 permissions:
   contents: read
