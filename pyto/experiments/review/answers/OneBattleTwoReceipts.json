@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.OneBattleTwoReceipts",
+  "sha256": "303952676cf02dfe2b58495447aac6f4c56c70fd319a169866d3abc7a2ab6bc6",
+  "value": {
+    "k": 245,
+    "kind": "owner",
+    "label": "OneBattleTwoReceipts",
+    "n": 10,
+    "sha256": "e539bf9f52bc3c099121b7b0e2d7dea6e2c408e9101221717fba3021d7d5a51d"
+  }
+}

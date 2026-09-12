@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.FrameIsPartOfTheLayout",
+  "sha256": "29bf653b413293692604a7c4aa6ad22053a1e4ec4ec5ba761d33ac7129b45bc0",
+  "value": {
+    "k": 240,
+    "kind": "default",
+    "label": "FrameIsPartOfTheLayout",
+    "n": 10,
+    "sha256": "85c9cb1bbed7bc05cc89f330b7fbe8282fa00fab8a1c1fa811cf73061c42cafc"
+  }
+}

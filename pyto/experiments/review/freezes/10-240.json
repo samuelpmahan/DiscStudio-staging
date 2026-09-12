@@ -1,0 +1,8 @@
+{
+  "address": "tidy.freeze.review.10.240.response",
+  "sha256": "49e9013cb581670681346982d9852eaad675e16f09ca31c2fbc9e6ba62534e3f",
+  "value": {
+    "bytes": "The default stands: layout.orientation owns the canvas and the frame Part restates it (the owner, 2026-09-12: \"No idea\").",
+    "sha256": "85c9cb1bbed7bc05cc89f330b7fbe8282fa00fab8a1c1fa811cf73061c42cafc"
+  }
+}

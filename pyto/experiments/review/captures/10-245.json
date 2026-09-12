@@ -1,0 +1,11 @@
+{
+  "address": "neat.capture.review.10.245.response",
+  "recordedAt": 1789173194742.1426,
+  "sha256": "35785ad9620056e5940dd859724e0d336a494c79a7e18eb0c394d0cb4ad3fc1c",
+  "value": {
+    "k": 245,
+    "label": "OneBattleTwoReceipts",
+    "n": 10,
+    "text": "In Chainspot, a Receipt IS the text and renders together. Food for thought"
+  }
+}

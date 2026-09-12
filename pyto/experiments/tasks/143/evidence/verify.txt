@@ -1,0 +1,13 @@
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+.........../home/user/DiscStudio-staging/EXP/143/pyto/tests/test_neat_review.py:283: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5sdi8zso/questions.md' mode='r' encoding='utf-8'>
+  text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/143/pyto/tests/test_neat_review.py:298: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5sdi8zso/questions.md' mode='r' encoding='utf-8'>
+  text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.......
+----------------------------------------------------------------------
+Ran 18 tests in 0.497s
+
+OK

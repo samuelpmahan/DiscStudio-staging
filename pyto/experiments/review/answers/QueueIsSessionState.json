@@ -1,0 +1,11 @@
+{
+  "address": "neat.review.answer.QueueIsSessionState",
+  "sha256": "75faab6f36df4fd8e38c1fb4a2586005cea10c6529974d509a75018d38de2973",
+  "value": {
+    "k": 247,
+    "kind": "owner",
+    "label": "QueueIsSessionState",
+    "n": 10,
+    "sha256": "770a4252b505c8aa5fd98d9353833ff82ffdbfee847fd3bd2e9bd35f49b334a5"
+  }
+}
