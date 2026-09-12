@@ -1,0 +1,227 @@
+EFFFFFFFFFFFFF....
+======================================================================
+ERROR: test_study (unittest.loader._FailedTest.test_study)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_study
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_study.py", line 28, in <module>
+    from pyto import PQL, Part, PxC  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_01_1_the_store (tests.test_use.UseMarkdownIsExecuted.test_01_1_the_store)
+USE.md section '1. The store', block 1.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '1. The store' block 1 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpmxtm5hjl/use_block.py", line 1, in <module>
+    from pyto import Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_02_2_a_part (tests.test_use.UseMarkdownIsExecuted.test_02_2_a_part)
+USE.md section '2. A Part', block 2.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '2. A Part' block 2 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpv8u0ib0q/use_block.py", line 1, in <module>
+    from pyto import Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_03_3_a_calculation (tests.test_use.UseMarkdownIsExecuted.test_03_3_a_calculation)
+USE.md section '3. A Calculation', block 3.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '3. A Calculation' block 3 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpquih5_zp/use_block.py", line 1, in <module>
+    from pyto import Calculation, PCR, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_04_4_a_program (tests.test_use.UseMarkdownIsExecuted.test_04_4_a_program)
+USE.md section '4. A program', block 4.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '4. A program' block 4 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpgjhujykm/use_block.py", line 1, in <module>
+    from pyto import Calculation, PCR, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_05_5_the_record (tests.test_use.UseMarkdownIsExecuted.test_05_5_the_record)
+USE.md section '5. The record', block 5.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '5. The record' block 5 failed:
+Traceback (most recent call last):
+  File "/tmp/tmp66l9tzb0/use_block.py", line 2, in <module>
+    from pyto import Calculation, PCR, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_06_6_pql (tests.test_use.UseMarkdownIsExecuted.test_06_6_pql)
+USE.md section '6. PQL', block 6.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '6. PQL' block 6 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpvu680nor/use_block.py", line 1, in <module>
+    from pyto import Calculation, PCR, PQL, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_07_8_what_not_to_do (tests.test_use.UseMarkdownIsExecuted.test_07_8_what_not_to_do)
+USE.md section '8. What not to do', block 7.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '8. What not to do' block 7 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpj09aq68s/use_block.py", line 1, in <module>
+    from pyto import Calculation, PCR, Part, PxC
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_08_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_08_9_crisp)
+USE.md section '9. crisp', block 8.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '9. crisp' block 8 failed:
+Traceback (most recent call last):
+  File "/tmp/tmp_92cyqy1/use_block.py", line 1, in <module>
+    from pyto import crisp
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_09_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_09_9_crisp)
+USE.md section '9. crisp', block 9.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '9. crisp' block 9 failed:
+Traceback (most recent call last):
+  File "/tmp/tmptejuws3d/use_block.py", line 4, in <module>
+    from pyto import crisp
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_10_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_10_9_crisp)
+USE.md section '9. crisp', block 10.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '9. crisp' block 10 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpz5wfce0a/use_block.py", line 4, in <module>
+    from pyto import crisp
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_11_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_11_9_crisp)
+USE.md section '9. crisp', block 11.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '9. crisp' block 11 failed:
+Traceback (most recent call last):
+  File "/tmp/tmpck3f9xxf/use_block.py", line 4, in <module>
+    from pyto import crisp
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_12_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_12_9_crisp)
+USE.md section '9. crisp', block 12.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '9. crisp' block 12 failed:
+Traceback (most recent call last):
+  File "/tmp/tmp3mz_18_h/use_block.py", line 1, in <module>
+    from pyto import crisp
+ModuleNotFoundError: No module named 'pyto'
+
+
+======================================================================
+FAIL: test_13_9_crisp (tests.test_use.UseMarkdownIsExecuted.test_13_9_crisp)
+USE.md section '9. crisp', block 13.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 180, in test
+    self.check(block)
+  File "/home/user/DiscStudio-staging/EXP/144/pyto/tests/test_use.py", line 164, in check
+    self.assertEqual(
+AssertionError: 1 != 0 : USE.md section '9. crisp' block 13 failed:
+Traceback (most recent call last):
+  File "/tmp/tmp7iqy533r/use_block.py", line 1, in <module>
+    from pyto import crisp
+ModuleNotFoundError: No module named 'pyto'
+
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.186s
+
+FAILED (failures=13, errors=1)
