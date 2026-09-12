@@ -27,7 +27,7 @@ pyto/experiments/review/batches/9.json  | 2927 +++++++++++++++++++++++++++++++
 ## Evidence
 
 - verify: `cd pyto && python -m unittest tests.test_neat_review tests.test_neat_diff tests.test_neat_gate tests.test_neat_delta && python scripts/walk.py --check` exit 1 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.jGiOxQGkIc) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.maLwMxW8X7) (evidence/check_all.txt)
     suite                         tests  status
     library                         447  OK
     experiments/brain               756  OK

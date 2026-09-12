@@ -1,28 +1,28 @@
 [tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/141/pyto/tests')
 fatal: expected 'acknowledgments', received 'packfile'
 warning: push negotiation failed; proceeding anyway with push
-.......EFFF/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py:283: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsbsz1nko/questions.md' mode='r' encoding='utf-8'>
+.......EFFF/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py:283: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpymlfv0ic/questions.md' mode='r' encoding='utf-8'>
   text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py:298: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsbsz1nko/questions.md' mode='r' encoding='utf-8'>
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py:298: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpymlfv0ic/questions.md' mode='r' encoding='utf-8'>
   text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-..F..FF..................../home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:158: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/receipt.json' mode='w' encoding='utf-8'>
+..F..FF..................../home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:158: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7gqhm16g/receipt.json' mode='w' encoding='utf-8'>
   json.dump({"schema": "pyto-landing-receipt@1", "package": "task-65"}, open(receipt, "w"))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:162: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/receipt.json' mode='r' encoding='utf-8'>
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:162: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7gqhm16g/receipt.json' mode='r' encoding='utf-8'>
   written = json.load(open(receipt))["gate"]
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:166: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/gate.json' mode='r' encoding='utf-8'>
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:166: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7gqhm16g/gate.json' mode='r' encoding='utf-8'>
   validate_record(json.load(open(record)))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:167: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/gate.json' mode='r' encoding='utf-8'>
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:167: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7gqhm16g/gate.json' mode='r' encoding='utf-8'>
   self.assertEqual(json.load(open(record))["ticks"][0]["invocations"][0]["calculation"]["address"],
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpa9ldr3at/approve.json' mode='w' encoding='utf-8'>
+./home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp_gkbanot/approve.json' mode='w' encoding='utf-8'>
   json.dump({"login": "selftest", "disposition": "approve", "selection": "<head>", "text": "stub approve"},
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpa9ldr3at/reject.json' mode='w' encoding='utf-8'>
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp_gkbanot/reject.json' mode='w' encoding='utf-8'>
   json.dump({"login": "selftest", "disposition": "reject", "selection": "<head>", "text": "no"}, open(reject, "w"))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ....                         after task-1  after task-2
@@ -143,6 +143,6 @@ Traceback (most recent call last):
 AssertionError: ('both runs are in the packet', "the copy's venv (python 3.11, numpy 2.4.6)") is not None
 
 ----------------------------------------------------------------------
-Ran 45 tests in 3.115s
+Ran 45 tests in 3.203s
 
 FAILED (failures=6, errors=1)
