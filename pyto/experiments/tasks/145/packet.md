@@ -19,7 +19,7 @@ scripts/build.mjs | 2 +-
 ## Evidence
 
 - verify: `npm test && node scripts/build.mjs && node -e "require('fs').accessSync('dist/pyto/consumers/discstudio-card/port/painter/painter.mjs')"` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.2myxBRqWID) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.Bk5cxbEjGF) (evidence/check_all.txt)
     suite                         tests  status
     library                         447  OK
     experiments/brain               756  OK
