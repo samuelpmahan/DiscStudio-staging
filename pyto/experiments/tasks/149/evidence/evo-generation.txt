@@ -1,0 +1,24 @@
+The owner's own generation, reproduced here and run twice: once against MAIN and once against
+this copy. 32 genomes, each render a flat list of 196,608 rgb integers, observed, with his own
+caps (value_cap_bytes=16000000, array_cap=250000).
+
+    cd <workspace>/evo && <python> exp/evo-pxc/run.py
+    (observed/measurements.json; profile entry for _result_sha256)
+
+                          before (MAIN)   after (this copy)
+    generation              9.710 s          9.019 s
+    run_record              1.563 s          0.461 s
+    write_record            2.829 s          2.956 s
+    _result_sha256          1.061 s          0.527 s   (273 calls -> 141)
+    record.json            109.3 MiB        109.3 MiB
+
+The record is the same record: sha256 of the document with every field a wall clock reaches
+dropped (source, counters.wall_ms, per-invocation duration_ms, per-tick latency_ms) is
+43c06f4d56dff1176c28afc06a24e7a0954131612643a15515e1e11d5ca7ab0e on both sides.
+
+write_record is unchanged because his own caps ask for every number of every render to be in the
+document; that is what the `array` kind is for, and the bench beside this file is what it is
+worth (111.5 MiB and 4.65 s of record for 32 list renders; 0.2 MiB and 0.02 s, with 6.0 MiB of
+buffers beside the record, for the same 32 renders as uint8 ndarrays).
+
+All 32 historical pixel hashes matched on both runs ("all_32_historical_pixel_hashes_match": true).

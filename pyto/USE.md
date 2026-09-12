@@ -315,6 +315,27 @@ into one `pyto-run-record@1` document: every Tick, every invocation, its inputs,
 its `into`, its writes, its digests, its value, and which addresses were there
 before the run started. `write_record(record, path)` puts it on disk.
 
+A value the record cannot hold whole says what it is instead of pretending. A
+long array carries its first 200 entries and a note with the full length; a value
+over 256 KB is dropped for its size, digest and all; an image whose PNG would not
+fit is never encoded (the encoder is stopped at the block that passes the cap) and
+keeps a digest of its pixels; and an **array Part -- an ndarray -- is never spelled
+out as JSON numbers at all**: the record keeps its dtype, its shape, the sha256 of
+its buffer, the first 200 values, and, when you say where to put them, the raw
+bytes beside the record.
+
+    record = run_record(run, pxc, preexisting=preexisting, values_dir="out/record.values")
+    write_record(record, "out/record.json")
+    # out/record.json          the document, one {dtype, shape, digest, preview, path} per array
+    # out/record.values/*.bin  the buffers, one file per published address
+
+The digest is the point: an array is digested from its dtype, its shape and its
+raw bytes, once, by the receipt (`result_sha256`), and the record reuses that
+number. Before this an ndarray was not JSON, so it had no digest, no cache key and
+an `omitted` line in every record. Everything else keeps one canonical
+serialization per value: the receipt's digest is the proof the value is JSON, so
+the materializer does not dump it a second time to find out.
+
 That document is what a fresh process replays: it never imports your program, and
 `px` reads it as a process table. A wall clock reaches two of its fields and no
 others — `counters.wall_ms`, and `duration_ms` per invocation — and the `source`

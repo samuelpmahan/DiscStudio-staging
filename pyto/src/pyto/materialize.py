@@ -42,7 +42,7 @@ import os
 from typing import Any, Mapping
 
 from .core import PxC
-from .pcr import PcrRun, receipt_address
+from .pcr import PcrRun, array_sha256, is_array, receipt_address
 
 SCHEMA = "pyto-run-record@1"
 RUNTIME = "pyto"
@@ -158,18 +158,222 @@ def _truncate_arrays(value: Any, cap: int, lengths: list[int]) -> Any:
         if len(value) > cap:
             lengths.append(len(value))
             value = value[:cap]
+        # A list with no list and no dict under it is its own truncation, and one
+        # C-level pass over its types says so far more cheaply than recursing once
+        # per entry: a genome's 196,608 rgb integers were rebuilt one call at a
+        # time to produce the same list back.
+        if not any(issubclass(kind, (list, dict)) for kind in set(map(type, value))):
+            return value
         return [_truncate_arrays(item, cap, lengths) for item in value]
     if isinstance(value, dict):
         return {key: _truncate_arrays(item, cap, lengths) for key, item in value.items()}
     return value
 
 
-def _png_data_url(image: Any) -> str:
+class _EncodeStopped(Exception):
+    """Raised by `_CappedSink` inside the encoder once the output passes the cap."""
+
+
+class _CappedSink:
+    """A file object for `Image.save` that accepts at most `limit` bytes.
+
+    PIL hands its encoder's output to `fp.write` block by block
+    (`ImageFile._save`), so refusing the block that crosses the limit stops the
+    encode where it stands. That is what makes "never encode an image that cannot
+    fit" true rather than aspirational: a 1024x1024 photograph is three megabytes
+    of pixels whose PNG is megabytes more, and the old path compressed all of it,
+    base64'd all of it, measured it, and threw it away.
+    """
+
+    def __init__(self, limit: int) -> None:
+        self.limit = limit
+        self.size = 0
+        self.blocks: list[bytes] = []
+
+    def write(self, data: Any) -> int:
+        self.size += len(data)
+        if self.size > self.limit:
+            raise _EncodeStopped
+        self.blocks.append(bytes(data))
+        return len(data)
+
+    def tell(self) -> int:
+        return self.size
+
+    def flush(self) -> None:  # pragma: no cover - PIL calls it, it has nothing to do
+        pass
+
+    def value(self) -> bytes:
+        return b"".join(self.blocks)
+
+
+def _png_budget(value_cap_bytes: int) -> int:
+    """The largest PNG, in bytes, whose data URL still fits under the cap.
+
+    base64 spends four characters on every three bytes, so the data URL of an
+    n-byte PNG is `len(prefix) + 4 * ceil(n / 3)` bytes, every one of them ASCII.
+    Solving that for n is exact, and exactness is the point: an encoding one byte
+    longer than this is over the cap and one this long is under it, so which side
+    of the cap an image falls on is decided by the encoder's own output length and
+    never by a guess about how well an image compresses.
+    """
+    return max(0, (value_cap_bytes - len(PNG_DATA_URL_PREFIX)) // 4 * 3)
+
+
+def _png_data_url(image: Any, limit: int | None = None) -> str | None:
+    """The image as a `data:image/png;base64,...` string, or None when it is over `limit`.
+
+    `limit` is a PNG byte budget (`_png_budget`), not a data URL budget: the encode
+    stops as soon as the PNG passes it, before there is anything to base64.
+    """
     from PIL import Image  # noqa: F401 - raises ImportError when Pillow is absent
 
-    buffer = io.BytesIO()
-    image.save(buffer, format="PNG")
-    return PNG_DATA_URL_PREFIX + base64.b64encode(buffer.getvalue()).decode("ascii")
+    if limit is None:
+        buffer = io.BytesIO()
+        image.save(buffer, format="PNG")
+        payload = buffer.getvalue()
+    else:
+        sink = _CappedSink(limit)
+        try:
+            image.save(sink, format="PNG")
+        except _EncodeStopped:
+            return None
+        payload = sink.value()
+    return PNG_DATA_URL_PREFIX + base64.b64encode(payload).decode("ascii")
+
+
+def _image_digest(image: Any) -> str:
+    """sha256 of an image's mode, its size and its raw pixels.
+
+    The digest an over-cap image carries. The old path digested the base64 it had
+    just built and was about to throw away, which is the encode this module no
+    longer performs; this one reads the pixels the image already holds. Same
+    pixels, same mode, same size digest the same, and nothing else does -- but it
+    is a digest of the *image* and not of any PNG of it, so the note says which it
+    is (pyto/viewer/RECORD.md, "over the size cap").
+    """
+    digest = hashlib.sha256()
+    digest.update(f"{image.mode} {image.size[0]}x{image.size[1]} ".encode("utf-8"))
+    digest.update(image.tobytes())
+    return digest.hexdigest()
+
+
+def _over_cap_image_note(image: Any, value_cap_bytes: int, limit: int) -> str:
+    try:
+        identity = f"{image.mode} {image.size[0]}x{image.size[1]}"
+    except Exception:  # pragma: no cover - a PIL image always has both
+        identity = type(image).__name__
+    note = (
+        f"image value ({identity}) is over the {value_cap_bytes} byte cap: its PNG passed "
+        f"{limit} bytes, which base64 only makes longer, so the encoding was stopped and "
+        "dropped"
+    )
+    try:
+        return f"{note}; sha256 of the raw pixels = {_image_digest(image)}"
+    except Exception as error:  # a truncated image cannot hand over its pixels
+        return f"{note}; no digest of the raw pixels could be taken ({type(error).__name__})"
+
+
+def _array_preview(value: Any, cap: int) -> list[Any] | None:
+    """The first `cap` entries of the array, flattened, or None when they are not JSON.
+
+    Only the dtypes whose Python values are JSON -- bool, the integers, the floats
+    -- get a preview; a complex, datetime or structured array is described and
+    digested but not previewed, because a preview that cannot be written is worse
+    than none (the record is dumped whole at the end, and one unserializable entry
+    would lose all of it).
+    """
+    if getattr(value.dtype, "kind", "") not in ("b", "i", "u", "f"):
+        return None
+    try:
+        return value.reshape(-1)[:cap].tolist()
+    except Exception:  # pragma: no cover - an array this runtime cannot flatten
+        return None
+
+
+def _array_href(values_path: str) -> str:
+    """What the record says the sidecar is: the folder beside the record, and the file.
+
+    A path relative to the record's own directory, so a record and its `.values`
+    folder are moved, copied and served together.
+    """
+    directory, name = os.path.split(values_path)
+    return f"{os.path.basename(directory)}/{name}" if directory else name
+
+
+def _array_value(
+    value: Any,
+    *,
+    value_cap_bytes: int,
+    array_cap: int,
+    digest: str | None,
+    values_path: str | None,
+) -> dict[str, Any]:
+    """One `array` value of RECORD.md: what the array is, its digest, a preview, its bytes.
+
+    An array is not rendered as JSON and never becomes `omitted` for its size: a
+    256x256x3 render is 196,608 numbers, and spelling them as decimal text is what
+    turned one generation's record into 109 MiB of integers that no viewer could
+    open. What the record keeps instead is what an inspection needs -- the dtype,
+    the shape, the digest, and the first `array_cap` values -- with the buffer
+    itself written beside the record when the caller asked for it
+    (`run_record(values_dir=...)`).
+
+    `digest` is the receipt's `result_sha256`, already computed by `pcr.array_sha256`
+    over these very bytes: the array is digested once per run, not once per reader.
+    """
+    shape = tuple(int(extent) for extent in value.shape)
+    count = 1
+    for extent in shape:
+        count *= extent
+    dtype = str(value.dtype)
+    if digest is None:
+        digest = array_sha256(value)
+    # The preview is the first `ARRAY_CAP` values at most, however high the
+    # caller's `array_cap` is: `array_cap` raises how much of a JSON *list* the
+    # record spells out, and an array is not spelled out at all -- its buffer is
+    # beside the record. The owner's own generation passes array_cap=250000, which
+    # under the other reading writes all 196,608 numbers of every render back into
+    # the record and loses the whole point of the kind ({?} ArrayPreviewCap).
+    preview = _array_preview(value, min(array_cap, ARRAY_CAP))
+    data: dict[str, Any] = {
+        "dtype": dtype,
+        "shape": list(shape),
+        "digest": digest,
+        "preview": preview,
+        "path": None,
+    }
+    notes = [f"{count} {dtype} value(s), shape ({', '.join(str(e) for e in shape)})"]
+    if values_path is not None:
+        try:
+            directory = os.path.dirname(os.path.abspath(values_path))
+            os.makedirs(directory, exist_ok=True)
+            with open(values_path, "wb") as handle:
+                handle.write(value.tobytes())
+            data["path"] = _array_href(values_path)
+            notes.append(f"raw bytes at {data['path']}")
+        except Exception as error:  # a full disk is not a reason to lose the record
+            notes.append(f"the raw bytes could not be written ({type(error).__name__}: {error})")
+    else:
+        notes.append("the raw bytes were not kept (no values directory was given)")
+    if preview is None:
+        notes.append(f"no preview: dtype {dtype} does not render as JSON")
+    else:
+        notes.append(f"preview holds the first {len(preview)} of {count}")
+    rendered = {"kind": "array", "data": data, "note": "; ".join(notes)}
+    # The description is bounded by `array_cap`, but a caller who raises that cap
+    # can still ask for more preview than the value cap allows. The preview goes
+    # and the description stays: an `array` never degrades to `omitted`, because
+    # the dtype, the shape and the digest are the part a reader cannot recompute.
+    payload = json.dumps(data, sort_keys=True, separators=(",", ":"))
+    if len(payload.encode("utf-8")) > value_cap_bytes:
+        data["preview"] = None
+        notes[-1] = (
+            f"the preview of {len(preview or ())} value(s) was over the {value_cap_bytes} "
+            "byte cap and was dropped"
+        )
+        rendered["note"] = "; ".join(notes)
+    return rendered
 
 
 def _omitted(note: str) -> dict[str, Any]:
@@ -181,28 +385,51 @@ def render_value(
     *,
     value_cap_bytes: int = VALUE_CAP_BYTES,
     array_cap: int = ARRAY_CAP,
+    result_sha256: str | None = None,
+    values_path: str | None = None,
 ) -> dict[str, Any]:
     """One `value` object of RECORD.md: `{kind, data, note}`.
 
     Dispatch order, which is not the order RECORD.md:59-64 lists the kinds in
     because `str` is itself JSON-serializable and would otherwise never reach
-    `text`: image first (it is a type test), then `str` (`svg` when it opens an SVG
-    document, else `text`), then JSON-serializable (`json`), then `omitted`.
+    `text`: image first (it is a type test), then array (a type test too), then
+    `str` (`svg` when it opens an SVG document, else `text`), then
+    JSON-serializable (`json`), then `omitted`.
 
     Arrays are truncated before the size cap is applied, so a long array of small
     entries survives as its first `array_cap` entries rather than being dropped
     whole.
+
+    `result_sha256` is the receipt's digest of this same value, passed in by
+    `run_record`. It says one thing and buys one thing: the value dumped once
+    already, so this function does not dump it again to find out whether it is
+    JSON. A value big enough to matter -- a genome's million floats -- was being
+    serialized three times to produce one record line.
+
+    `values_path` is where an array value's raw bytes go, `None` to keep none.
     """
     note: str | None = None
 
     if _is_pil_image(value):
+        limit = _png_budget(value_cap_bytes)
         try:
-            data = _png_data_url(value)
+            data = _png_data_url(value, limit=limit)
         except ImportError:  # pragma: no cover - Pillow present in this checkout
             return _omitted("image value: Pillow is not installed, so no PNG could be encoded")
         except Exception as error:  # a truncated or unsupported image mode
             return _omitted(f"image value could not be encoded as PNG: {type(error).__name__}: {error}")
+        if data is None:
+            return _omitted(_over_cap_image_note(value, value_cap_bytes, limit))
         return _capped({"kind": "png-data-url", "data": data, "note": None}, value_cap_bytes)
+
+    if is_array(value):
+        return _array_value(
+            value,
+            value_cap_bytes=value_cap_bytes,
+            array_cap=array_cap,
+            digest=result_sha256,
+            values_path=values_path,
+        )
 
     if isinstance(value, str):
         # The order and the tests are adapters.js:262-264's, which is the
@@ -226,10 +453,18 @@ def render_value(
     # that raises -- must degrade to `omitted` here rather than escape and lose the
     # whole record. json.dumps raises RecursionError (not a ValueError) on both of
     # the first two, which is exactly how the record used to be lost.
-    try:
-        json.dumps(value)
-    except Exception as error:
-        return _omitted(_unserializable_note(value, error))
+    # The digest is the dump: `pcr._result_sha256` is `json.dumps(value, ...)` over
+    # the very object `run.results` holds, and it is None exactly when that dump
+    # raised. A digest is therefore proof that the value is JSON-serializable and
+    # this test is skipped. The converse is not proof and is not treated as one:
+    # `sort_keys=True` also refuses a dict whose keys cannot be compared with each
+    # other, which plain `json.dumps` accepts, so a value with no digest still
+    # takes the old path and is still `json` when it dumps.
+    if result_sha256 is None:
+        try:
+            json.dumps(value)
+        except Exception as error:
+            return _omitted(_unserializable_note(value, error))
     try:
         data = _truncate_arrays(value, array_cap, lengths)
         if lengths:
@@ -319,11 +554,17 @@ def run_record(
     source: dict | None = None,
     value_cap_bytes: int = VALUE_CAP_BYTES,
     array_cap: int = ARRAY_CAP,
+    values_dir: str | None = None,
 ) -> dict:
     """The `pyto-run-record@1` document for one executed PCR.
 
     `run` is what `PCR.run(pxc, observe=True)` returned; `pxc` is the store it ran
-    against, read only to infer `preexisting` when it is not given. Pass
+    against, read only to infer `preexisting` when it is not given. `values_dir` is
+    where the raw bytes of `array` values go, one `<address>.bin` per value, and
+    the record names each one relative to its own directory; without it an array is
+    still described and digested, but its buffer is not kept. The bytes are written
+    here and not by `write_record` because this is the only place that has both the
+    values and a path to put them ({?} ArraySidecarWriter). Pass
     `preexisting=set(pxc.addresses())` captured *before* the run for the accurate
     answer (RECORD.md:73); the fallback here is "every address the post-run store
     holds that no invocation of this run produced", which is right whenever the run
@@ -526,6 +767,10 @@ def run_record(
                         run.results.get(testimony.id),
                         value_cap_bytes=value_cap_bytes,
                         array_cap=array_cap,
+                        result_sha256=result_sha256,
+                        values_path=_values_path(
+                            values_dir, testimony.id, produces_by_id[testimony.id]
+                        ),
                     )
                     if testimony.id in run.results
                     else _omitted("the run retained no result for this invocation"),
@@ -591,6 +836,21 @@ def run_record(
             "completed": completed,
         }
     return document
+
+
+def _values_path(
+    values_dir: str | None, invocation_id: str, produces: tuple[str, ...]
+) -> str | None:
+    """Where one invocation's raw array bytes go: `<values_dir>/<address>.bin`.
+
+    Named by the address it published, which is what a reader of the record has in
+    hand; an invocation that published several Parts returns one value that is not
+    any single address, so that file is named by the invocation instead.
+    """
+    if values_dir is None:
+        return None
+    name = produces[0] if len(produces) == 1 else invocation_id
+    return os.path.join(values_dir, f"{_safe(name)}.bin")
 
 
 def _tick_latency_ms(measured: float | None, invocations: list[dict[str, Any]]) -> float | None:
@@ -690,7 +950,10 @@ def _value_preview(value: Mapping[str, Any], lines: int = 3, width: int = 108) -
     (research/tick-observability-ledger.md:107-118). Image and SVG values get their
     own panel instead, and an omitted value has nothing to show.
     """
-    if value["kind"] == "json":
+    # `array` reads the same way: its data is a description, and a panel that
+    # named the kind and showed neither the dtype nor the digest would be the
+    # value-blindness above with an extra step.
+    if value["kind"] in ("json", "array"):
         text = json.dumps(value["data"], sort_keys=True)
     elif value["kind"] == "text":
         text = value["data"]

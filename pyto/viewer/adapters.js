@@ -19,7 +19,9 @@ export const MAX_VALUE_BYTES = 262144;
 export const MAX_ARRAY_ENTRIES = 200;
 
 export const RUNTIMES = ['pyto', 'discstudio', 'chesslab', 'wumpus'];
-export const VALUE_KINDS = ['json', 'text', 'svg', 'png-data-url', 'omitted'];
+export const VALUE_KINDS = ['json', 'text', 'svg', 'png-data-url', 'array', 'omitted'];
+/** RECORD.md, kind `array`: the five things an array value says about itself. */
+export const ARRAY_KEYS = ['dtype', 'shape', 'digest', 'preview', 'path'];
 export const WRITE_KINDS = ['new-address', 'refinement', 'replacement'];
 
 /** RECORD.md, "Placement and budget": the optional fields, and their key sets. */
@@ -155,6 +157,28 @@ function validateValue(value, path) {
   if (kind === 'omitted') {
     if (value.data !== null) fail(`${path}.data`, `expected null for kind "omitted", got ${show(value.data)}`);
     if (typeof value.note !== 'string' || !value.note.length) fail(`${path}.note`, 'kind "omitted" must say why in note');
+  } else if (kind === 'array') {
+    // RECORD.md "array": an array Part is not spelled out as JSON numbers. What
+    // the record keeps is what a reader cannot recompute -- the dtype, the shape
+    // and the digest of the buffer -- with a bounded preview and, when the
+    // producer kept them, the path of the raw bytes beside the record.
+    const data = requireObject(value.data, `${path}.data`);
+    for (const key of ARRAY_KEYS) {
+      if (!(key in data)) fail(`${path}.data.${key}`, 'is required for kind "array"');
+    }
+    requireString(data.dtype, `${path}.data.dtype`);
+    requireArray(data.shape, `${path}.data.shape`);
+    data.shape.forEach((extent, index) => {
+      if (!Number.isInteger(extent) || extent < 0) {
+        fail(`${path}.data.shape[${index}]`, `expected a non-negative integer, got ${show(extent)}`);
+      }
+    });
+    if (data.digest !== null && !/^[0-9a-f]{64}$/.test(data.digest)) {
+      fail(`${path}.data.digest`, `expected a sha256 hex digest or null, got ${show(data.digest)}`);
+    }
+    if (data.preview !== null) requireArray(data.preview, `${path}.data.preview`);
+    if (data.path !== null) requireString(data.path, `${path}.data.path`);
+    if (typeof value.note !== 'string' || !value.note.length) fail(`${path}.note`, 'kind "array" must say what the array is in note');
   } else if (kind !== 'json') {
     requireString(value.data, `${path}.data`, { nonEmpty: false });
     // RECORD.md:109-110 states the shape; tick-viewer.js:118 puts this string
