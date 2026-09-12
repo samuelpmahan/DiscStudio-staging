@@ -113,8 +113,12 @@ def _read_lf(path: str) -> str:
 
 # --- reading the tree: packets, questions.md, diffs, answers -----------------
 
-QUESTION_LINE = re.compile(r"^\{\?\}\s+([^:]+):\s?(.*)$")
-ROOT_LABEL = re.compile(r"\{\?\}\s+([^\s,]+)")
+#: A label is one token: no spaces, commas or colons -- the same shape whether it names a root
+#: heading (`### {?} PromotionScope`) or a packet line (`{?} FrameIsPartOfTheLayout: ...`). Reused
+#: by both patterns below so the two readings of "label" never drift apart.
+LABEL = r"[^\s,:]+"
+QUESTION_LINE = re.compile(r"^\{\?\}\s+(" + LABEL + r"):\s?(.*)$")
+ROOT_LABEL = re.compile(r"\{\?\}\s+(" + LABEL + r")")
 #: A root entry is answered when a line quotes the owner deciding or marks it resolved.
 DECIDED_LINE = re.compile(r"[Oo]wner, 20\d\d|[Oo]wner \(20\d\d|^Owner[,:]|Status: resolved|\bDecided\b|\bOverturned\b|by owner")
 #: A root entry still marked open carries no decision; it is open on the root, where the owner reads it,
@@ -126,18 +130,20 @@ REVIEW_TASK_MAX = 59
 NEEDS_OWNER = re.compile(r"\bowner", re.I)
 
 
-def split_question_line(line: str) -> tuple[str, str]:
-    """`(label, text)` from one raw `{?} Label: text` line.
+def split_question_line(line: str) -> tuple[str, str] | None:
+    """`(label, text)` from one raw, labelled `{?} Label: text` line, or `None` when the line has
+    no such label -- a prose evidence note (spaces before its first `:`, or no `:` at all) is not
+    a question and this does not invent a label for it.
 
     The one parser for the mark, shared by `collate` (reading every packet) and
     `pyto/scripts/walk.py` (reading one packet's own lines back to show their
-    answered state) -- one regex, so a line neither reads the same way twice.
-    A line with no `:` has no text, only a label (the whole remainder, stripped).
+    answered state) -- one regex, so a line neither reads the same way twice. A caller that gets
+    `None` back must treat the line as a note, not fall back to guessing a label from it.
     """
     match = QUESTION_LINE.match(line)
-    if match:
-        return match.group(1).strip(), match.group(2).strip()
-    return line[len("{?}"):].strip(), ""
+    if match is None:
+        return None
+    return match.group(1).strip(), match.group(2).strip()
 
 
 def _packet_dirs(tasks_dir: str) -> list[str]:
@@ -151,30 +157,39 @@ def _packet_dirs(tasks_dir: str) -> list[str]:
     return [d for _, d in sorted(numbered)]
 
 
-def _packet_items(pyto_root: str) -> list[dict]:
-    """Packet-origin candidates, in stable order: task number, then line."""
+def _packet_items(pyto_root: str) -> tuple[list[dict], dict[str, int]]:
+    """Packet-origin candidates, in stable order: task number, then line -- and, alongside them,
+    how many `{?}` lines per task carried no labelled form (`{?} Label: text`): prose evidence
+    notes an agent marked `{?}` for a human to read, not questions for the batch (task 103's
+    "## Uncertain" is the example: four paragraphs, zero labels). A note that wraps across several
+    output lines is still one note -- only its opening `{?}` line is ever looked at; the
+    continuation lines do not start with `{?}` and are never visited by this loop at all."""
     tasks_dir = os.path.join(pyto_root, "experiments", "tasks")
     items: list[dict] = []
+    notes_left_out: dict[str, int] = {}
     if not os.path.isdir(tasks_dir):
-        return items
+        return items, notes_left_out
     for task_id in _packet_dirs(tasks_dir):
         packet_path = os.path.join(tasks_dir, task_id, "packet.md")
         if not os.path.isfile(packet_path):
             continue
         text = _read_lf(packet_path)
         section = text.split("\n## Uncertain", 1)[1] if "\n## Uncertain" in text else ""
+        task_label = f"task-{task_id}"
         for line in section.splitlines():
             if not line.startswith("{?}"):
                 continue
-            label, question_text = split_question_line(line)
-            if not label:
+            split = split_question_line(line)
+            if split is None:
+                notes_left_out[task_label] = notes_left_out.get(task_label, 0) + 1
                 continue
+            label, question_text = split
             items.append({
-                "label": label, "task": f"task-{task_id}", "text": question_text,
+                "label": label, "task": task_label, "text": question_text,
                 "origin": "packet",
                 "needs": "owner" if NEEDS_OWNER.search(question_text) else "default",
             })
-    return items
+    return items, notes_left_out
 
 
 def _root_items(pyto_root: str) -> list[dict]:
@@ -319,9 +334,10 @@ def collate(args: Mapping[str, Any]) -> dict:
     if n is None:
         n = _next_batch_number(pyto_root)
     answered = _answered_labels(pyto_root)
+    packet_items, notes_left_out = _packet_items(pyto_root)
     items = [
         item for item in (
-            *_packet_items(pyto_root), *_root_items(pyto_root), *_diff_items(pyto_root),
+            *packet_items, *_root_items(pyto_root), *_diff_items(pyto_root),
         )
         if item["label"] not in answered
     ]
@@ -335,10 +351,19 @@ def collate(args: Mapping[str, Any]) -> dict:
             item["default_sha256"] = defaults_filed[item["label"]]["sha256"]
         elif item["label"] in reviewed or (reviewed and task_number is not None and task_number <= REVIEW_TASK_MAX):
             item["needs"] = "reviewed"
-    # What needs the owner first, then what the review page already lists, then what carries a
-    # default; each group in source order.
+    # What needs the owner first (newest task first among those -- the freshest packets are the
+    # ones most likely still live in the owner's head), then what the review page already lists,
+    # then what carries a default; each group otherwise in source order.
     rank = {"owner": 0, "root": 1, "reviewed": 2, "default": 3}
-    items = sorted(items, key=lambda it: rank.get(it.get("needs", "default"), 2))
+
+    def sort_key(item: dict) -> tuple[int, int]:
+        primary = rank.get(item.get("needs", "default"), 2)
+        secondary = 0
+        if item.get("needs") == "owner" and item["task"].startswith("task-"):
+            secondary = -int(item["task"].split("-", 1)[1])
+        return (primary, secondary)
+
+    items = sorted(items, key=sort_key)
     for number, item in enumerate(items, start=1):
         item["number"] = number
     ordered = [
@@ -347,11 +372,13 @@ def collate(args: Mapping[str, Any]) -> dict:
          **({"default_sha256": item["default_sha256"]} if item.get("default_sha256") else {})}
         for item in items
     ]
+    notes_by_task = dict(sorted(notes_left_out.items(), key=lambda kv: int(kv[0].split("-", 1)[1])))
     return {"n": n, "items": ordered,
             "needs_owner": sum(1 for it in ordered if it["needs"] == "owner"),
             "reviewed": sum(1 for it in ordered if it["needs"] == "reviewed"),
             "root_open": sum(1 for it in ordered if it["needs"] == "root"),
-            "defaults": sum(1 for it in ordered if it["needs"] == "default")}
+            "defaults": sum(1 for it in ordered if it["needs"] == "default"),
+            "notes_left_out": {"total": sum(notes_by_task.values()), "by_task": notes_by_task}}
 
 
 COLLATE = Calculation("fn.neat.review.collate", collate)
@@ -619,6 +646,10 @@ def _print_batch(batch_value: dict) -> None:
         for item in defaults:
             filed = f" (filed {item['default_sha256'][:12]})" if item.get("default_sha256") else ""
             print(f"{item['number']}. [{item['task']}] {item['label']}{filed}: {item['text']}")
+    notes = batch_value.get("notes_left_out") or {}
+    if notes.get("total"):
+        print(f"\n{notes['total']} notes left out of {len(notes.get('by_task') or {})} packets: "
+              "evidence, not questions.")
 
 
 def main(argv: list[str] | None = None) -> int:
