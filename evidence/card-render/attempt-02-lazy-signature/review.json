@@ -1,0 +1,10 @@
+{
+  "subject": "ac967f4c459ed0274cc59e592b57c1904c7ded8a212f75ef1d3a50bf321c2acb",
+  "baseline": "56dd75b2c2e4185b0d73c0befb0dab6a5882dc4d1f18ffa1832c6269f52d992c",
+  "candidate": "baba714e4bc2679d6f1b4d216d39930b880c8ebc87803569c013145e8097d4c5",
+  "prompt": "Candidate: Defer immutable-input certification until an input repeats; first renders use the original serializer, later verified repeats reuse the signature.\nAutomated result: rejected-regression. Review candidate.patch, comparison.json and the retained source/inputs before deciding whether this exact change should be promoted. What do you want to keep, change or reject?",
+  "response": null,
+  "acceptance": null,
+  "promotion": null,
+  "limitation": "SVG/result equivalence is not browser pixels or CV accuracy. No browser-paint latency is measured."
+}

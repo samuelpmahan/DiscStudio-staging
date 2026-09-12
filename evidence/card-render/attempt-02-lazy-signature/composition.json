@@ -1,0 +1,21 @@
+{
+  "PrincipleComponentRender": "card-render-experiment",
+  "Ticks": [
+    {
+      "name": "Compare",
+      "Calculations": [
+        {
+          "call": "fn.exp.cardRender.compare",
+          "with": {
+            "reference": "px.exp.cardRender.rfa849d510947e8d40ea5.reference",
+            "candidate": "px.exp.cardRender.rfa849d510947e8d40ea5.candidate",
+            "rounds": "px.exp.cardRender.rfa849d510947e8d40ea5.rounds",
+            "contract": "px.exp.cardRender.rfa849d510947e8d40ea5.contract"
+          },
+          "args": {},
+          "into": "px.exp.cardRender.rfa849d510947e8d40ea5.comparison"
+        }
+      ]
+    }
+  ]
+}

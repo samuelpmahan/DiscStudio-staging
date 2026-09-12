@@ -1,0 +1,80 @@
+{
+  "note": "ChessLab-shaped receipts, hand-written against reference/lab/chesslab-lab/contract.ts:127-141 (Receipt) and host.ts:28-36 (how loadCartridge builds one). Slot names, stage ids and the S1 declared/actual divergence follow debugger.test.ts:135-147: S1 declares px.chess.objects and actually also consumes px.chess.frame. Receipts retain no Part values, so every value in the derived record is omitted.",
+  "receipts": [
+    {
+      "stage": "S0",
+      "variant": "clean",
+      "operation": "chess.s0.materializeObjects",
+      "opId": "chess.s0.materializeObjects",
+      "frozenCalculations": [
+        {
+          "address": "fn.chess.readFrame",
+          "implementationHash": "3d2a5f9c8b1e47a06f0c9d4e5b8a1c7239e0f6b4a2d8c1e5079b3a6d4f2c8e10",
+          "identityScope": "runtime-function-body",
+          "limitation": "called helpers, constants, templates, and assets are not covered"
+        },
+        {
+          "address": "fn.chess.materializeObjects",
+          "implementationHash": "a71c04e8d5f39b2607c1a4e8d9b5f3021c6e8a4d70b9f2c5e18a3d6b4f0c2e97",
+          "identityScope": "runtime-function-body",
+          "limitation": "called helpers, constants, templates, and assets are not covered"
+        }
+      ],
+      "startedAtMs": 1757376000000,
+      "durationMs": 4,
+      "declaredConsumes": ["px.chess.frame"],
+      "declaredProduces": ["px.chess.objects"],
+      "actualConsumes": ["px.chess.frame"],
+      "actualProduces": ["px.chess.objects"],
+      "writes": [{ "address": "px.chess.objects", "kind": "new-address" }],
+      "probes": [{ "name": "pieces", "value": 32 }],
+      "artifacts": []
+    },
+    {
+      "stage": "S1",
+      "variant": "clean",
+      "operation": "chess.s1.analyzeSides",
+      "opId": "chess.s1.analyzeSides",
+      "frozenCalculations": [
+        {
+          "address": "fn.chess.attacks",
+          "implementationHash": "5e9b1d3a7c0f48620d8e2b6a9c4f10538a7d2e6b1c9f04a3d5e8b2c6f10a4d79",
+          "identityScope": "runtime-function-body",
+          "limitation": "called helpers, constants, templates, and assets are not covered"
+        }
+      ],
+      "startedAtMs": 1757376000004,
+      "durationMs": 11,
+      "declaredConsumes": ["px.chess.objects"],
+      "declaredProduces": ["px.chess.analysis"],
+      "actualConsumes": ["px.chess.frame", "px.chess.objects"],
+      "actualProduces": ["px.chess.analysis"],
+      "writes": [{ "address": "px.chess.analysis", "kind": "new-address" }],
+      "probes": [{ "name": "legalMoves", "value": 41 }],
+      "artifacts": []
+    },
+    {
+      "stage": "S1",
+      "variant": "exp",
+      "operation": "chess.s1.scoreCandidates",
+      "opId": "chess.s1.scoreCandidates",
+      "frozenCalculations": [],
+      "startedAtMs": 1757376000015,
+      "durationMs": 6,
+      "declaredConsumes": ["px.chess.analysis"],
+      "declaredProduces": ["px.chess.analysis"],
+      "actualConsumes": ["px.chess.analysis"],
+      "actualProduces": ["px.chess.analysis"],
+      "writes": [{ "address": "px.chess.analysis", "kind": "refinement" }],
+      "probes": [],
+      "artifacts": [
+        {
+          "id": "scoring-table-1",
+          "kind": "measurementTable",
+          "sha256": "b4c0e18a7d2f96350a1e4b8c7d0f2a6935c8e1b4d7a0f3c6e29b5d8a1f4c7e02",
+          "uri": "file:///tmp/chesslab/scoring-table-1.json"
+        }
+      ]
+    }
+  ]
+}

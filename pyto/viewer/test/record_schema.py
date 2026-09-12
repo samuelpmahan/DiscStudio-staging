@@ -1,0 +1,551 @@
+"""A Python validator for pyto-run-record@1, written from RECORD.md.
+
+Why this file exists, and why it is not `from pyto.materialize import ...`:
+the record is a contract between two runtimes, and a contract checked only by
+the side that wrote it is not checked at all. `pyto/viewer/adapters.js`
+validates in JavaScript what Python produced; this validates in Python what
+JavaScript produced. The two implementations are deliberately independent --
+this one is transcribed from `pyto/viewer/RECORD.md`, clause by clause, with
+each rule naming the line of RECORD.md it comes from -- so a field one side
+invents or omits fails on the other side instead of travelling unnoticed.
+
+Strictness is the point. Key sets are exact in both directions:
+  - a missing key is an error, because RECORD.md:114 says missing fields are
+    null, never absent ("Missing fields are null, never invented");
+  - an unknown key is an error, because a field neither RECORD.md nor the other
+    runtime knows about is exactly the invention that clause forbids.
+
+`validate(record)` returns the record unchanged or raises RecordSchemaError,
+whose `.path` names the offending location the way adapters.js does
+(`ticks[0].invocations[2].value.kind`), so a failure from either runtime reads
+the same.
+"""
+
+from __future__ import annotations
+
+import json
+
+SCHEMA = "pyto-run-record@1"                     # RECORD.md:20
+RUNTIMES = ("pyto", "discstudio", "chesslab", "wumpus")   # RECORD.md:22
+VALUE_KINDS = ("json", "text", "svg", "png-data-url", "array", "omitted")  # RECORD.md:108-112
+WRITE_KINDS = ("new-address", "refinement", "replacement")
+ARRAY_KEYS = ("dtype", "shape", "digest", "preview", "path")  # RECORD.md, kind "array"
+MAX_VALUE_BYTES = 262144                          # RECORD.md:112
+MAX_ARRAY_ENTRIES = 200                           # RECORD.md:113
+PNG_DATA_URL_PREFIX = "data:image/png;base64,"    # RECORD.md:109-110
+
+DOCUMENT_KEYS = ("schema", "pcr", "source", "ticks", "parts", "counters")
+SOURCE_KEYS = ("runtime", "version", "commit")
+TICK_KEYS = ("index", "name", "invocations")
+INVOCATION_KEYS = (
+    "id", "calculation", "inputs", "args", "into",
+    "declared_consumes", "actual_consumes", "actual_produces", "writes",
+    "duration_ms", "result_sha256", "hit", "value",
+)
+CALCULATION_KEYS = ("address", "implementation_sha256", "identity_scope")
+WRITE_KEYS = ("address", "kind")
+VALUE_KEYS = ("kind", "data", "note")
+PART_KEYS = ("written_by", "read_by", "preexisting")
+COUNTER_KEYS = ("invocations", "hits", "computed", "wall_ms")
+# RECORD.md, "Placement and budget": optional everywhere they appear. Absent means
+# the run was serial and unbudgeted, which is what a runtime that never heard of
+# either writes.
+DOCUMENT_OPTIONAL = ("parallel", "budget")
+TICK_OPTIONAL = ("latency_ms",)
+# RECORD.md, "Effects": optional in the same way and for the same reason. Absent
+# means the run performed none -- what every runtime that never heard of an `oc.`
+# Calculation writes -- and a record that carries it carries it on every
+# invocation, empty for every pure one.
+INVOCATION_OPTIONAL = ("placement", "effects")
+PLACEMENT_KEYS = ("worker", "started_ms")
+BUDGET_KEYS = ("limit_ms", "stopped_after_tick", "completed")
+EFFECT_KEYS = ("kind", "args", "result", "result_sha256")
+EFFECT_KINDS = ("write_text", "read_text", "now_ms", "random_seed", "random", "env")
+# The two kinds whose one argument is a path, relative to the run's effects_root
+# and never absolute (RECORD.md, "Effects").
+EFFECT_PATH_KINDS = ("write_text", "read_text")
+
+
+class RecordSchemaError(ValueError):
+    """A violation of RECORD.md, carrying the path that names it."""
+
+    def __init__(self, path: str, message: str) -> None:
+        super().__init__(f"{SCHEMA} {path}: {message}")
+        self.path = path
+        self.reason = message
+
+
+def _fail(path, message):
+    raise RecordSchemaError(path, message)
+
+
+def _show(value):
+    if isinstance(value, bool) or value is None or isinstance(value, (int, float, str)):
+        return json.dumps(value)
+    return type(value).__name__
+
+
+def _keys(value, path, expected, optional=()):
+    """Exactly `expected`, in any order, plus any of `optional`.
+
+    `optional` is the placement-and-budget set (RECORD.md, "Placement and budget"):
+    a record that carries none of them is a serial, unbudgeted run, which is what
+    every runtime but a parallel pyto writes.
+    """
+    if not isinstance(value, dict):
+        _fail(path, f"expected an object, got {_show(value)}")
+    have, want = set(value), set(expected)
+    missing, extra = sorted(want - have), sorted(have - want - set(optional))
+    if missing:
+        _fail(path, f"missing required field(s) {', '.join(missing)}; RECORD.md: missing fields are null, never absent")
+    if extra:
+        _fail(path, f"unknown field(s) {', '.join(extra)} not in RECORD.md")
+    return value
+
+
+def _obj(value, path):
+    if not isinstance(value, dict):
+        _fail(path, f"expected an object, got {_show(value)}")
+    return value
+
+
+def _arr(value, path):
+    if not isinstance(value, list):
+        _fail(path, f"expected an array, got {_show(value)}")
+    return value
+
+
+def _str(value, path, non_empty=True):
+    if not isinstance(value, str):
+        _fail(path, f"expected a string, got {_show(value)}")
+    if non_empty and not value:
+        _fail(path, "expected a non-empty string")
+    return value
+
+
+def _nullable_str(value, path):
+    if value is not None and not isinstance(value, str):
+        _fail(path, f"expected a string or null, got {_show(value)}")
+    return value
+
+
+def _nullable_number(value, path):
+    if value is None:
+        return value
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        _fail(path, f"expected a number or null, got {_show(value)}")
+    return value
+
+
+def _bool(value, path):
+    if not isinstance(value, bool):
+        _fail(path, f"expected true or false, got {_show(value)}")
+    return value
+
+
+def _enum(value, allowed, path):
+    if value not in allowed:
+        _fail(path, f"expected one of {', '.join(json.dumps(a) for a in allowed)}, got {_show(value)}")
+    return value
+
+
+def _str_array(value, path):
+    _arr(value, path)
+    for i, entry in enumerate(value):
+        _str(entry, f"{path}[{i}]", non_empty=False)
+    return value
+
+
+def _binding(value, path):
+    """RECORD.md: inputs keep the testimony spelling, `px:` or `fn:`.
+
+    A result binding is `fn:<id>` or, when the producer published several Parts,
+    `fn:<id>#<address>`; both halves of the qualified form must be non-empty, so
+    a reader always has a producer to resolve and an address to resolve it to.
+    """
+    _str(value, path)
+    if not value.startswith("px:") and not value.startswith("fn:"):
+        _fail(path, f'expected a testimony binding spelled "px:<address>", "fn:<id>" or "fn:<id>#<address>", got {_show(value)}')
+    if value.startswith("fn:") and "#" in value:
+        writer, _, produce = value[3:].rpartition("#")
+        if not writer or not produce:
+            _fail(path, f'expected a produce-qualified result binding "fn:<id>#<address>", got {_show(value)}')
+    return value
+
+
+def _into(value, path):
+    """RECORD.md: `into` is one address, an array of addresses, or null.
+
+    The array is the multi-produce form: an invocation that published several
+    Parts from one pass. An empty array is refused -- an invocation that produced
+    nothing writes null, the way every other absent field does -- and so is a
+    repeated address, which would claim one Part was published twice by one
+    invocation.
+    """
+    if value is None or isinstance(value, str):
+        return _nullable_str(value, path)
+    if not isinstance(value, list):
+        _fail(path, f"expected an address, an array of addresses, or null, got {_show(value)}")
+    if not value:
+        _fail(path, "expected at least one address; an invocation that produces nothing writes null")
+    seen = set()
+    for index, entry in enumerate(value):
+        _str(entry, f"{path}[{index}]")
+        if entry in seen:
+            _fail(f"{path}[{index}]", f"duplicate produce address {json.dumps(entry)}; one invocation publishes each address once")
+        seen.add(entry)
+    return value
+
+
+def produce_addresses(into):
+    """The addresses an invocation's `into` names: none, one, or several."""
+    if into is None:
+        return ()
+    return (into,) if isinstance(into, str) else tuple(into)
+
+
+def resolve_binding(binding, produced_by):
+    """The Part addresses one testimony binding reads (RECORD.md, Field rules).
+
+    `px:<address>` is that address. `fn:<id>` is the whole result of that
+    invocation, which is the one Part it published; `fn:<id>#<address>` names one
+    produce of an invocation that published several. A known id wins over the `#`
+    split, so an invocation id carrying a `#` still resolves as the bare reference
+    it is. `produced_by` maps an invocation id to the addresses it published.
+    """
+    if binding.startswith("px:"):
+        return (binding[3:],)
+    if not binding.startswith("fn:"):
+        return ()
+    body = binding[3:]
+    if body in produced_by:
+        return tuple(produced_by[body])
+    writer, separator, address = body.rpartition("#")
+    if separator and address and address in produced_by.get(writer, ()):
+        return (address,)
+    return ()
+
+
+def _value(block, path):
+    """RECORD.md:108-113."""
+    _keys(block, path, VALUE_KEYS)
+    kind = _enum(block["kind"], VALUE_KINDS, f"{path}.kind")
+    _nullable_str(block["note"], f"{path}.note")
+    data = block["data"]
+    if kind == "omitted":
+        if data is not None:
+            _fail(f"{path}.data", f'expected null for kind "omitted", got {_show(data)}')
+        if not isinstance(block["note"], str) or not block["note"]:
+            _fail(f"{path}.note", 'kind "omitted" must say why in note')
+    elif kind == "array":
+        # RECORD.md "array": the dtype, the shape and the digest of the buffer --
+        # what a reader cannot recompute -- with a bounded preview and, when the
+        # producer kept them, the path of the raw bytes beside the record.
+        _obj(data, f"{path}.data")
+        _keys(data, f"{path}.data", ARRAY_KEYS)
+        _str(data["dtype"], f"{path}.data.dtype")
+        _arr(data["shape"], f"{path}.data.shape")
+        for index, extent in enumerate(data["shape"]):
+            if not isinstance(extent, int) or isinstance(extent, bool) or extent < 0:
+                _fail(f"{path}.data.shape[{index}]", f"expected a non-negative integer, got {_show(extent)}")
+        digest = data["digest"]
+        if digest is not None and (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(character not in "0123456789abcdef" for character in digest)
+        ):
+            _fail(f"{path}.data.digest", f"expected a sha256 hex digest or null, got {_show(digest)}")
+        if data["preview"] is not None:
+            _arr(data["preview"], f"{path}.data.preview")
+        if data["path"] is not None:
+            _str(data["path"], f"{path}.data.path")
+        if not isinstance(block["note"], str) or not block["note"]:
+            _fail(f"{path}.note", 'kind "array" must say what the array is in note')
+    elif kind == "json":
+        # any JSON value, including null -- json.load already proved that
+        pass
+    else:
+        _str(data, f"{path}.data", non_empty=False)
+        # RECORD.md:109-110 does not merely name the kind, it states the shape:
+        # "data is a `data:image/png;base64,...` string". A viewer puts this
+        # string into an <img src>, so the clause is checked, not assumed.
+        if kind == "png-data-url" and not data.startswith(PNG_DATA_URL_PREFIX):
+            _fail(
+                f"{path}.data",
+                f'expected a string beginning "{PNG_DATA_URL_PREFIX}" for kind "png-data-url", got {_show(data)}',
+            )
+    return block
+
+
+def _invocation(inv, path, seen_ids):
+    _keys(inv, path, INVOCATION_KEYS, INVOCATION_OPTIONAL)
+    ident = _str(inv["id"], f"{path}.id")
+    if ident in seen_ids:
+        _fail(f"{path}.id", f"duplicate invocation id {json.dumps(ident)}; ids anchor annotations and must be unique in a record")
+    seen_ids.add(ident)
+
+    calc = _keys(inv["calculation"], f"{path}.calculation", CALCULATION_KEYS)
+    _nullable_str(calc["address"], f"{path}.calculation.address")
+    _nullable_str(calc["implementation_sha256"], f"{path}.calculation.implementation_sha256")
+    _str(calc["identity_scope"], f"{path}.calculation.identity_scope")
+
+    for name, binding in _obj(inv["inputs"], f"{path}.inputs").items():
+        _binding(binding, f"{path}.inputs.{name}")
+    _obj(inv["args"], f"{path}.args")
+    _into(inv["into"], f"{path}.into")
+
+    # RECORD.md's declared_consumes rule is strict, so it is checked and not
+    # assumed: exactly the `px:` bindings of `inputs`, in binding order. An
+    # `fn:` entry or an address `inputs` does not carry would add a read edge no
+    # binding declares, because derive_part_index below unions the two fields.
+    bound_values = set(inv["inputs"].values())
+    for i, entry in enumerate(_arr(inv["declared_consumes"], f"{path}.declared_consumes")):
+        where = f"{path}.declared_consumes[{i}]"
+        _binding(entry, where)
+        if not entry.startswith("px:"):
+            _fail(where, f'declared_consumes carries Part bindings only, spelled "px:<address>", got {_show(entry)}')
+        if entry not in bound_values:
+            _fail(where, f"declared_consumes is a subset of inputs.values(), which does not carry {_show(entry)}")
+    _str_array(inv["actual_consumes"], f"{path}.actual_consumes")
+    _str_array(inv["actual_produces"], f"{path}.actual_produces")
+
+    for i, write in enumerate(_arr(inv["writes"], f"{path}.writes")):
+        wpath = f"{path}.writes[{i}]"
+        _keys(write, wpath, WRITE_KEYS)
+        _str(write["address"], f"{wpath}.address")
+        if write["kind"] is not None:
+            _enum(write["kind"], WRITE_KINDS, f"{wpath}.kind")
+
+    _nullable_number(inv["duration_ms"], f"{path}.duration_ms")
+    _nullable_str(inv["result_sha256"], f"{path}.result_sha256")
+    _bool(inv["hit"], f"{path}.hit")
+    _value(inv["value"], f"{path}.value")
+    _placement(inv, path)
+    _effects(inv, path)
+    return inv
+
+
+def _placement(inv, path):
+    """`placement`, when it is there: which worker ran this, how far into the Tick.
+
+    Optional, and null for a serial run: a Tick that ran on one thread has no
+    placement to report. `worker` is a 0-based index inside its Tick and
+    `started_ms` an offset from the moment the Tick began, so both are numbers a
+    reader can draw without a wall clock.
+    """
+    if "placement" not in inv:
+        return None
+    placement = inv["placement"]
+    if placement is None:
+        return None
+    where = f"{path}.placement"
+    _keys(placement, where, PLACEMENT_KEYS)
+    worker = placement["worker"]
+    if isinstance(worker, bool) or not isinstance(worker, int) or worker < 0:
+        _fail(f"{where}.worker", f"expected a non-negative integer, got {_show(worker)}")
+    value = placement["started_ms"]
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        _fail(f"{where}.started_ms", f"expected a number, got {_show(value)}")
+    return placement
+
+
+def _effects(inv, path):
+    """`effects`, when it is there: what this invocation did to the world, in order.
+
+    RECORD.md, "Effects". A list, empty for a pure `fn.` invocation; one entry per
+    effect, in the order they happened, each
+    `{"kind", "args", "result", "result_sha256"}`. The rules checked here are the
+    ones a replay depends on: a kind it knows, an object of arguments, a path that
+    is relative (a leading `/` or a `..` segment would name a place the record
+    cannot claim), and a digest that is there for every entry -- `result` may be
+    null (a write keeps its text as a digest alone), `result_sha256` may not.
+    """
+    if "effects" not in inv:
+        return None
+    entries = _arr(inv["effects"], f"{path}.effects")
+    for index, entry in enumerate(entries):
+        where = f"{path}.effects[{index}]"
+        _keys(entry, where, EFFECT_KEYS)
+        _enum(entry["kind"], EFFECT_KINDS, f"{where}.kind")
+        args = _obj(entry["args"], f"{where}.args")
+        _str(entry["result_sha256"], f"{where}.result_sha256")
+        if entry["kind"] in EFFECT_PATH_KINDS:
+            if "path" not in args:
+                _fail(f"{where}.args", f'a {entry["kind"]} effect names the file it touched in args.path')
+            file_path = _str(args["path"], f"{where}.args.path")
+            if file_path.startswith("/") or file_path.startswith("\\") or ":" in file_path.split("/")[0]:
+                _fail(f"{where}.args.path", f"expected a path relative to the run's effects_root, got {_show(file_path)}")
+            if any(segment == ".." for segment in file_path.split("/")):
+                _fail(f"{where}.args.path", f"expected a path inside the run's effects_root, got {_show(file_path)}")
+        if entry["kind"] == "write_text" and entry["result"] is not None:
+            _fail(
+                f"{where}.result",
+                "a write_text effect keeps the text it wrote as result_sha256 alone; "
+                f"result is null, got {_show(entry['result'])}",
+            )
+    return entries
+
+
+def invocation_effects(invocation):
+    """This invocation's effects ledger -- absent and empty read the same."""
+    return list(invocation.get("effects") or ())
+
+
+def tick_latency_ms(tick):
+    """One Tick's wall time: `latency_ms` when the record carries it, else the sum.
+
+    The fallback is the same arithmetic a serial run does (RECORD.md, "Placement
+    and budget"), and it is null when any invocation's duration is null.
+    """
+    if tick.get("latency_ms") is not None:
+        return tick["latency_ms"]
+    total = 0.0
+    invocations = tick["invocations"]
+    if not invocations:
+        return None
+    for invocation in invocations:
+        if invocation["duration_ms"] is None:
+            return None
+        total += invocation["duration_ms"]
+    return total
+
+
+def invocation_placement(invocation):
+    """This invocation's placement, or None -- absent and null read the same."""
+    return invocation.get("placement") or None
+
+
+def run_schedule(record):
+    """How the run was scheduled, with the defaults an absent field means.
+
+    `{"parallel": bool, "budget": {"limit_ms", "stopped_after_tick", "completed"}}`.
+    A record with neither field is a serial, unbudgeted run that ran to the end.
+    """
+    budget = record.get("budget") or {}
+    return {
+        "parallel": bool(record.get("parallel", False)),
+        "budget": {
+            "limit_ms": budget.get("limit_ms"),
+            "stopped_after_tick": budget.get("stopped_after_tick"),
+            "completed": bool(budget.get("completed", True)),
+        },
+    }
+
+
+def validate(record):
+    """Return `record` unchanged, or raise RecordSchemaError naming the path."""
+    _keys(record, "document", DOCUMENT_KEYS, DOCUMENT_OPTIONAL)
+    if record["schema"] != SCHEMA:
+        _fail("schema", f"expected {json.dumps(SCHEMA)}, got {_show(record['schema'])}")
+    _str(record["pcr"], "pcr")
+
+    source = _keys(record["source"], "source", SOURCE_KEYS)
+    _enum(source["runtime"], RUNTIMES, "source.runtime")
+    _nullable_str(source["version"], "source.version")
+    _nullable_str(source["commit"], "source.commit")
+
+    ticks = _arr(record["ticks"], "ticks")
+    seen_ids, n_invocations, n_hits = set(), 0, 0
+    for index, tick in enumerate(ticks):
+        path = f"ticks[{index}]"
+        _keys(tick, path, TICK_KEYS, TICK_OPTIONAL)
+        if tick["index"] != index or isinstance(tick["index"], bool):
+            _fail(f"{path}.index", f"expected {index} (position in ticks), got {_show(tick['index'])}")
+        _str(tick["name"], f"{path}.name")
+        for i, inv in enumerate(_arr(tick["invocations"], f"{path}.invocations")):
+            _invocation(inv, f"{path}.invocations[{i}]", seen_ids)
+            n_invocations += 1
+            if inv["hit"]:
+                n_hits += 1
+
+    for address, part in _obj(record["parts"], "parts").items():
+        path = f'parts[{json.dumps(address)}]'
+        _keys(part, path, PART_KEYS)
+        _nullable_str(part["written_by"], f"{path}.written_by")
+        _str_array(part["read_by"], f"{path}.read_by")
+        _bool(part["preexisting"], f"{path}.preexisting")
+
+    counters = _keys(record["counters"], "counters", COUNTER_KEYS)
+    for key in ("invocations", "hits", "computed"):
+        value = counters[key]
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            _fail(f"counters.{key}", f"expected a non-negative integer, got {_show(value)}")
+    _nullable_number(counters["wall_ms"], "counters.wall_ms")
+    for index, tick in enumerate(ticks):
+        if "latency_ms" in tick:
+            _nullable_number(tick["latency_ms"], f"ticks[{index}].latency_ms")
+    if "parallel" in record:
+        _bool(record["parallel"], "parallel")
+    if "budget" in record:
+        budget = _keys(record["budget"], "budget", BUDGET_KEYS)
+        _nullable_number(budget["limit_ms"], "budget.limit_ms")
+        _nullable_str(budget["stopped_after_tick"], "budget.stopped_after_tick")
+        _bool(budget["completed"], "budget.completed")
+        if budget["completed"] and budget["stopped_after_tick"] is not None:
+            _fail(
+                "budget.stopped_after_tick",
+                "a completed run stopped after no Tick; stopped_after_tick names the "
+                f"last Tick a budget cut the run after, got {_show(budget['stopped_after_tick'])}",
+            )
+        names = {tick["name"] for tick in ticks}
+        if budget["stopped_after_tick"] is not None and budget["stopped_after_tick"] not in names:
+            _fail(
+                "budget.stopped_after_tick",
+                f"names no Tick in this record ({', '.join(sorted(names)) or 'none'}), got "
+                f"{_show(budget['stopped_after_tick'])}",
+            )
+    if counters["invocations"] != n_invocations:
+        _fail("counters.invocations", f"expected {n_invocations} (invocations in ticks), got {counters['invocations']}")
+    if counters["hits"] != n_hits:
+        _fail("counters.hits", f"expected {n_hits} (invocations with hit=true), got {counters['hits']}")
+    if counters["hits"] + counters["computed"] != counters["invocations"]:
+        _fail("counters.computed", f"expected {counters['invocations'] - counters['hits']} so hits + computed === invocations, got {counters['computed']}")
+    return record
+
+
+def derive_part_index(ticks):
+    """RECORD.md:115 -- parts is derived from the invocations, for convenience.
+
+    Written from that clause and RECORD.md:80-107, independently of adapters.js
+    `derivePartIndex` and of `pyto.materialize`, so the `parts` block is checked
+    against a third reading of the rule instead of being trusted because two
+    files by the same hand agree. `read_by` is compared sorted: RECORD.md fixes
+    the membership, not the order.
+
+    - a `px:` binding reads that address; a `fn:` binding reads the address the
+      named invocation wrote (RECORD.md:80-82, and the example at :71 where the
+      readers of scratch.ablation.split are the fit/score invocations), and
+      `fn:<id>#<address>` reads the one produce it names (`resolve_binding`);
+    - `actual_consumes` are bare addresses already observed on the store;
+    - an address read before anything in this run wrote it preexisted
+      (RECORD.md:104-107, the same clause `hit` is built on).
+    """
+    index = {}
+    produced_by = {}
+
+    def entry(address):
+        return index.setdefault(address, {"written_by": None, "read_by": [], "preexisting": False})
+
+    for tick in ticks:
+        for inv in tick["invocations"]:
+            reads = []
+            for binding in list(inv["inputs"].values()) + list(inv["declared_consumes"]):
+                reads.extend(resolve_binding(binding, produced_by))
+            reads.extend(inv["actual_consumes"])
+            for address in reads:
+                item = entry(address)
+                if item["written_by"] is None:
+                    item["preexisting"] = True
+                if inv["id"] not in item["read_by"]:
+                    item["read_by"].append(inv["id"])
+
+            writes = list(inv["actual_produces"]) + [w["address"] for w in inv["writes"]]
+            produces = produce_addresses(inv["into"])
+            if produces:
+                writes.extend(produces)
+                produced_by[inv["id"]] = produces
+            for address in writes:
+                item = entry(address)
+                if item["written_by"] is None:
+                    item["written_by"] = inv["id"]
+    return index

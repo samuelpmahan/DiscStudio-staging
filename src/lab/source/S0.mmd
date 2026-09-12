@@ -1,0 +1,19 @@
+flowchart TD
+    source["px.source.selectedInput"]
+
+    subgraph S0["PCR: S0"]
+        subgraph Decode["Tick: Decode"]
+            decode["fn.s0.decodeFullImage"]
+        end
+        subgraph Crop["Tick: Crop"]
+            bounds["fn.s0.findChromeBounds"]
+            crop["fn.s0.applyCrop"]
+        end
+    end
+
+    source -->|source| decode
+    decode -->|image| bounds
+    decode -->|image| crop
+    bounds -->|bounds| crop
+    bounds --> cropBounds["px.source.cropBounds"]
+    crop --> canonical["px.course.canonicalPixels"]

@@ -1,0 +1,595 @@
+import { createExecBoard, pxFn, readPql, invokePql, invokePqlAsync } from './core/exec.js';
+import { freeze, stable, labelHash, partAddress, get, all, currentBattle, materialFor, discoverFields, applyCommand, validateWorld, clone, id } from './domain.js';
+import { prepareDiscArt, composeCard, cardSvg, composeOverlay, materializeOverlay } from './presentation.js';
+import { constraintDefinitions, bagLimit, oneMold, teamThrows, combineConstraints } from './constraints.js';
+import { composeFrame } from './frames.js';
+import { battleConstraintDefinitions, validateBattleRule, discCap, placesPoints, tieRule } from './constraints.js';
+import { battleStandings, battleEntry } from './battle.js';
+import { fromDiscStudioReceipt, validate } from '../pyto/viewer/adapters.js';
+import { shelfSheet } from './formats/shelf-sheet.js';
+import { receiptList } from './formats/receipt-list.js';
+import { emptyStack, undoPush, undoPop, undoSettle } from './formats/undo.js';
+import { PROJECTIONS, CARD_TOKENS, cardsEffective, cardsApply, cardsQuery } from './cards.js';
+import { assignArt, shelfItems } from './art.js';
+import { shelfQuery } from './shelf.js';
+import { FAMILIES as ART_FAMILIES } from '../pyto/consumers/discstudio-card/port/painter/painter.mjs';
+import { labStageSpecs, registerLabCalculations, validateStage, stageView, LAB_COURSE } from './lab/stages.js';
+import { fixtureCapture } from './lab/fixtures.js';
+import { studioProposalParts } from './proposals.js';
+
+/** Application adapter over the existing ChainSpot runtime. No second execution engine. */
+export function createStudioRuntime(initial) {
+  const core = createExecBoard(), addresses = new Set();
+  const pxc = { ...core, set(address, value) { const key = typeof address === 'string' ? address : address.address; addresses.add(key); core.set(address, freeze(value)); } };
+  const calls = [], counters = { calls: 0, computed: 0, reused: 0 }, nextSlot = {};
+  let previousObjects = new Set(), listener = () => {};
+  const source = (address, value) => { if (!pxc.has(address) || stable(pxc.get(address)) !== stable(value)) pxc.set(address, value); return address; };
+  function register(address, calculate, { memo = true, revision = 1 } = {}) {
+    pxc.register(pxFn(address), inputs => {
+      const signature = stable({ revision, inputs }), tag = address.slice(3), prefix = `px.memo.${tag}.`;
+      let hit = null;
+      if (memo) for (let n = 0; n < 24; n++) if (pxc.has(prefix + n) && pxc.get(prefix + n).signature === signature) { hit = pxc.get(prefix + n); break; }
+      counters.calls++;
+      if (hit) { counters.reused++; calls.push({ call: address, reused: true, material: hit.id, revision }); return hit.value; }
+      const value = freeze(calculate(inputs)); counters.computed++;
+      const material = `${tag}:${labelHash(signature)}`;
+      if (memo) { const slot = (nextSlot[tag] ?? 0) % 24; nextSlot[tag] = slot + 1; pxc.set(prefix + slot, { id: material, signature, revision, value }); }
+      calls.push({ call: address, reused: false, material, revision }); return value;
+    });
+  }
+  register('fn.studio.applyCommand', applyCommand, { memo: false });
+  // `entry` is the BattleEntry Part fn.battle.entry published for this card, when
+  // there is one: the standings a card shows are then the standings a Calculation
+  // produced, on the record, rather than a value assembled beside the composition.
+  register('fn.domain.fields', ({ material, entry = undefined }) => discoverFields(entry === undefined ? material : { ...material, roots: { ...material.roots, entry: { ...material.roots.entry, record: entry } } }));
+  register('fn.disc.art', prepareDiscArt);
+  register('fn.art.assign', ({ world, families, key }) => assignArt({ items: shelfItems(world, key), families, key }));
+  register('fn.card.compose', composeCard);
+  register('fn.card.svg', cardSvg);
+  // `course` is bound only by the course arrangement (sceneComposition below);
+  // every other arrangement composes from the cards and the layout alone, as it always did.
+  register('fn.comparison.layout', ({ layout, course = null, frame = null, ...cards }) => composeOverlay({ cards, layout, course, frame }));
+  register('fn.overlay.frame', composeFrame);
+  register('fn.overlay.svg', materializeOverlay);
+  register('fn.battle.standings', battleStandings);
+  register('fn.battle.entry', battleEntry);
+  register('fn.constraint.discCap', discCap);
+  register('fn.constraint.placesPoints', placesPoints);
+  register('fn.constraint.tieRule', tieRule);
+  register('fn.constraint.bagLimit', bagLimit);
+  register('fn.constraint.oneMold', oneMold);
+  register('fn.constraint.teamThrows', teamThrows);
+  register('fn.constraint.combine', ({ combine, ...results }) => combineConstraints({ results, combine }));
+  register('fn.disc.format.shelfSheet', shelfSheet);
+  register('fn.studio.receipts', receiptList, { memo: false });
+  register('fn.undo.push', undoPush, { memo: false });
+  register('fn.undo.pop', undoPop, { memo: false });
+  register('fn.undo.settle', undoSettle, { memo: false });
+  register('fn.cards.effective', cardsEffective);
+  register('fn.cards.apply', cardsApply);
+  register('fn.cards.query', cardsQuery);
+  register('fn.shelf.query', ({ material, request }) => shelfQuery({ ...material, ...request }));
+  let previousCardInstances = new Set();
+  function publishWorld(world) {
+    world = validateWorld(world); pxc.set('px.studio.world', world);
+    const present = new Set();
+    for (const [type, records] of Object.entries(world.objects)) for (const [key, record] of Object.entries(records)) { const a = partAddress(type, key); present.add(a); source(a, record); }
+    for (const a of previousObjects) if (!present.has(a)) pxc.set(a, null); // Tombstones cannot masquerade as live objects.
+    previousObjects = present;
+    source('px.domain.schemas', world.schemas);
+    for (const preset of Object.values(world.presets)) source(`px.presentation.${preset.id}`, preset);
+    source('px.comparison.layout', world.layout); source('px.comparison.states', world.battle);
+    source('px.discstudio.cards.tokens', CARD_TOKENS);
+    source('px.discstudio.cards.global', world.cards.global);
+    const presentInstances = new Set();
+    for (const p of PROJECTIONS) for (const [discId, override] of Object.entries(world.cards.instances[p] ?? {})) {
+      const a = `px.discstudio.cards.instance.${p}.${discId}`; presentInstances.add(a); source(a, override);
+    }
+    for (const a of previousCardInstances) if (!presentInstances.has(a)) pxc.set(a, null); // A cleared override tombstones its Part.
+    previousCardInstances = presentInstances;
+  }
+  publishWorld(freeze(validateWorld(initial)));
+  pxc.set('px.undo.studio', emptyStack('studio'));
+  // What running the LAB's Stages here asked of this core and could not quite
+  // say (src/proposals.js), on the board beside the receipts a reader reads.
+  for (const [address, proposal] of studioProposalParts()) pxc.set(address, proposal);
+  const world = () => pxc.get('px.studio.world');
+  const calc = (call, bindings, into, args = {}) => ({ call, with: bindings, args, into });
+  const tick = (name, calcs) => ({ name, Calculations: calcs });
+  const step = (name, call, bindings, into, args = {}) => tick(name, [calc(call, bindings, into, args)]);
+  const compose = (name, ticks) => readPql(JSON.stringify({ PrincipleComponentRender: name, Ticks: ticks }), JSON.parse);
+  /**
+   * The shelf-wide art assignment (src/art.js): one Calculation over the whole
+   * shelf, on the record as `art-assignment`, publishing `px.art.assignment`,
+   * which every card's Art step binds. Re-run after every publishWorld, so a
+   * disc added or re-identified gets its family the same way the seed did.
+   */
+  function refreshArt() {
+    execute('art-assignment', [{ name: 'Assign', Calculations: [{ call: 'fn.art.assign', with: { world: 'px.studio.world' }, args: { families: ART_FAMILIES, key: 'moldId' }, into: 'px.art.assignment' }] }]);
+  }
+  refreshArt(); // the seed's shelf, assigned the same way every later shelf is
+  /**
+   * One receipt for one run. `run.schedule` is filed on it only when exec.js
+   * reported one -- a parallel run, a budgeted run, or a run a budget stopped --
+   * so a plain serial receipt is byte for byte the receipt it always was
+   * (pyto/viewer/RECORD.md, "Placement and budget").
+   */
+  function settle(name, composition, run, mark) {
+    const invoked = calls.slice(mark); if (calls.length > 1000) calls.splice(0, calls.length - 1000);
+    const trace = run.Ticks.flatMap(t => t.Calculations.map(c => ({ tick: t.name, call: c.actualCall, inputs: c.with, output: c.into, produces: c.produces }))).map((r, i) => ({ ...r, ...invoked[i] }));
+    const receipt = freeze({ composition, trace, computed: trace.filter(r => !r.reused).length, reused: trace.filter(r => r.reused).length, ...(run.schedule ? { schedule: run.schedule } : {}) });
+    pxc.set(`px.receipt.${name}`, receipt);
+    return receipt;
+  }
+  function execute(name, ticks, schedule = {}) {
+    const mark = calls.length, composition = compose(name, ticks);
+    return settle(name, composition, invokePql(composition, pxc, schedule), mark);
+  }
+  /** The awaited run: the only way to ask for `parallel: true` ({?} ParallelIsAsync). */
+  async function executeAsync(name, ticks, schedule = {}) {
+    const mark = calls.length, composition = compose(name, ticks);
+    return settle(name, composition, await invokePqlAsync(composition, pxc, schedule), mark);
+  }
+  /**
+   * The pyto-run-record@1 view of one recorded execution (pyto/viewer/RECORD.md),
+   * built by the shared adapter (pyto/viewer/adapters.js:508) from the two Parts the
+   * run already wrote -- px.pql.<name> (core/exec.js:66) and px.receipt.<name>
+   * (runtime.js:58) -- and validated by the shared validator before it is kept.
+   * It is kept at the reserved `run` second segment (pyto/BOARD.md:135-136), one
+   * address per composition name, so re-exporting replaces it; domain facts under
+   * px.domain.* are never written here.
+   */
+  function runRecord(name) {
+    const composition = `px.pql.${name}`, receipt = `px.receipt.${name}`, address = `px.run.${name}`;
+    if (!pxc.has(composition) || !pxc.has(receipt)) throw new Error(`No execution named '${name}' has been recorded in this session yet. Render the composition first.`);
+    const record = validate(fromDiscStudioReceipt(pxc.get(composition), pxc.get(receipt)));
+    pxc.set(address, record);
+    return { address, record };
+  }
+  function dispatch(command) {
+    push('px.studio.world');
+    source('px.input.command', { ...command, eventId: id('event'), time: new Date().toISOString() });
+    const run = execute('studio-command', [step('ApplyCommand', 'fn.studio.applyCommand', { world: 'px.studio.world', command: 'px.input.command' }, 'px.studio.nextWorld')]);
+    publishWorld(pxc.get('px.studio.nextWorld')); refreshArt(); listener(world(), command, run); return run;
+  }
+  /**
+   * The shared card chain, now with the cascade Tick task 78 asks for:
+   * `Cascade:<label>` computes the effective tokens then applies them to the
+   * chosen preset (task 57: two Calculations in declared order, one Tick,
+   * the second reading the first's produce -- classifyTick calls this a
+   * chain), and `Card:<label>` composes from the resulting preset instead of
+   * the raw one. `label` names the Ticks (discId ordinarily; recompose()
+   * below uses the projection name instead, since it renders one disc four
+   * ways in a single composition and needs four distinct Tick names).
+   */
+  /**
+   * The battle as one material: its lineup (with the name a reader recognises),
+   * its states in order, and which state is being rendered. One Part,
+   * `px.battle.material`, read by the standings and by every battle Constraint.
+   */
+  const battleMaterial = (w, state) => ({
+    entries: w.battle.entries.map(entry => {
+      const disc = get(w, 'Disc', entry.discId), mold = disc && get(w, 'Mold', disc.moldId);
+      return { id: entry.id, discId: entry.discId, name: disc?.nickname || mold?.name || entry.discId };
+    }),
+    states: w.battle.states.map(state => ({ id: state.id, name: state.name, scores: state.scores })),
+    currentStateId: state.id
+  });
+  function cardSteps(discId, presetId, context, entry, suffix, projection = 'single', label = discId) {
+    const w = world(), disc = get(w, 'Disc', discId), preset = w.presets[presetId];
+    if (!disc) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
+    if (!preset) throw new Error(`Missing presentation '${presetId}'.`);
+    const mold = get(w, 'Mold', disc.moldId), maker = mold && get(w, 'Manufacturer', mold.manufacturerId);
+    if (!mold || !maker) throw new Error(`The product identity for '${disc.nickname || disc.id}' is unresolved.`);
+    const bound = typeof entry === 'string' && entry.startsWith('px.');
+    const roots = { entry: { type: 'BattleEntry', record: bound ? null : entry }, disc: { type: 'Disc', id: discId }, bag: { type: 'Bag', id: context.bagId }, competition: { type: 'Competition', id: context.competitionId }, round: { type: 'Round', id: context.roundId } };
+    if (context.extraType && w.schemas[context.extraType]) roots[context.extraType.toLowerCase()] = { type: context.extraType, id: context.extraId };
+    const prefix = `px.render.${suffix}`, mat = source(`${prefix}.inputs`, materialFor(w, roots));
+    // An entry is either a value this render composed (the editor's preview) or
+    // the address of the Part fn.battle.entry published for it a Tick earlier.
+    const ea = bound ? entry : source(`${prefix}.entry`, entry);
+    const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`, presetAddress = `px.discstudio.cards.preset.${projection}.${discId}`;
+    return {
+      prefix,
+      ticks: [
+        step(`Fields:${label}`, 'fn.domain.fields', bound ? { material: mat, entry: ea } : { material: mat }, `${prefix}.fields`),
+        step(`Art:${label}`, 'fn.disc.art', { disc: partAddress('Disc', discId), mold: partAddress('Mold', mold.id), maker: partAddress('Manufacturer', maker.id), assignment: 'px.art.assignment' }, `${prefix}.art`),
+        tick(`Cascade:${label}`, [
+          calc('fn.cards.effective', { global: 'px.discstudio.cards.global', preset: `px.presentation.${presetId}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
+          calc('fn.cards.apply', { preset: `px.presentation.${presetId}`, effective: effectiveAddress }, presetAddress)
+        ]),
+        step(`Card:${label}`, 'fn.card.compose', { fields: `${prefix}.fields`, art: `${prefix}.art`, preset: presetAddress, entry: ea }, `${prefix}.card`),
+        step(`CardSvg:${label}`, 'fn.card.svg', { card: `${prefix}.card` }, `${prefix}.svg`)
+      ]
+    };
+  }
+  function card(discId, presetId, context = {}, entry = null, projection = 'single') {
+    const { prefix, ticks } = cardSteps(discId, presetId, context, entry, `single.${discId}`, projection);
+    const run = execute('display-card', ticks);
+    return { ...pxc.get(`${prefix}.svg`), card: pxc.get(`${prefix}.card`), fields: pxc.get(`${prefix}.fields`), part: `${prefix}.svg`, run };
+  }
+  function sceneComposition({ mode = 'battle', discId, bagId, competitionId, roundId, stateId, presetId, orientation } = {}) {
+    const w = world(), state = stateId ? w.battle.states.find(s => s.id === stateId) : currentBattle(w);
+    if (!state) throw new Error('Comparison state is missing.');
+    const entries = mode === 'card' ? [{ discId, id: 'single' }] : w.battle.entries;
+    // An export may ask for the other canvas without changing the workspace: the
+    // layout it composes with is then a Part of its own, and the run names it.
+    const layout = orientation && orientation !== w.layout.orientation ? { ...w.layout, orientation } : w.layout;
+    const ticks = [], inputs = { layout: layout === w.layout ? 'px.comparison.layout' : source('px.export.layout', layout) };
+    // The frame first: the canvas (1920x1080 or the vertical 1080x1920), the
+    // safe area the cards are then fitted into, the title strip and the sponsor
+    // lockup -- composed from the layout's own frame and the cards cascade's
+    // global tokens, so the frame and the cards on it are one design.
+    const spec = source('px.overlay.frame.spec', { orientation: layout.orientation, presetId: layout.frame.presetId, title: layout.frame.title || w.battle.name });
+    ticks.push(step('Frame', 'fn.overlay.frame', { spec, tokens: 'px.discstudio.cards.global' }, 'px.overlay.frame'));
+    inputs.frame = 'px.overlay.frame';
+    if (layout.arrangement === 'course') inputs.course = labCourseAddress();
+    // The standings before any card: ranks from the scores, points from the places
+    // Constraint, the running total through this state. Each card's BattleEntry is
+    // then read off them by fn.battle.entry, so the number on a card and the number
+    // in the standings panel are one Calculation's output, not two.
+    const material = source('px.battle.material', battleMaterial(w, state));
+    const rules = source('px.battle.rules', w.battle.constraints);
+    ticks.push(step('Standings', 'fn.battle.standings', { material, rules }, 'px.battle.standings'));
+    const lineup = mode === 'card' ? w.battle.entries.find(e => e.discId === discId) ?? null : null;
+    entries.forEach((entry, i) => {
+      const entryId = mode === 'card' ? lineup?.id ?? null : entry.id;
+      const address = `px.render.course.${entry.id}.entry`;
+      if (entryId) ticks.push(step(`Entry:${entry.id}`, 'fn.battle.entry', { standings: 'px.battle.standings', battle: 'px.comparison.states' }, address, { entryId, stateId: state.id }));
+      const built = cardSteps(entry.discId, presetId || (mode === 'card' ? w.layout.singlePresetId : w.layout.presetId), { bagId, competitionId, roundId }, entryId ? address : null, `course.${entry.id}`, mode === 'card' ? 'single' : 'competition');
+      ticks.push(...built.ticks); inputs[`card${i}`] = `${built.prefix}.card`;
+    });
+    ticks.push(step('ArrangeComparison', 'fn.comparison.layout', inputs, 'px.course.scene'));
+    ticks.push(step('MaterializeOverlay', 'fn.overlay.svg', { scene: 'px.course.scene', frame: 'px.overlay.frame' }, 'px.course.svg'));
+    return { ticks, state };
+  }
+  const rendered = state => ({ ...pxc.get('px.course.svg'), part: 'px.course.svg', stateId: state.id, scene: pxc.get('px.course.scene'), frame: pxc.get('px.overlay.frame'), standings: pxc.get('px.battle.standings') });
+  function scene(options = {}) {
+    const { ticks, state } = sceneComposition(options);
+    const run = execute('on-the-course', ticks);
+    return { ...rendered(state), run };
+  }
+  /**
+   * The same sample composition, one Tick per stage instead of one Tick per
+   * card: every card's Fields (then Art, then Card, then CardSvg) is a branch of
+   * one Tick, which is what the node law allows to run at once -- no branch
+   * reads what a sibling of its own Tick publishes.
+   */
+  function byStage(ticks) {
+    const stages = new Map();
+    for (const tick of ticks) {
+      const stage = tick.name.includes(':') ? tick.name.slice(0, tick.name.indexOf(':')) : tick.name;
+      if (!stages.has(stage)) stages.set(stage, { name: stage, Calculations: [] });
+      stages.get(stage).Calculations.push(...tick.Calculations);
+    }
+    return [...stages.values()];
+  }
+  async function sceneParallel(options = {}) {
+    const { ticks, state } = sceneComposition(options);
+    const run = await executeAsync('on-the-course-parallel', byStage(ticks), { parallel: true });
+    return { ...rendered(state), run };
+  }
+  /**
+   * The shelf a person asked for: their query, their filters, their sort and their
+   * grouping, as one Calculation over one read of the whole shelf (src/shelf.js), on
+   * the record as `shelf-view` like everything else. The UI draws what it returns; it
+   * does no finding of its own.
+   */
+  function shelf({ query = '', sort = 'recent', group = 'none', filters = [], bagId = null } = {}) {
+    const w = world();
+    const material = source('px.shelf.material', { discs: all(w, 'Disc'), molds: w.objects.Mold, makers: w.objects.Manufacturer, bags: all(w, 'Bag') });
+    const request = source('px.shelf.request', { query, sort, group, filters, bagId });
+    const run = execute('shelf-view', [step('Shelf', 'fn.shelf.query', { material, request }, 'px.shelf.view')]);
+    return { ...pxc.get('px.shelf.view'), part: 'px.shelf.view', run };
+  }
+  /**
+   * The battle as Competition[Constraint]: one Tick per enabled Constraint over
+   * the one battle material, composed by the same fn.constraint.combine a
+   * competition uses, filed as the `discomp` receipt.
+   */
+  function battleRules() {
+    const w = world(), state = currentBattle(w);
+    const ma = source('px.battle.material', battleMaterial(w, state)), ticks = [], inputs = {};
+    for (const rule of w.battle.constraints.filter(r => r.enabled)) {
+      const definition = battleConstraintDefinitions[validateBattleRule(rule).kind];
+      const ra = source(`px.battle.constraint.${rule.id}.definition`, rule), into = `px.battle.constraint.${rule.id}.result`;
+      ticks.push(step(rule.id, definition.call, { material: ma, rule: ra }, into)); inputs[rule.id] = into;
+    }
+    ticks.push(step('ComposeConstraints', 'fn.constraint.combine', inputs, 'px.battle.validation', { combine: w.battle.combine }));
+    const run = execute('discomp', ticks);
+    return { ...pxc.get('px.battle.validation'), run, part: 'px.battle.validation' };
+  }
+  function constraints(competitionId) {
+    const w = world(), comp = get(w, 'Competition', competitionId);
+    if (!comp) throw new Error('Competition is missing.');
+    const teams = comp.teamIds.map(key => { const team = get(w, 'Team', key); if (!team) throw new Error(`Missing team '${key}'.`); return team; });
+    const rounds = comp.roundIds.map(key => { const round = get(w, 'Round', key); if (!round) throw new Error(`Missing round '${key}'.`); return round; });
+    const material = { teams, rounds, bags: w.objects.Bag, discs: w.objects.Disc, molds: w.objects.Mold, throws: all(w, 'Throw').filter(t => comp.teamIds.includes(t.teamId) && comp.roundIds.includes(t.roundId)) };
+    const ma = source('px.competition.material', material), ticks = [], inputs = {};
+    for (const rule of comp.constraints.filter(r => r.enabled)) {
+      const definition = constraintDefinitions[rule.kind]; if (!definition) throw new Error(`Unknown reusable constraint '${rule.kind}'.`);
+      if (!Number.isInteger(rule.value) || rule.value < 1 || rule.value > 100) throw new Error('Constraint quantities must be integers from 1 to 100.');
+      const ra = source(`px.constraint.${rule.id}.definition`, rule), into = `px.constraint.${rule.id}.result`;
+      ticks.push(step(rule.id, definition.call, { material: ma, rule: ra }, into)); inputs[rule.id] = into;
+    }
+    ticks.push(step('ComposeConstraints', 'fn.constraint.combine', inputs, 'px.competition.validation', { combine: comp.combine }));
+    const run = execute('competition', ticks);
+    return { ...pxc.get('px.competition.validation'), run, part: 'px.competition.validation' };
+  }
+  /**
+   * UndoStack: `fn.undo.push` records the value an address holds now; `fn.undo.pop`
+   * writes the recorded value back and `fn.undo.settle` takes it off the stack.
+   * Each is an ordinary Calculation invocation, so runRecord() carries all of them.
+   */
+  const stackAddress = scope => `px.undo.${scope}`;
+  function undoStack(scope = 'studio') { const address = stackAddress(scope); if (!pxc.has(address)) pxc.set(address, emptyStack(scope)); return pxc.get(address); }
+  function push(address, scope = 'studio') {
+    undoStack(scope);
+    return execute('studio-undo-push', [step('Push', 'fn.undo.push', { stack: stackAddress(scope), value: address }, stackAddress(scope), { address, scope })]);
+  }
+  function pop(address, scope = 'studio') {
+    undoStack(scope);
+    const run = execute('studio-undo', [
+      step('Restore', 'fn.undo.pop', { stack: stackAddress(scope), current: address }, address, { address, scope }),
+      step('Settle', 'fn.undo.settle', { stack: stackAddress(scope) }, stackAddress(scope), { address, scope })
+    ]);
+    if (address === 'px.studio.world') { publishWorld(freeze(validateWorld(pxc.get(address)))); refreshArt(); listener(world(), { type: 'undo.pop', address, scope }, run); }
+    return run;
+  }
+  /** The studio's own receipts, read back through the PQL prefix query px.receipt.*. */
+  function receipts() {
+    const run = execute('studio-receipts', [step('Receipts', 'fn.studio.receipts', { receipts: 'px.receipt.*' }, ['px.studio.receipts', 'px.studio.receipts.summary'])]);
+    return { rows: pxc.get('px.studio.receipts'), summary: pxc.get('px.studio.receipts.summary'), run };
+  }
+  /**
+   * The card cascade editor's API (task 78; folded into the Component Editor
+   * in task 79). `presetFor` names the preset each projection composes with
+   * today (shelf/bag always show the disc itself; single/competition follow
+   * the shared comparison design), and is the only place that mapping lives.
+   */
+  function presetFor(projection) {
+    if (projection === 'shelf' || projection === 'bag') return 'discImage';
+    // `single` IS OnTheCourse's Single Disc mode, so it composes with the design
+    // that mode composes with; `competition` is the shared comparison design.
+    if (projection === 'single') return world().layout.singlePresetId;
+    if (projection === 'competition') return world().layout.presetId;
+    throw new Error(`Unknown card projection '${projection}'.`);
+  }
+  const cardsCascadeTick = (label, projection, discId, presetId) => {
+    const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`, presetAddress = `px.discstudio.cards.preset.${projection}.${discId}`;
+    return tick(`Cascade:${label}`, [
+      calc('fn.cards.effective', { global: 'px.discstudio.cards.global', preset: `px.presentation.${presetId}`, instances: `px.discstudio.cards.instance.${projection}.*` }, effectiveAddress, { projectionName: projection, discId }),
+      calc('fn.cards.apply', { preset: `px.presentation.${presetId}`, effective: effectiveAddress }, presetAddress)
+    ]);
+  };
+  /** Runs the Cascade Tick alone -- the effective tokens for one projection/disc pair, on the record. */
+  function cardsEffectiveRun(projection, discId, context = {}) {
+    if (!PROJECTIONS.includes(projection)) throw new Error(`Unknown card projection '${projection}'.`);
+    if (!get(world(), 'Disc', discId)) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
+    const effectiveAddress = `px.discstudio.cards.effective.${projection}.${discId}`;
+    const run = execute('cards-effective', [cardsCascadeTick(discId, projection, discId, presetFor(projection))]);
+    return { ...pxc.get(effectiveAddress), part: effectiveAddress, run };
+  }
+  /**
+   * One composition, `cards-recompose`, that renders one disc through all
+   * four projections' chains -- each Tick named by projection (`Cascade:shelf`,
+   * `Card:shelf`, ...) rather than by discId, and each addressed under its own
+   * `px.render.recompose.<projection>.<discId>` prefix, since the four chains
+   * share one discId in one run. `changed` reads the settled receipt: the
+   * `fn.card.compose` step for a projection is `!reused` exactly when that
+   * projection's effective tokens (and so its applied preset) actually moved.
+   */
+  /**
+   * `changed` is per address, not per invocation: the memo is keyed on input
+   * content, so two projections that compose byte-identical material share one
+   * hit and only the first would read as computed. Each recompose records the
+   * material each projection's card was composed from, at
+   * `px.discstudio.cards.recompose.materials`, and a projection changed when
+   * that material differs from the one recorded by the previous recompose of
+   * the same address. The first recompose of a session changes nothing.
+   */
+  const materialsAddress = 'px.discstudio.cards.recompose.materials';
+  function recompose(discId, context = {}) {
+    if (!get(world(), 'Disc', discId)) throw new Error(`Missing physical disc '${discId}'. Nothing was silently dropped.`);
+    const prefixes = {}, ticks = [];
+    for (const projection of PROJECTIONS) {
+      const { prefix, ticks: built } = cardSteps(discId, presetFor(projection), context, null, `recompose.${projection}.${discId}`, projection, projection);
+      prefixes[projection] = prefix; ticks.push(...built);
+    }
+    const receipt = execute('cards-recompose', ticks);
+    const previous = pxc.has(materialsAddress) ? pxc.get(materialsAddress) : {};
+    const materials = { ...previous }, cards = {};
+    for (const projection of PROJECTIONS) {
+      const prefix = prefixes[projection], svg = pxc.get(`${prefix}.svg`), address = `${prefix}.card`;
+      const row = receipt.trace.find(r => r.tick === `Card:${projection}` && r.call === 'fn.card.compose');
+      const material = row?.material ?? null;
+      cards[projection] = { svg: svg.svg, width: svg.width, height: svg.height, part: `${prefix}.svg`, material, changed: Object.hasOwn(previous, address) && previous[address] !== material };
+      materials[address] = material;
+    }
+    pxc.set(materialsAddress, materials);
+    return { receipt, cards };
+  }
+  /* ------------------------------------------------------------------ */
+  /* the LAB Stages: the same modules node runs, on this board            */
+  /* ------------------------------------------------------------------ */
+  /**
+   * `fn.lab.*` is registered here the way `createLab()` registers it (src/lab/lab.js):
+   * no memo and no freeze of the returned value. A Stage's inputs are rasters and
+   * pixel sets of a million samples; the studio's memo key is a stable stringify
+   * of the inputs, which would cost more than every Calculation in the Stage put
+   * together and could never hit twice on one capture. The invocation is still
+   * pushed onto `calls`, so `settle` files the same receipt for a Stage as for
+   * any other composition and the Inspect page lists it beside them.
+   */
+  const labCalculations = new Set();
+  function registerLabCalculation(address, calculate) {
+    if (!/^fn\.lab\.[a-z0-9.]+$/.test(address)) throw new Error(`lab: '${address}' is not a lowercase fn.lab.* address.`);
+    if (labCalculations.has(address)) return;
+    labCalculations.add(address);
+    pxc.register(pxFn(address), inputs => { counters.calls++; counters.computed++; calls.push({ call: address, reused: false, material: null, revision: 1 }); return calculate(inputs); });
+  }
+  /**
+   * What a Stage module is handed. It is the shape `createLab()` returns, reduced
+   * to what a Stage uses -- register, put, get, has, document, run -- so s0.js,
+   * s1.js, s2.js, s3.js and route.js are imported and called unchanged. `document`
+   * hands back the PQL document as written and `run` puts it through the studio's
+   * own `execute`, so a Stage leaves `px.pql.<name>`, `px.receipt.<name>` and a
+   * run record exactly like a card or a comparison does.
+   */
+  const labBoard = {
+    pxc,
+    register: registerLabCalculation,
+    put(address, value) { if (!address.startsWith('px.exp.lab.')) throw new Error(`lab: '${address}' is not a px.exp.lab.* address.`); pxc.set(address, value); return address; },
+    get: address => pxc.get(address),
+    has: address => pxc.has(address),
+    document: (name, ticks) => ({ PrincipleComponentRender: name, Ticks: ticks }),
+    run(name, composition) { const receipt = execute(name, composition.Ticks); return { run: receipt, receipt }; }
+  };
+  registerLabCalculations(labBoard);
+  // A Stage that carries its own Calculations registers them as it joins, the
+  // same hook `addStage` calls, so a landed Stage and one still being built
+  // reach the board by exactly one path.
+  const labSpecs = labStageSpecs().map(validateStage);
+  for (const spec of labSpecs) spec.register?.(labBoard);
+  const LAB_PIPELINE = 'px.exp.lab.pipeline';
+  let labCapture = null;
+  /** How many things one produce Part holds, for a reader counting them. */
+  const partCount = value => Array.isArray(value) ? value.length : null;
+  const labRow = spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', status: 'not-run', produced: [], reason: null, ms: null });
+  function freshLabRun(capture) {
+    return {
+      for: 'one capture through the LAB Stages on the studio board: what each Stage published, or why it refused',
+      course: LAB_COURSE,
+      capture: capture ? { imageId: capture.imageId, widthPx: capture.widthPx, heightPx: capture.heightPx, samples: capture.rgba.length } : null,
+      stages: labSpecs.map(labRow)
+    };
+  }
+  let labRun = freshLabRun(null);
+  /**
+   * The run as a Part, and the run as bookkeeping, are deliberately two values:
+   * a Part is frozen the moment it is published, so the pipeline publishes a
+   * copy of its running tally and keeps the tally itself mutable.
+   */
+  function publishLabRun() { const snapshot = clone(labRun); pxc.set(LAB_PIPELINE, snapshot); return snapshot; }
+  publishLabRun();
+  /** A new capture starts a new run: every Stage is not-run again, and stale produce cannot pass for this one. */
+  function labBegin(capture) {
+    if (!capture || !Array.isArray(capture.rgba)) throw new Error('lab: a capture is { imageId, widthPx, heightPx, rgba }.');
+    labCapture = capture; labRun = freshLabRun(capture); return publishLabRun();
+  }
+  /** Run one Stage: seed what it reads and nobody produces, then execute its document. */
+  function labStage(index, inputs = {}) {
+    const spec = labSpecs[index];
+    if (!spec) throw new Error(`lab: there is no Stage ${index}; this pipeline has ${labSpecs.length}.`);
+    const row = labRun.stages[index], previous = labRun.stages[index - 1];
+    const started = Date.now();
+    try {
+      if (index > 0 && previous.status !== 'produced') throw new Error(`lab ${spec.stage}: ${previous.stage} has not produced yet (${previous.status}), and ${spec.stage} reads what it publishes.`);
+      if (!labCapture && !inputs.capture) throw new Error('lab: load a capture before running a Stage.');
+      spec.seed?.(labBoard, { capture: labCapture, ...inputs });
+      for (const address of spec.needs ?? []) if (!pxc.has(address)) throw new Error(`lab ${spec.stage}: nothing has published '${address}' yet.`);
+      const receipt = execute(spec.composition, spec.ticks(labBoard));
+      row.produced = spec.produces.map(address => ({ address, count: partCount(pxc.get(address)) }));
+      row.status = 'produced'; row.reason = null; row.ms = Date.now() - started;
+      publishLabRun();
+      return { ...clone(row), receipt, view: labView(index) };
+    } catch (error) {
+      row.status = 'refused'; row.produced = []; row.reason = error.cause?.message || error.message; row.ms = Date.now() - started;
+      publishLabRun();
+      throw error;
+    }
+  }
+  /**
+   * What this Stage's produce looks like on the raster. A spec may carry its own
+   * `view`; otherwise the drawing is chosen by the addresses the Stage publishes
+   * (src/lab/stages.js `stageView`), so a Stage that is renumbered or renamed
+   * keeps its drawing and a new address is one row there.
+   */
+  function labView(index) {
+    const spec = labSpecs[index];
+    if (!spec || labRun.stages[index]?.status !== 'produced') return null;
+    return spec.view ? { key: spec.key, stage: spec.stage, title: spec.title, ...spec.view(labBoard) } : stageView(spec, labBoard);
+  }
+  /**
+   * S0 through the last landed Stage, in order, as one composition each. A Stage
+   * that refuses stops the run and leaves its reason on `px.exp.lab.pipeline`;
+   * the Stages after it stay not-run, because each reads what the one before
+   * publishes.
+   */
+  function labPipeline(capture, { upto = labSpecs.length - 1 } = {}) {
+    labBegin(capture);
+    for (let index = 0; index <= Math.min(upto, labSpecs.length - 1); index++) {
+      try { labStage(index); } catch { break; }
+    }
+    return labRun;
+  }
+  /**
+   * The Part the course arrangement stands cards on, in the order a reader would
+   * want it: the holes a Stage assembled if one has, else the round actually
+   * walked, else the straight round's own waypoints, else the course graph. Each
+   * is a produce Part of a Stage this board ran -- there is no second place the
+   * hole positions live, and which one was used is on the record as the `course`
+   * binding of that run's `fn.comparison.layout`.
+   */
+  const LAB_COURSE_ANCHORS = ['px.exp.lab.holes.straight', 'px.exp.lab.holes.objects', 'px.exp.lab.round.path', `px.exp.lab.route.${LAB_COURSE}`, 'px.exp.lab.course.graph'];
+  function labCourseAddress() {
+    const address = LAB_COURSE_ANCHORS.find(candidate => pxc.has(candidate));
+    if (!address) throw new Error('No course has been built yet. Open Course, give it a capture and run the pipeline; then this arrangement stands your cards at its holes.');
+    return address;
+  }
+  /** Which composition, which Tick and which Calculation published this Part: read off the receipts. */
+  function labProvenance(address) {
+    for (const key of [...addresses].filter(a => a.startsWith('px.receipt.lab-'))) {
+      const receipt = pxc.get(key), row = receipt?.trace?.find(step => (step.produces ?? [step.output]).includes(address));
+      if (row) return { composition: receipt.composition.PrincipleComponentRender, tick: row.tick, call: row.call, inputs: Object.values(row.inputs ?? {}) };
+    }
+    return null;
+  }
+  /**
+   * The Stage list the Course route draws. A Stage still being built joins with
+   * `addStage`: one spec, appended, and it runs, draws and inspects like the five
+   * that are landed (src/lab/stages.js).
+   */
+  function labAddStage(spec) {
+    validateStage(spec);
+    if (labSpecs.some(existing => existing.key === spec.key)) throw new Error(`lab: a Stage '${spec.key}' is already in this pipeline.`);
+    spec.register?.(labBoard);
+    labSpecs.push(spec); labRun.stages.push(labRow(spec)); publishLabRun();
+    return spec.key;
+  }
+
+  /** Every PQL read the editor needs over the cascade, one Calculation, one Part per name. */
+  function cardsQueryRun(name, args = {}) {
+    const into = `px.discstudio.cards.query.${name}`;
+    const bindings = { global: 'px.discstudio.cards.global', presentations: 'px.presentation.*', layout: 'px.comparison.layout', instances: 'px.discstudio.cards.instance.*', effective: 'px.discstudio.cards.effective.*' };
+    execute('cards-query', [step('Query', 'fn.cards.query', bindings, into, { name, ...args })]);
+    return pxc.get(into);
+  }
+  return {
+    pxc, world, dispatch, card, scene, sceneParallel, constraints, shelf, battle: battleRules, counters, runRecord, execute, executeAsync,
+    receipts,
+    cards: { projections: PROJECTIONS, tokens: CARD_TOKENS, presetFor, effective: cardsEffectiveRun, recompose, query: cardsQueryRun },
+    lab: {
+      course: LAB_COURSE, address: LAB_PIPELINE,
+      // The sample is the LAB fixture with something for every Stage to do: a
+      // tee that points at its badge with a basket on the same line (the ray and
+      // the straight hole), badges no ray can finish (the doglegs), and a region
+      // of terrain the round has to walk around. `{ overlaps: true }` also hides
+      // one object of each kind from the clean detectors, for the recovery Stage.
+      sample: (options = {}) => fixtureCapture(20260911, { obstacle: true, aligned: true, ...options }),
+      specs: () => labSpecs.map(spec => ({ key: spec.key, stage: spec.stage, title: spec.title, composition: spec.composition, about: spec.about ?? '', produces: [...spec.produces], needs: [...(spec.needs ?? [])] })),
+      begin: labBegin, stage: labStage, pipeline: labPipeline, addStage: labAddStage,
+      state: () => pxc.get(LAB_PIPELINE),
+      view: labView, views: () => labSpecs.map((spec, index) => labView(index)).filter(Boolean),
+      provenance: labProvenance, anchorAddress: labCourseAddress,
+      capture: () => labCapture,
+      raster: () => { const spec = labSpecs[0]; return spec.raster && pxc.has(spec.raster) && labRun.stages[0].status === 'produced' ? pxc.get(spec.raster) : labCapture; }
+    },
+    undo: { push, pop, stack: undoStack, depth: (scope = 'studio') => undoStack(scope).depth },
+    onChange(fn) { listener = fn; },
+    replace(next) { publishWorld(freeze(validateWorld(next))); refreshArt(); listener(world(), { type: 'draft.import' }, null); },
+    parts() { return [...addresses].sort().map(address => ({ address, value: pxc.get(address) })); },
+    /** Read/select Parts without building another state store. */
+    select(prefix) { return [...addresses].filter(a => a.startsWith(prefix)).map(a => ({ address: a, value: pxc.get(a) })); }
+  };
+}

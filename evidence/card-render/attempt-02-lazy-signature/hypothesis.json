@@ -1,0 +1,4 @@
+{
+  "text": "Defer immutable-input certification until an input repeats; first renders use the original serializer, later verified repeats reuse the signature.",
+  "recordedAt": "2026-09-12T05:52:51.615Z"
+}

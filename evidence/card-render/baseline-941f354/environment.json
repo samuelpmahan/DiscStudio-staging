@@ -1,0 +1,9 @@
+{
+  "node": "v24.19.0",
+  "executable": "/Users/samuelmahan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "os": "darwin",
+  "release": "23.6.0",
+  "arch": "x64",
+  "cpu": "Intel(R) Core(TM) i5-8210Y CPU @ 1.60GHz",
+  "logicalCpus": 4
+}

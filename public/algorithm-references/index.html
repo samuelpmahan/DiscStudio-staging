@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PxC algorithm references</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./digits.css">
+</head>
+<body>
+  <main class="shell">
+    <section id="digit-lab" aria-label="Learn a digit decision tree"></section>
+    <header class="masthead">
+      <p class="eyebrow">PxC / PQL reference fixtures</p>
+      <h1>Calculate. Then watch.</h1>
+      <p>Next step executes one declared Tick. Watch what it read and wrote, then decide when to continue.</p>
+      <p class="notice">Teaching references: a perceptron, a four-step decision tree, and a fixed-weight, single-head post-LayerNorm transformer block. Gamma = 1, beta = 0; two-layer ReLU FFN. Not a trained language model.</p>
+    </header>
+
+    <p id="status" class="status" role="status" aria-live="polite">Loading the reference calculations…</p>
+
+    <section class="controls" aria-label="Algorithm controls">
+      <article class="control-card" aria-labelledby="perceptron-title">
+        <div class="card-title"><p class="eyebrow">Single-layer perceptron</p><h2 id="perceptron-title">See contributions</h2></div>
+        <form id="perceptron-form">
+          <label>Features <input name="features" value="2, 1" inputmode="decimal" aria-describedby="perceptron-help"></label>
+          <label>Weights <input name="weights" value="0.5, -1" inputmode="decimal"></label>
+          <label>Bias <input name="bias" type="number" value="0.25" step="any"></label>
+          <label>Threshold <input name="threshold" type="number" value="0" step="any"></label>
+          <small id="perceptron-help">Comma-separated, equal-length numeric lists.</small>
+          <button type="submit">Prepare perceptron</button>
+        </form>
+      </article>
+
+      <article class="control-card" aria-labelledby="tree-title">
+        <div class="card-title"><p class="eyebrow">Decision tree</p><h2 id="tree-title">Choose a path</h2></div>
+        <form id="tree-form">
+          <label>Value <input name="value" type="number" value="7" step="any"></label>
+          <label>Root threshold <input name="rootThreshold" type="number" value="5" step="any"></label>
+          <label>Branch threshold <input name="branchThreshold" type="number" value="10" step="any"></label>
+          <button type="submit">Prepare decision tree</button>
+        </form>
+      </article>
+
+      <article class="control-card" aria-labelledby="transformer-title">
+        <div class="card-title"><p class="eyebrow">Tiny transformer layer</p><h2 id="transformer-title">Inspect one attention block</h2></div>
+        <form id="transformer-form">
+          <label>Input token rows <input name="input" value="1, 0; 0, 1" aria-describedby="transformer-help"></label>
+          <label>LayerNorm epsilon <input name="epsilon" type="number" value="0.00001" step="any" min="0.000000001"></label>
+          <small id="transformer-help">Rows use semicolons; values in a row use commas. The fixture uses fixed identity weights.</small>
+          <button type="submit">Prepare transformer</button>
+        </form>
+      </article>
+    </section>
+
+    <section aria-labelledby="runs-title">
+      <div class="runs-heading"><div><p class="eyebrow">Board history</p><h2 id="runs-title">Live sessions & retained frames</h2></div><p>Changing an input forks a fresh session. Earlier runs and their frames remain inspectable.</p></div>
+      <div id="runs" class="runs" aria-live="polite"></div>
+    </section>
+  </main>
+  <template id="empty-runs"><p class="empty">Prepare a reference, then calculate its next Tick.</p></template>
+  <script type="module" src="./app.js"></script>
+  <script type="module" src="./digits.js"></script>
+</body>
+</html>

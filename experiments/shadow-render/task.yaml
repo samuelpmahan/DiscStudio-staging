@@ -1,0 +1,61 @@
+id: shadow-render-pilot
+status: experimental
+what-is:
+  source: f153b65b5af9dd724e8b7618b95671468cfa5ba2
+  primary: preserved attempt-02-lazy-signature
+  reference: preserved baseline-941f354
+  evidence: Both agree on 26 SVG/result observations; primary has a cold/warm tradeoff.
+e:
+  question: Can we serve one implementation while independently checking its outputs without blocking delivery?
+  authorization: Sam asked how to implement the forked-parallel-primary/reference workflow.
+a*:
+  - Capture complete JSON request inputs once, with source and comparison identities.
+  - Run primary and reference in separate Node workers using their preserved source snapshots.
+  - Publish primary delivery before sampled reference completion; bound reference work to one in-flight check.
+  - Compare output values/SVG exactly, retaining differing execution receipts separately.
+  - Exercise successful, unsampled, overloaded, failed, timed-out and deliberately mismatched checks.
+what-is-next:
+  result: Opt-in local harness/API with a rerunnable demonstration and retained evidence.
+  review: Inspect served result, eventual check and subsequent routing; no automatic promotion.
+p&c:
+  existing-parts:
+    - Frozen sample worlds, requests, source snapshots and source manifests.
+    - Studio render outputs and pyto-run-record@1 receipts.
+  existing-calculations:
+    - createStudioRuntime card/scene compositions and runRecord.
+    - Existing JS PxC/PQL registration, invocation and prefix query.
+  updated-parts:
+    - The trace requirement and its matching in-app review instructions.
+  updated-calculations: []
+  new-parts:
+    - px.exp.shadow.<session>.sources and policy.
+    - Per-request input, selection, primary, delivery, reference and comparison Parts.
+    - Fresh routing-state Parts, summary, and unanswered review material.
+  new-calculations:
+    - fn.exp.shadow.capture validates/captures JSON inputs and their digest.
+    - fn.exp.shadow.select chooses the serving source and sampling eligibility.
+    - fn.exp.shadow.compare compares semantic outputs and classifies missing evidence.
+    - fn.exp.shadow.route derives next session routing from the latest check.
+    - fn.exp.shadow.summarize reads request outcomes by PQL prefix query.
+    - fn.exp.shadow.corrupt derives a clearly labelled SVG negative control without altering original evidence.
+policy:
+  sampleEvery: 3
+  maxReferenceInFlight: 1
+  referenceTimeoutMs: 5000
+  primaryTimeoutMs: 10000
+  mismatch: Flag served output; route subsequent requests in this session to reference.
+  timeout_or_error: Unknown, never agreement; keep primary serving, report unavailable checks.
+  budget: Skip rather than queue unbounded reference work; retain reason.
+  reference: Fresh runtime per check; not an exhaustive oracle, shares rendering code.
+  comparison: JSON-visible result excluding only top-level run receipt; exact SVG included.
+  pixels: Not checked; prior browser-repeatability issue remains separate.
+bounds:
+  - Node-only opt-in experiment; no browser UI, export policy or application-default changes.
+  - One primary request in flight per session, one reference check; separate workers, no shared runtime.
+  - No third runtime optimization, generic scheduler, distributed locks, new store or renderer.
+  - A session cannot retract a result already delivered or guarantee unchecked output correctness.
+  - An explicit negative-control mode derives a visibly corrupted output; never silently changes a source snapshot.
+  - Keep prior evidence; no external push, deployment or automatic acceptance.
+  - Retain orchestration execution bindings, prefix membership and output digests instead of duplicating large Part values in every receipt.
+acceptance: null
+promotion: null

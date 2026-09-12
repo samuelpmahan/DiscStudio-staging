@@ -1,0 +1,41 @@
+id: guided-experiments-candidate
+status: experimental
+what-is:
+  source: 941f3544f82f80f88c7228abec646b0889d575fa
+  evidence: UPDATE-REVIEW.md contains reproduced gaps and passing baseline tests.
+e:
+  question: Can small, composable repairs make local experimentation explainable and repeatable?
+  authorization: Sam encouraged a cohesive experimental candidate and intelligent use of Lunas.
+a*:
+  - Luna owns historical-input reconstruction and per-attempt retention in neat equiv.
+  - Luna owns honest missing-timing and array coverage in neat hot.
+  - Luna owns tests for the existing card experiment harness, reporting failures to the integrator.
+  - Integrator owns harness fixes, one profile-led runtime candidate and the combined review handoff.
+what-is-next:
+  result: A locally committed candidate with reproducible comparisons and limitations, not promotion.
+  learning: Preserve hypotheses, rejected attempts and reasons; evidence informs Sam's judgment.
+p&c:
+  existing-parts:
+    - Invocation records, producer references, initial Part values and candidate source identity.
+    - Studio world, presets, cascade, rendered Parts and frozen baseline-941f354.
+  existing-calculations:
+    - neat equiv rebuild/check/judge; neat hot measure/evaluate.
+    - Studio card/scene PQL and the current capture/probe/measure/compare harness.
+  updated-parts:
+    - Explicit measurement coverage and an independently retained witness per attempt.
+    - The trace requirement and its matching in-app review instructions.
+  updated-calculations:
+    - Resolve recorded inputs at their observation boundary; do not substitute future values.
+    - Keep unknown timing/shape distinct from zero, and label causal hypotheses as hypotheses.
+    - Validate harness boundaries and choose at most two runtime-only optimization candidates.
+  new-parts:
+    - Regression examples, paired observations, comparisons and unanswered review material.
+  new-calculations:
+    - Only experiment-specific glue demonstrated necessary by this pilot.
+bounds:
+  - No distributed execution framework, new store, renderer or DSL.
+  - No unrelated LAB, concurrent-render, undo or general canonicalization repairs.
+  - No blanket human gate for running experiments; Sam's acceptance remains his.
+  - No external push, merge into another branch, deployment or automatic promotion.
+acceptance: null
+promotion: null

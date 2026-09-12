@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "course": "Lenard",
+  "aliases": ["Lenard Park"],
+  "devDir": "Lenard",
+  "image": "Lenard-full.PNG",
+  "annotation": "Lenard-full.annotation.json"
+}

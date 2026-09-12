@@ -1,0 +1,45 @@
+id: signature-intervention
+status: experimental
+what-is:
+  source: 1fc144350aa748fd92b91ea6af5f2a653446ca45
+  question: Does avoiding repeat content-signature serialization explain the lazy candidate's warm-render behavior on these fixtures?
+  arms:
+    lazy: Preserved current lazy-signature runtime snapshot.
+    eager: Isolated fork that computes the same signature eagerly on each memoized registration invocation, while retaining the lazy arm's immutability-proof bookkeeping and memo lookup.
+e:
+  intervention: Restore eager signature computation while holding the renderer, fixture worlds, PxC memo-ring shape, render calls, and output comparison fixed.
+  measurements:
+    - Instrumented signature-work counts, serialized bytes, and observer timing in a distinct, untimed pass.
+    - Cold: runtime construction plus first render.
+    - Warm: render with an already populated memo ring.
+    - Repeats: first, second (certification boundary), and third-plus unchanged renders; plus a 24-slot eviction/revisit.
+    - Edits: each of the six retained authored command transitions followed by its unchanged repeat.
+  pairing: Sequential alternating AB/BA rounds only; arms never run concurrently.
+  budget: Two paired timing rounds, with two cold and eight warm samples per workload; retain any incomplete or regressing outcome.
+a*:
+  equality: Exact JSON-visible result and SVG equality, excluding only each top-level result.run receipt; retain both arm receipts separately.
+  controls:
+    - Instrumentation is opt-in and disabled during latency timing.
+    - Identical fixture inputs and Node executable are used for both arms.
+    - Sources and harness are hashed and copied/sealed with each result.
+  predicted:
+    - Lazy has fewer signature serializations on unchanged warm renders than eager.
+    - Lazy improves warm latency on at least some fixture workloads, while cold and edited-input behavior may be equal or worse.
+    - Both arms preserve JSON-visible output and SVG on the retained fixtures.
+p&c:
+  existing-parts:
+    - Existing seed worlds, PxC memo Parts, render outputs, and pyto-run-record@1 receipts.
+    - Card-render fixture workload definitions and existing PQL/PxC board.
+  existing-calculations:
+    - createStudioRuntime card/scene compositions, runRecord, and existing memoized Calculation registration.
+  new-parts:
+    - px.exp.signature-intervention.<run>.inputs, sources, arm observations, receipts, equality, and summary.
+  new-calculations:
+    - fn.exp.signatureIntervention.compare derives fixture-scoped parity and paired arm metrics.
+bounds:
+  - Local Node-only causal experiment; no Studio default, app UI, export behavior, renderer, or source-runtime change.
+  - This is not a third optimization, transformer benchmark, whole-app latency claim, browser-pixel assertion, or universal confidence claim.
+  - Old sealed evidence and frozen card-render harness remain untouched.
+  - No promotion, deployment, commit, or human acceptance is implied.
+acceptance: null
+promotion: null

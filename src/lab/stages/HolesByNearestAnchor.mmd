@@ -1,0 +1,31 @@
+flowchart TD
+    badges["px.badges.objects"]
+    tees["px.tees"]
+    baskets["px.baskets"]
+
+    subgraph Holes["PCR: HolesByNearestAnchor"]
+        subgraph ReadNumbers["Tick: Hole.readNumbers"]
+            readNumbers["fn.Hole.readNumbers"]
+        end
+        subgraph BindAnchors["Tick: Hole.bindAnchors"]
+            bindAnchors["fn.Hole.bindAnchors"]
+        end
+        subgraph Assemble["Tick: Hole.assemble"]
+            assemble["fn.Hole.assemble"]
+        end
+        subgraph Unplaced["Tick: Hole.unplaced"]
+            unplaced["fn.Hole.unplaced"]
+        end
+    end
+
+    badges -->|badges| readNumbers
+    readNumbers --> numbers["px.holes.numbers"]
+    numbers -->|numbers| bindAnchors
+    tees -->|tees| bindAnchors
+    baskets -->|baskets| bindAnchors
+    bindAnchors --> binding["px.holes.binding"]
+    binding -->|binding| assemble
+    assemble --> objects["px.holes.objects"]
+    binding -->|binding| unplaced
+    objects -->|holes| unplaced
+    unplaced --> unplacedPart["px.holes.unplaced"]

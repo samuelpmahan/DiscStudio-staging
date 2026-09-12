@@ -1,0 +1,45 @@
+id: card-render-experiment
+status: experimental
+what-is:
+  source: 941f3544f82f80f88c7228abec646b0889d575fa
+  merged: Sam requested this exact commit during implementation; the baseline is captured after it.
+  behavior: The existing PxC runtime composes fields, painter art, cards and SVG.
+  evidence: Existing tests assert reuse and SVG byte equivalence; no latency claim yet.
+e:
+  question: Can a bounded runtime change reduce repeat-card latency without changing outputs?
+  primary: card-broadcast/warm (milliseconds per render, lower is better)
+  bounds: At most two candidate changes in this pilot; preserve every attempt.
+a*:
+  - Capture concrete sample inputs, source files, reference outputs and harness identity.
+  - Profile the unchanged runtime before choosing a candidate.
+  - Change only src/runtime.js for a candidate; keep the renderer and core unchanged.
+  - Compare frozen source snapshots in alternating order using one frozen harness.
+  - Keep raw timings, failed comparisons, patches and review material.
+what-is-next:
+  result: A rerunnable experiment and an evidence-backed candidate, not automatic promotion.
+  review: Sam reviews the exact candidate and evidence; no response is supplied for him.
+p&c:
+  existing-parts:
+    - Sample world, domain objects, presentation presets and painted art.
+    - px.render.* and px.receipt.* outputs from the existing studio runtime.
+  existing-calculations:
+    - createSeed and createStudioRuntime; card and scene through existing PQL.
+    - Field discovery, painter, card composition and SVG rendering, unchanged.
+  updated-parts:
+    - DS-STUDIO-02 trace review description and matching in-app review entry.
+  updated-calculations:
+    - At most one measured runtime optimization at a time, selected after profiling.
+  new-parts:
+    - Frozen inputs, source manifests, reference outputs and measured observations.
+    - Candidate patches, comparison results and an unanswered exact-material review prompt.
+  new-calculations:
+    - Capture source and inputs; probe outputs; measure cold and warm renders.
+    - Compare output equivalence and paired timings using existing PxC/PQL.
+verification:
+  equivalence: Exact SVG bytes AND complete rendered-result JSON, including reuse traces.
+  pixels: Optional same-browser RGBA equality; explicitly unverified if unavailable.
+  performance: Seven paired rounds; >5% primary improvement, wins in at least six rounds.
+  guardrail: No workload median may regress by more than 10%; not a universal threshold.
+  checks: Unit tests, painter fixtures, build, and available browser checks.
+acceptance: null
+promotion: null

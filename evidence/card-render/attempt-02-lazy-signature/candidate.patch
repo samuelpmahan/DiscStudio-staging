@@ -1,0 +1,40 @@
+diff --git a/src/runtime.js b/src/runtime.js
+index 9ae7a2d..04b3aeb 100644
+--- a/src/runtime.js
++++ b/src/runtime.js
+@@ -24,9 +24,34 @@ export function createStudioRuntime(initial) {
+   const calls = [], counters = { calls: 0, computed: 0, reused: 0 }, nextSlot = {};
+   let previousObjects = new Set(), listener = () => {};
+   const source = (address, value) => { if (!pxc.has(address) || stable(pxc.get(address)) !== stable(value)) pxc.set(address, value); return address; };
++  // This caches proof of immutable data, not Parts or Calculation results. A
++  // shallow freeze or accessor cannot justify reusing a content signature.
++  const immutable = new WeakSet();
++  function fixed(value) {
++    if (!value || typeof value !== 'object') return typeof value !== 'function';
++    if (immutable.has(value)) return true;
++    if (!Object.isFrozen(value)) return false;
++    const array = Array.isArray(value), prototype = Object.getPrototypeOf(value);
++    if (!array && prototype !== Object.prototype && prototype !== null) return false;
++    const keys = Object.keys(value), descriptors = Object.getOwnPropertyDescriptors(value);
++    if (array && (keys.length !== value.length || keys.some((key, index) => key !== String(index)))) return false;
++    if (!keys.every(key => Object.hasOwn(descriptors[key], 'value') && fixed(descriptors[key].value))) return false;
++    immutable.add(value); return true;
++  }
+   function register(address, calculate, { memo = true, revision = 1 } = {}) {
++    let previousInputs = null, previousSignature = null, previousVerified = false;
+     pxc.register(pxFn(address), inputs => {
+-      const signature = stable({ revision, inputs }), tag = address.slice(3), prefix = `px.memo.${tag}.`;
++      const keys = Object.keys(inputs), descriptors = Object.getOwnPropertyDescriptors(inputs);
++      const dataInputs = memo && keys.every(key => Object.hasOwn(descriptors[key], 'value'));
++      const unchanged = dataInputs && previousInputs && keys.length === Object.keys(previousInputs).length && keys.every(key => Object.hasOwn(previousInputs, key) && Object.is(descriptors[key].value, previousInputs[key]));
++      const signature = unchanged && previousVerified ? previousSignature : stable({ revision, inputs });
++      // First occurrences pay no recursive proof cost. A repeat is serialized
++      // once more before certification, so freezing a previously mutable input
++      // can never make its old signature look current.
++      previousVerified = !!unchanged && (previousVerified || keys.every(key => fixed(descriptors[key].value)));
++      previousInputs = dataInputs ? Object.fromEntries(keys.map(key => [key, descriptors[key].value])) : null;
++      previousSignature = signature;
++      const tag = address.slice(3), prefix = `px.memo.${tag}.`;
+       let hit = null;
+       if (memo) for (let n = 0; n < 24; n++) if (pxc.has(prefix + n) && pxc.get(prefix + n).signature === signature) { hit = pxc.get(prefix + n); break; }
+       counters.calls++;

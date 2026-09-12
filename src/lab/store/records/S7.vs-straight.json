@@ -1,0 +1,171 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S7.vs-straight",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "CompareWithStraight",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s7.vsstraight",
+          "calculation": {
+            "address": "fn.lab.s7.comparewithstraight",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "legs": "px:px.exp.lab.round.legs",
+            "straight": "px:px.exp.lab.route.labfixture",
+            "graph": "px:px.exp.lab.course.graph"
+          },
+          "args": {},
+          "into": "px.exp.lab.s7.vsstraight",
+          "declared_consumes": [
+            "px:px.exp.lab.round.legs",
+            "px:px.exp.lab.route.labfixture",
+            "px:px.exp.lab.course.graph"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.round.legs",
+            "px.exp.lab.route.labfixture",
+            "px.exp.lab.course.graph"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s7.vsstraight"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s7.vsstraight",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "what respecting the obstacle map costs, and where the round the rays resolved is not the round the nearest-anchor fallback would have played",
+              "straight": {
+                "address": "px.exp.lab.route.labfixture",
+                "objective": "play the holes in badge order: each hole tee to basket, then basket to the next hole tee, over the canonical raster",
+                "wholeRoundLengthPx": 1862.803,
+                "holes": [
+                  1,
+                  10,
+                  11
+                ]
+              },
+              "routed": {
+                "address": "px.exp.lab.round.path",
+                "objective": "the same order over the same anchors, searched over the walkable cells"
+              },
+              "sameHoles": false,
+              "sameAnchors": false,
+              "divergence": {
+                "fallbackPlayed": [
+                  1,
+                  10,
+                  11
+                ],
+                "rayResolvedPlayed": [
+                  1,
+                  11
+                ],
+                "playedByTheFallbackOnly": [
+                  10
+                ],
+                "why": "the fallback binds every badge it can to its nearest free tee and basket, doglegs included; S7 plays only the holes S6 resolved by continuing the tee-to-badge ray, so a badge whose hole bends is unplayed here and routed there"
+              },
+              "legs": [
+                {
+                  "leg": "play:tee-3->basket-3",
+                  "hole": 1,
+                  "straightLengthPx": 180.501,
+                  "routedLengthPx": 180.798,
+                  "reachable": true,
+                  "deltaPx": 0.297,
+                  "detourRatio": 1.002,
+                  "obstacleCellsTheStraightLineCrosses": 0,
+                  "cells": []
+                },
+                {
+                  "leg": "walk:basket-3->tee-2",
+                  "hole": 11,
+                  "straightLengthPx": 546.76,
+                  "routedLengthPx": 573.742,
+                  "reachable": true,
+                  "deltaPx": 26.982,
+                  "detourRatio": 1.049,
+                  "obstacleCellsTheStraightLineCrosses": 0,
+                  "cells": []
+                },
+                {
+                  "leg": "play:tee-2->basket-1",
+                  "hole": 11,
+                  "straightLengthPx": 260.5,
+                  "routedLengthPx": 286.229,
+                  "reachable": true,
+                  "deltaPx": 25.729,
+                  "detourRatio": 1.099,
+                  "obstacleCellsTheStraightLineCrosses": 2,
+                  "cells": [
+                    687,
+                    719
+                  ]
+                }
+              ],
+              "straightTotalPx": 987.761,
+              "routedTotalPx": 1040.769,
+              "deltaPx": 53.008,
+              "legsTheStraightRouteWalkedThroughAnObstacle": [
+                "play:tee-2->basket-1"
+              ],
+              "obstacleCellsTheStraightRouteCrosses": 2
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.round.legs": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.vsstraight"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.route.labfixture": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.vsstraight"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.graph": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.vsstraight"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s7.vsstraight": {
+      "written_by": "px.exp.lab.s7.vsstraight",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 1,
+    "hits": 1,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

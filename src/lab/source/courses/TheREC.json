@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "course": "TheREC",
+  "aliases": ["The Rec", "REC", "TheREC"],
+  "set": "demo",
+  "devDir": ".",
+  "corpusDir": "demo",
+  "image": "TheREC-McKinney-TX.jpg",
+  "sweepCases": [
+    { "name": "stitched", "inputs": ["TheRec-L.PNG", "TheRec-R.PNG"] },
+    { "name": "clean-full", "inputs": ["TheREC-McKinney-TX.jpg"] },
+    { "name": "thrown-full", "inputs": ["TheRec-Thrown-full.PNG"] }
+  ]
+}

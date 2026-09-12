@@ -1,0 +1,280 @@
+/**
+ * embed.mjs writes a standalone page: the record embedded, the viewer inlined,
+ * nothing fetched. Also covers the loader seam (coerceToRecord,
+ * readEmbeddedRecord) that the page uses at start-up.
+ */
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve, join } from 'node:path';
+
+import { validate, fromPytoRecord } from '../adapters.js';
+import { coerceToRecord, readEmbeddedRecord, readEmbeddedWorlds } from '../tick-viewer.js';
+import { buildPage, embedFile, embeddableJson, buildWorldsPage, buildWorldsFromFixtures, loadWorldEntry, CHAINSPOT_ENTRY } from '../embed.mjs';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const VIEWER = resolve(HERE, '..');
+const fixturePath = (name) => resolve(VIEWER, 'fixtures', name);
+const fixture = (name) => JSON.parse(readFileSync(fixturePath(name), 'utf8'));
+
+const RECORD_OPEN = '<script type="application/json" id="record">';
+
+function embeddedRecordOf(page) {
+  const start = page.indexOf(RECORD_OPEN) + RECORD_OPEN.length;
+  const end = page.indexOf('</script>', start);
+  assert.ok(start > RECORD_OPEN.length - 1 && end > start, 'the page carries a record block');
+  return JSON.parse(page.slice(start, end));
+}
+
+const RECORDS_OPEN = '<script type="application/json" id="records">';
+
+function embeddedWorldsOf(page) {
+  const start = page.indexOf(RECORDS_OPEN) + RECORDS_OPEN.length;
+  const end = page.indexOf('</script>', start);
+  assert.ok(start > RECORDS_OPEN.length - 1 && end > start, 'the page carries a records block');
+  return JSON.parse(page.slice(start, end));
+}
+
+/* ---------------------------------------------------------------- */
+
+test('coerceToRecord accepts a record and every raw runtime document', () => {
+  const cases = [
+    ['pyto-grouped-ablation.json', (doc) => doc, 'pyto'],
+    ['discstudio-display-card.json', (doc) => doc, 'discstudio'],
+    ['discstudio-display-card.json', (doc) => doc.first, 'discstudio'],
+    ['chesslab-s0-s1.json', (doc) => doc, 'chesslab'],
+    ['wumpus-belief-tick.json', (doc) => doc, 'wumpus']
+  ];
+  for (const [name, pick, runtime] of cases) {
+    const record = coerceToRecord(pick(fixture(name)));
+    validate(record);
+    assert.equal(record.source.runtime, runtime, name);
+  }
+  assert.throws(() => coerceToRecord({ nothing: true }), /Unrecognized document/);
+  assert.throws(() => coerceToRecord(null), /Unrecognized document/);
+});
+
+test('readEmbeddedRecord reads the block, and returns null when it is empty', () => {
+  const record = fromPytoRecord(fixture('pyto-grouped-ablation.json'));
+  const doc = (textContent) => ({ getElementById: (id) => (id === 'record' ? { textContent } : null) });
+  assert.equal(readEmbeddedRecord(doc('')), null);
+  assert.equal(readEmbeddedRecord(doc('\n  \n')), null);
+  assert.equal(readEmbeddedRecord({ getElementById: () => null }), null);
+  assert.deepEqual(readEmbeddedRecord(doc(JSON.stringify(record))), record);
+  assert.throws(() => readEmbeddedRecord(doc('{"schema":"pyto-run-record@1"}')), /pcr: expected a string/);
+});
+
+test('embeddableJson escapes every character that could end the script element', () => {
+  const text = embeddableJson({ a: '</script><img onerror=alert(1)>', b: '  ' });
+  assert.ok(!text.includes('<'), text);
+  assert.ok(!text.includes('>'), text);
+  assert.ok(!text.includes(' '));
+  assert.deepEqual(JSON.parse(text), { a: '</script><img onerror=alert(1)>', b: '  ' });
+});
+
+test('buildPage inlines the viewer and embeds the record, with no module graph left', () => {
+  const record = fromPytoRecord(fixture('pyto-grouped-ablation.json'));
+  const page = buildPage(record);
+
+  assert.ok(!page.includes('src="./tick-viewer.js"'), 'no external script src');
+  assert.ok(!page.includes("from './adapters.js'"), 'the adapters import is gone');
+  assert.equal((page.match(/^<script/gm) || []).length, 2, 'exactly the record block and the inlined module');
+  assert.equal((page.match(/^<\/script>/gm) || []).length, 2);
+  assert.equal(page.match(/^\s*(import|export)\s/gm), null, 'no module statement survives inlining');
+  assert.ok(page.includes('\nmount(document);\n'), 'the page still boots');
+  assert.ok(page.includes('function renderRecord'), 'the viewer is present');
+  assert.ok(page.includes('function validate'), 'the adapters are present');
+  assert.ok(!/https?:\/\/(?!www\.w3\.org)/.test(page.replace(/xmlns="[^"]*"/g, '')), 'nothing is fetched from the network');
+
+  assert.deepEqual(embeddedRecordOf(page), record);
+  validate(embeddedRecordOf(page));
+});
+
+test('embedFile converts a raw runtime document on the way in', () => {
+  for (const [name, runtime, pcr] of [
+    ['discstudio-display-card.json', 'discstudio', 'display-card'],
+    ['chesslab-s0-s1.json', 'chesslab', 'chesslab'],
+    ['wumpus-belief-tick.json', 'wumpus', 'wumpus']
+  ]) {
+    const page = embedFile(fixturePath(name));
+    const record = embeddedRecordOf(page);
+    validate(record);
+    assert.equal(record.source.runtime, runtime, name);
+    assert.equal(record.pcr, pcr, name);
+  }
+});
+
+test('embedFile refuses a document that is not a record and not a known runtime shape', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tick-embed-'));
+  const bad = join(dir, 'bad.json');
+  writeFileSync(bad, JSON.stringify({ hello: 'world' }));
+  assert.throws(() => embedFile(bad), /Unrecognized document/);
+});
+
+test('buildPage fails loudly when the page and the embedder drift apart', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tick-drift-'));
+  mkdirSync(dir, { recursive: true });
+  for (const name of ['adapters.js', 'tick-viewer.js', 'tick-viewer.html']) cpSync(resolve(VIEWER, name), join(dir, name));
+  const html = readFileSync(join(dir, 'tick-viewer.html'), 'utf8');
+  writeFileSync(join(dir, 'tick-viewer.html'), html.replace(RECORD_OPEN, '<script type="application/json" id="run">'));
+  const record = fromPytoRecord(fixture('pyto-grouped-ablation.json'));
+  assert.throws(() => buildPage(record, { viewerDir: dir }), /empty record block not found/);
+});
+
+test('node embed.mjs record.json > page.html writes the same page from the command line', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tick-cli-'));
+  const out = join(dir, 'page.html');
+  const stdout = execFileSync(process.execPath, ['embed.mjs', 'fixtures/pyto-grouped-ablation.json'], { cwd: VIEWER, encoding: 'utf8', maxBuffer: 1 << 24 });
+  execFileSync(process.execPath, ['embed.mjs', 'fixtures/pyto-grouped-ablation.json', '--out', out], { cwd: VIEWER });
+  const written = readFileSync(out, 'utf8');
+  assert.equal(stdout, written);
+  assert.equal(written, buildPage(fromPytoRecord(fixture('pyto-grouped-ablation.json'))));
+  assert.ok(written.startsWith('<!doctype html>'));
+});
+
+test('the CLI exits 2 with a usage line when no record is named', () => {
+  const error = (() => {
+    try {
+      execFileSync(process.execPath, ['embed.mjs'], { cwd: VIEWER, stdio: 'pipe' });
+    } catch (thrown) {
+      return thrown;
+    }
+    throw new assert.AssertionError({ message: 'expected a non-zero exit' });
+  })();
+  assert.equal(error.status, 2);
+  assert.match(String(error.stderr), /usage: node embed\.mjs/);
+});
+
+test('the inlined bundle is valid module syntax with no duplicate top-level bindings', () => {
+  // Concatenating two modules can collide on a top-level name (both files once
+  // declared `const encoder`), which throws at load and renders nothing.
+  // node --check parses the bundle without executing it, so the collision is a
+  // test failure here instead of a blank page in someone's browser.
+  const page = buildPage(fromPytoRecord(fixture('pyto-grouped-ablation.json')));
+  const open = '<script type="module">\n';
+  const start = page.indexOf(open, page.indexOf('</script>')) + open.length;
+  const end = page.indexOf('\n</script>', start);
+  const bundle = page.slice(start, end);
+  assert.ok(bundle.includes('function renderRecord'), 'the bundle was located');
+
+  const dir = mkdtempSync(join(tmpdir(), 'tick-bundle-'));
+  const file = join(dir, 'bundle.mjs');
+  writeFileSync(file, bundle);
+  execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' });
+});
+
+test("a record carrying $&, $` and $' is embedded literally, not expanded", () => {
+  // String.prototype.replace expands `$&`, "$`", `$'` and `$1` inside a
+  // replacement STRING. Every byte of the record block is record-derived, so a
+  // Part value, an address or a pcr name holding one of those sequences used to
+  // splice the page's own text into the JSON block at build time: the record no
+  // longer parsed, and in the `$'` case the module bootstrap was left un-inlined,
+  // so the standalone page could never mount. A realistic carrier is a shell
+  // snippet: printf $'%s\n'.
+  const hostile = "printf $'%s\\n' -- $& then $` and $1 done";
+  const record = fromPytoRecord(fixture('pyto-grouped-ablation.json'));
+  record.pcr = `grouped-ablation ${hostile}`;
+  for (const tick of record.ticks) {
+    for (const invocation of tick.invocations) {
+      invocation.value = { kind: 'text', data: hostile, note: hostile };
+    }
+  }
+  validate(record);
+
+  const page = buildPage(record);
+  assert.equal((page.match(/^<script/gm) || []).length, 2, 'exactly the record block and the inlined module');
+  assert.equal((page.match(/^<\/script>/gm) || []).length, 2);
+  assert.ok(!page.includes("import { mount } from './tick-viewer.js';"), 'the bootstrap was still inlined');
+  assert.equal(page.match(/^\s*(import|export)\s/gm), null, 'no module statement survives inlining');
+  assert.ok(page.includes('\nmount(document);\n'), 'the page still boots');
+
+  // The record block parses, and it is the record that went in.
+  const start = page.indexOf(RECORD_OPEN) + RECORD_OPEN.length;
+  const text = page.slice(start, page.indexOf('</script>', start));
+  const readBack = readEmbeddedRecord({ getElementById: (id) => (id === 'record' ? { textContent: text } : null) });
+  assert.deepEqual(readBack, record);
+  assert.equal(readBack.pcr, `grouped-ablation ${hostile}`);
+  assert.equal(readBack.ticks[0].invocations[0].value.data, hostile);
+});
+
+/* ---------------------------------------------------------------- */
+/* four worlds, one terminal                                         */
+/* ---------------------------------------------------------------- */
+
+test('loadWorldEntry labels a good input by pcr and runtime, a bad one by filename with a named reason', () => {
+  const ok = loadWorldEntry(fixturePath('wumpus-belief-tick.json'));
+  assert.equal(ok.label, 'wumpus · wumpus');
+  assert.equal(ok.error, null);
+  validate(ok.record);
+
+  const dir = mkdtempSync(join(tmpdir(), 'tick-world-'));
+  const bad = join(dir, 'not-a-record.json');
+  writeFileSync(bad, JSON.stringify({ hello: 'world' }));
+  const failed = loadWorldEntry(bad);
+  assert.equal(failed.record, null);
+  assert.equal(failed.label, 'not-a-record');
+  assert.match(failed.error, /Unrecognized document/);
+});
+
+test('buildWorldsPage bakes every input into one page behind a picker, labelled and switchable client-side', () => {
+  const entries = ['pyto-grouped-ablation.json', 'discstudio-display-card.json', 'chesslab-s0-s1.json']
+    .map((name) => loadWorldEntry(fixturePath(name)));
+  const page = buildWorldsPage(entries);
+
+  assert.equal((page.match(/^<script/gm) || []).length, 2, 'exactly the records block and the inlined module');
+  assert.ok(!page.includes(`${RECORD_OPEN}</script>`), 'the unused single-record block is dropped, not shipped empty');
+  assert.match(page, /id="world-wrap"/, 'the picker markup is present for tick-viewer.js to reveal');
+
+  const worlds = embeddedWorldsOf(page);
+  assert.equal(worlds.length, 3);
+  assert.deepEqual(worlds.map((w) => w.label), ['ablation.grouped · pyto', 'display-card · discstudio', 'chesslab · chesslab']);
+  for (const world of worlds) { validate(world.record); assert.equal(world.error, null); }
+  assert.equal(readEmbeddedWorlds({ getElementById: (id) => (id === 'records' ? { textContent: JSON.stringify(worlds) } : null) }).length, 3);
+});
+
+test('a bad input becomes a world entry naming the failure, never a blank page or an aborted build', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tick-world-bad-'));
+  const bad = join(dir, 'garbled.json');
+  writeFileSync(bad, JSON.stringify({ nope: true }));
+  const entries = [loadWorldEntry(fixturePath('wumpus-belief-tick.json')), loadWorldEntry(bad)];
+  const page = buildWorldsPage(entries);
+  const worlds = embeddedWorldsOf(page);
+  assert.equal(worlds.length, 2);
+  assert.equal(worlds[0].error, null);
+  assert.equal(worlds[1].record, null);
+  assert.match(worlds[1].error, /Unrecognized document/, 'the reason a world is UNKNOWN travels with it');
+  assert.match(page, /UNKNOWN/, 'the bundled tick-viewer.js is the module that spells the panel');
+});
+
+test('node embed.mjs a.json b.json --out worlds.html bakes both worlds and the picker from the command line', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tick-cli-worlds-'));
+  const out = join(dir, 'worlds.html');
+  execFileSync(process.execPath, [
+    'embed.mjs', 'fixtures/pyto-grouped-ablation.json', 'fixtures/wumpus-belief-tick.json', '--out', out
+  ], { cwd: VIEWER });
+  const page = readFileSync(out, 'utf8');
+  const worlds = embeddedWorldsOf(page);
+  assert.deepEqual(worlds.map((w) => w.label), ['ablation.grouped · pyto', 'wumpus · wumpus']);
+  for (const world of worlds) validate(world.record);
+});
+
+test('--worlds bakes every fixture, sorted, plus ChainSpot as a labelled empty slot -- never a faked record', () => {
+  const page = buildWorldsFromFixtures();
+  const worlds = embeddedWorldsOf(page);
+
+  const fixtureNames = readdirSync(resolve(VIEWER, 'fixtures')).filter((f) => f.endsWith('.json')).sort();
+  assert.equal(worlds.length, fixtureNames.length + 1, 'one entry per fixture, plus ChainSpot');
+  for (const world of worlds.slice(0, fixtureNames.length)) { validate(world.record); assert.equal(world.error, null); }
+
+  const chainspot = worlds[worlds.length - 1];
+  assert.equal(chainspot.label, 'ChainSpot');
+  assert.equal(chainspot.record, null);
+  assert.equal(chainspot.empty, true);
+  assert.equal(chainspot.note, CHAINSPOT_ENTRY.note);
+
+  const stdout = execFileSync(process.execPath, ['embed.mjs', '--worlds'], { cwd: VIEWER, encoding: 'utf8', maxBuffer: 1 << 24 });
+  assert.equal(stdout, page, 'the CLI --worlds flag builds the same page as the function');
+});

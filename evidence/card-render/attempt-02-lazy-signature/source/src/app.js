@@ -1,0 +1,1018 @@
+import { createSeed } from './seed.js';
+import { createStudioRuntime } from './runtime.js';
+import { get, all, currentBattle, clone, id, labelHash, sampleHueFor, validateWorld } from './domain.js';
+import { esc, fieldNode, sampleColors } from './presentation.js';
+import { constraintDefinitions, battleConstraintDefinitions, TIE_MODES, SCORE_MODES, rulePoints } from './constraints.js';
+import { battleTemplates } from './battle.js';
+import { framePresets, canvasFor } from './frames.js';
+import { reviewItems } from './review.js';
+import { SORTS, GROUPS, FILTERS } from './shelf.js';
+import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
+import { planExports, queueProgress } from './exports.js';
+import { composePage, fetchPageSources } from '../pyto/viewer/embed.mjs';
+
+const DATA_KEY = 'discstudio.pxc.staging.world.v2', VIEW_KEY = 'discstudio.pxc.staging.view.v2';
+const app = document.querySelector('#app');
+let saveEnabled = true, stored = null, initialMessage = '';
+try { const raw = localStorage.getItem(DATA_KEY); if (raw) stored = validateWorld(JSON.parse(raw)); }
+catch (error) { saveEnabled = false; initialMessage = `Saved draft could not be opened: ${error.message} It has not been overwritten. Download the saved file before resetting.`; }
+const runtime = createStudioRuntime(stored || createSeed());
+let savedView = {}; try { savedView = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}'); } catch { /* View preferences cannot invalidate a domain draft. */ }
+const ui = {
+  route: 'shelf', discId: savedView.discId || 'buzzz-mint', bagId: savedView.bagId || 'everyday', competitionId: 'putterwarz', roundId: 'hole-1',
+  mode: savedView.mode || 'battle', presetId: savedView.presetId || 'broadcast', component: savedView.component || 'DisplayCard',
+  nodeId: 'mold', query: '', fieldQuery: '', library: 'fields', onlyBag: false,
+  shelfSort: savedView.shelfSort || 'recent', shelfGroup: savedView.shelfGroup || 'none', shelfFilters: Array.isArray(savedView.shelfFilters) ? savedView.shelfFilters : [], shelfLayout: savedView.shelfLayout || 'compact', traceOpen: false, inspectAddress: '', previewState: 'idle',
+  extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
+  footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
+  motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
+  lastCascade: null, instanceProjection: savedView.instanceProjection || 'single', battleRules: null, queue: [], queueRunning: false,
+  labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null
+};
+const w = () => runtime.world();
+const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
+const dataAttr = values => Object.entries(values).map(([key, value]) => `data-${key}="${esc(value)}"`).join(' ');
+const button = (label, action, values = {}, classes = '', extra = '') => `<button class="${classes}" data-action="${action}" ${dataAttr(values)} ${extra}>${label}</button>`;
+const select = (name, value, options, attrs = '') => `<select data-control="${name}" aria-label="${esc(name)}" ${attrs}>${options.map(([key, label]) => `<option value="${esc(key)}" ${String(key) === String(value) ? 'selected' : ''}>${esc(label)}</option>`).join('')}</select>`;
+const input = (label, control, value, type = 'text', attrs = '') => `<label class="control"><span>${esc(label)}</span><input aria-label="${esc(label)}" data-control="${control}" type="${type}" value="${esc(value ?? '')}" ${attrs}></label>`;
+const check = (label, control, value, attrs = '') => `<label class="check"><input data-control="${control}" type="checkbox" ${value ? 'checked' : ''} ${attrs}> ${esc(label)}</label>`;
+const discInfo = (discId = ui.discId) => { const disc = get(w(), 'Disc', discId), mold = disc && get(w(), 'Mold', disc.moldId), maker = mold && get(w(), 'Manufacturer', mold.manufacturerId); return { disc, mold, maker }; };
+const previewEntry = () => ui.previewState === 'idle' ? null : { id: 'editor-preview', score: 3, highlighted: ui.previewState === 'highlight', winner: ui.previewState === 'winner' };
+function message(text, error = false) { ui.message = text; ui.error = error; }
+/** The viewer's own directory, resolved from whichever URL this page actually has. */
+function viewerBase() {
+  for (const [path, base] of [['../pyto/viewer/', import.meta.url], ['./pyto/viewer/', globalThis.document?.baseURI]]) {
+    try { if (base) return new URL(path, base); } catch { /* A data:/about: base cannot resolve a relative path. */ }
+  }
+  throw new Error('This page has no resolvable URL, so the Tick viewer sources cannot be read. Open the studio over http:// (npm run dev).');
+}
+let viewerSourcePromise = null;
+/** tick-viewer.html + adapters.js + tick-viewer.js as text, fetched once from this origin. */
+function viewerSources() {
+  const base = viewerBase();
+  viewerSourcePromise ??= fetchPageSources(base).catch(error => { viewerSourcePromise = null; throw new Error(`The Tick viewer sources could not be read from ${base}: ${error.message}`); });
+  return viewerSourcePromise;
+}
+/** The PCR name of the execution the open trace panel is showing. */
+function shownPcr() {
+  const name = ui.lastResult?.run?.composition?.PrincipleComponentRender;
+  if (!name) throw new Error('Render a composition before exporting its run record.');
+  return name;
+}
+function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout })); } catch { /* Nonessential view state. */ } }
+runtime.onChange(() => {
+  if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
+  catch (error) { ui.saved = 'Not saved · download a draft'; message('Browser storage is full or unavailable. Your current work is still open. Download a draft to keep it.', true); }
+  persistView();
+});
+function execute(command) { runtime.dispatch(command); }
+/**
+ * Every cascade edit -- global, instance, or a preset's own token -- marks
+ * `ui.lastCascade` as pending its recompose. `recompose` itself is called
+ * exactly once, by render()'s single pass over the All cards tab -- calling
+ * it here too would let its own memoization see "nothing changed since the
+ * previous call" (the one this function just made) and mark every
+ * projection reused, erasing the very `changed` signal the receipt and the
+ * preview grid depend on (task 78's cascadeSet comment, unchanged discipline).
+ */
+function cascadeSet(layer, token, value, { projection, discId, presetId } = {}) {
+  if (layer === 'preset') { presetCascadeSet(presetId, token, value); return; }
+  // The value the layer holds now (undefined = inherits). A repeated change
+  // event carrying the same value is not an edit: nothing is dispatched and the
+  // last edit keeps its measured recompose.
+  const cards = w().cards, current = layer === 'global' ? cards.global[token] : cards.instances[projection]?.[discId]?.[token];
+  if ((value === null && current === undefined) || (value !== null && current === value)) return;
+  execute({ type: 'cards.set', layer, token, value, ...(projection ? { projection } : {}), ...(discId ? { discId } : {}) });
+  ui.lastCascade = { edit: { layer, token, value, projection, discId }, result: null };
+}
+/**
+ * The preset IS the projection layer (task 79): the Component Editor's
+ * existing background/foreground/accent/font/radius/sponsor controls (below,
+ * `preset-color`/`preset-number`/`preset-font`/`preset-sponsor`) dispatch an
+ * ordinary `preset.set`, exactly as they always have -- this just also marks
+ * the edit as a cascade edit, so the same one-recompose-per-render discipline
+ * applies to a preset field as to a global or instance one.
+ */
+function presetCascadeSet(presetId, token, value) {
+  const current = w().presets[presetId]?.[token] ?? null;
+  if ((value === null && current === null) || (value !== null && current === value)) return;
+  execute({ type: 'preset.set', id: presetId, patch: { [token]: value } });
+  ui.lastCascade = { edit: { layer: 'preset', token, value, presetId }, result: null };
+}
+const CARD_TOKENS = ['background', 'foreground', 'accent', 'font', 'radius', 'sponsor'];
+const cardTokenLabel = token => ({ background: 'Background', foreground: 'Foreground', accent: 'Accent', font: 'Font', radius: 'Radius', sponsor: 'Sponsor' }[token] || token);
+/** One editable token control at a given layer. `scope` = {layer, preset?, projection?, disc?} becomes the data-layer/data-preset/data-projection/data-disc attributes the browser test finds. */
+function tokenControl(token, value, scope) {
+  const label = cardTokenLabel(token), aria = `${label} (${scope.layer}${scope.preset ? ` · ${scope.preset}` : ''}${scope.projection ? ` · ${scope.projection}` : ''}${scope.disc ? ` · ${scope.disc}` : ''})`;
+  const attrs = dataAttr({ layer: scope.layer, token, ...(scope.preset ? { preset: scope.preset } : {}), ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) });
+  let field;
+  if (token === 'font') field = `<select data-control="cascade-token" aria-label="${esc(aria)}" ${attrs}>${[['sans', 'Sans'], ['serif', 'Serif'], ['mono', 'Mono']].map(([k, l]) => `<option value="${k}" ${k === value ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+  else if (token === 'radius') field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="number" min="0" max="100" value="${esc(value ?? 0)}" ${attrs}>`;
+  else if (token === 'sponsor') field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="text" maxlength="40" value="${esc(value ?? '')}" ${attrs}>`;
+  else field = `<input aria-label="${esc(aria)}" data-control="cascade-token" type="color" value="${esc(value ?? '#000000')}" ${attrs}>`;
+  return `<label class="control"><span>${esc(label)}</span>${field}</label>`;
+}
+function cascadeResetButton(scope, token) { return button('Reset to inherited', 'cascade-reset', { layer: scope.layer, token, ...(scope.preset ? { preset: scope.preset } : {}), ...(scope.projection ? { projection: scope.projection } : {}), ...(scope.disc ? { disc: scope.disc } : {}) }, 'quiet small'); }
+function navigate(route) { location.hash = `/${route}`; }
+function syncRoute() {
+  const [path, query] = location.hash.slice(1).split('?'), params = new URLSearchParams(query);
+  ui.route = ['shelf', 'course', 'course-build', 'components', 'competition'].includes(path?.slice(1)) ? path.slice(1) : 'shelf';
+  if (params.has('node')) { ui.nodeId = params.get('node'); ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; }
+  if (params.has('trace')) ui.traceOpen = true;
+  render();
+}
+window.addEventListener('hashchange', syncRoute);
+const safeThumb = (discId, preset = 'discImage', projection = 'bag') => { try { return runtime.card(discId, preset, context(), null, projection).svg; } catch { return '<span class="missing">Missing disc</span>'; } };
+function header() {
+  return `<header class="app-header"><a class="brand" href="#/shelf"><span class="brand-mark">◎</span><strong>CHAINSPOT</strong><span class="brand-divider"></span><span>DISC STUDIO</span><small>PxC</small></a><nav aria-label="Workspace"><a href="#/shelf" class="${ui.route === 'shelf' ? 'active' : ''}">DiscShelf</a><a href="#/course" class="${ui.route === 'course' ? 'active' : ''}">OnTheCourse</a>${ui.route === 'course-build' ? '<a href="#/course-build" class="active">Course</a>' : ''}<a href="#/components" class="${['components', 'competition'].includes(ui.route) ? 'active' : ''}">Component Editor</a></nav><div class="header-actions"><span class="save-status"><i></i>${esc(ui.saved)}</span>${button('Save draft ↓', 'save-draft', {}, 'quiet')}${button('Load', 'load-draft', {}, 'quiet')}${button('Reset', 'reset', {}, 'quiet')}</div></header>`;
+}
+function bagSelect(control = 'bag') { return select(control, ui.bagId, all(w(), 'Bag').map(b => [b.id, `${b.name} · ${b.discIds.length}`])); }
+/** What the shelf is asked for right now: the search box, the quick filters, the sort and the grouping. */
+function shelfRequest() {
+  const filters = [...ui.shelfFilters, ...(ui.route === 'course' && ui.onlyBag ? ['inBag'] : [])];
+  return { query: ui.query, sort: ui.shelfSort, group: ui.shelfGroup, filters, bagId: ui.bagId };
+}
+const flightLine = mold => ['speed', 'glide', 'turn', 'fade'].map(key => mold?.flight?.[key]).every(v => v == null) ? '' : ['speed', 'glide', 'turn', 'fade'].map(key => mold?.flight?.[key] ?? '·').join(' ').replace(/-/g, '−');
+/** The facts a person picks a disc by, on the row itself: plastic, weight, and the flight numbers. */
+function discFacts(disc, mold) {
+  return [disc.plastic, disc.weight == null ? '' : `${disc.weight} g`, flightLine(mold)].filter(Boolean).map(esc).join(' · ');
+}
+/** Which bags this disc is in, on the row, because being in several is the ordinary case. */
+function rowBags(row) {
+  const bags = row.bagIds.map(key => get(w(), 'Bag', key)).filter(Boolean);
+  return bags.length ? `<span class="row-bags">${bags.map(bag => `<span class="bag-tag ${bag.id === ui.bagId ? 'here' : ''}">${esc(bag.name)}</span>`).join('')}</span>` : '';
+}
+/** One shelf row. The same markup compact or card; the list decides which it is. */
+function shelfEntry(row) {
+  const disc = get(w(), 'Disc', row.id); if (!disc) return '';
+  const { mold, maker } = discInfo(row.id), bag = get(w(), 'Bag', ui.bagId);
+  const membership = bag?.discIds.includes(row.id), inLineup = w().battle.entries.some(e => e.discId === row.id), course = ui.route === 'course';
+  const matched = row.matched.length ? `<span class="match-row">${row.matched.map(m => `<span class="match">${esc(m)}</span>`).join('')}</span>` : '';
+  return `<div class="disc-row ${ui.discId === row.id ? 'selected' : ''}" data-disc-row="${esc(row.id)}"><button class="disc-pick" data-action="disc-select" data-id="${esc(row.id)}"><span class="disc-thumb">${safeThumb(row.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(disc.nickname)}</small><small class="disc-facts mono">${discFacts(disc, mold)}</small>${rowBags(row)}${matched}</span></button>${button(course ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), course ? 'lineup-add' : 'membership', { id: row.id }, 'row-add', `aria-label="${course ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(disc.nickname)}" ${course && inLineup ? 'disabled' : ''}`)}</div>`;
+}
+/** Organising, in the sidebar itself: the quick filters, the sort, the grouping and the two densities. */
+function shelfControls(view) {
+  const filtering = view.filters.length || view.terms.length;
+  return `<div class="shelf-controls"><div class="chip-row">${FILTERS.map(([key, label]) => button(label, 'shelf-filter', { value: key }, `pill ${ui.shelfFilters.includes(key) ? 'active' : ''}`, `aria-pressed="${ui.shelfFilters.includes(key)}"`)).join('')}</div><div class="shelf-order">${select('shelf-sort', ui.shelfSort, SORTS.map(([key, label]) => [key, `↕ ${label}`]))}${select('shelf-group', ui.shelfGroup, GROUPS)}<div class="segmented">${button('▤', 'shelf-layout', { value: 'compact' }, ui.shelfLayout === 'compact' ? 'active' : '', 'aria-label="Compact list"')}${button('▦', 'shelf-layout', { value: 'cards' }, ui.shelfLayout === 'cards' ? 'active' : '', 'aria-label="Card grid"')}</div></div><p class="tiny muted shelf-count" data-shelf-count="${view.shown}">${view.shown} of ${view.total} disc${view.total === 1 ? '' : 's'}${filtering ? ` · ${button('show all', 'shelf-clear', {}, 'linky')}` : ''}</p></div>`;
+}
+function shelfSidebar() {
+  const view = runtime.shelf(shelfRequest());
+  const lists = view.groups.map(group => `${ui.shelfGroup === 'none' ? '' : `<h3 class="shelf-group" data-shelf-group="${esc(group.label)}">${esc(group.label)}<small>${group.discIds.length}</small></h3>`}<div class="disc-list ${ui.shelfLayout === 'cards' ? 'as-cards' : ''}">${group.discIds.map(discId => shelfEntry(view.rows.find(row => row.id === discId))).join('')}</div>`).join('');
+  return `<aside class="sidebar" data-scroll="shelf"><div class="sidebar-heading"><div><span class="eyebrow">YOUR RAW MATERIAL</span><h2>Disc shelf <small>${view.total}</small></h2></div>${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div><input class="search" data-search="discs" aria-label="Find a disc" placeholder="⌕  buzzz 177 · midrange -1" value="${esc(ui.query)}">${ui.route === 'course' ? `<div class="sidebar-bag"><label class="eyebrow">SOURCE BAG</label>${bagSelect()}${check('Show only this bag', 'only-bag', ui.onlyBag)}</div>` : ''}${shelfControls(view)}${view.shown ? lists : `<p class="empty-note">Nothing on the shelf matches${view.terms.length ? ` “${esc(ui.query.trim())}”` : ' these filters'}. Try a mold, a plastic, a colour, a weight or a flight number.</p>`}<footer class="sidebar-footer">${ui.route === 'course' ? button('+ Add bag to comparison', 'bag-lineup', {}, 'wide secondary') : button('+ New physical disc', 'disc-add', {}, 'wide secondary')}<p class="tiny muted">Every disc keeps its own art in both views. Your photos stay on your device.</p></footer></aside>`;
+}
+/** The composer keeps its own typing in the DOM until a render needs it, exactly as the new-field panel does. */
+function captureComposer() { if (!ui.adding) return; for (const el of app.querySelectorAll('[data-compose]')) ui.adding[el.dataset.compose] = el.type === 'checkbox' ? el.checked : el.value; }
+const composeField = (label, key, type = 'text', attrs = '') => `<label class="control"><span>${esc(label)}</span><input aria-label="${esc(label)}" data-compose="${esc(key)}" type="${type}" value="${esc(ui.adding?.[key] ?? '')}" ${attrs}></label>`;
+const datalist = (key, values) => `<datalist id="suggest-${key}">${[...new Set(values.map(v => String(v ?? '').trim()).filter(Boolean))].sort().map(v => `<option value="${esc(v)}"></option>`).join('')}</datalist>`;
+/** Everything already on the shelf, offered back as suggestions: the second Buzzz is typed once. */
+function shelfSuggestions() { const molds = all(w(), 'Mold'), discs = all(w(), 'Disc'); return { maker: all(w(), 'Manufacturer').map(m => m.name), mold: molds.map(m => m.name), category: molds.map(m => m.category), plastic: discs.map(d => d.plastic), color: discs.map(d => d.color) }; }
+/**
+ * Adding a disc is one gesture: the facts a person has in their hand (maker, mold,
+ * plastic, weight, colour, photo), each suggested from what is already on the shelf,
+ * and one `disc.create` command that makes the maker, the mold, the disc and its bag
+ * membership together -- so one undo takes the whole thing back out again.
+ */
+function discComposer() {
+  const a = ui.adding, s = shelfSuggestions(), bag = get(w(), 'Bag', ui.bagId);
+  const [base, accent] = sampleColors(sampleHueFor(a.color, a.key));
+  const auto = [a.plastic.trim(), a.mold.trim(), a.weight === '' ? '' : `${a.weight} g`].filter(Boolean).join(' ') || 'your new disc';
+  return `<section class="composer" data-composer><div class="composer-head"><div><span class="eyebrow">ONE GESTURE</span><h2>Add a disc you own</h2><p class="tiny muted">Mold is the only thing this needs. Everything else is here because you usually know it while the disc is in your hand.</p></div>${button('×', 'compose-cancel', {}, 'circle', 'aria-label="Cancel adding a disc"')}</div><div class="composer-body"><div class="composer-art">${a.photo ? `<img src="${esc(a.photo)}" alt="The photo this disc will be added with">` : `<span class="composer-swatch" style="background:${esc(base)};border-color:${esc(accent)}"></span>`}<span class="tiny muted">${a.photo ? 'Your photo. It never leaves this browser.' : `Its own hue${a.color.trim() ? `, from “${esc(a.color.trim())}”` : ''} until you add a photo.`}</span><div class="button-row">${button(a.photo ? 'Replace photo' : '↑ Photo of this disc', 'compose-photo', {}, 'quiet small')}${a.photo ? button('Remove', 'compose-photo-clear', {}, 'quiet small') : ''}</div></div><div class="composer-grid">${composeField('Maker', 'maker', 'text', 'list="suggest-maker" placeholder="Discraft"')}${composeField('Mold', 'mold', 'text', 'list="suggest-mold" placeholder="Buzzz" required')}${composeField('Disc type', 'category', 'text', 'list="suggest-category" placeholder="Midrange"')}${composeField('Plastic', 'plastic', 'text', 'list="suggest-plastic" placeholder="ESP"')}${composeField('Weight (g)', 'weight', 'number', 'step="1" min="20" max="400" placeholder="177"')}${composeField('Colour', 'color', 'text', 'list="suggest-color" placeholder="Mint"')}</div></div>${datalist('maker', s.maker)}${datalist('mold', s.mold)}${datalist('category', s.category)}${datalist('plastic', s.plastic)}${datalist('color', s.color)}<div class="composer-foot">${composeField('Nickname', 'nickname', 'text', `placeholder="${esc(auto)}"`)}${bag ? `<label class="check"><input data-compose="toBag" type="checkbox" ${a.toBag ? 'checked' : ''}> Put it in ${esc(bag.name)}</label>` : ''}${button('Add to shelf', 'compose-add', {}, 'primary')}</div></section>`;
+}
+/** One disc in the bag, in the place the bag holds it: reorder by the grip or the arrows, out by one tap. */
+function bagCard(key, index, total) {
+  const { disc, mold, maker } = discInfo(key);
+  if (!disc) return `<div class="error-panel">Missing physical disc ${esc(key)}. Fix this reference before using the bag.</div>`;
+  const others = all(w(), 'Bag').filter(other => other.id !== ui.bagId && other.discIds.includes(key));
+  const dragging = bagDrag?.discId === key, dropping = bagDrag?.over === key;
+  return `<article class="bag-card ${ui.discId === key ? 'is-selected' : ''} ${dragging ? 'is-dragging' : ''} ${dropping ? 'is-drop-target' : ''}" data-bag-card="${esc(key)}"><button class="bag-card-select" data-action="disc-select" data-id="${esc(key)}"><div class="bag-art">${safeThumb(key, undefined, 'shelf')}</div><div class="bag-card-caption"><span class="eyebrow">${esc(maker?.name)}</span><h3>${esc(mold?.name)}</h3><p>${esc(disc.nickname)}</p><span class="tiny">${[disc.plastic, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).map(esc).join(' · ')}</span></div></button>${others.length ? `<div class="also-in"><span class="tiny muted">also in</span>${others.map(other => button(esc(other.name), 'bag-open', { id: other.id }, 'bag-tag linkish')).join('')}</div>` : ''}<div class="bag-card-order"><span class="bag-grip" data-bag-drag="${esc(key)}" title="Drag to reorder">⠿</span>${button('◀', 'bag-move', { id: key, value: index - 1 }, 'step', `aria-label="Move ${esc(disc.nickname)} earlier in this bag" ${index === 0 ? 'disabled' : ''}`)}<span class="tiny muted" data-bag-place="${esc(key)}">${index + 1}</span>${button('▶', 'bag-move', { id: key, value: index + 1 }, 'step', `aria-label="Move ${esc(disc.nickname)} later in this bag" ${index === total - 1 ? 'disabled' : ''}`)}</div>${button('−', 'membership', { id: key }, 'bag-remove', `aria-label="Take ${esc(disc.nickname)} out of this bag only"`)}</article>`;
+}
+/** An empty bag is an invitation: the discs you would most likely reach for, one tap each. */
+function bagInvitation() {
+  const suggestions = runtime.shelf({ sort: 'recent', bagId: ui.bagId }).rows.filter(row => !row.bagIds.includes(ui.bagId)).slice(0, 6);
+  return `<div class="empty-state"><h2>An empty bag is just one you have not packed yet.</h2><p>One tap puts a disc in. The same disc can be in as many bags as you like — it is never moved out of another one, and there is no limit on what a bag holds.</p><div class="invite-row">${suggestions.map(row => { const { disc, mold } = discInfo(row.id); return `<button class="invite-disc" data-action="membership" data-id="${esc(row.id)}"><span class="invite-art">${safeThumb(row.id)}</span><span class="invite-copy"><strong>${esc(mold?.name || 'Disc')}</strong><small>${esc(disc.nickname)}</small></span><span class="invite-plus">+</span></button>`; }).join('')}</div></div>`;
+}
+function shelfCenter() {
+  const bag = get(w(), 'Bag', ui.bagId), discIds = bag?.discIds ?? [];
+  return `<section class="center" data-scroll="center">${ui.adding ? discComposer() : ''}<div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Duplicate bag', 'bag-duplicate', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description">${bag ? `<input class="bag-title" data-control="bag-name" aria-label="Bag name" value="${esc(bag.name)}">` : '<span class="eyebrow">CREATE YOUR FIRST BAG</span>'}<span class="tiny muted">${bag ? `${discIds.length} disc${discIds.length === 1 ? '' : 's'} · drag the grip or use ◀ ▶ to set the order · no limits here, a cap belongs to a competition` : ''}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${discIds.map((key, index) => bagCard(key, index, discIds.length)).join('') || bagInvitation()}</div><div class="principle-strip"><span>ONE DISC. MANY BAGS. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bag it is in, and every bound card, sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
+}
+function discInspector() {
+  const { disc, mold, maker } = discInfo(); if (!disc) return '<aside class="inspector"><p>Select or add a disc.</p></aside>';
+  const fields = w().schemas.Disc.fields;
+  const primitiveFields = Object.entries(fields).filter(([, d]) => ['text', 'number', 'boolean'].includes(d.type));
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & CHANGE</span><span class="live-tag">LIVE · PxC</span></div><h2>${esc(mold?.name || 'Disc')}</h2><div class="inspector-art">${safeThumb(disc.id)}</div>${button(disc.photo ? 'Replace exact disc photo' : '↑ Add exact disc photo', 'photo', { id: disc.id }, 'wide')}${disc.photo ? button('Remove photo', 'photo-remove', {}, 'quiet small') : '<p class="tiny muted">Sample illustration, not your disc. No photo leaves this browser.</p>'}<section class="control-section"><h3>Disc identity <span>DOMAIN</span></h3>${input('Manufacturer', 'identity-maker', maker?.name || '')}${input('Mold / disc name', 'identity-mold', mold?.name || '')}<p class="tiny muted">These fields link this specimen to its product identity. Re-identifying it does not rename other discs.</p>${primitiveFields.map(([key, def]) => def.type === 'boolean' ? check(def.label, 'disc-field', disc[key], `data-key="${esc(key)}"`) : input(def.label + (def.unit ? ` (${def.unit})` : ''), 'disc-field', disc[key], def.type === 'number' ? 'number' : 'text', `data-key="${esc(key)}" data-kind="${def.type}"`)).join('')}<div class="four-inputs">${Object.entries(w().schemas.Mold.fields.flight.fields).map(([key, def]) => input(def.label, 'flight', mold?.flight?.[key], 'number', `data-key="${key}" step="0.5"`)).join('')}</div><p class="tiny muted">Flight numbers are optional product facts. Blank means unknown, not zero.</p><div class="button-row">${button('Another specimen', 'disc-duplicate', {}, 'quiet')}${button('Remove disc', 'disc-remove', {}, 'quiet danger')}</div><div class="undo-row">${button(`↶ Undo last change`, 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p></section><div class="subtle-box"><span class="eyebrow">PRESENTATION IS SEPARATE</span><p>Want a bigger photo or a different layout?</p>${button('Open Component Editor ↗', 'go-editor', {}, 'wide secondary')}</div></aside>`;
+}
+/**
+ * Single Disc mode. One disc, the design made for one disc, and the same state a
+ * lineup row gives a card -- score, highlight, winner, and the standing the
+ * battle's own Calculation produced -- when that disc is in the battle. When it
+ * is not, the sentence says so and offers the one gesture that changes it.
+ */
+function singleCardPanel(result) {
+  const { disc, mold, maker } = discInfo(), state = currentBattle(w());
+  const entry = w().battle.entries.find(e => e.discId === ui.discId) ?? null;
+  const standing = result.standings?.table.find(row => row.entryId === entry?.id) ?? null;
+  const designs = Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]);
+  return `<section class="single-panel"><div class="section-toolbar"><div><span class="eyebrow">ONE DISC IS THE SAME PRIMITIVE</span><h2>${esc(mold?.name || 'Select a disc')}</h2><p class="tiny muted">${esc([maker?.name, disc?.nickname].filter(Boolean).join(' · ')) || 'Pick a disc on the shelf.'}</p></div><label class="inline-control">Single-disc design ${select('single-preset', w().layout.singlePresetId, designs)}</label></div>${entry ? `<div class="lineup-entry single ${state.highlight === entry.id ? 'highlighted' : ''}"><span class="tiny">In the battle${standing?.standing ? ` · standing ${standing.standing}${standing.total == null ? '' : ` on ${standing.total} pt`}` : ''}</span><div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', 'aria-label="Decrease score"')}<input aria-label="Score" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', 'aria-label="Increase score"')}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★ Winner', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-pressed="${state.winners.includes(entry.id)}"`)}</div>` : `<p class="empty-note">This disc is not in the battle, so its card shows the facts and no score. ${button('+ Put it in the battle', 'lineup-add', { id: ui.discId }, 'secondary small')}</p>`}<p class="tiny muted">The single card is the same card chain the comparison uses, composed with its own saved design. ${button('Edit this design ↗', 'go-editor-single', {}, 'quiet small')}</p></section>`;
+}
+/** A filename that names what is in the picture: the disc in Single Disc mode, the state otherwise. */
+const exportSlug = text => String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+function exportName(result, mode) {
+  if (mode !== 'card') return result.stateId;
+  const { disc, mold } = discInfo();
+  return exportSlug(`${mold?.name || ''} ${disc?.nickname || ''}`) || exportSlug(ui.discId) || 'single-disc';
+}
+function coursePreview(result, editor = false) {
+  const background = ui.footage ? (ui.footageKind === 'video' ? `<video id="footage-video" src="${esc(ui.footage)}" muted playsinline preload="metadata"></video>` : `<img src="${esc(ui.footage)}" alt="Your local footage context">`) : `<div class="footage-placeholder"><span class="empty-disc">◌</span><h2>The flight gets the screen.</h2><p>Your discs get the credit.</p>${button('+ Try your footage behind the graphic', 'footage', {}, 'quiet')}</div>`;
+  const canvas = canvasFor(w().layout.orientation), vertical = canvas.height > canvas.width;
+  return `<div class="preview-frame ${vertical ? 'vertical' : ''}"><div class="preview-meta"><span><i class="status-dot"></i> ${editor ? 'COMPOSITION PREVIEW' : 'LIVE PREVIEW'} <small>${canvas.width} × ${canvas.height}</small></span><div>${ui.footage ? button('Clear', 'footage-clear', {}, 'quiet small') : ''}${button(ui.footage ? 'Replace footage ↗' : '+ Your footage', 'footage', {}, 'quiet small')}${ui.footageKind === 'video' ? button('Play / pause', 'footage-play', {}, 'quiet small') : ''}</div></div><div class="course-stage checker ${vertical ? 'vertical' : ''}"><div class="footage-layer">${background}</div><div class="overlay-layer" id="actual-preview">${result.svg}</div></div><div class="preview-meta bottom"><span>${ui.footageName ? `${esc(ui.footageName)} · context only, never exported` : (result.frame && result.frame.presetId !== 'none' ? esc(result.frame.note) : 'Transparent overlay · add your still or video for context')}</span><span>${result.cardCount} card${result.cardCount === 1 ? '' : 's'}</span></div></div>`;
+}
+function modeTabs() { return `<div class="segmented">${button('Single Disc', 'mode', { value: 'card' }, ui.mode === 'card' ? 'active' : '')}${button('DiscBattle', 'mode', { value: 'battle' }, ui.mode === 'battle' ? 'active' : '')}</div>`; }
+function courseCenter(result) {
+  const battle = w().battle, state = currentBattle(w()), standings = result.standings ?? null;
+  return `<section class="center course-center" data-scroll="center"><div class="section-heading compact"><div><span class="eyebrow">ON THE COURSE</span><h1>Your discs. Your screen.</h1></div>${modeTabs()}</div>${coursePreview(result)}<div class="pxc-strip"><span class="mono">${result.part}</span><span>${result.run.computed} computed · ${result.run.reused} reused</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${ui.mode === 'battle' ? `<div class="section-toolbar"><div><h2>On screen <small>${battle.entries.length} / 12</small></h2><p class="tiny muted">Edit scores. Highlight any disc. Mark your winner.</p></div>${button('Clear highlight', 'highlight', { id: '' }, 'quiet')}${button('Clear lineup', 'lineup-clear', {}, 'quiet danger')}</div><div class="lineup">${battle.entries.map((entry, index) => {
+    const { disc, mold } = discInfo(entry.discId); return `<div class="lineup-entry ${state.highlight === entry.id ? 'highlighted' : ''}"><button class="lineup-disc" data-action="disc-select" data-id="${esc(entry.discId)}"><span class="disc-thumb">${safeThumb(entry.discId)}</span><span><strong>${esc(mold?.name || 'Missing disc')}</strong><small>${esc(disc?.nickname)}</small></span></button>${orderButton(entry, index, standings)}<div class="score-stepper">${button('−', 'score-step', { id: entry.id, value: -1 }, '', `aria-label="Decrease score: ${esc(disc?.nickname)}"`)}<input aria-label="Score: ${esc(disc?.nickname)}" data-control="score" data-id="${esc(entry.id)}" type="number" value="${state.scores[entry.id] ?? ''}" placeholder="—">${button('+', 'score-step', { id: entry.id, value: 1 }, '', `aria-label="Increase score: ${esc(disc?.nickname)}"`)}</div>${button('Highlight', 'highlight', { id: state.highlight === entry.id ? '' : entry.id }, state.highlight === entry.id ? 'active' : '', `aria-pressed="${state.highlight === entry.id}"`)}${button('★', 'winner', { id: entry.id }, state.winners.includes(entry.id) ? 'active' : '', `aria-label="Mark winner: ${esc(disc?.nickname)}" aria-pressed="${state.winners.includes(entry.id)}"`)}<div class="ordering">${button('↑', 'lineup-move', { id: entry.id, value: -1 }, 'quiet', `aria-label="Move participant up" ${index === 0 ? 'disabled' : ''}`)}${button('↓', 'lineup-move', { id: entry.id, value: 1 }, 'quiet', `aria-label="Move participant down" ${index === battle.entries.length - 1 ? 'disabled' : ''}`)}</div>${button('×', 'lineup-remove', { id: entry.id }, 'quiet', `aria-label="Remove participant: ${esc(disc?.nickname)}"`)}</div>`;
+  }).join('') || '<div class="empty-note">Add physical discs from the shelf to start a comparison.</div>'}</div>${battleRulesSection(ui.battleRules)}${standingsSection(standings)}<section class="states-section"><div class="section-toolbar"><div><span class="eyebrow">ONE COMPARISON. MANY STATES.</span><h2>The next moment.</h2></div>${button('+ Duplicate current state', 'state-add', {}, 'secondary')}</div><div class="state-tabs">${battle.states.map((s, i) => button(`<small>${String(i + 1).padStart(2, '0')}</small> ${esc(s.name)}`, 'state-select', { id: s.id }, s.id === state.id ? 'active' : '')).join('')}</div><div class="button-row">${button('Rename current', 'state-rename', {}, 'quiet small')}${button('Delete current', 'state-remove', {}, 'quiet small danger')}${button('Export SVG state bundle ↓', 'states-export', {}, 'quiet small')}</div><p class="tiny muted">States are editable snapshots. PNG exports are still images; the motion preview is not a video export.</p></section>` : singleCardPanel(result)}${tracePanel(result.run)}</section>`;
+}
+/**
+ * The battle's own rules. A template is one gesture; what it composed is three
+ * reusable Constraints with their parameters, each showing the status
+ * `fn.constraint.combine` gave it -- the same composition a Competition uses.
+ */
+function battleRulesSection(rules) {
+  const battle = w().battle, template = battleTemplates[battle.templateId];
+  const options = [...Object.values(battleTemplates).map(t => [t.id, t.name]), ...(template ? [] : [['custom', 'Custom · edited by hand']])];
+  return `<section class="battle-rules"><div class="section-toolbar"><div><span class="eyebrow">A BATTLE IS COMPOSED OF CONSTRAINTS</span><h2>The rules.</h2></div><label class="inline-control">Template ${select('battle-template', battle.templateId, options)}</label>${rules ? `<span class="result-status ${esc(rules.status)}">${rules.status === 'pending' ? 'In progress' : rules.status === 'unconstrained' ? 'No rules' : esc(rules.status)}</span>` : ''}</div><p class="tiny muted">${esc(template ? template.about : 'Edited by hand from the constraint library. Picking a template starts again from one.')}</p><div class="battle-rule-list">${battle.constraints.map(rule => battleRuleRow(rule, rules)).join('') || '<p class="empty-note">No constraints: the scores and the winner are exactly what you author.</p>'}</div>${battle.constraints.length ? `<p class="tiny muted"><span class="mono">px.battle.validation</span> · composed by <span class="mono">fn.constraint.combine</span>, the same Calculation a competition uses</p>` : ''}</section>`;
+}
+function battleRuleRow(rule, rules) {
+  const def = battleConstraintDefinitions[rule.kind], outcome = rules?.rules?.find(r => r.id === rule.id) ?? null;
+  const parameter = rule.kind === 'discCap'
+    ? `<input type="number" min="1" max="12" data-control="battle-rule-value" data-id="${esc(rule.id)}" aria-label="Discs in the battle" value="${rule.value}"><span>${esc(def.unit)}</span>`
+    : rule.kind === 'placesPoints'
+      ? `<input type="text" data-control="battle-rule-points" data-id="${esc(rule.id)}" aria-label="Points per place" value="${esc(rulePoints(rule).join(', '))}" size="9"><span>pt per place</span>${select('battle-rule-mode', rule.mode ?? 'low', Object.entries(SCORE_MODES), `data-id="${esc(rule.id)}"`)}`
+      : select('battle-rule-mode', rule.mode ?? 'share', Object.entries(TIE_MODES), `data-id="${esc(rule.id)}"`);
+  return `<article class="battle-rule" data-rule="${esc(rule.id)}" data-status="${esc(outcome?.status ?? 'off')}"><div class="battle-rule-heading"><label class="check"><input type="checkbox" data-control="battle-rule-enabled" data-id="${esc(rule.id)}" ${rule.enabled ? 'checked' : ''}><strong>${esc(def?.label || rule.kind)}</strong></label><span class="result-status ${esc(outcome?.status ?? 'disabled')}">${esc(outcome?.status ?? 'off')}</span></div><div class="rule-parameter">${parameter}${button('×', 'battle-rule-remove', { id: rule.id }, 'quiet small', `aria-label="Remove constraint: ${esc(def?.label || rule.kind)}"`)}</div><p class="tiny muted">${esc(outcome?.details?.[0]?.message ?? def?.description ?? '')}</p><span class="mono tiny">${esc(def?.call ?? '')}</span></article>`;
+}
+/** The standings as `fn.battle.standings` produced them: nothing here recomputes a number. */
+function standingsSection(standings) {
+  if (!standings) return '';
+  return `<section class="standings-section"><div class="section-toolbar"><div><span class="eyebrow">SCORED BY ONE CALCULATION, ON THE RECORD</span><h2>Standings.</h2></div>${button('Clear this state', 'order-clear', {}, 'quiet small')}</div><div class="table-scroll"><table class="standings-table"><thead><tr><th>#</th><th>Disc</th><th>This state</th><th>Points</th><th>Total</th></tr></thead><tbody>${standings.table.map(row => `<tr data-standing="${esc(row.entryId)}"><td>${row.standing ?? '—'}</td><td>${esc(row.name)}</td><td>${row.score ?? '—'}${row.tied ? ' · tied' : ''}</td><td data-points>${row.points ?? '—'}</td><td data-total>${row.total ?? '—'}</td></tr>`).join('')}</tbody></table></div><p class="tiny muted">${esc(standings.sentence)}</p><span class="mono tiny">px.battle.standings</span></section>`;
+}
+const ordinal = n => ['1st', '2nd', '3rd'][n - 1] ?? `${n}th`;
+/**
+ * One tap enters a result: the tapped disc takes the next free place and its
+ * score is that place. Tapping it again takes it back out. The number on the
+ * left is the key that does the same thing from the keyboard.
+ */
+function orderButton(entry, index, standings) {
+  const row = standings?.table.find(t => t.entryId === entry.id) ?? null, place = row?.place ?? null;
+  if (standings && standings.scheme.mode === 'high') return '';
+  return `<span class="key-hint" aria-hidden="true">${index < 9 ? index + 1 : '·'}</span>${button(place ? ordinal(place) : 'tap', 'battle-order', { id: entry.id }, `place-tap ${place ? 'active' : ''}`, `aria-label="Finishing order for this state: ${esc(entry.discId)}" aria-pressed="${!!place}"`)}`;
+}
+/**
+ * The comparison's arrangements. `course` is offered only when a course exists to
+ * stand the cards on -- the Course route (#/course-build) has to have run the
+ * Stages first -- so the first screens of the studio are the shelf and
+ * OnTheCourse, and an arrangement is never offered that would refuse.
+ */
+function layoutControls() {
+  const l = w().layout, anchored = courseAnchorHint();
+  const arrangements = [['row', 'Across the screen'], ['stack', 'Down the screen'], ['grid', 'Two-column grid'], ...(anchored || l.arrangement === 'course' ? [['course', 'At the holes of your course']] : [])];
+  const vertical = l.orientation === 'portrait';
+  return `<section class="control-section"><h3>Canvas <span>VIEW</span></h3><div class="segmented orientation-pick">${button('Landscape <small>1920 × 1080</small>', 'orientation', { value: 'landscape' }, vertical ? '' : 'active')}${button('Vertical <small>1080 × 1920</small>', 'orientation', { value: 'portrait' }, vertical ? 'active' : '')}</div>${vertical ? '<p class="tiny muted">Vertical is what TikTok, Reels and Shorts want. Down the screen and the two-column grid are the arrangements that read at this size.</p>' : ''}</section><section class="control-section"><h3>DiscComp arrangement <span>VIEW</span></h3><label class="control"><span>Layout</span>${select('arrangement', l.arrangement, arrangements)}</label>${l.arrangement === 'course' ? `<p class="tiny muted">Anchored on <span class="mono">${esc(anchored ?? 'no course built yet')}</span> — the holes the Stages read off your capture. ${button('Open Course ↗', 'go-course-build', {}, 'quiet small')}</p>` : ''}<label class="control"><span>Place on screen</span></label><div class="anchor-pad">${[['top-left', '↖'], ['center', '◎'], ['top-right', '↗'], ['bottom-left', '↙'], ['bottom-right', '↘']].map(([value, label]) => button(label, 'anchor', { value }, l.anchor === value ? 'active' : '', `aria-label="Place ${value}"`)).join('')}</div>${input('Overlay scale', 'scale', l.scale, 'range', 'min="0.25" max="2" step="0.05"')}<span class="tiny muted">${Math.round(l.scale * 100)}% requested · always fitted inside frame</span>${input('Gap between cards (px)', 'gap', l.gap, 'number', 'min="0" max="100"')}</section>`;
+}
+/**
+ * The background / frame layer: one reusable frame preset (src/frames.js) with
+ * its title strip, and a sponsor lockup that is the cards cascade's own global
+ * Sponsor token -- so a frame never invents a palette or a second sponsor.
+ */
+function frameControls() {
+  const l = w().layout, f = l.frame, preset = framePresets[f.presetId], sponsor = w().cards.global.sponsor;
+  return `<section class="control-section"><h3>Background / frame <span>OVERLAY</span></h3><label class="control"><span>Frame preset</span>${select('frame-preset', f.presetId, Object.values(framePresets).map(x => [x.id, x.name]))}</label><p class="tiny muted">${esc(preset.description)}</p>${input('Title strip', 'frame-title', f.title, 'text', `maxlength="80" placeholder="${esc(w().battle.name)}"`)}<p class="tiny muted">${f.presetId === 'none' ? 'Any other frame preset draws the title strip and keeps the cards inside a safe area.' : sponsor ? `Sponsor lockup: <strong>${esc(sponsor)}</strong> — the cards cascade’s global Sponsor token.` : 'The sponsor lockup is the cards cascade’s global Sponsor token. It is empty, so nothing is drawn.'}</p>${button('Edit the cascade’s tokens ↗', 'go-editor', {}, 'wide quiet')}</section>`;
+}
+/** Which Stage Part the course arrangement would stand the cards on, or null if no course has been built. */
+function courseAnchorHint() {
+  try { return runtime.lab.anchorAddress(); } catch { return null; }
+}
+function courseInspector() {
+  const { disc, mold, maker } = discInfo();
+  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE & CUSTOMIZE</span><h2>Make it your own.</h2><section class="export-section">${button('Save overlay PNG ↓', 'export-png', {}, 'primary wide')}${button('Save editable SVG ↓', 'export-svg', {}, 'wide quiet')}<div class="button-row queue-taps">${ui.mode === 'battle' ? `${button('Export all states ↓', 'export-all-states', {}, 'secondary small')}${button('This battle, vertical ↓', 'export-vertical', {}, 'secondary small')}` : button('Every disc in the battle ↓', 'export-each-disc', {}, 'secondary small')}</div>${queuePanel()}<p class="tiny muted">${esc(canvasFor(w().layout.orientation).name)}. The actual PxC-produced scene. No footage, editor outlines or motion baked in.</p>${ui.latestReceipt ? `<p class="tiny mono">${esc(ui.latestReceipt.type)} SHA-256<br>${esc((ui.latestReceipt.pngHash ?? ui.latestReceipt.svgHash).slice(0, 24))}…</p>` : ''}</section><section class="control-section"><label class="control"><span>Shared DisplayCard design</span>${select('course-preset', w().layout.presetId, Object.values(w().presets).filter(p => p.kind === 'DisplayCard').map(p => [p.id, p.name]))}</label>${button('Edit this design ↗', 'go-editor', {}, 'wide secondary')}<p class="tiny muted">Photo, manufacturer, mold, every field. No fixed identity text hiding outside your design.</p></section>${layoutControls()}${frameControls()}<section class="control-section"><h3>Selected physical disc <span>DOMAIN</span></h3><div class="selected-summary"><span class="disc-thumb">${disc ? safeThumb(disc.id) : ''}</span><div><strong>${esc(mold?.name || 'None')}</strong><small>${esc(maker?.name)}</small></div></div><p class="tiny muted">${esc(disc?.nickname || '')}</p>${button('Edit facts & exact photo ↗', 'go-shelf', {}, 'wide')}</section><div class="subtle-box"><span class="eyebrow">PLAY BY YOUR RULES</span><p>Compose PutterWarz from reusable constraints.</p>${button('Open competition sandbox ↗', 'go-competition', {}, 'quiet small')}</div></aside>`;
+}
+/* ------------------------------------------------------------------ */
+/* the Course route: a capture, the Stages, the course                  */
+/* ------------------------------------------------------------------ */
+/**
+ * One capture becomes a course by running the LAB Stages, and this route is the
+ * three panes that show it happening: the capture and the Stage list on the
+ * left, the canonical raster drawn once in the centre with each Stage's produce
+ * laid over it as it lands, and on the right the selected object's Part with the
+ * Calculation that published it. Nothing here renders a card or holds state a
+ * Part could hold: the Stage list IS `px.exp.lab.pipeline`, the marks ARE the
+ * produce Parts (runtime.lab.views), and the run below is the same tracePanel
+ * every other route opens.
+ */
+const labStatus = row => row.status === 'refused' ? `refused · ${row.reason}` : row.status === 'produced' ? `produced ${row.produced.length} Part${row.produced.length === 1 ? '' : 's'}` : ui.labRunning === row.key ? 'running…' : 'not run';
+const labStageState = row => ui.labRunning === row.key ? 'running' : row.status;
+function courseBuildSidebar() {
+  const state = runtime.lab.state(), capture = ui.labCapture;
+  return `<aside class="sidebar" data-scroll="lab"><div class="sidebar-heading"><div><span class="eyebrow">THE CAPTURE</span><h2>Course build</h2></div></div>
+  <div class="lab-capture">${capture ? `<p class="tiny mono">${esc(capture.imageId)}</p><p class="tiny muted">${capture.widthPx} × ${capture.heightPx} · ${(capture.rgba.length / 4).toLocaleString('en-US')} pixels${ui.labCaptureName ? ` · ${esc(ui.labCaptureName)}` : ''}</p>` : '<p class="tiny muted">A capture is a photograph of a course map. Start with the LAB fixture, or use your own photo — it is decoded in this browser and never leaves it.</p>'}</div>
+  <div class="button-row lab-sources">${button('Sample capture', 'lab-sample', {}, 'wide secondary small')}${button('↑ Your photo', 'lab-photo', {}, 'wide small')}</div>
+  <div class="button-row lab-sources">${button('Sample · objects overlapped', 'lab-sample', { overlaps: 1 }, 'wide quiet small')}</div>
+  <div class="button-row lab-actions">${button(ui.labBusy ? 'Building…' : 'Run the pipeline ▸', 'lab-run', {}, 'wide primary small', ui.labBusy || !capture ? 'disabled' : '')}</div>
+  <div class="lab-stage-list">${state.stages.map((row, index) => {
+    const status = labStageState(row);
+    return `<article class="lab-stage-row ${status}" data-lab-stage="${esc(row.key)}" data-status="${esc(status)}">${button(`<span class="lab-stage-name"><b>${esc(row.stage)}</b> ${esc(row.title)}</span><span class="lab-stage-status">${esc(labStatus(row))}</span>`, 'lab-select-stage', { key: row.key }, 'lab-stage-pick')}
+    <p class="tiny muted">${esc(row.about)}</p>
+    <div class="lab-stage-parts">${row.produced.map(part => button(`${esc(part.address.replace('px.exp.lab.', ''))}${part.count === null ? '' : ` · ${part.count}`}`, 'inspect-part', { value: part.address }, 'part-link mono')).join('') || `<span class="tiny mono muted">${esc(row.composition)}</span>`}</div>
+    ${row.status === 'refused' ? `<p class="tiny lab-refused">${esc(row.reason)}</p>` : ''}<div class="lab-stage-foot">${row.ms === null ? '<span></span>' : `<span class="tiny muted">${row.ms} ms</span>`}${row.status === 'produced' && runtime.lab.views().some(view => view.key === row.key && (view.objects.length || view.legs || view.cells)) ? button(ui.labHidden.has(row.key) ? '◌ show' : '◉ hide', 'lab-toggle', { key: row.key }, 'quiet small', `aria-pressed="${!ui.labHidden.has(row.key)}"`) : ''}</div></article>`;
+  }).join('')}</div>
+  <footer class="sidebar-footer"><p class="tiny muted">Each Stage is one composition — <span class="mono">lab-s0</span> … — run on the studio's own board. Every run leaves a receipt and a run record.</p></footer></aside>`;
+}
+/**
+ * Every produced Stage's view, drawn over the one raster in raster coordinates.
+ * A view contributes whichever of four things it has -- obstacle cells, legs,
+ * waypoints, and objects placed by a bbox or by a point -- so a Stage that lands
+ * later draws itself by describing its produce (src/lab/stages.js `view`), with
+ * no new drawing code here.
+ */
+function labViewMarks(view) {
+  const selected = object => ui.labSelected?.key === view.key && ui.labSelected?.id === object.id;
+  const size = view.cells?.size ?? 0;
+  const cells = view.cells ? `<path class="lab-cells" d="${view.cells.centres.map(([x, y]) => `M${x - size / 2} ${y - size / 2}h${size}v${size}h-${size}z`).join('')}"><title>${view.cells.centres.length} obstacle cells</title></path>` : '';
+  const legs = (view.legs ?? []).map(leg => `<line class="lab-leg ${esc(leg.kind)}" x1="${leg.from[0]}" y1="${leg.from[1]}" x2="${leg.to[0]}" y2="${leg.to[1]}" vector-effect="non-scaling-stroke"><title>${esc(leg.kind)} · hole ${esc(leg.hole)} · ${esc(leg.lengthPx)} px</title></line>`).join('');
+  const points = (view.points ?? []).map(point => `<circle class="lab-waypoint" cx="${point.at[0]}" cy="${point.at[1]}" r="5"><title>${esc(point.id)}</title></circle>`).join('');
+  const polyline = view.polyline?.length ? `<polyline class="lab-path" points="${view.polyline.map(point => point.join(',')).join(' ')}" vector-effect="non-scaling-stroke"/>` : '';
+  const objects = view.objects.map(object => {
+    const shape = object.bbox ? `<rect x="${object.bbox[0]}" y="${object.bbox[1]}" width="${object.bbox[2]}" height="${object.bbox[3]}" rx="2" vector-effect="non-scaling-stroke"/>` : object.at ? `<circle cx="${object.at[0]}" cy="${object.at[1]}" r="13" vector-effect="non-scaling-stroke"/>` : '';
+    if (!shape) return '';
+    // A view whose boxes sit under someone else's label says so, rather than every
+    // Stage writing over the one before it.
+    const label = object.bbox
+      ? `<text x="${object.bbox[0]}" y="${view.labelBelow ? object.bbox[1] + object.bbox[3] + 14 : object.bbox[1] - 5}">${esc(object.label)}</text>`
+      : `<text x="${object.at[0]}" y="${object.at[1] - 18}" text-anchor="middle">${esc(object.label)}</text>`;
+    return `<g class="lab-mark tone-${esc(view.tone)} ${selected(object) ? 'is-selected' : ''}" data-action="lab-select" data-key="${esc(view.key)}" data-id="${esc(object.id)}">${shape}${label}</g>`;
+  }).join('');
+  // A Stage whose boxes enclose another Stage's objects is grabbed by its outline,
+  // so the badge inside a hole is still the thing a click on the badge selects.
+  return `<g class="lab-view tone-${esc(view.tone)}" data-lab-view="${esc(view.key)}" ${view.hitOutline ? 'data-hit="outline"' : ''}>${cells}${legs}${polyline}${points}${objects}</g>`;
+}
+function labOverlaySvg(raster) {
+  const marks = runtime.lab.views().filter(view => !ui.labHidden.has(view.key)).map(labViewMarks).join('');
+  return `<svg class="lab-overlay" viewBox="0 0 ${raster.widthPx} ${raster.heightPx}" role="img" aria-label="What each Stage produced, on the canonical raster">${marks}</svg>`;
+}
+function courseBuildCenter() {
+  const raster = runtime.lab.raster(), state = runtime.lab.state();
+  const produced = state.stages.filter(row => row.status === 'produced');
+  const frame = raster
+    ? `<div class="preview-frame lab-frame"><div class="preview-meta"><span><i class="status-dot"></i> ${state.stages[0].status === 'produced' ? 'CANONICAL RASTER' : 'CAPTURE'} <small>${raster.widthPx} × ${raster.heightPx}</small></span><span class="mono">${esc(runtime.lab.specs()[0].produces[1])}</span></div><div class="lab-stage-frame" style="aspect-ratio:${raster.widthPx}/${raster.heightPx}"><canvas data-lab-canvas width="${raster.widthPx}" height="${raster.heightPx}" aria-label="The capture, drawn once"></canvas>${labOverlaySvg(raster)}</div><div class="preview-meta bottom"><span>${produced.length} of ${state.stages.length} Stages produced</span><span>${runtime.lab.views().flatMap(view => view.kind === 'raster' ? [] : view.objects).length} objects on the raster</span></div></div>`
+    : `<div class="preview-frame lab-frame"><div class="lab-empty"><span class="empty-disc">◌</span><h2>Give it a capture.</h2><p>The sample is the LAB's own fixture. Your own photo of a course map works too, and stays in this browser.</p><div class="button-row">${button('Sample capture', 'lab-sample', {}, 'secondary')}${button('↑ Your photo', 'lab-photo', {})}</div></div></div>`;
+  const run = ui.labRun;
+  return `<section class="center course-build-center" data-scroll="center"><div class="section-heading compact"><div><span class="eyebrow">ONE CAPTURE. ONE COURSE.</span><h1>Watch the course get built.</h1><p>Each Stage is a composition; each one reads the Parts the one before it published.</p></div>${button(ui.labBusy ? 'Building…' : 'Run the pipeline ▸', 'lab-run', {}, 'primary', ui.labBusy || !ui.labCapture ? 'disabled' : '')}</div>${frame}<div class="pxc-strip"><span class="mono">${esc(run?.composition?.PrincipleComponentRender ? `px.receipt.${run.composition.PrincipleComponentRender}` : runtime.lab.address)}</span><span>${run ? `${run.computed} computed · ${run.reused} reused` : `${state.stages.filter(row => row.status === 'produced').length} produced`}</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${produced.length === state.stages.length ? `<div class="principle-strip"><span>THE COURSE IS THE CAPTURE, READ.</span><p>Take it OnTheCourse with the layout set to <b>the course</b> and your bag's cards stand at the holes.</p>${button('See it OnTheCourse ↗', 'lab-to-course', {}, 'secondary small')}</div>` : ''}${tracePanel(run)}</section>`;
+}
+function courseBuildInspector() {
+  const state = runtime.lab.state(), views = runtime.lab.views();
+  const key = ui.labSelected?.key ?? null;
+  const view = views.find(item => item.key === key) ?? null;
+  const object = view?.objects.find(item => item.id === ui.labSelected?.id) ?? null;
+  const row = state.stages.find(stage => stage.key === key) ?? null;
+  const receipt = row && runtime.pxc.has(`px.receipt.${row.composition}`) ? runtime.pxc.get(`px.receipt.${row.composition}`) : null;
+  const provenance = object ? runtime.lab.provenance(object.part) : null;
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">THE OBJECT & ITS PART</span><span class="live-tag">LIVE · PxC</span></div><h2>${esc(object?.label || row?.title || 'Select an object')}</h2>
+  ${object ? `<p class="binding-path mono">${esc(object.part)}</p><div class="value-box"><span class="eyebrow">VALUE</span><pre class="lab-value">${esc(summaryValue(object.detail))}</pre></div>
+  ${provenance ? `<section class="control-section"><h3>Provenance <span>ON THE RECORD</span></h3><p class="tiny">Stage <b>${esc(row?.stage || '')}</b> · composition <span class="mono">${esc(provenance.composition)}</span></p><p class="tiny">Tick <b>${esc(provenance.tick)}</b> · Calculation <span class="mono">${esc(provenance.call)}</span></p><div class="lab-stage-parts">${provenance.inputs.map(address => button(esc(address.replace('px.exp.lab.', '')), 'inspect-part', { value: address }, 'part-link mono')).join('')}</div></section>` : ''}` : '<p class="muted">Click a badge, a basket, a tee or a hole on the raster. Its Part, its value and the Calculation that published it appear here.</p>'}
+  ${row ? `<section class="control-section"><h3>${esc(row.stage)} receipt <span>${esc(row.status.toUpperCase())}</span></h3><p class="tiny mono">px.receipt.${esc(row.composition)}</p>${receipt ? `<p class="tiny">${receipt.trace.length} invocation${receipt.trace.length === 1 ? '' : 's'} · ${receipt.computed} computed · ${receipt.reused} reused</p><div class="lab-ticks">${receipt.composition.Ticks.map(tick => `<span class="tiny mono">${esc(tick.name)}</span>`).join('')}</div>` : `<p class="tiny muted">${esc(row.status === 'refused' ? row.reason : 'This Stage has not run yet.')}</p>`}<div class="lab-stage-parts">${row.produced.map(part => button(esc(part.address.replace('px.exp.lab.', '')), 'inspect-part', { value: part.address }, 'part-link mono')).join('')}</div>${button('Open this run in Inspect ↗', 'lab-open-run', { key: row.key }, 'wide quiet small', receipt ? '' : 'disabled')}</section>` : ''}
+  <div class="subtle-box"><span class="eyebrow">YOUR DISCS ON THIS COURSE</span><p>When the round exists, the comparison can stand your bag's DisplayCards at its holes.</p>${button('Open OnTheCourse ↗', 'lab-to-course', {}, 'wide secondary small')}</div></aside>`;
+}
+/** The capture as one canvas, painted once per raster: the Parts are pixels, not markup. */
+function paintLabRaster(canvas) {
+  const raster = runtime.lab.raster();
+  if (!raster) return;
+  const key = `${raster.imageId ?? 'raster'}:${raster.widthPx}x${raster.heightPx}`;
+  if (canvas.dataset.painted === key) return;
+  const context = canvas.getContext('2d'), image = context.createImageData(raster.widthPx, raster.heightPx);
+  image.data.set(raster.rgba);
+  context.putImageData(image, 0, 0);
+  canvas.dataset.painted = key;
+}
+/** One animation frame, so the Stage the studio is about to run is painted as running first. */
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+/**
+ * S0 through the last Stage, one at a time, with a paint between: this is what
+ * "watch the course get built" means. A refusal stops the run, stays on
+ * `px.exp.lab.pipeline` and is said in the notice bar; the Stages after it stay
+ * not-run, because each one reads what the one before publishes.
+ */
+async function runLabPipeline() {
+  if (!ui.labCapture) throw new Error('Load the sample capture or your own photo first.');
+  if (ui.labBusy) return;
+  ui.labBusy = true; ui.labSelected = null; ui.labRun = null; ui.labHidden.clear();
+  runtime.lab.begin(ui.labCapture);
+  try {
+    const specs = runtime.lab.specs();
+    for (let index = 0; index < specs.length; index++) {
+      ui.labRunning = specs[index].key; render(); await nextFrame();
+      try {
+        const result = runtime.lab.stage(index);
+        ui.labRun = result.receipt; ui.lastResult = { part: result.produced[0]?.address ?? runtime.lab.address, run: result.receipt };
+        ui.labSelected = null; ui.labRunning = null;
+        message(`${result.stage} produced ${result.produced.length} Part${result.produced.length === 1 ? '' : 's'} in ${result.ms} ms · px.receipt.${result.composition}`);
+      } catch (error) {
+        ui.labRunning = null;
+        message(`${specs[index].stage} refused: ${error.cause?.message || error.message}`, true);
+        return;
+      }
+      render(); await nextFrame();
+    }
+    const round = runtime.lab.views().find(view => view.kind === 'path');
+    message(round ? `The course is built: ${round.objects.length} hole${round.objects.length === 1 ? '' : 's'} in badge order, every anchor out of a Stage's produce Part.` : 'Every Stage produced.');
+  } finally { ui.labBusy = false; ui.labRunning = null; }
+}
+/**
+ * A photograph becomes a capture the way S0 wants one: RGBA samples, with the
+ * long side held to 1024 so a phone's 12 megapixels do not become 48 million
+ * numbers on the board. Decoding happens in this browser; nothing is uploaded.
+ */
+async function captureFromPhoto(file) {
+  const data = await photoData(file), image = new Image();
+  image.src = data; await image.decode();
+  const scale = Math.min(1, 1024 / Math.max(image.naturalWidth, image.naturalHeight));
+  const widthPx = Math.max(1, Math.round(image.naturalWidth * scale)), heightPx = Math.max(1, Math.round(image.naturalHeight * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = widthPx; canvas.height = heightPx;
+  canvas.getContext('2d').drawImage(image, 0, 0, widthPx, heightPx);
+  const { data: rgba } = canvas.getContext('2d').getImageData(0, 0, widthPx, heightPx);
+  return { imageId: `photo:${await sha256(data)}`.slice(0, 28), widthPx, heightPx, rgba: Array.from(rgba), sourceByteLength: rgba.length };
+}
+function componentTabs() { return `<div class="component-tabs">${[['DiscImage', 'Disc'], ['DisplayCard', 'DisplayCard'], ['DiscComp', 'DiscComp'], ['AllCards', 'All cards'], ['Competition', 'Competition']].map(([value, label]) => button(label, 'component', { value }, (ui.route === 'competition' ? value === 'Competition' : ui.component === value) ? 'active' : '')).join('')}</div>`; }
+function componentSidebar(result) {
+  const p = w().presets[ui.presetId], fields = result?.fields ?? [];
+  const query = ui.fieldQuery.toLowerCase(), matching = fields.filter(f => `${f.label} ${f.group} ${f.path}`.toLowerCase().includes(query));
+  const groups = Object.groupBy(matching, f => f.group);
+  return `<aside class="sidebar component-sidebar" data-scroll="library"><span class="eyebrow">PxC COMPONENT LIBRARY</span><h2>Build with your material.</h2><label class="control"><span>Presentation</span>${select('edit-preset', ui.presetId, Object.values(w().presets).map(p => [p.id, p.name]))}</label><div class="button-row">${button('Duplicate', 'preset-duplicate', {}, 'quiet small')}${button('Import', 'preset-import', {}, 'quiet small')}${button('Export ↓', 'preset-export', {}, 'quiet small')}</div><div class="segmented library-tabs">${button('All fields', 'library', { value: 'fields' }, ui.library === 'fields' ? 'active' : '')}${button(`Layers · ${p?.nodes.length || 0}`, 'library', { value: 'layers' }, ui.library === 'layers' ? 'active' : '')}</div>${ui.library === 'layers' ? `<div class="layer-list">${(p?.nodes || []).map(n => `<div class="layer-item ${ui.nodeId === n.id ? 'selected' : ''}">${button(`${n.kind === 'image' ? '▧' : 'T'} <span>${esc(fields.find(f => f.path === n.binding)?.label || n.binding || 'Static text')}</span>`, 'node-select', { id: n.id }, 'layer-select')}${button(n.visible ? '◉' : '○', 'node-visible', { id: n.id }, 'quiet', `aria-label="${n.visible ? 'Hide' : 'Show'} ${esc(n.binding)}"`)}</div>`).join('')}</div>` : `<input class="search" data-search="fields" aria-label="Find any field" placeholder="⌕  Name, maker, score, weight…" value="${esc(ui.fieldQuery)}"><p class="tiny muted field-help">Every registered field, including missing values. Click to place or select it.</p><div class="field-groups">${Object.entries(groups).map(([group, fs]) => `<section class="field-group"><h3>${esc(group)}</h3>${fs.map(f => { const present = p?.nodes.find(n => n.binding === f.path); return `<button class="field-item ${present?.id === ui.nodeId ? 'selected' : ''}" data-action="field-add" data-path="${esc(f.path)}" title="${esc(f.path)}"><span class="field-icon">${f.type === 'image' ? '▧' : f.type === 'number' ? '#' : f.type === 'boolean' ? '◉' : 'T'}</span><span><strong>${esc(f.label)}</strong><small>${f.type === 'image' ? f.available ? 'Your local photo' : 'Sample · no photo yet' : f.available ? esc(String(Array.isArray(f.value) ? `${f.value.length} references` : f.value).slice(0, 35)) : 'Not entered · still available'}</small></span><span class="field-add">${present ? '✓' : '+'}</span></button>`; }).join('')}</section>`).join('')}</div>${button('+ Register a domain field', 'field-new', {}, 'wide secondary small')}<p class="tiny muted">One definition → fact inspector + field picker + bound graphic.</p>`}<div class="sidebar-footer"><label class="control"><span>Additional object context</span>${select('extra-type', ui.extraType, [['', 'Disc, Bag, Competition & Round'], ...Object.keys(w().schemas).filter(t => t !== 'BattleEntry').map(t => [t, t])])}</label>${ui.extraType ? select('extra-id', ui.extraId, all(w(), ui.extraType).map(o => [o.id, o.name || o.nickname || o.id])) : ''}</div></aside>`;
+}
+/** The four live previews, one per projection, for the current specimen -- `runtime.cards.recompose` run once by render() (see cascadeSet above). */
+function cardPreviewTile(p, card) {
+  const preset = runtime.cards.presetFor(p), provenance = runtime.cards.query('provenance', { projection: p, discId: ui.discId });
+  // "recomposed" is the last edit's measured recompose (the one render took right after it), not this render's: a later render reuses everything and would erase the story.
+  const changed = !!ui.lastCascade?.result?.cards?.[p]?.changed;
+  const chips = provenance ? `<div class="provenance-chips">${CARD_TOKENS.map(token => `<span class="chip chip-${esc(provenance[token])}">${esc(token)} · ${esc(provenance[token])}</span>`).join('')}</div>` : '';
+  return `<div class="card-preview-tile" data-projection-preview="${esc(p)}" data-changed="${changed ? 'true' : 'false'}"><div class="card-preview-head"><span class="eyebrow">${esc(p.toUpperCase())}</span>${changed ? '<span class="changed-marker">recomposed</span>' : ''}</div><div class="card-preview-art">${card.svg}</div><div class="card-preview-foot"><span class="tiny muted mono">${esc(preset)}</span></div>${chips}</div>`;
+}
+function allCardsGrid(cascade) {
+  return `<div class="editor-toolbar"><label class="inline-control">Specimen ${select('editor-disc', ui.discId, all(w(), 'Disc').map(d => [d.id, d.nickname]))}</label></div><div class="cards-preview-grid">${runtime.cards.projections.map(p => cardPreviewTile(p, cascade.cards[p])).join('')}</div>`;
+}
+function editorCenter(result, cascade = null) {
+  const p = w().presets[ui.presetId];
+  const sceneMode = ui.component === 'DiscComp', allCards = ui.component === 'AllCards';
+  const stage = allCards ? allCardsGrid(cascade) : sceneMode ? coursePreview(result, true) : `<div class="editor-toolbar"><label class="inline-control">Specimen ${select('editor-disc', ui.discId, all(w(), 'Disc').map(d => [d.id, d.nickname]))}</label><div class="segmented">${['idle', 'highlight', 'winner'].map(value => button(value[0].toUpperCase() + value.slice(1), 'preview-state', { value }, ui.previewState === value ? 'active' : '')).join('')}</div></div><div class="editor-stage"><div class="editor-stage-label"><span class="eyebrow">LIVE BOUND COMPOSITION</span><span class="mono tiny">${p.width} × ${p.height} px</span></div><div class="editor-card" style="aspect-ratio:${p.width}/${p.height};width:min(100%,${p.width * (p.height > p.width ? 1 : 1.4)}px)">${result.svg}<svg class="selection-overlay" viewBox="0 0 ${p.width} ${p.height}" aria-label="Select and drag presentation elements">${result.card.nodes.map(n => `<rect data-node-select="${esc(n.id)}" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="2" class="${ui.nodeId === n.id ? 'selected-node' : ''}"/>`).join('')}</svg></div><div class="editor-stage-footer"><span>Click a piece to inspect it. Drag to move. Arrow keys nudge; Shift moves 10 px.</span><span>Editor outlines are never exported.</span></div></div>`;
+  return `<section class="center editor-center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">DESIGN SANDBOX · ACTUAL PRODUCT COMPONENTS</span><h1>A little more you.</h1><p>Arrange the material. Save the look. Use it everywhere.</p></div>${button('See it OnTheCourse ↗', 'go-course', {}, 'primary')}</div>${componentTabs()}${stage}<div class="pxc-strip"><span class="mono">${esc(result.part)}</span><span>${result.run.computed} computed · ${result.run.reused} reused</span>${button('Inspect PxC ↗', 'toggle-trace', {}, 'quiet small')}</div>${result.card?.warnings.length || result.warnings?.length ? `<div class="warning-panel">${(result.card?.warnings || result.warnings).map(esc).join('<br>')}</div>` : ''}${ui.newField ? `<section class="new-field-panel"><h2>Define it once.</h2><p>A new physical-disc field becomes available in the Shelf inspector and in every presentation.</p><div class="form-row">${input('Field label', 'new-field-label', '', 'text', 'id="new-field-label"')}${select('new-field-type', 'text', [['text', 'Text'], ['number', 'Number'], ['boolean', 'Yes / no']])}${button('Register field', 'field-register', {}, 'primary')}${button('Cancel', 'field-new', {}, 'quiet')}</div></section>` : ''}<div class="principle-strip"><span>NOT A SECOND RENDERER.</span><p>This is the same card composition used by your OnTheCourse preview and exported graphic.</p></div>${tracePanel(result.run)}</section>`;
+}
+/** The last measured recompose (task 78's cascadeSet comment): what an edit actually reached, not a fresh recompute on every render. */
+function recomposeLine() {
+  const c = ui.lastCascade;
+  if (!c || !c.result) return '<p class="tiny mono cascade-receipt">No cascade edit made yet this session.</p>';
+  const { edit, result } = c, changed = Object.entries(result.cards).filter(([, card]) => card.changed).map(([p]) => p);
+  return `<p class="tiny mono cascade-receipt">${esc(edit.layer)}.${esc(edit.token)} -> ${esc(String(edit.value))} recomposed: ${esc(changed.join(', ') || 'none')}</p>`;
+}
+/** The global-tokens inspector for the All cards tab: the root of the cascade, live. */
+function allCardsInspector() {
+  const global = w().cards.global, count = runtime.cards.projections.length;
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">GLOBAL DEFAULTS</span><span class="live-tag">LIVE · PxC</span></div><h2>All cards</h2><p class="tiny muted">The root of the cascade. Every preset inherits these six tokens unless it overrides one.</p><section class="control-section">${CARD_TOKENS.map(token => {
+    const inherits = runtime.cards.query('inherits', { token }), n = Object.values(inherits.projections).filter(Boolean).length;
+    return `<div class="cascade-token-row">${tokenControl(token, global[token], { layer: 'global' })}<p class="tiny muted">inherited by ${n} of ${count} projections</p></div>`;
+  }).join('')}</section>${recomposeLine()}<div class="undo-row">${button('↶ Undo last change', 'undo', {}, 'quiet small', `data-undo-depth="${runtime.undo.depth()}"`)}<span class="tiny muted" data-undo-stack>${runtime.undo.depth()} recorded value${runtime.undo.depth() === 1 ? '' : 's'} on <span class="mono">px.undo.studio</span></span></div><p class="tiny muted">Undo is a Calculation over that Part, so it is on the record like every other invocation.</p></aside>`;
+}
+/** "The whole card": the preset's own six cascade tokens, each marked inherited or overridden, with Reset to inherited on an override. */
+function wholeCardSection(p) {
+  const global = w().cards.global;
+  const row = (control, token) => {
+    const raw = p[token], overridden = raw !== null && raw !== undefined;
+    return `<div class="cascade-token-row">${control}<div class="token-meta"><span class="tiny ${overridden ? 'provenance-here' : 'muted'}">${overridden ? 'overridden here' : 'inherited from global'}</span>${overridden ? cascadeResetButton({ layer: 'preset', preset: p.id }, token) : ''}</div></div>`;
+  };
+  const value = token => (p[token] !== null && p[token] !== undefined) ? p[token] : global[token];
+  return `<section class="control-section"><h3>The whole card <span>PRESET</span></h3>${input('Design name', 'preset-name', p.name)}<div class="four-inputs two">${input('Card width', 'preset-number', p.width, 'number', 'data-key="width" min="100" max="2000"')}${input('Card height', 'preset-number', p.height, 'number', 'data-key="height" min="100" max="2000"')}</div>${row(input('Card background', 'preset-color', value('background') === 'transparent' ? '#ffffff' : value('background'), 'color', 'data-key="background"'), 'background')}${check('Transparent card background', 'preset-transparent', value('background') === 'transparent')}${row(input('Default text', 'preset-color', value('foreground'), 'color', 'data-key="foreground"'), 'foreground')}${row(input('Accent', 'preset-color', value('accent'), 'color', 'data-key="accent"'), 'accent')}${row(`<label class="control"><span>Typeface</span>${select('preset-font', value('font'), [['sans', 'Sans'], ['serif', 'Serif'], ['mono', 'Mono']])}</label>`, 'font')}${row(input('Card corner radius', 'preset-number', value('radius'), 'number', 'data-key="radius" min="0" max="100"'), 'radius')}${row(input('Sponsor lockup', 'preset-sponsor', value('sponsor') ?? '', 'text', 'maxlength="40"'), 'sponsor')}<p class="tiny muted">Background, text, accent, font, radius and sponsor cascade global → preset → instance across shelf, bag, single and competition.</p></section>`;
+}
+/** "This disc, this projection": the instance layer for the current specimen, on whichever projection composes with this preset. */
+function instanceSection(p) {
+  const options = p.kind === 'DiscImage' ? ['shelf', 'bag'] : ['single', 'competition'];
+  if (!options.includes(ui.instanceProjection)) ui.instanceProjection = options[0];
+  const projection = ui.instanceProjection, discId = ui.discId;
+  const composedPreset = w().presets[runtime.cards.presetFor(projection)], global = w().cards.global;
+  const instance = (w().cards.instances[projection] || {})[discId] || {};
+  const provenance = runtime.cards.query('provenance', { projection, discId }) || {};
+  return `<section class="control-section"><h3>This disc, this projection <span>${esc(projection.toUpperCase())} · ${esc(discId)}</span></h3><label class="control"><span>Projection</span>${select('instance-projection', projection, options.map(o => [o, o[0].toUpperCase() + o.slice(1)]))}</label>${CARD_TOKENS.map(token => {
+    const overridden = Object.hasOwn(instance, token), presetOverridden = composedPreset[token] !== null && composedPreset[token] !== undefined;
+    const value = overridden ? instance[token] : presetOverridden ? composedPreset[token] : global[token];
+    const layer = provenance[token] || (overridden ? 'instance' : (presetOverridden ? 'preset' : 'global')), label = layer === 'instance' ? 'here' : layer;
+    return `<div class="cascade-token-row">${tokenControl(token, value, { layer: 'instance', projection, disc: discId })}<div class="token-meta"><span class="tiny ${layer === 'instance' ? 'provenance-here' : 'muted'}">${esc(label)}</span>${overridden ? cascadeResetButton({ layer: 'instance', projection, disc: discId }, token) : ''}</div></div>`;
+  }).join('')}</section>${recomposeLine()}`;
+}
+function nodeInspector(result, cascade = null) {
+  if (ui.component === 'AllCards') return allCardsInspector();
+  if (ui.component === 'DiscComp') return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPOSE DISPLAYCARDS</span><h2>DiscComp</h2><p class="muted">A comparison is an arrangement of the same reusable cards, not a parallel card renderer.</p>${layoutControls()}${button('Edit participants & scores ↗', 'go-course', {}, 'wide secondary')}${button('Compose competition rules ↗', 'go-competition', {}, 'wide quiet')}</aside>`;
+  const p = w().presets[ui.presetId], n = p.nodes.find(n => n.id === ui.nodeId), field = result.fields.find(f => f.path === n?.binding);
+  return `<aside class="inspector" data-scroll="inspector"><div class="inspector-title"><span class="eyebrow">INSPECT & COMPOSE</span><span class="live-tag">LIVE</span></div><h2>${esc(n ? field?.label || 'Presentation element' : 'Select a component')}</h2>${n ? `<p class="binding-path mono">${esc(n.binding || 'Static text')}</p><section class="control-section"><label class="control"><span>Bind to domain material</span>${select('node-binding', n.binding, [['', 'Static text'], ...result.fields.filter(f => (n.kind === 'image') === (f.type === 'image')).map(f => [f.path, `${f.group} · ${f.label}`])])}</label>${!n.binding ? input('Static text', 'node-text', n.text || '') : `<div class="value-box"><span class="eyebrow">CURRENT VALUE</span><strong>${n.kind === 'image' ? field?.available ? 'Your exact photo' : 'Labelled sample artwork' : esc(field?.value == null ? 'Not entered' : String(field.value))}</strong></div>`}<div class="four-inputs two">${[['X', 'x'], ['Y', 'y'], ['Width', 'w'], ['Height', 'h']].map(([label, key]) => input(label, 'node-number', n[key], 'number', `data-key="${key}" step="1"`)).join('')}</div>${n.kind === 'text' ? `${input('Type size (px)', 'node-number', n.size, 'number', 'data-key="size" min="4" max="200"')}<label class="control"><span>Typeface</span>${select('node-font', n.font || 'sans', [['sans', 'Clean sans'], ['serif', 'Editorial serif'], ['mono', 'Monospace']])}</label><label class="control"><span>Alignment</span>${select('node-align', n.align, [['left', 'Left'], ['center', 'Center'], ['right', 'Right']])}</label>${input('Text color', 'node-color', n.color || p.foreground, 'color')}${check('Bold', 'node-bold', n.bold)}${check('Show field label', 'node-showLabel', n.showLabel)}${check('Hide when empty', 'node-hideEmpty', n.hideEmpty)}${input('Prefix', 'node-prefix', n.prefix || '')}${input('Suffix', 'node-suffix', n.suffix || '')}` : `<label class="control"><span>Image fit</span>${select('node-fit', n.fit || 'contain', [['contain', 'Contain · preserve all'], ['cover', 'Cover · crop to frame']])}</label>${input('Corner radius', 'node-number', n.radius || 0, 'number', 'data-key="radius" min="0"')}`}${check('Visible in presentation', 'node-visible', n.visible)}<div class="button-row">${button('Move back', 'node-move', { value: -1 }, 'quiet small')}${button('Move front', 'node-move', { value: 1 }, 'quiet small')}</div><div class="button-row">${button('Duplicate element', 'node-duplicate', {}, 'quiet small')}${button('Remove', 'node-remove', {}, 'quiet danger small')}</div></section>` : '<p class="muted">Choose a field on the left or a piece of the graphic. Its binding and presentation become editable here.</p>'}${wholeCardSection(p)}${instanceSection(p)}<section class="control-section"><h3>State treatments <span>REUSABLE</span></h3><label class="control"><span>Highlight</span>${select('preset-highlight', p.highlight, [['ring', 'Accent ring'], ['stripe', 'Accent stripe']])}</label><label class="control"><span>Score-change preview</span>${select('preset-motion', p.scoreMotion, [['pulse', 'Small pulse'], ['none', 'No animation']])}</label>${input('Motion duration (ms)', 'preset-number', p.duration, 'number', 'data-key="duration" min="100" max="1500"')}<p class="tiny muted">Motion respects reduced-motion preferences. Exports are static states.</p></section></aside>`;
+}
+function competitionSidebar() {
+  const comp = get(w(), 'Competition', ui.competitionId);
+  return `<aside class="sidebar" data-scroll="library"><span class="eyebrow">REUSABLE COMPOSITIONS</span><h2>Competitions</h2><label class="control"><span>Competition</span>${select('competition', ui.competitionId, all(w(), 'Competition').map(c => [c.id, c.name]))}</label>${button('Duplicate competition', 'competition-duplicate', {}, 'wide quiet')}<p class="tiny muted">Duplicates reuse team and round references. Constraints are copied and independently editable.</p><section class="control-section"><h3>Constraint library</h3>${Object.entries(constraintDefinitions).map(([key, def]) => `<div class="constraint-library-item"><span class="eyebrow">${esc(def.call)}</span><strong>${esc(def.label)}</strong><p>${esc(def.description)}</p>${button('+ Add to competition', 'constraint-add', { value: key }, 'wide small')}</div>`).join('')}</section>${button('Export rule composition ↓', 'competition-export', {}, 'wide secondary')}<p class="tiny muted">A rule composition contains named Constraints and their parameters, not generated code.</p></aside>`;
+}
+function competitionCenter(result) {
+  const comp = get(w(), 'Competition', ui.competitionId), round = get(w(), 'Round', ui.roundId);
+  return `<section class="center competition-center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">COMPETITION = REUSABLE CONSTRAINTS</span><h1>${esc(comp.name)}</h1><p>Compose the rules. Inspect the actual objects they apply to.</p></div><span class="result-status ${result.status}">${result.status === 'pending' ? 'In progress' : esc(result.status)}</span></div>${componentTabs()}<div class="rules-toolbar"><span class="mono">Competition[Constraint]</span><label class="inline-control">Composition ${select('constraint-combine', comp.combine, [['all', 'All rules (AND)'], ['any', 'Any rule (OR)']])}</label></div><div class="rule-cards">${comp.constraints.map(rule => {
+    const def = constraintDefinitions[rule.kind], outcome = result.rules.find(r => r.id === rule.id);
+    return `<article class="rule-card"><div class="rule-card-heading"><label class="check"><input type="checkbox" data-control="constraint-enabled" data-id="${esc(rule.id)}" ${rule.enabled ? 'checked' : ''}><strong>${esc(def?.label || rule.kind)}</strong></label><span class="result-status ${outcome?.status || 'disabled'}">${outcome?.status || 'disabled'}</span></div><p>${esc(def?.description || 'Unknown constraint')}</p><div class="rule-parameter">${rule.kind !== 'oneMold' ? `<input type="number" min="1" max="100" data-control="constraint-value" data-id="${esc(rule.id)}" aria-label="${esc(def?.unit)}" value="${rule.value}">` : '<strong>1</strong>'}<span>${esc(def?.unit)}</span>${button('Remove rule', 'constraint-remove', { id: rule.id }, 'quiet small danger')}</div>${outcome ? `<ul class="rule-results">${outcome.details.map(d => `<li><span class="result-dot ${d.status}"></span><strong>${esc(d.subject)}</strong><span>${esc(d.message)}</span></li>`).join('')}</ul>` : '<p class="tiny muted">Disabled rules are not executed.</p>'}<span class="mono tiny">px.constraint.${esc(rule.id)}.result</span></article>`;
+  }).join('')}</div><section class="round-section"><div class="section-toolbar"><div><span class="eyebrow">RECORDED USE, NOT INVENTED STATS</span><h2>Round / hole</h2></div>${select('round', ui.roundId, comp.roundIds.map(id => [id, get(w(), 'Round', id)?.name || 'Missing round']))}${button('+ Add round', 'round-add', {}, 'secondary')}</div>${round ? `${check('This round is complete', 'round-complete', round.complete)}<p class="tiny muted">Fewer than the required throws stays pending until you complete the round. Too many fails immediately.</p><div class="team-grid">${comp.teamIds.map(key => {
+    const team = get(w(), 'Team', key), bag = team && get(w(), 'Bag', team.bagId), throws = all(w(), 'Throw').filter(t => t.teamId === key && t.roundId === ui.roundId);
+    return `<article class="team-card"><span class="eyebrow">${esc(bag?.name || 'Missing bag')}</span><h3>${esc(team?.name || 'Missing team')}</h3><p>${throws.length} recorded throws</p><label class="control"><span>Throw a disc from this team’s bag</span><select data-team-disc="${esc(key)}" aria-label="Disc to throw: ${esc(team?.name)}">${(bag?.discIds || []).map(id => `<option value="${esc(id)}">${esc(get(w(), 'Disc', id)?.nickname || 'Missing disc')}</option>`).join('')}</select></label>${button('+ Record throw', 'throw-record', { id: key }, 'wide secondary')}<div class="throw-list">${throws.map(t => `<div><span>${esc(get(w(), 'Disc', t.discId)?.nickname || 'Missing disc')}</span>${button('×', 'throw-remove', { id: t.id }, 'quiet small', 'aria-label="Remove recorded throw"')}</div>`).join('')}</div></article>`;
+  }).join('')}</div>` : '<p class="error-panel">Round reference is missing.</p>'}</section><div class="principle-strip"><span>RULES DO NOT INVENT A WINNER.</span><p>These checks validate your setup and recorded use. Scores and winners on the graphic remain explicitly authored.</p></div>${tracePanel(result.run)}</section>`;
+}
+function competitionInspector() {
+  const comp = get(w(), 'Competition', ui.competitionId);
+  return `<aside class="inspector" data-scroll="inspector"><span class="eyebrow">COMPETITION OBJECTS</span><h2>Teams & bags</h2>${input('Competition name', 'competition-name', comp.name)}${comp.teamIds.map(key => { const team = get(w(), 'Team', key); return `<section class="control-section">${input('Team name', 'team-name', team?.name, 'text', `data-id="${esc(key)}"`)}<label class="control"><span>Referenced bag</span>${select('team-bag', team?.bagId, all(w(), 'Bag').map(b => [b.id, b.name]), `data-id="${esc(key)}"`)}</label>${button('Edit this bag ↗', 'team-bag-open', { id: team?.bagId }, 'wide quiet')}</section>`; }).join('')}${button('Use these discs OnTheCourse ↗', 'competition-course', {}, 'wide primary')}<p class="tiny muted">Adds the team bags’ physical discs to your current comparison. It does not infer points or replace authored states.</p><div class="subtle-box"><span class="eyebrow">LOCAL INSTRUMENTATION</span><p>${w().events.length} recorded edits<br>${w().exports.length} recorded exports<br>${all(w(), 'Throw').length} recorded throws</p>${button('Export local activity ↓', 'activity-export', {}, 'quiet small')}<p class="tiny muted">Nothing is transmitted. Sample objects are not usage, sales, reach or performance evidence.</p></div></aside>`;
+}
+/**
+ * A Part is now sometimes a raster: `px.exp.lab.course.canonicalpixels` holds
+ * nearly two million samples, and printing them would be neither readable nor
+ * survivable. A long run of numbers is reported by its length; everything else
+ * is printed exactly as it always was.
+ */
+function summaryValue(value) { return JSON.stringify(value, (key, v) => key === 'signature' ? '[full input signature retained in PxC; omitted here]' : Array.isArray(v) && v.length > 256 && v.every(entry => typeof entry === 'number') ? `[${v.length} numeric samples, full value in Part]` : typeof v === 'string' && v.startsWith('data:image/') ? `[embedded photo: ${v.length} characters]` : key === 'svg' && typeof v === 'string' && v.length > 1000 ? `${v.slice(0, 600)}… [${v.length} characters, full value in Part]` : v, 2); }
+/**
+ * The studio's own receipts, read back through PQL: `fn.studio.receipts` binds
+ * the prefix query `px.receipt.*` and publishes the rows and their summary as
+ * two Parts (src/formats/receipt-list.js). One row per receipt.
+ */
+function receiptsSection() {
+  let listed;
+  try { listed = runtime.receipts(); }
+  catch (error) { return `<div class="receipts"><h3>Receipts</h3><p class="tiny muted">${esc(error.cause?.message || error.message)}</p></div>`; }
+  const { rows, summary } = listed;
+  return `<div class="receipts" data-receipts="px.receipt.*"><h3>Receipts <small class="mono">px.receipt.* → px.studio.receipts</small></h3><div class="trace-table receipts-table"><div class="trace-row receipts-row table-heading"><span>Receipt</span><span>Consumes</span><span>Produces</span><span>Result digest</span></div>${rows.map(row => `<div class="trace-row receipts-row" data-receipt="${esc(row.name)}"><span class="mono">${esc(row.name)}</span><span class="tiny" title="${esc(row.consumes.join('\n'))}">${row.consumes.length}: ${esc(row.consumes.map(a => a.replace(/^px\./, '')).join(', ').slice(0, 44))}</span><span class="tiny" title="${esc(row.produces.join('\n'))}">${row.produces.length}: ${esc(row.produces.map(a => a.replace(/^px\./, '')).join(', ').slice(0, 44))}</span><span class="mono tiny" data-digest="${esc(row.name)}">${esc(row.digest)}</span></div>`).join('')}</div><p class="tiny muted">${summary.receipts} receipt${summary.receipts === 1 ? '' : 's'}, ${summary.invocations} invocation${summary.invocations === 1 ? '' : 's'}, ${summary.produces} distinct Parts produced. The digest labels the material identity of a receipt's invocations, not the bytes of its Parts.</p></div>`;
+}
+function tracePanel(run) {
+  if (!run) return '';
+  return `<section class="trace-panel ${ui.traceOpen ? 'open' : ''}"><button class="trace-heading" data-action="toggle-trace"><span>◎ <strong>PxC · actual execution</strong></span><span>${run.computed} computed / ${run.reused} reused <b>${ui.traceOpen ? '−' : '+'}</b></span></button>${ui.traceOpen ? `<div class="trace-flow"><span>Domain Parts</span><b>→</b><span>Registered Calculations</span><b>→</b><span>Bound presentation</span><b>→</b><span>SVG Part</span></div><div class="trace-table"><div class="trace-row table-heading"><span>Calculation</span><span>Output Part</span><span>This invocation</span></div>${run.trace.map(t => `<div class="trace-row"><span class="mono" title="${esc(Object.values(t.inputs).join('\n'))}">${esc(t.call)}</span><span class="part-links">${(t.produces || [t.output]).map(address => button(esc(address), 'inspect-part', { value: address }, 'part-link mono')).join('')}</span><span class="cache-state ${t.reused ? 'reused' : ''}">${t.reused ? '↺ reused material' : '● computed'}</span></div>`).join('')}</div><div class="button-row">${button('Inspect PQL composition', 'inspect-pql', {}, 'quiet small')}${button('Browse all Parts', 'inspect-all', {}, 'quiet small')}${button('Download this execution receipt ↓', 'trace-export', {}, 'quiet small')}${button('Export run record ↓', 'record-export', {}, 'quiet small')}${button('Open Tick render ↗', 'record-render', {}, 'quiet small')}</div>${ui.inspectAddress ? `<div class="part-view"><h3>${esc(ui.inspectAddress)}</h3><pre>${esc(ui.inspectAddress === 'PQL' ? JSON.stringify(run.composition, null, 2) : ui.inspectAddress === 'Part index' ? runtime.parts().map(p => p.address).join('\n') : runtime.pxc.has(ui.inspectAddress) ? summaryValue(runtime.pxc.get(ui.inspectAddress)) : 'Part no longer exists in this context.')}</pre></div>` : ''}${receiptsSection()}<p class="tiny muted">Cache hits return retained material from PxC. Each invocation is still recorded. A hit is not a claim that the calculation ran again.</p>` : ''}</section>`;
+}
+let renderedRoute = null;
+function render() {
+  captureComposer();
+  const active = document.activeElement;
+  const focus = active?.closest('#app') ? { control: active.dataset.control, search: active.dataset.search, compose: active.dataset.compose, label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : null;
+  const scrolls = Object.fromEntries([...app.querySelectorAll('[data-scroll]')].map(e => [e.dataset.scroll, e.scrollTop]));
+  const oldVideo = document.querySelector('#footage-video'), playing = oldVideo && !oldVideo.paused;
+  if (oldVideo) ui.footageTime = oldVideo.currentTime;
+  let body;
+  try {
+    if (!get(w(), 'Disc', ui.discId)) ui.discId = all(w(), 'Disc')[0]?.id;
+    if (!get(w(), 'Bag', ui.bagId)) ui.bagId = all(w(), 'Bag')[0]?.id;
+    if (!w().presets[ui.presetId]) ui.presetId = w().layout.presetId;
+    if (ui.route === 'shelf') {
+      ui.lastResult = ui.discId ? runtime.card(ui.discId, 'discImage', context()) : null;
+      body = `${shelfSidebar()}${shelfCenter()}${discInspector()}`;
+    } else if (ui.route === 'course') {
+      ui.lastResult = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() });
+      ui.battleRules = ui.mode === 'battle' ? runtime.battle() : null;
+      body = `${shelfSidebar()}${courseCenter(ui.lastResult)}${courseInspector()}`;
+    } else if (ui.route === 'course-build') {
+      // The last Stage's own receipt is the run this route shows; nothing is
+      // re-rendered here, because a Stage is run by a person pressing a button.
+      body = `${courseBuildSidebar()}${courseBuildCenter()}${courseBuildInspector()}`;
+    } else if (ui.route === 'components') {
+      let result, cascade = null;
+      if (ui.component === 'DiscComp') result = { ...runtime.scene({ mode: 'battle', ...context() }), fields: runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single').fields };
+      else if (ui.component === 'AllCards') {
+        // The All cards tab's recompose is taken exactly once here, per task 78's
+        // cascadeSet comment: calling it again in a handler would let the memo see
+        // nothing changed since this very call and erase `changed`. It must also be
+        // the ONLY card() call this render makes for this disc: a second, ordinary
+        // runtime.card(..., 'single') call (as the DisplayCard/Disc tabs make below)
+        // would materialize the very same Cascade Tick moments earlier and leave
+        // recompose() reading its own reused reflection instead of a fresh compose.
+        cascade = runtime.cards.recompose(ui.discId, context());
+        if (ui.lastCascade && !ui.lastCascade.result) ui.lastCascade.result = cascade;
+        result = { fields: [], run: cascade.receipt, part: 'px.discstudio.cards.query.recompose' };
+      } else result = runtime.card(ui.discId, ui.presetId, context(), previewEntry(), 'single');
+      ui.lastResult = result;
+      body = `${componentSidebar(result)}${editorCenter(result, cascade)}${nodeInspector(result, cascade)}`;
+    } else {
+      ui.lastResult = runtime.constraints(ui.competitionId);
+      body = `${competitionSidebar()}${competitionCenter(ui.lastResult)}${competitionInspector()}`;
+    }
+  } catch (error) {
+    body = `<section class="full-error"><span class="eyebrow">VISIBLE MODEL BOUNDARY</span><h1>This composition cannot resolve.</h1><p>${esc(error.cause?.message || error.message)}</p><p>No missing participant was silently removed and no draft was overwritten by this render.</p><div class="button-row">${button('Open Shelf', 'go-shelf', {}, 'primary')}${button('Download current draft', 'save-draft', {}, 'secondary')}${button('Load a valid draft', 'load-draft', {}, 'secondary')}</div></section>`;
+  }
+  app.innerHTML = `${header()}${ui.message ? `<div class="notice ${ui.error ? 'error' : ''}" role="${ui.error ? 'alert' : 'status'}"><span>${esc(ui.message)}</span>${!saveEnabled ? button('Download protected saved file', 'save-protected', {}, 'quiet small') : ''}${button('×', 'dismiss', {}, 'quiet', 'aria-label="Dismiss message"')}</div>` : ''}<main class="workspace ${ui.route}" id="main">${body}</main><footer class="app-footer"><span>LOCAL-FIRST · NO ACCOUNT · NO DATA SENT</span><span>Concept B visual language · ChainSpot PxC execution · ${esc(ui.build.commit.slice(0, 8))}</span></footer>`;
+  for (const e of app.querySelectorAll('[data-scroll]')) e.scrollTop = renderedRoute === ui.route ? scrolls[e.dataset.scroll] ?? 0 : 0;
+  renderedRoute = ui.route;
+  if (focus) {
+    const target = [...app.querySelectorAll('input,select,textarea')].find(e => (focus.compose ? e.dataset.compose === focus.compose : focus.search ? e.dataset.search === focus.search : e.dataset.control === focus.control && e.getAttribute('aria-label') === focus.label));
+    if (target) { target.focus({ preventScroll: true }); try { if (focus.start != null) target.setSelectionRange(focus.start, focus.end); } catch { /* Number/range controls have no selection. */ } }
+  }
+  if (ui.adding?.focus) { ui.adding.focus = false; app.querySelector('[data-compose="mold"]')?.focus(); }
+  const labCanvas = app.querySelector('[data-lab-canvas]');
+  if (labCanvas) paintLabRaster(labCanvas);
+  const video = document.querySelector('#footage-video');
+  if (video) video.addEventListener('loadedmetadata', () => { video.currentTime = Math.min(ui.footageTime, video.duration || 0); if (playing) video.play().catch(() => {}); }, { once: true });
+  if (ui.motionEntry && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const node = [...app.querySelectorAll('#actual-preview [data-entry]')].find(e => e.dataset.entry === ui.motionEntry);
+    if (node && node.dataset.motion !== 'none') node.animate([{ opacity: .45 }, { opacity: 1 }], { duration: Math.max(100, Math.min(1500, +node.dataset.duration || 350)) });
+  }
+  ui.motionEntry = null;
+  const review = document.querySelector('neat-review');
+  review.getContext = () => ({ route: location.hash, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, stateId: w().battle.currentStateId, runRecordAddress: ui.recordAddress || null, worldLabel: labelHash({ objects: w().objects, presets: w().presets, battle: w().battle }) });
+}
+/** The + on the shelf opens the composer instead of dropping a blank record named 'My new disc'. */
+function openComposer() {
+  const { maker } = discInfo();
+  ui.adding = { key: id('disc'), maker: maker?.name || '', mold: '', category: '', plastic: '', weight: '', color: '', nickname: '', photo: null, toBag: !!ui.bagId, focus: true };
+}
+function addLineup(discId) { if (!w().battle.entries.some(e => e.discId === discId)) execute({ type: 'battle.add', discId, id: id('entry') }); }
+/**
+ * The export queue. A tap makes jobs (src/exports.js decides which); the queue
+ * runs them one at a time through the same runtime.scene, hashes what it
+ * actually produced, files an export.record receipt for each and hands over the
+ * file. A job that fails keeps its sentence and the queue carries on with the
+ * rest; the queue itself lives in this session, so navigating away and back
+ * finds it exactly where it was.
+ */
+function enqueue(intent, kind = 'png') {
+  const jobs = planExports({ intent, kind, world: w(), discId: ui.discId, mode: ui.mode });
+  ui.queue = [...ui.queue, ...jobs.map((job, index) => ({ ...job, id: `${job.id}-${ui.queue.length + index}` }))];
+  message(`${jobs.length} export${jobs.length === 1 ? '' : 's'} queued. They run in order and each one leaves a receipt.`);
+  runQueue();
+}
+async function runQueue() {
+  if (ui.queueRunning) return;
+  ui.queueRunning = true;
+  try {
+    for (let job = ui.queue.find(j => j.status === 'queued'); job; job = ui.queue.find(j => j.status === 'queued')) {
+      job.status = 'running'; render();
+      try { await runExportJob(job); job.status = 'done'; }
+      catch (error) { job.status = 'failed'; job.message = error.cause?.message || error.message; }
+      render();
+    }
+  } finally {
+    ui.queueRunning = false;
+    const progress = queueProgress(ui.queue);
+    if (progress.total) message(progress.failed ? `${progress.sentence} Nothing was lost: the jobs that failed are still listed with their reason.` : progress.sentence, !!progress.failed);
+    render();
+  }
+}
+/** One job: the scene it names, rendered by the same chain, recorded, downloaded. */
+async function runExportJob(job) {
+  const result = runtime.scene({ mode: job.mode, discId: job.discId, ...context(), stateId: job.stateId, orientation: job.orientation });
+  if (!result.cardCount) throw new Error('Nothing to export: add at least one disc to the battle first.');
+  // Capture the exact scene and source data BEFORE async conversion; later edits cannot relabel the export.
+  const state = w().battle.states.find(s => s.id === result.stateId) ?? currentBattle(w());
+  const sourceSnapshot = clone({ layout: w().layout, orientation: job.orientation, frame: result.frame ?? null, preset: w().presets[job.mode === 'card' ? w().layout.singlePresetId : w().layout.presetId], state, entryDiscIds: job.mode === 'card' ? [job.discId] : w().battle.entries.map(e => e.discId), objects: {} });
+  for (const discId of sourceSnapshot.entryDiscIds) {
+    const disc = clone(get(w(), 'Disc', discId)), mold = clone(get(w(), 'Mold', disc.moldId)), maker = clone(get(w(), 'Manufacturer', mold.manufacturerId));
+    sourceSnapshot.objects[discId] = { disc, mold, maker };
+  }
+  const svgHash = await sha256(result.svg);
+  const common = { id: id('export'), time: new Date().toISOString(), stateId: result.stateId, mode: job.mode, name: job.name, svgHash, width: result.width, height: result.height, orientation: result.orientation, framePresetId: result.frame?.presetId ?? 'none', sourceSnapshot };
+  const file = `discstudio-${job.name}-${result.width}x${result.height}-${svgHash.slice(0, 8)}`;
+  let record;
+  if (job.kind === 'svg') {
+    const blob = new Blob([result.svg], { type: 'image/svg+xml' });
+    record = { ...common, type: 'SVG', byteLength: blob.size };
+    downloadBlob(blob, `${file}.svg`);
+  } else {
+    const blob = await pngFromSvg(result.svg, result.width, result.height), pngHash = await sha256(blob);
+    for (const item of Object.values(sourceSnapshot.objects)) if (item.disc.photo) { item.disc.photoSha256 = await sha256(item.disc.photo); delete item.disc.photo; }
+    sourceSnapshot.assetPolicy = 'Photo data-URL hashes retained; original photo bytes remain in the draft, not duplicated per export. Keep exported SVGs for self-contained graphics.';
+    record = { ...common, type: 'PNG', pngHash, byteLength: blob.size };
+    downloadBlob(blob, `${file}.png`);
+  }
+  execute({ type: 'export.record', record });
+  ui.latestReceipt = record; job.receiptId = record.id;
+  job.message = `${record.type} ${result.width} × ${result.height} · ${(record.pngHash ?? record.svgHash).slice(0, 12)}…`;
+}
+/** The queue on screen: where it is, then every job with its own sentence. */
+function queuePanel() {
+  if (!ui.queue.length) return '<p class="tiny muted">One tap queues a job per state or per disc. Jobs run in order, each leaves a receipt, and the queue stays put while you work elsewhere.</p>';
+  const progress = queueProgress(ui.queue);
+  return `<div class="export-queue" data-queue="${esc(progress.complete ? 'complete' : 'running')}"><div class="queue-head"><strong>Export queue</strong>${progress.complete ? button('Clear', 'queue-clear', {}, 'quiet small') : ''}</div><p class="tiny" data-queue-progress>${esc(progress.sentence)}</p><ol class="queue-list">${ui.queue.map(job => `<li data-job="${esc(job.id)}" data-status="${esc(job.status)}"><span class="queue-dot"></span><span class="queue-label">${esc(job.label)}</span><span class="tiny muted">${esc(job.message || job.status)}</span></li>`).join('')}</ol></div>`;
+}
+async function action(name, el) {
+  const d = el.dataset, { disc, mold, maker } = discInfo();
+  switch (name) {
+    case 'go-shelf': navigate('shelf'); return;
+    case 'go-course': navigate('course'); return;
+    case 'go-competition': navigate('competition'); return;
+    case 'go-course-build': navigate('course-build'); return;
+    case 'go-editor-single': ui.presetId = w().layout.singlePresetId; ui.component = 'DisplayCard'; navigate('components'); return;
+    case 'lab-sample': ui.labCapture = runtime.lab.sample(d.overlaps ? { overlaps: true } : {}); ui.labCaptureName = d.overlaps ? 'LAB fixture · overlapped' : 'LAB fixture'; runtime.lab.begin(ui.labCapture); ui.labRun = null; ui.labSelected = null; message('The LAB fixture is loaded: a deterministic synthetic capture with badges, baskets and tees drawn to the Stages own knobs.'); break;
+    case 'lab-photo': ui.photoTarget = 'lab'; document.querySelector('#photo-file').click(); return;
+    case 'lab-run': await runLabPipeline(); break;
+    case 'lab-select': ui.labSelected = { key: d.key, id: d.id }; break;
+    case 'lab-toggle': if (ui.labHidden.has(d.key)) ui.labHidden.delete(d.key); else ui.labHidden.add(d.key); break;
+    case 'lab-select-stage': ui.labSelected = { key: d.key, id: null }; break;
+    case 'lab-open-run': {
+      const row = runtime.lab.state().stages.find(stage => stage.key === d.key);
+      ui.lastResult = { part: row.produced[0]?.address ?? runtime.lab.address, run: runtime.pxc.get(`px.receipt.${row.composition}`) };
+      ui.labRun = ui.lastResult.run; ui.traceOpen = true; ui.inspectAddress = '';
+      break;
+    }
+    case 'lab-to-course': navigate('course'); return;
+    case 'go-editor': ui.component = 'DisplayCard'; ui.presetId = w().layout.presetId; navigate('components'); return;
+    case 'cascade-reset': cascadeSet(d.layer, d.token, null, { projection: d.projection || undefined, discId: d.disc || undefined, presetId: d.preset || undefined }); break;
+    case 'dismiss': ui.message = ''; break;
+    case 'save-draft': downloadJson(w(), 'discstudio-draft.json'); message('Draft downloaded with domain objects, photos, presentations and states.'); break;
+    case 'save-protected': downloadBlob(new Blob([localStorage.getItem(DATA_KEY) || ''], { type: 'application/json' }), 'discstudio-protected-original.json'); break;
+    case 'load-draft': document.querySelector('#draft-file').click(); return;
+    case 'reset': if (confirm('Replace this local workspace with the labelled sample collection? Download a draft first to keep your work. Review comments are not deleted.')) { saveEnabled = true; runtime.replace(createSeed()); ui.discId = 'buzzz-mint'; ui.bagId = 'everyday'; ui.presetId = 'broadcast'; message('Sample workspace restored. Your review comments are unchanged.'); } break;
+    case 'disc-select': ui.discId = d.id; break;
+    case 'shelf-filter': ui.shelfFilters = ui.shelfFilters.includes(d.value) ? ui.shelfFilters.filter(key => key !== d.value) : [...ui.shelfFilters, d.value]; break;
+    case 'shelf-layout': ui.shelfLayout = d.value; break;
+    case 'shelf-clear': ui.query = ''; ui.shelfFilters = []; break;
+    case 'disc-add': openComposer(); if (ui.route !== 'shelf') { persistView(); navigate('shelf'); return; } break;
+    case 'compose-cancel': ui.adding = null; break;
+    case 'compose-photo': document.querySelector('#compose-file').click(); return;
+    case 'compose-photo-clear': ui.adding.photo = null; break;
+    case 'compose-add': {
+      captureComposer();
+      const a = ui.adding, weight = a.weight === '' ? null : Number(a.weight);
+      if (!a.mold.trim()) throw new Error('Name the mold — the disc’s product name — and this disc goes on the shelf. Everything else can wait.');
+      if (weight !== null && !Number.isFinite(weight)) throw new Error('Weight is a number of grams, or blank when you have not weighed it.');
+      execute({ type: 'disc.create', id: a.key, manufacturer: a.maker, mold: a.mold, category: a.category, plastic: a.plastic, weight, color: a.color, nickname: a.nickname, photo: a.photo, bagId: a.toBag && ui.bagId ? ui.bagId : null });
+      const made = get(w(), 'Disc', a.key), bag = get(w(), 'Bag', ui.bagId);
+      ui.discId = a.key; ui.adding = null;
+      message(`${made.nickname} is on your shelf${a.toBag && bag ? ` and in ${bag.name}` : ''}. One undo takes the whole disc back out, maker and mold included.`);
+      break;
+    }
+    case 'disc-duplicate': { const key = id('disc'); execute({ type: 'disc.duplicate', id: disc.id, newId: key }); ui.discId = key; break; }
+    case 'disc-remove': if (confirm('Remove this physical disc from your shelf? Bag/lineup references must be removed first.')) execute({ type: 'disc.remove', id: disc.id }); break;
+    case 'membership': if (!ui.bagId) throw new Error('Create a bag first.'); execute({ type: 'bag.membership', bagId: ui.bagId, discId: d.id, include: !get(w(), 'Bag', ui.bagId).discIds.includes(d.id) }); break;
+    case 'bag-add': { const name = prompt('Name this bag', 'New bag'); if (name?.trim()) { const key = id('bag'); execute({ type: 'entity.add', record: { id: key, type: 'Bag', name: name.trim(), discIds: [], notes: '' } }); ui.bagId = key; } break; }
+    case 'bag-open': ui.bagId = d.id; break;
+    case 'bag-duplicate': { const source = get(w(), 'Bag', ui.bagId); if (!source) throw new Error('Open a bag first.'); const key = id('bag'); execute({ type: 'bag.duplicate', id: source.id, newId: key, name: `${source.name} · copy` }); ui.bagId = key; message(`${get(w(), 'Bag', key).name} holds the same discs, in the same order. Rename it in place; the originals are untouched.`); break; }
+    case 'bag-move': execute({ type: 'bag.reorder', bagId: ui.bagId, discId: d.id, toIndex: +d.value }); break;
+    case 'bag-remove': if (confirm('Delete this bag? Physical discs remain on your shelf.')) execute({ type: 'bag.remove', id: ui.bagId }); break;
+    case 'photo': ui.photoTarget = 'disc'; ui.photoDiscId = d.id || ui.discId; document.querySelector('#photo-file').click(); return;
+    case 'photo-remove': execute({ type: 'entity.set', entityType: 'Disc', id: ui.discId, path: 'photo', value: null }); break;
+    case 'mode': ui.mode = d.value; break;
+    case 'orientation': {
+      // Switching to the vertical canvas takes a wide row of cards down the
+      // screen with it: one command, so undo is one step, and the sentence says
+      // what moved rather than leaving a row of three unreadable cards.
+      const l = w().layout, stacking = d.value === 'portrait' && l.arrangement === 'row' && w().battle.entries.length > 2;
+      execute({ type: 'layout.set', patch: { orientation: d.value, ...(stacking ? { arrangement: 'stack' } : {}) } });
+      message(d.value === 'portrait' ? `Vertical canvas: 1080 × 1920. Cards are fitted inside the frame’s safe area and exports come out at that size.${stacking ? ' The row went down the screen, which is what reads at this size.' : ''}` : 'Landscape canvas: 1920 × 1080.');
+      break;
+    }
+    case 'lineup-add': addLineup(d.id); break;
+    case 'bag-lineup': for (const key of get(w(), 'Bag', ui.bagId)?.discIds || []) addLineup(key); break;
+    case 'lineup-remove': execute({ type: 'battle.remove', id: d.id }); break;
+    case 'lineup-clear': if (confirm('Clear the comparison lineup and its scores/highlights in every state? Your shelf and bags remain unchanged.')) for (const e of [...w().battle.entries]) execute({ type: 'battle.remove', id: e.id }); break;
+    case 'lineup-move': execute({ type: 'battle.move', id: d.id, offset: +d.value }); break;
+    case 'battle-order': execute({ type: 'battle.order', id: d.id }); ui.motionEntry = d.id; break;
+    case 'order-clear': execute({ type: 'battle.order.clear' }); message('This state is clear. Tap the finishing order again, or type the scores.'); break;
+    case 'battle-rule-remove': execute({ type: 'battle.rule.remove', ruleId: d.id }); break;
+    case 'score-step': execute({ type: 'battle.score', id: d.id, score: (currentBattle(w()).scores[d.id] ?? 0) + +d.value }); ui.motionEntry = d.id; break;
+    case 'highlight': execute({ type: 'battle.highlight', id: d.id }); break;
+    case 'winner': execute({ type: 'battle.winner', id: d.id }); break;
+    case 'state-add': execute({ type: 'battle.state.save', id: id('state'), name: `State ${w().battle.states.length + 1}` }); break;
+    case 'state-select': execute({ type: 'battle.state.select', id: d.id }); break;
+    case 'state-rename': { const name = prompt('State name', currentBattle(w()).name); if (name?.trim()) execute({ type: 'battle.state.rename', name: name.trim() }); break; }
+    case 'state-remove': if (confirm('Delete the current comparison state?')) execute({ type: 'battle.state.remove', id: w().battle.currentStateId }); break;
+    case 'anchor': execute({ type: 'layout.set', patch: { anchor: d.value } }); break;
+    case 'footage': document.querySelector('#footage-file').click(); return;
+    case 'footage-clear': if (ui.footage) URL.revokeObjectURL(ui.footage); Object.assign(ui, { footage: null, footageKind: null, footageName: '', footageTime: 0 }); break;
+    case 'footage-play': { const video = document.querySelector('#footage-video'); if (video) { if (video.paused) await video.play(); else video.pause(); } return; }
+    case 'export-png': enqueue('current', 'png'); return;
+    case 'export-all-states': enqueue('all-states', 'png'); return;
+    case 'export-vertical': enqueue('vertical', 'png'); return;
+    case 'export-each-disc': enqueue('each-disc', 'png'); return;
+    case 'queue-clear': ui.queue = []; message('Queue cleared. The receipts it wrote are still on the record.'); break;
+    case 'export-svg': enqueue('current', 'svg'); return;
+    case 'states-export': {
+      const files = [];
+      for (const [index, state] of w().battle.states.entries()) { const result = runtime.scene({ mode: 'battle', ...context(), stateId: state.id }); files.push({ filename: `${String(index + 1).padStart(2, '0')}-${state.name.replace(/[^a-z0-9_-]+/ig, '-')}.svg`, svg: result.svg, stateId: state.id }); }
+      downloadJson({ format: 'DiscStudio SVG state sequence', files }, 'discstudio-state-sequence.json'); message('State sequence exported as JSON containing one SVG per state. Export the selected state as PNG for direct video-editor use.'); break;
+    }
+    case 'component': ui.component = d.value; if (d.value === 'Competition') { navigate('competition'); return; } if (d.value === 'DiscImage') ui.presetId = 'discImage'; else if (ui.presetId === 'discImage') ui.presetId = w().layout.presetId; if (ui.route !== 'components') { navigate('components'); return; } break;
+    case 'library': ui.library = d.value; break;
+    case 'node-select': ui.nodeId = d.id; break;
+    case 'field-add': {
+      const field = ui.lastResult.fields?.find(f => f.path === d.path); if (!field) throw new Error('Field is not available in this context.');
+      const p = w().presets[ui.presetId], existing = p.nodes.find(n => n.binding === field.path);
+      if (existing) { ui.nodeId = existing.id; if (!existing.visible) execute({ type: 'preset.set', id: p.id, nodeId: existing.id, patch: { visible: true } }); }
+      else { const node = { ...fieldNode(field), x: 24, y: Math.max(16, p.height - 60), w: Math.min(240, p.width - 48) }; if (field.path.startsWith('entry.')) node.context = 'battle'; execute({ type: 'preset.node.add', id: p.id, node }); ui.nodeId = node.id; }
+      break;
+    }
+    case 'node-visible': { const node = w().presets[ui.presetId].nodes.find(n => n.id === d.id); execute({ type: 'preset.set', id: ui.presetId, nodeId: d.id, patch: { visible: !node.visible } }); break; }
+    case 'node-remove': execute({ type: 'preset.node.remove', id: ui.presetId, nodeId: ui.nodeId }); ui.nodeId = ''; break;
+    case 'node-move': execute({ type: 'preset.node.move', id: ui.presetId, nodeId: ui.nodeId, offset: +d.value }); break;
+    case 'node-duplicate': { const node = clone(w().presets[ui.presetId].nodes.find(n => n.id === ui.nodeId)); node.id = id('node'); node.x += 8; node.y += 8; execute({ type: 'preset.node.add', id: ui.presetId, node }); ui.nodeId = node.id; break; }
+    case 'preview-state': ui.previewState = d.value; break;
+    case 'preset-duplicate': { const original = w().presets[ui.presetId], name = prompt('Name your reusable design', `${original.name} · my version`); if (name?.trim()) { const preset = { ...clone(original), id: id('preset'), name: name.trim() }; execute({ type: 'preset.put', preset }); ui.presetId = preset.id; if (preset.kind === 'DisplayCard') execute({ type: 'layout.set', patch: { presetId: preset.id } }); } break; }
+    case 'preset-export': downloadJson({ format: 'DiscStudio presentation', version: 1, preset: w().presets[ui.presetId] }, `${ui.presetId}.presentation.json`); message('Reusable design exported. It contains bindings and styling, not the current disc’s data.'); break;
+    case 'preset-import': document.querySelector('#preset-file').click(); return;
+    case 'field-new': ui.newField = !ui.newField; break;
+    case 'field-register': { const label = document.querySelector('#new-field-label').value.trim(), kind = document.querySelector('[data-control="new-field-type"]').value, key = label.replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase()).replace(/[^A-Za-z0-9]/g, ''); if (!key || !/^[A-Za-z]/.test(key)) throw new Error('Give the field a name beginning with a letter.'); const name = key[0].toLowerCase() + key.slice(1); execute({ type: 'schema.addField', entityType: 'Disc', name, fieldType: kind, label }); ui.newField = false; ui.fieldQuery = label; message(`${label} is now in the domain inspector and the presentation field library. No renderer code was added.`); break; }
+    case 'constraint-add': execute({ type: 'competition.rule.add', id: ui.competitionId, rule: { id: id('rule'), kind: d.value, value: constraintDefinitions[d.value].defaultValue, enabled: true } }); break;
+    case 'constraint-remove': execute({ type: 'competition.rule.remove', id: ui.competitionId, ruleId: d.id }); break;
+    case 'competition-duplicate': { const comp = clone(get(w(), 'Competition', ui.competitionId)), name = prompt('Competition name', `${comp.name} · my format`); if (name?.trim()) { comp.id = id('competition'); comp.name = name.trim(); execute({ type: 'entity.add', record: comp }); ui.competitionId = comp.id; } break; }
+    case 'competition-export': { const { name, combine, constraints } = get(w(), 'Competition', ui.competitionId); downloadJson({ format: 'DiscStudio constraint composition', name, combine, constraints }, 'competition-rules.json'); break; }
+    case 'team-bag-open': ui.bagId = d.id; navigate('shelf'); return;
+    case 'competition-course': { const comp = get(w(), 'Competition', ui.competitionId); for (const teamId of comp.teamIds) for (const discId of get(w(), 'Bag', get(w(), 'Team', teamId).bagId)?.discIds || []) addLineup(discId); ui.mode = 'battle'; navigate('course'); return; }
+    case 'round-add': { const key = id('round'), comp = get(w(), 'Competition', ui.competitionId); execute({ type: 'entity.add', record: { id: key, type: 'Round', name: `Hole ${comp.roundIds.length + 1}`, complete: false } }); execute({ type: 'entity.set', entityType: 'Competition', id: comp.id, path: 'roundIds', value: [...comp.roundIds, key] }); ui.roundId = key; break; }
+    case 'throw-record': { const el = [...document.querySelectorAll('[data-team-disc]')].find(e => e.dataset.teamDisc === d.id); if (!el?.value) throw new Error('Put a physical disc in this team’s bag first.'); execute({ type: 'throw.record', id: id('throw'), teamId: d.id, roundId: ui.roundId, discId: el.value }); break; }
+    case 'throw-remove': execute({ type: 'throw.remove', id: d.id }); break;
+    case 'activity-export': downloadJson({ disclosure: 'Local authored actions, recorded throws and actual PNG exports only. Not market/audience/performance measurements.', events: w().events, throws: all(w(), 'Throw'), exports: w().exports.map(({ sourceSnapshot, ...record }) => record) }, 'discstudio-local-activity.json'); break;
+    case 'undo': {
+      const depth = runtime.undo.depth(), run = runtime.undo.pop('px.studio.world');
+      message(depth ? `Undone: px.studio.world restored from px.undo.studio (depth ${depth} → ${runtime.undo.depth()}). ${run.trace.length} recorded invocations; the receipt is px.receipt.studio-undo.` : 'The undo stack is empty, so nothing changed. The attempt is still on the record as px.receipt.studio-undo.');
+      break;
+    }
+    case 'toggle-trace': ui.traceOpen = !ui.traceOpen; break;
+    case 'inspect-part': ui.inspectAddress = d.value; break;
+    case 'inspect-pql': ui.inspectAddress = 'PQL'; break;
+    case 'inspect-all': ui.inspectAddress = 'Part index'; break;
+    case 'trace-export': downloadJson(ui.lastResult?.run, 'discstudio-pql-execution.json'); break;
+    case 'record-export': {
+      const { address, record } = runtime.runRecord(shownPcr());
+      ui.recordAddress = address; ui.inspectAddress = address; ui.traceOpen = true;
+      downloadJson(record, `${record.pcr}-run-record.json`);
+      message(`pyto-run-record@1 accepted by the shared validator and kept as the Part ${address}: ${record.ticks.length} Ticks, ${record.counters.invocations} invocations, ${record.counters.hits} hits. No domain fact was written.`);
+      break;
+    }
+    case 'record-render': {
+      const { address, record } = runtime.runRecord(shownPcr());
+      const page = composePage({ ...await viewerSources(), record });
+      ui.recordAddress = address;
+      const blob = new Blob([page], { type: 'text/html' });
+      downloadBlob(blob, `${record.pcr}-tick-render.html`);
+      // A tab for reading now; the saved file is the one that opens over file:// later.
+      const url = URL.createObjectURL(blob); if (!window.open(url, '_blank')) URL.revokeObjectURL(url); else setTimeout(() => URL.revokeObjectURL(url), 30000);
+      message(`Tick render page built from ${address} and saved: the record is embedded and adapters.js and tick-viewer.js are inlined, so it opens over file:// with no server.`);
+      break;
+    }
+  }
+  persistView(); render();
+}
+app.addEventListener('click', event => {
+  const el = event.target.closest('[data-action]'); if (!el || el.disabled) return;
+  Promise.resolve(action(el.dataset.action, el)).catch(error => { ui.busy = false; message(error.cause?.message || error.message, true); render(); });
+});
+function controlChange(el) {
+  const key = el.dataset.control, value = el.value, d = el.dataset, { disc, mold, maker } = discInfo();
+  const number = () => value === '' ? null : Number(value);
+  const setNode = patch => execute({ type: 'preset.set', id: ui.presetId, nodeId: ui.nodeId, patch });
+  const setPreset = patch => execute({ type: 'preset.set', id: ui.presetId, patch });
+  switch (key) {
+    case 'bag': ui.bagId = value; break;
+    case 'only-bag': ui.onlyBag = el.checked; break;
+    case 'bag-name': execute({ type: 'entity.set', entityType: 'Bag', id: ui.bagId, path: 'name', value: value.trim() || 'Bag' }); break;
+    case 'shelf-sort': ui.shelfSort = value; break;
+    case 'shelf-group': ui.shelfGroup = value; break;
+    case 'identity-maker': execute({ type: 'disc.identity', id: disc.id, manufacturer: value, mold: mold?.name || '' }); break;
+    case 'identity-mold': execute({ type: 'disc.identity', id: disc.id, manufacturer: maker?.name || '', mold: value }); break;
+    case 'disc-field': execute({ type: 'entity.set', entityType: 'Disc', id: disc.id, path: d.key, value: el.type === 'checkbox' ? el.checked : d.kind === 'number' ? number() : value }); break;
+    case 'flight': execute({ type: 'entity.set', entityType: 'Mold', id: mold.id, path: `flight.${d.key}`, value: number() }); break;
+    case 'score': execute({ type: 'battle.score', id: d.id, score: number() }); ui.motionEntry = d.id; break;
+    case 'course-preset': ui.presetId = value; execute({ type: 'layout.set', patch: { presetId: value } }); break;
+    case 'single-preset': execute({ type: 'layout.set', patch: { singlePresetId: value } }); message(`Single Disc mode composes with ${esc(w().presets[value].name)}. The comparison keeps its own design.`); break;
+    case 'battle-template': { execute({ type: 'battle.template', id: value }); const template = battleTemplates[value]; message(`${template.name}. ${template.about}`); break; }
+    case 'battle-rule-enabled': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { enabled: el.checked } }); break;
+    case 'battle-rule-value': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { value: number() } }); break;
+    case 'battle-rule-mode': execute({ type: 'battle.rule.set', ruleId: d.id, patch: { mode: value } }); break;
+    case 'battle-rule-points': { const points = value.split(/[^0-9]+/).filter(Boolean).map(Number); execute({ type: 'battle.rule.set', ruleId: d.id, patch: { points, value: points.length } }); break; }
+    case 'arrangement': execute({ type: 'layout.set', patch: { arrangement: value } }); break;
+    case 'frame-preset': execute({ type: 'layout.set', patch: { frame: { ...w().layout.frame, presetId: value } } }); break;
+    case 'frame-title': execute({ type: 'layout.set', patch: { frame: { ...w().layout.frame, title: value.slice(0, 80) } } }); break;
+    case 'scale': execute({ type: 'layout.set', patch: { scale: number() } }); break;
+    case 'gap': execute({ type: 'layout.set', patch: { gap: number() } }); break;
+    case 'edit-preset': ui.presetId = value; ui.component = w().presets[value].kind; ui.nodeId = w().presets[value].nodes[0]?.id; if (w().presets[value].kind === 'DisplayCard') execute({ type: 'layout.set', patch: { presetId: value } }); break;
+    case 'editor-disc': ui.discId = value; break;
+    case 'instance-projection': ui.instanceProjection = value; break;
+    case 'cascade-token': cascadeSet(d.layer, d.token, d.token === 'radius' ? number() : value, { projection: d.projection || undefined, discId: d.disc || undefined, presetId: d.preset || undefined }); break;
+    case 'extra-type': ui.extraType = value; ui.extraId = all(w(), value)[0]?.id || ''; break;
+    case 'extra-id': ui.extraId = value; break;
+    case 'node-binding': setNode({ binding: value, context: value.startsWith('entry.') ? 'battle' : null }); break;
+    case 'node-number': setNode({ [d.key]: number() }); break;
+    case 'node-text': setNode({ text: value }); break;
+    case 'node-font': setNode({ font: value }); break;
+    case 'node-align': setNode({ align: value }); break;
+    case 'node-color': setNode({ color: value }); break;
+    case 'node-fit': setNode({ fit: value }); break;
+    case 'node-prefix': setNode({ prefix: value }); break;
+    case 'node-suffix': setNode({ suffix: value }); break;
+    case 'node-bold': case 'node-showLabel': case 'node-hideEmpty': case 'node-visible': setNode({ [key.slice(5)]: el.checked }); break;
+    case 'preset-name': setPreset({ name: value }); break;
+    case 'preset-number': if (d.key === 'radius') presetCascadeSet(ui.presetId, 'radius', number()); else setPreset({ [d.key]: number() }); break;
+    // background/foreground/accent are cascade fields: the preset's own override
+    // (task 79, "the preset IS the projection layer"), so the edit is marked as a
+    // cascade edit too and picked up by the All cards tab's one-recompose-per-render.
+    case 'preset-color': presetCascadeSet(ui.presetId, d.key, value); break;
+    case 'preset-transparent': presetCascadeSet(ui.presetId, 'background', el.checked ? 'transparent' : '#203d36'); break;
+    case 'preset-font': presetCascadeSet(ui.presetId, 'font', value); break;
+    case 'preset-sponsor': presetCascadeSet(ui.presetId, 'sponsor', value); break;
+    case 'preset-highlight': setPreset({ highlight: value }); break;
+    case 'preset-motion': setPreset({ scoreMotion: value }); break;
+    case 'competition': ui.competitionId = value; ui.roundId = get(w(), 'Competition', value).roundIds[0]; break;
+    case 'competition-name': execute({ type: 'entity.set', entityType: 'Competition', id: ui.competitionId, path: 'name', value }); break;
+    case 'constraint-combine': execute({ type: 'entity.set', entityType: 'Competition', id: ui.competitionId, path: 'combine', value }); break;
+    case 'constraint-enabled': execute({ type: 'competition.rule.set', id: ui.competitionId, ruleId: d.id, patch: { enabled: el.checked } }); break;
+    case 'constraint-value': execute({ type: 'competition.rule.set', id: ui.competitionId, ruleId: d.id, patch: { value: number() } }); break;
+    case 'team-name': execute({ type: 'entity.set', entityType: 'Team', id: d.id, path: 'name', value }); break;
+    case 'team-bag': execute({ type: 'entity.set', entityType: 'Team', id: d.id, path: 'bagId', value }); break;
+    case 'round': ui.roundId = value; break;
+    case 'round-complete': execute({ type: 'entity.set', entityType: 'Round', id: ui.roundId, path: 'complete', value: el.checked }); break;
+    case 'new-field-label': case 'new-field-type': return;
+  }
+  persistView(); render();
+}
+app.addEventListener('change', event => { const el = event.target.closest('[data-control]'); if (!el) return; try { controlChange(el); } catch (error) { message(error.cause?.message || error.message, true); render(); } });
+app.addEventListener('input', event => { const el = event.target; if (el.dataset.search) { if (el.dataset.search === 'discs') ui.query = el.value; else ui.fieldQuery = el.value; render(); } });
+let bagDrag = null;
+app.addEventListener('pointerdown', event => {
+  const grip = event.target.closest('[data-bag-drag]'); if (!grip || event.button !== 0) return;
+  event.preventDefault(); grip.setPointerCapture?.(event.pointerId);
+  bagDrag = { discId: grip.dataset.bagDrag, bagId: ui.bagId, over: null }; render();
+});
+window.addEventListener('pointermove', event => {
+  if (!bagDrag) return;
+  const card = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-bag-card]');
+  const over = card && card.dataset.bagCard !== bagDrag.discId ? card.dataset.bagCard : null;
+  if (over !== bagDrag.over) { bagDrag.over = over; render(); }
+});
+/** The drop is the command: one move, one undo step, wherever the pointer travelled to get there. */
+window.addEventListener('pointerup', () => {
+  const move = bagDrag; bagDrag = null;
+  if (!move?.over) { if (move) render(); return; }
+  const bag = get(w(), 'Bag', move.bagId), toIndex = bag ? bag.discIds.indexOf(move.over) : -1;
+  try { if (toIndex >= 0) execute({ type: 'bag.reorder', bagId: move.bagId, discId: move.discId, toIndex }); }
+  catch (error) { message(error.message, true); }
+  render();
+});
+window.addEventListener('pointercancel', () => { bagDrag = null; render(); });
+let drag = null, dragFrame = null, pendingMove = null;
+app.addEventListener('pointerdown', event => {
+  const hit = event.target.closest('[data-node-select]'); if (!hit || event.button !== 0) return;
+  event.preventDefault(); ui.nodeId = hit.dataset.nodeSelect;
+  const node = w().presets[ui.presetId].nodes.find(n => n.id === ui.nodeId), rect = hit.ownerSVGElement.getBoundingClientRect();
+  drag = { x: event.clientX, y: event.clientY, startX: node.x, startY: node.y, ratio: w().presets[ui.presetId].width / rect.width, id: node.id, presetId: ui.presetId };
+  render();
+});
+window.addEventListener('pointermove', event => {
+  if (!drag) return;
+  const state = drag, x = Math.round(state.startX + (event.clientX - state.x) * state.ratio), y = Math.round(state.startY + (event.clientY - state.y) * state.ratio);
+  cancelAnimationFrame(dragFrame);
+  pendingMove = { type: 'preset.set', id: state.presetId, nodeId: state.id, patch: { x, y } };
+  dragFrame = requestAnimationFrame(flushDrag);
+});
+function flushDrag() { if (!pendingMove) return; const command = pendingMove; pendingMove = null; try { execute(command); render(); } catch (error) { message(error.message, true); } }
+window.addEventListener('pointerup', () => { cancelAnimationFrame(dragFrame); flushDrag(); drag = null; });
+window.addEventListener('pointercancel', () => { cancelAnimationFrame(dragFrame); pendingMove = null; drag = null; });
+/**
+ * Entering a hole from the keyboard: 1..9 taps that disc into the finishing
+ * order (the same command the button dispatches), 0 or Backspace clears the
+ * state. Nothing here writes a score the order does not imply.
+ */
+window.addEventListener('keydown', event => {
+  if (ui.route !== 'course' || ui.mode !== 'battle' || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+  const entries = w().battle.entries;
+  const command = /^[1-9]$/.test(event.key) && entries[+event.key - 1] ? { type: 'battle.order', id: entries[+event.key - 1].id }
+    : event.key === '0' || event.key === 'Backspace' ? { type: 'battle.order.clear' } : null;
+  if (!command) return;
+  event.preventDefault();
+  try { execute(command); ui.motionEntry = command.id ?? null; } catch (error) { message(error.cause?.message || error.message, true); }
+  render();
+});
+window.addEventListener('keydown', event => {
+  if (ui.route !== 'components' || !ui.nodeId || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+  const node = w().presets[ui.presetId]?.nodes.find(n => n.id === ui.nodeId); if (!node) return;
+  const offsets = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  if (offsets[event.key]) { event.preventDefault(); const [dx, dy] = offsets[event.key], step = event.shiftKey ? 10 : 1; execute({ type: 'preset.set', id: ui.presetId, nodeId: node.id, patch: { x: node.x + dx * step, y: node.y + dy * step } }); render(); }
+});
+for (const name of ['photo', 'compose', 'footage', 'draft', 'preset']) document.querySelector(`#${name}-file`).addEventListener('change', async event => {
+  const file = event.target.files?.[0]; if (!file) return;
+  try {
+    if (name === 'photo' && ui.photoTarget === 'lab') {
+      // The same file input, the same local-only decode: a photograph of a course
+      // map is a capture for S0 instead of a disc's exact photo.
+      ui.labCapture = await captureFromPhoto(file); ui.labCaptureName = file.name; ui.labRun = null; ui.labSelected = null;
+      runtime.lab.begin(ui.labCapture); ui.photoTarget = 'disc';
+      message(`Your photo is decoded in this browser as a ${ui.labCapture.widthPx} × ${ui.labCapture.heightPx} capture. Run the pipeline to read a course off it.`);
+    }
+    else if (name === 'compose') { if (ui.adding) { ui.adding.photo = await photoData(file); message('Photo ready. It goes on the disc when you add it, and never leaves this browser.'); } }
+    else if (name === 'photo') { const targetDisc = ui.photoDiscId || ui.discId, data = await photoData(file); execute({ type: 'entity.set', entityType: 'Disc', id: targetDisc, path: 'photo', value: data }); message('Exact photo saved locally. Every bound presentation now uses it.'); }
+    if (name === 'footage') {
+      if (!/^(image\/(png|jpeg|webp)|video\/(mp4|webm|quicktime))$/.test(file.type)) throw new Error('Choose a PNG/JPEG/WebP still or MP4/WebM/MOV video.');
+      if (ui.footage) URL.revokeObjectURL(ui.footage); ui.footage = URL.createObjectURL(file); ui.footageKind = file.type.startsWith('video') ? 'video' : 'image'; ui.footageName = file.name; ui.footageTime = 0; message('Footage is preview context only. It is not uploaded, saved in your draft, or included in your overlay export.');
+    }
+    if (name === 'draft') { if (file.size > 12_000_000) throw new Error('Draft exceeds 12 MB.'); const value = validateWorld(JSON.parse(await file.text())); if (confirm('Replace this workspace with the imported draft? Review comments will remain separate.')) { saveEnabled = true; runtime.replace(value); message('Draft loaded. Domain objects, presentations and comparison states restored.'); } }
+    if (name === 'preset') { if (file.size > 200_000) throw new Error('Presentation file is too large.'); const data = JSON.parse(await file.text()), preset = data.preset || data; if (!w().presets[preset.id] || confirm(`Replace the saved design “${w().presets[preset.id].name}”?`)) { execute({ type: 'preset.put', preset }); ui.presetId = preset.id; ui.component = preset.kind; if (preset.kind === 'DisplayCard') execute({ type: 'layout.set', patch: { presetId: preset.id } }); message('Reusable presentation imported. Bindings now resolve against your own selected disc.'); } }
+  } catch (error) { message(error.cause?.message || error.message, true); }
+  event.target.value = ''; render();
+});
+const review = document.querySelector('neat-review');
+review.setAttribute('data-checklist', JSON.stringify(reviewItems));
+review.setAttribute('checkpoint-id', 'discstudio-pxc-02'); review.setAttribute('subject-commit', 'local-development');
+fetch(new URL('../build-info.json', import.meta.url)).then(r => r.ok ? r.json() : null).then(info => { if (info) { ui.build = info; review.setAttribute('submission-id', `discstudio-pxc-02-${info.fingerprint.slice(0, 16)}`); review.setAttribute('checkpoint-id', info.fingerprint); review.setAttribute('subject-commit', info.commit); render(); } }).catch(() => {});
+// Explicit developer inspection/command surface. UI and programmatic commands use the same registered Calculations.
+window.discStudio = { queue: () => ({ jobs: ui.queue, progress: queueProgress(ui.queue), running: ui.queueRunning }), lab: () => ({ state: runtime.lab.state(), views: runtime.lab.views(), selected: ui.labSelected, capture: ui.labCapture && { imageId: ui.labCapture.imageId, widthPx: ui.labCapture.widthPx, heightPx: ui.labCapture.heightPx }, run: ui.labRun?.composition?.PrincipleComponentRender ?? null }), runtime, renderRecordPage: async record => composePage({ ...await viewerSources(), record }), get world() { return runtime.world(); }, get preview() { return ui.lastResult; }, get shelf() { return runtime.shelf(shelfRequest()); }, get view() { return { route: ui.route, discId: ui.discId, bagId: ui.bagId, presetId: ui.presetId, nodeId: ui.nodeId, mode: ui.mode, adding: ui.adding && { ...ui.adding } }; }, cards: () => ui.lastCascade };
+syncRoute();

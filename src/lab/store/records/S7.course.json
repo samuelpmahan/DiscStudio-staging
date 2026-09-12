@@ -1,0 +1,1124 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S7.course",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Course.holeGeometry",
+      "invocations": [
+        {
+          "id": "px.exp.lab.course.holes",
+          "calculation": {
+            "address": "fn.lab.course.holegeometry",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "holes": "px:px.exp.lab.holes.straight",
+            "unresolved": "px:px.exp.lab.holes.unresolved",
+            "raster": "px:px.exp.lab.course.canonicalpixels"
+          },
+          "args": {},
+          "into": "px.exp.lab.course.holes",
+          "declared_consumes": [
+            "px:px.exp.lab.holes.straight",
+            "px:px.exp.lab.holes.unresolved",
+            "px:px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.holes.straight",
+            "px.exp.lab.holes.unresolved",
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_produces": [
+            "px.exp.lab.course.holes"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.course.holes",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "frame": {
+                "widthPx": 512,
+                "heightPx": 920
+              },
+              "order": [
+                1,
+                11
+              ],
+              "holes": [
+                {
+                  "number": 1,
+                  "badge": "badge-3",
+                  "basis": "tee-badge-ray-continued",
+                  "tee": {
+                    "id": "tee-3",
+                    "at": [
+                      329.5,
+                      510.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-3",
+                    "at": [
+                      330,
+                      691
+                    ]
+                  },
+                  "vector": [
+                    0.5,
+                    180.5
+                  ],
+                  "lengthPx": 180.501,
+                  "bearingDeg": 89.841,
+                  "residualPx": 0.5
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-2",
+                  "basis": "tee-badge-ray-continued",
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-1",
+                    "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "vector": [
+                    0.5,
+                    260.5
+                  ],
+                  "lengthPx": 260.5,
+                  "bearingDeg": 89.89,
+                  "residualPx": 0.5
+                }
+              ],
+              "unplayed": [
+                {
+                  "badge": "badge-1",
+                  "reading": "10",
+                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                },
+                {
+                  "badge": "badge-4",
+                  "reading": "11",
+                  "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                }
+              ],
+              "spare": {
+                "tees": [
+                  "tee-1",
+                  "tee-4",
+                  "tee-5"
+                ],
+                "baskets": [
+                  "basket-2",
+                  "basket-4"
+                ]
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Course.obstacleMap",
+      "invocations": [
+        {
+          "id": "px.exp.lab.course.obstacles",
+          "calculation": {
+            "address": "fn.lab.course.obstaclemap",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "remaining": "px:px.exp.lab.remaining.afterbadges",
+            "fields": "px:px.exp.lab.components",
+            "baskets": "px:px.exp.lab.baskets",
+            "tees": "px:px.exp.lab.tees",
+            "raster": "px:px.exp.lab.course.canonicalpixels"
+          },
+          "args": {
+            "cellPx": 16
+          },
+          "into": "px.exp.lab.course.obstacles",
+          "declared_consumes": [
+            "px:px.exp.lab.remaining.afterbadges",
+            "px:px.exp.lab.components",
+            "px:px.exp.lab.baskets",
+            "px:px.exp.lab.tees",
+            "px:px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.remaining.afterbadges",
+            "px.exp.lab.components",
+            "px.exp.lab.baskets",
+            "px.exp.lab.tees",
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_produces": [
+            "px.exp.lab.course.obstacles"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.course.obstacles",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "what is between the anchors: one class per pixel and per cell, derived from the Parts the Stages published and from nothing else",
+              "from": [
+                "px.exp.lab.remaining.afterbadges",
+                "px.exp.lab.components",
+                "px.exp.lab.baskets",
+                "px.exp.lab.tees"
+              ],
+              "frame": {
+                "cellPx": 16,
+                "cols": 32,
+                "rows": 58,
+                "cells": 1856,
+                "widthPx": 512,
+                "heightPx": 920
+              },
+              "classes": [
+                "terrain",
+                "basket",
+                "tee",
+                "badge",
+                "open"
+              ],
+              "priority": "a cell takes the first class present in it, in the order above",
+              "pixelsByClass": {
+                "terrain": 7538,
+                "basket": 11100,
+                "tee": 656,
+                "badge": 7200,
+                "open": 444546
+              },
+              "cellsByClass": {
+                "terrain": 69,
+                "basket": 73,
+                "tee": 17,
+                "badge": 45,
+                "open": 1652
+              },
+              "cells": [
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "tee",
+                "tee",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "tee",
+                "tee",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open",
+                "open"
+              ],
+              "terrain": {
+                "pixels": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "4c269c83531fd555ee18ec898aadfb2f0be8115958b5c189f4bb1a9c9bbb123d"
+                },
+                "cells": {
+                  "kind": "numbers",
+                  "length": 69,
+                  "sha256": "039b95b85a94326efde43dbfb7ec72bc9e02bae644be588c71b528d5e85c985a"
+                }
+              }
+            },
+            "note": "2 array(s) truncated to the first 200 entries; original lengths: [7538, 1856]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Course.walkable",
+      "invocations": [
+        {
+          "id": "px.exp.lab.course.walkable",
+          "calculation": {
+            "address": "fn.lab.course.walkable",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "obstacles": "px:px.exp.lab.course.obstacles"
+          },
+          "args": {},
+          "into": "px.exp.lab.course.walkable",
+          "declared_consumes": [
+            "px:px.exp.lab.course.obstacles"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.course.obstacles"
+          ],
+          "actual_produces": [
+            "px.exp.lab.course.walkable"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.course.walkable",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "rule": "every class but terrain: a badge, a basket and a tee are printed on the map, and a tee or a basket is where a leg ends",
+              "frame": {
+                "cellPx": 16,
+                "cols": 32,
+                "rows": 58,
+                "cells": 1856,
+                "widthPx": 512,
+                "heightPx": 920
+              },
+              "walkable": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+              },
+              "count": 1787,
+              "obstacleCells": {
+                "kind": "numbers",
+                "length": 69,
+                "sha256": "039b95b85a94326efde43dbfb7ec72bc9e02bae644be588c71b528d5e85c985a"
+              }
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [1856]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Course.graph",
+      "invocations": [
+        {
+          "id": "px.exp.lab.course.graph",
+          "calculation": {
+            "address": "fn.lab.course.graph",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "geometry": "px:px.exp.lab.course.holes",
+            "obstacles": "px:px.exp.lab.course.obstacles",
+            "walkable": "px:px.exp.lab.course.walkable"
+          },
+          "args": {
+            "course": "labfixture"
+          },
+          "into": "px.exp.lab.course.graph",
+          "declared_consumes": [
+            "px:px.exp.lab.course.holes",
+            "px:px.exp.lab.course.obstacles",
+            "px:px.exp.lab.course.walkable"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.course.holes",
+            "px.exp.lab.course.obstacles",
+            "px.exp.lab.course.walkable"
+          ],
+          "actual_produces": [
+            "px.exp.lab.course.graph"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.course.graph",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "the course as a graph over the canonical raster: which holes are in play, in what order, over what ground",
+              "course": "labfixture",
+              "frame": {
+                "cellPx": 16,
+                "cols": 32,
+                "rows": 58,
+                "cells": 1856,
+                "widthPx": 512,
+                "heightPx": 920
+              },
+              "walkableRule": "every class but terrain: a badge, a basket and a tee are printed on the map, and a tee or a basket is where a leg ends",
+              "order": [
+                1,
+                11
+              ],
+              "holes": [
+                {
+                  "number": 1,
+                  "badge": "badge-3",
+                  "basis": "tee-badge-ray-continued",
+                  "tee": {
+                    "id": "tee-3",
+                    "at": [
+                      329.5,
+                      510.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-3",
+                    "at": [
+                      330,
+                      691
+                    ]
+                  },
+                  "vector": [
+                    0.5,
+                    180.5
+                  ],
+                  "lengthPx": 180.501,
+                  "bearingDeg": 89.841,
+                  "residualPx": 0.5
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-2",
+                  "basis": "tee-badge-ray-continued",
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ]
+                  },
+                  "basket": {
+                    "id": "basket-1",
+                    "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "vector": [
+                    0.5,
+                    260.5
+                  ],
+                  "lengthPx": 260.5,
+                  "bearingDeg": 89.89,
+                  "residualPx": 0.5
+                }
+              ],
+              "nodes": [
+                {
+                  "id": "tee-3",
+                  "kind": "tee",
+                  "hole": 1,
+                  "at": [
+                    329.5,
+                    510.5
+                  ],
+                  "cell": 1012
+                },
+                {
+                  "id": "basket-3",
+                  "kind": "basket",
+                  "hole": 1,
+                  "at": [
+                    330,
+                    691
+                  ],
+                  "cell": 1396
+                },
+                {
+                  "id": "tee-2",
+                  "kind": "tee",
+                  "hole": 11,
+                  "at": [
+                    247.5,
+                    150.5
+                  ],
+                  "cell": 303
+                },
+                {
+                  "id": "basket-1",
+                  "kind": "basket",
+                  "hole": 11,
+                  "at": [
+                    248,
+                    411
+                  ],
+                  "cell": 815
+                }
+              ],
+              "edges": [
+                {
+                  "kind": "play",
+                  "hole": 1,
+                  "from": "tee-3",
+                  "to": "basket-3",
+                  "straightLengthPx": 180.501,
+                  "straightIsBlocked": false
+                },
+                {
+                  "kind": "walk",
+                  "hole": 11,
+                  "from": "basket-3",
+                  "to": "tee-2",
+                  "straightLengthPx": 546.76,
+                  "straightIsBlocked": false
+                },
+                {
+                  "kind": "play",
+                  "hole": 11,
+                  "from": "tee-2",
+                  "to": "basket-1",
+                  "straightLengthPx": 260.5,
+                  "straightIsBlocked": true
+                }
+              ],
+              "obstacles": {
+                "classes": [
+                  "terrain",
+                  "basket",
+                  "tee",
+                  "badge",
+                  "open"
+                ],
+                "cellsByClass": {
+                  "terrain": 69,
+                  "basket": 73,
+                  "tee": 17,
+                  "badge": 45,
+                  "open": 1652
+                },
+                "pixelsByClass": {
+                  "terrain": 7538,
+                  "basket": 11100,
+                  "tee": 656,
+                  "badge": 7200,
+                  "open": 444546
+                },
+                "cells": [
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "tee",
+                  "tee",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "tee",
+                  "tee",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open",
+                  "open"
+                ],
+                "terrainCells": {
+                  "kind": "numbers",
+                  "length": 69,
+                  "sha256": "039b95b85a94326efde43dbfb7ec72bc9e02bae644be588c71b528d5e85c985a"
+                }
+              },
+              "walkable": {
+                "cells": {
+                  "kind": "numbers",
+                  "length": 200,
+                  "sha256": "8fec771a7f38946b499599d9c9af61d08ed9d261a8c7085d351842645cd111ae"
+                },
+                "count": 1787
+              }
+            },
+            "note": "2 array(s) truncated to the first 200 entries; original lengths: [1856, 1856]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "name": "Course.summary",
+      "invocations": [
+        {
+          "id": "px.exp.lab.course.summary",
+          "calculation": {
+            "address": "fn.lab.course.summary",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "graph": "px:px.exp.lab.course.graph",
+            "geometry": "px:px.exp.lab.course.holes"
+          },
+          "args": {},
+          "into": "px.exp.lab.course.summary",
+          "declared_consumes": [
+            "px:px.exp.lab.course.graph",
+            "px:px.exp.lab.course.holes"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.course.graph",
+            "px.exp.lab.course.holes"
+          ],
+          "actual_produces": [
+            "px.exp.lab.course.summary"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.course.summary",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "the course in five numbers, and what is not in it",
+              "course": "labfixture",
+              "holes": 2,
+              "order": [
+                1,
+                11
+              ],
+              "from": "px.exp.lab.holes.straight",
+              "totalLengthPx": 441.001,
+              "longestHole": 11,
+              "blockedStraightLegs": [
+                "play:tee-2->basket-1"
+              ],
+              "cellPx": 16,
+              "walkableCells": 1787,
+              "obstacleCells": 69,
+              "unplayed": {
+                "doglegs": [
+                  {
+                    "badge": "badge-1",
+                    "reading": "10",
+                    "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                  },
+                  {
+                    "badge": "badge-4",
+                    "reading": "11",
+                    "why": "no tee points at this badge: the pads that could have are symmetric, so no end of them is the front"
+                  }
+                ],
+                "tees": [
+                  "tee-1",
+                  "tee-4",
+                  "tee-5"
+                ],
+                "baskets": [
+                  "basket-2",
+                  "basket-4"
+                ]
+              },
+              "residualPx": [
+                0.5,
+                0.5
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.holes.straight": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.holes"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.holes.unresolved": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.holes"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.canonicalpixels": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.holes",
+        "px.exp.lab.course.obstacles"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.holes": {
+      "written_by": "px.exp.lab.course.holes",
+      "read_by": [
+        "px.exp.lab.course.graph",
+        "px.exp.lab.course.summary"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.remaining.afterbadges": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.obstacles"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.components": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.obstacles"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.obstacles"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.course.obstacles"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.obstacles": {
+      "written_by": "px.exp.lab.course.obstacles",
+      "read_by": [
+        "px.exp.lab.course.walkable",
+        "px.exp.lab.course.graph"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.course.walkable": {
+      "written_by": "px.exp.lab.course.walkable",
+      "read_by": [
+        "px.exp.lab.course.graph"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.course.graph": {
+      "written_by": "px.exp.lab.course.graph",
+      "read_by": [
+        "px.exp.lab.course.summary"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.course.summary": {
+      "written_by": "px.exp.lab.course.summary",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 5,
+    "hits": 2,
+    "computed": 3,
+    "wall_ms": null
+  }
+}

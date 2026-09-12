@@ -1,0 +1,606 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S0",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Decode",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s0.local.decode",
+          "calculation": {
+            "address": "fn.lab.s0.decodefullimage",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "source": "px:px.exp.lab.source.selectedinput"
+          },
+          "args": {},
+          "into": "px.exp.lab.s0.local.decode",
+          "declared_consumes": [
+            "px:px.exp.lab.source.selectedinput"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.source.selectedinput"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s0.local.decode"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s0.local.decode",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "imageId": "lab-fixture-20260911-h11-obs-ovl-aln-aln2",
+              "widthPx": 512,
+              "heightPx": 1024,
+              "rgba": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "fe80edb05616e2c04a0ab91f1fcbb872290bc76dac2bd1f8c995ff3b74ca7625"
+              },
+              "sourceByteLength": 2097152,
+              "badges": [
+                {
+                  "reading": "10",
+                  "border": [
+                    120,
+                    300,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    126,
+                    304,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      132,
+                      310,
+                      6,
+                      20
+                    ],
+                    [
+                      148,
+                      310,
+                      12,
+                      20
+                    ]
+                  ],
+                  "loop": [
+                    151,
+                    313,
+                    6,
+                    14
+                  ]
+                },
+                {
+                  "reading": "01",
+                  "border": [
+                    300,
+                    620,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    306,
+                    624,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      312,
+                      630,
+                      12,
+                      20
+                    ],
+                    [
+                      328,
+                      630,
+                      6,
+                      20
+                    ]
+                  ],
+                  "loop": [
+                    315,
+                    633,
+                    6,
+                    14
+                  ]
+                },
+                {
+                  "reading": "11",
+                  "border": [
+                    380,
+                    180,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    386,
+                    184,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      392,
+                      190,
+                      6,
+                      20
+                    ],
+                    [
+                      408,
+                      190,
+                      6,
+                      20
+                    ]
+                  ],
+                  "loop": null
+                },
+                {
+                  "reading": "11",
+                  "border": [
+                    218,
+                    300,
+                    60,
+                    40
+                  ],
+                  "plate": [
+                    224,
+                    304,
+                    48,
+                    32
+                  ],
+                  "digits": [
+                    [
+                      230,
+                      310,
+                      6,
+                      20
+                    ],
+                    [
+                      246,
+                      310,
+                      6,
+                      20
+                    ]
+                  ],
+                  "loop": null
+                }
+              ],
+              "baskets": [
+                {
+                  "body": [
+                    150,
+                    470,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    146,
+                    466,
+                    50,
+                    74
+                  ]
+                },
+                {
+                  "body": [
+                    330,
+                    800,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    326,
+                    796,
+                    50,
+                    74
+                  ]
+                },
+                {
+                  "body": [
+                    227,
+                    420,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    223,
+                    416,
+                    50,
+                    74
+                  ]
+                },
+                {
+                  "body": [
+                    309,
+                    700,
+                    42,
+                    66
+                  ],
+                  "shell": [
+                    305,
+                    696,
+                    50,
+                    74
+                  ]
+                }
+              ],
+              "tees": [
+                {
+                  "frame": [
+                    60,
+                    250,
+                    16,
+                    26
+                  ],
+                  "hole": [
+                    62,
+                    252,
+                    12,
+                    22
+                  ],
+                  "nose": null,
+                  "points": null
+                },
+                {
+                  "frame": [
+                    420,
+                    560,
+                    16,
+                    26
+                  ],
+                  "hole": [
+                    422,
+                    562,
+                    12,
+                    22
+                  ],
+                  "nose": null,
+                  "points": null
+                },
+                {
+                  "frame": [
+                    470,
+                    120,
+                    16,
+                    26
+                  ],
+                  "hole": [
+                    472,
+                    122,
+                    12,
+                    22
+                  ],
+                  "nose": null,
+                  "points": null
+                },
+                {
+                  "frame": [
+                    240,
+                    180,
+                    16,
+                    30
+                  ],
+                  "hole": [
+                    242,
+                    182,
+                    12,
+                    22
+                  ],
+                  "nose": [
+                    245,
+                    206,
+                    6,
+                    4
+                  ],
+                  "points": [
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "frame": [
+                    322,
+                    540,
+                    16,
+                    30
+                  ],
+                  "hole": [
+                    324,
+                    542,
+                    12,
+                    22
+                  ],
+                  "nose": [
+                    327,
+                    566,
+                    6,
+                    4
+                  ],
+                  "points": [
+                    0,
+                    1
+                  ]
+                }
+              ],
+              "obstacle": {
+                "x": 0,
+                "y": 380,
+                "width": 264,
+                "height": 16
+              },
+              "occluded": [
+                {
+                  "kind": "badge",
+                  "of": "11",
+                  "bbox": [
+                    380,
+                    180,
+                    60,
+                    40
+                  ],
+                  "how": "the white border ring cut top and bottom; the dark plate untouched"
+                },
+                {
+                  "kind": "basket",
+                  "of": "basket-2",
+                  "bbox": [
+                    330,
+                    800,
+                    42,
+                    66
+                  ],
+                  "how": "a white tab fused to the body, so its component is no longer the sprite's exact bbox; the dark shell untouched"
+                },
+                {
+                  "kind": "tee",
+                  "of": "tee at 60,250",
+                  "bbox": [
+                    60,
+                    250,
+                    16,
+                    26
+                  ],
+                  "how": "a notch through the top wall wider than the detector can dilate closed, so the hole leaks to the background; the frame component keeps its bbox"
+                }
+              ],
+              "aligned": {
+                "tee": [
+                  240,
+                  180
+                ],
+                "badge": [
+                  218,
+                  300
+                ],
+                "basket": [
+                  227,
+                  420
+                ],
+                "reading": "11",
+                "axisX": 248
+              },
+              "aligned2": {
+                "tee": [
+                  322,
+                  540
+                ],
+                "basket": [
+                  309,
+                  700
+                ],
+                "reading": "01",
+                "axisX": 330
+              }
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [2097152]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Crop",
+      "invocations": [
+        {
+          "id": "px.exp.lab.source.cropbounds",
+          "calculation": {
+            "address": "fn.lab.s0.findchromebounds",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "image": "px:px.exp.lab.s0.local.decode"
+          },
+          "args": {},
+          "into": "px.exp.lab.source.cropbounds",
+          "declared_consumes": [
+            "px:px.exp.lab.s0.local.decode"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s0.local.decode"
+          ],
+          "actual_produces": [
+            "px.exp.lab.source.cropbounds"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.source.cropbounds",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "insets": {
+                "top": 42,
+                "right": 0,
+                "bottom": 62,
+                "left": 0
+              },
+              "source": "single-phone-entropy"
+            },
+            "note": null
+          }
+        },
+        {
+          "id": "px.exp.lab.course.canonicalpixels",
+          "calculation": {
+            "address": "fn.lab.s0.applycrop",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "image": "px:px.exp.lab.s0.local.decode",
+            "bounds": "px:px.exp.lab.source.cropbounds"
+          },
+          "args": {},
+          "into": "px.exp.lab.course.canonicalpixels",
+          "declared_consumes": [
+            "px:px.exp.lab.s0.local.decode",
+            "px:px.exp.lab.source.cropbounds"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s0.local.decode",
+            "px.exp.lab.source.cropbounds"
+          ],
+          "actual_produces": [
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.course.canonicalpixels",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "imageId": "composite:b2896681fea6472938",
+              "widthPx": 512,
+              "heightPx": 920,
+              "rgba": {
+                "kind": "numbers",
+                "length": 200,
+                "sha256": "6ce11b9d57068df5dc6226e96b00d631839c67288cca8fb798cf55f43373c8c9"
+              }
+            },
+            "note": "1 array(s) truncated to the first 200 entries; original lengths: [1884160]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Cache",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s0.cachereceipt",
+          "calculation": {
+            "address": "fn.lab.s0.cachefullimage",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "image": "px:px.exp.lab.s0.local.decode"
+          },
+          "args": {},
+          "into": "px.exp.lab.s0.cachereceipt",
+          "declared_consumes": [
+            "px:px.exp.lab.s0.local.decode"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s0.local.decode"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s0.cachereceipt"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s0.cachereceipt",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "cached": "lab-fixture-20260911-h11-obs-ovl-aln-aln2",
+              "at": "last",
+              "widthPx": 512,
+              "heightPx": 1024
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.source.selectedinput": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s0.local.decode"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s0.local.decode": {
+      "written_by": "px.exp.lab.s0.local.decode",
+      "read_by": [
+        "px.exp.lab.source.cropbounds",
+        "px.exp.lab.course.canonicalpixels",
+        "px.exp.lab.s0.cachereceipt"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.source.cropbounds": {
+      "written_by": "px.exp.lab.source.cropbounds",
+      "read_by": [
+        "px.exp.lab.course.canonicalpixels"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.course.canonicalpixels": {
+      "written_by": "px.exp.lab.course.canonicalpixels",
+      "read_by": [],
+      "preexisting": false
+    },
+    "px.exp.lab.s0.cachereceipt": {
+      "written_by": "px.exp.lab.s0.cachereceipt",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 4,
+    "hits": 1,
+    "computed": 3,
+    "wall_ms": null
+  }
+}

@@ -1,0 +1,771 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "route-labfixture",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "Anchors",
+      "invocations": [
+        {
+          "id": "px.exp.lab.route.anchors",
+          "calculation": {
+            "address": "fn.lab.route.anchors",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "badges": "px:px.exp.lab.badges.objects",
+            "baskets": "px:px.exp.lab.baskets",
+            "tees": "px:px.exp.lab.tees",
+            "raster": "px:px.exp.lab.course.canonicalpixels"
+          },
+          "args": {},
+          "into": "px.exp.lab.route.anchors",
+          "declared_consumes": [
+            "px:px.exp.lab.badges.objects",
+            "px:px.exp.lab.baskets",
+            "px:px.exp.lab.tees",
+            "px:px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.badges.objects",
+            "px.exp.lab.baskets",
+            "px.exp.lab.tees",
+            "px.exp.lab.course.canonicalpixels"
+          ],
+          "actual_produces": [
+            "px.exp.lab.route.anchors"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.route.anchors",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "frame": {
+                "width": 512,
+                "height": 920
+              },
+              "badges": [
+                {
+                  "id": "badge-candidate:black-component-5:white-component-8",
+                  "reading": "10",
+                  "status": "read",
+                  "bbox": [
+                    120,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    150,
+                    278
+                  ]
+                },
+                {
+                  "id": "badge-candidate:black-component-6:white-component-9",
+                  "reading": "11",
+                  "status": "read",
+                  "bbox": [
+                    218,
+                    258,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    248,
+                    278
+                  ]
+                },
+                {
+                  "id": "badge-candidate:black-component-11:white-component-18",
+                  "reading": "01",
+                  "status": "read",
+                  "bbox": [
+                    300,
+                    578,
+                    60,
+                    40
+                  ],
+                  "at": [
+                    330,
+                    598
+                  ]
+                }
+              ],
+              "baskets": [
+                {
+                  "id": "basket-1",
+                  "bbox": [
+                    223,
+                    374,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    248,
+                    411
+                  ]
+                },
+                {
+                  "id": "basket-2",
+                  "bbox": [
+                    146,
+                    424,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    171,
+                    461
+                  ]
+                },
+                {
+                  "id": "basket-3",
+                  "bbox": [
+                    305,
+                    654,
+                    50,
+                    74
+                  ],
+                  "at": [
+                    330,
+                    691
+                  ]
+                }
+              ],
+              "tees": [
+                {
+                  "id": "tee-1",
+                  "bbox": [
+                    470,
+                    78,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    477.5,
+                    90.5
+                  ]
+                },
+                {
+                  "id": "tee-2",
+                  "bbox": [
+                    240,
+                    138,
+                    16,
+                    30
+                  ],
+                  "at": [
+                    247.5,
+                    150.5
+                  ]
+                },
+                {
+                  "id": "tee-3",
+                  "bbox": [
+                    322,
+                    498,
+                    16,
+                    30
+                  ],
+                  "at": [
+                    329.5,
+                    510.5
+                  ]
+                },
+                {
+                  "id": "tee-4",
+                  "bbox": [
+                    420,
+                    518,
+                    16,
+                    26
+                  ],
+                  "at": [
+                    427.5,
+                    530.5
+                  ]
+                }
+              ]
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Order",
+      "invocations": [
+        {
+          "id": "px.exp.lab.route.order",
+          "calculation": {
+            "address": "fn.lab.route.order",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "anchors": "px:px.exp.lab.route.anchors"
+          },
+          "args": {},
+          "into": "px.exp.lab.route.order",
+          "declared_consumes": [
+            "px:px.exp.lab.route.anchors"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.route.anchors"
+          ],
+          "actual_produces": [
+            "px.exp.lab.route.order"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.route.order",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "holes": [
+                {
+                  "number": 1,
+                  "badge": "badge-candidate:black-component-11:white-component-18",
+                  "at": [
+                    330,
+                    598
+                  ],
+                  "tee": {
+                    "id": "tee-3",
+                    "at": [
+                      329.5,
+                      510.5
+                    ],
+                    "gapFromBadgePx": 87.501
+                  },
+                  "basket": {
+                    "id": "basket-3",
+                    "at": [
+                      330,
+                      691
+                    ],
+                    "gapFromBadgePx": 93
+                  }
+                },
+                {
+                  "number": 10,
+                  "badge": "badge-candidate:black-component-5:white-component-8",
+                  "at": [
+                    150,
+                    278
+                  ],
+                  "tee": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ],
+                    "gapFromBadgePx": 160.507
+                  },
+                  "basket": {
+                    "id": "basket-1",
+                    "at": [
+                      248,
+                      411
+                    ],
+                    "gapFromBadgePx": 165.206
+                  }
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-candidate:black-component-6:white-component-9",
+                  "at": [
+                    248,
+                    278
+                  ],
+                  "tee": {
+                    "id": "tee-1",
+                    "at": [
+                      477.5,
+                      90.5
+                    ],
+                    "gapFromBadgePx": 296.355
+                  },
+                  "basket": {
+                    "id": "basket-2",
+                    "at": [
+                      171,
+                      461
+                    ],
+                    "gapFromBadgePx": 198.54
+                  }
+                }
+              ],
+              "unreadable": [],
+              "unbound": {
+                "tees": [
+                  "tee-4"
+                ],
+                "baskets": []
+              },
+              "incomplete": []
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Route",
+      "invocations": [
+        {
+          "id": "px.exp.lab.route.legs",
+          "calculation": {
+            "address": "fn.lab.route.route",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "order": "px:px.exp.lab.route.order",
+            "anchors": "px:px.exp.lab.route.anchors"
+          },
+          "args": {},
+          "into": "px.exp.lab.route.legs",
+          "declared_consumes": [
+            "px:px.exp.lab.route.order",
+            "px:px.exp.lab.route.anchors"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.route.order",
+            "px.exp.lab.route.anchors"
+          ],
+          "actual_produces": [
+            "px.exp.lab.route.legs"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.route.legs",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": [
+              {
+                "kind": "play",
+                "hole": 1,
+                "from": {
+                  "id": "tee-3",
+                  "at": [
+                    329.5,
+                    510.5
+                  ]
+                },
+                "to": {
+                  "id": "basket-3",
+                  "at": [
+                    330,
+                    691
+                  ]
+                },
+                "lengthPx": 180.501
+              },
+              {
+                "kind": "walk",
+                "hole": 10,
+                "from": {
+                  "id": "basket-3",
+                  "at": [
+                    330,
+                    691
+                  ]
+                },
+                "to": {
+                  "id": "tee-2",
+                  "at": [
+                    247.5,
+                    150.5
+                  ]
+                },
+                "lengthPx": 546.76
+              },
+              {
+                "kind": "play",
+                "hole": 10,
+                "from": {
+                  "id": "tee-2",
+                  "at": [
+                    247.5,
+                    150.5
+                  ]
+                },
+                "to": {
+                  "id": "basket-1",
+                  "at": [
+                    248,
+                    411
+                  ]
+                },
+                "lengthPx": 260.5
+              },
+              {
+                "kind": "walk",
+                "hole": 11,
+                "from": {
+                  "id": "basket-1",
+                  "at": [
+                    248,
+                    411
+                  ]
+                },
+                "to": {
+                  "id": "tee-1",
+                  "at": [
+                    477.5,
+                    90.5
+                  ]
+                },
+                "lengthPx": 394.196
+              },
+              {
+                "kind": "play",
+                "hole": 11,
+                "from": {
+                  "id": "tee-1",
+                  "at": [
+                    477.5,
+                    90.5
+                  ]
+                },
+                "to": {
+                  "id": "basket-2",
+                  "at": [
+                    171,
+                    461
+                  ]
+                },
+                "lengthPx": 480.846
+              }
+            ],
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Settle",
+      "invocations": [
+        {
+          "id": "px.exp.lab.route.labfixture",
+          "calculation": {
+            "address": "fn.lab.route.settle",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "legs": "px:px.exp.lab.route.legs",
+            "order": "px:px.exp.lab.route.order",
+            "anchors": "px:px.exp.lab.route.anchors"
+          },
+          "args": {
+            "course": "labfixture"
+          },
+          "into": "px.exp.lab.route.labfixture",
+          "declared_consumes": [
+            "px:px.exp.lab.route.legs",
+            "px:px.exp.lab.route.order",
+            "px:px.exp.lab.route.anchors"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.route.legs",
+            "px.exp.lab.route.order",
+            "px.exp.lab.route.anchors"
+          ],
+          "actual_produces": [
+            "px.exp.lab.route.labfixture"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.route.labfixture",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": false,
+          "value": {
+            "kind": "json",
+            "data": {
+              "for": "a round over one course, ordered by the badge numbers S1 read and anchored on the tees and baskets S3 and S2 found",
+              "course": "labfixture",
+              "objective": "play the holes in badge order: each hole tee to basket, then basket to the next hole tee, over the canonical raster",
+              "from": [
+                "px.exp.lab.badges.objects",
+                "px.exp.lab.baskets",
+                "px.exp.lab.tees"
+              ],
+              "holes": [
+                {
+                  "number": 1,
+                  "badge": "badge-candidate:black-component-11:white-component-18",
+                  "tee": "tee-3",
+                  "basket": "basket-3"
+                },
+                {
+                  "number": 10,
+                  "badge": "badge-candidate:black-component-5:white-component-8",
+                  "tee": "tee-2",
+                  "basket": "basket-1"
+                },
+                {
+                  "number": 11,
+                  "badge": "badge-candidate:black-component-6:white-component-9",
+                  "tee": "tee-1",
+                  "basket": "basket-2"
+                }
+              ],
+              "waypoints": [
+                {
+                  "id": "tee-3",
+                  "at": [
+                    329.5,
+                    510.5
+                  ]
+                },
+                {
+                  "id": "basket-3",
+                  "at": [
+                    330,
+                    691
+                  ]
+                },
+                {
+                  "id": "tee-2",
+                  "at": [
+                    247.5,
+                    150.5
+                  ]
+                },
+                {
+                  "id": "basket-1",
+                  "at": [
+                    248,
+                    411
+                  ]
+                },
+                {
+                  "id": "tee-1",
+                  "at": [
+                    477.5,
+                    90.5
+                  ]
+                },
+                {
+                  "id": "basket-2",
+                  "at": [
+                    171,
+                    461
+                  ]
+                }
+              ],
+              "legs": [
+                {
+                  "kind": "play",
+                  "hole": 1,
+                  "from": {
+                    "id": "tee-3",
+                    "at": [
+                      329.5,
+                      510.5
+                    ]
+                  },
+                  "to": {
+                    "id": "basket-3",
+                    "at": [
+                      330,
+                      691
+                    ]
+                  },
+                  "lengthPx": 180.501
+                },
+                {
+                  "kind": "walk",
+                  "hole": 10,
+                  "from": {
+                    "id": "basket-3",
+                    "at": [
+                      330,
+                      691
+                    ]
+                  },
+                  "to": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ]
+                  },
+                  "lengthPx": 546.76
+                },
+                {
+                  "kind": "play",
+                  "hole": 10,
+                  "from": {
+                    "id": "tee-2",
+                    "at": [
+                      247.5,
+                      150.5
+                    ]
+                  },
+                  "to": {
+                    "id": "basket-1",
+                    "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "lengthPx": 260.5
+                },
+                {
+                  "kind": "walk",
+                  "hole": 11,
+                  "from": {
+                    "id": "basket-1",
+                    "at": [
+                      248,
+                      411
+                    ]
+                  },
+                  "to": {
+                    "id": "tee-1",
+                    "at": [
+                      477.5,
+                      90.5
+                    ]
+                  },
+                  "lengthPx": 394.196
+                },
+                {
+                  "kind": "play",
+                  "hole": 11,
+                  "from": {
+                    "id": "tee-1",
+                    "at": [
+                      477.5,
+                      90.5
+                    ]
+                  },
+                  "to": {
+                    "id": "basket-2",
+                    "at": [
+                      171,
+                      461
+                    ]
+                  },
+                  "lengthPx": 480.846
+                }
+              ],
+              "playLengthPx": 921.847,
+              "walkLengthPx": 940.956,
+              "totalLengthPx": 1862.803,
+              "unplaced": {
+                "badges": [],
+                "tees": [
+                  "tee-4"
+                ],
+                "baskets": [],
+                "incompleteHoles": []
+              }
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.badges.objects": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.route.anchors"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.baskets": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.route.anchors"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.tees": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.route.anchors"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.canonicalpixels": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.route.anchors"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.route.anchors": {
+      "written_by": "px.exp.lab.route.anchors",
+      "read_by": [
+        "px.exp.lab.route.order",
+        "px.exp.lab.route.legs",
+        "px.exp.lab.route.labfixture"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.route.order": {
+      "written_by": "px.exp.lab.route.order",
+      "read_by": [
+        "px.exp.lab.route.legs",
+        "px.exp.lab.route.labfixture"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.route.legs": {
+      "written_by": "px.exp.lab.route.legs",
+      "read_by": [
+        "px.exp.lab.route.labfixture"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.route.labfixture": {
+      "written_by": "px.exp.lab.route.labfixture",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 4,
+    "hits": 1,
+    "computed": 3,
+    "wall_ms": null
+  }
+}

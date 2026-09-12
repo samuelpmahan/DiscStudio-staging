@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "rounds": 7,
+  "warmup": 5,
+  "coldIterations": 3,
+  "warmIterations": 15,
+  "primary": "card-broadcast/warm",
+  "minimumImprovement": 0.05,
+  "minimumWinningRounds": 6,
+  "maximumRegression": 0.10,
+  "viewport": { "width": 1920, "height": 1080 },
+  "deviceScaleFactor": 1
+}

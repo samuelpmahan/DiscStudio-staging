@@ -1,0 +1,4 @@
+{
+  "pointing": { "minLeanPx": 0.5 },
+  "castRay": { "stepPx": 1 }
+}

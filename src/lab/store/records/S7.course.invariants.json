@@ -1,0 +1,224 @@
+{
+  "schema": "pyto-run-record@1",
+  "pcr": "S7.course.invariants",
+  "source": {
+    "runtime": "discstudio",
+    "version": null,
+    "commit": null
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "name": "AccountCourse",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s7.courseledger",
+          "calculation": {
+            "address": "fn.lab.s7.accountcourse",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "obstacles": "px:px.exp.lab.course.obstacles",
+            "walkable": "px:px.exp.lab.course.walkable",
+            "graph": "px:px.exp.lab.course.graph",
+            "geometry": "px:px.exp.lab.course.holes"
+          },
+          "args": {},
+          "into": "px.exp.lab.s7.courseledger",
+          "declared_consumes": [
+            "px:px.exp.lab.course.obstacles",
+            "px:px.exp.lab.course.walkable",
+            "px:px.exp.lab.course.graph",
+            "px:px.exp.lab.course.holes"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.course.obstacles",
+            "px.exp.lab.course.walkable",
+            "px.exp.lab.course.graph",
+            "px.exp.lab.course.holes"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s7.courseledger"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s7.courseledger",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "pixels": 471040,
+              "pixelsInFrame": 471040,
+              "cells": 1856,
+              "cellsByClass": {
+                "terrain": 69,
+                "basket": 73,
+                "tee": 17,
+                "badge": 45,
+                "open": 1652
+              },
+              "walkableCells": 1787,
+              "obstacleCells": 69,
+              "holes": 2,
+              "unplayed": 2,
+              "anchors": 4,
+              "edges": 3
+            },
+            "note": null
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "CheckCourse",
+      "invocations": [
+        {
+          "id": "px.exp.lab.s7.coursecheck",
+          "calculation": {
+            "address": "fn.lab.s7.checkcourse",
+            "implementation_sha256": null,
+            "identity_scope": "registered-address-and-revision:1"
+          },
+          "inputs": {
+            "ledger": "px:px.exp.lab.s7.courseledger",
+            "graph": "px:px.exp.lab.course.graph",
+            "holes": "px:px.exp.lab.holes.straight",
+            "obstacles": "px:px.exp.lab.course.obstacles",
+            "summary": "px:px.exp.lab.course.summary"
+          },
+          "args": {},
+          "into": "px.exp.lab.s7.coursecheck",
+          "declared_consumes": [
+            "px:px.exp.lab.s7.courseledger",
+            "px:px.exp.lab.course.graph",
+            "px:px.exp.lab.holes.straight",
+            "px:px.exp.lab.course.obstacles",
+            "px:px.exp.lab.course.summary"
+          ],
+          "actual_consumes": [
+            "px.exp.lab.s7.courseledger",
+            "px.exp.lab.course.graph",
+            "px.exp.lab.holes.straight",
+            "px.exp.lab.course.obstacles",
+            "px.exp.lab.course.summary"
+          ],
+          "actual_produces": [
+            "px.exp.lab.s7.coursecheck"
+          ],
+          "writes": [
+            {
+              "address": "px.exp.lab.s7.coursecheck",
+              "kind": "new-address"
+            }
+          ],
+          "duration_ms": null,
+          "result_sha256": null,
+          "hit": true,
+          "value": {
+            "kind": "json",
+            "data": {
+              "pixels": 471040,
+              "pixelsInFrame": 471040,
+              "cells": 1856,
+              "cellsByClass": {
+                "terrain": 69,
+                "basket": 73,
+                "tee": 17,
+                "badge": 45,
+                "open": 1652
+              },
+              "walkableCells": 1787,
+              "obstacleCells": 69,
+              "holes": 2,
+              "unplayed": 2,
+              "anchors": 4,
+              "edges": 3,
+              "checks": {
+                "anchorsInsideTheRaster": true,
+                "everyPixelLeavesOnce": true,
+                "theMapIsAPartition": true,
+                "terrainIsWhatNoStageOwns": true,
+                "playOrderIsTheStraightHoleOrder": true,
+                "everyEdgeIsAnchored": true,
+                "everyDoglegIsNamedNotRouted": true
+              },
+              "balanced": true
+            },
+            "note": null
+          }
+        }
+      ]
+    }
+  ],
+  "parts": {
+    "px.exp.lab.course.obstacles": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.courseledger",
+        "px.exp.lab.s7.coursecheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.walkable": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.courseledger"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.graph": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.courseledger",
+        "px.exp.lab.s7.coursecheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.holes": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.courseledger"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s7.courseledger": {
+      "written_by": "px.exp.lab.s7.courseledger",
+      "read_by": [
+        "px.exp.lab.s7.coursecheck"
+      ],
+      "preexisting": false
+    },
+    "px.exp.lab.holes.straight": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.coursecheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.course.summary": {
+      "written_by": null,
+      "read_by": [
+        "px.exp.lab.s7.coursecheck"
+      ],
+      "preexisting": true
+    },
+    "px.exp.lab.s7.coursecheck": {
+      "written_by": "px.exp.lab.s7.coursecheck",
+      "read_by": [],
+      "preexisting": false
+    }
+  },
+  "counters": {
+    "invocations": 2,
+    "hits": 2,
+    "computed": 0,
+    "wall_ms": null
+  }
+}

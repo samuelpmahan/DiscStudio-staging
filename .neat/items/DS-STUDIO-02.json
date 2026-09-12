@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "id": "DS-STUDIO-02",
+  "outcome": "A linked, instrumented DiscStudio with editable domain-bound presentations and reusable competition Constraints.",
+  "location": {
+    "component": "DiscStudio"
+  },
+  "target": {
+    "kind": "pcr",
+    "identity": "pcr.on-the-course"
+  },
+  "requirements": [
+    {
+      "id": "experiences",
+      "text": "Load open-ended Experience Parts under px.studio.<experience>.*, sharing UDS requirements across photo and paint specializations",
+      "reviewRoute": "Read docs/experiences.md and CLOUD-START.md. Inspect px.studio.experiences and px.studio.uds.* on the existing board. Review the common frame followed by one Experience at a time, starting with UDS and three existing painters.",
+      "verification": "Definition Parts now load through createStudioRuntime. Three focused tests cover no domain mutation on loading, ordinary PQL prefix discovery, and repeatable rendering of a created specimen without a photo. The cloud bundle script captures working source, including uncommitted files, with byte hashes. UI specializations, persistent Experience contexts and the remaining Experience integrations are explicitly future work. Human acceptance remains unset."
+    },
+    {
+      "id": "identity",
+      "text": "Manufacturer + mold + physical disc identity"
+    },
+    {
+      "id": "bags",
+      "text": "Named bags use shared physical-disc references"
+    },
+    {
+      "id": "persistence",
+      "text": "Drafts, photos and changes survive reload"
+    },
+    {
+      "id": "bindings",
+      "text": "Every field is discoverable; identity text is editable"
+    },
+    {
+      "id": "reuse",
+      "text": "One presentation works for Single and DiscBattle"
+    },
+    {
+      "id": "footage",
+      "text": "Compose on footage, export a transparent overlay"
+    },
+    {
+      "id": "states",
+      "text": "Independent states, scores, highlights and winner"
+    },
+    {
+      "id": "constraints",
+      "text": "PutterWarz composes reusable rules"
+    },
+    {
+      "id": "trace",
+      "text": "Real PQL path and memoized Parts are inspectable",
+      "reviewRoute": "Components (#/components?trace=1): inspect px.render.*.art/card/svg and px.memo.*. For the opt-in Node shadow pilot, read experiments/shadow-render/README.md, then evidence/shadow-render/control/REPORT.md, events.json and addressed Parts. Follow a primary delivery, its later mismatch and the next request selecting reference. The original runtime tradeoff remains in experiments/card-render/RESULTS.md.",
+      "verification": "Shadow pilot: 26 checked requests agree on JSON outputs/SVG, excluding only the top-level execution receipt. A labelled negative control produces one mismatch and 25 subsequent reference deliveries. Burst capacity and expired deadlines are explicitly recorded, not counted as agreement. Twelve focused tests pass; final suite logs and exact source are under evidence/shadow-render/verification. Separate workers use preserved sources; no new store or renderer, no Studio UI/export default change, deployment, pixel-parity claim or human acceptance."
+    },
+    {
+      "id": "feedback",
+      "text": "Item comments persist and export with checkpoint identity"
+    },
+    {
+      "id": "record",
+      "text": "The composition exports its own pyto-run-record@1 and opens a Tick render",
+      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cExport run record \u2193\u201d, expect a downloaded pyto-run-record@1 the shared validator accepted and the Part px.run.on-the-course (14 Ticks, one invocation per PQL Calculation); press \u201cOpen Tick render \u2197\u201d, expect a saved standalone page that opens over file:// with no server and shows one section per Tick.",
+      "verification": "Verified by npm test (tests/core.test.js: the record validates, one Tick per composition Tick, the receipt's material digests reach it, composePage's page round-trips the record and renders one section per Tick), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose new block drives the studio on a real local origin and opens the saved page over file:// with zero network requests. Deployed build: scripts/build.mjs now copies pyto/viewer/ into dist/ because src/app.js and src/runtime.js import it directly; npm run build confirms dist/pyto/viewer/ exists. The deployed page itself has not been opened in a browser. Automated verification only; no human acceptance is recorded."
+    },
+    {
+      "id": "receipts",
+      "text": "The studio reads its own receipts through PQL, and undo is one more Calculation on the record",
+      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cInspect PxC \u2197\u201d and read the Receipts section, expect one row per px.receipt.* Part with its name, consumes, produces and result digest; on the Shelf, press \u201c\u21b6 Undo last change\u201d, expect the exact previous workspace back and a studio-undo row in that same list.",
+      "verification": "Verified by npm test (tests/core.test.js: `into` may be an array and both Parts are published or neither is, the px.receipt.* prefix query is answered sorted, the Receipts rows and summary are the two Parts one Calculation publishes, push/pop restores the exact previous value, a pop on an empty stack is a recorded no-op, and the run record carries the undo invocations), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose eleventh check drives the Undo button and compares the rendered rows against px.receipt.* in the store and whose twelfth runs the sample composition with parallel: true, reads parallel, placement, latency_ms and budget off the exported record and checks the Tick page draws that Tick's branches on one row. scripts/review_checkpoint.mjs pins the count at 12. Automated verification only; no human acceptance is recorded."
+    },
+    {
+      "id": "frame",
+      "text": "Landscape and vertical export frames"
+    },
+    {
+      "id": "id3-digits",
+      "text": "ID3 learns pixel questions from visible labelled digits, with actual split diagrams and retained tree history",
+      "reviewRoute": "Open /public/algorithm-references/index.html#digit-lab. Each node is one card in the full-screen tree, containing its sample pile and question. Score then split: the first three cards fit at 1437×789. Compare questions opens a top-right dialog; preview another pixel and confirm the main tree stays unchanged. Try a digit and Inspect open their own dialogs. Escape/close returns focus. Back/scrub inspect retained models; zoom, Fit tree and Current node navigate larger trees.",
+      "verification": "262 package tests pass; six focused ID3 tests also pass after the candidate-recommendation refinement. Checks include independent root gain/membership, zero-gain XOR, deterministic ties, absent future splits, retained records and input immutability. Local full learner: 50 Ticks, 25 nodes, training 30/30 and disjoint held-out 10/20; these small teaching sets are not a general accuracy claim. Bounded reduced-motion Chrome profiling measured one HTML replacement and 7 height flushes by Tick 6 after removing redundant renders, versus three replacements and 19 flushes before; timings are directional evidence, not machine-specific gates. Browser results, screenshots and the exact served build fingerprint are retained in test-results/algorithm-references-id3/verification.json. Automated evidence does not constitute human acceptance."
+    },
+    {
+      "id": "algorithm-references",
+      "text": "Next executes one algorithm Tick through existing PxC/PQL; retained Frames and records show actual produced Parts",
+      "reviewRoute": "Open /public/algorithm-references/index.html. Default perceptron: first Next shows products 1 and -1, weighted sum 0.25 and no activation/output; second Next shows output 1. Back/scrub review without executing. Change bias to -1 to fork; Play produces 0 while the old output stays 1. Prepare the four-step tree and five-step transformer; inspect Part addresses and query-row/attended-token-column attention, then export or replay the record at a retained frame.",
+      "verification": "256 package tests, 142 shared viewer tests and the headless Chrome reference harness pass; build passes. Tests cover one-Tick Next, rapid clicks, absent future Parts, step-all/run-all agreement, retained history/forks, Play, actual Part values, valid partial exports and shared replay. Screenshots/records and the served build fingerprint are in test-results/algorithm-references-live; source base is 455f66db91fc34ac0d8d32b66aa6ccbef224b774 plus uncommitted work on codex/card-render-experiment. Package scripts used the bundled runtime; viewer checks used current Python. The separate legacy Studio Python browser harness lacks playwright in this environment. History is page-lifetime; LAB invocation durations/digests remain null when unavailable. Automated verification only; no human acceptance."
+    }
+  ],
+  "dependencies": [],
+  "agent": "Astra direct implementation",
+  "status": "review",
+  "blockers": [],
+  "checkpoints": [
+    {
+      "id": "signature-intervention",
+      "summary": "Controlled eager-versus-lazy content-signature intervention with separate signature-work counting and bounded sequential fixture timing.",
+      "verification": "See experiments/signature-intervention/README.md, evidence/signature-intervention/run-03, and verification-05. run-03 edited worlds differ because each arm's dispatch generated its own event ID/time, so those rows are not parity evidence. verification-05 captures explicit shared event values once, retains both runRecord receipts, and has 39/39 PQL-compared JSON-visible/SVG observations plus output-neutral instrumented copies. No promotion or universal claim.",
+      "acceptance": null
+    },
+    {
+      "id": "algorithm-references",
+      "summary": "Live one-Tick execution shared by the perceptron, decision tree and fixed-weight tiny transformer, with Session, Step and Frame Parts and retained fork history.",
+      "verification": "Review /public/algorithm-references/index.html and docs/algorithm-references.md. Existing LAB executes each one-Tick document with a unique receipt; fn.lab.reference.frame projects existing Parts. Shared record replay stays separate from live execution. 256 package tests, 142 viewer tests and the headless reference browser checks pass. See test-results/algorithm-references-live for screenshots, records and source fingerprint. No human acceptance.",
+      "acceptance": null
+    },
+    {
+      "id": "shadow-render-pilot",
+      "summary": "Candidate-first delivery, sampled reference checking and session-local fallback expressed as addressed observations and decisions through existing PxC/PQL.",
+      "verification": "See experiments/shadow-render/README.md and evidence/shadow-render/verification. Successful, deliberately mismatched, overloaded and timed-out runs are retained separately. This is an opt-in Node pilot, not an app default or an exhaustive oracle.",
+      "acceptance": null
+    },
+    {
+      "id": "guided-experiments-candidate",
+      "summary": "A local capture/profile/compare lever plus scoped neat replay and measurement repairs. The runtime optimization remains experimental, with its cold/warm tradeoff retained.",
+      "verification": "See experiments/card-render/RESULTS.md and evidence/card-render/verification. Evidence includes unsuccessful attempts; a reporting command's exit code is not Sam's acceptance.",
+      "acceptance": null
+    },
+    {
+      "id": "astra-discstudio-1",
+      "summary": "Ported painter disc-art Calculation and deterministic shelf-sheet Calculation are available for review.",
+      "verification": "npm test and build passed in the integration workspace; embedded browser verification could not start because Playwright is unavailable in the runtime.",
+      "acceptance": null
+    },
+    {
+      "id": "exp-42-whole-record",
+      "summary": "Several `into` per Calculation and a px.receipt.* prefix query in the PQL grammar; a Receipts section on Inspect built from them; px.undo.<scope> with fn.undo.push/pop/settle and an Undo button on the Shelf card.",
+      "verification": "npm test, node --test pyto/viewer/test/*.test.mjs and scripts/browser_test.py --embedded all pass; the browser checks are now 12 and scripts/review_checkpoint.mjs pins that count.",
+      "acceptance": null
+    }
+  ],
+  "acceptanceRefs": [],
+  "promotionRefs": [],
+  "resume": "CI emits an exact-commit item/submission under dist/review after fresh tests. Review each item in the in-app neat checklist, export comments, and address those items. No human acceptance is implied."
+}

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "rounds": 2,
+  "warmup": 2,
+  "coldIterations": 2,
+  "warmIterations": 8,
+  "editIterations": 2,
+  "maxCases": 7,
+  "maxEdits": 6
+}

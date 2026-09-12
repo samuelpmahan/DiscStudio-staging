@@ -1,0 +1,38 @@
+{
+  "baseCommit": "455f66db91fc34ac0d8d32b66aa6ccbef224b774",
+  "branch": "codex/card-render-experiment",
+  "excluded": [
+    ".git and credentials",
+    "node_modules and virtualenvs",
+    "dist and local test results",
+    "local browser drafts/photos",
+    "unrelated repos and the full Python runtime",
+    "historical evidence except the two required sealed test fixtures"
+  ],
+  "includesUncommittedSource": true,
+  "notes": "This is the actual local Studio source, not a latest-upstream assertion. Source painter fixtures and required sealed test evidence are retained. P&C uses the supplied JavaScript runtime; no Python pyto install is needed.",
+  "rootFiles": [
+    "index.html",
+    "package.json",
+    "README.md",
+    "AGENTS.md",
+    ".gitignore",
+    "CLOUD-START.md",
+    ".neat/items/DS-STUDIO-02.json"
+  ],
+  "roots": [
+    "src",
+    "public",
+    "tests",
+    "scripts",
+    "docs",
+    "concept-b",
+    "experiments",
+    "pyto/viewer",
+    "pyto/consumers/discstudio-card/port/painter",
+    "evidence/card-render/attempt-02-lazy-signature",
+    "evidence/card-render/baseline-941f354"
+  ],
+  "scope": "Experience frame, then UDS photo/paint with three existing painters",
+  "workingTreeStatus": "M .neat/items/DS-STUDIO-02.json\n M README.md\n M pyto/viewer/test/playback.test.mjs\n M scripts/build.mjs\n M src/review-data.js\n M src/runtime.js\n?? CLOUD-START.md\n?? docs/algorithm-references.md\n?? docs/experiences.md\n?? docs/id3-digits.md\n?? public/algorithm-references/\n?? scripts/bundle-experience.py\n?? src/experiences.js\n?? src/reference-algorithms/\n?? tests/experiences.test.js\n?? tests/reference-algorithms-browser.mjs\n?? tests/reference-decision-tree.test.js\n?? tests/reference-id3-browser.mjs\n?? tests/reference-id3.test.js\n?? tests/reference-perceptron.test.js\n?? tests/reference-transformer.test.js"
+}
