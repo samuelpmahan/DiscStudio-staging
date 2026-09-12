@@ -107,10 +107,35 @@ two derive. It carries both binding spellings on purpose -- `split` binds a Part
   used is a hit.
 - `value.kind` is one of `json` (data is the JSON value), `text` (data is a string), `svg` (data is
   the SVG document text; viewers render it as an image, never inline it as markup), `png-data-url`
-  (data is a `data:image/png;base64,...` string produced by a materializer from an image Part), or
+  (data is a `data:image/png;base64,...` string produced by a materializer from an image Part),
+  `array` (data describes a numeric array; below), or
   `omitted` (data is null; `note` says why: not serializable, over the size cap, or the runtime did
   not retain values). Values over 256 KB are replaced by `omitted` with a note carrying the size and
   the digest; arrays longer than 200 entries carry the first 200 and a note with the full length.
+- An `array` value is an array Part -- an ndarray -- and the record does not spell its numbers out
+  as JSON: 32 renders of 256x256x3 integers wrote one 109 MiB record that no viewer could open.
+  `data` is `{dtype, shape, digest, preview, path}` -- the dtype as its own runtime names it; the
+  shape as a list of extents; the sha256 of `"<dtype> <extents> "` followed by the raw buffer (null
+  when the buffer could not be read); the first 200 values flattened (null when the dtype does not
+  render as JSON: complex, datetime, structured; always at most 200, because a
+  caller's `array_cap` raises how much of a JSON *list* the record spells out and
+  an array is not spelled out); and the path of the raw bytes beside the record,
+  `<record>.values/<address>.bin` relative to the record's own directory, or null when the bytes
+  were not kept. `note` says how many values there are, what shape they have, where the bytes went
+  and how much of the preview is present. An `array` never becomes `omitted` for its size: over the
+  cap the preview goes and the description stays, because the dtype, the shape and the digest are
+  the part a reader cannot recompute. A runtime with no arrays never emits the kind, and every
+  record written before it existed is unchanged.
+- The digest of an `array` is the digest of its buffer and not of any text of it: the same dtype,
+  the same shape and the same bytes digest the same in every process, which decimal text of the
+  same array does not promise. It is the same digest the receipt carries as `result_sha256`,
+  computed once per run and reused here, so an array is never walked twice.
+- An image Part whose PNG cannot fit under the cap is `omitted` with a digest of the **image** --
+  `"<mode> <width>x<height> "` followed by its raw pixels -- and not of the encoding, because the
+  encoding is not performed: the encoder is stopped at the first block that passes the cap, which
+  is why the note carries no byte count for it. An image whose PNG does fit is `png-data-url`
+  exactly as it was, and an over-cap value of every other kind still carries the size and the
+  sha256 of the payload that was measured.
 - Missing fields are null, never invented. A runtime that does not record durations writes null.
 - `parts` is derived from the invocations and is present for convenience only.
 - Records are JSON with sorted keys and two-space indentation when written to disk.
@@ -252,7 +277,11 @@ A `Receipt` carries two digests, because one invocation may publish several Part
 one-address invocation the returned value *is* the published Part. `produce_sha256` is
 `{address: sha256 or null}`, one entry per published address in declared order, and for a
 one-address invocation it is `{into: result_sha256}`. Both are canonical-JSON digests, so a value
-that is not JSON has none rather than an unstable one (`pyto/src/pyto/pcr.py` `_result_sha256`).
+that is not JSON has none rather than an unstable one (`pyto/src/pyto/pcr.py` `_result_sha256`) --
+with one exception, an **array**, which is digested from its dtype, its shape and its raw buffer
+(`pcr.array_sha256`). An array is not JSON and had no digest at all, which left the one kind of
+value a rendering loop actually returns with no cache key; its buffer is a digest input every
+process reproduces exactly, and it is read once for the receipt and reused by the record.
 The multi-produce return itself is the Calculation's: it returns a mapping keyed by the declared
 addresses, or a sequence in the declared order, and anything else -- a missing key, an extra key,
 a sequence of the wrong length -- publishes no Part at all (`{?} MultiReturnStrict`).

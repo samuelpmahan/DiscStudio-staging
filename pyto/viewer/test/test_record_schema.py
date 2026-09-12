@@ -504,6 +504,49 @@ class TheValidatorActuallyRejects(unittest.TestCase):
         ok = set_at(self.record, base, {"kind": "json", "data": None, "note": None})
         self.assertIs(validate(ok), ok)
 
+    def test_the_array_kind_is_read_on_its_description_RECORD_md(self):
+        """An `array` value carries what a reader cannot recompute, and says it properly.
+
+        The numbers are not in the record: an array Part is its dtype, its shape,
+        the digest of its buffer, a bounded preview and the path of the raw bytes
+        beside the record. A viewer that cannot read one shows an ndarray render as
+        nothing at all, so the kind is validated here the way every other kind is.
+        """
+        base = "ticks.0.invocations.0.value"
+        data = {
+            "dtype": "uint8",
+            "shape": [2, 4, 3],
+            "digest": "a" * 64,
+            "preview": [0, 1, 2],
+            "path": "record.values/px.evo.render.01.bin",
+        }
+        note = "24 uint8 value(s), shape (2, 4, 3); raw bytes at record.values/px.evo.render.01.bin"
+        good = set_at(self.record, base, {"kind": "array", "data": data, "note": note})
+        self.assertIs(validate(good), good)
+        # The bytes need not be kept, and a dtype that does not render as JSON has
+        # no preview; neither is a malformed value.
+        without = dict(data, path=None, preview=None, digest=None)
+        kept = set_at(self.record, base, {"kind": "array", "data": without, "note": note})
+        self.assertIs(validate(kept), kept)
+        where = "ticks[0].invocations[0].value.data"
+        cases = [
+            (dict(data, shape=[2, -1]), f"{where}.shape[1]"),
+            (dict(data, dtype=7), f"{where}.dtype"),
+            (dict(data, digest="not-a-digest"), f"{where}.digest"),
+            (dict(data, preview={"first": 0}), f"{where}.preview"),
+            ({key: data[key] for key in ("dtype", "shape", "digest", "preview")}, where),
+        ]
+        for broken, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertRejects(
+                    set_at(self.record, base, {"kind": "array", "data": broken, "note": note}),
+                    expected,
+                )
+        self.assertRejects(
+            set_at(self.record, base, {"kind": "array", "data": data, "note": None}),
+            "ticks[0].invocations[0].value.note",
+        )
+
     def test_a_duplicate_invocation_id_is_rejected_because_ids_anchor_annotations(self):
         error = self.assertRejects(
             set_at(self.record, "ticks.1.invocations.0.id", "split"), "ticks[1].invocations[0].id"

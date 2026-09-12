@@ -1,0 +1,28 @@
+genomes        32
+points         196608 per render (list), (256, 256, 3) uint8 (array)
+caps           16000000 bytes, 250000 entries
+out            /tmp/bench-record-n57n7c91
+== 32 renders as list
+   run              2.68 s   (the generation, receipts and all)
+   of which         1.10 s   in _result_sha256, 64 calls
+   materialize      1.75 s   run_record
+   write            2.89 s   write_record
+   record+write     4.65 s   what the record costs on top
+   record          111.5 MiB
+   value kinds   {"json": 32}
+== 32 renders as array
+   run              0.03 s   (the generation, receipts and all)
+   of which         0.00 s   in _result_sha256, 64 calls
+   materialize      0.01 s   run_record
+   write            0.00 s   write_record
+   record+write     0.01 s   what the record costs on top
+   record            0.0 MiB
+   value kinds   {"omitted": 32}
+== 32 renders as array at pyto's default caps
+   run              0.01 s   (the generation, receipts and all)
+   of which         0.00 s   in _result_sha256, 64 calls
+   materialize      0.01 s   run_record
+   write            0.00 s   write_record
+   record+write     0.01 s   what the record costs on top
+   record            0.0 MiB
+   value kinds   {"omitted": 32}

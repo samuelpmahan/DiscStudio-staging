@@ -223,6 +223,44 @@ test('materialize classifies text, svg, png data URLs and JSON', () => {
   assert.match(materialize(undefined).note, /did not retain/);
 });
 
+test('an array value is validated on its description, not on its numbers', () => {
+  // pyto emits kind "array" for an ndarray Part: the numbers are not in the
+  // record, the buffer is beside it (RECORD.md, kind `array`). A JS runtime has
+  // no arrays to emit, so all this side owes the kind is to read one without
+  // refusing it -- and to refuse a malformed one.
+  const record = JSON.parse(JSON.stringify(pytoDoc));
+  const value = {
+    kind: 'array',
+    data: {
+      dtype: 'uint8',
+      shape: [2, 4, 3],
+      digest: 'a'.repeat(64),
+      preview: [0, 1, 2],
+      path: 'record.values/px.evo.render.01.bin'
+    },
+    note: '24 uint8 value(s), shape (2, 4, 3); raw bytes at record.values/px.evo.render.01.bin'
+  };
+  record.ticks[0].invocations[0].value = value;
+  const validated = validate(record);
+  assert.equal(validated.ticks[0].invocations[0].value.data.dtype, 'uint8');
+
+  const broken = [
+    [{ ...value.data, shape: [2, -1] }, /shape\[1\]/],
+    [{ ...value.data, digest: 'not-a-digest' }, /digest/],
+    [{ ...value.data, dtype: 7 }, /dtype/],
+    [{ dtype: 'uint8', shape: [1], digest: null, preview: null }, /path/]
+  ];
+  for (const [data, expected] of broken) {
+    const bad = JSON.parse(JSON.stringify(record));
+    bad.ticks[0].invocations[0].value = { ...value, data };
+    assert.throws(() => validate(bad), expected);
+  }
+
+  const noNote = JSON.parse(JSON.stringify(record));
+  noNote.ticks[0].invocations[0].value = { ...value, note: null };
+  assert.throws(() => validate(noNote), /must say what the array is/);
+});
+
 test('materialize honours RECORD.md size and array caps', () => {
   const long = Array.from({ length: MAX_ARRAY_ENTRIES + 55 }, (_, i) => i);
   const truncated = materialize(long);

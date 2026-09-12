@@ -17,7 +17,9 @@ Every Calculation body is a named module-level function; no lambdas
 from __future__ import annotations
 
 import hashlib
+import io
 import json
+import random
 import os
 import shutil
 import subprocess
@@ -27,14 +29,19 @@ import unittest
 from dataclasses import asdict
 
 from pyto import Calculation, Part, PCR, PxC
+from pyto import materialize as materialize_module
 from pyto.materialize import (
+    ARRAY_CAP,
     SCHEMA,
+    VALUE_CAP_BYTES,
+    _png_budget,
     _stable_repr,
     render_value,
     run_record,
     tick_sheets,
     write_record,
 )
+from pyto.pcr import array_sha256
 
 # Intra-repo sys.path insert (experiments/CAPTURE.md): the Day 1 program lives in
 # experiments/grouped-ablation/ and its modules import each other by top-level name.
@@ -80,6 +87,13 @@ try:  # Pillow is optional for the record; only the sheet tests need it.
 except ImportError:  # pragma: no cover - Pillow is installed in this checkout
     PILLOW = False
 
+try:  # numpy is optional too; only the array-value tests need it.
+    import numpy
+
+    NUMPY = True
+except ImportError:  # pragma: no cover - numpy is installed in this checkout
+    NUMPY = False
+
 
 # --- module-level calculation bodies (named functions only) --------------------
 
@@ -106,6 +120,24 @@ def emit_big_text(args):
 
 def emit_image(args):
     return Image.new("RGBA", (4, 3), (255, 0, 255, 255))
+
+
+def emit_big_noise_image(args):
+    """A 512x512 RGB noise image: nothing compresses it under the value cap."""
+    pixels = random.Random(11).randbytes(512 * 512 * 3)
+    return Image.frombytes("RGB", (512, 512), pixels)
+
+
+def emit_array(args):
+    return numpy.arange(24, dtype="uint8").reshape(2, 4, 3)
+
+
+def emit_long_array(args):
+    return numpy.arange(5000, dtype="int32")
+
+
+def emit_object_array(args):
+    return numpy.array([{"a": 1}, {"b": 2}], dtype=object)
 
 
 def read_part(args):
@@ -860,6 +892,239 @@ class ReadableByTheOtherRuntimesValidator(unittest.TestCase):
             self.skipTest(f"{path} is not present")
         with open(path, encoding="utf-8") as handle:
             validate_record(json.load(handle))
+
+
+class CountingJson:
+    """`json` with its `dumps` counted, so "serialize once" is a guard and not a note."""
+
+    def __init__(self, module):
+        self._json = module
+        self.dumps_calls = 0
+        self.dump_calls = 0
+
+    def dumps(self, *args, **keywords):
+        self.dumps_calls += 1
+        return self._json.dumps(*args, **keywords)
+
+    def dump(self, *args, **keywords):
+        self.dump_calls += 1
+        return self._json.dump(*args, **keywords)
+
+    def __getattr__(self, name):
+        return getattr(self._json, name)
+
+
+class WhatMaterializingCosts(unittest.TestCase):
+    """One serialization per value, and no encoding of an image that cannot fit.
+
+    Not a timing test -- nothing here measures a clock. It counts the work: a
+    genome's render was dumped to test that it is JSON, copied, dumped again to
+    measure it and digested a third time for the receipt, and a 1024x1024 image
+    was encoded to PNG, base64'd, measured and thrown away. The counters below are
+    what keeps that from coming back; `pyto/scripts/bench_record.py` is what says
+    what it was worth in seconds.
+    """
+
+    def test_a_json_value_is_serialized_once_in_the_whole_record(self):
+        run, pxc, preexisting = _one_calc_run(Calculation("fn.spec.long", emit_long_list))
+        counter = CountingJson(materialize_module.json)
+        original = materialize_module.json
+        materialize_module.json = counter
+        try:
+            record = run_record(run, pxc, preexisting=preexisting)
+        finally:
+            materialize_module.json = original
+        # One: the dump that measures the rendered value against the cap. The test
+        # that the value is JSON at all is the receipt's own digest, which pcr
+        # already took over this same object.
+        self.assertEqual(counter.dumps_calls, 1)
+        self.assertEqual(record["ticks"][0]["invocations"][0]["value"]["kind"], "json")
+
+    def test_a_value_with_no_receipt_digest_is_still_dumped_to_say_why(self):
+        """The digest is proof of JSON; the absence of one is not proof of the opposite.
+
+        `pcr._result_sha256` dumps with `sort_keys=True`, which also refuses a dict
+        whose keys cannot be compared with one another -- something plain
+        `json.dumps` accepts. So a value with no digest still takes the old path:
+        it is dumped here, once, and what the dump raises is what the note says.
+        """
+        run, pxc, preexisting = _one_calc_run(Calculation("fn.spec.set", emit_set))
+        self.assertIsNone(run.receipts["only"].result_sha256)
+        counter = CountingJson(materialize_module.json)
+        original = materialize_module.json
+        materialize_module.json = counter
+        try:
+            record = run_record(run, pxc, preexisting=preexisting)
+        finally:
+            materialize_module.json = original
+        self.assertEqual(counter.dumps_calls, 1)
+        value = record["ticks"][0]["invocations"][0]["value"]
+        self.assertEqual(value["kind"], "omitted")
+        self.assertIn("not JSON-serializable", value["note"])
+
+    @unittest.skipUnless(PILLOW, "Pillow is not installed")
+    def test_an_image_that_cannot_fit_the_cap_is_never_encoded_whole(self):
+        seen = []
+        original = materialize_module._png_data_url
+
+        def spy(image, limit=None):
+            seen.append(limit)
+            return original(image, limit=limit)
+
+        materialize_module._png_data_url = spy
+        try:
+            value = render_value(emit_big_noise_image({}))
+        finally:
+            materialize_module._png_data_url = original
+        # Called once, with the PNG budget the cap implies, and it came back with
+        # nothing: the encode stopped instead of producing a data URL to discard.
+        self.assertEqual(seen, [_png_budget(VALUE_CAP_BYTES)])
+        self.assertEqual(value["kind"], "omitted")
+        self.assertIsNone(value["data"])
+
+    @unittest.skipUnless(PILLOW, "Pillow is not installed")
+    def test_the_encoder_is_stopped_at_the_block_that_passes_the_cap(self):
+        image = emit_big_noise_image({})
+        whole = io.BytesIO()
+        image.save(whole, format="PNG")
+        written = []
+        original = materialize_module._CappedSink
+
+        class Spy(original):
+            def __init__(self, limit):
+                super().__init__(limit)
+                written.append(self)
+
+        materialize_module._CappedSink = Spy
+        try:
+            self.assertIsNone(materialize_module._png_data_url(image, limit=_png_budget(VALUE_CAP_BYTES)))
+        finally:
+            materialize_module._CappedSink = original
+        self.assertEqual(len(written), 1)
+        sink = written[0]
+        self.assertGreater(len(whole.getvalue()), _png_budget(VALUE_CAP_BYTES))
+        self.assertLess(sink.size, len(whole.getvalue()))
+
+    @unittest.skipUnless(PILLOW, "Pillow is not installed")
+    def test_an_over_cap_image_carries_a_digest_of_its_pixels(self):
+        image = emit_big_noise_image({})
+        value = render_value(image)
+        expected = hashlib.sha256()
+        expected.update(f"{image.mode} {image.size[0]}x{image.size[1]} ".encode("utf-8"))
+        expected.update(image.tobytes())
+        self.assertIn(f"sha256 of the raw pixels = {expected.hexdigest()}", value["note"])
+        self.assertIn("over the 262144 byte cap", value["note"])
+
+    @unittest.skipUnless(PILLOW, "Pillow is not installed")
+    def test_an_image_that_fits_is_still_a_png_data_url(self):
+        """The cheap path decides `omitted`; it does not decide `png-data-url`.
+
+        A small or flat image compresses far under the cap however many pixels it
+        has, and it is still encoded and still drawn in the viewer -- which is why
+        the budget is the encoder's own output length and not a guess about how
+        well an image compresses.
+        """
+        value = render_value(Image.new("RGB", (512, 512), (9, 9, 9)))
+        self.assertEqual(value["kind"], "png-data-url")
+        self.assertTrue(value["data"].startswith("data:image/png;base64,"))
+        self.assertIsNone(value["note"])
+
+    def test_the_png_budget_is_exactly_what_base64_fits_under_the_cap(self):
+        budget = _png_budget(VALUE_CAP_BYTES)
+        import base64 as base64_module
+
+        url = "data:image/png;base64," + base64_module.b64encode(b"\0" * budget).decode("ascii")
+        self.assertLessEqual(len(url), VALUE_CAP_BYTES)
+        one_more = "data:image/png;base64," + base64_module.b64encode(b"\0" * (budget + 1)).decode("ascii")
+        self.assertGreater(len(one_more), VALUE_CAP_BYTES)
+
+
+@unittest.skipUnless(NUMPY, "numpy is not installed")
+class ArrayValues(unittest.TestCase):
+    """RECORD.md, kind `array`: an array Part is described, digested and kept, not spelled out."""
+
+    def setUp(self):
+        self.out_dir = tempfile.mkdtemp(prefix="pyto-array-")
+        self.addCleanup(shutil.rmtree, self.out_dir, True)
+
+    def _record(self, body, **keywords):
+        run, pxc, preexisting = _one_calc_run(Calculation("fn.spec.array", body))
+        record = run_record(run, pxc, preexisting=preexisting, **keywords)
+        return run, record, record["ticks"][0]["invocations"][0]["value"]
+
+    def test_an_array_is_its_dtype_shape_digest_and_a_preview(self):
+        run, record, value = self._record(emit_array)
+        self.assertEqual(value["kind"], "array")
+        self.assertEqual(value["data"]["dtype"], "uint8")
+        self.assertEqual(value["data"]["shape"], [2, 4, 3])
+        self.assertEqual(value["data"]["preview"], list(range(24)))
+        self.assertIsNone(value["data"]["path"])
+        self.assertIn("24 uint8 value(s), shape (2, 4, 3)", value["note"])
+        validate_record(record)
+
+    def test_the_record_and_the_receipt_carry_the_same_digest_taken_once(self):
+        run, record, value = self._record(emit_array)
+        expected = array_sha256(emit_array({}))
+        self.assertEqual(value["data"]["digest"], expected)
+        self.assertEqual(run.receipts["only"].result_sha256, expected)
+        self.assertEqual(run.receipts["only"].produce_sha256["scratch.spec.value"], expected)
+
+    def test_the_digest_is_of_the_buffer_and_says_dtype_and_shape(self):
+        first = numpy.arange(6, dtype="uint8")
+        self.assertEqual(array_sha256(first), array_sha256(numpy.arange(6, dtype="uint8")))
+        self.assertNotEqual(array_sha256(first), array_sha256(first.reshape(2, 3)))
+        self.assertNotEqual(array_sha256(first), array_sha256(first.astype("int8")))
+        self.assertIsNone(array_sha256([0, 1, 2, 3, 4, 5]))
+
+    def test_the_raw_bytes_are_written_beside_the_record(self):
+        values_dir = os.path.join(self.out_dir, "record.values")
+        run, record, value = self._record(emit_array, values_dir=values_dir)
+        self.assertEqual(value["data"]["path"], "record.values/scratch.spec.value.bin")
+        written = os.path.join(values_dir, "scratch.spec.value.bin")
+        with open(written, "rb") as handle:
+            self.assertEqual(handle.read(), emit_array({}).tobytes())
+        self.assertIn("raw bytes at record.values/scratch.spec.value.bin", value["note"])
+        write_record(record, os.path.join(self.out_dir, "record.json"))
+        validate_record(record)
+
+    def test_without_a_values_directory_the_bytes_are_not_kept_and_it_says_so(self):
+        run, record, value = self._record(emit_array)
+        self.assertIn("the raw bytes were not kept", value["note"])
+        self.assertEqual(os.listdir(self.out_dir), [])
+
+    def test_the_preview_is_never_longer_than_the_array_cap_the_record_fixes(self):
+        """A caller's `array_cap` can lower the preview and cannot raise it.
+
+        The owner's own generation passes `array_cap=250000` so that no render is
+        truncated; under the other reading that writes every one of a render's
+        196,608 numbers back into the record and the kind buys nothing
+        ({?} ArrayPreviewCap).
+        """
+        run, record, value = self._record(emit_long_array, array_cap=250000)
+        self.assertEqual(len(value["data"]["preview"]), ARRAY_CAP)
+        self.assertIn(f"preview holds the first {ARRAY_CAP} of 5000", value["note"])
+        rendered = render_value(emit_long_array({}), array_cap=5)
+        self.assertEqual(rendered["data"]["preview"], [0, 1, 2, 3, 4])
+
+    def test_an_array_over_the_cap_loses_its_preview_and_keeps_its_description(self):
+        value = render_value(emit_long_array({}), value_cap_bytes=64)
+        self.assertEqual(value["kind"], "array")
+        self.assertIsNone(value["data"]["preview"])
+        self.assertEqual(value["data"]["shape"], [5000])
+        self.assertIsNotNone(value["data"]["digest"])
+        self.assertIn("over the 64 byte cap", value["note"])
+
+    def test_a_dtype_that_is_not_json_is_described_without_a_preview(self):
+        value = render_value(numpy.zeros(3, dtype="complex128"))
+        self.assertEqual(value["kind"], "array")
+        self.assertIsNone(value["data"]["preview"])
+        self.assertIn("no preview: dtype complex128 does not render as JSON", value["note"])
+
+    def test_an_object_array_is_not_an_array_value(self):
+        """Its buffer is a row of pointers, which is the unstable digest pcr refuses."""
+        value = render_value(emit_object_array({}))
+        self.assertEqual(value["kind"], "omitted")
+        self.assertIsNone(array_sha256(emit_object_array({})))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,22 @@
+genomes        32
+points         196608 per render (list), (256, 256, 3) uint8 (array)
+caps           16000000 bytes, 250000 entries
+out            /tmp/bench-record-uude62io
+== 32 renders as list
+   run              2.17 s   (the generation, receipts and all)
+   of which         0.54 s   in _result_sha256, 32 calls
+   materialize      0.50 s   run_record
+   write            2.86 s   write_record
+   record+write     3.36 s   what the record costs on top
+   record          111.5 MiB
+   values            0.0 MiB beside it
+   value kinds   {"json": 32}
+== 32 renders as array
+   run              0.04 s   (the generation, receipts and all)
+   of which         0.02 s   in _result_sha256, 32 calls
+   materialize      0.01 s   run_record
+   write            0.01 s   write_record
+   record+write     0.01 s   what the record costs on top
+   record            0.2 MiB
+   values            6.0 MiB beside it
+   value kinds   {"array": 32}
