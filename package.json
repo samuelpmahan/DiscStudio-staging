@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
+    "verify:pages": "bash scripts/verify_pages.sh",
     "build": "node scripts/build.mjs",
     "dev": "node scripts/serve.mjs",
     "smoke": "npm test && npm run build"
