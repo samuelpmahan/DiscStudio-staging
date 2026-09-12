@@ -4,8 +4,46 @@ Intent: the owner, 2026-09-12: 'come up with some compiler-ish efficiency pass t
 Starting point: 7c354c04e7da2a5323fdb3a92e4ccf8223068cfe (board: **started** `task-149`: materializing a record with big values is cheap:)
 Verify: bash pyto/scripts/check_all.sh
 Allow: pyto/src/pyto/neat/hot.py pyto/src/pyto/neat/equiv.py pyto/scripts/neat.sh pyto/USE.md pyto/tests/test_neat_hot.py pyto/tests/test_neat_equiv.py pyto/tests/test_use.py pyto/experiments/review/hot pyto/experiments/review/equiv pyto/BOARD.md pyto/questions.md
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 7 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- M  pyto/USE.md
+- M  pyto/scripts/neat.sh
+- A  pyto/src/pyto/neat/equiv.py
+- A  pyto/src/pyto/neat/hot.py
+- A  pyto/tests/test_neat_equiv.py
+- A  pyto/tests/test_neat_hot.py
+- M  pyto/tests/test_use.py
+
+```
+pyto/USE.md                   | 125 ++++++++++++
+ pyto/scripts/neat.sh          |  26 ++-
+ pyto/src/pyto/neat/equiv.py   | 430 ++++++++++++++++++++++++++++++++++++++++
+ pyto/src/pyto/neat/hot.py     | 452 ++++++++++++++++++++++++++++++++++++++++++
+ pyto/tests/test_neat_equiv.py | 277 ++++++++++++++++++++++++++
+ pyto/tests/test_neat_hot.py   | 201 +++++++++++++++++++
+ pyto/tests/test_use.py        |   1 +
+ 7 files changed, 1511 insertions(+), 1 deletion(-)
+```
+
+## Evidence
+
+- verify: `bash pyto/scripts/check_all.sh` exit 0 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.8c7EXF6XNY) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         528  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 
