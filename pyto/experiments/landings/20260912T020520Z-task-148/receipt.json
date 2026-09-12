@@ -1,0 +1,81 @@
+{
+  "schema": "pyto-landing-receipt@1",
+  "id": "20260912T020520Z-task-148",
+  "package": "task-148",
+  "base_sha": "24b16b53af42d5c340b6ed68e80fc69863024edb",
+  "result": "verified",
+  "verifier": {
+    "command": "test -s .claude/skills/sam-mode/SKILL.md && head -1 .claude/skills/sam-mode/SKILL.md | grep -q '^---$' && grep -q '^name: sam-mode$' .claude/skills/sam-mode/SKILL.md && grep -q sam-mode CLAUDE.md",
+    "exit": 0,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "check_all": {
+    "exit": 0,
+    "output_sha256": "b50281d18b804a32734d51c5e88ab67e1e53a3eaeaedb6ff0c96b4ec36a1692e",
+    "counts": {
+      "library": 472,
+      "experiments/brain": 756,
+      "experiments/classroom": 16,
+      "experiments/cross-project": 9,
+      "experiments/grouped-ablation": 250,
+      "experiments/hiding-primitives": 6,
+      "experiments/molecules": 10,
+      "experiments/s3-synthetic": 5,
+      "experiments/students": 17,
+      "experiments/tick-laws": 14,
+      "consumer": 61,
+      "disc-stats": 4,
+      "examples": 3,
+      "viewer": 139,
+      "viewer-record-schema": 36
+    }
+  },
+  "score": null,
+  "claimed": [
+    {
+      "path": ".claude/skills/sam-mode/SKILL.md",
+      "bytes": 6392,
+      "sha256": "acf0accbc6fd69dd41d26b434e3d1832ff6e814312b0b8a3657a7e8d30f984bd"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 258,
+      "sha256": "97dc197cec5e76a15e59cf36e8c88da9d6b84e1265686ae2f02def0ed57edb5b"
+    },
+    {
+      "path": "pyto/experiments/tasks/148/HANDOFF.md",
+      "bytes": 6188,
+      "sha256": "6a22b901f241cb7d5827a2850c1bc14449334e919fd8d04aaa34b2283e2cfbdd"
+    },
+    {
+      "path": "pyto/experiments/tasks/148/evidence/check_all.txt",
+      "bytes": 297947,
+      "sha256": "7c8453dd7bdf880fb2dfa437c11f97815c1f99cc5f605ed50f433dc8dc21fd0c"
+    },
+    {
+      "path": "pyto/experiments/tasks/148/evidence/verify.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pyto/experiments/tasks/148/packet.md",
+      "bytes": 2119,
+      "sha256": "dcd0e712f18ec74c73f49896fa2635f8d00cfb5545e9d5f3eebc36edb638d67b"
+    }
+  ],
+  "unclaimed": [],
+  "provisional": {
+    "count": 0,
+    "addresses": []
+  },
+  "landed_by": "session",
+  "at": "2026-09-12T02:07:39.385062Z",
+  "result_sha": null,
+  "note": "result_sha is filled by the next landing; a receipt cannot contain its own commit",
+  "gate": {
+    "mode": "none",
+    "allowed": false,
+    "trusted": false,
+    "reason": "awaiting human: no event"
+  }
+}

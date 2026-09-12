@@ -69,6 +69,7 @@ interrupt.
 One line per landing attempt, newest first, written by the landing script. Lines before 06:53 are
 the day so far, in plain words.
 
+- 2026-09-12 02:07 **landed** `task-148`: sam-mode: the owner's working conventions, mined from his own words across the session and the board, as a Claude Code skill (.claude/skills/sam-mode) with a three-line CLAUDE.md pointing at it, so every fresh agent in this repository works his way without being told (6 files since 24b16b5, suites green, receipt 20260912T020520Z-task-148)
 - 2026-09-12 02:00 **started** `task-148`: sam-mode: the owner's working conventions, mined from his own words across the session and the board, as a Claude Code skill (.claude/skills/sam-mode) with a three-line CLAUDE.md pointing at it, so every fresh agent in this repository works his way without being told (copy EXP/148; it lands only on green, with a receipt, or is killed)
 - 2026-09-12 01:59 **started** `task-147`: pyto study on a table that is not tiny: a seeded sample where the method's cost is quadratic, a refusal where a training fold is narrower than the fit, the separator and the hole spelling the caller's, the entry point callable in a fresh process, and USE.md section 11 (copy EXP/147; it lands only on green, with a receipt, or is killed)
 - 2026-09-12 01:59 **landed** `task-144`: python -m pyto.study: an honest study of a csv, every step a brain Calculation through an observed PCR, with a store, records and a Tick page (7 files since 36d752e, suites green, receipt 20260912T015640Z-task-144)
