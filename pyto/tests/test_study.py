@@ -299,6 +299,64 @@ class TooFewRows(unittest.TestCase):
         self.assertEqual(names, ["study.json", "study_read.json"])
 
 
+class ASampleWhereTheCostIsQuadratic(unittest.TestCase):
+    """past a row count the study samples, and every Part of it says which rows."""
+
+    def setUp(self):
+        self.kept = (study_module.CLUSTER_MAX_ROWS, study_module.MODEL_MAX_ROWS)
+        study_module.CLUSTER_MAX_ROWS, study_module.MODEL_MAX_ROWS = 40, 60
+        self.directory = tempfile.mkdtemp(prefix="study-sample-")
+
+    def tearDown(self):
+        study_module.CLUSTER_MAX_ROWS, study_module.MODEL_MAX_ROWS = self.kept
+        shutil.rmtree(self.directory, ignore_errors=True)
+
+    def test_the_sample_is_a_part_the_summary_names(self):
+        source = os.path.join(self.directory, "planted.csv")
+        study_module.write_planted_csv(source)
+        study_module.study(source, target="y", out_dir=self.directory, quiet=True, page=False)
+        parts = read(os.path.join(self.directory, "store.json"))
+        plan = parts["px.exp.study.planted.plan"]
+        self.assertEqual(plan["clustering"]["sample"]["rows"], 40)
+        self.assertEqual(plan["clustering"]["sample"]["of"], 180)
+        self.assertEqual(len(parts["px.exp.study.planted.cluster.rows"]["rows"]), 40)
+        self.assertEqual(len(parts["px.exp.study.planted.model.sample"]["rows"]), 60)
+        summary = json.dumps(parts["px.exp.study.planted.summary"])
+        self.assertIn("a seeded sample of 40 of 180", summary)
+        self.assertIn("a seeded sample of 60 of 180", summary)
+
+    def test_a_training_fold_narrower_than_the_fit_is_refused(self):
+        study_module.MODEL_MAX_ROWS = 10
+        source = study_module.write_shelf_csv(os.path.join(self.directory, "shelf.csv"))
+        study_module.study(source, target="weight", out_dir=self.directory, quiet=True, page=False)
+        parts = read(os.path.join(self.directory, "store.json"))
+        refused = parts["px.exp.study.shelf.skipped.model"]
+        self.assertIn("fewer rows than the fit has columns", refused["why"])
+        self.assertNotIn("px.exp.study.shelf.model.best", parts)
+
+
+class ACsvAPersonActuallyHas(unittest.TestCase):
+    """a semicolon separator and a hole spelled the way the exporter spelled it."""
+
+    def test_the_separator_and_the_missing_spelling_are_the_callers(self):
+        directory = tempfile.mkdtemp(prefix="study-csv-")
+        try:
+            source = os.path.join(directory, "euro.csv")
+            with open(source, "w", encoding="utf-8", newline="\n") as handle:
+                handle.write("name;score;note\n")
+                for index in range(8):
+                    handle.write(f"row{index};{index * 2};{'-' if index == 3 else 'ok'}\n")
+            study_module.study(source, out_dir=directory, quiet=True, page=False,
+                               delimiter=";", missing=["-"])
+            parts = read(os.path.join(directory, "store.json"))
+            table = parts["px.exp.study.euro.table"]
+            self.assertEqual(table["columns"], ["name", "score", "note"])
+            self.assertEqual(parts["px.exp.study.euro.missing"]["columns"]["note"]["missing"], 1)
+            self.assertEqual(parts["px.exp.study.euro.column.score.describe"]["n"], 8)
+        finally:
+            shutil.rmtree(directory, ignore_errors=True)
+
+
 class TheCommand(unittest.TestCase):
     """`python -m pyto.study` and `neat study` are the same command."""
 
@@ -314,11 +372,39 @@ class TheCommand(unittest.TestCase):
         finally:
             shutil.rmtree(directory, ignore_errors=True)
 
+    def test_the_api_is_callable_as_the_first_thing_a_process_does(self):
+        """`from pyto.study import study; study(...)` with nothing imported before it."""
+        directory = tempfile.mkdtemp(prefix="study-api-")
+        try:
+            source = study_module.write_shelf_csv(os.path.join(directory, "shelf.csv"))
+            done = subprocess.run(
+                [sys.executable, "-c",
+                 "from pyto.study import study\n"
+                 f"study({source!r}, out_dir={directory!r}, page=False, quiet=True)\n"],
+                cwd=PYTO_ROOT, capture_output=True, text=True, timeout=600)
+            self.assertEqual(done.returncode, 0, done.stderr)
+            self.assertTrue(os.path.isfile(os.path.join(directory, "store.json")))
+        finally:
+            shutil.rmtree(directory, ignore_errors=True)
+
+    def test_the_page_is_named_after_the_study(self):
+        directory = tempfile.mkdtemp(prefix="study-title-")
+        try:
+            source = study_module.write_shelf_csv(os.path.join(directory, "shelf.csv"))
+            study_module.study(source, out_dir=directory, quiet=True)
+            with open(os.path.join(directory, "study.html"), encoding="utf-8") as handle:
+                page = handle.read()
+            self.assertIn("<title>shelf &middot; a pyto study</title>", page)
+        finally:
+            shutil.rmtree(directory, ignore_errors=True)
+
     def test_neat_study_forwards_to_the_module(self):
         script = os.path.join(PYTO_ROOT, "scripts", "neat.sh")
         with open(script, encoding="utf-8") as handle:
             text = handle.read()
         self.assertIn("study) cmd_study", text)
+        if os.name == "nt" or shutil.which("bash") is None:
+            self.skipTest("neat is a posix shell script; the verb is asserted above")
         directory = tempfile.mkdtemp(prefix="study-neat-")
         try:
             done = subprocess.run(

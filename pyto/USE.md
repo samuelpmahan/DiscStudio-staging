@@ -978,6 +978,103 @@ tore out of `a`. What counts is the repository's own manifest,
 `pyto/experiments/delta/patterns.json`. The first record is task 78 (a second
 page built beside the PxC composer) against task 79 (the composer refined).
 
+## 11. pyto study
+
+One command, a table you actually have, and an honest study of it. Every step is
+a `Calculation` from the brain (`experiments/brain`) run through an observed
+`PCR`, so what comes back is Parts with receipts rather than a printout.
+
+```sh
+bash pyto/scripts/neat.sh study shelf.csv                     # or: python -m pyto.study shelf.csv
+bash pyto/scripts/neat.sh study shelf.csv --target weight --out shelf-study
+bash pyto/scripts/neat.sh study --example shelf --out shelf-study    # the worked example below
+bash pyto/scripts/neat.sh study --example planted --out planted      # and its oracle
+bash pyto/scripts/neat.sh study rows.csv --delimiter ";" --missing "-,n/a"
+```
+
+Under `--out` (default `study/`):
+
+| File | What it is |
+|---|---|
+| `store.json` | every Part the study wrote, canonical, addressed `px.exp.study.<name>.*` |
+| `records/study_read.json`, `records/study_weigh.json`, `records/study.json` | the three observed runs, `pyto-run-record@1` |
+| `study.html` | the summary, then the Tick viewer with those records baked in (one file, no server) |
+| `px.exp.study.<name>.map` | what ran, what was refused and why, which engine each step used |
+
+The study reads the table (`oc.brain.data.load`, through the run's effects
+handle), profiles every column (`describe`, the iqr outlier rule, shapiro-wilk),
+correlates what is numeric and puts a p-value beside each pair, tests the one
+hypothesis the table invites, clusters and takes the principal components, and
+with `--target` cross-validates every model the brain owns on the same folds and
+the same seed. `backend="auto"` everywhere the brain's plan Part has an entry, so
+shapiro runs on scipy and k-means on the gram expansion without anyone saying so.
+
+**Four rules, and they are the whole design.**
+
+*Every number is a Part.* The summary is `px.exp.study.<name>.summary`, and every
+line in it carries `cites`: the address, the key and the value it printed.
+`tests/test_study.py` walks them and checks the prose against the store.
+
+*A step that does not fit is refused, not forced.* Too few rows, a non-numeric
+column, a t test whose normality check failed: each is a row in the plan and a
+Part of its own (`px.exp.study.<name>.skipped.*`) with its `needed` and its
+`had`, and the page ends with **what this study would not say**.
+
+*Nothing is chosen by its answer.* The group column is the first one that splits
+the rows, never the one with the smallest p-value; the number of clusters is the
+one the recorded silhouette prefers; the model is the one the recorded
+cross-validated score prefers, and if none of them beats predicting the mean the
+study names no predictor and says so.
+
+*And nothing expensive is silent.* Past 1200 complete rows the clustering is
+fitted and scored on a seeded sample of them -- the silhouette compares every row
+with every other one, so its cost is quadratic -- and past 2000 rows the model
+comparison is too. Both samples are Parts, named in the plan and in the summary
+and reproducible from the seed; neither is a quiet narrowing of the claim.
+
+The worked example is the studio's own shelf -- twelve discs, their molds' flight
+numbers, and what they weigh:
+
+```sh
+bash pyto/scripts/neat.sh study --example shelf --out shelf-study
+```
+
+```text
+== the hypothesis
+  - weight across maker: Discraft (n=8, mean 174), Innova (n=4, mean 173.75).
+  - normality (shapiro-wilk): Discraft p=0.014, Innova p=0.31 -- fails at 0.05.
+  - equal variance (levene): p=0.187 -- passes at 0.05.
+  - so the study ran fn.brain.stats.mannwhitneyu: normality is not established
+    (shapiro-wilk rejects it), so the ranks are compared instead of the means.
+  - mannwhitneyu: statistic 22, p = 0.332 -- no difference this test can tell from chance at 0.05.
+
+== the clusters
+  - k = 3 of the 3 tried scores best: silhouette 0.547 -- the clusters are real.
+
+== the best predictor
+  - knn wins on r2: -0.4997, ahead of forest by 1.7412.
+  - but it does NOT clear the baseline (0: predicting the mean of the training rows),
+    so this study names no predictor: on these rows, nothing here beats the obvious guess.
+
+== what this study would not say
+  - model.winner: no candidate beat the baseline, so the study names no predictor.
+```
+
+The three records are ordinary `pyto-run-record@1` documents, so the shell over
+records reads a study back without importing anything:
+
+```sh
+python -m pyto.px ps shelf-study/records/study.json      # every Tick, every Calculation, hit or computed
+python -m pyto.px cat shelf-study/records/study.json px.exp.study.shelf.summary
+```
+
+The second example is the check on the study itself: `--example planted` writes a
+table with three planted clusters, a planted linear target, a decoy column of
+pure noise and a constant column, all before the study sees it, and then compares
+what the study said with what was planted -- the right number of clusters, the
+decoy left out of the findings, the constant column refused, the planted group
+difference found, and a linear model winning because the truth is linear.
+
 ## Where to go next
 
 - `experiments/students/homework.py` — section 7, as a program you can run.
