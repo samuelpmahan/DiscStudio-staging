@@ -30,6 +30,14 @@
 #   neat gate <id> [--mode github|stub:<file>|none]   the join's gate for the copy's head: open only on a human's approval of that exact sha
 #   neat delta <a> <b> [--json] [--out-dir D]   two landings' capability delta against cost, computed: px.exp.neat.delta.<a>.<b>
 #                             under pyto/experiments/review/deltas (end states, rework, verdict); patterns in pyto/experiments/delta/patterns.json
+#   neat hot <record.json> [--json] [--name <stem>] [--dense N] [--per-element NS]   the efficiency pass over one
+#                             run record: the hot Calculations and the shape of their values (a dense list that would be
+#                             an array, cost per element, an over-cap value, a cache that isn't there), as
+#                             px.exp.neat.hot.<record-stem> under pyto/experiments/review/hot
+#   neat equiv <record.json> --calc <fn.address> --candidate <module:function> [--store <parts.json>] [--json]
+#                             the trust path: every receipt of that Calculation rebuilt from the record (and --store),
+#                             the candidate run on the same inputs, and its results compared value for value, as the
+#                             witness px.exp.neat.equiv.<calc>.<sha> under pyto/experiments/review/equiv
 #   neat study <file.csv> [--target <column>] [--out <dir>]   an honest study of a table you have: every step a
 #                             Calculation from the brain through an observed PCR, so what comes out is a store, the
 #                             run records and one page (study.html). `neat study --example shelf` studies the disc shelf.
@@ -663,6 +671,22 @@ cmd_delta() {
   "$PYTHON" -m pyto.neat.delta --root "$ROOT" "$@"
 }
 
+cmd_hot() {
+  # neat hot <record.json> [...]: a thin forward to the pass's host (pyto/src/pyto/neat/hot.py), from
+  # MAIN's root so the Part and its record land under pyto/experiments/review/hot; the record the caller
+  # named stays relative to where the caller stood.
+  [ "$PYTO_MODE" -eq 1 ] || die "neat hot needs a pyto repository (pyto/pyproject.toml)"
+  "$PYTHON" -m pyto.neat.hot --root "$ROOT" "$@"
+}
+
+cmd_equiv() {
+  # neat equiv <record.json> --calc <fn.address> --candidate <module:function> [...]: a thin forward to the
+  # witness's host (pyto/src/pyto/neat/equiv.py). It runs the candidate, so the candidate is whatever the
+  # caller names -- a module on the path, or a path/to/file.py:function.
+  [ "$PYTO_MODE" -eq 1 ] || die "neat equiv needs a pyto repository (pyto/pyproject.toml)"
+  "$PYTHON" -m pyto.neat.equiv --root "$ROOT" "$@"
+}
+
 cmd_study() {
   # neat study <file.csv> [...]: a thin forward to the study's host (pyto/src/pyto/study.py). It runs
   # from MAIN's root so the brain the study reads (pyto/experiments/brain) is this checkout's, and the
@@ -755,6 +779,6 @@ case "$cmd" in
   new) cmd_new "$@";; pack) cmd_pack "$@";; show) cmd_show "$@";; drop) cmd_drop "$@";;
   land) cmd_land "$@";; kill) cmd_kill "$@";; undo) cmd_undo "$@";; update) cmd_update "$@";;
   list) cmd_list "$@";; selftest) cmd_selftest "$@";; walk) cmd_walk "$@";; gate) cmd_gate "$@";;
-  delta) cmd_delta "$@";; study) cmd_study "$@";;
+  delta) cmd_delta "$@";; study) cmd_study "$@";; hot) cmd_hot "$@";; equiv) cmd_equiv "$@";;
   ask) cmd_ask "$@";; answer) cmd_answer "$@";; default) cmd_default "$@";; answers) cmd_answers "$@";; diff) cmd_diff "$@";; crisp) cmd_crisp "$@";; *) usage;;
 esac

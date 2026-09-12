@@ -1,0 +1,23 @@
+$ neat hot observed/record.json --name evo-dense      # run.py: 32 renders as lists of 196,608 ints
+
+record: /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json  pcr=evo  invocations=133  measured=8390.256 ms
+CALCULATION      N   TOTAL MS  MAX MS  KIND          BYTES   ELEMENTS  NS/ELEMENT
+fn.evo.render    32  6597.4    267.0   json          599415  196608    1358.0
+fn.evo.fitness   32  1633.5    67.8    json          208     196608    344.8
+fn.evo.encode    32  148.3     16.8    png-data-url  14266   196608    85.7
+oc.evo.export    1   8.6       8.6     json          175     0         -
+fn.evo.bind      32  1.0       0.1     json          1845    32        1997.9
+fn.evo.mutate    1   0.6       0.6     json          7842    32        18623.4
+oc.evo.load      1   0.6       0.6     json          6988    0         -
+fn.evo.select    1   0.2       0.2     json          3954    16        15452.0
+fn.evo.findings  1   0.1       0.1     json          2249    0         -
+
+findings
+  hot          fn.evo.render is 78.6% of this run (6597.379 ms over 32 invocation(s)): fix here first
+  hot          fn.evo.fitness is 19.5% of this run (1633.493 ms over 32 invocation(s)): fix here first
+  hot          fn.evo.encode is 1.8% of this run (148.263 ms over 32 invocation(s)): fix here first
+  dense-list   fn.evo.render returns a list of 196608 numbers (592938 bytes in the record) that would be an array
+  per-element  fn.evo.render spends 1358.01 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass
+  per-element  fn.evo.fitness spends 344.81 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass
+  per-element  fn.evo.encode spends 85.65 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass
+  over-cap     fn.evo.render puts 19169813 bytes into the record over 32 invocation(s), each over the 262144 byte cap: the record carries them only because the run raised the cap

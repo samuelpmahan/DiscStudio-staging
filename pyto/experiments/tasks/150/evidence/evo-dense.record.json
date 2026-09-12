@@ -1,0 +1,3893 @@
+{
+  "counters": {
+    "computed": 1,
+    "hits": 0,
+    "invocations": 1,
+    "wall_ms": 0.36818700027652085
+  },
+  "parts": {
+    "px.exp.neat.hot.evo-dense": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "evaluate"
+    }
+  },
+  "pcr": "neat-hot",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.neat.hot.evo-dense"
+          ],
+          "args": {
+            "dense_list": 4096,
+            "measured": {
+              "counters": {
+                "computed": 130,
+                "hits": 3,
+                "invocations": 133,
+                "wall_ms": 8390.256094007782
+              },
+              "invocations": [
+                {
+                  "args": {},
+                  "bytes": 6988,
+                  "calculation": "oc.evo.load",
+                  "duration_ms": 0.5700270012312103,
+                  "elements": 0,
+                  "hit": true,
+                  "id": "load",
+                  "input_elements": 0,
+                  "input_key": "[[\"path=px:px.exp.evo.input_path\"],{}]",
+                  "inputs": {
+                    "path": "px:px.exp.evo.input_path"
+                  },
+                  "into": "px.exp.evo.input",
+                  "kind": "json",
+                  "moved": 0,
+                  "ns_per_element": null,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f",
+                  "shape": null,
+                  "tick": "load",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 3954,
+                  "calculation": "fn.evo.select",
+                  "duration_ms": 0.247232001129305,
+                  "elements": 16,
+                  "hit": false,
+                  "id": "select",
+                  "input_elements": 0,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\"],{}]",
+                  "inputs": {
+                    "input": "fn:load"
+                  },
+                  "into": "px.exp.evo.parents",
+                  "kind": "json",
+                  "moved": 16,
+                  "ns_per_element": 15452.0,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "8f7ec8746486a109d704c72837091c5321dfb5343a24b37429b660a054b67efc",
+                  "shape": [
+                    16
+                  ],
+                  "tick": "select",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 7842,
+                  "calculation": "fn.evo.mutate",
+                  "duration_ms": 0.5959480004094075,
+                  "elements": 32,
+                  "hit": false,
+                  "id": "mutate",
+                  "input_elements": 16,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"parents=8f7ec8746486a109d704c72837091c5321dfb5343a24b37429b660a054b67efc\"],{}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "parents": "fn:select"
+                  },
+                  "into": "px.exp.evo.population",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 18623.38,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5",
+                  "shape": [
+                    32
+                  ],
+                  "tick": "mutate",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 0
+                  },
+                  "bytes": 1846,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.037277000956237316,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_01",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":0}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.01",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 1164.91,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "0ed2c5b4bafd5fbf194cdbf1d3310c69ae16847a8e285553efba8e32d64a4a68",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 1
+                  },
+                  "bytes": 1842,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02959099947474897,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_02",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":1}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.02",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 924.72,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "16b01117f24af942d6331c2f121c7574b362e0e072b061e3c88d45be8a25f7c2",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 2
+                  },
+                  "bytes": 1841,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.030052997317397967,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_03",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":2}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.03",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 939.16,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "228a72cf2477970a3f273ef37f4637ea4f0d91ed6ba05538a7ae88c631712d64",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 3
+                  },
+                  "bytes": 1852,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.027501999284140766,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_04",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":3}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.04",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 859.44,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "947bff669c10c055830437f4b142ed745cc41c6f10e4725279fbec3bd6de2cc4",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 4
+                  },
+                  "bytes": 1839,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.031201998353935778,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_05",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":4}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.05",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 975.06,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "1467b28fbb5108f4fcad66aadeb6a780f189dace3b9ab2de7f55b6dbe0cf0e87",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 5
+                  },
+                  "bytes": 1848,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.028664999263128266,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_06",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":5}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.06",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 895.78,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "d555262fc00174bd115bb96069159c4a1cfc87d9a2fd4f57872bedfec7a373a9",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 6
+                  },
+                  "bytes": 1846,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.028296999516896904,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_07",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":6}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.07",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 884.28,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "ec3cee9d8288546eeb52e9d7734b3477a0f05d946bd32de5566896fb82bec793",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 7
+                  },
+                  "bytes": 1846,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02852899706340395,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_08",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":7}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.08",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 891.53,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "81a305249a28d45253b580ee74ca1bee273546522bb522c7fb2fc6978417d7f1",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 8
+                  },
+                  "bytes": 1851,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.03763299901038408,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_09",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":8}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.09",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 1176.03,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "05f184719efac8190aa83a8b409deedc2e1871a7780f1bc2c9de3b4319414c05",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 9
+                  },
+                  "bytes": 1842,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.026726000214694068,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_10",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":9}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.10",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 835.19,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "e51f02c8cb98b95a107347c88fcc75267af582446c980d66496b1a76406a47c6",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 10
+                  },
+                  "bytes": 1845,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02777299960143864,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_11",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":10}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.11",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 867.91,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "671293544918790d8c1c1c573842ab6bfedd6e004b08577d1e76d3f13fcab20e",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 11
+                  },
+                  "bytes": 1844,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.026322999474359676,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_12",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":11}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.12",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 822.59,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "2f0be03d319c9ef8b8a4b61af2dea8e9396d3c07d804f9b4872c02b214d3636f",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 12
+                  },
+                  "bytes": 1855,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.027832000341732055,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_13",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":12}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.13",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 869.75,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "35fa9db94bf9295fe298727fe3274049cf00a8d5438d156a428596e5ec35e2c3",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 13
+                  },
+                  "bytes": 1843,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02780900103971362,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_14",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":13}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.14",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 869.03,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "45e1af180434c6f5fe723aea98a57b085e78cb968ffffb5e576cfbe6cf29da6b",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 14
+                  },
+                  "bytes": 1860,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.027447000320535153,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_15",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":14}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.15",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 857.72,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "34dc10e50509cf9f96bd28ec46c7f0cf99b5d43ba4393576ac48c0aafbbd9cda",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 15
+                  },
+                  "bytes": 1848,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02562100053182803,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_16",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":15}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.16",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 800.66,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "1c60106ee0d0d6e9aadcfec32f707b990658fa48e3d99a455dae86b4fb79016d",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 16
+                  },
+                  "bytes": 1847,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.03132900019409135,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_17",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":16}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.17",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 979.03,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "4e65d234f1b69abefff6fb391ac199ece2503a4b9424f67b935395fc58001c42",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 17
+                  },
+                  "bytes": 1858,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.026412999432068318,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_18",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":17}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.18",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 825.41,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "589b0843444a45cda45bbc8fe178f9764abf42e03b7b2afc9dd9199887558cfc",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 18
+                  },
+                  "bytes": 1842,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.028631999157369137,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_19",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":18}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.19",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 894.75,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "2a3b106b3a95a2071a9644eb83db91088565110a3a0525ebf481ed30b5cd3afe",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 19
+                  },
+                  "bytes": 1839,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.026024001272162423,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_20",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":19}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.20",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 813.25,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "bb38e7c9d2f45add5d2f1a40c290644db093fc0d8be2fe9eaa04b8ae9fd376da",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 20
+                  },
+                  "bytes": 1846,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02722999852267094,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_21",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":20}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.21",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 850.94,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "8e1330f3e6bb9086f85ef680a6da87fcb5f8b7760f8e5c6465226b9027711903",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 21
+                  },
+                  "bytes": 1845,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.06393200237653218,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_22",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":21}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.22",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 1997.88,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "bf0d1a2207d3232014870967e536dd0015b60d53e25704788fdea3e2b021165d",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 22
+                  },
+                  "bytes": 1843,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.027556998247746378,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_23",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":22}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.23",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 861.16,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "53da37f76e4484fc151969b3e787581decb23ecd86c82df3951a9fba0c638655",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 23
+                  },
+                  "bytes": 1842,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.027710000722436234,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_24",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":23}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.24",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 865.94,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "2ecb1ae207595ce848d3a90ccfb2d586318a14bef1e87e6ea4e41a6586cb7da7",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 24
+                  },
+                  "bytes": 1844,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.0301649997709319,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_25",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":24}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.25",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 942.66,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "e27be5f1b820f22bfdab3444cba3b0d4141ea68e2a034ffc10154ee30c782076",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 25
+                  },
+                  "bytes": 1846,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.027606001822277904,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_26",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":25}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.26",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 862.69,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "983c58c88c7c595f1956805327d1e316317e142d22635ba2001b3af9ad5f37ea",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 26
+                  },
+                  "bytes": 1844,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02594800025690347,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_27",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":26}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.27",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 810.88,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "bcb9f199fdcd10f87fa889bd61003009a388ad49d12bc20b5057b310df0fcb5c",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 27
+                  },
+                  "bytes": 1844,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02752799991867505,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_28",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":27}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.28",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 860.25,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "e5f75c0d0fa80110719fae664add29fe236679fc3d6566ef216cc8d10a1d71da",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 28
+                  },
+                  "bytes": 1846,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.029479000659193844,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_29",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":28}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.29",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 921.22,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "7c8ed2c1387737e2c45e765869a3b1eb09bcaa4fb2bfb3072c750bd1821f35c5",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 29
+                  },
+                  "bytes": 1846,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02628000220283866,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_30",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":29}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.30",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 821.25,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "45ea5156974ce480d3508ad7912af5a7d846b0b7537c4c2e66ddf93100e9a5e0",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 30
+                  },
+                  "bytes": 1842,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.02793999738059938,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_31",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":30}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.31",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 873.12,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "61ef2f7573357108f4ed027bf30a4988913d1402b663c3f2e576c2ee1bf0b260",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {
+                    "index": 31
+                  },
+                  "bytes": 1851,
+                  "calculation": "fn.evo.bind",
+                  "duration_ms": 0.03398799890419468,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "bind_32",
+                  "input_elements": 32,
+                  "input_key": "[[\"input=87d39a64e32377b94ecf1d1265ba9b0a0f77d6204c726c4c198b90a8efc9102f\",\"population=481e7081cd85c2c9bf28966bbb19e3a42dd498f7310a53eb6aa103ba7d2acee5\"],{\"index\":31}]",
+                  "inputs": {
+                    "input": "fn:load",
+                    "population": "fn:mutate"
+                  },
+                  "into": "px.exp.evo.spec.32",
+                  "kind": "json",
+                  "moved": 32,
+                  "ns_per_element": 1062.12,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "472f2edbc2d861fe84a0c0791177b614a53ea17d5d500b19793d04001e9f4940",
+                  "shape": null,
+                  "tick": "bind",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 592938,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 175.88183299812954,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_01",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=0ed2c5b4bafd5fbf194cdbf1d3310c69ae16847a8e285553efba8e32d64a4a68\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_01"
+                  },
+                  "into": "px.exp.evo.render.01",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 894.58,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 592938,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "e7feae23f83db49d84825ecc303ec66e33eb7efd62b7ab4040fe9db0cb831997",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 595708,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 169.79599199839868,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_02",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=16b01117f24af942d6331c2f121c7574b362e0e072b061e3c88d45be8a25f7c2\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_02"
+                  },
+                  "into": "px.exp.evo.render.02",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 863.63,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 595708,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "a3f6c20268e644bd486f410ae9e9b1f9743ffe5a65cb89689ac4f8b0f23688c4",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 597457,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 243.21133500052383,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_03",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=228a72cf2477970a3f273ef37f4637ea4f0d91ed6ba05538a7ae88c631712d64\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_03"
+                  },
+                  "into": "px.exp.evo.render.03",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1237.04,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 597457,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "5d899572bf8f12868d1540db373ae89179351a7bb2ab76a273648ec062504f0f",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 605401,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 242.72854100127006,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_04",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=947bff669c10c055830437f4b142ed745cc41c6f10e4725279fbec3bd6de2cc4\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_04"
+                  },
+                  "into": "px.exp.evo.render.04",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1234.58,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 605401,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "84ea36b68b7fd316fe6f41e2bd31900478bd190964104536e4012b8de1cdd085",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 595042,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 166.71646699978737,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_05",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=1467b28fbb5108f4fcad66aadeb6a780f189dace3b9ab2de7f55b6dbe0cf0e87\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_05"
+                  },
+                  "into": "px.exp.evo.render.05",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 847.96,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 595042,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "b16c2ce8ff97653b7fbbc94665ca2673a4f1d584696dc684a9bfc1c9804290c2",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 593566,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 172.16579399973853,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_06",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=d555262fc00174bd115bb96069159c4a1cfc87d9a2fd4f57872bedfec7a373a9\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_06"
+                  },
+                  "into": "px.exp.evo.render.06",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 875.68,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 593566,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "a0264d111d5db270fdaad166948d516b03dc4aefe91f9d6791a77cddfab90d3a",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 604467,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 168.88687200116692,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_07",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=ec3cee9d8288546eeb52e9d7734b3477a0f05d946bd32de5566896fb82bec793\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_07"
+                  },
+                  "into": "px.exp.evo.render.07",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 859.0,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 604467,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "77322bfcffdd4b66d8a60421bfae1bffa32538cec1f71afc01bccfbc4132999d",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 607752,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 173.92638599994825,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_08",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=81a305249a28d45253b580ee74ca1bee273546522bb522c7fb2fc6978417d7f1\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_08"
+                  },
+                  "into": "px.exp.evo.render.08",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 884.64,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 607752,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "e8ed56516f56a12f961575761ed728626cdb0b7445aa87bafb7a634d2f729a6a",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 600885,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 255.92458300161525,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_09",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=05f184719efac8190aa83a8b409deedc2e1871a7780f1bc2c9de3b4319414c05\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_09"
+                  },
+                  "into": "px.exp.evo.render.09",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1301.7,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 600885,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "1fadfbe4406d9d6845f60d21ea6c3a6b24115343aabe6b8a99c8514f5d2bec2c",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 599415,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 266.99526000084006,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_10",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=e51f02c8cb98b95a107347c88fcc75267af582446c980d66496b1a76406a47c6\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_10"
+                  },
+                  "into": "px.exp.evo.render.10",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1358.01,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 599415,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "cbe0c2869c0d82d0750b5fecce17447380b4ea1d16276ff759fdf8b9aece9217",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 600317,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 188.32460599878686,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_11",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=671293544918790d8c1c1c573842ab6bfedd6e004b08577d1e76d3f13fcab20e\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_11"
+                  },
+                  "into": "px.exp.evo.render.11",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 957.87,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 600317,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "504f8f0680a08b72769fb7df2bcfeee95200223ff49d5bf979508eb69ae0c5a3",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 602629,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 176.7203800009156,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_12",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=2f0be03d319c9ef8b8a4b61af2dea8e9396d3c07d804f9b4872c02b214d3636f\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_12"
+                  },
+                  "into": "px.exp.evo.render.12",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 898.85,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 602629,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "c7f64e0d15d8f49a3ccbbc5769ae3c522d0bde900e1cb1d75c0c7ac92739aa0a",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 598841,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 255.55574700047146,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_13",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=35fa9db94bf9295fe298727fe3274049cf00a8d5438d156a428596e5ec35e2c3\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_13"
+                  },
+                  "into": "px.exp.evo.render.13",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1299.82,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 598841,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "dd1c76b5cbaf4edd8335fd2ad865f0d01cdd382f4b11b83cf4d3dd86504ff583",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 599534,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 249.48270599998068,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_14",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=45e1af180434c6f5fe723aea98a57b085e78cb968ffffb5e576cfbe6cf29da6b\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_14"
+                  },
+                  "into": "px.exp.evo.render.14",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1268.93,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 599534,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "dccd2f9e0c079cfb27c829efd3eb07289a448e196059602c55e6ade8aaab9656",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 595068,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 171.00471800222294,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_15",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=34dc10e50509cf9f96bd28ec46c7f0cf99b5d43ba4393576ac48c0aafbbd9cda\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_15"
+                  },
+                  "into": "px.exp.evo.render.15",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 869.77,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 595068,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "120ff643a8c73e8c3a60feb047521fedc53b3ffc5a723b3b57b01f00f9fb5682",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 605887,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 174.3567189987516,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_16",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=1c60106ee0d0d6e9aadcfec32f707b990658fa48e3d99a455dae86b4fb79016d\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_16"
+                  },
+                  "into": "px.exp.evo.render.16",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 886.82,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 605887,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "c482ef0c1bb4922067fa73a0cc9a7dd84c577a672ecfe2fb6ed529421b7b5d34",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 597276,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 248.99905799975386,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_17",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=4e65d234f1b69abefff6fb391ac199ece2503a4b9424f67b935395fc58001c42\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_17"
+                  },
+                  "into": "px.exp.evo.render.17",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1266.47,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 597276,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "91645916786c03a5335471ce29cd8df24bc810e2272bb372557259d97c6355f3",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 596771,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 249.3358320025436,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_18",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=589b0843444a45cda45bbc8fe178f9764abf42e03b7b2afc9dd9199887558cfc\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_18"
+                  },
+                  "into": "px.exp.evo.render.18",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1268.19,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 596771,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "69423e151f02d4a15c51e39342459a8c3458141c23f9eeca794812a19917746b",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 594451,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 171.7181759995583,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_19",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=2a3b106b3a95a2071a9644eb83db91088565110a3a0525ebf481ed30b5cd3afe\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_19"
+                  },
+                  "into": "px.exp.evo.render.19",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 873.4,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 594451,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "9c7759784143a45a9aea22b22849b8ea739ba9865714fc38014cfd19124fbcdb",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 591646,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 170.54858499977854,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_20",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=bb38e7c9d2f45add5d2f1a40c290644db093fc0d8be2fe9eaa04b8ae9fd376da\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_20"
+                  },
+                  "into": "px.exp.evo.render.20",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 867.45,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 591646,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "6b48cbd61e648ad777739df48f0293f95d76b0fea590bda74eebfc720ba7c213",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 602614,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 173.7578290012607,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_21",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=8e1330f3e6bb9086f85ef680a6da87fcb5f8b7760f8e5c6465226b9027711903\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_21"
+                  },
+                  "into": "px.exp.evo.render.21",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 883.78,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 602614,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "51e51700768fc8ff54d15c4f4f0e4f767573e3f44f03088b0e480f369e00e014",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 598467,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 173.53785399973276,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_22",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=bf0d1a2207d3232014870967e536dd0015b60d53e25704788fdea3e2b021165d\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_22"
+                  },
+                  "into": "px.exp.evo.render.22",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 882.66,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 598467,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "7d729f8da389a416c548f258ea84a3b4fbcde0f1cb2b45536b1ac360e61a93ab",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 600772,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 242.32056099936017,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_23",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=53da37f76e4484fc151969b3e787581decb23ecd86c82df3951a9fba0c638655\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_23"
+                  },
+                  "into": "px.exp.evo.render.23",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1232.51,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 600772,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "db2e17a5bce2fecef9cf7d1f69e7173827de977bf3e7757b1982728c6137f604",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 604435,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 246.4511690013751,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_24",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=2ecb1ae207595ce848d3a90ccfb2d586318a14bef1e87e6ea4e41a6586cb7da7\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_24"
+                  },
+                  "into": "px.exp.evo.render.24",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1253.52,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 604435,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "4722fce3530761ae83c87cbbf6ed6ca9068a0277b44a9caa0d9e19d1ce7d3058",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 599275,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 168.03929100206005,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_25",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=e27be5f1b820f22bfdab3444cba3b0d4141ea68e2a034ffc10154ee30c782076\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_25"
+                  },
+                  "into": "px.exp.evo.render.25",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 854.69,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 599275,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "824b01fdb724a3de5eb27dd70d589bbb7a077b6f90c55ecd7229898ce01299dd",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 593751,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 175.48967900074786,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_26",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=983c58c88c7c595f1956805327d1e316317e142d22635ba2001b3af9ad5f37ea\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_26"
+                  },
+                  "into": "px.exp.evo.render.26",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 892.59,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 593751,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "387628c92fca6cde400909c7967dae8d6bacf3fedd03df252520b2d33944aaa2",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 598026,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 246.97927399756736,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_27",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=bcb9f199fdcd10f87fa889bd61003009a388ad49d12bc20b5057b310df0fcb5c\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_27"
+                  },
+                  "into": "px.exp.evo.render.27",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1256.2,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 598026,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "8d60d446d362a4089358153e7b76aad6bf60de78a9d6878cbb18977e8a58c88a",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 597637,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 246.11205400287872,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_28",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=e5f75c0d0fa80110719fae664add29fe236679fc3d6566ef216cc8d10a1d71da\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_28"
+                  },
+                  "into": "px.exp.evo.render.28",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1251.79,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 597637,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "8d1dc11bf41b37ea35eed5c6ff1959c297fd3dce15919b9d99b13a4544080f8e",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 599934,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 168.61007199986489,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_29",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=7c8ed2c1387737e2c45e765869a3b1eb09bcaa4fb2bfb3072c750bd1821f35c5\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_29"
+                  },
+                  "into": "px.exp.evo.render.29",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 857.6,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 599934,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "7672c08d2786176f5f0a2fea8721a018d94dd4016704c96a7bea370d1977f7ac",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 594558,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 170.37296800117474,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_30",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=45ea5156974ce480d3508ad7912af5a7d846b0b7537c4c2e66ddf93100e9a5e0\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_30"
+                  },
+                  "into": "px.exp.evo.render.30",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 866.56,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 594558,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "611e9763d0f77e489c771c42e1fc5615239d6d07a9fee3609540ccb2ca7c55c5",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 605762,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 244.8694640006579,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_31",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=61ef2f7573357108f4ed027bf30a4988913d1402b663c3f2e576c2ee1bf0b260\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_31"
+                  },
+                  "into": "px.exp.evo.render.31",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1245.47,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 605762,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "1e82af67692add26ea67f4a44561a0fed9f553e08f9772a381855cf5e62844d1",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 599531,
+                  "calculation": "fn.evo.render",
+                  "duration_ms": 248.5589349998918,
+                  "elements": 196608,
+                  "hit": false,
+                  "id": "render_32",
+                  "input_elements": 0,
+                  "input_key": "[[\"spec=472f2edbc2d861fe84a0c0791177b614a53ea17d5d500b19793d04001e9f4940\"],{}]",
+                  "inputs": {
+                    "spec": "fn:bind_32"
+                  },
+                  "into": "px.exp.evo.render.32",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 1264.24,
+                  "numeric": true,
+                  "over_cap": {
+                    "bytes": 599531,
+                    "cap": 262144,
+                    "kept": true
+                  },
+                  "result_sha256": "cb1ea595444e74bf9a21036e50eeae33c110a41d29c1ed31d7460bffe4c07a6b",
+                  "shape": [
+                    196608
+                  ],
+                  "tick": "render",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.046648997522425,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_01",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=e7feae23f83db49d84825ecc303ec66e33eb7efd62b7ab4040fe9db0cb831997\",\"spec=0ed2c5b4bafd5fbf194cdbf1d3310c69ae16847a8e285553efba8e32d64a4a68\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_01",
+                    "spec": "fn:bind_01"
+                  },
+                  "into": "px.exp.evo.fitness.01",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.55,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "cd2edd3b4343bfd75dcee2430369ff1f4effd266cc34ca74cf127c95948d3a4a",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 51.32854700059397,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_02",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=a3f6c20268e644bd486f410ae9e9b1f9743ffe5a65cb89689ac4f8b0f23688c4\",\"spec=16b01117f24af942d6331c2f121c7574b362e0e072b061e3c88d45be8a25f7c2\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_02",
+                    "spec": "fn:bind_02"
+                  },
+                  "into": "px.exp.evo.fitness.02",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 261.07,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "48112ad266cdb7909e5f3cdee17d051814d1ad7eb0a4884e5f863935baa17cc3",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.486967997130705,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_03",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=5d899572bf8f12868d1540db373ae89179351a7bb2ab76a273648ec062504f0f\",\"spec=228a72cf2477970a3f273ef37f4637ea4f0d91ed6ba05538a7ae88c631712d64\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_03",
+                    "spec": "fn:bind_03"
+                  },
+                  "into": "px.exp.evo.fitness.03",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 256.79,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "b76432b777b4a4e4a378e6872493694c13720c2512ff97469698716129a9421e",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.381746998027666,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_04",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=84ea36b68b7fd316fe6f41e2bd31900478bd190964104536e4012b8de1cdd085\",\"spec=947bff669c10c055830437f4b142ed745cc41c6f10e4725279fbec3bd6de2cc4\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_04",
+                    "spec": "fn:bind_04"
+                  },
+                  "into": "px.exp.evo.fitness.04",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 256.25,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "897d2b20364c1868e32242e63385ae0e0baeb310d6c5a7f6a177e3955b397ba8",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 51.84999300035997,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_05",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=b16c2ce8ff97653b7fbbc94665ca2673a4f1d584696dc684a9bfc1c9804290c2\",\"spec=1467b28fbb5108f4fcad66aadeb6a780f189dace3b9ab2de7f55b6dbe0cf0e87\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_05",
+                    "spec": "fn:bind_05"
+                  },
+                  "into": "px.exp.evo.fitness.05",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 263.72,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "a26622da163f31d75ab055e8b96ec6186e2061f5b8fffe77d7673d4584b1ebd7",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 51.45529700166662,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_06",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=a0264d111d5db270fdaad166948d516b03dc4aefe91f9d6791a77cddfab90d3a\",\"spec=d555262fc00174bd115bb96069159c4a1cfc87d9a2fd4f57872bedfec7a373a9\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_06",
+                    "spec": "fn:bind_06"
+                  },
+                  "into": "px.exp.evo.fitness.06",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 261.72,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "5854e1d7308263b3d13031fb8472c8c8228ae9befb4831e726c9ec60b419c54f",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 56.64142499881564,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_07",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=77322bfcffdd4b66d8a60421bfae1bffa32538cec1f71afc01bccfbc4132999d\",\"spec=ec3cee9d8288546eeb52e9d7734b3477a0f05d946bd32de5566896fb82bec793\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_07",
+                    "spec": "fn:bind_07"
+                  },
+                  "into": "px.exp.evo.fitness.07",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 288.09,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "3977e50eb0889b9c731fb266a777877f3aea195fd5e075b10b57f7f04989818e",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.23539999820059,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_08",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=e8ed56516f56a12f961575761ed728626cdb0b7445aa87bafb7a634d2f729a6a\",\"spec=81a305249a28d45253b580ee74ca1bee273546522bb522c7fb2fc6978417d7f1\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_08",
+                    "spec": "fn:bind_08"
+                  },
+                  "into": "px.exp.evo.fitness.08",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 255.51,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "d7a21e47017730cc14d72e356f5951d50dbc0c681c303ca7de61c62641b5a506",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 51.23788800119655,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_09",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=1fadfbe4406d9d6845f60d21ea6c3a6b24115343aabe6b8a99c8514f5d2bec2c\",\"spec=05f184719efac8190aa83a8b409deedc2e1871a7780f1bc2c9de3b4319414c05\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_09",
+                    "spec": "fn:bind_09"
+                  },
+                  "into": "px.exp.evo.fitness.09",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 260.61,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "826dac740a2d394ac322bb00e6a3cedd748ab349e829defc747783fbc4083bb2",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.129503000789555,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_10",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=cbe0c2869c0d82d0750b5fecce17447380b4ea1d16276ff759fdf8b9aece9217\",\"spec=e51f02c8cb98b95a107347c88fcc75267af582446c980d66496b1a76406a47c6\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_10",
+                    "spec": "fn:bind_10"
+                  },
+                  "into": "px.exp.evo.fitness.10",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.97,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "c0cf815432be26590ff946147fc53a4d51aa76a61b89874ec60fb65f8737cd69",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.97911499958718,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_11",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=504f8f0680a08b72769fb7df2bcfeee95200223ff49d5bf979508eb69ae0c5a3\",\"spec=671293544918790d8c1c1c573842ab6bfedd6e004b08577d1e76d3f13fcab20e\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_11",
+                    "spec": "fn:bind_11"
+                  },
+                  "into": "px.exp.evo.fitness.11",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.21,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "8ce277e16b22d5a6f5bf0130b73cf033fc6271f944c86ce12586e0466f917412",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.85405199840898,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_12",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=c7f64e0d15d8f49a3ccbbc5769ae3c522d0bde900e1cb1d75c0c7ac92739aa0a\",\"spec=2f0be03d319c9ef8b8a4b61af2dea8e9396d3c07d804f9b4872c02b214d3636f\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_12",
+                    "spec": "fn:bind_12"
+                  },
+                  "into": "px.exp.evo.fitness.12",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 253.57,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "1637d1059b644f69c2a6f5c46262f2e646c1d3d11706cbe950b591d7d648ac54",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.88832999879378,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_13",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=dd1c76b5cbaf4edd8335fd2ad865f0d01cdd382f4b11b83cf4d3dd86504ff583\",\"spec=35fa9db94bf9295fe298727fe3274049cf00a8d5438d156a428596e5ec35e2c3\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_13",
+                    "spec": "fn:bind_13"
+                  },
+                  "into": "px.exp.evo.fitness.13",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 253.75,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "b1dcb452f0cba7a8925db81a955d21c13962985566b5060e3dcf38a666272ef7",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.806934999651276,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_14",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=dccd2f9e0c079cfb27c829efd3eb07289a448e196059602c55e6ade8aaab9656\",\"spec=45e1af180434c6f5fe723aea98a57b085e78cb968ffffb5e576cfbe6cf29da6b\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_14",
+                    "spec": "fn:bind_14"
+                  },
+                  "into": "px.exp.evo.fitness.14",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 253.33,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "5ad2d892606b99a0717d6f26d142c8fbec38180b1710220c5d9b230a7974ab15",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.14785700041102,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_15",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=120ff643a8c73e8c3a60feb047521fedc53b3ffc5a723b3b57b01f00f9fb5682\",\"spec=34dc10e50509cf9f96bd28ec46c7f0cf99b5d43ba4393576ac48c0aafbbd9cda\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_15",
+                    "spec": "fn:bind_15"
+                  },
+                  "into": "px.exp.evo.fitness.15",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 255.07,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "14bdf212b002fbb5a74980deee01bcd4544d9b82f3f5bc2cd470909648d0490f",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.03682900132844,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_16",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=c482ef0c1bb4922067fa73a0cc9a7dd84c577a672ecfe2fb6ed529421b7b5d34\",\"spec=1c60106ee0d0d6e9aadcfec32f707b990658fa48e3d99a455dae86b4fb79016d\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_16",
+                    "spec": "fn:bind_16"
+                  },
+                  "into": "px.exp.evo.fitness.16",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.5,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "fca7b51f5af07a9aa6a2ed9b7631f436c87ca8138b5300f5ace7dbfb9c102109",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.10614700222504,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_17",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=91645916786c03a5335471ce29cd8df24bc810e2272bb372557259d97c6355f3\",\"spec=4e65d234f1b69abefff6fb391ac199ece2503a4b9424f67b935395fc58001c42\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_17",
+                    "spec": "fn:bind_17"
+                  },
+                  "into": "px.exp.evo.fitness.17",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.85,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "e763d97cd578e1a971caa5a9f50d2ada1d26c81828e5454191c4779c60b345ec",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.913520997506566,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_18",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=69423e151f02d4a15c51e39342459a8c3458141c23f9eeca794812a19917746b\",\"spec=589b0843444a45cda45bbc8fe178f9764abf42e03b7b2afc9dd9199887558cfc\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_18",
+                    "spec": "fn:bind_18"
+                  },
+                  "into": "px.exp.evo.fitness.18",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 253.87,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "1114c1e84ddaa08d1daf3217dab26704676d48f60a58657d7398438df100929e",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 51.29014600242954,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_19",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=9c7759784143a45a9aea22b22849b8ea739ba9865714fc38014cfd19124fbcdb\",\"spec=2a3b106b3a95a2071a9644eb83db91088565110a3a0525ebf481ed30b5cd3afe\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_19",
+                    "spec": "fn:bind_19"
+                  },
+                  "into": "px.exp.evo.fitness.19",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 260.88,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "db1317b9167b647c6bf2c82933fba59005bc9b6b7ec19a87afb07bdbccacd91a",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.88893200081657,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_20",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=6b48cbd61e648ad777739df48f0293f95d76b0fea590bda74eebfc720ba7c213\",\"spec=bb38e7c9d2f45add5d2f1a40c290644db093fc0d8be2fe9eaa04b8ae9fd376da\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_20",
+                    "spec": "fn:bind_20"
+                  },
+                  "into": "px.exp.evo.fitness.20",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 258.83,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "f3622e60a74f4a085364c8e024212d3475b79a238f418fa6f87e8d6edf96d9be",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.99974200109136,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_21",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=51e51700768fc8ff54d15c4f4f0e4f767573e3f44f03088b0e480f369e00e014\",\"spec=8e1330f3e6bb9086f85ef680a6da87fcb5f8b7760f8e5c6465226b9027711903\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_21",
+                    "spec": "fn:bind_21"
+                  },
+                  "into": "px.exp.evo.fitness.21",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.31,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "d0b9b0dfc2a15ff7311c158dd4beff5282a23b0595b45e4f16391881b64ba684",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.142910000431584,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_22",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=7d729f8da389a416c548f258ea84a3b4fbcde0f1cb2b45536b1ac360e61a93ab\",\"spec=bf0d1a2207d3232014870967e536dd0015b60d53e25704788fdea3e2b021165d\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_22",
+                    "spec": "fn:bind_22"
+                  },
+                  "into": "px.exp.evo.fitness.22",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 255.04,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "6fadfaf22f7ec71b9654abc4c4022fce8e1d26a73c77fce9878edb8f6082a9f0",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.99459800092154,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_23",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=db2e17a5bce2fecef9cf7d1f69e7173827de977bf3e7757b1982728c6137f604\",\"spec=53da37f76e4484fc151969b3e787581decb23ecd86c82df3951a9fba0c638655\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_23",
+                    "spec": "fn:bind_23"
+                  },
+                  "into": "px.exp.evo.fitness.23",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.29,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "dca890321e5bdcd9750d2a22019e797dbeadce52b1ba0f7835410c2d0418a0c5",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.86849299893947,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_24",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=4722fce3530761ae83c87cbbf6ed6ca9068a0277b44a9caa0d9e19d1ce7d3058\",\"spec=2ecb1ae207595ce848d3a90ccfb2d586318a14bef1e87e6ea4e41a6586cb7da7\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_24",
+                    "spec": "fn:bind_24"
+                  },
+                  "into": "px.exp.evo.fitness.24",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 253.64,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "6d392e7c6caa2722fcec0ba8fc88c57c3a33c462babbc20efadfce0ba3e475eb",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.20285099817556,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_25",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=824b01fdb724a3de5eb27dd70d589bbb7a077b6f90c55ecd7229898ce01299dd\",\"spec=e27be5f1b820f22bfdab3444cba3b0d4141ea68e2a034ffc10154ee30c782076\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_25",
+                    "spec": "fn:bind_25"
+                  },
+                  "into": "px.exp.evo.fitness.25",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 255.34,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "79a510f6b27101e41b93a872301a82a49adf8a610b0dad00099ead50c1449d41",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.8384319980687,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_26",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=387628c92fca6cde400909c7967dae8d6bacf3fedd03df252520b2d33944aaa2\",\"spec=983c58c88c7c595f1956805327d1e316317e142d22635ba2001b3af9ad5f37ea\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_26",
+                    "spec": "fn:bind_26"
+                  },
+                  "into": "px.exp.evo.fitness.26",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 253.49,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "5ca04f8822cd807384c5c6d0b424f79e623d4b9cb9e866f987abb9b192edef88",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.0905579974642,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_27",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=8d60d446d362a4089358153e7b76aad6bf60de78a9d6878cbb18977e8a58c88a\",\"spec=bcb9f199fdcd10f87fa889bd61003009a388ad49d12bc20b5057b310df0fcb5c\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_27",
+                    "spec": "fn:bind_27"
+                  },
+                  "into": "px.exp.evo.fitness.27",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.77,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "73f284150069f2e31de248eb3ecd6d0c3b57321418923756b3510842ae326e37",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.99898800087976,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_28",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=8d1dc11bf41b37ea35eed5c6ff1959c297fd3dce15919b9d99b13a4544080f8e\",\"spec=e5f75c0d0fa80110719fae664add29fe236679fc3d6566ef216cc8d10a1d71da\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_28",
+                    "spec": "fn:bind_28"
+                  },
+                  "into": "px.exp.evo.fitness.28",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.31,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "f40983898d4c1b4ee08569cfe66c0cb2f17e41c1525b1bc90d30d1796fc654b6",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.96291900170036,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_29",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=7672c08d2786176f5f0a2fea8721a018d94dd4016704c96a7bea370d1977f7ac\",\"spec=7c8ed2c1387737e2c45e765869a3b1eb09bcaa4fb2bfb3072c750bd1821f35c5\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_29",
+                    "spec": "fn:bind_29"
+                  },
+                  "into": "px.exp.evo.fitness.29",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 254.12,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "b6d87609408d1ed1675ac9c191eae620c16f23db361df617caef08e14e1be1d7",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 50.18085300253006,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_30",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=611e9763d0f77e489c771c42e1fc5615239d6d07a9fee3609540ccb2ca7c55c5\",\"spec=45ea5156974ce480d3508ad7912af5a7d846b0b7537c4c2e66ddf93100e9a5e0\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_30",
+                    "spec": "fn:bind_30"
+                  },
+                  "into": "px.exp.evo.fitness.30",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 255.23,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "0ab2c78e79481d3746101806cf5b68a73659ea2c376499f2f1fdb913c7cb5bd3",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 67.79227900187834,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_31",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=1e82af67692add26ea67f4a44561a0fed9f553e08f9772a381855cf5e62844d1\",\"spec=61ef2f7573357108f4ed027bf30a4988913d1402b663c3f2e576c2ee1bf0b260\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_31",
+                    "spec": "fn:bind_31"
+                  },
+                  "into": "px.exp.evo.fitness.31",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 344.81,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "397f1f98623874652264729f37972321259e881370c025fe106623134fdff000",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "duration_ms": 49.71521299739834,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "fitness_32",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=cb1ea595444e74bf9a21036e50eeae33c110a41d29c1ed31d7460bffe4c07a6b\",\"spec=472f2edbc2d861fe84a0c0791177b614a53ea17d5d500b19793d04001e9f4940\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_32",
+                    "spec": "fn:bind_32"
+                  },
+                  "into": "px.exp.evo.fitness.32",
+                  "kind": "json",
+                  "moved": 196608,
+                  "ns_per_element": 252.86,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "ffe79dab17eee5a8af72bb671597b93116f60533e5d3fed9f08bc4dbc6783cad",
+                  "shape": null,
+                  "tick": "fitness",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 14266,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 16.838796000229195,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_01",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=e7feae23f83db49d84825ecc303ec66e33eb7efd62b7ab4040fe9db0cb831997\",\"spec=0ed2c5b4bafd5fbf194cdbf1d3310c69ae16847a8e285553efba8e32d64a4a68\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_01",
+                    "spec": "fn:bind_01"
+                  },
+                  "into": "px.exp.evo.image.01",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 85.65,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "063030be52872dbeeb490f83acf7a9da5a00983dbcb89c6b447f60e9e30f0837",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 17122,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.8933060022827704,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_02",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=a3f6c20268e644bd486f410ae9e9b1f9743ffe5a65cb89689ac4f8b0f23688c4\",\"spec=16b01117f24af942d6331c2f121c7574b362e0e072b061e3c88d45be8a25f7c2\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_02",
+                    "spec": "fn:bind_02"
+                  },
+                  "into": "px.exp.evo.image.02",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 19.8,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "c1fb950f3c28c0ffb4041c80447cfc20235c8df1c5890626bf5da0848adfc1a4",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 23922,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.706596999312751,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_03",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=5d899572bf8f12868d1540db373ae89179351a7bb2ab76a273648ec062504f0f\",\"spec=228a72cf2477970a3f273ef37f4637ea4f0d91ed6ba05538a7ae88c631712d64\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_03",
+                    "spec": "fn:bind_03"
+                  },
+                  "into": "px.exp.evo.image.03",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 23.94,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "f0f703f7bfd08c4f6ae70c544821354f29fe118cc7449a187df5b738017a955f",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 29282,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.502487998252036,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_04",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=84ea36b68b7fd316fe6f41e2bd31900478bd190964104536e4012b8de1cdd085\",\"spec=947bff669c10c055830437f4b142ed745cc41c6f10e4725279fbec3bd6de2cc4\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_04",
+                    "spec": "fn:bind_04"
+                  },
+                  "into": "px.exp.evo.image.04",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 22.9,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "2f6315487ef6108f13af566282a4b01c3b09f39c45fa66a52c957efa850f4caa",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 17542,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.641620002075797,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_05",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=b16c2ce8ff97653b7fbbc94665ca2673a4f1d584696dc684a9bfc1c9804290c2\",\"spec=1467b28fbb5108f4fcad66aadeb6a780f189dace3b9ab2de7f55b6dbe0cf0e87\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_05",
+                    "spec": "fn:bind_05"
+                  },
+                  "into": "px.exp.evo.image.05",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 23.61,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "7bc7b1520a1833cf52de8fcc1d1fe654a7c7212070a2bfa235911865ec88e6b2",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 14162,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.893174998665927,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_06",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=a0264d111d5db270fdaad166948d516b03dc4aefe91f9d6791a77cddfab90d3a\",\"spec=d555262fc00174bd115bb96069159c4a1cfc87d9a2fd4f57872bedfec7a373a9\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_06",
+                    "spec": "fn:bind_06"
+                  },
+                  "into": "px.exp.evo.image.06",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 19.8,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "3711cf23a0a2feec826207507c74bd11490d7121eff5722059808c1955d61a3e",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 18350,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.164167999988422,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_07",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=77322bfcffdd4b66d8a60421bfae1bffa32538cec1f71afc01bccfbc4132999d\",\"spec=ec3cee9d8288546eeb52e9d7734b3477a0f05d946bd32de5566896fb82bec793\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_07",
+                    "spec": "fn:bind_07"
+                  },
+                  "into": "px.exp.evo.image.07",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 21.18,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "eabde784adca41633c6bcbd836d9b1d7ad5bc3311166ca68b06e848e6296dd04",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 22230,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.135620001761708,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_08",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=e8ed56516f56a12f961575761ed728626cdb0b7445aa87bafb7a634d2f729a6a\",\"spec=81a305249a28d45253b580ee74ca1bee273546522bb522c7fb2fc6978417d7f1\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_08",
+                    "spec": "fn:bind_08"
+                  },
+                  "into": "px.exp.evo.image.08",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 21.03,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "33723c298e0f217d40e7e44407480d1f4944e9de60b2a5dbc16a603036d27373",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 23690,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.3226499983575195,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_09",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=1fadfbe4406d9d6845f60d21ea6c3a6b24115343aabe6b8a99c8514f5d2bec2c\",\"spec=05f184719efac8190aa83a8b409deedc2e1871a7780f1bc2c9de3b4319414c05\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_09",
+                    "spec": "fn:bind_09"
+                  },
+                  "into": "px.exp.evo.image.09",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 21.99,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "948e642e5ab88da7f2b45613291fed244880eb7207211c41502e328d36e5ce2c",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 22246,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.078207999555161,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_10",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=cbe0c2869c0d82d0750b5fecce17447380b4ea1d16276ff759fdf8b9aece9217\",\"spec=e51f02c8cb98b95a107347c88fcc75267af582446c980d66496b1a76406a47c6\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_10",
+                    "spec": "fn:bind_10"
+                  },
+                  "into": "px.exp.evo.image.10",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 20.74,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "2d12b34504f24eb21f2011c92382eba7e0eae775f27fc496f76792305b9d27bd",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 19570,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.146036000747699,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_11",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=504f8f0680a08b72769fb7df2bcfeee95200223ff49d5bf979508eb69ae0c5a3\",\"spec=671293544918790d8c1c1c573842ab6bfedd6e004b08577d1e76d3f13fcab20e\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_11",
+                    "spec": "fn:bind_11"
+                  },
+                  "into": "px.exp.evo.image.11",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 21.09,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "d102bc8da62e5df3b678ca1e93ab6ed734f4087c12a72963fab6f3150851d155",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 21474,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.137798001465853,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_12",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=c7f64e0d15d8f49a3ccbbc5769ae3c522d0bde900e1cb1d75c0c7ac92739aa0a\",\"spec=2f0be03d319c9ef8b8a4b61af2dea8e9396d3c07d804f9b4872c02b214d3636f\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_12",
+                    "spec": "fn:bind_12"
+                  },
+                  "into": "px.exp.evo.image.12",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 21.05,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "8ab37ac612071e14778b3a73d94e58d288f8180c2cc286dff542651858aa94a6",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 31294,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.679903999203816,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_13",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=dd1c76b5cbaf4edd8335fd2ad865f0d01cdd382f4b11b83cf4d3dd86504ff583\",\"spec=35fa9db94bf9295fe298727fe3274049cf00a8d5438d156a428596e5ec35e2c3\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_13",
+                    "spec": "fn:bind_13"
+                  },
+                  "into": "px.exp.evo.image.13",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 23.8,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "ace942c563f83fffa1f8d13b9274a7dd2a6dd6485b2321a5cd49ee0836ad62f3",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 29262,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.744784000649815,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_14",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=dccd2f9e0c079cfb27c829efd3eb07289a448e196059602c55e6ade8aaab9656\",\"spec=45e1af180434c6f5fe723aea98a57b085e78cb968ffffb5e576cfbe6cf29da6b\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_14",
+                    "spec": "fn:bind_14"
+                  },
+                  "into": "px.exp.evo.image.14",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 24.13,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "35817dbf622cde4ff78efeb53c8dd5b521f0651bd51f194e0bf5236ece6d0fa6",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 16650,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.10026499957894,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_15",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=120ff643a8c73e8c3a60feb047521fedc53b3ffc5a723b3b57b01f00f9fb5682\",\"spec=34dc10e50509cf9f96bd28ec46c7f0cf99b5d43ba4393576ac48c0aafbbd9cda\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_15",
+                    "spec": "fn:bind_15"
+                  },
+                  "into": "px.exp.evo.image.15",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 20.86,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "3640d5503d03883209fd6aacd1b58b3796ab0e822e7b6d143dc09e6661ef067b",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 18326,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.123115002585109,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_16",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=c482ef0c1bb4922067fa73a0cc9a7dd84c577a672ecfe2fb6ed529421b7b5d34\",\"spec=1c60106ee0d0d6e9aadcfec32f707b990658fa48e3d99a455dae86b4fb79016d\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_16",
+                    "spec": "fn:bind_16"
+                  },
+                  "into": "px.exp.evo.image.16",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 20.97,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "298342a9a641116c44cc83fe5aadbdec0b421e71f533232b7bef8cdf8f8681fe",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 27094,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.3721389993152115,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_17",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=91645916786c03a5335471ce29cd8df24bc810e2272bb372557259d97c6355f3\",\"spec=4e65d234f1b69abefff6fb391ac199ece2503a4b9424f67b935395fc58001c42\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_17",
+                    "spec": "fn:bind_17"
+                  },
+                  "into": "px.exp.evo.image.17",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 22.24,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "0f82ef0481a23e3be33b5a330aa64e4afe21ba5feddced86ae59b40f78c367a3",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 27358,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.433482001331868,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_18",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=69423e151f02d4a15c51e39342459a8c3458141c23f9eeca794812a19917746b\",\"spec=589b0843444a45cda45bbc8fe178f9764abf42e03b7b2afc9dd9199887558cfc\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_18",
+                    "spec": "fn:bind_18"
+                  },
+                  "into": "px.exp.evo.image.18",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 22.55,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "96bf9d193ae44d0db37cd18848dc58bccb236795a61ea2385a28a84e67d484e3",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 15090,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.775200999371009,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_19",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=9c7759784143a45a9aea22b22849b8ea739ba9865714fc38014cfd19124fbcdb\",\"spec=2a3b106b3a95a2071a9644eb83db91088565110a3a0525ebf481ed30b5cd3afe\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_19",
+                    "spec": "fn:bind_19"
+                  },
+                  "into": "px.exp.evo.image.19",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 19.2,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "64855d5776fa01375fd0d99dffa44239ea6ed88139aa063ca2b19a9f8c59f253",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 13318,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.9556569972774014,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_20",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=6b48cbd61e648ad777739df48f0293f95d76b0fea590bda74eebfc720ba7c213\",\"spec=bb38e7c9d2f45add5d2f1a40c290644db093fc0d8be2fe9eaa04b8ae9fd376da\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_20",
+                    "spec": "fn:bind_20"
+                  },
+                  "into": "px.exp.evo.image.20",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 20.12,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "d90cff8319a0c0bc6000f5e634c587525eb0feed5d8cdc003de45b62f9ee101a",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 14674,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.6780709997401573,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_21",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=51e51700768fc8ff54d15c4f4f0e4f767573e3f44f03088b0e480f369e00e014\",\"spec=8e1330f3e6bb9086f85ef680a6da87fcb5f8b7760f8e5c6465226b9027711903\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_21",
+                    "spec": "fn:bind_21"
+                  },
+                  "into": "px.exp.evo.image.21",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 18.71,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "3bba15c6988797b3baa02b27cb84d092581f1781c9eaedc232ec1bea211b6346",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 13342,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.6637310004152823,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_22",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=7d729f8da389a416c548f258ea84a3b4fbcde0f1cb2b45536b1ac360e61a93ab\",\"spec=bf0d1a2207d3232014870967e536dd0015b60d53e25704788fdea3e2b021165d\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_22",
+                    "spec": "fn:bind_22"
+                  },
+                  "into": "px.exp.evo.image.22",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 18.63,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "cd3c327e0c03a95b8f2158b875bc10a170d2935a17ebc220a1e74aaff2c87039",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 23074,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.34517999747186,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_23",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=db2e17a5bce2fecef9cf7d1f69e7173827de977bf3e7757b1982728c6137f604\",\"spec=53da37f76e4484fc151969b3e787581decb23ecd86c82df3951a9fba0c638655\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_23",
+                    "spec": "fn:bind_23"
+                  },
+                  "into": "px.exp.evo.image.23",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 22.1,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "7c05653b4d2ddad87b46cf6ff8b35db26103ae821eec2dcf6fccd2e11885d79b",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 27522,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.50355399880209,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_24",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=4722fce3530761ae83c87cbbf6ed6ca9068a0277b44a9caa0d9e19d1ce7d3058\",\"spec=2ecb1ae207595ce848d3a90ccfb2d586318a14bef1e87e6ea4e41a6586cb7da7\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_24",
+                    "spec": "fn:bind_24"
+                  },
+                  "into": "px.exp.evo.image.24",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 22.91,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "7c77fe29f58169c6ae5b522bbb362134498450de64c073a3c91033fa6852ae97",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 14066,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.905336001480464,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_25",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=824b01fdb724a3de5eb27dd70d589bbb7a077b6f90c55ecd7229898ce01299dd\",\"spec=e27be5f1b820f22bfdab3444cba3b0d4141ea68e2a034ffc10154ee30c782076\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_25",
+                    "spec": "fn:bind_25"
+                  },
+                  "into": "px.exp.evo.image.25",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 19.86,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "d5a1b69fb41385221461ba2f080d717b4bde6113cc5d961034e0d49771ed3f9f",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 14062,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.9107630000216886,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_26",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=387628c92fca6cde400909c7967dae8d6bacf3fedd03df252520b2d33944aaa2\",\"spec=983c58c88c7c595f1956805327d1e316317e142d22635ba2001b3af9ad5f37ea\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_26",
+                    "spec": "fn:bind_26"
+                  },
+                  "into": "px.exp.evo.image.26",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 19.89,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "270fd71c9d049f45de489e4c1912b480d0bded137ce107cc4fd3cd9b57916d4b",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 30194,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.447657000127947,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_27",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=8d60d446d362a4089358153e7b76aad6bf60de78a9d6878cbb18977e8a58c88a\",\"spec=bcb9f199fdcd10f87fa889bd61003009a388ad49d12bc20b5057b310df0fcb5c\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_27",
+                    "spec": "fn:bind_27"
+                  },
+                  "into": "px.exp.evo.image.27",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 22.62,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "7512d7fc3fbe72da026eef3f3ac110832292b824e63af10bcd488f9ec8b2fa77",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 25838,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.4876310021209065,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_28",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=8d1dc11bf41b37ea35eed5c6ff1959c297fd3dce15919b9d99b13a4544080f8e\",\"spec=e5f75c0d0fa80110719fae664add29fe236679fc3d6566ef216cc8d10a1d71da\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_28",
+                    "spec": "fn:bind_28"
+                  },
+                  "into": "px.exp.evo.image.28",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 22.83,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "5545d0a8ab3b2db45d6e5ed5d48963a8bce6d2117110f8826c9aba1983a0ba9c",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 15886,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.8884650020918343,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_29",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=7672c08d2786176f5f0a2fea8721a018d94dd4016704c96a7bea370d1977f7ac\",\"spec=7c8ed2c1387737e2c45e765869a3b1eb09bcaa4fb2bfb3072c750bd1821f35c5\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_29",
+                    "spec": "fn:bind_29"
+                  },
+                  "into": "px.exp.evo.image.29",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 19.78,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "6674ee0a7e3635dcc07f8fa3abd55c728c5f64edb7372104399af0480e1dd155",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 16270,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 3.8549020027858205,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_30",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=611e9763d0f77e489c771c42e1fc5615239d6d07a9fee3609540ccb2ca7c55c5\",\"spec=45ea5156974ce480d3508ad7912af5a7d846b0b7537c4c2e66ddf93100e9a5e0\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_30",
+                    "spec": "fn:bind_30"
+                  },
+                  "into": "px.exp.evo.image.30",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 19.61,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "aa7a744cec323d6807974b9548f2c04101c589f04fa2abed8a71303939cb7178",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 31530,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 5.184082001505885,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_31",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=1e82af67692add26ea67f4a44561a0fed9f553e08f9772a381855cf5e62844d1\",\"spec=61ef2f7573357108f4ed027bf30a4988913d1402b663c3f2e576c2ee1bf0b260\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_31",
+                    "spec": "fn:bind_31"
+                  },
+                  "into": "px.exp.evo.image.31",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 26.37,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "ff301a8fe9cedf96163ffffecf86ce6077647f570e4635321941869363c377a1",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 29790,
+                  "calculation": "fn.evo.encode",
+                  "duration_ms": 4.748955998366,
+                  "elements": 0,
+                  "hit": false,
+                  "id": "encode_32",
+                  "input_elements": 196608,
+                  "input_key": "[[\"rgb=cb1ea595444e74bf9a21036e50eeae33c110a41d29c1ed31d7460bffe4c07a6b\",\"spec=472f2edbc2d861fe84a0c0791177b614a53ea17d5d500b19793d04001e9f4940\"],{}]",
+                  "inputs": {
+                    "rgb": "fn:render_32",
+                    "spec": "fn:bind_32"
+                  },
+                  "into": "px.exp.evo.image.32",
+                  "kind": "png-data-url",
+                  "moved": 196608,
+                  "ns_per_element": 24.15,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "4f0b4bc0b2ec7a3b6ea01ac3767a194f56e6b5c6aaeb03dc8eb743f991a026be",
+                  "shape": null,
+                  "tick": "encode",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 175,
+                  "calculation": "oc.evo.export",
+                  "duration_ms": 8.622653000202263,
+                  "elements": 0,
+                  "hit": true,
+                  "id": "export",
+                  "input_elements": 0,
+                  "input_key": "[[\"image_01=063030be52872dbeeb490f83acf7a9da5a00983dbcb89c6b447f60e9e30f0837\",\"image_02=c1fb950f3c28c0ffb4041c80447cfc20235c8df1c5890626bf5da0848adfc1a4\",\"image_03=f0f703f7bfd08c4f6ae70c544821354f29fe118cc7449a187df5b738017a955f\",\"image_04=2f6315487ef6108f13af566282a4b01c3b09f39c45fa66a52c957efa850f4caa\",\"image_05=7bc7b1520a1833cf52de8fcc1d1fe654a7c7212070a2bfa235911865ec88e6b2\",\"image_06=3711cf23a0a2feec826207507c74bd11490d7121eff5722059808c1955d61a3e\",\"image_07=eabde784adca41633c6bcbd836d9b1d7ad5bc3311166ca68b06e848e6296dd04\",\"image_08=33723c298e0f217d40e7e44407480d1f4944e9de60b2a5dbc16a603036d27373\",\"image_09=948e642e5ab88da7f2b45613291fed244880eb7207211c41502e328d36e5ce2c\",\"image_10=2d12b34504f24eb21f2011c92382eba7e0eae775f27fc496f76792305b9d27bd\",\"image_11=d102bc8da62e5df3b678ca1e93ab6ed734f4087c12a72963fab6f3150851d155\",\"image_12=8ab37ac612071e14778b3a73d94e58d288f8180c2cc286dff542651858aa94a6\",\"image_13=ace942c563f83fffa1f8d13b9274a7dd2a6dd6485b2321a5cd49ee0836ad62f3\",\"image_14=35817dbf622cde4ff78efeb53c8dd5b521f0651bd51f194e0bf5236ece6d0fa6\",\"image_15=3640d5503d03883209fd6aacd1b58b3796ab0e822e7b6d143dc09e6661ef067b\",\"image_16=298342a9a641116c44cc83fe5aadbdec0b421e71f533232b7bef8cdf8f8681fe\",\"image_17=0f82ef0481a23e3be33b5a330aa64e4afe21ba5feddced86ae59b40f78c367a3\",\"image_18=96bf9d193ae44d0db37cd18848dc58bccb236795a61ea2385a28a84e67d484e3\",\"image_19=64855d5776fa01375fd0d99dffa44239ea6ed88139aa063ca2b19a9f8c59f253\",\"image_20=d90cff8319a0c0bc6000f5e634c587525eb0feed5d8cdc003de45b62f9ee101a\",\"image_21=3bba15c6988797b3baa02b27cb84d092581f1781c9eaedc232ec1bea211b6346\",\"image_22=cd3c327e0c03a95b8f2158b875bc10a170d2935a17ebc220a1e74aaff2c87039\",\"image_23=7c05653b4d2ddad87b46cf6ff8b35db26103ae821eec2dcf6fccd2e11885d79b\",\"image_24=7c77fe29f58169c6ae5b522bbb362134498450de64c073a3c91033fa6852ae97\",\"image_25=d5a1b69fb41385221461ba2f080d717b4bde6113cc5d961034e0d49771ed3f9f\",\"image_26=270fd71c9d049f45de489e4c1912b480d0bded137ce107cc4fd3cd9b57916d4b\",\"image_27=7512d7fc3fbe72da026eef3f3ac110832292b824e63af10bcd488f9ec8b2fa77\",\"image_28=5545d0a8ab3b2db45d6e5ed5d48963a8bce6d2117110f8826c9aba1983a0ba9c\",\"image_29=6674ee0a7e3635dcc07f8fa3abd55c728c5f64edb7372104399af0480e1dd155\",\"image_30=aa7a744cec323d6807974b9548f2c04101c589f04fa2abed8a71303939cb7178\",\"image_31=ff301a8fe9cedf96163ffffecf86ce6077647f570e4635321941869363c377a1\",\"image_32=4f0b4bc0b2ec7a3b6ea01ac3767a194f56e6b5c6aaeb03dc8eb743f991a026be\",\"path=px:px.exp.evo.output_path\"],{}]",
+                  "inputs": {
+                    "image_01": "fn:encode_01",
+                    "image_02": "fn:encode_02",
+                    "image_03": "fn:encode_03",
+                    "image_04": "fn:encode_04",
+                    "image_05": "fn:encode_05",
+                    "image_06": "fn:encode_06",
+                    "image_07": "fn:encode_07",
+                    "image_08": "fn:encode_08",
+                    "image_09": "fn:encode_09",
+                    "image_10": "fn:encode_10",
+                    "image_11": "fn:encode_11",
+                    "image_12": "fn:encode_12",
+                    "image_13": "fn:encode_13",
+                    "image_14": "fn:encode_14",
+                    "image_15": "fn:encode_15",
+                    "image_16": "fn:encode_16",
+                    "image_17": "fn:encode_17",
+                    "image_18": "fn:encode_18",
+                    "image_19": "fn:encode_19",
+                    "image_20": "fn:encode_20",
+                    "image_21": "fn:encode_21",
+                    "image_22": "fn:encode_22",
+                    "image_23": "fn:encode_23",
+                    "image_24": "fn:encode_24",
+                    "image_25": "fn:encode_25",
+                    "image_26": "fn:encode_26",
+                    "image_27": "fn:encode_27",
+                    "image_28": "fn:encode_28",
+                    "image_29": "fn:encode_29",
+                    "image_30": "fn:encode_30",
+                    "image_31": "fn:encode_31",
+                    "image_32": "fn:encode_32",
+                    "path": "px:px.exp.evo.output_path"
+                  },
+                  "into": "px.exp.evo.export",
+                  "kind": "json",
+                  "moved": 0,
+                  "ns_per_element": null,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "57131396579be4ee96c65db7f8c6f1545e548d24c694e4ece67e04a7b5f7046e",
+                  "shape": null,
+                  "tick": "export",
+                  "truncated": false
+                },
+                {
+                  "args": {},
+                  "bytes": 2249,
+                  "calculation": "fn.evo.findings",
+                  "duration_ms": 0.12899899957119487,
+                  "elements": 0,
+                  "hit": true,
+                  "id": "findings",
+                  "input_elements": 0,
+                  "input_key": "[[\"findings=px:px.exp.evo.findings\"],{}]",
+                  "inputs": {
+                    "findings": "px:px.exp.evo.findings"
+                  },
+                  "into": [
+                    "proposal.evo.context",
+                    "proposal.evo.binary_effects",
+                    "proposal.evo.cache",
+                    "proposal.evo.review_scope",
+                    "proposal.evo.purity",
+                    "proposal.evo.fitness",
+                    "proposal.evo.receipt_timing",
+                    "proposal.evo.reuse_strength"
+                  ],
+                  "kind": "json",
+                  "moved": 0,
+                  "ns_per_element": null,
+                  "numeric": false,
+                  "over_cap": null,
+                  "result_sha256": "dbd1ae848aae6c19f2c2fc6068ba78d7781fbf48d6ffc03a180678ac461f42f8",
+                  "shape": null,
+                  "tick": "findings",
+                  "truncated": false
+                }
+              ],
+              "path": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json",
+              "pcr": "evo",
+              "schema": "pyto-run-record@1",
+              "thresholds": {
+                "cap_bytes": 262144,
+                "dense_list": 4096,
+                "element_floor": 1024,
+                "per_element_ns": 50.0,
+                "top": 3
+              }
+            },
+            "per_element_ns": 50.0,
+            "stem": "evo-dense",
+            "top": 3
+          },
+          "calculation": {
+            "address": "fn.neat.hot.evaluate",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "a5f5108c437c8e0cfc2a087a13d21425e9d4d3a30d97999f25cd1a3f08546241"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.36818700027652085,
+          "hit": false,
+          "id": "evaluate",
+          "inputs": {},
+          "into": "px.exp.neat.hot.evo-dense",
+          "result_sha256": "eb3e3a3df9cfce2e8adb161b210cca99d3d7e387a5d6f9e29409155c5d3b8041",
+          "value": {
+            "data": {
+              "address": "px.exp.neat.hot.evo-dense",
+              "calculations": [
+                {
+                  "bytes": 599415,
+                  "calculation": "fn.evo.render",
+                  "elements": 196608,
+                  "invocations": 32,
+                  "kind": "json",
+                  "max_ms": 266.995,
+                  "moved": 196608,
+                  "ns_per_element": 1358.01,
+                  "shape": [
+                    196608
+                  ],
+                  "share": 0.7863,
+                  "total_ms": 6597.379
+                },
+                {
+                  "bytes": 208,
+                  "calculation": "fn.evo.fitness",
+                  "elements": 0,
+                  "invocations": 32,
+                  "kind": "json",
+                  "max_ms": 67.792,
+                  "moved": 196608,
+                  "ns_per_element": 344.81,
+                  "shape": null,
+                  "share": 0.1947,
+                  "total_ms": 1633.493
+                },
+                {
+                  "bytes": 14266,
+                  "calculation": "fn.evo.encode",
+                  "elements": 0,
+                  "invocations": 32,
+                  "kind": "png-data-url",
+                  "max_ms": 16.839,
+                  "moved": 196608,
+                  "ns_per_element": 85.65,
+                  "shape": null,
+                  "share": 0.0177,
+                  "total_ms": 148.263
+                },
+                {
+                  "bytes": 175,
+                  "calculation": "oc.evo.export",
+                  "elements": 0,
+                  "invocations": 1,
+                  "kind": "json",
+                  "max_ms": 8.623,
+                  "moved": 0,
+                  "ns_per_element": null,
+                  "shape": null,
+                  "share": 0.001,
+                  "total_ms": 8.623
+                },
+                {
+                  "bytes": 1845,
+                  "calculation": "fn.evo.bind",
+                  "elements": 0,
+                  "invocations": 32,
+                  "kind": "json",
+                  "max_ms": 0.064,
+                  "moved": 32,
+                  "ns_per_element": 1997.88,
+                  "shape": null,
+                  "share": 0.0001,
+                  "total_ms": 0.956
+                },
+                {
+                  "bytes": 7842,
+                  "calculation": "fn.evo.mutate",
+                  "elements": 32,
+                  "invocations": 1,
+                  "kind": "json",
+                  "max_ms": 0.596,
+                  "moved": 32,
+                  "ns_per_element": 18623.38,
+                  "shape": [
+                    32
+                  ],
+                  "share": 0.0001,
+                  "total_ms": 0.596
+                },
+                {
+                  "bytes": 6988,
+                  "calculation": "oc.evo.load",
+                  "elements": 0,
+                  "invocations": 1,
+                  "kind": "json",
+                  "max_ms": 0.57,
+                  "moved": 0,
+                  "ns_per_element": null,
+                  "shape": null,
+                  "share": 0.0001,
+                  "total_ms": 0.57
+                },
+                {
+                  "bytes": 3954,
+                  "calculation": "fn.evo.select",
+                  "elements": 16,
+                  "invocations": 1,
+                  "kind": "json",
+                  "max_ms": 0.247,
+                  "moved": 16,
+                  "ns_per_element": 15452.0,
+                  "shape": [
+                    16
+                  ],
+                  "share": 0.0,
+                  "total_ms": 0.247
+                },
+                {
+                  "bytes": 2249,
+                  "calculation": "fn.evo.findings",
+                  "elements": 0,
+                  "invocations": 1,
+                  "kind": "json",
+                  "max_ms": 0.129,
+                  "moved": 0,
+                  "ns_per_element": null,
+                  "shape": null,
+                  "share": 0.0,
+                  "total_ms": 0.129
+                }
+              ],
+              "findings": [
+                {
+                  "calculation": "fn.evo.render",
+                  "finding": "hot",
+                  "for": "fn.evo.render is 78.6% of this run (6597.379 ms over 32 invocation(s)): fix here first",
+                  "invocations": 32,
+                  "share": 0.7863,
+                  "total_ms": 6597.379
+                },
+                {
+                  "calculation": "fn.evo.fitness",
+                  "finding": "hot",
+                  "for": "fn.evo.fitness is 19.5% of this run (1633.493 ms over 32 invocation(s)): fix here first",
+                  "invocations": 32,
+                  "share": 0.1947,
+                  "total_ms": 1633.493
+                },
+                {
+                  "calculation": "fn.evo.encode",
+                  "finding": "hot",
+                  "for": "fn.evo.encode is 1.8% of this run (148.263 ms over 32 invocation(s)): fix here first",
+                  "invocations": 32,
+                  "share": 0.0177,
+                  "total_ms": 148.263
+                },
+                {
+                  "bytes": 592938,
+                  "calculation": "fn.evo.render",
+                  "elements": 196608,
+                  "finding": "dense-list",
+                  "for": "fn.evo.render returns a list of 196608 numbers (592938 bytes in the record) that would be an array",
+                  "invocations": 32,
+                  "shape": [
+                    196608
+                  ],
+                  "truncated": false
+                },
+                {
+                  "calculation": "fn.evo.render",
+                  "elements": 196608,
+                  "finding": "per-element",
+                  "for": "fn.evo.render spends 1358.01 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass",
+                  "invocations": 32,
+                  "ns_per_element": 1358.01,
+                  "total_ms": 6597.379
+                },
+                {
+                  "calculation": "fn.evo.fitness",
+                  "elements": 196608,
+                  "finding": "per-element",
+                  "for": "fn.evo.fitness spends 344.81 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass",
+                  "invocations": 32,
+                  "ns_per_element": 344.81,
+                  "total_ms": 1633.493
+                },
+                {
+                  "calculation": "fn.evo.encode",
+                  "elements": 196608,
+                  "finding": "per-element",
+                  "for": "fn.evo.encode spends 85.65 ns on each of 196608 elements: it is walking them in Python, not moving them in one pass",
+                  "invocations": 1,
+                  "ns_per_element": 85.65,
+                  "total_ms": 16.839
+                },
+                {
+                  "bytes": 607752,
+                  "calculation": "fn.evo.render",
+                  "cap": 262144,
+                  "finding": "over-cap",
+                  "for": "fn.evo.render puts 19169813 bytes into the record over 32 invocation(s), each over the 262144 byte cap: the record carries them only because the run raised the cap",
+                  "invocations": 32,
+                  "kept": true,
+                  "total_bytes": 19169813
+                }
+              ],
+              "for": "name the hot Calculations of one run and the shape of their values, so the next pass is chosen and not guessed",
+              "quiet": false,
+              "record": {
+                "invocations": 133,
+                "measured_ms": 8390.256,
+                "path": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json",
+                "pcr": "evo",
+                "wall_ms": 8390.256094007782
+              },
+              "thresholds": {
+                "cap_bytes": 262144,
+                "dense_list": 4096,
+                "element_floor": 1024,
+                "per_element_ns": 50.0,
+                "top": 3
+              }
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.neat.hot.evo-dense",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Hot"
+    }
+  ]
+}

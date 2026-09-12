@@ -1,0 +1,385 @@
+{
+  "counters": {
+    "computed": 1,
+    "hits": 0,
+    "invocations": 1,
+    "wall_ms": 0.1045989993144758
+  },
+  "parts": {
+    "px.exp.neat.equiv.fn.evo.render.f906b002": {
+      "preexisting": false,
+      "read_by": [],
+      "written_by": "judge"
+    }
+  },
+  "pcr": "neat-equiv",
+  "schema": "pyto-run-record@1",
+  "source": {
+    "commit": null,
+    "runtime": "pyto",
+    "version": "0.1.0"
+  },
+  "ticks": [
+    {
+      "index": 0,
+      "invocations": [
+        {
+          "actual_consumes": [],
+          "actual_produces": [
+            "px.exp.neat.equiv.fn.evo.render.f906b002"
+          ],
+          "args": {
+            "calculation": "fn.evo.render",
+            "candidate": {
+              "function": "render",
+              "implementation_sha256": "f906b00242867f04cd803ac61c4ba34ecaf51a7b7fff086e5773efd754c0b2b9",
+              "module": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/fast_render.py"
+            },
+            "record": {
+              "path": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json",
+              "pcr": "evo"
+            },
+            "rows": [
+              {
+                "actual": "b8316b070a682b083b5e06ba34831d7c2cd68e6b07fa4cbf032dc12eea57b8f4",
+                "expected": "b8316b070a682b083b5e06ba34831d7c2cd68e6b07fa4cbf032dc12eea57b8f4",
+                "id": "render_01",
+                "into": "px.exp.evo.render.01",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "d4ed970c1f8ca30a4d48894e44128599e09c9a1d2c9ba75c354e1d60b7f92c15",
+                "expected": "d4ed970c1f8ca30a4d48894e44128599e09c9a1d2c9ba75c354e1d60b7f92c15",
+                "id": "render_02",
+                "into": "px.exp.evo.render.02",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "a184ccdaf4f46d97871422847efd108de29f89f0b4c700042b7c80d0df50e439",
+                "expected": "a184ccdaf4f46d97871422847efd108de29f89f0b4c700042b7c80d0df50e439",
+                "id": "render_03",
+                "into": "px.exp.evo.render.03",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "e6fcc391d709e3cf43990ddbd52f2d31f6c2f7937ae89256404d1349f070f4c8",
+                "expected": "e6fcc391d709e3cf43990ddbd52f2d31f6c2f7937ae89256404d1349f070f4c8",
+                "id": "render_04",
+                "into": "px.exp.evo.render.04",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "c6bea52e939ac5d61d8c7c3613d6e1820c065bc7afcb11c80e65989c84be0ff7",
+                "expected": "c6bea52e939ac5d61d8c7c3613d6e1820c065bc7afcb11c80e65989c84be0ff7",
+                "id": "render_05",
+                "into": "px.exp.evo.render.05",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "8a9981f7db1e6a6ec6145ec946712393f211f15a5c7d738707ab04e1e6527eb2",
+                "expected": "8a9981f7db1e6a6ec6145ec946712393f211f15a5c7d738707ab04e1e6527eb2",
+                "id": "render_06",
+                "into": "px.exp.evo.render.06",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "0bc34b5b96671c0eab02641d67a4ce6fc1f14bd586191610bce076880217ec14",
+                "expected": "0bc34b5b96671c0eab02641d67a4ce6fc1f14bd586191610bce076880217ec14",
+                "id": "render_07",
+                "into": "px.exp.evo.render.07",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "be9c5b0d1ce853d6e975dead03f1956a8ec7ba827639ff75969d1421cc4f6152",
+                "expected": "be9c5b0d1ce853d6e975dead03f1956a8ec7ba827639ff75969d1421cc4f6152",
+                "id": "render_08",
+                "into": "px.exp.evo.render.08",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "44faaadaf2c5893e7fb1109357b129631f816b630fe75bb1487ed4b66f7bcfc5",
+                "expected": "44faaadaf2c5893e7fb1109357b129631f816b630fe75bb1487ed4b66f7bcfc5",
+                "id": "render_09",
+                "into": "px.exp.evo.render.09",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "ad04a51bfc67832a6cc6c71ec789341f374df5f70e9eb0ad1750b6f23e393c3a",
+                "expected": "ad04a51bfc67832a6cc6c71ec789341f374df5f70e9eb0ad1750b6f23e393c3a",
+                "id": "render_10",
+                "into": "px.exp.evo.render.10",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "1b15b0f9eb741108993cb6322ebcb5c57be87f942d0e27993a672ced821bb54e",
+                "expected": "1b15b0f9eb741108993cb6322ebcb5c57be87f942d0e27993a672ced821bb54e",
+                "id": "render_11",
+                "into": "px.exp.evo.render.11",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "f138eb655c7e97f7bd72c311c3dadd33361e1b8472a50c11e7fe274211a380f6",
+                "expected": "f138eb655c7e97f7bd72c311c3dadd33361e1b8472a50c11e7fe274211a380f6",
+                "id": "render_12",
+                "into": "px.exp.evo.render.12",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "c1d9b7e065fea19b1d37751c46cdc2f5639d6363048a24c628da62ae284a64f7",
+                "expected": "c1d9b7e065fea19b1d37751c46cdc2f5639d6363048a24c628da62ae284a64f7",
+                "id": "render_13",
+                "into": "px.exp.evo.render.13",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "849ff09b9428a5efa967eb67163fa14c71b62535d6d35119f21b4c8eda628eb1",
+                "expected": "849ff09b9428a5efa967eb67163fa14c71b62535d6d35119f21b4c8eda628eb1",
+                "id": "render_14",
+                "into": "px.exp.evo.render.14",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "311f653c4665444a62aaa74d57083c9e481ccd4a8e386648d1113130f1ca58cc",
+                "expected": "311f653c4665444a62aaa74d57083c9e481ccd4a8e386648d1113130f1ca58cc",
+                "id": "render_15",
+                "into": "px.exp.evo.render.15",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "251f0e622716bad6f171a140bb6fb983c6329a8baf78f88f7a5a8fa7b001f116",
+                "expected": "251f0e622716bad6f171a140bb6fb983c6329a8baf78f88f7a5a8fa7b001f116",
+                "id": "render_16",
+                "into": "px.exp.evo.render.16",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "53782493ef5a5cad81b1b6516372977c25192cea8d9e66fd4047bb8708f23759",
+                "expected": "53782493ef5a5cad81b1b6516372977c25192cea8d9e66fd4047bb8708f23759",
+                "id": "render_17",
+                "into": "px.exp.evo.render.17",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "78aef53aaeba1c6e1795347855119c407ec00cdda001670d5a6ef377044fd3f2",
+                "expected": "78aef53aaeba1c6e1795347855119c407ec00cdda001670d5a6ef377044fd3f2",
+                "id": "render_18",
+                "into": "px.exp.evo.render.18",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "ab16dc2b58f6c4dd922fc749d6ee032e10a97616b32044ca63d872986395e4fc",
+                "expected": "ab16dc2b58f6c4dd922fc749d6ee032e10a97616b32044ca63d872986395e4fc",
+                "id": "render_19",
+                "into": "px.exp.evo.render.19",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "78a76175867fffb8d4e71ed10dec471d5b0d240231c5ca35d21b0430323326ca",
+                "expected": "78a76175867fffb8d4e71ed10dec471d5b0d240231c5ca35d21b0430323326ca",
+                "id": "render_20",
+                "into": "px.exp.evo.render.20",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "e8759b487002415b952f43dd5bf93e8619a4e5d3178f2570edf5f47d70f7ebff",
+                "expected": "e8759b487002415b952f43dd5bf93e8619a4e5d3178f2570edf5f47d70f7ebff",
+                "id": "render_21",
+                "into": "px.exp.evo.render.21",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "9f5b5828674b0296d0ac37a5f5b8719a91dee2f52a9d3fed8da777f07026a19b",
+                "expected": "9f5b5828674b0296d0ac37a5f5b8719a91dee2f52a9d3fed8da777f07026a19b",
+                "id": "render_22",
+                "into": "px.exp.evo.render.22",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "5c5c54cd3816a7359579a8f4c3b654928af09cc315eec147917afb3f10903912",
+                "expected": "5c5c54cd3816a7359579a8f4c3b654928af09cc315eec147917afb3f10903912",
+                "id": "render_23",
+                "into": "px.exp.evo.render.23",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "4c9fea43ad722663dc384cb92d9f3580e1f64a78f85496aa899fcb3eb14548d8",
+                "expected": "4c9fea43ad722663dc384cb92d9f3580e1f64a78f85496aa899fcb3eb14548d8",
+                "id": "render_24",
+                "into": "px.exp.evo.render.24",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "d01368f07ac1c233aded3054608ca02f15a1e8e6ea28c8f1d67a671fee638dd5",
+                "expected": "d01368f07ac1c233aded3054608ca02f15a1e8e6ea28c8f1d67a671fee638dd5",
+                "id": "render_25",
+                "into": "px.exp.evo.render.25",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "66b114e57a7f19080402d567246b6144e92e0fca265edb01862949ed2cb06fab",
+                "expected": "66b114e57a7f19080402d567246b6144e92e0fca265edb01862949ed2cb06fab",
+                "id": "render_26",
+                "into": "px.exp.evo.render.26",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "b7721de7f5910e7e024424c304b4f9bf9bc77a52cf3ff17daf7dec6d8aa6d42e",
+                "expected": "b7721de7f5910e7e024424c304b4f9bf9bc77a52cf3ff17daf7dec6d8aa6d42e",
+                "id": "render_27",
+                "into": "px.exp.evo.render.27",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "61104532023f2810b5a4042f69976c7119423f97bf649460b617e890993d51a8",
+                "expected": "61104532023f2810b5a4042f69976c7119423f97bf649460b617e890993d51a8",
+                "id": "render_28",
+                "into": "px.exp.evo.render.28",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "f7577e313eba90dcf7676481ffa6b66bdf69d8a46503fdd58ca2bb898c1426a8",
+                "expected": "f7577e313eba90dcf7676481ffa6b66bdf69d8a46503fdd58ca2bb898c1426a8",
+                "id": "render_29",
+                "into": "px.exp.evo.render.29",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "b00595785c18dab567824c83190858daaa00890340b12a90f994f2ed23b89916",
+                "expected": "b00595785c18dab567824c83190858daaa00890340b12a90f994f2ed23b89916",
+                "id": "render_30",
+                "into": "px.exp.evo.render.30",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "6c3d383f46c6bd860a61c1529810fbf74cb7b9285a8048539d0cef317bb2541f",
+                "expected": "6c3d383f46c6bd860a61c1529810fbf74cb7b9285a8048539d0cef317bb2541f",
+                "id": "render_31",
+                "into": "px.exp.evo.render.31",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              },
+              {
+                "actual": "fd111294b95f415abc5a0d470d6a9114b5a0307aa37faf084153237d97bace55",
+                "expected": "fd111294b95f415abc5a0d470d6a9114b5a0307aa37faf084153237d97bace55",
+                "id": "render_32",
+                "into": "px.exp.evo.render.32",
+                "state": "match",
+                "tick": "render",
+                "via": "canonical bytes"
+              }
+            ],
+            "store_used": false
+          },
+          "calculation": {
+            "address": "fn.neat.equiv.judge",
+            "identity_scope": "runtime-function-body",
+            "implementation_sha256": "d428b82bc29ab05b3c1c76887e9d0d1630e9bfadcf86d075f89b9890e7c8111b"
+          },
+          "declared_consumes": [],
+          "duration_ms": 0.1045989993144758,
+          "hit": false,
+          "id": "judge",
+          "inputs": {},
+          "into": "px.exp.neat.equiv.fn.evo.render.f906b002",
+          "result_sha256": "da8e0a085b5397f4e17608e92307a279d76d8df44d7462c40b12c098e6fe07a9",
+          "value": {
+            "data": {
+              "address": "px.exp.neat.equiv.fn.evo.render.f906b002",
+              "calculation": "fn.evo.render",
+              "candidate": {
+                "function": "render",
+                "implementation_sha256": "f906b00242867f04cd803ac61c4ba34ecaf51a7b7fff086e5773efd754c0b2b9",
+                "module": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/fast_render.py"
+              },
+              "counts": {
+                "matched": 32,
+                "mismatched": 0,
+                "not_rebuildable": 0,
+                "receipts": 32
+              },
+              "for": "witness that a candidate reproduces every recorded result of one Calculation, so the faster one can be trusted",
+              "reason": "32/32 receipts of fn.evo.render reproduced by /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/fast_render.py:render, value for value",
+              "record": {
+                "path": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json",
+                "pcr": "evo"
+              },
+              "rows": [],
+              "store_used": false,
+              "trusted": true
+            },
+            "kind": "json",
+            "note": null
+          },
+          "writes": [
+            {
+              "address": "px.exp.neat.equiv.fn.evo.render.f906b002",
+              "kind": "new-address"
+            }
+          ]
+        }
+      ],
+      "name": "Equiv"
+    }
+  ]
+}

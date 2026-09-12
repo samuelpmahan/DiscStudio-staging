@@ -1,0 +1,181 @@
+{
+  "address": "px.exp.neat.hot.evo-fast",
+  "calculations": [
+    {
+      "bytes": 0,
+      "calculation": "fn.evo.geometry",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "omitted",
+      "max_ms": 7.554,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.4391,
+      "total_ms": 151.833
+    },
+    {
+      "bytes": 14266,
+      "calculation": "fn.evo.encode",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "png-data-url",
+      "max_ms": 12.509,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.3251,
+      "total_ms": 112.405
+    },
+    {
+      "bytes": 0,
+      "calculation": "fn.evo.tint",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "omitted",
+      "max_ms": 2.473,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.1524,
+      "total_ms": 52.712
+    },
+    {
+      "bytes": 208,
+      "calculation": "fn.evo.fitness",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "json",
+      "max_ms": 0.6,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.0493,
+      "total_ms": 17.06
+    },
+    {
+      "bytes": 180,
+      "calculation": "oc.evo.export",
+      "elements": 0,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 9.692,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.028,
+      "total_ms": 9.692
+    },
+    {
+      "bytes": 6988,
+      "calculation": "oc.evo.load",
+      "elements": 0,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 0.924,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.0027,
+      "total_ms": 0.924
+    },
+    {
+      "bytes": 81,
+      "calculation": "fn.evo.shape",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "json",
+      "max_ms": 0.059,
+      "moved": 0,
+      "ns_per_element": null,
+      "shape": null,
+      "share": 0.0011,
+      "total_ms": 0.382
+    },
+    {
+      "bytes": 1846,
+      "calculation": "fn.evo.bind",
+      "elements": 0,
+      "invocations": 32,
+      "kind": "json",
+      "max_ms": 0.022,
+      "moved": 32,
+      "ns_per_element": 693.69,
+      "shape": null,
+      "share": 0.001,
+      "total_ms": 0.355
+    },
+    {
+      "bytes": 7842,
+      "calculation": "fn.evo.mutate",
+      "elements": 32,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 0.237,
+      "moved": 32,
+      "ns_per_element": 7410.66,
+      "shape": [
+        32
+      ],
+      "share": 0.0007,
+      "total_ms": 0.237
+    },
+    {
+      "bytes": 3954,
+      "calculation": "fn.evo.select",
+      "elements": 16,
+      "invocations": 1,
+      "kind": "json",
+      "max_ms": 0.166,
+      "moved": 16,
+      "ns_per_element": 10364.75,
+      "shape": [
+        16
+      ],
+      "share": 0.0005,
+      "total_ms": 0.166
+    }
+  ],
+  "findings": [
+    {
+      "calculation": "fn.evo.geometry",
+      "finding": "hot",
+      "for": "fn.evo.geometry is 43.9% of this run (151.833 ms over 32 invocation(s)): fix here first",
+      "invocations": 32,
+      "share": 0.4391,
+      "total_ms": 151.833
+    },
+    {
+      "calculation": "fn.evo.encode",
+      "finding": "hot",
+      "for": "fn.evo.encode is 32.5% of this run (112.405 ms over 32 invocation(s)): fix here first",
+      "invocations": 32,
+      "share": 0.3251,
+      "total_ms": 112.405
+    },
+    {
+      "calculation": "fn.evo.tint",
+      "finding": "hot",
+      "for": "fn.evo.tint is 15.2% of this run (52.712 ms over 32 invocation(s)): fix here first",
+      "invocations": 32,
+      "share": 0.1524,
+      "total_ms": 52.712
+    }
+  ],
+  "for": "name the hot Calculations of one run and the shape of their values, so the next pass is chosen and not guessed",
+  "quiet": true,
+  "record": {
+    "invocations": 196,
+    "measured_ms": 345.766,
+    "path": "/tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed-fast/record.json",
+    "pcr": "evo",
+    "wall_ms": 345.76554196246434
+  },
+  "thresholds": {
+    "cap_bytes": 262144,
+    "dense_list": 4096,
+    "element_floor": 1024,
+    "per_element_ns": 50.0,
+    "top": 3
+  }
+}

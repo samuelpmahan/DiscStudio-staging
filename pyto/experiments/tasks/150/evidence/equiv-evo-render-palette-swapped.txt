@@ -1,0 +1,43 @@
+$ neat equiv observed/record.json --calc fn.evo.render --candidate exp/evo-pxc/fast_render.py:render_palette_swapped   # the control
+
+record: /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/observed/record.json  pcr=evo
+calculation: fn.evo.render
+candidate: /tmp/claude-0/-home-user-DiscStudio-staging/c7ad5950-a39c-58bb-9747-e1301075cf94/scratchpad/evo/exp/evo-pxc/fast_render.py:render_palette_swapped  sha256=3c22fd6b7785
+
+matched 0/32  mismatched 32  not rebuildable 0
+
+ID         STATE     VIA              EXPECTED      ACTUAL        WHY
+render_01  mismatch  canonical bytes  b8316b070a68  44269364cc3b
+render_02  mismatch  canonical bytes  d4ed970c1f8c  1e908678a797
+render_03  mismatch  canonical bytes  a184ccdaf4f4  87e329fa1807
+render_04  mismatch  canonical bytes  e6fcc391d709  97ee261f8d0a
+render_05  mismatch  canonical bytes  c6bea52e939a  b69b7c6d2628
+render_06  mismatch  canonical bytes  8a9981f7db1e  92f81e1459a6
+render_07  mismatch  canonical bytes  0bc34b5b9667  0ae7d3cdc27f
+render_08  mismatch  canonical bytes  be9c5b0d1ce8  711f58d0a354
+render_09  mismatch  canonical bytes  44faaadaf2c5  9200b0f427b2
+render_10  mismatch  canonical bytes  ad04a51bfc67  18e0d87b9ba2
+render_11  mismatch  canonical bytes  1b15b0f9eb74  637f09b2c257
+render_12  mismatch  canonical bytes  f138eb655c7e  1173a4963663
+render_13  mismatch  canonical bytes  c1d9b7e065fe  16ac6c2caabd
+render_14  mismatch  canonical bytes  849ff09b9428  48453305b359
+render_15  mismatch  canonical bytes  311f653c4665  e7d27b053ce6
+render_16  mismatch  canonical bytes  251f0e622716  4f7ad50cca3f
+render_17  mismatch  canonical bytes  53782493ef5a  cd52d13ac451
+render_18  mismatch  canonical bytes  78aef53aaeba  db05f632db2f
+render_19  mismatch  canonical bytes  ab16dc2b58f6  de8f3adbf46c
+render_20  mismatch  canonical bytes  78a76175867f  84c6bb378391
+render_21  mismatch  canonical bytes  e8759b487002  6faf754d37c7
+render_22  mismatch  canonical bytes  9f5b5828674b  f5c6195f7da6
+render_23  mismatch  canonical bytes  5c5c54cd3816  a23b12c9be31
+render_24  mismatch  canonical bytes  4c9fea43ad72  74f9ce8e6304
+render_25  mismatch  canonical bytes  d01368f07ac1  317d92554f90
+render_26  mismatch  canonical bytes  66b114e57a7f  c7dde2faa113
+render_27  mismatch  canonical bytes  b7721de7f591  4d1a652cc37f
+render_28  mismatch  canonical bytes  61104532023f  629b510f6470
+render_29  mismatch  canonical bytes  f7577e313eba  144e2f4c8d95
+render_30  mismatch  canonical bytes  b00595785c18  287d21f7fd50
+render_31  mismatch  canonical bytes  6c3d383f46c6  bc16a618d176
+render_32  mismatch  canonical bytes  fd111294b95f  a8fff861a812
+
+trusted: false (0/32 matched; 32 mismatched, 0 not rebuilt)
