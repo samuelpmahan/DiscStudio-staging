@@ -4,8 +4,42 @@ Intent: neat ask surfaces questions, not notes: batch 9 collated 359 items becau
 Starting point: aa83ee97c41128ad428da05564428a35c60d6761 (board: **started** `task-140`: neat ask surfaces questions, not notes: batch 9)
 Verify: cd pyto && python -m unittest tests.test_neat_review tests.test_neat_diff tests.test_neat_gate tests.test_neat_delta && python scripts/walk.py --check
 Allow: pyto/src/pyto/neat pyto/scripts/walk.py pyto/tests pyto/experiments/review pyto/experiments/tasks
-Candidate: not packed yet
-Evidence: not packed yet
+Candidate: 5 files, see below
+Evidence: suite exit 0, see below
+
+## Candidate
+
+- A  pyto/experiments/review/batches/9.json
+- A  pyto/experiments/review/runs/ask-9.json
+- M  pyto/scripts/walk.py
+- M  pyto/src/pyto/neat/review.py
+- M  pyto/tests/test_neat_review.py
+
+```
+pyto/experiments/review/batches/9.json  | 2927 +++++++++++++++++++++++++++++++
+ pyto/experiments/review/runs/ask-9.json | 1671 ++++++++++++++++++
+ pyto/scripts/walk.py                    |   12 +-
+ pyto/src/pyto/neat/review.py            |   73 +-
+ pyto/tests/test_neat_review.py          |   90 +
+ 5 files changed, 4749 insertions(+), 24 deletions(-)
+```
+
+## Evidence
+
+- verify: `cd pyto && python -m unittest tests.test_neat_review tests.test_neat_diff tests.test_neat_gate tests.test_neat_delta && python scripts/walk.py --check` exit 1 (evidence/verify.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.jGiOxQGkIc) (evidence/check_all.txt)
+    suite                         tests  status
+    library                         447  OK
+    experiments/brain               756  OK
+    experiments/classroom            16  OK
+    experiments/cross-project         9  OK
+    experiments/grouped-ablation    250  OK
+    experiments/hiding-primitives      6  OK
+    experiments/molecules            10  OK
+    experiments/s3-synthetic          5  OK
+    experiments/students             17  OK
+    experiments/tick-laws            14  OK
+    consumer                         61  OK
 
 ## Uncertain
 

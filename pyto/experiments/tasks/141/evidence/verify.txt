@@ -1,0 +1,148 @@
+[tests/test_neat_diff] sys.path.insert(0, '/home/user/DiscStudio-staging/EXP/141/pyto/tests')
+fatal: expected 'acknowledgments', received 'packfile'
+warning: push negotiation failed; proceeding anyway with push
+.......EFFF/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py:283: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsbsz1nko/questions.md' mode='r' encoding='utf-8'>
+  text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py:298: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsbsz1nko/questions.md' mode='r' encoding='utf-8'>
+  text = open(os.path.join(root, "questions.md"), encoding="utf-8").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..F..FF..................../home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:158: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/receipt.json' mode='w' encoding='utf-8'>
+  json.dump({"schema": "pyto-landing-receipt@1", "package": "task-65"}, open(receipt, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:162: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/receipt.json' mode='r' encoding='utf-8'>
+  written = json.load(open(receipt))["gate"]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:166: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/gate.json' mode='r' encoding='utf-8'>
+  validate_record(json.load(open(record)))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:167: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpicjxgjna/gate.json' mode='r' encoding='utf-8'>
+  self.assertEqual(json.load(open(record))["ticks"][0]["invocations"][0]["calculation"]["address"],
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpa9ldr3at/approve.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "approve", "selection": "<head>", "text": "stub approve"},
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_gate.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpa9ldr3at/reject.json' mode='w' encoding='utf-8'>
+  json.dump({"login": "selftest", "disposition": "reject", "selection": "<head>", "text": "no"}, open(reject, "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+....                         after task-1  after task-2
+capability.verified      67            68
+capability.calculations  2             2
+capability.actions       1             1
+capability.queries       1             1
+capability.points        4             4
+cost.lines               9             7
+cost.files               4             4
+cost.address_roots       1             1
+cost.fixtures            1             1
+cost.pages               2             0
+cost.moved_assertions    2             2
+cost.total               19            15
+verified / cost          3.5263        4.5333
+rework: 2 lines
+verdict: b (after b: 68 verified, 4 capability points, cost 15; after a alone: 67 verified, 4 capability points, cost 19; b removed 2 lines a had added (the price of building a first))
+..
+======================================================================
+ERROR: test_no_notes_is_an_empty_total (tests.test_neat_review.NotesLeftOut.test_no_notes_is_an_empty_total)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py", line 374, in test_no_notes_is_an_empty_total
+    self.assertEqual(batch["notes_left_out"], {"total": 0, "by_task": {}})
+                     ~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'notes_left_out'
+
+======================================================================
+FAIL: test_one_labelled_and_one_prose_yields_one_item (tests.test_neat_review.NotesLeftOut.test_one_labelled_and_one_prose_yields_one_item)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py", line 331, in test_one_labelled_and_one_prose_yields_one_item
+    self.assertEqual([it["label"] for it in batch["items"]], ["FrameIsPartOfTheLayout"])
+AssertionError: Lists differ: ['FrameIsPartOfTheLayout', 'both runs are in the packet'] != ['FrameIsPartOfTheLayout']
+
+First list contains 1 additional elements.
+First extra element 1:
+'both runs are in the packet'
+
+- ['FrameIsPartOfTheLayout', 'both runs are in the packet']
++ ['FrameIsPartOfTheLayout']
+
+======================================================================
+FAIL: test_prose_note_with_an_embedded_colon_is_one_note_not_several (tests.test_neat_review.NotesLeftOut.test_prose_note_with_an_embedded_colon_is_one_note_not_several)
+Task 103's own first note: a colon appears mid-sentence, but the label before it has
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py", line 348, in test_prose_note_with_an_embedded_colon_is_one_note_not_several
+    self.assertEqual(batch["items"], [])
+AssertionError: Lists differ: [{'number': 1, 'label': 'both runs are in [223 chars]lt'}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'number': 1, 'label': 'both runs are in the packet', 'task': 'task-103', 'text': "the copy's venv (python 3.11, numpy 2.4.6) through the Verify line, and python 3.12.3 with numpy 2.5.3 and scipy 1.18.1. 728 tests, OK in both.", 'origin': 'packet', 'needs': 'default'}
+
++ []
+- [{'label': 'both runs are in the packet',
+-   'needs': 'default',
+-   'number': 1,
+-   'origin': 'packet',
+-   'task': 'task-103',
+-   'text': "the copy's venv (python 3.11, numpy 2.4.6) through the Verify line, "
+-           'and python 3.12.3 with numpy 2.5.3 and scipy 1.18.1. 728 tests, OK '
+-           'in both.'}]
+
+======================================================================
+FAIL: test_prose_note_wrapped_over_several_lines_still_counts_once (tests.test_neat_review.NotesLeftOut.test_prose_note_wrapped_over_several_lines_still_counts_once)
+Only the opening `{?}` line is ever inspected; continuation lines carry no `{?}` and are
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py", line 364, in test_prose_note_wrapped_over_several_lines_still_counts_once
+    self.assertEqual(batch["items"], [])
+AssertionError: Lists differ: [{'number': 1, 'label': 'a case may now ca[121 chars]lt'}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'number': 1, 'label': 'a case may now carry `engines=("np", "sp")`. It is not a way to excuse', 'task': 'task-1', 'text': '', 'origin': 'packet', 'needs': 'default'}
+
++ []
+- [{'label': 'a case may now carry `engines=("np", "sp")`. It is not a way to '
+-            'excuse',
+-   'needs': 'default',
+-   'number': 1,
+-   'origin': 'packet',
+-   'task': 'task-1',
+-   'text': ''}]
+
+======================================================================
+FAIL: test_owner_items_newest_task_first (tests.test_neat_review.Ranking.test_owner_items_newest_task_first)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py", line 388, in test_owner_items_newest_task_first
+    self.assertEqual([it["label"] for it in batch["items"]], ["New", "Old"])
+AssertionError: Lists differ: ['Old', 'New'] != ['New', 'Old']
+
+First differing element 0:
+'Old'
+'New'
+
+- ['Old', 'New']
++ ['New', 'Old']
+
+======================================================================
+FAIL: test_prose_with_no_colon_is_none (tests.test_neat_review.SplitQuestionLine.test_prose_with_no_colon_is_none)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py", line 314, in test_prose_with_no_colon_is_none
+    self.assertIsNone(review.split_question_line(
+AssertionError: ('a case may now carry engines. It is not a way to excuse a disagreement.', '') is not None
+
+======================================================================
+FAIL: test_prose_with_spaces_before_colon_is_none (tests.test_neat_review.SplitQuestionLine.test_prose_with_spaces_before_colon_is_none)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/DiscStudio-staging/EXP/141/pyto/tests/test_neat_review.py", line 310, in test_prose_with_spaces_before_colon_is_none
+    self.assertIsNone(review.split_question_line(
+AssertionError: ('both runs are in the packet', "the copy's venv (python 3.11, numpy 2.4.6)") is not None
+
+----------------------------------------------------------------------
+Ran 45 tests in 3.115s
+
+FAILED (failures=6, errors=1)
