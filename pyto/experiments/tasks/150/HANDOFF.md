@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/150
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/150:pyto/experiments/tasks/150/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 7c354c0 origin/exp/150 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff b6a1834 origin/exp/150 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ the owner, 2026-09-12: 'come up with some compiler-ish efficiency pass to preven
 
 ## Starting point
 
-7c354c04e7da2a5323fdb3a92e4ccf8223068cfe (board: **started** `task-149`: materializing a record with big values is cheap:). MAIN may have moved since: `git log --oneline 7c354c0..origin/main` shows how far.
+7c354c04e7da2a5323fdb3a92e4ccf8223068cfe (board: **started** `task-149`: materializing a record with big values is cheap:). MAIN may have moved since: `git log --oneline b6a1834..origin/main` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -81,9 +81,9 @@ pyto/USE.md                   | 125 ++++++++++++
 ## Evidence
 
 - verify: `bash pyto/scripts/check_all.sh` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.8c7EXF6XNY) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.ra0ZONnHXi) (evidence/check_all.txt)
     suite                         tests  status
-    library                         528  OK
+    library                         544  OK
     experiments/brain               756  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK

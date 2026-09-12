@@ -31,9 +31,9 @@ pyto/USE.md                   | 125 ++++++++++++
 ## Evidence
 
 - verify: `bash pyto/scripts/check_all.sh` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.8c7EXF6XNY) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.ra0ZONnHXi) (evidence/check_all.txt)
     suite                         tests  status
-    library                         528  OK
+    library                         544  OK
     experiments/brain               756  OK
     experiments/classroom            16  OK
     experiments/cross-project         9  OK
