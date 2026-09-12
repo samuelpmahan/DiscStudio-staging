@@ -34,10 +34,14 @@ from board_page import inline  # noqa: E402  (the board's renderer: same inline 
 
 
 def question_status(line: str) -> str:
-    """"open", or "answered <digest first 12>" -- the label of one raw `{?}` line, looked up in
+    """"open", "answered <digest first 12>", or "note" for a `{?}` line with no labelled form (a
+    prose evidence note, not a question) -- the label of one raw `{?}` line, looked up in
     `pyto/experiments/review/answers/` the same way `neat answers` does (`pyto.neat.review.
     answer_for`), so a step and the CLI never disagree about what counts as answered."""
-    label, _ = neat_review.split_question_line(line)
+    split = neat_review.split_question_line(line)
+    if split is None:
+        return "note"
+    label, _ = split
     answer = neat_review.answer_for(PYTO_DIR, label)
     if answer is None:
         return "open"
@@ -240,7 +244,9 @@ def build_steps() -> tuple[list[dict], list[str]]:
         steps.append({
             **row, "receipt": receipt, "commit": commit,
             "intent_full": commit["subject"] if commit else row["intent"],
-            "owner": owner_words([neat_review.split_question_line(q)[0] for q in qs]),
+            "owner": owner_words([
+                split[0] for q in qs if (split := neat_review.split_question_line(q)) is not None
+            ]),
             "result": (receipt or {}).get("result", "no receipt"),
             "rscore": (receipt or {}).get("score"),
             "tests": sum(v for v in counts.values() if isinstance(v, int)),
