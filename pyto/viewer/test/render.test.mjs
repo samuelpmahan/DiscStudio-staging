@@ -223,6 +223,35 @@ test('json is collapsible, text is a pre, png-data-url is an img, omitted is the
   assert.equal(withClass(omitted, 'omitted')[0].textContent, 'over the cap');
 });
 
+test('an array value draws what it is, and never tries to draw its numbers', () => {
+  // The buffer is beside the record, not in it: the panel is the dtype, the
+  // shape, the digest and as much of the preview as was kept (RECORD.md, kind
+  // `array`).
+  const box = renderValue(doc, {
+    kind: 'array',
+    data: {
+      dtype: 'uint8',
+      shape: [256, 256, 3],
+      digest: 'abc123def456' + '0'.repeat(52),
+      preview: [1, 2, 3],
+      path: 'record.values/px.evo.render.01.bin'
+    },
+    note: '196608 uint8 value(s), shape (256, 256, 3)'
+  });
+  assert.equal(all(box, 'img').length, 0);
+  const summary = all(box, 'summary')[0].textContent;
+  assert.match(summary, /^array · uint8 256 x 256 x 3 · sha256 abc123def456 · first 3$/);
+  assert.equal(all(box, 'pre')[0].textContent, JSON.stringify([1, 2, 3], null, 2));
+  assert.match(textOf(box), /196608 uint8 value\(s\)/);
+
+  const bare = renderValue(doc, {
+    kind: 'array',
+    data: { dtype: 'complex128', shape: [3], digest: null, preview: null, path: null },
+    note: 'no preview'
+  });
+  assert.match(all(bare, 'summary')[0].textContent, /no preview$/);
+});
+
 test('a png-data-url that is not a PNG data URL never reaches an <img src>', () => {
   // The record is data, and <img src> is a fetch. RECORD.md:109-110 fixes the
   // shape; adapters.js refuses anything else, and the render site re-checks so

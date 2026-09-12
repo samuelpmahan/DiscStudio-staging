@@ -27,8 +27,9 @@ import json
 
 SCHEMA = "pyto-run-record@1"                     # RECORD.md:20
 RUNTIMES = ("pyto", "discstudio", "chesslab", "wumpus")   # RECORD.md:22
-VALUE_KINDS = ("json", "text", "svg", "png-data-url", "omitted")  # RECORD.md:108-112
+VALUE_KINDS = ("json", "text", "svg", "png-data-url", "array", "omitted")  # RECORD.md:108-112
 WRITE_KINDS = ("new-address", "refinement", "replacement")
+ARRAY_KEYS = ("dtype", "shape", "digest", "preview", "path")  # RECORD.md, kind "array"
 MAX_VALUE_BYTES = 262144                          # RECORD.md:112
 MAX_ARRAY_ENTRIES = 200                           # RECORD.md:113
 PNG_DATA_URL_PREFIX = "data:image/png;base64,"    # RECORD.md:109-110
@@ -236,6 +237,30 @@ def _value(block, path):
             _fail(f"{path}.data", f'expected null for kind "omitted", got {_show(data)}')
         if not isinstance(block["note"], str) or not block["note"]:
             _fail(f"{path}.note", 'kind "omitted" must say why in note')
+    elif kind == "array":
+        # RECORD.md "array": the dtype, the shape and the digest of the buffer --
+        # what a reader cannot recompute -- with a bounded preview and, when the
+        # producer kept them, the path of the raw bytes beside the record.
+        _obj(data, f"{path}.data")
+        _keys(data, f"{path}.data", ARRAY_KEYS)
+        _str(data["dtype"], f"{path}.data.dtype")
+        _arr(data["shape"], f"{path}.data.shape")
+        for index, extent in enumerate(data["shape"]):
+            if not isinstance(extent, int) or isinstance(extent, bool) or extent < 0:
+                _fail(f"{path}.data.shape[{index}]", f"expected a non-negative integer, got {_show(extent)}")
+        digest = data["digest"]
+        if digest is not None and (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(character not in "0123456789abcdef" for character in digest)
+        ):
+            _fail(f"{path}.data.digest", f"expected a sha256 hex digest or null, got {_show(digest)}")
+        if data["preview"] is not None:
+            _arr(data["preview"], f"{path}.data.preview")
+        if data["path"] is not None:
+            _str(data["path"], f"{path}.data.path")
+        if not isinstance(block["note"], str) or not block["note"]:
+            _fail(f"{path}.note", 'kind "array" must say what the array is in note')
     elif kind == "json":
         # any JSON value, including null -- json.load already proved that
         pass

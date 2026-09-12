@@ -6,13 +6,13 @@ which experiments/CAPTURE.md forbids for anything scripts/check_all.sh runs; it
 is therefore outside the discovered test suite, and the tests assert on this
 committed log instead of re-running it (fixer round 1, finding 4).
 
-PYTHONPATH (scratch, removed after the run): /tmp/determinism-lf-_kk3wr81
-command: ['/home/user/DiscStudio-staging/EXP/57/.venv/bin/python', '-c', '<CHILD_LF_SNIPPET>', '/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation', '/home/user/DiscStudio-staging/EXP/57/pyto/experiments/grouped-ablation/evidence/run-1/retained.json']
+PYTHONPATH (scratch, removed after the run): /tmp/determinism-lf-hblu3t4s
+command: ['/home/user/DiscStudio-staging/EXP/149/.venv/bin/python', '-c', '<CHILD_LF_SNIPPET>', '/home/user/DiscStudio-staging/EXP/149/pyto/experiments/grouped-ablation', '/home/user/DiscStudio-staging/EXP/149/pyto/experiments/grouped-ablation/evidence/run-1/retained.json']
 record_results_sha256 (the retained.json this log was produced against): 5d68fef265b20ac82bcf949ff1e5eda8c059e64a2bef08d24dc6b40069a4e415
-converted files: ['__init__.py', 'address.py', 'core.py', 'effects.py', 'graph.py', 'materialize.py', 'mounts.py', 'neon.py', 'pcr.py', 'pql.py', 'px.py']
-child pyto.__file__: /tmp/determinism-lf-_kk3wr81/pyto/__init__.py  (used editable install instead of the LF copy: False)
+converted files: ['__init__.py', 'address.py', 'core.py', 'crisp.py', 'effects.py', 'graph.py', 'materialize.py', 'mounts.py', 'neon.py', 'pcr.py', 'pql.py', 'px.py', 'study.py']
+child pyto.__file__: /tmp/determinism-lf-hblu3t4s/pyto/__init__.py  (used editable install instead of the LF copy: False)
 core.py source sha256: editable-install(LF)=877e0218b19f54685b7580618c8cfec23e5dcc28acb119efb33e98d7de05598d crlf-copy(raw bytes)=2bc55a3f88b3988402201f59f4bdf847f6ed07a9ec4a366738a904327f30ff77 differs_by_construction=True
-pcr.py source sha256: editable-install(LF)=38135faee8107a4e47df4a4842a41c5d56fcad0952e496b105abdadce8e2e825 crlf-copy(raw bytes)=13d384241b16a159abd8b9a7146548b0e05dab6595e700f71e1792b801f53536 differs_by_construction=True
+pcr.py source sha256: editable-install(LF)=d6389ee93a46badf18f988d84c26a686a1fc0ef471b0d80919b79de5228f30af crlf-copy(raw bytes)=076aa05b3849523c413af2aaea73b666d1ec789ea7e70f5b1a1a586c177d9a6f differs_by_construction=True
 normalized sha256 equal to the record's provider digests: True
 replay result digests identical to run-1 despite the source-hash drift: True
 

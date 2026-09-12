@@ -274,6 +274,21 @@ export function renderValue(doc, value) {
         el(doc, 'figcaption', { text: `png-data-url · ${value.data.length} chars` })
       ]));
     }
+  } else if (value.kind === 'array') {
+    // The numbers are not here and are not meant to be: the buffer is beside the
+    // record (value.data.path) and the digest identifies it. What the panel shows
+    // is what the array is, and as much of it as the preview kept.
+    const data = value.data || {};
+    const shape = Array.isArray(data.shape) ? data.shape.join(' x ') : '?';
+    const preview = Array.isArray(data.preview) ? data.preview : null;
+    const details = el(doc, 'details', { className: 'json' });
+    details.appendChild(el(doc, 'summary', {
+      text: `array · ${data.dtype || '?'} ${shape}`
+        + (data.digest ? ` · sha256 ${String(data.digest).slice(0, 12)}` : '')
+        + (preview ? ` · first ${preview.length}` : ' · no preview')
+    }));
+    details.appendChild(el(doc, 'pre', { text: JSON.stringify(preview, null, 2) }));
+    box.appendChild(details);
   } else if (value.kind === 'text') {
     box.appendChild(el(doc, 'pre', { className: 'text', text: value.data }));
   } else {

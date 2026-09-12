@@ -452,6 +452,59 @@ def _implementation_sha256(function: Any) -> str | None:
     return hashlib.sha256(source.replace("\r\n", "\n").encode("utf-8")).hexdigest()
 
 
+def is_array(value: Any) -> bool:
+    """True for an array value -- an ndarray -- without importing numpy.
+
+    Duck-typed on `dtype`, `shape` and `tobytes`, the three things this runtime
+    needs from one: what the numbers are, how they are arranged, and the buffer
+    itself. Nothing here imports numpy, for the same reason `materialize._is_pil_image`
+    imports no PIL: a value produced by the caller's numpy has to be recognized by
+    a pyto that was never installed with one.
+
+    `object` dtype is refused. Its buffer is a row of pointers whose bytes differ
+    between processes, which is the unstable digest `_result_sha256` refuses to
+    invent.
+
+    A scalar is refused too -- shape `()`, which is what a numpy float or a 0-d
+    array has. An array value is a buffer of many numbers; one number is a number,
+    and `numpy.float64` is a Python float, so it was `json` in every record ever
+    written and stays `json`.
+    """
+    dtype = getattr(value, "dtype", None)
+    shape = getattr(value, "shape", None)
+    if dtype is None or not isinstance(shape, tuple) or not callable(getattr(value, "tobytes", None)):
+        return False
+    if not shape or not all(isinstance(extent, int) for extent in shape):
+        return False
+    return getattr(dtype, "kind", "") != "O"
+
+
+def array_sha256(value: Any) -> str | None:
+    """sha256 of an array's dtype, its shape and its raw bytes; None for anything else.
+
+    The digest an array gets where canonical JSON gets it for everything else, and
+    it is a better digest of an array than JSON would be: the buffer is what the
+    array *is*, a second process reproduces it exactly, and it costs one pass over
+    the bytes instead of turning ten million numbers into decimal text. Before
+    this, an ndarray result had no digest at all -- `json.dumps` refuses one -- so
+    a Calculation that returned one had no cache key and no `result_sha256`.
+
+    dtype and shape are in the digest because the same bytes are a different value
+    read as int16 or as uint8, or as (2, 3) or as (3, 2).
+    """
+    if not is_array(value):
+        return None
+    try:
+        payload = value.tobytes()
+    except Exception:  # pragma: no cover - a buffer that will not travel
+        return None
+    digest = hashlib.sha256()
+    extent = "x".join(str(number) for number in value.shape)
+    digest.update(f"{value.dtype} {extent} ".encode("utf-8"))
+    digest.update(payload)
+    return digest.hexdigest()
+
+
 def _result_sha256(value: Any) -> str | None:
     """sha256 of canonical JSON, or None when the value is not JSON.
 
@@ -461,7 +514,16 @@ def _result_sha256(value: Any) -> str | None:
     10). A set, a PxC and a dict with tuple keys (the disc-stats result shape,
     consumers/discstudio-card/experiments/disc-stats/stats.py:34) therefore have no
     digest rather than an unstable one.
+
+    An array (`is_array`) is the one value digested without JSON: `array_sha256`
+    takes its dtype, shape and raw bytes, which is stable across processes in a
+    way neither its repr nor its decimal text would be. That digest is computed
+    once here and the record reuses it (`materialize.render_value`), so an array
+    is never walked twice.
     """
+    array = array_sha256(value)
+    if array is not None:
+        return array
     try:
         payload = json.dumps(value, sort_keys=True, separators=(",", ":"))
     except (TypeError, ValueError):
@@ -1049,6 +1111,7 @@ class PCR:
 
         if isinstance(board, _TrackedPxC):
             duration_ms = (perf_counter() - entry.started) * 1000.0
+            result_digest = _result_sha256(entry.value)
             receipt = Receipt(
                 invocation_id=invocation.id,
                 calculation=FrozenCalculation(
@@ -1064,9 +1127,18 @@ class PCR:
                 actual_consumes=tuple(board.consumed),
                 actual_produces=tuple(board.produced),
                 writes=tuple(board.writes),
-                result_sha256=_result_sha256(entry.value),
+                result_sha256=result_digest,
                 produce_sha256={
-                    address: _result_sha256(part_value)
+                    # A one-address invocation publishes the value it returned:
+                    # the same object, so the same canonical JSON and the same
+                    # digest. Taking it twice dumped a genome's million floats
+                    # twice for one receipt, which is half of what an observed
+                    # generation paid to be observed.
+                    address: (
+                        result_digest
+                        if part_value is entry.value
+                        else _result_sha256(part_value)
+                    )
                     for address, part_value in slots.items()
                 },
                 effective_arg_keys=tuple(entry.call_args),
