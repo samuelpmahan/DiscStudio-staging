@@ -20,7 +20,7 @@ cd DiscStudio-staging
 git fetch origin exp/146
 python -m pip install -e "./pyto[drawing]"         # Python 3.11+, Node 22 for the viewer suite
 git show origin/exp/146:pyto/experiments/tasks/146/packet.md  # this task's packet (also: HANDOFF.md, evidence/)
-git diff 16956ce origin/exp/146 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
+git diff 44cfba2 origin/exp/146 -- . ':!pyto/experiments/tasks'   # the candidate itself, as a diff
 ```
 
 ## Why this repository is worth twenty minutes
@@ -54,7 +54,7 @@ the Pages deploy on main passed its browser check after 145 and failed one step 
 
 ## Starting point
 
-16956cec7e3307f41eed209624ee800d6cff3680 (land(task-145): the Pages deploy on main failed in its own browser check: the served page never mounted because dist carries pyto/viewer but not the painter port the app imports (pyto/consumers/discstudio-card/port/painter), which the embedded harness inlines and so never missed; the build copies the painter port, and the verify serves dist over HTTP and runs the browser test the way the workflow does). MAIN may have moved since: `git log --oneline 16956ce..origin/claude/os-sprint-st8hnu` shows how far.
+16956cec7e3307f41eed209624ee800d6cff3680 (land(task-145): the Pages deploy on main failed in its own browser check: the served page never mounted because dist carries pyto/viewer but not the painter port the app imports (pyto/consumers/discstudio-card/port/painter), which the embedded harness inlines and so never missed; the build copies the painter port, and the verify serves dist over HTTP and runs the browser test the way the workflow does). MAIN may have moved since: `git log --oneline 44cfba2..origin/claude/os-sprint-st8hnu` shows how far.
 Landing merges the candidate onto MAIN as it is now and re-runs the suite on the result.
 
 ## What changed (the candidate)
@@ -75,7 +75,7 @@ Landing merges the candidate onto MAIN as it is now and re-runs the suite on the
 ## Evidence
 
 - verify: `bash scripts/verify_pages.sh` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.7UDuvfI8Oc) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.7n9oRd5E6y) (evidence/check_all.txt)
     suite                         tests  status
     library                         447  OK
     experiments/brain               756  OK

@@ -25,7 +25,7 @@ Evidence: suite exit 0, see below
 ## Evidence
 
 - verify: `bash scripts/verify_pages.sh` exit 0 (evidence/verify.txt)
-- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.7UDuvfI8Oc) (evidence/check_all.txt)
+- suite: `bash pyto/scripts/check_all.sh` exit 0, last line: ALL SUITES PASSED (logs in /tmp/tmp.7n9oRd5E6y) (evidence/check_all.txt)
     suite                         tests  status
     library                         447  OK
     experiments/brain               756  OK
