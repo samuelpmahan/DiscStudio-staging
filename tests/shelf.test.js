@@ -88,3 +88,44 @@ test('shelfQuery is pure over what it is given and never invents a disc', () => 
   assert.deepEqual(view.rows.map(r => r.id), ['d1'], 'a disc whose mold is missing is still findable by what it does have');
   assert.equal(shelfQuery({ discs: [one], molds: {}, makers: {}, bags: [], query: 'buzzz' }).shown, 0);
 });
+
+test('grouping chains nest: every order of dimensions is valid and every disc lands in exactly one leaf', () => {
+  const r = make();
+  const view = r.shelf({ group: ['category', 'maker'] });
+  assert.deepEqual(view.groups.map(g => g.label), ['Distance driver', 'Fairway driver', 'Midrange', 'Putt & approach', 'Putter']);
+  for (const top of view.groups) {
+    assert.ok(top.children.length > 0, `${top.label} splits by maker`);
+    assert.ok(top.children.every(c => c.children.length === 0), 'two links nest exactly two deep');
+  }
+  const leaves = view.groups.flatMap(g => g.children);
+  assert.equal(leaves.flatMap(l => l.discIds).length, view.shown, 'every shown disc sits in exactly one leaf');
+  assert.equal(new Set(leaves.flatMap(l => l.discIds)).size, view.shown);
+  const midrange = view.groups.find(g => g.label === 'Midrange');
+  assert.ok(midrange.children.some(c => c.label === 'Discraft'), 'the Buzzzes nest under Discraft inside Midrange');
+  const other = r.shelf({ group: ['maker', 'category'] });
+  assert.deepEqual(other.groups.map(g => g.label), ['Discraft', 'Innova'], 'the maker-first chain reads the other way');
+  assert.equal(other.groups.flatMap(g => g.children.flatMap(c => c.discIds)).length, other.shown);
+});
+
+test('speed and stability are grouping dimensions with their own order', () => {
+  const r = make();
+  const speed = r.shelf({ group: 'speed' });
+  const nums = speed.groups.map(g => g.label);
+  assert.ok(nums.every(l => /^Speed \d+/.test(l)), nums);
+  assert.deepEqual(nums.map(l => Number(l.slice(6))), [...nums.map(l => Number(l.slice(6)))].sort((a, b) => a - b), 'speed sections run slow to fast');
+  const stab = r.shelf({ group: ['stability'] });
+  const bands = ['Very understable', 'Understable', 'Neutral', 'Stable', 'Overstable', 'Unknown stability'];
+  assert.ok(stab.groups.every(g => bands.includes(g.label)), stab.groups.map(g => g.label));
+  assert.deepEqual(stab.groups.map(g => bands.indexOf(g.label)), [...stab.groups.map(g => bands.indexOf(g.label))].sort((a, b) => a - b), 'stability reads understable to overstable');
+  assert.equal(stab.groups.flatMap(g => g.discIds).length, stab.shown);
+});
+
+test('a lone string still groups one level and none is the empty chain', () => {
+  const r = make();
+  assert.deepEqual(r.shelf({ group: 'maker' }).groups.map(g => g.label), ['Discraft', 'Innova']);
+  for (const view of [r.shelf({ group: 'none' }), r.shelf({ group: [] }), r.shelf({})]) {
+    assert.deepEqual(view.groups.map(g => g.label), ['All discs']);
+    assert.equal(view.groups[0].discIds.length, view.shown);
+  }
+  assert.deepEqual(r.shelf({ group: ['category', 'maker'] }).rows[0].groupPath.length, 2, 'rows carry their breadcrumb');
+});

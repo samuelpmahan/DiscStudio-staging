@@ -6,7 +6,7 @@ import { constraintDefinitions, battleConstraintDefinitions, TIE_MODES, SCORE_MO
 import { battleTemplates } from './battle.js';
 import { framePresets, canvasFor } from './frames.js';
 import { reviewItems } from './review.js';
-import { SORTS, GROUPS, FILTERS } from './shelf.js';
+import { SORTS, GROUP_DIMS, FILTERS } from './shelf.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
 import { planExports, queueProgress } from './exports.js';
 import { composePage, fetchPageSources } from '../pyto/viewer/embed.mjs';
@@ -20,11 +20,16 @@ try { const raw = localStorage.getItem(DATA_KEY); if (raw) stored = validateWorl
 catch (error) { saveEnabled = false; initialMessage = `Saved draft could not be opened: ${error.message} It has not been overwritten. Download the saved file before resetting.`; }
 const runtime = createStudioRuntime(stored || createSeed());
 let savedView = {}; try { savedView = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}'); } catch { /* View preferences cannot invalidate a domain draft. */ }
+/** The grouping chain, migrated: the old single select becomes a one-link chain, and a shelf that never chose gets the default Category → Maker. */
+const GROUP_DIM_KEYS = new Set(GROUP_DIMS.map(([key]) => key));
+const savedShelfGroup = saved => saved === undefined ? ['category', 'maker']
+  : [...new Set((Array.isArray(saved) ? saved : saved === 'none' ? [] : [saved]).filter(key => GROUP_DIM_KEYS.has(key)))].slice(0, 3);
 const ui = {
   route: 'shelf', discId: savedView.discId || 'buzzz-mint', bagId: savedView.bagId || 'everyday', competitionId: 'putterwarz', roundId: 'hole-1',
   mode: savedView.mode || 'battle', presetId: savedView.presetId || 'broadcast', component: savedView.component || 'DisplayCard',
   nodeId: 'mold', query: '', fieldQuery: '', library: 'fields', onlyBag: false,
-  shelfSort: savedView.shelfSort || 'recent', shelfGroup: savedView.shelfGroup || 'none', shelfFilters: Array.isArray(savedView.shelfFilters) ? savedView.shelfFilters : [], shelfLayout: savedView.shelfLayout || 'compact', traceOpen: false, inspectAddress: '', previewState: 'idle',
+  shelfSort: savedView.shelfSort || 'recent', shelfGroup: savedShelfGroup(savedView.shelfGroup), shelfFilters: Array.isArray(savedView.shelfFilters) ? savedView.shelfFilters : [], shelfLayout: savedView.shelfLayout || 'compact', traceOpen: false, inspectAddress: '', previewState: 'idle', selecting: false,
+  bagDraft: Array.isArray(savedView.bagDraft) ? savedView.bagDraft : [], bagDraftName: savedView.bagDraftName || '',
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
@@ -63,7 +68,7 @@ function shownPcr() {
   if (!name) throw new Error('Render a composition before exporting its run record.');
   return name;
 }
-function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout, selectedExperience: ui.selectedExperience, experienceVariant: ui.experienceVariant })); } catch { /* Nonessential view state. */ } }
+function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout, selectedExperience: ui.selectedExperience, experienceVariant: ui.experienceVariant, bagDraft: ui.bagDraft, bagDraftName: ui.bagDraftName })); } catch { /* Nonessential view state. */ } }
 runtime.onChange(() => {
   if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
   catch (error) { ui.saved = 'Not saved · download a draft'; message('Browser storage is full or unavailable. Your current work is still open. Download a draft to keep it.', true); }
@@ -151,18 +156,48 @@ function shelfEntry(row) {
   const disc = get(w(), 'Disc', row.id); if (!disc) return '';
   const { mold, maker } = discInfo(row.id), bag = get(w(), 'Bag', ui.bagId);
   const membership = bag?.discIds.includes(row.id), inLineup = w().battle.entries.some(e => e.discId === row.id), course = ui.route === 'course';
+  const inDraft = ui.bagDraft.includes(row.id);
   const matched = row.matched.length ? `<span class="match-row">${row.matched.map(m => `<span class="match">${esc(m)}</span>`).join('')}</span>` : '';
-  return `<div class="disc-row ${ui.discId === row.id ? 'selected' : ''}" data-disc-row="${esc(row.id)}"><button class="disc-pick" data-action="disc-select" data-id="${esc(row.id)}"><span class="disc-thumb">${safeThumb(row.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(disc.nickname)}</small><small class="disc-facts mono">${discFacts(disc, mold)}</small>${rowBags(row)}${matched}</span></button>${button(course ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), course ? 'lineup-add' : 'membership', { id: row.id }, 'row-add', `aria-label="${course ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(disc.nickname)}" ${course && inLineup ? 'disabled' : ''}`)}</div>`;
+  // In select mode a tap drafts the disc for a bag instead of inspecting it: CreateBag is just selecting from the shelf.
+  const pickAction = ui.selecting ? 'shelf-select' : 'disc-select';
+  return `<div class="disc-row ${ui.discId === row.id ? 'selected' : ''} ${inDraft ? 'in-draft' : ''}" data-disc-row="${esc(row.id)}"><button class="disc-pick" data-action="${pickAction}" data-id="${esc(row.id)}" ${ui.selecting ? `aria-pressed="${inDraft}" aria-label="Select ${esc(disc.nickname)} for a bag"` : ''}>${ui.selecting ? `<span class="draft-tick" aria-hidden="true">${inDraft ? '✓' : ''}</span>` : ''}<span class="disc-thumb">${safeThumb(row.id)}</span><span class="disc-copy"><span class="tiny caps">${esc(maker?.name || 'Unresolved')}</span><strong>${esc(mold?.name || 'Unresolved mold')}</strong><small>${esc(disc.nickname)}</small><small class="disc-facts mono">${discFacts(disc, mold)}</small>${rowBags(row)}${matched}</span></button>${button(course ? (inLineup ? '✓' : '+') : (membership ? '✓' : '+'), course ? 'lineup-add' : 'membership', { id: row.id }, 'row-add', `aria-label="${course ? 'Add to comparison' : membership ? 'Remove from bag' : 'Add to bag'}: ${esc(disc.nickname)}" ${course && inLineup ? 'disabled' : ''}`)}</div>`;
 }
-/** Organising, in the sidebar itself: the quick filters, the sort, the grouping and the two densities. */
+/** Organising, in the sidebar itself: the quick filters, the sort, the grouping chain and the two densities. The shelf always shows: the query runs live underneath, nobody runs it. */
 function shelfControls(view) {
   const filtering = view.filters.length || view.terms.length;
-  return `<div class="shelf-controls"><div class="chip-row">${FILTERS.map(([key, label]) => button(label, 'shelf-filter', { value: key }, `pill ${ui.shelfFilters.includes(key) ? 'active' : ''}`, `aria-pressed="${ui.shelfFilters.includes(key)}"`)).join('')}</div><div class="shelf-order">${select('shelf-sort', ui.shelfSort, SORTS.map(([key, label]) => [key, `↕ ${label}`]))}${select('shelf-group', ui.shelfGroup, GROUPS)}<div class="segmented">${button('▤', 'shelf-layout', { value: 'compact' }, ui.shelfLayout === 'compact' ? 'active' : '', 'aria-label="Compact list"')}${button('▦', 'shelf-layout', { value: 'cards' }, ui.shelfLayout === 'cards' ? 'active' : '', 'aria-label="Card grid"')}</div></div><p class="tiny muted shelf-count" data-shelf-count="${view.shown}">${view.shown} of ${view.total} disc${view.total === 1 ? '' : 's'}${filtering ? ` · ${button('show all', 'shelf-clear', {}, 'linky')}` : ''}</p></div>`;
+  return `<div class="shelf-controls"><div class="chip-row">${FILTERS.map(([key, label]) => button(label, 'shelf-filter', { value: key }, `pill ${ui.shelfFilters.includes(key) ? 'active' : ''}`, `aria-pressed="${ui.shelfFilters.includes(key)}"`)).join('')}${button(ui.selecting ? '✓ Selecting' : 'Select', 'selecting', {}, `pill ${ui.selecting ? 'active' : ''}`, `aria-pressed="${ui.selecting}" aria-label="Select discs for a bag"`)}</div>${groupChainControl()}<div class="shelf-order">${select('shelf-sort', ui.shelfSort, SORTS.map(([key, label]) => [key, `↕ ${label}`]))}<div class="segmented">${button('▤', 'shelf-layout', { value: 'compact' }, ui.shelfLayout === 'compact' ? 'active' : '', 'aria-label="Compact list"')}${button('▦', 'shelf-layout', { value: 'cards' }, ui.shelfLayout === 'cards' ? 'active' : '', 'aria-label="Card grid"')}</div></div><p class="tiny muted shelf-count" data-shelf-count="${view.shown}">${view.shown} of ${view.total} disc${view.total === 1 ? '' : 's'}${filtering ? ` · ${button('show all', 'shelf-clear', {}, 'linky')}` : ''}</p></div>`;
+}
+/** The grouping chain as tappable chips: every link removes itself, every free dimension appends. All orders are valid. */
+function groupChainControl() {
+  const chain = ui.shelfGroup;
+  const dimLabel = key => (GROUP_DIMS.find(([k]) => k === key) ?? [key, key])[1];
+  const free = GROUP_DIMS.filter(([key]) => !chain.includes(key));
+  return `<div class="group-chain"><span class="eyebrow">Group</span><div class="chip-row">${chain.map(key => button(`✓ ${dimLabel(key)}`, 'shelf-group-remove', { value: key }, 'pill active', `aria-label="Remove ${dimLabel(key)} from the grouping"`)).join('')}${chain.length === 0 ? '<span class="tiny muted">Ungrouped</span>' : ''}${chain.length < 3 ? free.map(([key, label]) => button(`+ ${label}`, 'shelf-group-add', { value: key }, 'pill', `aria-label="Group by ${label}"`)).join('') : ''}${chain.length ? button('Clear', 'shelf-group-clear', {}, 'pill quiet') : ''}</div></div>`;
+}
+/** Naming the bag being drafted from the shelf: CreateBag is just selecting from those. */
+function selectionBar(mode = 'auto') {
+  const n = ui.bagDraft.length;
+  if (mode === 'auto' && !ui.selecting && !n) return '';
+  return `<div class="selection-bar"><span class="sel-count">${n ? `${n} selected` : 'Tap discs to select'}</span><input class="sel-name" data-control="bag-draft-name" aria-label="Bag name" placeholder="Name this bag…" value="${esc(ui.bagDraftName)}" maxlength="60">${button('Create the bag', 'experience-use', { id: 'createbag' }, 'primary small')}${n ? button('✕', 'bag-draft-clear', {}, 'quiet small', 'aria-label="Clear the selection"') : ''}</div>`;
+}
+/** Nested group sections: a chain of two renders sections inside sections, each with its own count. */
+function shelfGroupNodes(view, nodes, depth = 0) {
+  return nodes.map(node => {
+    const tag = depth === 0 ? 'h3' : 'h4', cls = depth === 0 ? 'shelf-group' : 'shelf-subgroup';
+    const header = `<${tag} class="${cls}" ${depth === 0 ? `data-shelf-group="${esc(node.label)}"` : ''}>${esc(node.label)}<small>${node.discIds.length}</small></${tag}>`;
+    const body = node.children.length ? shelfGroupNodes(view, node.children, depth + 1)
+      : `<div class="disc-list ${ui.shelfLayout === 'cards' ? 'as-cards' : ''}">${node.discIds.map(discId => shelfEntry(view.rows.find(row => row.id === discId))).join('')}</div>`;
+    return header + body;
+  }).join('');
+}
+/** The tactile shelf: find, filter, sort and group above; the discs below; the bag draft when selecting. One renderer for the sidebar and the Experiences. */
+function shelfExplorer(view, { bagBar = 'auto' } = {}) {
+  const empty = `<p class="empty-note">Nothing on the shelf matches${view.terms.length ? ` “${esc(ui.query.trim())}”` : ' these filters'}. Try a mold, a plastic, a colour, a weight or a flight number.</p>`;
+  return `${shelfControls(view)}${selectionBar(bagBar)}${view.shown ? (ui.shelfGroup.length ? shelfGroupNodes(view, view.groups) : `<div class="disc-list ${ui.shelfLayout === 'cards' ? 'as-cards' : ''}">${view.groups[0].discIds.map(discId => shelfEntry(view.rows.find(row => row.id === discId))).join('')}</div>`) : empty}`;
 }
 function shelfSidebar() {
   const view = runtime.shelf(shelfRequest());
-  const lists = view.groups.map(group => `${ui.shelfGroup === 'none' ? '' : `<h3 class="shelf-group" data-shelf-group="${esc(group.label)}">${esc(group.label)}<small>${group.discIds.length}</small></h3>`}<div class="disc-list ${ui.shelfLayout === 'cards' ? 'as-cards' : ''}">${group.discIds.map(discId => shelfEntry(view.rows.find(row => row.id === discId))).join('')}</div>`).join('');
-  return `<aside class="sidebar" data-scroll="shelf"><div class="sidebar-heading"><div><span class="eyebrow">YOUR RAW MATERIAL</span><h2>Disc shelf <small>${view.total}</small></h2></div>${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div><input class="search" data-search="discs" aria-label="Find a disc" placeholder="⌕  buzzz 177 · midrange -1" value="${esc(ui.query)}">${ui.route === 'course' ? `<div class="sidebar-bag"><label class="eyebrow">SOURCE BAG</label>${bagSelect()}${check('Show only this bag', 'only-bag', ui.onlyBag)}</div>` : ''}${shelfControls(view)}${view.shown ? lists : `<p class="empty-note">Nothing on the shelf matches${view.terms.length ? ` “${esc(ui.query.trim())}”` : ' these filters'}. Try a mold, a plastic, a colour, a weight or a flight number.</p>`}<footer class="sidebar-footer">${ui.route === 'course' ? button('+ Add bag to comparison', 'bag-lineup', {}, 'wide secondary') : button('+ New physical disc', 'disc-add', {}, 'wide secondary')}<p class="tiny muted">Every disc keeps its own art in both views. Your photos stay on your device.</p></footer></aside>`;
+  return `<aside class="sidebar" data-scroll="shelf"><div class="sidebar-heading"><div><span class="eyebrow">YOUR RAW MATERIAL</span><h2>Disc shelf <small>${view.total}</small></h2></div>${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div><input class="search" data-search="discs" aria-label="Find a disc" placeholder="⌕  buzzz 177 · midrange -1" value="${esc(ui.query)}">${ui.route === 'course' ? `<div class="sidebar-bag"><label class="eyebrow">SOURCE BAG</label>${bagSelect()}${check('Show only this bag', 'only-bag', ui.onlyBag)}</div>` : ''}${shelfExplorer(view)}<footer class="sidebar-footer">${ui.route === 'course' ? button('+ Add bag to comparison', 'bag-lineup', {}, 'wide secondary') : button('+ New physical disc', 'disc-add', {}, 'wide secondary')}<p class="tiny muted">Every disc keeps its own art in both views. Your photos stay on your device.</p></footer></aside>`;
 }
 /** The composer keeps its own typing in the DOM until a render needs it, exactly as the new-field panel does. Dotted keys (paint.family) nest into the paint recipe; touching any of them marks the recipe as the user's own. */
 function captureComposer() {
@@ -628,8 +663,8 @@ function udsDetail(exp) {
 /** Fresh USE arguments for an Experience, from the frame's own form state. */
 function resetExperienceForm(key) {
   switch (key) {
-    case 'exploreshelf': return { query: '' };
-    case 'createbag': return { name: '', discId: ui.discId };
+    case 'exploreshelf': return {};
+    case 'createbag': return {};
     case 'managebags': return { bagId: ui.bagId, kind: 'rename', name: '', discId: ui.discId, include: true, toIndex: 0, newName: '' };
     case 'creategraphics': return { discId: ui.discId };
     case 'exportgraphics': return { discId: ui.discId };
@@ -640,8 +675,8 @@ function resetExperienceForm(key) {
 function experienceUseArgs(key) {
   const form = ui.experienceForm;
   switch (key) {
-    case 'exploreshelf': return { query: form.query ?? '' };
-    case 'createbag': return { name: form.name ?? '', discIds: form.discId ? [form.discId] : [] };
+    case 'exploreshelf': return { query: ui.query, sort: ui.shelfSort, group: [...ui.shelfGroup], filters: [...ui.shelfFilters] };
+    case 'createbag': return { name: ui.bagDraftName ?? '', discIds: [...ui.bagDraft] };
     case 'managebags': {
       const adaptation = { kind: form.kind ?? 'rename' };
       if (adaptation.kind === 'rename') adaptation.name = form.name ?? '';
@@ -679,15 +714,17 @@ function experienceFired(key, body) {
   return `<div class="subtle-box"><span class="eyebrow">PROJECTION — <span class="mono">${esc(result.projection ?? '')}</span></span>${body(result)}</div>`;
 }
 function exploreShelfDetail(exp) {
-  const form = ui.experienceForm;
+  const view = runtime.shelf(shelfRequest());
   return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
-  <div class="button-row">${input('Find', 'experience-form', form.query ?? '', 'text', 'data-key="query" placeholder="Search the shelf…"')}${button('Run the shelf query', 'experience-use', { id: 'exploreshelf' }, 'primary')}</div>
-  ${experienceFired('exploreshelf', result => `<p>${result.total} on the shelf · ${result.shown} shown.</p>${tracePanel(result.run)}<p class="tiny muted">Find, inspect, correct and select them in the <a href="#/shelf">shelf view ↗</a>.</p>`)}`;
+  ${shelfExplorer(view)}
+  <div class="button-row">${button('Use this shelf view', 'experience-use', { id: 'exploreshelf' }, 'primary')}</div>
+  ${experienceFired('exploreshelf', result => `<p>${result.total} on the shelf · ${result.shown} shown.</p>${tracePanel(result.run)}`)}`;
 }
 function createBagDetail(exp) {
-  const form = ui.experienceForm;
+  const view = runtime.shelf(shelfRequest());
   return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
-  <div class="button-row">${input('Bag name', 'experience-form', form.name ?? '', 'text', 'data-key="name" placeholder="Sunday singles"')}${labeledSelect('First disc', 'experience-form', 'discId', form.discId ?? ui.discId, experienceDiscOptions())}${button('Name this bag', 'experience-use', { id: 'createbag' }, 'primary')}</div>
+  <p class="tiny muted">Tap <strong>Select</strong>, tap the discs, name the bag. The bag only points at them — every physical disc stays on the shelf.</p>
+  ${shelfExplorer(view, { bagBar: 'always' })}
   ${experienceFired('createbag', result => `<p><strong>${esc(result.name)}</strong> holds ${result.discIds.length} shared specimen reference${result.discIds.length === 1 ? '' : 's'} — the discs stay on the shelf, the bag only points at them.</p><p class="tiny muted">Pack and adapt it in the <a href="#/shelf">shelf view ↗</a>.</p>`)}`;
 }
 function manageBagsDetail(exp) {
@@ -944,6 +981,12 @@ async function action(name, el) {
     case 'reset': if (confirm('Replace this local workspace with the labelled sample collection? Download a draft first to keep your work. Review comments are not deleted.')) { saveEnabled = true; runtime.replace(createSeed()); ui.discId = 'buzzz-mint'; ui.bagId = 'everyday'; ui.presetId = 'broadcast'; message('Sample workspace restored. Your review comments are unchanged.'); } break;
     case 'disc-select': ui.discId = d.id; break;
     case 'shelf-filter': ui.shelfFilters = ui.shelfFilters.includes(d.value) ? ui.shelfFilters.filter(key => key !== d.value) : [...ui.shelfFilters, d.value]; break;
+    case 'shelf-group-add': if (!ui.shelfGroup.includes(d.value) && ui.shelfGroup.length < 3) ui.shelfGroup = [...ui.shelfGroup, d.value]; break;
+    case 'shelf-group-remove': ui.shelfGroup = ui.shelfGroup.filter(key => key !== d.value); break;
+    case 'shelf-group-clear': ui.shelfGroup = []; break;
+    case 'selecting': ui.selecting = !ui.selecting; break;
+    case 'shelf-select': ui.bagDraft = ui.bagDraft.includes(d.id) ? ui.bagDraft.filter(id => id !== d.id) : [...ui.bagDraft, d.id]; break;
+    case 'bag-draft-clear': ui.bagDraft = []; ui.bagDraftName = ''; break;
     case 'shelf-layout': ui.shelfLayout = d.value; break;
     case 'shelf-clear': ui.query = ''; ui.shelfFilters = []; break;
     case 'disc-add': openComposer(); if (!['shelf', 'experiences'].includes(ui.route)) { persistView(); navigate('shelf'); return; } break;
@@ -1009,6 +1052,7 @@ async function action(name, el) {
       if (key === 'managebags' && (ui.experienceForm.kind ?? 'rename') === 'remove' && !confirm('Delete this bag? Physical discs remain on your shelf.')) break;
       const result = runtime.experiences().use(key, experienceUseArgs(key));
       ui.experienceUse[key] = result;
+      if (key === 'createbag' && result.fired) { ui.bagDraft = []; ui.bagDraftName = ''; ui.selecting = false; }
       message(result.fired ? `${result.projection} projected.` : result.reason, !result.fired);
       persistView(); break;
     }
@@ -1150,7 +1194,6 @@ function controlChange(el) {
     case 'only-bag': ui.onlyBag = el.checked; break;
     case 'bag-name': execute({ type: 'entity.set', entityType: 'Bag', id: ui.bagId, path: 'name', value: value.trim() || 'Bag' }); break;
     case 'shelf-sort': ui.shelfSort = value; break;
-    case 'shelf-group': ui.shelfGroup = value; break;
     // The Experience frame's USE form: values accumulate in ui.experienceForm
     // and the frame re-renders (once, after this switch) so dependent inputs
     // (like the ManageBags adaptation parameters) follow the chosen kind.
@@ -1215,7 +1258,7 @@ function controlChange(el) {
 /* A <select>'s change is handled a frame later: on iOS Safari, replacing the select synchronously inside its own change event races the native picker's dismissal and the first pick is lost (the user has to pick twice). */
 const handleChangeTarget = target => { const el = target.closest('[data-control]'); if (el) { try { controlChange(el); } catch (error) { message(error.cause?.message || error.message, true); render(); } return; } /* Composer selects (the maker dropdown) re-render so dependent inputs -- like the Other maker name field -- appear immediately. */ if (target.closest('select[data-compose]')) render(); };
 app.addEventListener('change', event => { const target = event.target; if (target instanceof HTMLSelectElement) requestAnimationFrame(() => handleChangeTarget(target)); else handleChangeTarget(target); });
-app.addEventListener('input', event => { const el = event.target; if (el.dataset.search) { if (el.dataset.search === 'discs') ui.query = el.value; else ui.fieldQuery = el.value; render(); } });
+app.addEventListener('input', event => { const el = event.target; if (el.dataset.search) { if (el.dataset.search === 'discs') ui.query = el.value; else ui.fieldQuery = el.value; render(); } else if (el.dataset.control === 'bag-draft-name') { ui.bagDraftName = el.value; persistView(); } });
 let bagDrag = null;
 app.addEventListener('pointerdown', event => {
   const grip = event.target.closest('[data-bag-drag]'); if (!grip || event.button !== 0) return;

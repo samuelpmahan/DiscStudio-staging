@@ -153,6 +153,18 @@
 .linky{border:0;background:transparent;padding:0;font-size:10px;color:#5c7b42;text-decoration:underline}
 .shelf-group{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:#7a8a6c;border-bottom:1px solid var(--line);padding:0 3px 6px;margin:14px 0 7px;display:flex;justify-content:space-between;gap:8px;font-weight:500}
 .shelf-group small{font-size:9px;color:#9aa791}
+.shelf-subgroup{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:#7a8a6c;border-left:2px solid #cfd8c2;padding:0 3px 6px 8px;margin:10px 0 7px 4px;display:flex;justify-content:space-between;gap:8px;font-weight:500}
+.shelf-subgroup small{font-size:9px;color:#9aa791}
+.group-chain{margin:10px 0 2px}
+.group-chain .eyebrow{margin-bottom:5px}
+.group-chain .pill{font-size:11px;padding:8px 12px}
+.selection-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#e9efe0;border:1px solid #b9c8a6;border-radius:10px;padding:10px 12px;margin:12px 0}
+.sel-count{font-size:11px;font-weight:600;color:#3f6030;white-space:nowrap}
+.sel-name{flex:1;min-width:120px;font-size:12px}
+.disc-row.in-draft{background:#e4ecda;border-color:#9db884}
+.disc-pick{position:relative}
+.draft-tick{position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:#fff;border:1.5px solid #9db884;display:grid;place-items:center;font-size:11px;color:#3f6030;z-index:1}
+.disc-row.in-draft .draft-tick{background:#5c7b42;border-color:#5c7b42;color:#fff}
 .disc-facts{font-size:9px;color:#8a9682;letter-spacing:.2px}
 .match-row{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
 .match{font-size:8px;padding:2px 5px;border-radius:3px;background:#e7eddf;color:#4c6b3a;letter-spacing:.2px;white-space:nowrap}

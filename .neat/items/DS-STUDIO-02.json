@@ -89,6 +89,10 @@
     {
       "id": "ios-select",
       "text": "Dropdown changes take on the first pick on iOS"
+    },
+    {
+      "id": "exploreshelf-v2",
+      "text": "ExploreShelf v2: the shelf opens on a default view (disc type, then maker) with sort, filter chips and a user-composable grouping chain on top -- no query to run; every chain order is valid and sections nest; select mode drafts discs for a bag and naming it fires CreateBag through the existing composition"
     }
   ],
   "dependencies": [],

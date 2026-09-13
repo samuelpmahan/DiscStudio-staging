@@ -17,6 +17,11 @@ export const SORTS = [
   ['category', 'Disc type'], ['speed', 'Speed'], ['weight', 'Weight']
 ];
 export const GROUPS = [['none', 'No grouping'], ['maker', 'By maker'], ['category', 'By disc type']];
+/** The dimensions a person can stack into their own grouping chain: every order is valid. */
+export const GROUP_DIMS = [['maker', 'Maker'], ['category', 'Disc type'], ['speed', 'Speed'], ['stability', 'Stability']];
+const GROUP_DIM_KEYS = new Set(GROUP_DIMS.map(([key]) => key));
+/** A grouping is a chain of dimensions; a lone string stays working, 'none' is the empty chain. */
+const normalizeGroup = group => [...new Set((Array.isArray(group) ? group : group == null || group === 'none' ? [] : [group]).filter(key => GROUP_DIM_KEYS.has(key)))].slice(0, 3);
 export const FILTERS = [['inBag', 'In this bag'], ['unbagged', 'In no bag'], ['photo', 'Has photo']];
 const FLIGHT = ['speed', 'glide', 'turn', 'fade'];
 const norm = value => String(value ?? '').toLowerCase().trim();
@@ -63,7 +68,38 @@ function order(sort, rows) {
   }[sort] ?? ((a, b) => b.index - a.index);
   return [...rows].sort((a, b) => by(a, b) || compare(a.disc.id, b.disc.id));
 }
-const groupOf = (row, group) => group === 'maker' ? (row.maker?.name || 'Unknown maker') : group === 'category' ? (row.mold?.category || 'Unsorted') : 'All discs';
+/** Total stability: how the whole flight reads, turn plus fade. A Buzzz at 0 flies straight; a Firebird at 3+ always comes back. */
+const stabilityOf = mold => {
+  const flight = mold?.flight ?? {};
+  if (flight.turn == null && flight.fade == null) return null;
+  return (flight.turn ?? 0) + (flight.fade ?? 0);
+};
+const STABILITY_BANDS = [[-Infinity, -1.5, 'Very understable'], [-1, -1, 'Understable'], [0, 0, 'Neutral'], [1, 2, 'Stable'], [2.5, Infinity, 'Overstable']];
+const stabilityLabel = score => score == null ? 'Unknown stability' : STABILITY_BANDS.find(([lo, hi]) => score >= lo && score <= hi)[2];
+const groupLabel = (row, dim) => dim === 'maker' ? (row.maker?.name || 'Unknown maker')
+  : dim === 'category' ? (row.mold?.category || 'Unsorted')
+  : dim === 'speed' ? (row.mold?.flight?.speed == null ? 'Unknown speed' : `Speed ${row.mold.flight.speed}`)
+  : stabilityLabel(stabilityOf(row.mold));
+/** Numeric rank inside a dimension so Speed 9 reads before Speed 10 and understable before overstable; null reads A to Z. */
+const groupRank = (label, dim) => {
+  if (dim === 'speed') { const m = /^Speed (\d+)/.exec(label); return m ? Number(m[1]) : 1e9; }
+  if (dim === 'stability') { const i = STABILITY_BANDS.findIndex(band => band[2] === label); return i === -1 ? 1e9 : i; }
+  return null;
+};
+/** The grouping chain as nested sections: each level partitions the ordered rows, so the sort inside every section is the shelf's sort. */
+function groupTree(rows, dims) {
+  if (!dims.length) return [];
+  const [dim, ...rest] = dims, parts = [];
+  for (const row of rows) {
+    const label = groupLabel(row, dim);
+    (parts.find(p => p.label === label) ?? (parts.push({ label, rows: [] }), parts.at(-1))).rows.push(row);
+  }
+  parts.sort((a, b) => {
+    const ra = groupRank(a.label, dim), rb = groupRank(b.label, dim);
+    return typeof ra === 'number' && typeof rb === 'number' ? ra - rb : compare(norm(a.label), norm(b.label));
+  });
+  return parts.map(part => ({ label: part.label, dim, discIds: part.rows.map(r => r.disc.id), children: groupTree(part.rows, rest) }));
+}
 /**
  * The shelf as a person asked for it. `discs` arrives in the order the shelf holds
  * them, which is the order they were added, so "recently added" is that order read
@@ -92,17 +128,12 @@ export function shelfQuery({ discs = [], molds = {}, makers = {}, bags = [], que
   const ordered = terms.length
     ? order(sort, ranked).sort((a, b) => b.score - a.score || 0)
     : order(sort, ranked);
-  const groups = [];
-  for (const row of ordered) {
-    const label = groupOf(row, group);
-    (groups.find(g => g.label === label) ?? (groups.push({ label, discIds: [] }), groups.at(-1))).discIds.push(row.disc.id);
-  }
-  // The sections read A to Z whatever the sort inside them is; without grouping there is one.
-  if (group !== 'none') groups.sort((a, b) => compare(norm(a.label), norm(b.label)));
+  const dims = normalizeGroup(group);
+  const groups = dims.length ? groupTree(ordered, dims) : [{ label: 'All discs', dim: null, discIds: ordered.map(row => row.disc.id), children: [] }];
   return {
-    query, terms, sort, group, filters: active, bagId,
+    query, terms, sort, group: dims, filters: active, bagId,
     total: discs.length, shown: ordered.length,
-    rows: ordered.map(row => ({ id: row.disc.id, score: row.score, matched: row.matched, bagIds: row.bagIds, group: groupOf(row, group) })),
+    rows: ordered.map(row => ({ id: row.disc.id, score: row.score, matched: row.matched, bagIds: row.bagIds, group: dims.length ? groupLabel(row, dims[0]) : 'All discs', groupPath: dims.map(dim => groupLabel(row, dim)) })),
     groups
   };
 }

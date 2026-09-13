@@ -282,15 +282,18 @@ with sync_playwright() as p:
     # ExploreShelf fires its projection through the frame.
     page.locator('.exp-item[data-id="exploreshelf"]').click()
     assert 'FIRING CONDITION' in page.locator('.exp-detail').text_content()
-    page.locator('[data-action="experience-use"]').click()
+    page.locator('[data-action="experience-use"][data-id="exploreshelf"]').click()
     assert 'px.shelf.view' in page.locator('.exp-detail').text_content()
     assert_world(page,'discStudio.runtime.pxc.get("px.studio.exploreshelf.context.selection").experience==="exploreshelf"')
     assert_world(page,'discStudio.runtime.pxc.has("px.shelf.view")')
-    # CreateBag names a bag of shared specimen references through the frame.
+    # CreateBag is just selecting from the shelf: tap Select, tap discs, name it.
     page.locator('.exp-item[data-id="createbag"]').click()
-    page.locator('[data-control="experience-form"][data-key="name"]').fill('Browser bag')
-    pick(page, '[data-control="experience-form"][data-key="discId"]', index=0)
-    page.locator('[data-action="experience-use"]').click()
+    page.locator('.exp-detail [data-action="selecting"]').click()
+    page.locator('.exp-detail .disc-row[data-disc-row="buzzz-mint"] .disc-pick').click()
+    page.locator('.exp-detail .disc-row[data-disc-row="zone-peach"] .disc-pick').click()
+    assert '2 selected' in page.locator('.exp-detail').text_content()
+    page.locator('.exp-detail [data-control="bag-draft-name"]').fill('Browser bag')
+    page.locator('[data-action="experience-use"][data-id="createbag"]').click()
     assert 'px.domain.Bag.' in page.locator('.exp-detail').text_content()
     made_bag=page.evaluate('discStudio.runtime.pxc.get("px.studio.createbag.context.bag")')
     assert page.evaluate('b=>discStudio.world.objects.Bag[b.split(".").pop()].name',made_bag)=='Browser bag'
@@ -384,7 +387,10 @@ with sync_playwright() as p:
     weights=page.evaluate('()=>discStudio.shelf.rows.map(r=>discStudio.world.objects.Disc[r.id].weight)')
     assert weights==sorted(weights,reverse=True),weights
     assert [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]==page.evaluate('discStudio.shelf.rows.map(r=>r.id)'),'the list is exactly what the Calculation returned'
-    pick(page, '[data-control="shelf-group"]', 'maker')
+    # The grouping chain: the default is disc type then maker; rebuilding it to
+    # maker alone reads the same sections the old single select did.
+    page.locator('[data-action="shelf-group-clear"]').click()
+    page.locator('[data-action="shelf-group-add"][data-value="maker"]').click()
     assert [t.strip() for t in page.locator('.shelf-group').all_text_contents()]==['Boone Moldworks1','Discraft8','Innova4'],page.locator('.shelf-group').all_text_contents()
     assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
     page.locator('[data-action="shelf-layout"][data-value="cards"]').click()
@@ -394,9 +400,16 @@ with sync_playwright() as p:
     page.locator('[data-action="shelf-layout"][data-value="compact"]').click()
     assert page.locator('.disc-list.as-cards').count()==0
     assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .disc-thumb svg, .disc-row[data-disc-row="buzzz-mint"] .disc-thumb img').count()>=1,'and so does a compact one'
-    pick(page, '[data-control="shelf-group"]', 'none')
+    # A second link nests inside the first: maker outside, disc type inside.
+    page.locator('[data-action="shelf-group-add"][data-value="category"]').click()
+    assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
+    assert page.locator('.shelf-subgroup').count()>0,'the second link renders inside the first'
+    leaf_total=page.evaluate('discStudio.shelf.groups.flatMap(g=>g.children.flatMap(c=>c.discIds)).length')
+    assert leaf_total==page.evaluate('discStudio.shelf.shown'),(leaf_total,page.evaluate('discStudio.shelf.shown'))
+    page.locator('[data-action="shelf-group-clear"]').click()
+    assert page.locator('.shelf-group').count()==0,'clearing the chain ungroups the shelf'
     pick(page, '[data-control="shelf-sort"]', 'recent')
-    record('The shelf organises itself: quick filters (has photo, in no bag), six sorts, grouping by maker or disc type, and a compact and a card density -- all one fn.shelf.query read, with every disc keeping its own art in both')
+    record('The shelf organises itself: quick filters (has photo, in no bag), six sorts, a user-composable grouping chain (maker, disc type, speed, stability -- every order valid), and a compact and a card density -- all one fn.shelf.query read, with every disc keeping its own art in both')
     # Bags: simple, intuitive, and never the thing that says no. One disc is in as many
     # bags as its owner likes and every row says which; the order inside a bag is the
     # owner's, by the arrows or by dragging the grip (one drop, one command, one undo);
