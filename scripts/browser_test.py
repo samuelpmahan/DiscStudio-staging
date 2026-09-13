@@ -364,7 +364,7 @@ with sync_playwright() as p:
     assert [t.strip() for t in page.locator('.shelf-group').all_text_contents()]==['Boone Moldworks1','Discraft8','Innova4'],page.locator('.shelf-group').all_text_contents()
     assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
     page.locator('[data-action="shelf-layout"][data-value="cards"]').click()
-    assert page.locator('.disc-list.as-cards').count()==2
+    assert page.locator('.disc-list.as-cards').count()==3
     assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .disc-thumb svg, .disc-row[data-disc-row="buzzz-mint"] .disc-thumb img').count()>=1,'a card view disc still shows its own art'
     page.screenshot(path=str(out/'shelf-cards.png'))
     page.locator('[data-action="shelf-layout"][data-value="compact"]').click()
