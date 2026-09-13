@@ -361,7 +361,7 @@ with sync_playwright() as p:
     assert weights==sorted(weights,reverse=True),weights
     assert [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]==page.evaluate('discStudio.shelf.rows.map(r=>r.id)'),'the list is exactly what the Calculation returned'
     page.locator('[data-control="shelf-group"]').select_option('maker')
-    assert [t.strip() for t in page.locator('.shelf-group').all_text_contents()]==['Discraft8','Innova4'],page.locator('.shelf-group').all_text_contents()
+    assert [t.strip() for t in page.locator('.shelf-group').all_text_contents()]==['Boone Moldworks1','Discraft8','Innova4'],page.locator('.shelf-group').all_text_contents()
     assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
     page.locator('[data-action="shelf-layout"][data-value="cards"]').click()
     assert page.locator('.disc-list.as-cards').count()==2
