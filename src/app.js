@@ -827,7 +827,15 @@ async function action(name, el) {
     case 'disc-add': openComposer(); if (!['shelf', 'experiences'].includes(ui.route)) { persistView(); navigate('shelf'); return; } break;
     case 'compose-cancel': ui.adding = null; break;
     case 'compose-depiction': ui.adding.depiction = d.value; runtime.experiences().draft({ depiction: d.value, paint: ui.adding.paint, hasPhoto: !!ui.adding.photo }); break;
-    case 'compose-reroll': ui.adding.paint.seed = Math.floor(Math.random() * 90000) + 10000; ui.adding.paintTouched = true; break;
+    case 'compose-reroll': {
+      const seed = Math.floor(Math.random() * 90000) + 10000;
+      ui.adding.paint.seed = seed; ui.adding.paintTouched = true;
+      // The seed input is captured back into composer state on render: sync the
+      // DOM now, or its stale value would clobber the reroll before it renders.
+      const seedInput = app.querySelector('[data-compose="paint.seed"]');
+      if (seedInput) seedInput.value = seed;
+      break;
+    }
     case 'compose-photo': document.querySelector('#compose-file').click(); return;
     case 'compose-photo-clear': ui.adding.photo = null; break;
     case 'compose-add': {
