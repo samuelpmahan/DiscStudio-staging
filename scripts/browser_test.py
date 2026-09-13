@@ -283,6 +283,7 @@ with sync_playwright() as p:
     # CreateBag names a bag of shared specimen references through the frame.
     page.locator('.exp-item[data-id="createbag"]').click()
     page.locator('[data-control="experience-form"][data-key="name"]').fill('Browser bag')
+    page.locator('[data-control="experience-form"][data-key="discId"]').select_option(index=0)
     page.locator('[data-action="experience-use"]').click()
     assert 'px.domain.Bag.' in page.locator('.exp-detail').text_content()
     made_bag=page.evaluate('discStudio.runtime.pxc.get("px.studio.createbag.context.bag")')
