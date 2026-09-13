@@ -289,8 +289,8 @@ with sync_playwright() as p:
     # CreateBag is just selecting from the shelf: tap Select, tap discs, name it.
     page.locator('.exp-item[data-id="createbag"]').click()
     page.locator('.exp-detail [data-action="selecting"]').click()
-    page.locator('.exp-detail .disc-row[data-disc-row="buzzz-mint"] .disc-pick').click()
-    page.locator('.exp-detail .disc-row[data-disc-row="zone-peach"] .disc-pick').click()
+    page.locator('.exp-detail .disc-row[data-disc-row="destroyer-lilac"] .disc-pick').click()
+    page.locator('.exp-detail .disc-row[data-disc-row="leopard3-gold"] .disc-pick').click()
     assert '2 selected' in page.locator('.exp-detail').text_content()
     page.locator('.exp-detail [data-control="bag-draft-name"]').fill('Browser bag')
     page.locator('[data-action="experience-use"][data-id="createbag"]').click()
