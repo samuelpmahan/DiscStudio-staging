@@ -386,7 +386,7 @@ with sync_playwright() as p:
     pick(page, '[data-control="shelf-sort"]', 'weight')
     weights=page.evaluate('()=>discStudio.shelf.rows.map(r=>discStudio.world.objects.Disc[r.id].weight)')
     assert weights==sorted(weights,reverse=True),weights
-    assert [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]==page.evaluate('discStudio.shelf.rows.map(r=>r.id)'),'the list is exactly what the Calculation returned'
+    assert [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]==page.evaluate('()=>{const out=[];const walk=nodes=>nodes.forEach(n=>n.children.length?walk(n.children):out.push(...n.discIds));walk(discStudio.shelf.groups);return out}'),'the grouped list renders exactly what the Calculation returned, section by section'
     # The grouping chain: the default is disc type then maker; rebuilding it to
     # maker alone reads the same sections the old single select did.
     page.locator('[data-action="shelf-group-clear"]').click()
