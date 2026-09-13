@@ -93,6 +93,10 @@
     {
       "id": "exploreshelf-v2",
       "text": "ExploreShelf v2: the shelf opens on a default view (disc type, then maker) with sort, filter chips and a user-composable grouping chain on top -- no query to run; every chain order is valid and sections nest; select mode drafts discs for a bag and naming it fires CreateBag through the existing composition"
+    },
+    {
+      "id": "brand-mark",
+      "text": "Chainspot header mark draws the C1/C2 putting circles (10m:20m) as two outline circles at true 1:2 proportions, with optical-size stroke cuts for small and display sizes"
     }
   ],
   "dependencies": [],
