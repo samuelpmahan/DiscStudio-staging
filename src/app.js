@@ -169,11 +169,29 @@ function captureComposer() {
   for (const el of app.querySelectorAll('[data-compose]')) {
     const value = el.type === 'checkbox' ? el.checked : el.value, path = el.dataset.compose.split('.');
     if (path.length === 1) ui.adding[path[0]] = value;
+    else if (path[0] === 'flight') (ui.adding.flight ??= {})[path[1]] = value;
     else { ui.adding.paintTouched = true; (ui.adding.paint ??= {})[path[1]] = value; }
   }
 }
 const composeValue = key => key.split('.').reduce((o, k) => o?.[k], ui.adding);
 const composeField = (label, key, type = 'text', attrs = '') => `<label class="control"><span>${esc(label)}</span><input aria-label="${esc(label)}" data-compose="${esc(key)}" type="${type}" value="${esc(composeValue(key) ?? '')}" ${attrs}></label>`;
+/** Maker is a dropdown of the top manufacturers; "Other" reveals a text input. The set is small and stable, so a select beats typing. */
+const makerSelect = (a, makers) => {
+  const names = [...new Set(makers.map(m => String(m ?? '').trim()).filter(Boolean))].sort();
+  // If the current maker isn't in the list (custom from Other), keep it selected via the Other path
+  const isOther = a.maker === '__other' || (a.maker && !names.includes(a.maker));
+  const opts = names.map(m => `<option value="${esc(m)}"${a.maker === m ? ' selected' : ''}>${esc(m)}</option>`).join('');
+  return `<label class="control"><span>Maker</span><select aria-label="Maker" data-compose="maker">${opts}<option value="__other"${isOther ? ' selected' : ''}>Other…</option></select></label>${isOther ? composeField('Maker name', 'makerOther', 'text', 'placeholder="Small batch"') : ''}`;
+};
+/** Flight numbers: four compact inputs. If the typed mold matches a known mold, its numbers show as placeholders. */
+const flightInputs = (a) => {
+  const known = a.mold.trim() ? all(w(), 'Mold').find(m => m.name.toLowerCase() === a.mold.trim().toLowerCase()) : null;
+  const fields = ['speed', 'glide', 'turn', 'fade'].map(k => {
+    const ph = known?.flight?.[k] != null ? `placeholder="${esc(String(known.flight[k]))}"` : '';
+    return `<label class="control"><span>${k[0].toUpperCase() + k.slice(1)}</span><input aria-label="Flight ${k}" data-compose="flight.${k}" type="number" step="0.5" value="${esc(a.flight?.[k] ?? '')}" ${ph}></label>`;
+  }).join('');
+  return `<fieldset class="flight-group"><legend>Flight numbers</legend><div class="four-inputs">${fields}</div></fieldset>`;
+};
 const datalist = (key, values) => `<datalist id="suggest-${key}">${[...new Set(values.map(v => String(v ?? '').trim()).filter(Boolean))].sort().map(v => `<option value="${esc(v)}"></option>`).join('')}</datalist>`;
 /** Everything already on the shelf, offered back as suggestions: the second Buzzz is typed once. */
 function shelfSuggestions() { const molds = all(w(), 'Mold'), discs = all(w(), 'Disc'); return { maker: all(w(), 'Manufacturer').map(m => m.name), mold: molds.map(m => m.name), category: molds.map(m => m.category), plastic: discs.map(d => d.plastic), color: discs.map(d => d.color) }; }
@@ -186,7 +204,7 @@ function shelfSuggestions() { const molds = all(w(), 'Mold'), discs = all(w(), '
 function discComposer() {
   const a = ui.adding, s = shelfSuggestions(), bag = get(w(), 'Bag', ui.bagId);
   const auto = [a.plastic.trim(), a.mold.trim(), a.weight === '' ? '' : `${a.weight} g`].filter(Boolean).join(' ') || 'your new disc';
-  return `<section class="composer" data-composer><div class="composer-head"><div><span class="eyebrow">ONE GESTURE</span><h2>Add a disc you own</h2><p class="tiny muted">Mold is the only thing this needs. Everything else is here because you usually know it while the disc is in your hand.</p></div>${button('×', 'compose-cancel', {}, 'circle', 'aria-label="Cancel adding a disc"')}</div><div class="composer-body">${composerDepictionArt(a)}<div class="composer-grid">${composeField('Maker', 'maker', 'text', 'list="suggest-maker" placeholder="Discraft"')}${composeField('Mold', 'mold', 'text', 'list="suggest-mold" placeholder="Buzzz" required')}${composeField('Disc type', 'category', 'text', 'list="suggest-category" placeholder="Midrange"')}${composeField('Plastic', 'plastic', 'text', 'list="suggest-plastic" placeholder="ESP"')}${composeField('Weight (g)', 'weight', 'number', 'step="1" min="20" max="400" placeholder="177"')}${composeField('Colour', 'color', 'text', 'list="suggest-color" placeholder="Mint"')}</div></div>${datalist('maker', s.maker)}${datalist('mold', s.mold)}${datalist('category', s.category)}${datalist('plastic', s.plastic)}${datalist('color', s.color)}<div class="composer-foot">${composeField('Nickname', 'nickname', 'text', `placeholder="${esc(auto)}"`)}${bag ? `<label class="check"><input data-compose="toBag" type="checkbox" ${a.toBag ? 'checked' : ''}> Put it in ${esc(bag.name)}</label>` : ''}${button('Add to shelf', 'compose-add', {}, 'primary')}</div></section>`;
+  return `<section class="composer" data-composer><div class="composer-head"><div><span class="eyebrow">ONE GESTURE</span><h2>Add a disc you own</h2><p class="tiny muted">Mold is the only thing this needs. Everything else is here because you usually know it while the disc is in your hand.</p></div>${button('×', 'compose-cancel', {}, 'circle', 'aria-label="Cancel adding a disc"')}</div><div class="composer-body">${composerDepictionArt(a)}<div class="composer-grid">${makerSelect(a, s.maker)}${composeField('Mold', 'mold', 'text', 'list="suggest-mold" placeholder="Buzzz" required')}${flightInputs(a)}${composeField('Disc type', 'category', 'text', 'list="suggest-category" placeholder="Midrange"')}${composeField('Plastic', 'plastic', 'text', 'list="suggest-plastic" placeholder="ESP"')}${composeField('Weight (g)', 'weight', 'number', 'step="1" min="20" max="400" placeholder="177"')}${composeField('Colour', 'color', 'text', 'list="suggest-color" placeholder="Mint"')}</div></div>${datalist('mold', [...s.mold, ...all(w(), 'Mold').map(m => m.name)])}${datalist('category', s.category)}${datalist('plastic', s.plastic)}${datalist('color', s.color)}<div class="composer-foot">${composeField('Nickname', 'nickname', 'text', `placeholder="${esc(auto)}"`)}${bag ? `<label class="check"><input data-compose="toBag" type="checkbox" ${a.toBag ? 'checked' : ''}> Put it in ${esc(bag.name)}</label>` : ''}${button('Add to shelf', 'compose-add', {}, 'primary')}</div></section>`;
 }
 /** One disc in the bag, in the place the bag holds it: reorder by the grip or the arrows, out by one tap. */
 function bagCard(key, index, total) {
@@ -703,7 +721,7 @@ function defaultPaintRecipe() {
 }
 function openComposer(depiction = 'paint') {
   const { maker } = discInfo();
-  ui.adding = { key: id('disc'), maker: maker?.name || '', mold: '', category: '', plastic: '', weight: '', color: '', nickname: '', photo: null, toBag: !!ui.bagId, focus: true, depiction, paint: defaultPaintRecipe(), paintTouched: false };
+  ui.adding = { key: id('disc'), maker: maker?.name || '', makerOther: '', mold: '', category: '', plastic: '', weight: '', color: '', nickname: '', photo: null, flight: { speed: '', glide: '', turn: '', fade: '' }, toBag: !!ui.bagId, focus: true, depiction, paint: defaultPaintRecipe(), paintTouched: false };
   // USE: the composer's depiction choice is published as frame context, never at load.
   runtime.experiences().draft({ depiction, paint: ui.adding.paint, hasPhoto: false });
 }
@@ -718,7 +736,7 @@ function composerPaintPreview(a) {
 /** The deliberate Photo/Paint choice: Paint is the default and needs no file. */
 function composerDepictionArt(a) {
   const segmented = `<div class="segmented" role="group" aria-label="Depiction"><button class="${a.depiction === 'photo' ? 'active' : ''}" data-action="compose-depiction" data-value="photo">Photo</button><button class="${a.depiction === 'paint' ? 'active' : ''}" data-action="compose-depiction" data-value="paint">Paint</button></div>`;
-  if (a.depiction === 'photo') return `${segmented}<div class="composer-art">${a.photo ? `<img src="${esc(a.photo)}" alt="The photo this disc will be added with">` : `<span class="composer-swatch" style="background:${esc(sampleColors(sampleHueFor(a.color, a.key))[0])};border-color:${esc(sampleColors(sampleHueFor(a.color, a.key))[1])}"></span>`}<span class="tiny muted">${a.photo ? 'Your photo. It never leaves this browser.' : 'No photo yet — add one, or paint instead.'}</span><div class="button-row">${button(a.photo ? 'Replace photo' : '↑ Photo of this disc', 'compose-photo', {}, 'quiet small')}${a.photo ? button('Remove', 'compose-photo-clear', {}, 'quiet small') : ''}</div></div>`;
+  if (a.depiction === 'photo') return `${segmented}<div class="composer-art">${a.photo ? `<img src="${esc(a.photo)}" alt="The photo this disc will be added with">` : `<span class="composer-swatch" style="background:${esc(sampleColors(sampleHueFor(a.color, a.key))[0])};border-color:${esc(sampleColors(sampleHueFor(a.color, a.key))[1])}"></span>`}<span class="tiny muted">${a.photo ? 'Your photo. It never leaves this browser.' : 'No photo yet — take one, upload one, or paint instead.'}</span><div class="button-row">${a.photo ? button('Retake', 'compose-camera', {}, 'quiet small') : button('📷 Take photo', 'compose-camera', {}, 'quiet small')}${button(a.photo ? 'Replace' : '↑ Upload', 'compose-photo', {}, 'quiet small')}${a.photo ? button('Remove', 'compose-photo-clear', {}, 'quiet small') : ''}</div></div>`;
   const families = starterFamilies(), p = a.paint ?? {};
   const familyOptions = families.map(f => `<option value="${esc(f)}" ${f === p.family ? 'selected' : ''}>${esc(f)}</option>`).join('');
   const targetOptions = PAINT_TARGETS.map(t => `<option value="${t}" ${Number(p.target) === t ? 'selected' : ''}>${t}</option>`).join('');
@@ -837,12 +855,18 @@ async function action(name, el) {
       break;
     }
     case 'compose-photo': document.querySelector('#compose-file').click(); return;
+    case 'compose-camera': document.querySelector('#compose-camera').click(); return;
     case 'compose-photo-clear': ui.adding.photo = null; break;
     case 'compose-add': {
       captureComposer();
       const a = ui.adding, weight = a.weight === '' ? null : Number(a.weight);
       if (!a.mold.trim()) throw new Error('Name the mold — the disc’s product name — and this disc goes on the shelf. Everything else can wait.');
       if (weight !== null && !Number.isFinite(weight)) throw new Error('Weight is a number of grams, or blank when you have not weighed it.');
+      // Maker comes from the dropdown; "Other" uses the typed name.
+      const manufacturer = a.maker === '__other' ? String(a.makerOther ?? '').trim() : String(a.maker ?? '').trim();
+      // Flight numbers ride along for a new mold; a known mold already has them.
+      const flight = {};
+      for (const k of ['speed', 'glide', 'turn', 'fade']) { const v = Number(a.flight?.[k]); if (Number.isFinite(v) && String(a.flight[k]).trim() !== '') flight[k] = v; }
       // The recipe lives in the composer's state, so unrelated edits never reroll
       // it. It is retained whenever the person engaged the paint panel -- and
       // always when the depiction is paint -- so one disc.create carries the
@@ -853,7 +877,7 @@ async function action(name, el) {
       const paint = a.depiction === 'paint' || a.paintTouched
         ? { family: a.paint.family, seed: Number(a.paint.seed), base: a.paint.base, accent: a.paint.accent, target: Number(a.paint.target), label: paintLabel }
         : null;
-      execute({ type: 'disc.create', id: a.key, manufacturer: a.maker, mold: a.mold, category: a.category, plastic: a.plastic, weight, color: a.color, nickname: a.nickname, photo: a.photo, depiction: a.depiction, paint, bagId: a.toBag && ui.bagId ? ui.bagId : null });
+      execute({ type: 'disc.create', id: a.key, manufacturer, mold: a.mold, category: a.category, plastic: a.plastic, weight, color: a.color, nickname: a.nickname, photo: a.photo, depiction: a.depiction, paint, flight, bagId: a.toBag && ui.bagId ? ui.bagId : null });
       const made = get(w(), 'Disc', a.key), bag = get(w(), 'Bag', ui.bagId);
       ui.discId = a.key; ui.adding = null;
       message(`${made.nickname} is on your shelf${a.toBag && bag ? ` and in ${bag.name}` : ''}${made.depiction === 'paint' ? ', painted from your recipe' : ''}. One undo takes the whole disc back out, maker and mold included.`);
@@ -1139,6 +1163,13 @@ for (const name of ['photo', 'compose', 'footage', 'draft', 'preset']) document.
     if (name === 'draft') { if (file.size > 12_000_000) throw new Error('Draft exceeds 12 MB.'); const value = validateWorld(JSON.parse(await file.text())); if (confirm('Replace this workspace with the imported draft? Review comments will remain separate.')) { saveEnabled = true; runtime.replace(value); message('Draft loaded. Domain objects, presentations and comparison states restored.'); } }
     if (name === 'preset') { if (file.size > 200_000) throw new Error('Presentation file is too large.'); const data = JSON.parse(await file.text()), preset = data.preset || data; if (!w().presets[preset.id] || confirm(`Replace the saved design “${w().presets[preset.id].name}”?`)) { execute({ type: 'preset.put', preset }); ui.presetId = preset.id; ui.component = preset.kind; if (preset.kind === 'DisplayCard') execute({ type: 'layout.set', patch: { presetId: preset.id } }); message('Reusable presentation imported. Bindings now resolve against your own selected disc.'); } }
   } catch (error) { message(error.cause?.message || error.message, true); }
+  event.target.value = ''; render();
+});
+/** The camera input goes straight to the device camera (capture="environment"); the file input offers the library. Both land in the composer's photo. */
+document.querySelector('#compose-camera').addEventListener('change', async event => {
+  const file = event.target.files?.[0]; if (!file) return;
+  try { if (ui.adding) { ui.adding.photo = await photoData(file); message('Photo ready. It goes on the disc when you add it, and never leaves this browser.'); } }
+  catch (error) { message(error.cause?.message || error.message, true); }
   event.target.value = ''; render();
 });
 const review = document.querySelector('neat-review');

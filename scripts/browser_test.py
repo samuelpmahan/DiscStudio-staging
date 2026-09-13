@@ -233,7 +233,8 @@ with sync_playwright() as p:
     page.locator('[data-action="disc-add"]').first.click()
     assert page.locator('.composer [data-compose="mold"]').count()==1
     assert page.evaluate('document.activeElement.dataset.compose')=='mold','the composer opens on the one fact it needs'
-    for key,value in [('maker','Kastaplast'),('mold','Berg'),('category','Putter'),('plastic','K1'),('weight','174'),('color','Mint')]:
+    page.locator('[data-compose="maker"]').select_option('Kastaplast')
+    for key,value in [('mold','Berg'),('category','Putter'),('plastic','K1'),('weight','174'),('color','Mint')]:
         page.locator('[data-compose="%s"]'%key).fill(value)
     # The UDS composer makes the Photo/Paint choice deliberately: Paint is the
     # default, so this test chooses Photo before uploading.

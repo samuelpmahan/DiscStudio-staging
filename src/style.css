@@ -206,3 +206,17 @@
 .exp-variants{margin:16px 0}
 .composer-paint svg{width:100%;height:auto;display:block;border-radius:8px}
 .composer-art .segmented{margin-bottom:10px}
+
+/* Flight numbers in the composer: a grouped fieldset, four across on desktop. */
+.flight-group{border:1px solid var(--line);border-radius:8px;padding:12px;margin:0;min-width:0}
+.flight-group legend{font-size:10px;letter-spacing:1.2px;color:var(--muted);padding:0 6px;text-transform:uppercase}
+.flight-group .four-inputs{margin-top:4px}
+.flight-group .control{margin:0}
+/* iOS auto-zooms on inputs under 16px; the composer is unusable without this. */
+@media(max-width:560px){
+  .composer input,.composer select,.composer textarea{font-size:16px}
+  .flight-group .four-inputs{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .flight-group input{padding:9px 4px;text-align:center}
+  .composer-grid{grid-template-columns:1fr}
+  .composer-art{margin-inline:auto;max-width:280px}
+}

@@ -4,13 +4,46 @@ import { defaultCards } from './cards.js';
 export function createSeed() {
   const objects = Object.fromEntries(Object.keys(schema).map(type => [type, {}]));
   const add = (type, value) => (objects[type][value.id] = { ...value, type });
-  add('Manufacturer', { id: 'discraft', name: 'Discraft', website: '' });
-  add('Manufacturer', { id: 'innova', name: 'Innova', website: '' });
+  const manufacturers = ['Innova', 'Discraft', 'Dynamic Discs', 'Latitude 64', 'Westside Discs', 'MVP Disc Sports', 'Axiom Discs', 'Discmania', 'Prodigy Disc', 'Gateway Disc Sports', 'Kastaplast', 'Thought Space Athletics', 'Lone Star Disc', 'Mint Discs', 'Clash Discs', 'Yikun Discs', 'RPM Discs', 'Infinite Discs', 'Doomsday Discs', 'Viking Discs'];
+  for (const name of manufacturers) add('Manufacturer', { id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), name, website: '' });
   const molds = [
     ['buzzz', 'Buzzz', 'discraft', 'Midrange', 5, 4, -1, 1], ['zone', 'Zone', 'discraft', 'Putt & approach', 4, 3, 0, 3],
     ['destroyer', 'Destroyer', 'innova', 'Distance driver', 12, 5, -1, 3], ['leopard3', 'Leopard3', 'innova', 'Fairway driver', 7, 5, -2, 1],
     ['mako3', 'Mako3', 'innova', 'Midrange', 5, 5, 0, 0], ['teebird3', 'TeeBird3', 'innova', 'Fairway driver', 8, 4, 0, 2],
-    ['luna', 'Luna', 'discraft', 'Putter', 3, 3, 0, 3]
+    ['luna', 'Luna', 'discraft', 'Putter', 3, 3, 0, 3],
+    ['aviar', 'Aviar', 'innova', 'Putter', 2, 3, 0, 1], ['roc', 'Roc', 'innova', 'Midrange', 4, 4, 0, 3],
+    ['wraith', 'Wraith', 'innova', 'Distance driver', 11, 5, -1, 3], ['firebird', 'Firebird', 'innova', 'Fairway driver', 9, 3, 0, 4],
+    ['valkyrie', 'Valkyrie', 'innova', 'Distance driver', 9, 4, -2, 2], ['sidewinder', 'Sidewinder', 'innova', 'Distance driver', 9, 5, -3, 1],
+    ['thunderbird', 'Thunderbird', 'innova', 'Fairway driver', 9, 5, 0, 2], ['eagle', 'Eagle', 'innova', 'Fairway driver', 7, 4, -1, 3],
+    ['rhyno', 'Rhyno', 'innova', 'Putter', 2, 1, 0, 3], ['pig', 'Pig', 'innova', 'Putt & approach', 4, 1, 0, 3],
+    ['shryke', 'Shryke', 'innova', 'Distance driver', 13, 6, -2, 2], ['beast', 'Beast', 'innova', 'Distance driver', 10, 5, -2, 2],
+    ['roach', 'Roach', 'discraft', 'Putter', 2, 4, -1, 1], ['comet', 'Comet', 'discraft', 'Midrange', 4, 5, -2, 1],
+    ['meteor', 'Meteor', 'discraft', 'Midrange', 5, 5, -3, 1], ['stalker', 'Stalker', 'discraft', 'Fairway driver', 7, 5, -1, 2],
+    ['undertaker', 'Undertaker', 'discraft', 'Distance driver', 9, 5, -1, 2], ['vulture', 'Vulture', 'discraft', 'Distance driver', 10, 5, 0, 2],
+    ['force', 'Force', 'discraft', 'Distance driver', 12, 5, 0, 3], ['nuke', 'Nuke', 'discraft', 'Distance driver', 13, 5, -1, 3],
+    ['heat', 'Heat', 'discraft', 'Distance driver', 9, 6, -3, 1], ['raptor', 'Raptor', 'discraft', 'Fairway driver', 9, 4, 0, 3],
+    ['cicada', 'Cicada', 'discraft', 'Fairway driver', 7, 6, -1, 1], ['passion', 'Passion', 'discraft', 'Fairway driver', 8, 5, -1, 1],
+    ['judge', 'Judge', 'dynamic-discs', 'Putter', 2, 4, 0, 1], ['truth', 'Truth', 'dynamic-discs', 'Midrange', 5, 5, -1, 1],
+    ['escape', 'Escape', 'dynamic-discs', 'Distance driver', 9, 5, -1, 2], ['felon', 'Felon', 'dynamic-discs', 'Fairway driver', 9, 3, 0.5, 4],
+    ['trespass', 'Trespass', 'dynamic-discs', 'Distance driver', 12, 5, -1, 3], ['getaway', 'Getaway', 'dynamic-discs', 'Distance driver', 9, 5, -1, 3],
+    ['pure', 'Pure', 'latitude-64', 'Putter', 3, 3, -1, 1], ['fuse', 'Fuse', 'latitude-64', 'Midrange', 5, 6, -1, 0],
+    ['saint', 'Saint', 'latitude-64', 'Fairway driver', 9, 7, -1, 2], ['river', 'River', 'latitude-64', 'Fairway driver', 7, 7, -1, 1],
+    ['ballista', 'Ballista', 'latitude-64', 'Distance driver', 14, 5, -1, 3], ['diamond', 'Diamond', 'latitude-64', 'Fairway driver', 8, 5, -3, 1],
+    ['harp', 'Harp', 'westside-discs', 'Putt & approach', 4, 3, 0, 3], ['shield', 'Shield', 'westside-discs', 'Putter', 3, 3, 0, 1],
+    ['tursas', 'Tursas', 'westside-discs', 'Midrange', 5, 5, -2, 1], ['sword', 'Sword', 'westside-discs', 'Distance driver', 12, 5, -0.5, 2],
+    ['envy', 'Envy', 'mvp-disc-sports', 'Putter', 3, 3, 0, 2], ['hex', 'Hex', 'mvp-disc-sports', 'Midrange', 5, 5, -1, 1],
+    ['volt', 'Volt', 'mvp-disc-sports', 'Fairway driver', 8, 5, -0.5, 2], ['tesla', 'Tesla', 'mvp-disc-sports', 'Distance driver', 9, 5, -1, 2],
+    ['wave', 'Wave', 'mvp-disc-sports', 'Distance driver', 11, 6, -2, 2], ['proxy', 'Proxy', 'mvp-disc-sports', 'Putter', 3, 3, -1, 0.5],
+    ['p2', 'P2', 'discmania', 'Putter', 2, 3, 0, 1], ['md3', 'MD3', 'discmania', 'Midrange', 5, 5, 0, 1],
+    ['fd', 'FD', 'discmania', 'Fairway driver', 7, 6, -1, 1], ['essence', 'Essence', 'discmania', 'Fairway driver', 8, 6, -2, 1],
+    ['dd3', 'DD3', 'discmania', 'Distance driver', 12, 5, -1, 3], ['pd', 'PD', 'discmania', 'Distance driver', 10, 4, 0, 3],
+    ['wizard', 'Wizard', 'gateway-disc-sports', 'Putter', 2, 3, 0, 2],
+    ['kaxe', 'Kaxe', 'kastaplast', 'Fairway driver', 6, 4, 0, 3], ['falk', 'Falk', 'kastaplast', 'Fairway driver', 9, 6, -2, 1],
+    ['reko', 'Reko', 'kastaplast', 'Putter', 3, 3, 0, 1], ['berg', 'Berg', 'kastaplast', 'Putter', 1, 1, 0, 2],
+    ['grym', 'Grym', 'kastaplast', 'Distance driver', 12, 5, -1, 3],
+    ['pathfinder', 'Pathfinder', 'thought-space-athletics', 'Midrange', 5, 5, 0, 1], ['votum', 'Votum', 'thought-space-athletics', 'Distance driver', 9, 5, -1, 2],
+    ['pa-3', 'PA-3', 'prodigy-disc', 'Putter', 3, 3, 0, 1], ['m4', 'M4', 'prodigy-disc', 'Midrange', 5, 6, -3, 0],
+    ['f5', 'F5', 'prodigy-disc', 'Distance driver', 9, 5, -2, 1], ['d2', 'D2', 'prodigy-disc', 'Distance driver', 12, 5, -1, 3]
   ];
   for (const [id, name, manufacturerId, category, speed, glide, turn, fade] of molds) add('Mold', { id, name, manufacturerId, category, flight: { speed, glide, turn, fade } });
   const discs = [

@@ -634,7 +634,7 @@ test('disc.create reuses the maker and mold that are already on the shelf, and a
   r.dispatch({ type: 'disc.create', id: 'disc-two', manufacturer: 'discraft', mold: 'buzzz', category: 'Midrange', plastic: 'Big Z', weight: null, color: 'Swirly something', nickname: 'The gamer', photo: null, bagId: null });
   const w = r.world(), made = w.objects.Disc['disc-two'];
   assert.equal(made.moldId, 'buzzz', 'the mold is matched case-insensitively rather than duplicated');
-  assert.equal(Object.keys(w.objects.Mold).length, 7);
+  assert.equal(Object.keys(w.objects.Mold).length, 71);
   assert.equal(made.nickname, 'The gamer');
   assert.ok(Number.isFinite(made.sampleHue) && made.sampleHue !== w.objects.Disc['buzzz-mint'].sampleHue);
   const card = r.card('disc-two', 'broadcast', context);

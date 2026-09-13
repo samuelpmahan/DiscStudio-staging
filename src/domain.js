@@ -279,6 +279,8 @@ export function applyCommand({ world: previous, command }) {
       reidentify(w, disc, String(c.manufacturer ?? ''), String(c.mold ?? ''));
       const product = get(w, 'Mold', disc.moldId), category = String(c.category ?? '').trim();
       if (category && !product.category) product.category = category;
+      // Flight numbers are product facts: fill blanks on the mold, never overwrite known numbers.
+      if (c.flight) for (const k of ['speed', 'glide', 'turn', 'fade']) { const v = Number(c.flight[k]); if (Number.isFinite(v) && product.flight[k] == null) product.flight[k] = v; }
       disc.nickname = String(c.nickname ?? '').trim() || [disc.plastic, product.name, disc.weight == null ? '' : `${disc.weight} g`].filter(Boolean).join(' ') || 'Your disc';
       if (c.bagId) required('Bag', c.bagId).discIds = [...get(w, 'Bag', c.bagId).discIds, c.id];
       break;
