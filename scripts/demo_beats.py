@@ -45,6 +45,13 @@ def route(page, name):
     page.evaluate('r=>location.hash="/"+r', name)
     page.wait_for_timeout(150)
 
+def pick(page, selector, *args, **kwargs):
+    # Select changes are handled a frame later -- iOS Safari needs the native
+    # picker to finish dismissing before the re-render replaces the <select> --
+    # so wait for the handler to run before the next assertion.
+    page.locator(selector).select_option(*args, **kwargs)
+    page.evaluate('() => new Promise(r => requestAnimationFrame(r))')
+
 def open_trace(page):
     """Open the Inspect panel if it is not already open (it stays open across routes)."""
     if page.locator('.trace-panel.open').count() == 0:
@@ -127,14 +134,14 @@ with sync_playwright() as p:
 
     # 3b. The same discs, on the canvas a phone actually wants.
     page.locator('[data-action="orientation"][data-value="portrait"]').click()
-    page.locator('[data-control="frame-preset"]').select_option('filled')
+    pick(page, '[data-control="frame-preset"]', 'filled')
     page.locator('[data-control="frame-title"]').fill('PutterWarz')
     page.locator('[data-control="frame-title"]').dispatch_event('change')
     size = page.evaluate('[discStudio.preview.width, discStudio.preview.height]')
     assert size == [1080, 1920] and 'data-frame="filled"' in page.evaluate('discStudio.preview.svg'), size
     beat(page, 'tease', 'tease-03b-vertical', 'The same comparison, on the canvas a phone wants, framed and titled',
          'preview canvas', ' x '.join(str(n) for n in size))
-    page.locator('[data-control="frame-preset"]').select_option('none')
+    pick(page, '[data-control="frame-preset"]', 'none')
     page.locator('[data-action="orientation"][data-value="landscape"]').click()
 
     # 4. A score moves and the card that owns it pulses.

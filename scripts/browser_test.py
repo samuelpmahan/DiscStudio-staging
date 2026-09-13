@@ -19,6 +19,12 @@ def route(page,name):
     page.wait_for_timeout(120)
 def change(page,selector,value):
     page.locator(selector).fill(str(value));page.locator(selector).dispatch_event('change')
+def pick(page, selector, *args, **kwargs):
+    # Select changes are handled a frame later -- iOS Safari needs the native
+    # picker to finish dismissing before the re-render replaces the <select> --
+    # so wait for the handler to run before the next assertion.
+    page.locator(selector).select_option(*args, **kwargs)
+    page.evaluate('() => new Promise(r => requestAnimationFrame(r))')
 def assert_world(page,js): assert page.evaluate('()=>'+js),js
 with sync_playwright() as p:
     launch={'headless':True,'args':['--no-sandbox']}
@@ -51,7 +57,7 @@ with sync_playwright() as p:
     record('Manufacturer/mold first-class bindings; styling and pointer dragging edit the real preset')
     page.locator('[data-action="field-new"]').click()
     page.locator('#new-field-label').fill('My rating')
-    page.locator('[data-control="new-field-type"]').select_option('number')
+    pick(page, '[data-control="new-field-type"]', 'number')
     page.locator('[data-action="field-register"]').click()
     assert page.locator('[data-path="disc.myRating"]').count()==1
     route(page,'shelf');change(page,'[data-control="disc-field"][data-key="myRating"]',9)
@@ -233,7 +239,7 @@ with sync_playwright() as p:
     page.locator('[data-action="disc-add"]').first.click()
     assert page.locator('.composer [data-compose="mold"]').count()==1
     assert page.evaluate('document.activeElement.dataset.compose')=='mold','the composer opens on the one fact it needs'
-    page.locator('[data-compose="maker"]').select_option('Kastaplast')
+    pick(page, '[data-compose="maker"]', 'Kastaplast')
     for key,value in [('mold','Berg'),('category','Putter'),('plastic','K1'),('weight','174'),('color','Mint')]:
         page.locator('[data-compose="%s"]'%key).fill(value)
     # The UDS composer makes the Photo/Paint choice deliberately: Paint is the
@@ -283,7 +289,7 @@ with sync_playwright() as p:
     # CreateBag names a bag of shared specimen references through the frame.
     page.locator('.exp-item[data-id="createbag"]').click()
     page.locator('[data-control="experience-form"][data-key="name"]').fill('Browser bag')
-    page.locator('[data-control="experience-form"][data-key="discId"]').select_option(index=0)
+    pick(page, '[data-control="experience-form"][data-key="discId"]', index=0)
     page.locator('[data-action="experience-use"]').click()
     assert 'px.domain.Bag.' in page.locator('.exp-detail').text_content()
     made_bag=page.evaluate('discStudio.runtime.pxc.get("px.studio.createbag.context.bag")')
@@ -313,7 +319,7 @@ with sync_playwright() as p:
     assert page.locator('.composer-paint').inner_html()!=before,'rerolling changes the live preview'
     assert_world(page,'discStudio.runtime.pxc.has("px.studio.uds.context.draft")')
     # Maker is a dropdown now; the Other path reveals a text input for the typed name.
-    page.locator('[data-compose="maker"]').select_option('__other')
+    pick(page, '[data-compose="maker"]', '__other')
     page.locator('[data-compose="makerOther"]').fill('Boone Moldworks')
     for key,value in [('mold','Testwing'),('weight','175'),('paint.label','Boone test disc')]:
         page.locator('[data-compose="%s"]'%key).fill(value)
@@ -374,11 +380,11 @@ with sync_playwright() as p:
     page.locator('[data-action="shelf-filter"][data-value="unbagged"]').click()
     assert page.evaluate('discStudio.shelf.rows.every(r=>r.bagIds.length===0)') and len(rows())<total,rows()
     page.locator('[data-action="shelf-filter"][data-value="unbagged"]').click()
-    page.locator('[data-control="shelf-sort"]').select_option('weight')
+    pick(page, '[data-control="shelf-sort"]', 'weight')
     weights=page.evaluate('()=>discStudio.shelf.rows.map(r=>discStudio.world.objects.Disc[r.id].weight)')
     assert weights==sorted(weights,reverse=True),weights
     assert [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]==page.evaluate('discStudio.shelf.rows.map(r=>r.id)'),'the list is exactly what the Calculation returned'
-    page.locator('[data-control="shelf-group"]').select_option('maker')
+    pick(page, '[data-control="shelf-group"]', 'maker')
     assert [t.strip() for t in page.locator('.shelf-group').all_text_contents()]==['Boone Moldworks1','Discraft8','Innova4'],page.locator('.shelf-group').all_text_contents()
     assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
     page.locator('[data-action="shelf-layout"][data-value="cards"]').click()
@@ -388,8 +394,8 @@ with sync_playwright() as p:
     page.locator('[data-action="shelf-layout"][data-value="compact"]').click()
     assert page.locator('.disc-list.as-cards').count()==0
     assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .disc-thumb svg, .disc-row[data-disc-row="buzzz-mint"] .disc-thumb img').count()>=1,'and so does a compact one'
-    page.locator('[data-control="shelf-group"]').select_option('none')
-    page.locator('[data-control="shelf-sort"]').select_option('recent')
+    pick(page, '[data-control="shelf-group"]', 'none')
+    pick(page, '[data-control="shelf-sort"]', 'recent')
     record('The shelf organises itself: quick filters (has photo, in no bag), six sorts, grouping by maker or disc type, and a compact and a card density -- all one fn.shelf.query read, with every disc keeping its own art in both')
     # Bags: simple, intuitive, and never the thing that says no. One disc is in as many
     # bags as its owner likes and every row says which; the order inside a bag is the
@@ -530,7 +536,7 @@ with sync_playwright() as p:
     # gains one arrangement, and the cards stand at the holes S4 assembled. Same
     # fn.comparison.layout, same card chain, same materializeOverlay.
     route(page,'course')
-    page.locator('[data-control="arrangement"]').select_option('course')
+    pick(page, '[data-control="arrangement"]', 'course')
     assert_world(page,'discStudio.world.layout.arrangement==="course"')
     scene=page.evaluate('discStudio.preview.scene')
     assert scene['arrangement']=='course',scene.get('arrangement')
@@ -550,7 +556,7 @@ with sync_playwright() as p:
     assert svg.count('data-entry="entry-')==page.evaluate('discStudio.preview.cardCount')
     page.screenshot(path=str(out/'cards-on-the-course.png'))
     record('OnTheCourse gains one arrangement: the bag\'s DisplayCards stand at the holes the Stages read off the capture, through the same fn.comparison.layout and the same card chain')
-    page.locator('[data-control="arrangement"]').select_option('row')
+    pick(page, '[data-control="arrangement"]', 'row')
     # Vertical content: the same comparison on the 1080x1920 canvas, with a frame
     # preset behind it -- one fn.overlay.frame Calculation, the same
     # fn.comparison.layout fitting the cards into its safe area, the same
@@ -558,7 +564,7 @@ with sync_playwright() as p:
     page.locator('[data-action="orientation"][data-value="portrait"]').click()
     # one command: the vertical canvas, and the row of three cards taken down the screen with it
     assert_world(page,'discStudio.world.layout.orientation==="portrait" && discStudio.world.layout.arrangement==="stack"')
-    page.locator('[data-control="frame-preset"]').select_option('filled')
+    pick(page, '[data-control="frame-preset"]', 'filled')
     change(page,'[data-control="frame-title"]','Vertical night')
     assert_world(page,'discStudio.world.layout.frame.presetId==="filled" && discStudio.world.layout.frame.title==="Vertical night"')
     assert page.evaluate('[discStudio.preview.width,discStudio.preview.height]')==[1080,1920]
@@ -586,14 +592,14 @@ with sync_playwright() as p:
     page.screenshot(path=str(out/'vertical-course.png'))
     assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'vertical canvas overflow'
     record('OnTheCourse composes on a 1080x1920 vertical canvas beside the 1920x1080 one: a frame preset (fill, safe area, title strip, sponsor lockup on the cascade\'s global tokens) is one fn.overlay.frame Calculation, the cards are fitted inside its safe area by the same fn.comparison.layout, and the exported PNG is actually 1080x1920 with its hash on the receipt')
-    page.locator('[data-control="frame-preset"]').select_option('none')
+    pick(page, '[data-control="frame-preset"]', 'none')
     page.locator('[data-action="orientation"][data-value="landscape"]').click()
     assert_world(page,'discStudio.world.layout.orientation==="landscape" && discStudio.world.layout.frame.presetId==="none"')
-    page.locator('[data-control="arrangement"]').select_option('row')
+    pick(page, '[data-control="arrangement"]', 'row')
     # The 5-disc cap battle, the way the owner says it: pick the template, add
     # discs until the cap refuses one by name, tap the finishing order, and watch
     # the standings and the cards move together off one fn.battle.standings.
-    page.locator('[data-control="battle-template"]').select_option('cap5-top3')
+    pick(page, '[data-control="battle-template"]', 'cap5-top3')
     assert_world(page,'discStudio.world.templateId===undefined && discStudio.world.battle.templateId==="cap5-top3"')
     assert_world(page,'discStudio.world.battle.constraints.map(r=>r.kind).join()==="discCap,placesPoints,tieRule"')
     assert page.locator('.battle-rule').count()==3
@@ -648,7 +654,7 @@ with sync_playwright() as p:
     page.screenshot(path=str(out/'battle.png'))
     assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),'battle rules overflow'
     record('A DiscComp is composed from reusable Constraints: the 5-disc cap template composes discCap, placesPoints and tieRule, the cap refuses a sixth disc by name without changing anything, a hole is entered with one tap per disc (or the number keys), and fn.battle.standings scores ranks, points and a running total once for both the standings panel and the cards')
-    page.locator('[data-control="battle-template"]').select_option('open')
+    pick(page, '[data-control="battle-template"]', 'open')
     # Single Disc mode: one disc, the design made for one disc, the state it has
     # in the battle, and an export whose filename says which disc it is.
     page.locator('[data-action="mode"][data-value="card"]').click()
@@ -779,7 +785,7 @@ with sync_playwright() as p:
     page.locator('[data-action="component"][data-value="AllCards"]').click();page.wait_for_timeout(60)
     page.locator('[data-action="component"][data-value="DisplayCard"]').click();page.wait_for_timeout(60)
     instance_projection='[data-control="instance-projection"]'
-    page.locator(instance_projection).select_option('single')
+    pick(page, instance_projection, 'single')
     radius_instance='[data-control="cascade-token"][data-layer="instance"][data-projection="single"][data-disc="buzzz-mint"][data-token="radius"]'
     change(page,radius_instance,'77')
     assert_world(page,'discStudio.world.cards.instances.single["buzzz-mint"].radius===77')
