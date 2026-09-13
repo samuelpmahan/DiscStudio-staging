@@ -300,13 +300,18 @@ with sync_playwright() as p:
     page.locator('[data-action="compose-reroll"]').click()
     assert page.locator('.composer-paint').inner_html()!=before,'rerolling changes the live preview'
     assert_world(page,'discStudio.runtime.pxc.has("px.studio.uds.context.draft")')
-    for key,value in [('maker','Boone Moldworks'),('mold','Testwing'),('weight','175'),('paint.label','Boone test disc')]:
+    # Maker is a dropdown now; the Other path reveals a text input for the typed name.
+    page.locator('[data-compose="maker"]').select_option('__other')
+    page.locator('[data-compose="makerOther"]').fill('Boone Moldworks')
+    for key,value in [('mold','Testwing'),('weight','175'),('paint.label','Boone test disc')]:
         page.locator('[data-compose="%s"]'%key).fill(value)
     page.locator('[data-action="compose-add"]').click()
     made=page.evaluate('discStudio.view.discId')
     disc=page.evaluate('d=>discStudio.world.objects.Disc[d]',made)
     assert disc['depiction']=='paint' and disc['paint'] is not None
     assert disc['paint']['family']=='chevron-run' and disc['paint']['label']=='Boone test disc'
+    mold=page.evaluate('d=>discStudio.world.objects.Mold[discStudio.world.objects.Disc[d].moldId]',made)
+    assert page.evaluate('m=>discStudio.world.objects.Manufacturer[m].name',mold['manufacturerId'])=='Boone Moldworks','the Other maker path records the typed name'
     route(page,'shelf')
     assert page.locator('.bag-card [data-action="disc-select"][data-id="%s"] svg'%made).count()>=1
     record('UDS is usable: the variant composes an effective definition through PQL, the composer defaults to Paint with the exact three-family picker and a live recipe, and one disc.create carries it all')

@@ -1081,7 +1081,7 @@ function controlChange(el) {
   }
   persistView(); render();
 }
-app.addEventListener('change', event => { const el = event.target.closest('[data-control]'); if (!el) return; try { controlChange(el); } catch (error) { message(error.cause?.message || error.message, true); render(); } });
+app.addEventListener('change', event => { const el = event.target.closest('[data-control]'); if (el) { try { controlChange(el); } catch (error) { message(error.cause?.message || error.message, true); render(); } return; } /* Composer selects (the maker dropdown) re-render so dependent inputs -- like the Other maker name field -- appear immediately. */ if (event.target.closest('select[data-compose]')) render(); });
 app.addEventListener('input', event => { const el = event.target; if (el.dataset.search) { if (el.dataset.search === 'discs') ui.query = el.value; else ui.fieldQuery = el.value; render(); } });
 let bagDrag = null;
 app.addEventListener('pointerdown', event => {
