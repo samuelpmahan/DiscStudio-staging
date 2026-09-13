@@ -617,14 +617,16 @@ export function createStudioRuntime(initial) {
   /**
    * The Experience frame (src/experiences.js): the loaded definitions, discovered,
    * never assembled in a view. UploadDiscToShelf is usable after this pass; the
-   * other five stay defined, their existing views still available and their
-   * Experience integration explicitly pending. Context lives in real Parts under
-   * the declared `px.studio.uds.context.*` prefix and is published on USE --
-   * selecting an Experience, choosing a variant, opening the composer -- never
-   * at load, so a fresh runtime carries an empty prefix.
+   * Six Experience Parts are discovered from px.studio.experiences -- never
+   * assembled in a view. All six are usable at minimum: each has a real
+   * (firing condition, projection) pair runnable through use(), chained so each
+   * projection unseals the next firing condition. Context lives in real Parts
+   * under each definition's declared context prefix (px.studio.uds.context.* for
+   * UDS) and is published on USE -- selecting an Experience, firing one --
+   * never at load, so a fresh runtime carries an empty prefix.
    */
   const EXPERIENCE_KEYS = ['uds', 'exploreshelf', 'createbag', 'managebags', 'creategraphics', 'exportgraphics'];
-  const EXPERIENCE_USABLE = new Set(['uds']);
+  const EXPERIENCE_USABLE = new Set(EXPERIENCE_KEYS);
   function experienceDescriptor(key) {
     const address = `px.studio.${key}.definition`;
     if (!pxc.has(address)) throw new Error(`No Experience definition at '${address}'.`);
@@ -645,21 +647,23 @@ export function createStudioRuntime(initial) {
     return address;
   }
   /**
-   * USE: publish the selection context and, when a variant is chosen, compose
-   * the effective definition through fn.studio.effectiveDefinition -- via PQL,
-   * no view-layer object spread -- into px.studio.uds.context.effective.*.
+   * USE: publish the selection context under the Experience's own declared
+   * prefix and, when a variant is chosen, compose the effective definition
+   * through fn.studio.effectiveDefinition -- via PQL, no view-layer object
+   * spread -- into <prefix>effective.*. UDS keeps px.studio.uds.context.*.
    */
   function experienceSelect(key, variantKey = null) {
-    const { address, variants } = experienceDescriptor(key);
+    const { address, variants, definition } = experienceDescriptor(key);
+    const prefix = definition.contextPrefix ?? 'px.studio.uds.context.';
     const variantAddress = variantKey ? experienceVariantAddress(key, variantKey) : null;
     let effectiveAddress = null;
     if (variantAddress) {
-      effectiveAddress = `px.studio.uds.context.effective.${variantKey}`;
+      effectiveAddress = `${prefix}effective.${variantKey}`;
       execute('experience-effective', [step('Effective', 'fn.studio.effectiveDefinition', { base: address, variant: variantAddress }, effectiveAddress)]);
     }
-    const record = source('px.studio.uds.context.selection.value', { experience: key, definition: address, variant: variantAddress, effective: effectiveAddress, variantKeys: variants.map(v => v.variant), at: new Date().toISOString() });
-    execute('experience-context', [step('Context', 'fn.studio.contextRecord', { record }, 'px.studio.uds.context.selection')]);
-    return pxc.get('px.studio.uds.context.selection');
+    const record = source(`${prefix}selection.value`, { experience: key, definition: address, variant: variantAddress, effective: effectiveAddress, variantKeys: variants.map(v => v.variant), at: new Date().toISOString() });
+    execute('experience-context', [step('Context', 'fn.studio.contextRecord', { record }, `${prefix}selection`)]);
+    return pxc.get(`${prefix}selection`);
   }
   /** USE: the composer's current depiction choice, as a context Part. */
   function experienceDraft({ depiction, paint = null, hasPhoto = false } = {}) {
@@ -667,7 +671,110 @@ export function createStudioRuntime(initial) {
     execute('experience-draft', [step('Draft', 'fn.studio.contextRecord', { record }, 'px.studio.uds.context.draft')]);
     return pxc.get('px.studio.uds.context.draft');
   }
-  function experienceFrame() { return { list: experienceList, select: experienceSelect, draft: experienceDraft, usable: [...EXPERIENCE_USABLE] }; }
+  /**
+   * USE: fire an Experience's (firing condition, projection) pair. Each arm
+   * checks its firing condition first and says why not when it refuses; on
+   * success it runs the projection through the existing compositions -- the
+   * shelf composition for the shelf, the bag commands for bags, the card chain
+   * for the spotlight, runtime.scene for the export -- and publishes the
+   * projection under the Experience's own context prefix. The returned
+   * `unsealed` names the definitions this projection unseals: the spec's
+   * sequencing, made navigable. Competition is never touched here; it is
+   * parked in Maximal.
+   */
+  function experienceUse(key, args = {}) {
+    const descriptor = experienceDescriptor(key);
+    if (!EXPERIENCE_USABLE.has(key)) return { fired: false, reason: `'${descriptor.name}' is not usable yet.` };
+    const prefix = descriptor.definition.contextPrefix ?? 'px.studio.uds.context.';
+    const unsealed = descriptor.definition.unseals ?? [];
+    const resolveSpecimen = discId => {
+      const disc = get(world(), 'Disc', discId), mold = disc ? get(world(), 'Mold', disc.moldId) : null;
+      const maker = mold ? get(world(), 'Manufacturer', mold.manufacturerId) : null;
+      return { disc, mold, maker };
+    };
+    switch (key) {
+      case 'uds':
+        return { fired: false, reason: 'UploadDiscToShelf fires through its composer: select it and add a disc.' };
+      case 'exploreshelf': {
+        if (!Object.keys(world().objects.Disc ?? {}).length)
+          return { fired: false, reason: 'The shelf is empty: add a disc (UploadDiscToShelf) before the shelf view can fire.' };
+        const view = shelf({ query: args.query ?? '', sort: args.sort, group: args.group, filters: args.filters, bagId: args.bagId ?? null });
+        source(`${prefix}view`, 'px.shelf.view');
+        const selection = experienceSelect(key);
+        return { fired: true, projection: 'px.shelf.view', run: view.run, total: view.total, shown: view.shown, groups: view.groups, unsealed, context: selection };
+      }
+      case 'createbag': {
+        const name = String(args.name ?? '').trim();
+        const discIds = [...new Set(args.discIds ?? [])].filter(discId => get(world(), 'Disc', discId));
+        if (!name || !discIds.length)
+          return { fired: false, reason: 'Name the bag and select at least one disc: a bag is a named collection of shared specimen references.' };
+        const bagId = args.bagId ?? id('bag');
+        dispatch({ type: 'entity.add', record: { id: bagId, type: 'Bag', name, discIds: [], notes: String(args.notes ?? '') } });
+        for (const discId of discIds) dispatch({ type: 'bag.membership', bagId, discId, include: true });
+        const part = `px.domain.Bag.${bagId}`;
+        source(`${prefix}bag`, part);
+        const selection = experienceSelect(key);
+        return { fired: true, projection: part, bagId, name, discIds, unsealed, context: selection };
+      }
+      case 'managebags': {
+        const bag = get(world(), 'Bag', args.bagId);
+        if (!bag) return { fired: false, reason: 'Choose a bag to adapt: the firing condition is a bag and an adaptation.' };
+        const adaptation = args.adaptation ?? {};
+        let resultBagId = bag.id, removed = false;
+        switch (adaptation.kind) {
+          case 'rename':
+            dispatch({ type: 'entity.set', entityType: 'Bag', id: bag.id, path: 'name', value: String(adaptation.name ?? '').trim() || bag.name });
+            break;
+          case 'membership':
+            dispatch({ type: 'bag.membership', bagId: bag.id, discId: adaptation.discId, include: adaptation.include !== false });
+            break;
+          case 'reorder':
+            dispatch({ type: 'bag.reorder', bagId: bag.id, discId: adaptation.discId, toIndex: adaptation.toIndex ?? 0 });
+            break;
+          case 'duplicate':
+            resultBagId = adaptation.newId ?? id('bag');
+            dispatch({ type: 'bag.duplicate', id: bag.id, newId: resultBagId, name: adaptation.name });
+            break;
+          case 'remove':
+            dispatch({ type: 'bag.remove', id: bag.id });
+            removed = true;
+            break;
+          default:
+            return { fired: false, reason: 'Choose an adaptation: rename, membership, reorder, duplicate or remove.' };
+        }
+        const part = removed ? null : `px.domain.Bag.${resultBagId}`;
+        if (part) source(`${prefix}bag`, part); else if (pxc.has(`${prefix}bag`)) pxc.set(`${prefix}bag`, null);
+        const selection = experienceSelect(key);
+        return { fired: true, projection: part, bagId: bag.id, adaptation: adaptation.kind, removed, bag: removed ? null : get(world(), 'Bag', resultBagId), unsealed, context: selection };
+      }
+      case 'creategraphics': {
+        const { disc, mold, maker } = resolveSpecimen(args.discId);
+        if (!disc || !mold || !maker)
+          return { fired: false, reason: 'Bind a specimen that resolves: the disc, its mold and its maker must all exist.' };
+        const composed = card(args.discId, 'spotlight', {}, null, 'single');
+        const part = `px.render.single.${args.discId}.svg`;
+        source(`${prefix}card`, part);
+        const selection = experienceSelect(key);
+        return { fired: true, projection: part, svg: composed.svg, width: composed.width, height: composed.height, unsealed, context: selection };
+      }
+      case 'exportgraphics': {
+        const { disc, mold, maker } = resolveSpecimen(args.discId);
+        if (!disc || !mold || !maker)
+          return { fired: false, reason: 'Release an inspected card: bind a specimen to the spotlight purpose first (CreateGraphics).' };
+        const result = scene({ mode: 'card', discId: args.discId });
+        source(`${prefix}scene`, 'px.course.svg');
+        const selection = experienceSelect(key);
+        // The PNG bytes need a browser canvas; the runtime proves the artifact
+        // composes and names its provenance. The frame releases the PNG through
+        // the existing export queue, which files the export.record receipt.
+        const provenance = { disc: `px.domain.Disc.${args.discId}`, recipe: `px.presets.${world().layout.singlePresetId}`, renderer: 'card' };
+        return { fired: true, projection: 'px.course.svg', svg: result.svg, width: result.width, height: result.height, provenance, unsealed, context: selection };
+      }
+      default:
+        return { fired: false, reason: `No firing pair for '${key}'.` };
+    }
+  }
+  function experienceFrame() { return { list: experienceList, select: experienceSelect, draft: experienceDraft, use: experienceUse, usable: [...EXPERIENCE_USABLE] }; }
   return {
     pxc, world, dispatch, card, scene, sceneParallel, constraints, shelf, battle: battleRules, counters, runRecord, execute, executeAsync,
     receipts, experiences: experienceFrame,

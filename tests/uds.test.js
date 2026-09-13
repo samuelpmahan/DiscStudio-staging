@@ -137,16 +137,21 @@ test('fn.studio.effectiveDefinition merges the base requirements with the varian
   catch (error) { assert.match(String(error.cause?.message ?? error.message), /variant/); }
 });
 
-test('the frame discovers six experiences: UDS usable, the other five defined', () => {
+test('the frame discovers six experiences, all usable at minimum', () => {
   const r = createStudioRuntime(createSeed());
   const list = r.experiences().list();
   assert.deepEqual(list.map(e => e.key), ['uds', 'exploreshelf', 'createbag', 'managebags', 'creategraphics', 'exportgraphics']);
   for (const e of list) {
-    assert.equal(e.status, e.key === 'uds' ? 'usable' : 'defined', e.key);
+    assert.equal(e.status, 'usable', e.key);
     assert.ok(e.purpose.length > 0, e.key);
     assert.equal(e.address, `px.studio.${e.key}.definition`);
+    assert.ok((e.definition.firing ?? '').length > 0, `${e.key} declares its firing condition`);
+    assert.ok((e.definition.projects ?? '').length > 0, `${e.key} declares its projection`);
   }
-  assert.deepEqual(r.experiences().usable, ['uds']);
+  assert.deepEqual(r.experiences().usable, ['uds', 'exploreshelf', 'createbag', 'managebags', 'creategraphics', 'exportgraphics']);
+  // Competition purpose variants are parked in Maximal, not offered at minimum.
+  assert.equal(r.pxc.get('px.studio.creategraphics.onthecourse.competition.definition').status, 'parked');
+  assert.equal(r.pxc.get('px.studio.exportgraphics.onthecourse.competition.definition').status, 'parked');
 });
 
 test('frame context publishes on USE under px.studio.uds.context.*, never at load', () => {

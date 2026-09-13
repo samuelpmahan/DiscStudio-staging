@@ -261,27 +261,38 @@ with sync_playwright() as p:
     assert not page.evaluate('d=>!!discStudio.world.objects.Disc[d]',made),'one undo took the whole disc back out'
     assert page.evaluate('Object.keys(discStudio.world.objects.Manufacturer).length')==makers,'no stray maker was left behind'
     record('Adding a disc is one gesture: the shelf + opens a composer of the facts that matter, one disc.create writes the maker, the mold, the disc, its photo and its bag place, and one undo takes all of it back')
-    # DiscStudio UDS: the #/experiences frame. Six Experience Parts are
-    # discovered from px.studio.experiences -- never assembled in a view. UDS is
-    # usable; the other five stay defined with their existing views linked and
-    # their Experience integration honestly pending. Selecting is USE: frame
-    # context publishes under px.studio.uds.context.* only then, and the
-    # selection survives navigating away and back.
+    # DiscStudio Experience projections: six Experience Parts discovered from
+    # px.studio.experiences -- never assembled in a view -- all usable at
+    # minimum. Each shows its (firing condition, projection) pair from its
+    # definition and fires it through the existing compositions; each
+    # projection unseals the next. Selecting is USE: frame context publishes
+    # under that Experience's own context prefix only then, and the selection
+    # survives navigating away and back.
     route(page,'experiences')
     chips=page.locator('.exp-item [data-status]')
     assert chips.count()==6,f'experience status chips: {chips.count()}'
-    assert [chips.nth(i).text_content().strip() for i in range(6)].count('usable')==1
-    assert chips.filter(has_text='defined').count()==5
-    assert page.locator('.exp-item[data-id="uds"] [data-status]').text_content().strip()=='usable'
+    assert [chips.nth(i).text_content().strip() for i in range(6)].count('usable')==6
+    assert chips.filter(has_text='defined').count()==0
+    # ExploreShelf fires its projection through the frame.
     page.locator('.exp-item[data-id="exploreshelf"]').click()
-    assert 'its Experience integration is pending' in page.locator('.exp-detail').text_content()
-    assert page.locator('.exp-detail a').count()>=1,'the defined experience links its existing view'
-    assert_world(page,'discStudio.runtime.pxc.has("px.studio.uds.context.selection")')
-    assert_world(page,'discStudio.runtime.pxc.get("px.studio.uds.context.selection").experience==="exploreshelf"')
+    assert 'FIRING CONDITION' in page.locator('.exp-detail').text_content()
+    page.locator('[data-action="experience-use"]').click()
+    assert 'px.shelf.view' in page.locator('.exp-detail').text_content()
+    assert_world(page,'discStudio.runtime.pxc.get("px.studio.exploreshelf.context.selection").experience==="exploreshelf"')
+    assert_world(page,'discStudio.runtime.pxc.has("px.shelf.view")')
+    # CreateBag names a bag of shared specimen references through the frame.
+    page.locator('.exp-item[data-id="createbag"]').click()
+    page.locator('[data-control="experience-form"][data-key="name"]').fill('Browser bag')
+    page.locator('[data-action="experience-use"]').click()
+    assert 'px.domain.Bag.' in page.locator('.exp-detail').text_content()
+    made_bag=page.evaluate('discStudio.runtime.pxc.get("px.studio.createbag.context.bag")')
+    assert page.evaluate('b=>discStudio.world.objects.Bag[b.split(".").pop()].name',made_bag)=='Browser bag'
+    assert page.evaluate('b=>discStudio.world.objects.Bag[b.split(".").pop()].discIds.length',made_bag)>=1,'the bag holds shared references'
+    # The selection survives navigating away and back.
     route(page,'shelf');route(page,'experiences')
-    assert page.locator('.exp-item[data-id="exploreshelf"].is-selected').count()==1,'the selection survived navigating away and back'
-    assert_world(page,'discStudio.runtime.pxc.has("px.studio.uds.context.selection")')
-    record('The Experiences frame discovers six Experience Parts: UDS usable, the other five defined with their existing views linked, and selection context persists')
+    assert page.locator('.exp-item[data-id="createbag"].is-selected').count()==1,'the selection survived navigating away and back'
+    assert_world(page,'discStudio.runtime.pxc.has("px.studio.createbag.context.selection")')
+    record('The Experiences frame fires the minimum projections: ExploreShelf projects px.shelf.view, CreateBag a Bag Part of shared references, each under its own context prefix, and selection persists')
     # UploadDiscToShelf is the usable one: its variants compose an effective
     # definition through fn.studio.effectiveDefinition via PQL -- no view-layer
     # merge -- and the composer makes the deliberate Photo/Paint choice with

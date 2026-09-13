@@ -204,6 +204,8 @@
 .exp-material{display:grid;gap:12px;margin-top:18px}
 .exp-material code{background:#eef1e6;padding:2px 6px;border-radius:4px;font-size:11px}
 .exp-variants{margin:16px 0}
+.exp-card-preview{max-width:320px;margin:12px 0}
+.exp-card-preview svg{width:100%;height:auto;display:block;border-radius:8px}
 .composer-paint svg{width:100%;height:auto;display:block;border-radius:8px}
 .composer-art .segmented{margin-bottom:10px}
 

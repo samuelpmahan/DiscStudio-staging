@@ -2,10 +2,11 @@
 
 Status: Experience definition Parts load into the existing Studio board from
 `src/experiences.js`. The #/experiences frame is live: six definitions discovered
-from `px.studio.experiences` — UDS usable with its photo/paint specializations,
-the other five defined with their existing views linked and their Experience
-integration honestly pending. Frame context publishes under
-`px.studio.uds.context.*` on use. [CLOUD-START.md](../CLOUD-START.md) carries the
+from `px.studio.experiences` — all usable at minimum, each with a real (firing
+condition, projection) pair runnable through `runtime.experiences().use()` and
+chained so each projection unseals the next. Frame context publishes under each
+Experience's own `px.studio.<key>.context.*` prefix on use. Competition purposes
+are parked in Maximal. [CLOUD-START.md](../CLOUD-START.md) carries the
 remaining cloud pass.
 
 ## Definition

@@ -20,21 +20,56 @@ export function studioExperienceParts() {
       actions: { create: { command: 'disc.create', calculation: 'fn.studio.applyCommand' } },
       variants: ['px.studio.uds.photo.definition', 'px.studio.uds.paint.definition'],
       contextPrefix: 'px.studio.uds.context.',
+      firing: 'a physical specimen is added with a useful depiction, with or without a photo',
+      projects: 'the specimen Part and its depiction Part via disc.create',
       continues: ['px.studio.exploreshelf.definition', 'px.studio.createbag.definition', 'px.studio.creategraphics.onthecourse.discspotlight.definition']
     })],
     ['px.studio.uds.photo.definition', { for: 'specialize UDS for supplied images', specializes: 'px.studio.uds.definition', discVizType: 'px.studio.discviztype.photo', additional: ['select or replace image', 'inspect prepared image', 'retain source image when changing depiction type'], effect: 'local file read and image preparation' }],
     ['px.studio.uds.paint.definition', { for: 'specialize UDS for deterministic painting', specializes: 'px.studio.uds.definition', discVizType: 'px.studio.discviztype.paint', additional: ['inspect generated candidates', 'vary and retain recipe', 'select a depiction without a file'], families: 'px.studio.uds.paint.families', starterFamilies: 'px.studio.uds.paint.starterfamilies', assignment: 'px.art.assignment', effect: null }],
     ['px.studio.uds.paint.families', { for: 'discover the existing reusable painter vocabulary', values: [...FAMILIES] }],
     ['px.studio.uds.paint.starterfamilies', { for: 'fill the first UDS demo with three contrasting existing painters', values: ['chevron-run', 'pressed-fern', 'contour-basin'] }],
-    ['px.studio.exploreshelf.definition', definition('ExploreShelf', 'find, inspect, correct and select physical discs', { calculation: 'fn.shelf.query', result: 'px.shelf.view' })],
-    ['px.studio.createbag.definition', definition('CreateBag', 'start a named collection of shared specimen references', { commands: ['entity.add', 'bag.duplicate', 'bag.membership'] })],
-    ['px.studio.managebags.definition', definition('ManageBags', 'adapt independent collections of the same physical discs', { commands: ['entity.set', 'bag.membership', 'bag.reorder', 'bag.duplicate', 'bag.remove'] })],
+    ['px.studio.exploreshelf.definition', definition('ExploreShelf', 'find, inspect, correct and select physical discs', {
+      calculation: 'fn.shelf.query', result: 'px.shelf.view',
+      firing: 'the shelf view is requested and at least one specimen exists',
+      projects: 'px.shelf.view — the findable, inspectable, correctable, selectable shelf',
+      unseals: ['px.studio.createbag.definition', 'px.studio.creategraphics.definition'],
+      contextPrefix: 'px.studio.exploreshelf.context.'
+    })],
+    ['px.studio.createbag.definition', definition('CreateBag', 'start a named collection of shared specimen references', {
+      commands: ['entity.add', 'bag.membership'],
+      firing: 'a collection is named and at least one specimen reference is selected',
+      projects: 'a Bag Part of shared specimen references — never copies',
+      unseals: ['px.studio.managebags.definition', 'px.studio.creategraphics.definition'],
+      contextPrefix: 'px.studio.createbag.context.'
+    })],
+    ['px.studio.managebags.definition', definition('ManageBags', 'adapt independent collections of the same physical discs', {
+      commands: ['entity.set', 'bag.membership', 'bag.reorder', 'bag.duplicate', 'bag.remove'],
+      firing: 'a bag exists and an adaptation is chosen',
+      projects: 'updated Bag Parts — Disc Parts are untouched',
+      unseals: ['px.studio.creategraphics.definition'],
+      contextPrefix: 'px.studio.managebags.context.'
+    })],
     ['px.studio.onthecourse.definition', { for: 'give graphics a purpose', purposes: ['px.studio.onthecourse.discspotlight', 'px.studio.onthecourse.competition'] }],
     ['px.studio.onthecourse.discspotlight', { for: 'make one disc understandable and visually useful', rendererMode: 'card', projection: 'single', composition: 'on-the-course' }],
     ['px.studio.onthecourse.competition', { for: 'communicate a comparison or contest through authored moments', rendererMode: 'battle', projection: 'competition', composition: 'on-the-course', authoredStates: 'px.comparison.states' }],
-    ...['creategraphics', 'exportgraphics'].flatMap(key => [
-      [`px.studio.${key}.definition`, definition(key === 'creategraphics' ? 'CreateGraphics' : 'ExportGraphics', key === 'creategraphics' ? 'compose bound material into a useful graphic' : 'export the inspected graphic and identify what produced it', { context: 'px.studio.onthecourse.definition', discVizType: 'px.studio.discviztype', composition: 'on-the-course' })],
-      ...['discspotlight', 'competition'].map(purpose => [`px.studio.${key}.onthecourse.${purpose}.definition`, { for: `${key === 'creategraphics' ? 'create' : 'export'} an OnTheCourse ${purpose} graphic`, specializes: `px.studio.${key}.definition`, purpose: `px.studio.onthecourse.${purpose}` }])
-    ])
+    ...['creategraphics', 'exportgraphics'].flatMap(key => {
+      const graphics = key === 'creategraphics';
+      return [
+        [`px.studio.${key}.definition`, definition(graphics ? 'CreateGraphics' : 'ExportGraphics', graphics ? 'compose bound material into a useful graphic' : 'export the inspected graphic and identify what produced it', {
+          context: 'px.studio.onthecourse.definition', discVizType: 'px.studio.discviztype', composition: 'on-the-course',
+          firing: graphics ? 'a specimen is bound to the spotlight purpose and resolves' : 'the inspected spotlight card is released for export',
+          projects: graphics
+            ? 'the spotlight card — the disc owns what it says, the recipe owns how it looks, label: null is live derivation'
+            : 'a PNG export plus provenance: the disc reference, the recipe, the renderer',
+          unseals: graphics ? ['px.studio.exportgraphics.definition'] : [],
+          contextPrefix: `px.studio.${key}.context.`
+        })],
+        ...['discspotlight', 'competition'].map(purpose => [`px.studio.${key}.onthecourse.${purpose}.definition`, {
+          for: `${graphics ? 'create' : 'export'} an OnTheCourse ${purpose} graphic`,
+          specializes: `px.studio.${key}.definition`, purpose: `px.studio.onthecourse.${purpose}`,
+          ...(purpose === 'competition' ? { status: 'parked', note: 'Parked in Maximal: battle competition is out of the minimum demo.' } : {})
+        }])
+      ];
+    })
   ];
 }

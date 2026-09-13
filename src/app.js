@@ -30,7 +30,8 @@ const ui = {
   motionEntry: null, newField: false, latestReceipt: null, recordAddress: '', build: { commit: 'local', fingerprint: 'development' },
   lastCascade: null, instanceProjection: savedView.instanceProjection || 'single', battleRules: null, queue: [], queueRunning: false,
   labCapture: null, labCaptureName: '', labRunning: null, labBusy: false, labSelected: null, labRun: null, labHidden: new Set(), photoTarget: 'disc', adding: null,
-  selectedExperience: savedView.selectedExperience || 'uds', experienceVariant: savedView.experienceVariant || null
+  selectedExperience: savedView.selectedExperience || 'uds', experienceVariant: savedView.experienceVariant || null,
+  experienceForm: {}, experienceUse: {}
 };
 const w = () => runtime.world();
 const context = () => ({ bagId: ui.bagId, competitionId: ui.competitionId, roundId: ui.roundId, extraType: ui.extraType, extraId: ui.extraId });
@@ -593,11 +594,6 @@ function tracePanel(run) {
   return `<section class="trace-panel ${ui.traceOpen ? 'open' : ''}"><button class="trace-heading" data-action="toggle-trace"><span>◎ <strong>PxC · actual execution</strong></span><span>${run.computed} computed / ${run.reused} reused <b>${ui.traceOpen ? '−' : '+'}</b></span></button>${ui.traceOpen ? `<div class="trace-flow"><span>Domain Parts</span><b>→</b><span>Registered Calculations</span><b>→</b><span>Bound presentation</span><b>→</b><span>SVG Part</span></div><div class="trace-table"><div class="trace-row table-heading"><span>Calculation</span><span>Output Part</span><span>This invocation</span></div>${run.trace.map(t => `<div class="trace-row"><span class="mono" title="${esc(Object.values(t.inputs).join('\n'))}">${esc(t.call)}</span><span class="part-links">${(t.produces || [t.output]).map(address => button(esc(address), 'inspect-part', { value: address }, 'part-link mono')).join('')}</span><span class="cache-state ${t.reused ? 'reused' : ''}">${t.reused ? '↺ reused material' : '● computed'}</span></div>`).join('')}</div><div class="button-row">${button('Inspect PQL composition', 'inspect-pql', {}, 'quiet small')}${button('Browse all Parts', 'inspect-all', {}, 'quiet small')}${button('Download this execution receipt ↓', 'trace-export', {}, 'quiet small')}${button('Export run record ↓', 'record-export', {}, 'quiet small')}${button('Open Tick render ↗', 'record-render', {}, 'quiet small')}</div>${ui.inspectAddress ? `<div class="part-view"><h3>${esc(ui.inspectAddress)}</h3><pre>${esc(ui.inspectAddress === 'PQL' ? JSON.stringify(run.composition, null, 2) : ui.inspectAddress === 'Part index' ? runtime.parts().map(p => p.address).join('\n') : runtime.pxc.has(ui.inspectAddress) ? summaryValue(runtime.pxc.get(ui.inspectAddress)) : 'Part no longer exists in this context.')}</pre></div>` : ''}${receiptsSection()}<p class="tiny muted">Cache hits return retained material from PxC. Each invocation is still recorded. A hit is not a claim that the calculation ran again.</p>` : ''}</section>`;
 }
 let renderedRoute = null;
-/** Where a defined-only Experience still lives: the existing route that already does its job. */
-const EXPERIENCE_FALLBACK = {
-  exploreshelf: ['#/shelf', 'DiscShelf'], createbag: ['#/shelf', 'DiscShelf'], managebags: ['#/shelf', 'DiscShelf'],
-  creategraphics: ['#/course', 'OnTheCourse'], exportgraphics: ['#/course', 'OnTheCourse']
-};
 const safePart = address => { try { return runtime.pxc.get(address); } catch { return null; } };
 /** The bound material a definition Part declares, rendered straight -- nothing here is assembled by hand. */
 function experienceBoundMaterial(exp) {
@@ -615,29 +611,137 @@ function experienceBoundMaterial(exp) {
  * The usable Experience: choosing a DiscVizType composes the effective
  * definition through fn.studio.effectiveDefinition (PQL, no view-layer spread)
  * and opens the composer in that depiction. The other lens is the composer itself.
+ * Unchanged by the minimum Experience projections.
  */
 function udsDetail(exp) {
   const variants = exp.variants ?? [];
   const effective = ui.experienceVariant ? safePart(`px.studio.uds.context.effective.${ui.experienceVariant}`) : null;
   return `<p class="lede">${esc(exp.purpose)}</p><div class="exp-variants"><span class="eyebrow">DISC VIZ TYPE — CHOOSE ONE</span><div class="button-row">${variants.map(v => button(`${v.variant === 'photo' ? '↑ Photo' : '◈ Paint'} · ${esc(v.discVizType)}`, 'experience-variant', { value: v.variant }, ui.experienceVariant === v.variant ? 'secondary' : 'quiet')).join('')}</div></div>${effective ? `<div class="subtle-box"><span class="eyebrow">EFFECTIVE DEFINITION — COMPOSED BY fn.studio.effectiveDefinition THROUGH PQL</span><p><strong>Shared</strong> ${effective.shared.map(s => `<code>${esc(s)}</code>`).join(' ')}</p><p><strong>Additional</strong> ${effective.additional.map(s => `<code>${esc(s)}</code>`).join(' ')}</p><p class="tiny muted">Read back from <span class="mono">px.studio.uds.context.effective.${esc(ui.experienceVariant)}</span>; nothing here was assembled by object spread.</p></div>` : '<p class="tiny muted">Choose a DiscVizType to compose its effective definition: the shared UploadDiscToShelf requirements plus that variant’s additional ones.</p>'}<div class="button-row">${button('+ Add a disc', 'disc-add', {}, 'primary')}</div>${ui.adding ? discComposer() : ''}${experienceBoundMaterial(exp)}`;
 }
-/** A defined Experience: honest about the pending integration, with the views that already work. */
-function pendingDetail(exp) {
-  const [href, label] = EXPERIENCE_FALLBACK[exp.key] ?? ['#/shelf', 'DiscShelf'];
-  return `<p class="lede">${esc(exp.purpose)}</p><div class="notice"><h3>${esc(exp.name)} is defined — its Experience integration is pending.</h3><p>The definition, its purpose and its bound material are on the record; the frame does not run it yet, and it does not pretend to.</p><p>The existing views stay available: <a href="${href}">${label} ↗</a></p></div>${experienceBoundMaterial(exp)}`;
+/**
+ * The minimum Experience frame: each of the five projections shows its
+ * (firing condition, projection) pair read straight from the definition Part,
+ * offers one USE control that fires it through the existing compositions, and
+ * shows the projection it produced. Competition is parked in Maximal and is
+ * never offered here.
+ */
+/** Fresh USE arguments for an Experience, from the frame's own form state. */
+function resetExperienceForm(key) {
+  switch (key) {
+    case 'exploreshelf': return { query: '' };
+    case 'createbag': return { name: '', discId: ui.discId };
+    case 'managebags': return { bagId: ui.bagId, kind: 'rename', name: '', discId: ui.discId, include: true, toIndex: 0, newName: '' };
+    case 'creategraphics': return { discId: ui.discId };
+    case 'exportgraphics': return { discId: ui.discId };
+    default: return {};
+  }
+}
+/** The runtime use() arguments, built from the frame form. */
+function experienceUseArgs(key) {
+  const form = ui.experienceForm;
+  switch (key) {
+    case 'exploreshelf': return { query: form.query ?? '' };
+    case 'createbag': return { name: form.name ?? '', discIds: form.discId ? [form.discId] : [] };
+    case 'managebags': {
+      const adaptation = { kind: form.kind ?? 'rename' };
+      if (adaptation.kind === 'rename') adaptation.name = form.name ?? '';
+      if (adaptation.kind === 'membership') { adaptation.discId = form.discId; adaptation.include = form.include !== false; }
+      if (adaptation.kind === 'reorder') { adaptation.discId = form.discId; adaptation.toIndex = Number(form.toIndex ?? 0); }
+      if (adaptation.kind === 'duplicate' && String(form.newName ?? '').trim()) adaptation.name = String(form.newName).trim();
+      return { bagId: form.bagId ?? ui.bagId, adaptation };
+    }
+    case 'creategraphics': return { discId: form.discId ?? ui.discId };
+    case 'exportgraphics': return { discId: form.discId ?? ui.discId };
+    default: return {};
+  }
+}
+const experiencePrefix = exp => exp.definition?.contextPrefix ?? 'px.studio.uds.context.';
+/** The definitions this projection unseals, as navigation: the spec's sequencing. */
+function experienceUnsealed(exp) {
+  const list = runtime.experiences().list();
+  const items = (exp.definition?.unseals ?? []).map(address => list.find(e => e.address === address)).filter(Boolean);
+  if (!items.length) return '<p class="tiny muted">This projection hands its PNG to the editor outside the Studio — nothing further to unseal here.</p>';
+  return `<p class="tiny muted">Unseals ${items.map(e => button(`→ ${e.name}`, 'experience-select', { id: e.key }, 'quiet small')).join(' ')}</p>`;
+}
+/** The pair, read from the definition -- never assembled in a view. */
+function experiencePairCard(exp) {
+  const def = exp.definition ?? {};
+  return `<div class="subtle-box"><span class="eyebrow">FIRING CONDITION → PROJECTION</span><p><strong>Fires when</strong> ${esc(def.firing ?? '—')}</p><p><strong>Projects</strong> ${esc(def.projects ?? '—')}</p>${experienceUnsealed(exp)}</div>`;
+}
+const experienceDiscOptions = () => all(w(), 'Disc').map(disc => { const mold = get(w(), 'Mold', disc.moldId); return [disc.id, `${mold?.name ?? 'Unknown mold'} · ${disc.nickname}`]; });
+const experienceBagOptions = () => all(w(), 'Bag').map(bag => [bag.id, `${bag.name} (${bag.discIds.length})`]);
+const labeledSelect = (label, control, key, value, options, attrs = '') => `<label class="control"><span>${esc(label)}</span><select data-control="${control}" data-key="${esc(key)}" aria-label="${esc(label)}" ${attrs}>${options.map(([k, l]) => `<option value="${esc(k)}" ${String(k) === String(value) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
+/** The last firing result for an Experience, or nothing when it never fired. */
+function experienceFired(key, body) {
+  const result = ui.experienceUse[key];
+  if (!result) return '';
+  if (!result.fired) return `<div class="notice"><h3>Not fired.</h3><p>${esc(result.reason)}</p></div>`;
+  return `<div class="subtle-box"><span class="eyebrow">PROJECTION — <span class="mono">${esc(result.projection ?? '')}</span></span>${body(result)}</div>`;
+}
+function exploreShelfDetail(exp) {
+  const form = ui.experienceForm;
+  return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
+  <div class="button-row">${input('Find', 'experience-form', form.query ?? '', 'text', 'data-key="query" placeholder="Search the shelf…"')}${button('Run the shelf query', 'experience-use', { id: 'exploreshelf' }, 'primary')}</div>
+  ${experienceFired('exploreshelf', result => `<p>${result.total} on the shelf · ${result.shown} shown.</p>${tracePanel(result.run)}<p class="tiny muted">Find, inspect, correct and select them in the <a href="#/shelf">shelf view ↗</a>.</p>`)}`;
+}
+function createBagDetail(exp) {
+  const form = ui.experienceForm;
+  return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
+  <div class="button-row">${input('Bag name', 'experience-form', form.name ?? '', 'text', 'data-key="name" placeholder="Sunday singles"')}${labeledSelect('First disc', 'experience-form', 'discId', form.discId ?? ui.discId, experienceDiscOptions())}${button('Name this bag', 'experience-use', { id: 'createbag' }, 'primary')}</div>
+  ${experienceFired('createbag', result => `<p><strong>${esc(result.name)}</strong> holds ${result.discIds.length} shared specimen reference${result.discIds.length === 1 ? '' : 's'} — the discs stay on the shelf, the bag only points at them.</p><p class="tiny muted">Pack and adapt it in the <a href="#/shelf">shelf view ↗</a>.</p>`)}`;
+}
+function manageBagsDetail(exp) {
+  const form = ui.experienceForm, kind = form.kind ?? 'rename';
+  const kinds = [['rename', 'Rename'], ['membership', 'Pack / unpack'], ['reorder', 'Reorder'], ['duplicate', 'Duplicate'], ['remove', 'Remove']];
+  const params = kind === 'rename' ? input('New name', 'experience-form', form.name ?? '', 'text', 'data-key="name"')
+    : kind === 'membership' ? `${labeledSelect('Disc', 'experience-form', 'discId', form.discId ?? ui.discId, experienceDiscOptions())}${check('In this bag', 'experience-form', form.include !== false, 'data-key="include"')}`
+    : kind === 'reorder' ? `${labeledSelect('Disc', 'experience-form', 'discId', form.discId ?? ui.discId, experienceDiscOptions())}${input('New position', 'experience-form', form.toIndex ?? 0, 'number', 'data-key="toIndex" min="0"')}`
+    : kind === 'duplicate' ? input('Copy name', 'experience-form', form.newName ?? '', 'text', 'data-key="newName" placeholder="Optional"')
+    : '<p class="tiny muted">Removing deletes the bag only — every physical disc stays on the shelf.</p>';
+  return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
+  <div class="button-row">${labeledSelect('Bag', 'experience-form', 'bagId', form.bagId ?? ui.bagId, experienceBagOptions())}${labeledSelect('Adaptation', 'experience-form', 'kind', kind, kinds)}${params}${button('Adapt', 'experience-use', { id: 'managebags' }, 'primary')}</div>
+  ${experienceFired('managebags', result => result.removed
+    ? '<p>The bag is gone. Every physical disc is still on the shelf.</p>'
+    : `<p><strong>${esc(result.bag.name)}</strong> — <span class="mono">px.domain.Bag.${esc(result.bag.id)}</span> · ${result.bag.discIds.length} disc${result.bag.discIds.length === 1 ? '' : 's'}.</p><p class="tiny muted">Disc Parts untouched: the adaptation only rewrote the bag.</p>`)}`;
+}
+function createGraphicsDetail(exp) {
+  const form = ui.experienceForm;
+  return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
+  <p class="tiny muted">Spotlight is the minimum purpose: one disc, understandable and visually useful. Competition is parked in Maximal.</p>
+  <div class="button-row">${labeledSelect('Specimen', 'experience-form', 'discId', form.discId ?? ui.discId, experienceDiscOptions())}${button('Compose the spotlight card', 'experience-use', { id: 'creategraphics' }, 'primary')}</div>
+  ${experienceFired('creategraphics', result => `<div class="exp-card-preview">${result.svg}</div><p class="tiny muted">${result.width} × ${result.height} · the disc owns what it says, the recipe owns how it looks — a blank recipe label derives the maker and mold live at render time.</p>`)}`;
+}
+function exportGraphicsDetail(exp) {
+  const form = ui.experienceForm, card = ui.experienceUse.creategraphics, released = ui.experienceUse.exportgraphics;
+  const receipt = w().exports.at(-1);
+  return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
+  <div class="button-row">${labeledSelect('Specimen', 'experience-form', 'discId', form.discId ?? ui.discId, experienceDiscOptions())}${button('Release for export ↓', 'experience-release', {}, 'primary')}</div>
+  ${card?.fired ? `<div class="subtle-box"><span class="eyebrow">INSPECTED CARD</span><div class="exp-card-preview">${card.svg}</div></div>` : ''}
+  ${released ? (released.fired
+    ? `<div class="subtle-box"><span class="eyebrow">PROVENANCE</span><p>Disc <span class="mono">${esc(released.provenance.disc)}</span> · recipe <span class="mono">${esc(released.provenance.recipe)}</span> · renderer <span class="mono">${esc(released.provenance.renderer)}</span></p>${receipt ? `<p class="tiny mono">${esc(receipt.type)} · SHA-256 ${esc((receipt.pngHash ?? receipt.svgHash ?? '').slice(0, 24))}… · ${esc(String(receipt.byteLength ?? ''))} bytes</p>` : '<p class="tiny muted">The PNG is in the export queue — its export.record receipt lands here when it finishes.</p>'}</div>`
+    : `<div class="notice"><h3>Not fired.</h3><p>${esc(released.reason)}</p></div>`) : ''}`;
 }
 /**
  * The #/experiences route: the six loaded Experience Parts, discovered from
- * px.studio.experiences, each with its defined/usable status. Selecting one is
- * USE -- it publishes frame context under px.studio.uds.context.* -- so leaving
- * the route and returning finds the selection and its Parts where they were.
+ * px.studio.experiences, each with its usable status. Selecting one is USE --
+ * it publishes frame context under that Experience's own context prefix -- so
+ * leaving the route and returning finds the selection and its Parts where
+ * they were. Each projection unseals the next firing condition.
  */
 function experiencesCenter() {
   const list = runtime.experiences().list();
   if (!list.some(e => e.key === ui.selectedExperience)) ui.selectedExperience = 'uds';
   const selected = list.find(e => e.key === ui.selectedExperience);
-  const selection = safePart('px.studio.uds.context.selection');
-  return `<section class="center exp-center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">EXPERIENCE FRAME</span><h1>Experiences</h1><p>The loaded Experience definitions, discovered from <span class="mono">px.studio.experiences</span> — never assembled in a view. UploadDiscToShelf is usable; the other five are defined, their existing views still available and their Experience integration explicitly pending.</p></div></div><div class="exp-layout"><aside class="exp-list" aria-label="Experiences">${list.map(e => `<button class="exp-item ${e.key === selected.key ? 'is-selected' : ''}" data-action="experience-select" data-id="${esc(e.key)}"><span class="exp-item-head"><strong>${esc(e.name)}</strong><span class="status-chip" data-status="${e.status}">${e.status}</span></span><small>${esc(e.purpose)}</small></button>`).join('')}</aside><div class="exp-detail"><div class="exp-detail-head"><h2>${esc(selected.name)}</h2><span class="status-chip" data-status="${selected.status}">${selected.status}</span><span class="mono tiny">${esc(selected.address)}</span></div>${selected.key === 'uds' ? udsDetail(selected) : pendingDetail(selected)}${selection ? `<p class="tiny muted">Frame context on the record: <span class="mono">px.studio.uds.context.selection</span> → ${esc(selection.experience)}${selection.variant ? ` · variant ${esc(String(selection.variant).split('.')[3])}` : ''}</p>` : '<p class="tiny muted">No frame context published yet — select an Experience above to publish it.</p>'}</div></div></section>`;
+  const prefix = experiencePrefix(selected);
+  const selection = safePart(`${prefix}selection`);
+  const detail = selected.key === 'uds' ? udsDetail(selected)
+    : selected.key === 'exploreshelf' ? exploreShelfDetail(selected)
+    : selected.key === 'createbag' ? createBagDetail(selected)
+    : selected.key === 'managebags' ? manageBagsDetail(selected)
+    : selected.key === 'creategraphics' ? createGraphicsDetail(selected)
+    : selected.key === 'exportgraphics' ? exportGraphicsDetail(selected)
+    : `<p class="lede">${esc(selected.purpose)}</p>`;
+  return `<section class="center exp-center" data-scroll="center"><div class="section-heading"><div><span class="eyebrow">EXPERIENCE FRAME</span><h1>Experiences</h1><p>The loaded Experience definitions, discovered from <span class="mono">px.studio.experiences</span> — never assembled in a view. All six are usable at minimum: each fires a (firing condition, projection) pair through the same compositions the views use, and each projection unseals the next.</p></div></div><div class="exp-layout"><aside class="exp-list" aria-label="Experiences">${list.map(e => `<button class="exp-item ${e.key === selected.key ? 'is-selected' : ''}" data-action="experience-select" data-id="${esc(e.key)}"><span class="exp-item-head"><strong>${esc(e.name)}</strong><span class="status-chip" data-status="${e.status}">${e.status}</span></span><small>${esc(e.purpose)}</small></button>`).join('')}</aside><div class="exp-detail"><div class="exp-detail-head"><h2>${esc(selected.name)}</h2><span class="status-chip" data-status="${selected.status}">${selected.status}</span><span class="mono tiny">${esc(selected.address)}</span></div>${detail}${selection ? `<p class="tiny muted">Frame context on the record: <span class="mono">${esc(prefix)}selection</span> → ${esc(selection.experience)}${selection.variant ? ` · variant ${esc(String(selection.variant).split('.')[3])}` : ''}</p>` : '<p class="tiny muted">No frame context published yet — select an Experience above to publish it.</p>'}</div></div></section>`;
 }
 function render() {
   captureComposer();
@@ -897,9 +1001,32 @@ async function action(name, el) {
     // stay on the disc, the switch only chooses which one renders.
     case 'depiction': execute({ type: 'entity.set', entityType: 'Disc', id: ui.discId, path: 'depiction', value: d.value }); break;
     // The Experience frame: selecting is USE -- it publishes frame context under
-    // px.studio.uds.context.*, never at load. Leaving the route and returning
-    // finds the selection and its Parts exactly where they were.
-    case 'experience-select': ui.selectedExperience = d.id; ui.experienceVariant = null; runtime.experiences().select(d.id); persistView(); break;
+    // the Experience's own context prefix, never at load. Leaving the route and
+    // returning finds the selection and its Parts exactly where they were.
+    case 'experience-select': ui.selectedExperience = d.id; ui.experienceVariant = null; ui.experienceForm = resetExperienceForm(d.id); runtime.experiences().select(d.id); persistView(); break;
+    case 'experience-use': {
+      const key = d.id;
+      if (key === 'managebags' && (ui.experienceForm.kind ?? 'rename') === 'remove' && !confirm('Delete this bag? Physical discs remain on your shelf.')) break;
+      const result = runtime.experiences().use(key, experienceUseArgs(key));
+      ui.experienceUse[key] = result;
+      message(result.fired ? `${result.projection} projected.` : result.reason, !result.fired);
+      persistView(); break;
+    }
+    case 'experience-release': {
+      // The chain in one gesture: the spotlight card is composed (and inspected
+      // above), the export composition is proven, then the PNG goes through the
+      // existing export queue, which files the export.record receipt.
+      const discId = ui.experienceForm.discId ?? ui.discId;
+      const graphic = runtime.experiences().use('creategraphics', { discId });
+      ui.experienceUse.creategraphics = graphic;
+      if (!graphic.fired) { message(graphic.reason, true); break; }
+      const exported = runtime.experiences().use('exportgraphics', { discId });
+      ui.experienceUse.exportgraphics = exported;
+      if (!exported.fired) { message(exported.reason, true); break; }
+      ui.discId = discId; ui.mode = 'card';
+      enqueue('current', 'png');
+      break;
+    }
     case 'experience-variant': {
       ui.experienceVariant = d.value;
       runtime.experiences().select('uds', d.value);
@@ -1024,6 +1151,10 @@ function controlChange(el) {
     case 'bag-name': execute({ type: 'entity.set', entityType: 'Bag', id: ui.bagId, path: 'name', value: value.trim() || 'Bag' }); break;
     case 'shelf-sort': ui.shelfSort = value; break;
     case 'shelf-group': ui.shelfGroup = value; break;
+    // The Experience frame's USE form: values accumulate in ui.experienceForm
+    // and the frame re-renders so dependent inputs (like the ManageBags
+    // adaptation parameters) follow the chosen kind.
+    case 'experience-form': ui.experienceForm[d.key] = el.type === 'checkbox' ? el.checked : value; render(); break;
     case 'identity-maker': execute({ type: 'disc.identity', id: disc.id, manufacturer: value, mold: mold?.name || '' }); break;
     case 'identity-mold': execute({ type: 'disc.identity', id: disc.id, manufacturer: maker?.name || '', mold: value }); break;
     case 'disc-field': execute({ type: 'entity.set', entityType: 'Disc', id: disc.id, path: d.key, value: el.type === 'checkbox' ? el.checked : d.kind === 'number' ? number() : value }); break;
