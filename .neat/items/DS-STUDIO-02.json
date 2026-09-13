@@ -96,7 +96,7 @@
     },
     {
       "id": "brand-mark",
-      "text": "Chainspot header mark draws the C1/C2 putting circles (10m:20m) as two outline circles at true 1:2 proportions, with optical-size stroke cuts for small and display sizes"
+      "text": "Chainspot header mark draws the C1/C2 putting circles (10m:20m) as two outline circles reading a true 2:1 silhouette, with optical compensation for stroke width and optical-size stroke cuts for small and display sizes"
     }
   ],
   "dependencies": [],
