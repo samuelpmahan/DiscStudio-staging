@@ -306,6 +306,7 @@ with sync_playwright() as p:
     disc=page.evaluate('d=>discStudio.world.objects.Disc[d]',made)
     assert disc['depiction']=='paint' and disc['paint'] is not None
     assert disc['paint']['family']=='chevron-run' and disc['paint']['label']=='Boone test disc'
+    route(page,'shelf')
     assert page.locator('.bag-card [data-action="disc-select"][data-id="%s"] svg'%made).count()>=1
     record('UDS is usable: the variant composes an effective definition through PQL, the composer defaults to Paint with the exact three-family picker and a live recipe, and one disc.create carries it all')
     # Cancelling the composer creates nothing: no world object, no specimen.
