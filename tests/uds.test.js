@@ -93,6 +93,20 @@ test('switching depiction keeps both the photo and the recipe, and undoes', () =
   assert.equal(artOf(r, 'disc-s').kind, 'photo', 'the switch undoes');
 });
 
+test('handing a disc a photo chooses the photo depiction, so the bound presentations use it', () => {
+  const r = createStudioRuntime(createSeed());
+  const photo = 'data:image/webp;base64,UklGRg==';
+  assert.equal(r.world().objects.Disc['buzzz-mint'].depiction, 'paint');
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'photo', value: photo });
+  const disc = r.world().objects.Disc['buzzz-mint'];
+  assert.equal(disc.depiction, 'photo', 'the upload is the deliberate choice of the photo depiction');
+  assert.equal(artOf(r, 'buzzz-mint').kind, 'photo');
+  assert.equal(artOf(r, 'buzzz-mint').src, photo);
+  r.dispatch({ type: 'entity.set', entityType: 'Disc', id: 'buzzz-mint', path: 'photo', value: null });
+  assert.equal(r.world().objects.Disc['buzzz-mint'].depiction, 'photo', 'removing the photo keeps the depiction; the painted fallback renders');
+  assert.equal(artOf(r, 'buzzz-mint').kind, 'painted');
+});
+
 test('a legacy draft without depiction normalises instead of refusing', () => {
   const seed = createSeed();
   for (const disc of Object.values(seed.objects.Disc)) { delete disc.depiction; delete disc.paint; }

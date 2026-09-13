@@ -243,7 +243,15 @@ export function applyCommand({ world: previous, command }) {
   const w = clone(previous), c = command, state = currentBattle(w);
   const required = (type, key) => { const value = get(w, type, key); if (!value) throw new Error(`${type} '${key}' is missing.`); return value; };
   switch (c.type) {
-    case 'entity.set': setPath(required(c.entityType, c.id), c.path, c.value); break;
+    case 'entity.set': {
+      const record = required(c.entityType, c.id);
+      setPath(record, c.path, c.value);
+      // Handing a disc a photo is the deliberate choice of the photo depiction:
+      // the bound presentations use the photo it was just given. The inspector's
+      // switch still moves back to paint, and both sources are retained.
+      if (c.entityType === 'Disc' && c.path === 'photo' && c.value != null) record.depiction = 'photo';
+      break;
+    }
     case 'entity.add': {
       if (!safeKey(c.record.type) || !safeKey(c.record.id)) throw new Error('Invalid new object.');
       (w.objects[c.record.type] ??= {})[c.record.id] = clone(c.record); break;
