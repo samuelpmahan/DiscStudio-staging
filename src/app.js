@@ -1198,6 +1198,11 @@ function controlChange(el) {
     // and the frame re-renders (once, after this switch) so dependent inputs
     // (like the ManageBags adaptation parameters) follow the chosen kind.
     case 'experience-form': ui.experienceForm[d.key] = el.type === 'checkbox' ? el.checked : value; break;
+    // The bag draft name types into the DOM (the input listener keeps it current
+    // with no render); on change it only syncs, never re-renders -- a render here
+    // would replace the Create-the-bag button between its mousedown and mouseup
+    // and swallow the click that blurs this input.
+    case 'bag-draft-name': ui.bagDraftName = value; return;
     case 'identity-maker': execute({ type: 'disc.identity', id: disc.id, manufacturer: value, mold: mold?.name || '' }); break;
     case 'identity-mold': execute({ type: 'disc.identity', id: disc.id, manufacturer: maker?.name || '', mold: value }); break;
     case 'disc-field': execute({ type: 'entity.set', entityType: 'Disc', id: disc.id, path: d.key, value: el.type === 'checkbox' ? el.checked : d.kind === 'number' ? number() : value }); break;
