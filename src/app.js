@@ -1152,9 +1152,9 @@ function controlChange(el) {
     case 'shelf-sort': ui.shelfSort = value; break;
     case 'shelf-group': ui.shelfGroup = value; break;
     // The Experience frame's USE form: values accumulate in ui.experienceForm
-    // and the frame re-renders so dependent inputs (like the ManageBags
-    // adaptation parameters) follow the chosen kind.
-    case 'experience-form': ui.experienceForm[d.key] = el.type === 'checkbox' ? el.checked : value; render(); break;
+    // and the frame re-renders (once, after this switch) so dependent inputs
+    // (like the ManageBags adaptation parameters) follow the chosen kind.
+    case 'experience-form': ui.experienceForm[d.key] = el.type === 'checkbox' ? el.checked : value; break;
     case 'identity-maker': execute({ type: 'disc.identity', id: disc.id, manufacturer: value, mold: mold?.name || '' }); break;
     case 'identity-mold': execute({ type: 'disc.identity', id: disc.id, manufacturer: maker?.name || '', mold: value }); break;
     case 'disc-field': execute({ type: 'entity.set', entityType: 'Disc', id: disc.id, path: d.key, value: el.type === 'checkbox' ? el.checked : d.kind === 'number' ? number() : value }); break;
@@ -1212,7 +1212,9 @@ function controlChange(el) {
   }
   persistView(); render();
 }
-app.addEventListener('change', event => { const el = event.target.closest('[data-control]'); if (el) { try { controlChange(el); } catch (error) { message(error.cause?.message || error.message, true); render(); } return; } /* Composer selects (the maker dropdown) re-render so dependent inputs -- like the Other maker name field -- appear immediately. */ if (event.target.closest('select[data-compose]')) render(); });
+/* A <select>'s change is handled a frame later: on iOS Safari, replacing the select synchronously inside its own change event races the native picker's dismissal and the first pick is lost (the user has to pick twice). */
+const handleChangeTarget = target => { const el = target.closest('[data-control]'); if (el) { try { controlChange(el); } catch (error) { message(error.cause?.message || error.message, true); render(); } return; } /* Composer selects (the maker dropdown) re-render so dependent inputs -- like the Other maker name field -- appear immediately. */ if (target.closest('select[data-compose]')) render(); };
+app.addEventListener('change', event => { const target = event.target; if (target instanceof HTMLSelectElement) requestAnimationFrame(() => handleChangeTarget(target)); else handleChangeTarget(target); });
 app.addEventListener('input', event => { const el = event.target; if (el.dataset.search) { if (el.dataset.search === 'discs') ui.query = el.value; else ui.fieldQuery = el.value; render(); } });
 let bagDrag = null;
 app.addEventListener('pointerdown', event => {
