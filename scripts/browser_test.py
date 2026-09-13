@@ -299,7 +299,7 @@ with sync_playwright() as p:
     page.locator('[data-action="compose-reroll"]').click()
     assert page.locator('.composer-paint').inner_html()!=before,'rerolling changes the live preview'
     assert_world(page,'discStudio.runtime.pxc.has("px.studio.uds.context.draft")')
-    for key,value in [('maker','Boone Moldworks'),('mold','Testwing'),('paint.label','Boone test disc')]:
+    for key,value in [('maker','Boone Moldworks'),('mold','Testwing'),('weight','175'),('paint.label','Boone test disc')]:
         page.locator('[data-compose="%s"]'%key).fill(value)
     page.locator('[data-action="compose-add"]').click()
     made=page.evaluate('discStudio.view.discId')
