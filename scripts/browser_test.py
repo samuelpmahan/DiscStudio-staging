@@ -275,6 +275,11 @@ with sync_playwright() as p:
     # under that Experience's own context prefix only then, and the selection
     # survives navigating away and back.
     route(page,'experiences')
+    # The frame is a single-section route: the detail pane must paint at full
+    # width, not crushed into the workspace grid's sidebar track (DOM present,
+    # nothing visible). A bounding-box assertion: text assertions cannot see it.
+    detail_w=page.locator('.exp-detail').evaluate('el=>el.getBoundingClientRect().width')
+    assert detail_w>500,f'the experience detail paints at full width, got {detail_w}px'
     chips=page.locator('.exp-item [data-status]')
     assert chips.count()==6,f'experience status chips: {chips.count()}'
     assert [chips.nth(i).text_content().strip() for i in range(6)].count('usable')==6

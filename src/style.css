@@ -204,6 +204,8 @@
 .invite-plus{font-size:16px;color:#8ca573}
 @media(max-width:560px){.invite-row{grid-template-columns:1fr 1fr}.bag-title{font-size:20px}.bag-card-order{padding:0 6px 9px}}
 .exp-layout{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:22px;align-items:start}
+/* The frame is a single-section route: without this, its lone .center section auto-places into the workspace grid's 238px sidebar track and the detail pane collapses to ~0 width (DOM present, nothing paints). */
+.workspace.experiences{grid-template-columns:minmax(0,1fr)}
 .exp-list{display:flex;flex-direction:column;gap:8px}
 .exp-item{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fafbf5;cursor:pointer}
 .exp-item.is-selected{border-color:#a0b784;background:#eef3e4}
