@@ -276,3 +276,19 @@
 .focus-stack .focus-head h1{font-size:26px}
 .empty-note{padding:34px 20px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed #b6c4a9;border-radius:12px;background:#f4f6ee}
 .bag-section{margin-top:36px;border-top:1px solid var(--line);padding-top:28px}
+/* Mobile: pickers on top, one vertical scroll; the lanes stay horizontal. */
+@media(max-width:900px){
+  .exp-layout{display:block}
+  .exp-list{flex-direction:row;overflow-x:auto;padding-bottom:8px;margin-bottom:14px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .exp-item{flex:0 0 215px;scroll-snap-align:start}
+  .sidebar.focus-rail{max-height:none;overflow:visible}
+  .focus-stack{margin:10px 0}
+  .focus-stack .focus-rail{padding:16px}
+  .focus-stack .focus-hero{padding:16px}
+}
+@media(max-width:560px){
+  .focus-lane{gap:12px;padding:16px 4px 22px}
+  .focus-lane .disc-row{flex-basis:168px}
+  .focus-head h1{font-size:28px}
+  .focus-stack .focus-head h1{font-size:22px}
+}
