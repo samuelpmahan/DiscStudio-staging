@@ -372,7 +372,9 @@ with sync_playwright() as p:
     assert sorted(rows())==sorted(page.evaluate('discStudio.shelf.rows.map(r=>r.id)')),'every shown disc sits in exactly one lane'
     assert len(set(rows()))==len(rows())
     # Momentum and snap are real CSS on the lane, not a JS reimplementation.
-    assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).scrollSnapType')=='x proximity'
+    # Chromium serializes the computed value of `x proximity` as just `x`
+    # (proximity is the default strictness, so the keyword is dropped).
+    assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).scrollSnapType')=='x'
     assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).overflowX') in ('auto','scroll')
     # The focused disc lifts: exactly one per lane, and it is the disc nearest the lane's middle.
     nearest=page.evaluate("""()=>{const out=[];for(const lane of document.querySelectorAll('.focus-lane')){const mid=lane.scrollLeft+lane.clientWidth/2;let best=null,bd=1e18;for(const c of lane.querySelectorAll('[data-disc-row]')){const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<bd){bd=d;best=c}}out.push(best&&best.classList.contains('focused')?best.getAttribute('data-disc-row'):null)}return out}""")
