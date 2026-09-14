@@ -387,6 +387,12 @@ with sync_playwright() as p:
     assert focused==now,(focused,now)
     if page.evaluate('()=>{const l=document.querySelector(".focus-lane");return l.scrollWidth>l.clientWidth}'):
         assert page.evaluate('()=>document.querySelector(".focus-lane").scrollLeft')>0,'the lane really scrolled, and the focus above is the card nearest its new middle'
+    # A re-render that leaves the lanes alone must not reset their scroll:
+    # opening the split picker rebuilds the lane DOM, and the lane should stay put.
+    page.locator('[data-action="lane-split"]').first.click()
+    assert page.locator('.lane-picker').count()==1,'the lane header tap opened the split picker'
+    assert page.evaluate('()=>document.querySelector(".focus-lane").scrollLeft')>0,'the swiped lane kept its scroll position across the picker re-render'
+    page.locator('[data-action="lane-split"]').first.click()
     record('The hero paints at full width: two momentum-scrolling snap lanes, every disc in exactly one lane, the focused disc lifting and following the scroll')
     # The bag walk: tour the stops in both directions (reset the tour first; an earlier test may have left it mid-tour).
     page.locator('[data-action="shape"][data-value="walk"]').click()

@@ -400,6 +400,10 @@ function focusHero(view) {
     + `<p class="tiny muted focus-count">${view.shown} of ${view.total} discs · lane split: ${esc(laneAxisName(axis))}${ui.laneSplit[ui.shelfShape] ? '' : ' (auto)'} · tap a lane header to change it</p>`
     + `</section>`;
 }
+/** A lane keeps its scroll position across a re-render only while it still holds the same discs in the same order: a new split or a new stop starts its lanes at zero. */
+function laneScrollKey(lane) {
+  return `${lane.dataset.lane}|${[...lane.querySelectorAll('[data-disc-row]')].map(card => card.dataset.discRow).join(',')}`;
+}
 /** The focused disc lifts out of the rack; the lift follows the eye, so it tracks scroll, not taps. */
 function wireFocusLanes() {
   for (const lane of app.querySelectorAll('.focus-lane')) {
@@ -951,6 +955,7 @@ function render() {
   const active = document.activeElement;
   const focus = active?.closest('#app') ? { control: active.dataset.control, search: active.dataset.search, compose: active.dataset.compose, label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : null;
   const scrolls = Object.fromEntries([...app.querySelectorAll('[data-scroll]')].map(e => [e.dataset.scroll, e.scrollTop]));
+  const laneScrolls = new Map([...app.querySelectorAll('.focus-lane')].map(lane => [laneScrollKey(lane), lane.scrollLeft]));
   const oldVideo = document.querySelector('#footage-video'), playing = oldVideo && !oldVideo.paused;
   if (oldVideo) ui.footageTime = oldVideo.currentTime;
   let body;
@@ -999,6 +1004,10 @@ function render() {
   app.innerHTML = `${header()}${ui.message ? `<div class="notice ${ui.error ? 'error' : ''}" role="${ui.error ? 'alert' : 'status'}"><span>${esc(ui.message)}</span>${!saveEnabled ? button('Download protected saved file', 'save-protected', {}, 'quiet small') : ''}${button('×', 'dismiss', {}, 'quiet', 'aria-label="Dismiss message"')}</div>` : ''}<main class="workspace ${ui.route}" id="main">${body}</main><footer class="app-footer"><span>LOCAL-FIRST · NO ACCOUNT · NO DATA SENT</span><span>Concept B visual language · ChainSpot PxC execution · ${esc(ui.build.commit.slice(0, 8))}</span></footer>`;
   for (const e of app.querySelectorAll('[data-scroll]')) e.scrollTop = renderedRoute === ui.route ? scrolls[e.dataset.scroll] ?? 0 : 0;
   renderedRoute = ui.route;
+  for (const lane of app.querySelectorAll('.focus-lane')) {
+    const saved = laneScrolls.get(laneScrollKey(lane));
+    if (saved != null) lane.scrollLeft = saved;
+  }
   wireFocusLanes();
   if (focus) {
     const target = [...app.querySelectorAll('input,select,textarea')].find(e => (focus.compose ? e.dataset.compose === focus.compose : focus.search ? e.dataset.search === focus.search : e.dataset.control === focus.control && e.getAttribute('aria-label') === focus.label));
