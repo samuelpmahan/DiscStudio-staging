@@ -236,3 +236,43 @@
   .composer-grid{grid-template-columns:1fr}
   .composer-art{margin-inline:auto;max-width:280px}
 }
+/* ShelfAsTheFocus: the shelf is the experience; the rail only finds things. */
+.workspace.shelf{grid-template-columns:266px minmax(0,1fr) 274px}
+.focus-rail .shape-row{display:flex;gap:6px;margin:2px 0 12px}
+.focus-rail .shape-row .pill{flex:1;font-size:12px;padding:9px 4px;text-align:center}
+.shape-filters{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.shape-filters .eyebrow{margin-bottom:1px}
+.shape-filters .tiny.muted{align-self:center}
+.rail-bags{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.rail-bag-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+.rail-bag-row select{flex:1;min-width:0;font-size:12px}
+.focus-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:4px}
+.focus-head h1{font-size:34px;margin:4px 0 6px;letter-spacing:-.3px}
+.focus-head-actions{display:flex;align-items:center;gap:12px;flex:none}
+.walk-nav{display:flex;align-items:center;gap:10px;background:#f4f6ee;border:1px solid var(--line);border-radius:24px;padding:5px 8px}
+.circle.small{height:28px;width:28px;font-size:15px}
+.lane-picker{margin:10px 0 2px;padding:10px 12px;background:#f4f6ee;border:1px solid var(--line);border-radius:10px}
+.focus-lanes{display:flex;flex-direction:column;gap:30px;margin-top:16px}
+.lane-head{display:flex;align-items:baseline;gap:10px;background:none;border:0;padding:2px;width:100%;text-align:left;cursor:pointer;color:inherit;font:inherit}
+.lane-head:hover strong{text-decoration:underline;text-underline-offset:3px}
+.lane-head .eyebrow{flex:none}
+.lane-head strong{font-size:15px}
+/* The rack: momentum scrolling, snap-to-disc, and the focused disc lifts. */
+.focus-lane{display:flex;gap:16px;overflow-x:auto;padding:20px 6px 26px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.focus-lane .disc-row{flex:0 0 204px;scroll-snap-align:center;flex-direction:column;align-items:stretch;border:1px solid var(--line);border-radius:12px;background:var(--white);position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.2,.7,.3,1.2),box-shadow .28s ease,border-color .28s ease}
+.focus-lane .disc-pick{flex-direction:column;align-items:stretch;gap:0;padding:0}
+.focus-lane .disc-thumb{width:100%;height:auto;flex:none;aspect-ratio:1;background:#e6ebde}
+.focus-lane .disc-copy{padding:10px 12px 12px}
+.focus-lane .disc-copy small{max-width:none}
+.focus-lane .disc-row .row-add{position:absolute;right:7px;top:7px;background:#ffffffc0;border-radius:50%;width:25px;height:25px;padding:0;font-size:15px;line-height:1}
+.focus-lane .disc-row.focused{transform:translateY(-9px) scale(1.035);box-shadow:0 14px 30px rgba(63,96,48,.22);border-color:#9db884;z-index:2}
+.focus-lane .disc-row.focused.in-draft{border-color:#5c7b42}
+@media(prefers-reduced-motion:reduce){.focus-lane .disc-row{transition:none}.focus-lane{scroll-snap-type:none}}
+.focus-count{margin-top:18px}
+/* The Experiences frame stacks the rail above the hero. */
+.focus-stack{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--white);margin:14px 0}
+.focus-stack .focus-rail{border-right:0;border-bottom:1px solid var(--line);padding:20px}
+.focus-stack .focus-hero{padding:22px}
+.focus-stack .focus-head h1{font-size:26px}
+.empty-note{padding:34px 20px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed #b6c4a9;border-radius:12px;background:#f4f6ee}
+.bag-section{margin-top:36px;border-top:1px solid var(--line);padding-top:28px}

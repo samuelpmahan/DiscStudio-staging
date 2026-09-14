@@ -291,11 +291,12 @@ with sync_playwright() as p:
     assert 'px.shelf.view' in page.locator('.exp-detail').text_content()
     assert_world(page,'discStudio.runtime.pxc.get("px.studio.exploreshelf.context.selection").experience==="exploreshelf"')
     assert_world(page,'discStudio.runtime.pxc.has("px.shelf.view")')
-    # CreateBag is just selecting from the shelf: tap Select, tap discs, name it.
+    # CreateBag is just selecting from the shelf: the walk already selects, tap discs, name it.
     page.locator('.exp-item[data-id="createbag"]').click()
-    page.locator('.exp-detail [data-action="selecting"]').click()
-    page.locator('.exp-detail .disc-row[data-disc-row="destroyer-lilac"] .disc-pick').click()
+    page.locator('.exp-detail [data-action="shape"][data-value="walk"]').click()
+    page.locator('.exp-detail [data-action="walk-next"]').click()
     page.locator('.exp-detail .disc-row[data-disc-row="leopard3-gold"] .disc-pick').click()
+    page.locator('.exp-detail .disc-row[data-disc-row="teebird3-sand"] .disc-pick').click()
     assert '2 selected' in page.locator('.exp-detail').text_content()
     page.locator('.exp-detail [data-control="bag-draft-name"]').fill('Browser bag')
     page.locator('[data-action="experience-use"][data-id="createbag"]').click()
@@ -360,66 +361,109 @@ with sync_playwright() as p:
     page.locator('[data-action="undo"]').click()
     assert_world(page,'discStudio.world.objects.Disc["%s"].depiction==="paint"'%made)
     record('The shelf inspector depiction switch is one undoable entity.set with a painted fallback')
-    # Finding the RIGHT disc (task 134): the search box is one Calculation over the whole
-    # shelf -- every field, the plastic and the flight numbers included -- with the terms
-    # a person actually types, ranked, and the row saying what it matched on.
-    rows=lambda:[e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]
+    # ShelfAsTheFocus: the shelf is the experience. The rail finds things; the
+    # hero shows them in two momentum-scrolling lanes with a lifting focus.
+    hero=page.locator('.focus-hero')
+    assert hero.bounding_box()['width']>500,'the shelf paints at hero width, not in the old sidebar track'
+    rows=lambda:[e.get_attribute('data-disc-row') for e in page.locator('.focus-lane .disc-row').all()]
+    # Makers shape first: the whole shelf, so the lanes have something to split.
+    page.locator('[data-action="shape"][data-value="makers"]').click()
+    assert page.locator('.focus-lane').count()==2,'two lanes like a physical rack'
+    assert sorted(rows())==sorted(page.evaluate('discStudio.shelf.rows.map(r=>r.id)')),'every shown disc sits in exactly one lane'
+    assert len(set(rows()))==len(rows())
+    # Momentum and snap are real CSS on the lane, not a JS reimplementation.
+    assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).scrollSnapType')=='x mandatory'
+    assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).overflowX') in ('auto','scroll')
+    # The focused disc lifts: exactly one per lane, and it is the disc nearest the lane's middle.
+    nearest=page.evaluate("""()=>{const out=[];for(const lane of document.querySelectorAll('.focus-lane')){const mid=lane.scrollLeft+lane.clientWidth/2;let best=null,bd=1e18;for(const c of lane.querySelectorAll('[data-disc-row]')){const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<bd){bd=d;best=c}}out.push(best&&best.classList.contains('focused')?best.getAttribute('data-disc-row'):null)}return out}""")
+    assert page.locator('.focus-lane .disc-row.focused').count()==2 and all(nearest),nearest
+    # And it follows the scroll: fling the first lane to its end and the focus rides along.
+    page.evaluate('()=>{const l=document.querySelector(".focus-lane");l.scrollTo({left:l.scrollWidth})}')
+    page.wait_for_timeout(250)
+    now=page.evaluate("""()=>{const lane=document.querySelector('.focus-lane');const mid=lane.scrollLeft+lane.clientWidth/2;let best=null,bd=1e18;for(const c of lane.querySelectorAll('[data-disc-row]')){const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<bd){bd=d;best=c}}return best?best.getAttribute('data-disc-row'):null}""")
+    focused=page.locator('.focus-lane').nth(0).locator('.disc-row.focused').get_attribute('data-disc-row')
+    assert focused==now,(focused,now)
+    if page.evaluate('()=>{const l=document.querySelector(".focus-lane");return l.scrollWidth>l.clientWidth}'):
+        last_in_lane=page.evaluate('()=>[...document.querySelector(".focus-lane").querySelectorAll("[data-disc-row]")].pop().getAttribute("data-disc-row")')
+        assert focused==last_in_lane,'the focus rode the scroll to the end of the lane'
+    record('The hero paints at full width: two momentum-scrolling snap lanes, every disc in exactly one lane, the focused disc lifting and following the scroll')
+    # The bag walk: tour the stops in both directions.
+    page.locator('[data-action="shape"][data-value="walk"]').click()
+    assert page.locator('.focus-head h1').text_content()=='Distance drivers'
+    page.locator('[data-action="walk-next"]').click()
+    assert page.locator('.focus-head h1').text_content()=='Fairway drivers'
+    assert sorted(rows())==['leopard3-gold','teebird3-sand'],rows()
+    page.locator('[data-action="walk-prev"]').click()
+    assert page.locator('.focus-head h1').text_content()=='Distance drivers'
+    page.locator('[data-action="walk-dir"][data-value="up"]').click()
+    assert page.locator('.focus-head h1').text_content()=='Putters'
+    page.locator('[data-action="walk-next"]').click()
+    assert page.locator('.focus-head h1').text_content()=='Midranges'
+    page.locator('[data-action="walk-dir"][data-value="down"]').click()
+    record('The bag walk tours the stops top-down and bottom-up')
+    # Maker review: pick a maker set, one tap each.
+    page.locator('[data-action="shape"][data-value="makers"]').click()
+    maker_id=page.evaluate('Object.values(discStudio.world.objects.Manufacturer).find(m=>m.name==="Discraft").id')
+    page.locator(f'[data-action="maker-toggle"][data-value="{maker_id}"]').click()
+    assert page.evaluate('discStudio.shelf.rows.every(r=>discStudio.world.objects.Mold[discStudio.world.objects.Disc[r.id].moldId].manufacturerId===discStudio.world.objects.Manufacturer["%s"].id)'%maker_id)
+    assert sorted(rows())==sorted(page.evaluate('discStudio.shelf.rows.map(r=>r.id)'))
+    page.locator(f'[data-action="maker-toggle"][data-value="{maker_id}"]').click()
+    # Slot review: a tight cohort, e.g. neutral discs at speed 4-6.
+    page.locator('[data-action="shape"][data-value="slot"]').click()
+    page.locator('[data-action="slot-stability"][data-value="Neutral"]').click()
+    page.locator('[data-action="slot-speed"][data-value="4-6"]').click()
+    assert sorted(rows())==['buzzz-mint','buzzz-rose','mako3-blue'],rows()
+    assert page.evaluate('discStudio.shelf.rows.every(r=>{const m=discStudio.world.objects.Mold[discStudio.world.objects.Disc[r.id].moldId];return m.flight.speed>=4&&m.flight.speed<=6})')
+    # The slot names its own split: maker, until a tap says otherwise.
+    assert 'Maker' in page.locator('.lane-head .eyebrow').first.text_content()
+    # Two-click reconfiguration: tap the lane, tap the axis. Nothing nested deeper.
+    page.locator('.lane-head').first.click()
+    assert page.locator('.lane-picker').count()==1
+    assert page.locator('.lane-picker .lane-picker').count()==0,'the picker is one level, nothing nested'
+    assert page.locator('.lane-picker [data-action="lane-axis"]').count()==5
+    page.locator('.lane-picker [data-action="lane-axis"][data-value="speed"]').click()
+    assert page.locator('.lane-picker').count()==0,'one tap on the axis closes the picker'
+    assert 'Speed' in page.locator('.lane-head .eyebrow').first.text_content()
+    page.locator('.lane-head').first.click()
+    page.locator('[data-action="lane-auto"]').click()
+    assert 'Maker' in page.locator('.lane-head .eyebrow').first.text_content(),'Auto hands the split back to the situation'
+    record('Maker review and slot review narrow the same Calculation; the lane split is two taps, one level deep')
+    # The search box and the quick filters still narrow the same live read.
+    page.locator('[data-action="shape"][data-value="makers"]').click()
     search=page.locator('[data-search="discs"]')
     search.fill('buzzz 177')
     assert rows()[0]=='buzzz-mint',rows()
-    assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .match').all_text_contents()==['Buzzz','177 g'],page.locator('.disc-row[data-disc-row="buzzz-mint"] .match').all_text_contents()
     assert page.evaluate("discStudio.shelf.rows[0].score")>page.evaluate("discStudio.shelf.rows[1].score")
-    search.fill('midrange -1')
-    assert sorted(rows())==['buzzz-mint','buzzz-rose'],rows()
-    assert any('turn' in t for t in page.locator('.match').all_text_contents()),'the row says it matched on a flight number'
-    search.fill('esp mint')
-    assert rows()==['buzzz-mint'],rows()
+    assert 'Buzzz' in page.locator('.focus-lane .disc-row[data-disc-row="buzzz-mint"] .match').all_text_contents()
     search.fill('zzzz')
-    assert rows()==[] and page.locator('.empty-note').count()==1
-    page.locator('[data-action="shelf-clear"]').click()
-    assert page.locator('[data-search="discs"]').input_value()==''
-    total=page.evaluate('Object.keys(discStudio.world.objects.Disc).length')
-    assert len(rows())==total
-    record('The shelf search is ranked over every field: "buzzz 177" puts the 177 g Buzzz first, "midrange -1" finds the discs whose disc type and turn both match, and each row says what it matched on')
-    # The quick filters, the sorts, the grouping and the two densities -- the same one read.
-    page.locator('[data-action="shelf-filter"][data-value="photo"]').click()
-    assert rows()==['buzzz-mint'],'only the disc with the uploaded photo'
-    page.locator('[data-action="shelf-filter"][data-value="photo"]').click()
+    assert rows()==[] and page.locator('.focus-hero .empty-note').count()==1
+    search.fill('')
     page.locator('[data-action="shelf-filter"][data-value="unbagged"]').click()
-    assert page.evaluate('discStudio.shelf.rows.every(r=>r.bagIds.length===0)') and len(rows())<total,rows()
+    assert page.evaluate('discStudio.shelf.rows.every(r=>r.bagIds.length===0)')
     page.locator('[data-action="shelf-filter"][data-value="unbagged"]').click()
     pick(page, '[data-control="shelf-sort"]', 'weight')
     weights=page.evaluate('()=>discStudio.shelf.rows.map(r=>discStudio.world.objects.Disc[r.id].weight)')
     assert weights==sorted(weights,reverse=True),weights
-    assert [e.get_attribute('data-disc-row') for e in page.locator('.disc-row').all()]==page.evaluate('()=>{const out=[];const walk=nodes=>nodes.forEach(n=>n.children.length?walk(n.children):out.push(...n.discIds));walk(discStudio.shelf.groups);return out}'),'the grouped list renders exactly what the Calculation returned, section by section'
-    # The grouping chain: the default is disc type then maker; rebuilding it to
-    # maker alone reads the same sections the old single select did.
-    page.locator('[data-action="shelf-group-clear"]').click()
-    page.locator('[data-action="shelf-group-add"][data-value="maker"]').click()
-    assert [t.strip() for t in page.locator('.shelf-group').all_text_contents()]==['Boone Moldworks1','Discraft8','Innova4'],page.locator('.shelf-group').all_text_contents()
-    assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
-    page.locator('[data-action="shelf-layout"][data-value="cards"]').click()
-    assert page.locator('.disc-list.as-cards').count()==3
-    assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .disc-thumb svg, .disc-row[data-disc-row="buzzz-mint"] .disc-thumb img').count()>=1,'a card view disc still shows its own art'
-    page.screenshot(path=str(out/'shelf-cards.png'))
-    page.locator('[data-action="shelf-layout"][data-value="compact"]').click()
-    assert page.locator('.disc-list.as-cards').count()==0
-    assert page.locator('.disc-row[data-disc-row="buzzz-mint"] .disc-thumb svg, .disc-row[data-disc-row="buzzz-mint"] .disc-thumb img').count()>=1,'and so does a compact one'
-    # A second link nests inside the first: maker outside, disc type inside.
-    page.locator('[data-action="shelf-group-add"][data-value="category"]').click()
-    assert page.locator('.shelf-group').count()==len(page.evaluate('discStudio.shelf.groups'))
-    assert page.locator('.shelf-subgroup').count()>0,'the second link renders inside the first'
-    leaf_total=page.evaluate('discStudio.shelf.groups.flatMap(g=>g.children.flatMap(c=>c.discIds)).length')
-    assert leaf_total==page.evaluate('discStudio.shelf.shown'),(leaf_total,page.evaluate('discStudio.shelf.shown'))
-    page.locator('[data-action="shelf-group-clear"]').click()
-    assert page.locator('.shelf-group').count()==0,'clearing the chain ungroups the shelf'
     pick(page, '[data-control="shelf-sort"]', 'recent')
-    record('The shelf organises itself: quick filters (has photo, in no bag), six sorts, a user-composable grouping chain (maker, disc type, speed, stability -- every order valid), and a compact and a card density -- all one fn.shelf.query read, with every disc keeping its own art in both')
+    record('Search, quick filters and the six sorts still ride the one live fn.shelf.query read')
+    # The walk ends in a named bag: selecting is already on, tap discs, name it, create it.
+    page.locator('[data-action="shape"][data-value="walk"]').click()
+    page.locator('[data-action="walk-next"]').click()
+    page.locator('.focus-lane .disc-row[data-disc-row="leopard3-gold"] .disc-pick').click()
+    page.locator('.focus-lane .disc-row[data-disc-row="teebird3-sand"] .disc-pick').click()
+    assert '2 selected' in page.locator('.focus-rail').text_content()
+    page.locator('[data-control="bag-draft-name"]').fill('Walk bag')
+    page.locator('[data-action="experience-use"][data-id="createbag"]').click()
+    bag=page.evaluate('Object.values(discStudio.world.objects.Bag).find(b=>b.name==="Walk bag")')
+    assert sorted(bag['discIds'])==['leopard3-gold','teebird3-sand'],bag
+    assert page.evaluate('["leopard3-gold","teebird3-sand"].every(id=>!!discStudio.world.objects.Disc[id])'),'the bag holds shared references; the discs stay on the shelf'
+    record('The bag walk ends in a named bag of shared references, tapped straight off the rack')
     # Bags: simple, intuitive, and never the thing that says no. One disc is in as many
     # bags as its owner likes and every row says which; the order inside a bag is the
     # owner's, by the arrows or by dragging the grip (one drop, one command, one undo);
     # a bag is duplicated and renamed in place; an empty bag invites instead of refusing.
     route(page,'shelf')
+    page.locator('[data-action="shape"][data-value="makers"]').click()
     order=lambda:page.evaluate('discStudio.world.objects.Bag[discStudio.view.bagId].discIds')
     before=order()
     assert page.locator('.disc-row[data-disc-row="zone-peach"] .bag-tag').all_text_contents()==['Everyday bag','Zone squad'],page.locator('.disc-row[data-disc-row="zone-peach"] .bag-tag').all_text_contents()

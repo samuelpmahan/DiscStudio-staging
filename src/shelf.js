@@ -69,13 +69,13 @@ function order(sort, rows) {
   return [...rows].sort((a, b) => by(a, b) || compare(a.disc.id, b.disc.id));
 }
 /** Total stability: how the whole flight reads, turn plus fade. A Buzzz at 0 flies straight; a Firebird at 3+ always comes back. */
-const stabilityOf = mold => {
+export const stabilityOf = mold => {
   const flight = mold?.flight ?? {};
   if (flight.turn == null && flight.fade == null) return null;
   return (flight.turn ?? 0) + (flight.fade ?? 0);
 };
-const STABILITY_BANDS = [[-Infinity, -1.5, 'Very understable'], [-1, -1, 'Understable'], [0, 0, 'Neutral'], [1, 2, 'Stable'], [2.5, Infinity, 'Overstable']];
-const stabilityLabel = score => score == null ? 'Unknown stability' : STABILITY_BANDS.find(([lo, hi]) => score >= lo && score <= hi)[2];
+export const STABILITY_BANDS = [[-Infinity, -1.5, 'Very understable'], [-1, -1, 'Understable'], [0, 0, 'Neutral'], [1, 2, 'Stable'], [2.5, Infinity, 'Overstable']];
+export const stabilityLabel = score => score == null ? 'Unknown stability' : STABILITY_BANDS.find(([lo, hi]) => score >= lo && score <= hi)[2];
 const groupLabel = (row, dim) => dim === 'maker' ? (row.maker?.name || 'Unknown maker')
   : dim === 'category' ? (row.mold?.category || 'Unsorted')
   : dim === 'speed' ? (row.mold?.flight?.speed == null ? 'Unknown speed' : `Speed ${row.mold.flight.speed}`)
@@ -105,7 +105,7 @@ function groupTree(rows, dims) {
  * them, which is the order they were added, so "recently added" is that order read
  * backwards rather than a timestamp nobody wrote down.
  */
-export function shelfQuery({ discs = [], molds = {}, makers = {}, bags = [], query = '', sort = 'recent', group = 'none', filters = [], bagId = null } = {}) {
+export function shelfQuery({ discs = [], molds = {}, makers = {}, bags = [], query = '', sort = 'recent', group = 'none', filters = [], bagId = null, makerIds = [], categories = [], stability = [], speedRange = null } = {}) {
   const terms = norm(query).split(/\s+/).filter(Boolean);
   const active = FILTERS.map(([key]) => key).filter(key => filters.includes(key));
   const rows = discs.map((disc, index) => {
@@ -116,6 +116,12 @@ export function shelfQuery({ discs = [], molds = {}, makers = {}, bags = [], que
     if (active.includes('inBag') && !(bagId && row.bagIds.includes(bagId))) return false;
     if (active.includes('unbagged') && row.bagIds.length) return false;
     if (active.includes('photo') && !row.disc.photo) return false;
+    // The focus shelf's shapes narrow the same read: maker set, category set,
+    // stability bands and a speed range are all optional filters, never a new query.
+    if (makerIds.length && !makerIds.includes(row.mold?.manufacturerId)) return false;
+    if (categories.length && !categories.includes(row.mold?.category)) return false;
+    if (stability.length && !stability.includes(stabilityLabel(stabilityOf(row.mold)))) return false;
+    if (speedRange && (row.mold?.flight?.speed == null || row.mold.flight.speed < speedRange[0] || row.mold.flight.speed > speedRange[1])) return false;
     return true;
   });
   const ranked = [];

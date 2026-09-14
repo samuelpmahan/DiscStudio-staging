@@ -61,13 +61,13 @@
     {
       "id": "record",
       "text": "The composition exports its own pyto-run-record@1 and opens a Tick render",
-      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press “Export run record ↓”, expect a downloaded pyto-run-record@1 the shared validator accepted and the Part px.run.on-the-course (14 Ticks, one invocation per PQL Calculation); press “Open Tick render ↗”, expect a saved standalone page that opens over file:// with no server and shows one section per Tick.",
+      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cExport run record \u2193\u201d, expect a downloaded pyto-run-record@1 the shared validator accepted and the Part px.run.on-the-course (14 Ticks, one invocation per PQL Calculation); press \u201cOpen Tick render \u2197\u201d, expect a saved standalone page that opens over file:// with no server and shows one section per Tick.",
       "verification": "Verified by npm test (tests/core.test.js: the record validates, one Tick per composition Tick, the receipt's material digests reach it, composePage's page round-trips the record and renders one section per Tick), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose new block drives the studio on a real local origin and opens the saved page over file:// with zero network requests. Deployed build: scripts/build.mjs now copies pyto/viewer/ into dist/ because src/app.js and src/runtime.js import it directly; npm run build confirms dist/pyto/viewer/ exists. The deployed page itself has not been opened in a browser. Automated verification only; no human acceptance is recorded."
     },
     {
       "id": "receipts",
       "text": "The studio reads its own receipts through PQL, and undo is one more Calculation on the record",
-      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press “Inspect PxC ↗” and read the Receipts section, expect one row per px.receipt.* Part with its name, consumes, produces and result digest; on the Shelf, press “↶ Undo last change”, expect the exact previous workspace back and a studio-undo row in that same list.",
+      "reviewRoute": "OnTheCourse (#/course?trace=1) with the sample workspace: press \u201cInspect PxC \u2197\u201d and read the Receipts section, expect one row per px.receipt.* Part with its name, consumes, produces and result digest; on the Shelf, press \u201c\u21b6 Undo last change\u201d, expect the exact previous workspace back and a studio-undo row in that same list.",
       "verification": "Verified by npm test (tests/core.test.js: `into` may be an array and both Parts are published or neither is, the px.receipt.* prefix query is answered sorted, the Receipts rows and summary are the two Parts one Calculation publishes, push/pop restores the exact previous value, a pop on an empty stack is a recorded no-op, and the run record carries the undo invocations), node --test pyto/viewer/test/*.test.mjs, and scripts/browser_test.py --embedded, whose eleventh check drives the Undo button and compares the rendered rows against px.receipt.* in the store and whose twelfth runs the sample composition with parallel: true, reads parallel, placement, latency_ms and budget off the exported record and checks the Tick page draws that Tick's branches on one row. scripts/review_checkpoint.mjs pins the count at 12. Automated verification only; no human acceptance is recorded."
     },
     {
@@ -77,7 +77,7 @@
     {
       "id": "id3-digits",
       "text": "ID3 learns pixel questions from visible labelled digits, with actual split diagrams and retained tree history",
-      "reviewRoute": "Open /public/algorithm-references/index.html#digit-lab. Each node is one card in the full-screen tree, containing its sample pile and question. Score then split: the first three cards fit at 1437×789. Compare questions opens a top-right dialog; preview another pixel and confirm the main tree stays unchanged. Try a digit and Inspect open their own dialogs. Escape/close returns focus. Back/scrub inspect retained models; zoom, Fit tree and Current node navigate larger trees.",
+      "reviewRoute": "Open /public/algorithm-references/index.html#digit-lab. Each node is one card in the full-screen tree, containing its sample pile and question. Score then split: the first three cards fit at 1437\u00d7789. Compare questions opens a top-right dialog; preview another pixel and confirm the main tree stays unchanged. Try a digit and Inspect open their own dialogs. Escape/close returns focus. Back/scrub inspect retained models; zoom, Fit tree and Current node navigate larger trees.",
       "verification": "262 package tests pass; six focused ID3 tests also pass after the candidate-recommendation refinement. Checks include independent root gain/membership, zero-gain XOR, deterministic ties, absent future splits, retained records and input immutability. Local full learner: 50 Ticks, 25 nodes, training 30/30 and disjoint held-out 10/20; these small teaching sets are not a general accuracy claim. Bounded reduced-motion Chrome profiling measured one HTML replacement and 7 height flushes by Tick 6 after removing redundant renders, versus three replacements and 19 flushes before; timings are directional evidence, not machine-specific gates. Browser results, screenshots and the exact served build fingerprint are retained in test-results/algorithm-references-id3/verification.json. Automated evidence does not constitute human acceptance."
     },
     {
@@ -92,7 +92,7 @@
     },
     {
       "id": "exploreshelf-v2",
-      "text": "ExploreShelf v2: the shelf opens on a default view (disc type, then maker) with sort, filter chips and a user-composable grouping chain on top -- no query to run; every chain order is valid and sections nest; select mode drafts discs for a bag and naming it fires CreateBag through the existing composition"
+      "text": "ExploreShelf v3 (ShelfAsTheFocus): the shelf is the experience, not the panel under the controls. Three search shapes, one tap each: bag walk (tour the disc types top-down or bottom-up, ends in a named bag), maker review (a maker set), slot review (a tight stability/speed cohort). Two momentum-scrolling snap lanes per shape; the situation names the lane split (walk: stability, slot: maker), reconfigurable in two taps (tap the lane header, tap the axis), nothing nested deeper. The focused disc lifts and follows the scroll. The walk selects by default; tapping discs drafts a bag and naming it fires CreateBag through the existing composition. The organise variant (grouping chain, both densities) stays on the #/course sidebar."
     },
     {
       "id": "brand-mark",

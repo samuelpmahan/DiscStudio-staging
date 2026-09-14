@@ -129,3 +129,25 @@ test('a lone string still groups one level and none is the empty chain', () => {
   }
   assert.deepEqual(r.shelf({ group: ['category', 'maker'] }).rows[0].groupPath.length, 2, 'rows carry their breadcrumb');
 });
+
+test('the focus shapes narrow the same read: maker set, category set, stability bands, speed range', () => {
+  const r = make(), total = r.shelf({}).shown;
+  assert.ok(total > 4, 'enough discs to narrow');
+  const makers = r.world().objects.Manufacturer;
+  const discraft = Object.values(makers).find(m => m.name === 'Discraft').id;
+  const onlyDiscraft = r.shelf({ makerIds: [discraft] });
+  assert.ok(onlyDiscraft.shown > 0 && onlyDiscraft.shown < total);
+  assert.ok(ids(onlyDiscraft).every(id => r.world().objects.Mold[r.world().objects.Disc[id].moldId].manufacturerId === discraft));
+  const putters = r.shelf({ categories: ['Putter', 'Putt & approach'] });
+  assert.ok(putters.shown > 0 && putters.shown < total);
+  assert.ok(ids(putters).every(id => ['Putter', 'Putt & approach'].includes(r.world().objects.Mold[r.world().objects.Disc[id].moldId].category)));
+  const neutral = r.shelf({ stability: ['Neutral'] });
+  assert.ok(neutral.shown > 0 && neutral.shown < total, 'some but not all of the seed is neutral');
+  const slot = r.shelf({ stability: ['Neutral'], speedRange: [5, 5] });
+  assert.ok(slot.shown > 0 && slot.shown <= neutral.shown, 'the speed range narrows the band');
+  for (const id of ids(slot)) {
+    const mold = r.world().objects.Mold[r.world().objects.Disc[id].moldId];
+    assert.equal(mold.flight.speed, 5, id);
+  }
+  assert.equal(r.shelf({ makerIds: ['no-such-maker'] }).shown, 0, 'a maker set with nothing in it is empty, not an error');
+});

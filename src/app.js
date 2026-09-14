@@ -6,7 +6,7 @@ import { constraintDefinitions, battleConstraintDefinitions, TIE_MODES, SCORE_MO
 import { battleTemplates } from './battle.js';
 import { framePresets, canvasFor } from './frames.js';
 import { reviewItems } from './review.js';
-import { SORTS, GROUP_DIMS, FILTERS } from './shelf.js';
+import { SORTS, GROUP_DIMS, FILTERS, STABILITY_BANDS, stabilityOf, stabilityLabel } from './shelf.js';
 import { downloadBlob, downloadJson, photoData, pngFromSvg, sha256 } from './media.js';
 import { planExports, queueProgress } from './exports.js';
 import { composePage, fetchPageSources } from '../pyto/viewer/embed.mjs';
@@ -28,7 +28,17 @@ const ui = {
   route: 'shelf', discId: savedView.discId || 'buzzz-mint', bagId: savedView.bagId || 'everyday', competitionId: 'putterwarz', roundId: 'hole-1',
   mode: savedView.mode || 'battle', presetId: savedView.presetId || 'broadcast', component: savedView.component || 'DisplayCard',
   nodeId: 'mold', query: '', fieldQuery: '', library: 'fields', onlyBag: false,
-  shelfSort: savedView.shelfSort || 'recent', shelfGroup: savedShelfGroup(savedView.shelfGroup), shelfFilters: Array.isArray(savedView.shelfFilters) ? savedView.shelfFilters : [], shelfLayout: savedView.shelfLayout || 'compact', traceOpen: false, inspectAddress: '', previewState: 'idle', selecting: false,
+  shelfSort: savedView.shelfSort || 'recent', shelfGroup: savedShelfGroup(savedView.shelfGroup), shelfFilters: Array.isArray(savedView.shelfFilters) ? savedView.shelfFilters : [], shelfLayout: savedView.shelfLayout || 'compact', traceOpen: false, inspectAddress: '', previewState: 'idle',
+  // ShelfAsTheFocus: the search comes in three shapes, each naming its own lane
+  // split. walk tours the disc types top-down or bottom-up; makers browses a
+  // maker set; slot reviews a tight stability/speed cohort.
+  shelfShape: ['walk', 'makers', 'slot'].includes(savedView.shelfShape) ? savedView.shelfShape : 'walk',
+  walkDir: savedView.walkDir === 'up' ? 'up' : 'down', walkStop: Math.min(3, Math.max(0, Number(savedView.walkStop) || 0)),
+  shelfMakers: Array.isArray(savedView.shelfMakers) ? savedView.shelfMakers : [],
+  slotStability: typeof savedView.slotStability === 'string' ? savedView.slotStability : null,
+  slotSpeed: Array.isArray(savedView.slotSpeed) ? savedView.slotSpeed : null,
+  laneSplit: savedView.laneSplit && typeof savedView.laneSplit === 'object' ? savedView.laneSplit : {},
+  lanePicker: false, selecting: (savedView.shelfShape || 'walk') === 'walk',
   bagDraft: Array.isArray(savedView.bagDraft) ? savedView.bagDraft : [], bagDraftName: savedView.bagDraftName || '',
   extraType: '', extraId: '', message: initialMessage, error: !!initialMessage, saved: saveEnabled ? (stored ? 'Saved in this browser' : 'Local sample workspace') : 'Saved file protected',
   footage: null, footageKind: null, footageName: '', footageTime: 0, lastResult: null, busy: false, photoDiscId: null,
@@ -68,7 +78,7 @@ function shownPcr() {
   if (!name) throw new Error('Render a composition before exporting its run record.');
   return name;
 }
-function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout, selectedExperience: ui.selectedExperience, experienceVariant: ui.experienceVariant, bagDraft: ui.bagDraft, bagDraftName: ui.bagDraftName })); } catch { /* Nonessential view state. */ } }
+function persistView() { try { localStorage.setItem(VIEW_KEY, JSON.stringify({ discId: ui.discId, bagId: ui.bagId, mode: ui.mode, presetId: ui.presetId, component: ui.component, instanceProjection: ui.instanceProjection, shelfSort: ui.shelfSort, shelfGroup: ui.shelfGroup, shelfFilters: ui.shelfFilters, shelfLayout: ui.shelfLayout, shelfShape: ui.shelfShape, walkDir: ui.walkDir, walkStop: ui.walkStop, shelfMakers: ui.shelfMakers, slotStability: ui.slotStability, slotSpeed: ui.slotSpeed, laneSplit: ui.laneSplit, selectedExperience: ui.selectedExperience, experienceVariant: ui.experienceVariant, bagDraft: ui.bagDraft, bagDraftName: ui.bagDraftName })); } catch { /* Nonessential view state. */ } }
 runtime.onChange(() => {
   if (saveEnabled) try { localStorage.setItem(DATA_KEY, JSON.stringify(w())); ui.saved = 'Saved in this browser'; }
   catch (error) { ui.saved = 'Not saved · download a draft'; message('Browser storage is full or unavailable. Your current work is still open. Download a draft to keep it.', true); }
@@ -139,7 +149,75 @@ function bagSelect(control = 'bag') { return select(control, ui.bagId, all(w(), 
 /** What the shelf is asked for right now: the search box, the quick filters, the sort and the grouping. */
 function shelfRequest() {
   const filters = [...ui.shelfFilters, ...(ui.route === 'course' && ui.onlyBag ? ['inBag'] : [])];
-  return { query: ui.query, sort: ui.shelfSort, group: ui.shelfGroup, filters, bagId: ui.bagId };
+  const base = { query: ui.query, sort: ui.shelfSort, group: 'none', filters, bagId: ui.bagId };
+  // The organise variant (the #/course sidebar) keeps the grouping chain; the
+  // focus shelf narrows the same Calculation by search shape instead.
+  if (ui.route === 'course') return { ...base, group: ui.shelfGroup };
+  if (ui.shelfShape === 'walk') base.categories = walkCategories();
+  else if (ui.shelfShape === 'makers' && ui.shelfMakers.length) base.makerIds = [...ui.shelfMakers];
+  else if (ui.shelfShape === 'slot') {
+    if (ui.slotStability) base.stability = [ui.slotStability];
+    if (ui.slotSpeed) base.speedRange = [...ui.slotSpeed];
+  }
+  return base;
+}
+/** The bag walk tours the disc types in speed order; putt & approach walks with the putters. */
+const WALK_STOPS = [['Distance driver'], ['Fairway driver'], ['Midrange'], ['Putter', 'Putt & approach']];
+const WALK_STOP_LABELS = ['Distance drivers', 'Fairway drivers', 'Midranges', 'Putters'];
+const walkIndex = () => ui.walkDir === 'down' ? ui.walkStop : WALK_STOPS.length - 1 - ui.walkStop;
+const walkCategories = () => WALK_STOPS[walkIndex()];
+const walkStopLabel = () => WALK_STOP_LABELS[walkIndex()];
+/** How many of the shelf's discs each walk stop holds, for the tour chips. */
+function walkStopCounts() {
+  const counts = WALK_STOPS.map(() => 0);
+  for (const disc of all(w(), 'Disc')) {
+    const category = get(w(), 'Mold', disc.moldId)?.category;
+    const stop = WALK_STOPS.findIndex(cats => cats.includes(category));
+    if (stop !== -1) counts[stop]++;
+  }
+  return counts;
+}
+/** The axes a lane split can use. Numeric axes cut at the largest gap; makers and disc types split in half. */
+const LANE_AXES = [['stability', 'Stability'], ['speed', 'Speed'], ['weight', 'Weight'], ['maker', 'Maker'], ['category', 'Disc type']];
+const laneAxisName = key => (LANE_AXES.find(([k]) => k === key) ?? [key, key])[1];
+/** The situation names the split; a tap on the lane overrides it per shape. */
+const laneAxisFor = () => ui.laneSplit[ui.shelfShape]
+  || (ui.shelfShape === 'walk' ? 'stability'
+    : ui.shelfShape === 'slot' ? 'maker'
+    : ['speed', 'weight'].includes(ui.shelfSort) ? ui.shelfSort : 'stability');
+function laneValue(row, axis) {
+  const disc = get(w(), 'Disc', row.id); if (!disc) return null;
+  const mold = get(w(), 'Mold', disc.moldId), maker = mold && get(w(), 'Manufacturer', mold.manufacturerId);
+  if (axis === 'stability') { const s = stabilityOf(mold); return s == null ? 0 : s; }
+  if (axis === 'speed') return mold?.flight?.speed ?? null;
+  if (axis === 'weight') return disc.weight ?? null;
+  if (axis === 'maker') return maker?.name || 'Unknown maker';
+  return mold?.category || 'Unsorted';
+}
+const fmtLaneNum = n => String(n).replace('-', '−');
+/** Split the ordered rows into one or two lanes, keeping the shelf's sort inside each lane. */
+function splitLanes(rows, axis) {
+  const single = label => [{ label, ids: rows.map(r => r.id) }];
+  const vals = rows.map(row => ({ id: row.id, value: laneValue(row, axis) }));
+  if (['stability', 'speed', 'weight'].includes(axis)) {
+    const known = vals.filter(v => v.value != null).sort((a, b) => a.value - b.value);
+    if (known.length < 2) return single('All discs');
+    let cut = 1, gap = -Infinity;
+    for (let i = 1; i < known.length; i++) { const g = known[i].value - known[i - 1].value; if (g > gap) { gap = g; cut = i; } }
+    if (!(gap > 0)) return single('All discs');
+    const mid = (known[cut - 1].value + known[cut].value) / 2, name = laneAxisName(axis);
+    const lo = [], hi = [];
+    for (const v of vals) (v.value == null || v.value <= mid ? lo : hi).push(v.id);
+    if (!lo.length || !hi.length) return single('All discs');
+    const range = ids => { const vs = vals.filter(v => ids.includes(v.id) && v.value != null).map(v => v.value); return `${fmtLaneNum(Math.min(...vs))}…${fmtLaneNum(Math.max(...vs))}`; };
+    return [{ label: `${name} ${range(lo)}`, ids: lo }, { label: `${name} ${range(hi)}`, ids: hi }];
+  }
+  const names = [...new Set(vals.map(v => v.value))].sort();
+  if (names.length < 2) return single('All discs');
+  const inLo = new Set(names.slice(0, Math.ceil(names.length / 2))), lo = [], hi = [];
+  for (const v of vals) (inLo.has(v.value) ? lo : hi).push(v.id);
+  const short = ns => ns.slice(0, 2).join(' · ') + (ns.length > 2 ? ` +${ns.length - 2}` : '');
+  return [{ label: short(names.filter(n => inLo.has(n))), ids: lo }, { label: short(names.filter(n => !inLo.has(n))), ids: hi }];
 }
 const flightLine = mold => ['speed', 'glide', 'turn', 'fade'].map(key => mold?.flight?.[key]).every(v => v == null) ? '' : ['speed', 'glide', 'turn', 'fade'].map(key => mold?.flight?.[key] ?? '·').join(' ').replace(/-/g, '−');
 /** The facts a person picks a disc by, on the row itself: plastic, weight, and the flight numbers. */
@@ -194,6 +272,44 @@ function shelfGroupNodes(view, nodes, depth = 0) {
 function shelfExplorer(view, { bagBar = 'auto' } = {}) {
   const empty = `<p class="empty-note">Nothing on the shelf matches${view.terms.length ? ` “${esc(ui.query.trim())}”` : ' these filters'}. Try a mold, a plastic, a colour, a weight or a flight number.</p>`;
   return `${shelfControls(view)}${selectionBar(bagBar)}${view.shown ? (ui.shelfGroup.length ? shelfGroupNodes(view, view.groups) : `<div class="disc-list ${ui.shelfLayout === 'cards' ? 'as-cards' : ''}">${view.groups[0].discIds.map(discId => shelfEntry(view.rows.find(row => row.id === discId))).join('')}</div>`) : empty}`;
+}
+/** The three search shapes, one tap each: the filter is the shape, and each shape's refinements sit one level below it. */
+function shapeFilters(view) {
+  const chip = (label, action, value, active, extra = '') => button(label, action, { value }, `pill small ${active ? 'active' : ''}`, extra);
+  if (ui.shelfShape === 'walk') {
+    const counts = walkStopCounts();
+    return `<div class="shape-filters"><span class="eyebrow">Tour</span><div class="chip-row">${chip('↓ Drivers first', 'walk-dir', 'down', ui.walkDir === 'down')}${chip('↑ Putters first', 'walk-dir', 'up', ui.walkDir === 'up')}</div><div class="chip-row" role="group" aria-label="Tour stop">${WALK_STOP_LABELS.map((label, i) => chip(`${label} · ${counts[i]}`, 'walk-stop', String(i), walkIndex() === i, `aria-label="Tour ${label}"`)).join('')}</div></div>`;
+  }
+  if (ui.shelfShape === 'makers') {
+    const makers = all(w(), 'Manufacturer').map(m => m);
+    const counts = new Map();
+    for (const disc of all(w(), 'Disc')) { const id = get(w(), 'Mold', disc.moldId)?.manufacturerId; counts.set(id, (counts.get(id) || 0) + 1); }
+    return `<div class="shape-filters"><span class="eyebrow">Makers ${ui.shelfMakers.length ? `· ${ui.shelfMakers.length} picked` : '· all'}</span><div class="chip-row">${makers.map(m => chip(`${m.name} · ${counts.get(m.id) || 0}`, 'maker-toggle', m.id, ui.shelfMakers.includes(m.id))).join('') || '<span class="tiny muted">No makers on the shelf.</span>'}</div></div>`;
+  }
+  const speeds = [[1, 3, '1–3'], [4, 6, '4–6'], [7, 9, '7–9'], [10, 14, '10–14']];
+  return `<div class="shape-filters"><span class="eyebrow">Cohort</span><div class="chip-row" role="group" aria-label="Stability">${STABILITY_BANDS.map(([, , label]) => chip(label, 'slot-stability', label, ui.slotStability === label)).join('')}</div><div class="chip-row" role="group" aria-label="Speed"><span class="tiny muted">Speed</span>${speeds.map(([lo, hi, label]) => chip(label, 'slot-speed', `${lo}-${hi}`, ui.slotSpeed?.[0] === lo)).join('')}</div></div>`;
+}
+/** One line saying what the shelf is showing, so the shape never needs decoding. */
+function shapeSummary(view) {
+  if (ui.shelfShape === 'walk') return `${walkStopLabel()} · ${ui.walkDir === 'down' ? 'moving down' : 'moving up'} · tap discs to pack the bag`;
+  if (ui.shelfShape === 'makers') {
+    const names = ui.shelfMakers.map(id => get(w(), 'Manufacturer', id)?.name).filter(Boolean);
+    return names.length ? `Makers: ${names.join(', ')}` : 'All makers';
+  }
+  return [ui.slotStability || 'any stability', ui.slotSpeed ? `speed ${ui.slotSpeed[0]}–${ui.slotSpeed[1]}` : 'any speed'].join(' · ');
+}
+/** The rail: search, the three shapes, quick filters, sort, the bag draft. The shelf itself is the hero next to it. */
+function focusRail(view) {
+  const shapes = [['walk', 'Bag walk'], ['makers', 'Makers'], ['slot', 'Slot']];
+  return `<aside class="sidebar focus-rail" data-scroll="shelf"><div class="sidebar-heading"><div><span class="eyebrow">FIND YOUR DISC</span><h2>Shelf <small>${view.total}</small></h2></div>${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div>`
+    + `<input class="search" data-search="discs" aria-label="Find a disc" placeholder="⌕  buzzz 177 · midrange -1" value="${esc(ui.query)}">`
+    + `<div class="shape-row" role="group" aria-label="Search shape">${shapes.map(([key, label]) => button(label, 'shape', { value: key }, `pill ${ui.shelfShape === key ? 'active' : ''}`, `aria-pressed="${ui.shelfShape === key}"`)).join('')}</div>`
+    + shapeFilters(view)
+    + `<div class="chip-row">${FILTERS.map(([key, label]) => button(label, 'shelf-filter', { value: key }, `pill small ${ui.shelfFilters.includes(key) ? 'active' : ''}`, `aria-pressed="${ui.shelfFilters.includes(key)}"`)).join('')}${button(ui.selecting ? '✓ Selecting' : 'Select', 'selecting', {}, `pill small ${ui.selecting ? 'active' : ''}`, `aria-pressed="${ui.selecting}" aria-label="Select discs for a bag"`)}</div>`
+    + `<div class="shelf-order">${select('shelf-sort', ui.shelfSort, SORTS.map(([key, label]) => [key, `↕ ${label}`]))}</div>`
+    + selectionBar('always')
+    + `<div class="rail-bags"><span class="eyebrow">Bag</span><div class="rail-bag-row">${bagSelect('rail-bag')}${button('Manage →', 'go-managebags', {}, 'quiet small')}</div></div>`
+    + `</aside>`;
 }
 function shelfSidebar() {
   const view = runtime.shelf(shelfRequest());
@@ -255,9 +371,59 @@ function bagInvitation() {
   const suggestions = runtime.shelf({ sort: 'recent', bagId: ui.bagId }).rows.filter(row => !row.bagIds.includes(ui.bagId)).slice(0, 6);
   return `<div class="empty-state"><h2>An empty bag is just one you have not packed yet.</h2><p>One tap puts a disc in. The same disc can be in as many bags as you like — it is never moved out of another one, and there is no limit on what a bag holds.</p><div class="invite-row">${suggestions.map(row => { const { disc, mold } = discInfo(row.id); return `<button class="invite-disc" data-action="membership" data-id="${esc(row.id)}"><span class="invite-art">${safeThumb(row.id)}</span><span class="invite-copy"><strong>${esc(mold?.name || 'Disc')}</strong><small>${esc(disc.nickname)}</small></span><span class="invite-plus">+</span></button>`; }).join('')}</div></div>`;
 }
-function shelfCenter() {
+/** The walk's tour controls: direction, the four stops, and the tour steppers. */
+function walkNav() {
+  const canPrev = ui.walkStop > 0, canNext = ui.walkStop < WALK_STOPS.length - 1;
+  return `<div class="walk-nav" role="group" aria-label="Tour stops"><button class="circle small" data-action="walk-prev" ${canPrev ? '' : 'disabled'} aria-label="Previous stop">←</button><span class="tiny"><strong>${esc(walkStopLabel())}</strong> · ${ui.walkStop + 1} of ${WALK_STOPS.length}</span><button class="circle small" data-action="walk-next" ${canNext ? '' : 'disabled'} aria-label="Next stop">→</button></div>`;
+}
+/** One tap on the lane header opens the split picker; one more tap picks the axis. Two clicks, nothing nested. */
+function lanePicker() {
+  const axis = laneAxisFor();
+  return `<div class="lane-picker chip-row" role="group" aria-label="Split the lanes by">${LANE_AXES.map(([key, label]) => button(label, 'lane-axis', { value: key }, `pill small ${axis === key ? 'active' : ''}`)).join('')}${button('Auto', 'lane-auto', {}, `pill small quiet ${ui.laneSplit[ui.shelfShape] ? '' : 'active'}`)}</div>`;
+}
+/** A hero lane: its header names the split (tap to change it), the rack below scrolls with momentum and snaps to each disc. */
+function focusLane(lane, index, count, rowsById) {
+  return `<div class="focus-lane-wrap"><button class="lane-head" data-action="lane-split" aria-expanded="${ui.lanePicker}" aria-label="Change what the lanes split by"><span class="eyebrow">${esc(laneAxisName(laneAxisFor()))} · lane ${index + 1} of ${count}</span><strong>${esc(lane.label)}</strong></button><div class="focus-lane" data-lane="${index}">${lane.ids.map(id => shelfEntry(rowsById.get(id))).join('')}</div></div>`;
+}
+/** ShelfAsTheFocus: the shelf is the experience, the rail only finds things. */
+function focusHero(view) {
+  const axis = laneAxisFor();
+  const lanes = splitLanes(view.rows, axis);
+  const rowsById = new Map(view.rows.map(row => [row.id, row]));
+  const heroTitle = ui.shelfShape === 'walk' ? walkStopLabel() : ui.shelfShape === 'makers' ? 'Maker review' : 'Slot review';
+  return `<section class="focus-hero">${ui.adding ? discComposer() : ''}`
+    + `<div class="focus-head"><div><span class="eyebrow">THE SHELF · ${ui.shelfShape === 'walk' ? 'BAG WALK' : ui.shelfShape === 'makers' ? 'MAKER REVIEW' : 'SLOT REVIEW'}</span><h1>${esc(heroTitle)}</h1><p class="tiny muted">${esc(shapeSummary(view))}</p></div><div class="focus-head-actions">${ui.shelfShape === 'walk' ? walkNav() : ''}${button('+', 'disc-add', {}, 'circle', 'aria-label="Add a physical disc"')}</div></div>`
+    + (ui.lanePicker ? lanePicker() : '')
+    + (view.shown
+      ? `<div class="focus-lanes">${lanes.map((lane, i) => focusLane(lane, i, lanes.length, rowsById)).join('')}</div>`
+      : `<p class="empty-note">Nothing on the shelf matches. Loosen the shape or clear the search.</p>`)
+    + `<p class="tiny muted focus-count">${view.shown} of ${view.total} discs · lane split: ${esc(laneAxisName(axis))}${ui.laneSplit[ui.shelfShape] ? '' : ' (auto)'} · tap a lane header to change it</p>`
+    + `</section>`;
+}
+/** The focused disc lifts out of the rack; the lift follows the eye, so it tracks scroll, not taps. */
+function wireFocusLanes() {
+  for (const lane of app.querySelectorAll('.focus-lane')) {
+    const cards = [...lane.querySelectorAll('[data-disc-row]')];
+    if (!cards.length) continue;
+    let ticking = false;
+    const lift = () => {
+      ticking = false;
+      const mid = lane.scrollLeft + lane.clientWidth / 2;
+      let best = null, bestDist = Infinity;
+      for (const card of cards) {
+        const dist = Math.abs(card.offsetLeft + card.offsetWidth / 2 - mid);
+        if (dist < bestDist) { bestDist = dist; best = card; }
+      }
+      for (const card of cards) card.classList.toggle('focused', card === best);
+    };
+    lane.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(lift); } }, { passive: true });
+    lift();
+  }
+}
+/** The bag section sits one scroll below the hero: the walk ends in a named bag, and the bag is packed and adapted here. */
+function bagSection() {
   const bag = get(w(), 'Bag', ui.bagId), discIds = bag?.discIds ?? [];
-  return `<section class="center" data-scroll="center">${ui.adding ? discComposer() : ''}<div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Duplicate bag', 'bag-duplicate', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description">${bag ? `<input class="bag-title" data-control="bag-name" aria-label="Bag name" value="${esc(bag.name)}">` : '<span class="eyebrow">CREATE YOUR FIRST BAG</span>'}<span class="tiny muted">${bag ? `${discIds.length} disc${discIds.length === 1 ? '' : 's'} · drag the grip or use ◀ ▶ to set the order · no limits here, a cap belongs to a competition` : ''}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${discIds.map((key, index) => bagCard(key, index, discIds.length)).join('') || bagInvitation()}</div><div class="principle-strip"><span>ONE DISC. MANY BAGS. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bag it is in, and every bound card, sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
+  return `<section class="bag-section"><div class="section-heading"><div><span class="eyebrow">LESS SETUP. MORE DISC.</span><h1>Make it yours.</h1><p>Your physical discs. A bag for every kind of round.</p></div>${button('Take it OnTheCourse ↗', 'go-course', {}, 'primary')}</div><div class="section-toolbar"><div class="bag-picker">${bagSelect()}${button('+ New bag', 'bag-add', {}, 'quiet')}</div><div>${button('Duplicate bag', 'bag-duplicate', {}, 'quiet')}${button('Delete bag', 'bag-remove', {}, 'quiet')}</div></div><div class="bag-description">${bag ? `<input class="bag-title" data-control="bag-name" aria-label="Bag name" value="${esc(bag.name)}">` : '<span class="eyebrow">CREATE YOUR FIRST BAG</span>'}<span class="tiny muted">${bag ? `${discIds.length} disc${discIds.length === 1 ? '' : 's'} · drag the grip or use ◀ ▶ to set the order · no limits here, a cap belongs to a competition` : ''}</span><span class="mono tiny">${esc(bag ? `px.domain.Bag.${bag.id}` : '')}</span></div><div class="bag-grid">${discIds.map((key, index) => bagCard(key, index, discIds.length)).join('') || bagInvitation()}</div><div class="principle-strip"><span>ONE DISC. MANY BAGS. MANY COMPOSITIONS.</span><p>Change a photo or fact here. Every bag it is in, and every bound card, sees the same physical disc.</p></div>${tracePanel(ui.lastResult?.run)}</section>`;
 }
 /** What the depiction switch keeps: both sources, whichever one is not showing. */
 function depictionNote(disc) {
@@ -675,7 +841,7 @@ function resetExperienceForm(key) {
 function experienceUseArgs(key) {
   const form = ui.experienceForm;
   switch (key) {
-    case 'exploreshelf': return { query: ui.query, sort: ui.shelfSort, group: [...ui.shelfGroup], filters: [...ui.shelfFilters] };
+    case 'exploreshelf': return { ...shelfRequest(), group: 'none' };
     case 'createbag': return { name: ui.bagDraftName ?? '', discIds: [...ui.bagDraft] };
     case 'managebags': {
       const adaptation = { kind: form.kind ?? 'rename' };
@@ -716,7 +882,7 @@ function experienceFired(key, body) {
 function exploreShelfDetail(exp) {
   const view = runtime.shelf(shelfRequest());
   return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
-  ${shelfExplorer(view)}
+  <div class="focus-stack">${focusRail(view)}${focusHero(view)}</div>
   <div class="button-row">${button('Use this shelf view', 'experience-use', { id: 'exploreshelf' }, 'primary')}</div>
   ${experienceFired('exploreshelf', result => `<p>${result.total} on the shelf · ${result.shown} shown.</p>${tracePanel(result.run)}`)}`;
 }
@@ -724,7 +890,7 @@ function createBagDetail(exp) {
   const view = runtime.shelf(shelfRequest());
   return `<p class="lede">${esc(exp.purpose)}</p>${experiencePairCard(exp)}
   <p class="tiny muted">Tap <strong>Select</strong>, tap the discs, name the bag. The bag only points at them — every physical disc stays on the shelf.</p>
-  ${shelfExplorer(view, { bagBar: 'always' })}
+  <div class="focus-stack">${focusRail(view)}${focusHero(view)}</div>
   ${experienceFired('createbag', result => `<p><strong>${esc(result.name)}</strong> holds ${result.discIds.length} shared specimen reference${result.discIds.length === 1 ? '' : 's'} — the discs stay on the shelf, the bag only points at them.</p><p class="tiny muted">Pack and adapt it in the <a href="#/shelf">shelf view ↗</a>.</p>`)}`;
 }
 function manageBagsDetail(exp) {
@@ -794,7 +960,8 @@ function render() {
     if (!w().presets[ui.presetId]) ui.presetId = w().layout.presetId;
     if (ui.route === 'shelf') {
       ui.lastResult = ui.discId ? runtime.card(ui.discId, 'discImage', context()) : null;
-      body = `${shelfSidebar()}${shelfCenter()}${discInspector()}`;
+      const view = runtime.shelf(shelfRequest());
+      body = `${focusRail(view)}<div class="center" data-scroll="center">${focusHero(view)}${bagSection()}</div>${discInspector()}`;
     } else if (ui.route === 'course') {
       ui.lastResult = runtime.scene({ mode: ui.mode, discId: ui.discId, ...context() });
       ui.battleRules = ui.mode === 'battle' ? runtime.battle() : null;
@@ -832,6 +999,7 @@ function render() {
   app.innerHTML = `${header()}${ui.message ? `<div class="notice ${ui.error ? 'error' : ''}" role="${ui.error ? 'alert' : 'status'}"><span>${esc(ui.message)}</span>${!saveEnabled ? button('Download protected saved file', 'save-protected', {}, 'quiet small') : ''}${button('×', 'dismiss', {}, 'quiet', 'aria-label="Dismiss message"')}</div>` : ''}<main class="workspace ${ui.route}" id="main">${body}</main><footer class="app-footer"><span>LOCAL-FIRST · NO ACCOUNT · NO DATA SENT</span><span>Concept B visual language · ChainSpot PxC execution · ${esc(ui.build.commit.slice(0, 8))}</span></footer>`;
   for (const e of app.querySelectorAll('[data-scroll]')) e.scrollTop = renderedRoute === ui.route ? scrolls[e.dataset.scroll] ?? 0 : 0;
   renderedRoute = ui.route;
+  wireFocusLanes();
   if (focus) {
     const target = [...app.querySelectorAll('input,select,textarea')].find(e => (focus.compose ? e.dataset.compose === focus.compose : focus.search ? e.dataset.search === focus.search : e.dataset.control === focus.control && e.getAttribute('aria-label') === focus.label));
     if (target) { target.focus({ preventScroll: true }); try { if (focus.start != null) target.setSelectionRange(focus.start, focus.end); } catch { /* Number/range controls have no selection. */ } }
@@ -981,6 +1149,18 @@ async function action(name, el) {
     case 'reset': if (confirm('Replace this local workspace with the labelled sample collection? Download a draft first to keep your work. Review comments are not deleted.')) { saveEnabled = true; runtime.replace(createSeed()); ui.discId = 'buzzz-mint'; ui.bagId = 'everyday'; ui.presetId = 'broadcast'; message('Sample workspace restored. Your review comments are unchanged.'); } break;
     case 'disc-select': ui.discId = d.id; break;
     case 'shelf-filter': ui.shelfFilters = ui.shelfFilters.includes(d.value) ? ui.shelfFilters.filter(key => key !== d.value) : [...ui.shelfFilters, d.value]; break;
+    case 'shape': ui.shelfShape = d.value; ui.lanePicker = false; ui.selecting = d.value === 'walk' ? true : ui.selecting; persistView(); break;
+    case 'walk-dir': ui.walkDir = d.value; ui.walkStop = 0; persistView(); break;
+    case 'walk-stop': ui.walkStop = Math.min(3, Math.max(0, Number(d.value) || 0)); break;
+    case 'walk-prev': ui.walkStop = Math.max(0, ui.walkStop - 1); break;
+    case 'walk-next': ui.walkStop = Math.min(WALK_STOPS.length - 1, ui.walkStop + 1); break;
+    case 'maker-toggle': ui.shelfMakers = ui.shelfMakers.includes(d.value) ? ui.shelfMakers.filter(id => id !== d.value) : [...ui.shelfMakers, d.value]; persistView(); break;
+    case 'slot-stability': ui.slotStability = ui.slotStability === d.value ? null : d.value; persistView(); break;
+    case 'slot-speed': { const [lo, hi] = d.value.split('-').map(Number); ui.slotSpeed = ui.slotSpeed?.[0] === lo ? null : [lo, hi]; persistView(); break; }
+    case 'lane-split': ui.lanePicker = !ui.lanePicker; break;
+    case 'lane-axis': ui.laneSplit = { ...ui.laneSplit, [ui.shelfShape]: d.value }; ui.lanePicker = false; persistView(); break;
+    case 'lane-auto': { const next = { ...ui.laneSplit }; delete next[ui.shelfShape]; ui.laneSplit = next; ui.lanePicker = false; persistView(); break; }
+    case 'go-managebags': ui.selectedExperience = 'managebags'; ui.experienceVariant = null; ui.experienceForm = resetExperienceForm('managebags'); runtime.experiences().select('managebags'); navigate('experiences'); return;
     case 'shelf-group-add': if (!ui.shelfGroup.includes(d.value) && ui.shelfGroup.length < 3) ui.shelfGroup = [...ui.shelfGroup, d.value]; break;
     case 'shelf-group-remove': ui.shelfGroup = ui.shelfGroup.filter(key => key !== d.value); break;
     case 'shelf-group-clear': ui.shelfGroup = []; break;
@@ -1191,6 +1371,7 @@ function controlChange(el) {
   const setPreset = patch => execute({ type: 'preset.set', id: ui.presetId, patch });
   switch (key) {
     case 'bag': ui.bagId = value; break;
+    case 'rail-bag': ui.bagId = value; break;
     case 'only-bag': ui.onlyBag = el.checked; break;
     case 'bag-name': execute({ type: 'entity.set', entityType: 'Bag', id: ui.bagId, path: 'name', value: value.trim() || 'Bag' }); break;
     case 'shelf-sort': ui.shelfSort = value; break;

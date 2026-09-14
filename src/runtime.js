@@ -324,10 +324,10 @@ export function createStudioRuntime(initial) {
    * the record as `shelf-view` like everything else. The UI draws what it returns; it
    * does no finding of its own.
    */
-  function shelf({ query = '', sort = 'recent', group = 'none', filters = [], bagId = null } = {}) {
+  function shelf({ query = '', sort = 'recent', group = 'none', filters = [], bagId = null, makerIds = [], categories = [], stability = [], speedRange = null } = {}) {
     const w = world();
     const material = source('px.shelf.material', { discs: all(w, 'Disc'), molds: w.objects.Mold, makers: w.objects.Manufacturer, bags: all(w, 'Bag') });
-    const request = source('px.shelf.request', { query, sort, group, filters, bagId });
+    const request = source('px.shelf.request', { query, sort, group, filters, bagId, makerIds, categories, stability, speedRange });
     const run = execute('shelf-view', [step('Shelf', 'fn.shelf.query', { material, request }, 'px.shelf.view')]);
     return { ...pxc.get('px.shelf.view'), part: 'px.shelf.view', run };
   }
@@ -698,7 +698,7 @@ export function createStudioRuntime(initial) {
       case 'exploreshelf': {
         if (!Object.keys(world().objects.Disc ?? {}).length)
           return { fired: false, reason: 'The shelf is empty: add a disc (UploadDiscToShelf) before the shelf view can fire.' };
-        const view = shelf({ query: args.query ?? '', sort: args.sort, group: args.group, filters: args.filters, bagId: args.bagId ?? null });
+        const view = shelf({ query: args.query ?? '', sort: args.sort, group: args.group, filters: args.filters, bagId: args.bagId ?? null, makerIds: args.makerIds ?? [], categories: args.categories ?? [], stability: args.stability ?? [], speedRange: args.speedRange ?? null });
         source(`${prefix}view`, 'px.shelf.view');
         const selection = experienceSelect(key);
         return { fired: true, projection: 'px.shelf.view', run: view.run, total: view.total, shown: view.shown, groups: view.groups, unsealed, context: selection };
