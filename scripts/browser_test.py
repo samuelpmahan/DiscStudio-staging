@@ -371,10 +371,11 @@ with sync_playwright() as p:
     assert page.locator('.focus-lane').count()==2,'two lanes like a physical rack'
     assert sorted(rows())==sorted(page.evaluate('discStudio.shelf.rows.map(r=>r.id)')),'every shown disc sits in exactly one lane'
     assert len(set(rows()))==len(rows())
-    # Momentum and snap are real CSS on the lane, not a JS reimplementation.
-    # Chromium serializes the computed value of `x proximity` as just `x`
-    # (proximity is the default strictness, so the keyword is dropped).
-    assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).scrollSnapType')=='x'
+    # Momentum scrolling is real CSS on the lane; there is deliberately no CSS
+    # scroll-snap on the lane (iOS Safari's snap kept yanking the lane back to
+    # the start on real phones, under both mandatory and proximity). A magnetic
+    # settle, if it comes back, will be JS-driven.
+    assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).scrollSnapType')=='none'
     assert page.evaluate('getComputedStyle(document.querySelector(".focus-lane")).overflowX') in ('auto','scroll')
     # The focused disc lifts: exactly one per lane, and it is the disc nearest the lane's middle.
     nearest=page.evaluate("""()=>{const out=[];for(const lane of document.querySelectorAll('.focus-lane')){const mid=lane.scrollLeft+lane.clientWidth/2;let best=null,bd=1e18;for(const c of lane.querySelectorAll('[data-disc-row]')){const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<bd){bd=d;best=c}}out.push(best&&best.classList.contains('focused')?best.getAttribute('data-disc-row'):null)}return out}""")
@@ -393,7 +394,7 @@ with sync_playwright() as p:
     assert page.locator('.lane-picker').count()==1,'the lane header tap opened the split picker'
     assert page.evaluate('()=>document.querySelector(".focus-lane").scrollLeft')>0,'the swiped lane kept its scroll position across the picker re-render'
     page.locator('[data-action="lane-split"]').first.click()
-    record('The hero paints at full width: two momentum-scrolling snap lanes, every disc in exactly one lane, the focused disc lifting and following the scroll')
+    record('The hero paints at full width: two momentum-scrolling lanes (no CSS snap), every disc in exactly one lane, the focused disc lifting and following the scroll')
     # The bag walk: tour the stops in both directions (reset the tour first; an earlier test may have left it mid-tour).
     page.locator('[data-action="shape"][data-value="walk"]').click()
     page.locator('[data-action="walk-dir"][data-value="down"]').click()

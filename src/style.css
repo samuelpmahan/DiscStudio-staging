@@ -257,10 +257,10 @@
 .lane-head:hover strong{text-decoration:underline;text-underline-offset:3px}
 .lane-head .eyebrow{flex:none}
 .lane-head strong{font-size:15px}
-/* The rack: momentum scrolling, snap-to-disc, and the focused disc lifts. */
-.focus-lane{display:flex;gap:16px;overflow-x:auto;padding:20px 6px 26px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-/* Proximity, not mandatory: iOS Safari treats a mandatory lane as a trap, any swipe short of the next card's snap point gets yanked back to the start. Proximity keeps the snap-to-disc feel without fighting the finger. */
-.focus-lane .disc-row{flex:0 0 204px;scroll-snap-align:center;flex-direction:column;align-items:stretch;border:1px solid var(--line);border-radius:12px;background:var(--white);position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.2,.7,.3,1.2),box-shadow .28s ease,border-color .28s ease}
+/* The rack: momentum scrolling with no CSS scroll-snap (iOS Safari's snap kept yanking the lane back to the start on real phones, under both mandatory and proximity), and the focused disc lifts. If the magnetic settle comes back it will be JS-driven, in our control, and testable. */
+.focus-lane{display:flex;gap:16px;overflow-x:auto;padding:20px 6px 26px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+/* No scroll-snap-align here: the lane carries no scroll-snap-type, so the declaration would be dead. */
+.focus-lane .disc-row{flex:0 0 204px;flex-direction:column;align-items:stretch;border:1px solid var(--line);border-radius:12px;background:var(--white);position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.2,.7,.3,1.2),box-shadow .28s ease,border-color .28s ease}
 .focus-lane .disc-pick{flex-direction:column;align-items:stretch;gap:0;padding:0}
 .focus-lane .disc-thumb{width:100%;height:auto;flex:none;aspect-ratio:1;background:#e6ebde}
 .focus-lane .disc-copy{padding:10px 12px 12px}
