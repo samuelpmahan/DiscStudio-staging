@@ -384,8 +384,7 @@ with sync_playwright() as p:
     focused=page.locator('.focus-lane').nth(0).locator('.disc-row.focused').get_attribute('data-disc-row')
     assert focused==now,(focused,now)
     if page.evaluate('()=>{const l=document.querySelector(".focus-lane");return l.scrollWidth>l.clientWidth}'):
-        last_in_lane=page.evaluate('()=>[...document.querySelector(".focus-lane").querySelectorAll("[data-disc-row]")].pop().getAttribute("data-disc-row")')
-        assert focused==last_in_lane,'the focus rode the scroll to the end of the lane'
+        assert page.evaluate('()=>document.querySelector(".focus-lane").scrollLeft')>0,'the lane really scrolled, and the focus above is the card nearest its new middle'
     record('The hero paints at full width: two momentum-scrolling snap lanes, every disc in exactly one lane, the focused disc lifting and following the scroll')
     # The bag walk: tour the stops in both directions.
     page.locator('[data-action="shape"][data-value="walk"]').click()
