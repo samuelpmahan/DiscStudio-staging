@@ -386,8 +386,10 @@ with sync_playwright() as p:
     if page.evaluate('()=>{const l=document.querySelector(".focus-lane");return l.scrollWidth>l.clientWidth}'):
         assert page.evaluate('()=>document.querySelector(".focus-lane").scrollLeft')>0,'the lane really scrolled, and the focus above is the card nearest its new middle'
     record('The hero paints at full width: two momentum-scrolling snap lanes, every disc in exactly one lane, the focused disc lifting and following the scroll')
-    # The bag walk: tour the stops in both directions.
+    # The bag walk: tour the stops in both directions (reset the tour first; an earlier test may have left it mid-tour).
     page.locator('[data-action="shape"][data-value="walk"]').click()
+    page.locator('[data-action="walk-dir"][data-value="down"]').click()
+    page.locator('[data-action="walk-stop"][data-value="0"]').click()
     assert page.locator('.focus-head h1').text_content()=='Distance drivers'
     page.locator('[data-action="walk-next"]').click()
     assert page.locator('.focus-head h1').text_content()=='Fairway drivers'
@@ -447,7 +449,10 @@ with sync_playwright() as p:
     record('Search, quick filters and the six sorts still ride the one live fn.shelf.query read')
     # The walk ends in a named bag: selecting is already on, tap discs, name it, create it.
     page.locator('[data-action="shape"][data-value="walk"]').click()
+    page.locator('[data-action="walk-dir"][data-value="down"]').click()
+    page.locator('[data-action="walk-stop"][data-value="0"]').click()
     page.locator('[data-action="walk-next"]').click()
+    assert page.locator('.focus-head h1').text_content()=='Fairway drivers'
     page.locator('.focus-lane .disc-row[data-disc-row="leopard3-gold"] .disc-pick').click()
     page.locator('.focus-lane .disc-row[data-disc-row="teebird3-sand"] .disc-pick').click()
     assert '2 selected' in page.locator('.focus-rail').text_content()
